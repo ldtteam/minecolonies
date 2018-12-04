@@ -106,7 +106,7 @@ achievement.upgrade.townhall.first=A nilo gbogan-ilu!
 achievement.upgrade.townhall.first.desc=Ko gbogan ilu!
 tile.minecolonies.blockHutGuardTower.name=Ile-iso eso
 tile.blockHutTownHall.messageGuardDead=Oluṣọ na %s ti ku ni %d %d %d of %s !
-item.minecolonies.scepterGuard.name=Eso scepter
+item.minecolonies.scepterGuard.name=Opa-oluso
 
 com.minecolonies.configgui.title=Iwa ileto Konfigi
 
