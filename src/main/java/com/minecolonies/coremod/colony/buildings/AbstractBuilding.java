@@ -317,6 +317,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         buf.writeInt(getBuildingLevel());
         buf.writeInt(getMaxBuildingLevel());
         buf.writeInt(getPickUpPriority());
+        buf.writeBoolean(getPriorityState());
         buf.writeInt(getCurrentWorkOrderLevel());
         ByteBufUtils.writeUTF8String(buf, getStyle());
         ByteBufUtils.writeUTF8String(buf, this.getSchematicName());
