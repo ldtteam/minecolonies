@@ -1,16 +1,19 @@
 package com.minecolonies.api.colony.requestsystem.requestable;
 
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Predicate;
+
 /**
  * Deliverable that can only be fulfilled by a single stack with a given minimal amount of items.
  */
-public class Stack implements IDeliverable
+public class Stack implements IDeliverable, Predicate<ItemStack>
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_STACK       = "Stack";
@@ -23,13 +26,19 @@ public class Stack implements IDeliverable
     @NotNull
     private final ItemStack theStack;
 
-    @NotNull
+    /**
+     * If meta should match.
+     */
     private boolean matchMeta = false;
 
-    @NotNull
+    /**
+     * If NBT should match.
+     */
     private boolean matchNBT = false;
 
-    @NotNull
+    /**
+     * If oredict should match.
+     */
     private boolean matchOreDic = false;
 
     @NotNull
@@ -50,6 +59,15 @@ public class Stack implements IDeliverable
 
         setMatchMeta(true).setMatchNBT(true);
         this.theStack.setCount(Math.min(this.theStack.getCount(), this.theStack.getMaxStackSize()));
+    }
+
+    /**
+     * Transform an itemStorage into this predicate.
+     * @param itemStorage the storage to use.
+     */
+    public Stack (@NotNull final ItemStorage itemStorage)
+    {
+        this(itemStorage.getItemStack(), !itemStorage.ignoreDamageValue(), false, false, ItemStackUtils.EMPTY);
     }
 
     /**
@@ -74,12 +92,22 @@ public class Stack implements IDeliverable
         this.result = result;
     }
 
+    /**
+     * Set if NBT has to match
+     * @param match true if so.
+     * @return an instance of this.
+     */
     public Stack setMatchNBT(final boolean match)
     {
         this.matchNBT = match;
         return this;
     }
 
+    /**
+     * Set if meta has to match
+     * @param match true if so.
+     * @return an instance of this.
+     */
     public Stack setMatchMeta(final boolean match)
     {
         this.matchMeta = match;
@@ -156,7 +184,9 @@ public class Stack implements IDeliverable
     {
         this.matchOreDic = match;
         return this;
-    }    @NotNull
+    }
+
+    @NotNull
     @Override
     public ItemStack getResult()
     {
@@ -205,6 +235,12 @@ public class Stack implements IDeliverable
         result1 = 31 * result1 + (matchOreDic ? 1 : 0);
         result1 = 31 * result1 + getResult().hashCode();
         return result1;
+    }
+
+    @Override
+    public boolean test(final ItemStack stack)
+    {
+        return this.equals(new Stack(stack, matchMeta, matchNBT, matchOreDic, getResult()));
     }
 }
 

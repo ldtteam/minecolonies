@@ -37,8 +37,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     }
 
     @Override
-    public boolean canResolve(
-      @NotNull final IRequestManager manager, final IRequest<? extends Delivery> requestToCheck)
+    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends Delivery> requestToCheck)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -62,8 +61,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolve(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -103,24 +101,21 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     }
 
     @Override
-    public void resolve(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws RuntimeException
+    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws RuntimeException
     {
         //Noop. The delivery man will resolve it.
     }
 
     @Nullable
     @Override
-    public IRequest<?> getFollowupRequestForCompletion(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> completedRequest)
+    public IRequest<?> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> completedRequest)
     {
         return null;
     }
 
     @Nullable
     @Override
-    public IRequest<?> onRequestCancelled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+    public IRequest<?> onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
@@ -146,8 +141,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     }
 
     @Override
-    public void onRequestBeingOverruled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+    public void onRequestBeingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
         onRequestCancelled(manager, request);
     }

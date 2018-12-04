@@ -26,11 +26,22 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.MAX_CRAFTING_CYCLE_DEPTH;
 
+/**
+ * Abstract crafting resolver for all crafting tasks.
+ */
 public abstract class AbstractCraftingRequestResolver extends AbstractRequestResolver<Stack> implements IBuildingBasedRequester
 {
-
+    /**
+     * Variable to check if requests can be requested externally.
+     */
     public final boolean isPublicCrafter;
 
+    /**
+     * Constructor to initialize.
+     * @param location the location.
+     * @param token the id.
+     * @param isPublicCrafter if public crafter or not.
+     */
     public AbstractCraftingRequestResolver(
       @NotNull final ILocation location,
       @NotNull final IToken<?> token, final boolean isPublicCrafter)
@@ -46,8 +57,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     }
 
     @Override
-    public Optional<IRequester> getBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
@@ -58,8 +68,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     }
 
     @Override
-    public boolean canResolve(
-      @NotNull final IRequestManager manager, final IRequest<? extends Stack> requestToCheck)
+    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends Stack> requestToCheck)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
@@ -74,8 +83,14 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
         return false;
     }
 
-    public boolean canResolveForBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request, @NotNull final AbstractBuilding building)
+    /**
+     * Check if the request can be resolved for this building.
+     * @param manager the manager.
+     * @param request the request to check.
+     * @param building the building to check.
+     * @return true if so.
+     */
+    public boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request, @NotNull final AbstractBuilding building)
     {
         if (createsCraftingCycle(manager, request, request))
         {
@@ -85,11 +100,26 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
         return building instanceof AbstractBuildingWorker && canBuildingCraftStack((AbstractBuildingWorker) building, request.getRequest().getStack());
     }
 
+    /**
+     * Method to check if a crafting cycle can be created.
+     * @param manager the manager.
+     * @param request the request.
+     * @param target the target.
+     * @return true if so.
+     */
     protected boolean createsCraftingCycle(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request, @NotNull final IRequest<? extends Stack> target)
     {
         return createsCraftingCycle(manager, request, target, 0);
     }
 
+    /**
+     * Method to check if a crafting cycle can be created.
+     * @param manager the manager.
+     * @param request the request.
+     * @param target the target to create.
+     * @param count the itemCount.
+     * @return true if possible.
+     */
     protected boolean createsCraftingCycle(
             @NotNull final IRequestManager manager,
             @NotNull final IRequest<?> request,
@@ -114,20 +144,24 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
         return createsCraftingCycle(manager, manager.getRequestForToken(request.getParent()), target, count+1);
     }
 
+    /**
+     * Check if a building can craft a certain stack.
+     * @param building the building to check in.
+     * @param stack the stack to check.
+     * @return true if so.
+     */
     public abstract boolean canBuildingCraftStack(@NotNull final AbstractBuildingWorker building, ItemStack stack);
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolve(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
+    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
     {
         final AbstractBuilding building = getBuilding(manager, request.getToken()).map(r -> (AbstractBuilding) r).get();
         return attemptResolveForBuilding(manager, request, building);
     }
 
     @Nullable
-    public List<IToken<?>> attemptResolveForBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request, @NotNull final AbstractBuilding building)
+    public List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request, @NotNull final AbstractBuilding building)
     {
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
         return attemptResolveForBuildingAndStack(manager, buildingWorker, request.getRequest().getStack());
@@ -151,7 +185,13 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
         return createRequestsForRecipe(manager, building, stack, craftableCrafting);
     }
 
-    protected int calculateMaxCraftingCount(@NotNull final ItemStack outputStack, @NotNull final IRecipeStorage storage)
+    /**
+     * Calculate the max time a recipe has to be executed.
+     * @param outputStack the output stack.
+     * @param storage the storage.
+     * @return the quantity.
+     */
+    public static int calculateMaxCraftingCount(@NotNull final ItemStack outputStack, @NotNull final IRecipeStorage storage)
     {
         //Calculate the initial crafting count from the request and the storage output.
         int craftingCount = (int)Math.ceil(Math.max(ItemStackUtils.getSize(outputStack), ItemStackUtils.getSize(storage.getPrimaryOutput())) / (double)ItemStackUtils.getSize(storage.getPrimaryOutput()));
@@ -198,13 +238,18 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     }
 
     @Override
-    public void resolve(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
+    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
     {
         final AbstractBuilding building = getBuilding(manager, request.getToken()).map(r -> (AbstractBuilding) r).get();
         resolveForBuilding(manager, request, building);
     }
 
+    /**
+     * Resolve the request in a building.
+     * @param manager the request manager.
+     * @param request the request.
+     * @param building the building.
+     */
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request, @NotNull final AbstractBuilding building)
     {
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;

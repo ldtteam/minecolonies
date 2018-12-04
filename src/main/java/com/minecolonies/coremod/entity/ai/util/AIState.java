@@ -457,4 +457,25 @@ public enum AIState
      * Archer shoot target.
      */
     ARCHER_SHOOT,
+
+        /*
+### Crafter Workers ###
+     */
+
+    /**
+     * Get the recipe.
+     */
+    GET_RECIPE,
+
+    /**
+     * Query the required items for a recipe.
+      */
+    QUERY_ITEMS,
+
+    /**
+     * Execute the crafting action.
+     */
+    CRAFT,
+
+
 }

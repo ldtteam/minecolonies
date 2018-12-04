@@ -840,3 +840,4 @@ com.minecolonies.coremod.pirates.sailing.away=A pirate ship close to %s just sai
 com.minecolonies.coremod.cook.serve.player=%s: Here you go Sir, take this food!
 tile.minecolonies.blockHutArchery.name=Archery
 com.minecolonies.coremod.gui.workerHuts.Archery=Archery
+com.minecolonies.coremod.gui.workerHuts.Sawmill=Sawmill

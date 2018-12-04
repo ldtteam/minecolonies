@@ -1,18 +1,17 @@
-package com.minecolonies.coremod.colony.buildings;
+package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
-import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.jobs.JobSawmill;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +20,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 /**
  * Class of the sawmill building.
  */
-public class BuildingSawmill extends AbstractBuildingWorker
+public class BuildingSawmill extends AbstractBuildingCrafter
 {
 
     private static final String SAWMILL = "Sawmill";
@@ -51,19 +50,6 @@ public class BuildingSawmill extends AbstractBuildingWorker
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
-    @Override
-    public ImmutableCollection<IRequestResolver<?>> createResolvers()
-    {
-        final ImmutableCollection<IRequestResolver<?>> supers = super.createResolvers();
-        final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
-
-        builder.addAll(supers);
-        builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getRequesterLocation(),
-                                                 getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
-
-        return builder.build();
-    }
-
     @NotNull
     @Override
     public AbstractJob createJob(final CitizenData citizen)
@@ -79,15 +65,31 @@ public class BuildingSawmill extends AbstractBuildingWorker
     }
 
     @Override
-    public boolean canCraftComplexRecipes()
+    public boolean canRecipeBeAdded(final IToken token)
     {
+        if(!super.canRecipeBeAdded(token))
+        {
+            return false;
+        }
+
+        final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
+        if(storage == null)
+        {
+            return false;
+        }
+
+        for(final ItemStack stack : storage.getInput())
+        {
+
+        }
+
         return true;
     }
 
     /**
      * BuildingDeliveryman View.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingCrafter.View
     {
 
         /**
