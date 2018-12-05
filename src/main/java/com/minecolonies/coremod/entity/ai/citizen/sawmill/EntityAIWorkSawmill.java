@@ -67,6 +67,11 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
     private int progress = 0;
 
     /**
+     * The current request.
+     */
+    private IRequest<? extends Stack> currentRequest;
+
+    /**
      * Initialize the sawmill and add all his tasks.
      *
      * @param sawmill the job he has.
@@ -215,8 +220,8 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
 
         progress++;
         worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getLocation());
-
-        if (progress >= getRequiredProgressForMakingRawMaterial())
+        setDelay(HIT_DELAY);
+        if (progress >= 10) //TODO set up afterwards again!
         {
             final AIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
@@ -231,6 +236,8 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
                     maxCraftingCount = 0;
                     progress = 0;
                     craftCounter = 0;
+                    currentRecipeStorage = null;
+                    currentRequest = job.getCurrentTask();
                     return START_WORKING;
                 }
             }
@@ -245,7 +252,11 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
     @Override
     public AIState afterDump()
     {
-        getOwnBuilding().getColony().getRequestManager().updateRequestState(job.getCurrentTask().getToken(), RequestState.COMPLETED);
+        if (maxCraftingCount == 0 && progress == 0 && craftCounter == 0 && currentRequest != null)
+        {
+            getOwnBuilding().getColony().getRequestManager().updateRequestState(currentRequest.getToken(), RequestState.COMPLETED);
+            currentRequest = null;
+        }
         return super.afterDump();
     }
 
