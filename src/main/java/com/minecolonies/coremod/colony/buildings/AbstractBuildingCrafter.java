@@ -43,9 +43,14 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     @Override
     public ImmutableCollection<IRequestResolver<?>> createResolvers()
     {
-        return ImmutableList.of(
-            new BuildingRequestResolver(getRequester().getRequesterLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
-            new PublicWorkerCraftingRequestResolver(getRequester().getRequesterLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+        final ImmutableCollection<IRequestResolver<?>> supers = super.createResolvers();
+        final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
+
+        builder.addAll(supers);
+        builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getRequesterLocation(),
+          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+
+        return builder.build();
     }
 
     @Override
