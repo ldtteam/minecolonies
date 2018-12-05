@@ -106,6 +106,12 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
     }
 
     @Override
+    public IToken<?> getRequesterId()
+    {
+        return super.getRequesterId();
+    }
+
+    @Override
     public void onRequestBeingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
     {
         onRequestCancelled(manager, request);

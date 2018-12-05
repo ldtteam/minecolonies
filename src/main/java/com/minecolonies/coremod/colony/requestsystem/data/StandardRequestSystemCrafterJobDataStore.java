@@ -49,8 +49,7 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
      */
     public StandardRequestSystemCrafterJobDataStore()
     {
-        this(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-          new LinkedList<>());
+        this(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN), new LinkedList<>());
     }
 
     @Override
@@ -118,7 +117,7 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
             final IToken<?> token = controller.deserialize(nbt.getCompoundTag(TAG_TOKEN));
             final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getTagList(TAG_LIST, Constants.NBT.TAG_COMPOUND))
                                                   .map(nbtTagCompound -> (IToken<?>) controller.deserialize(nbtTagCompound))
-                                                  .collect(Collectors.toCollection(LinkedList<IToken<?>>::new));
+                                                  .collect(Collectors.toCollection(LinkedList::new));
             return new StandardRequestSystemCrafterJobDataStore(token, queue);
         }
     }
