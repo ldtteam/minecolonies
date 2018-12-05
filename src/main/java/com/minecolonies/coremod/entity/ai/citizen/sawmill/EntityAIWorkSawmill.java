@@ -120,9 +120,9 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
      */
     private AIState getRecipe()
     {
-        final IRequest currentTask = job.getCurrentTask();
+        final IRequest<? extends Stack> currentTask = job.getCurrentTask();
         final AbstractBuildingWorker buildingWorker = getOwnBuilding();
-        currentRecipeStorage = buildingWorker.getFirstFullFillableRecipe(currentTask.getDelivery());
+        currentRecipeStorage = buildingWorker.getFirstFullFillableRecipe(currentTask.getRequest().getStack());
 
         if (currentRecipeStorage == null)
         {
@@ -165,7 +165,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
         final List<ItemStorage> input = storage.getCleanedInput();
         for(final ItemStorage inputStorage : input)
         {
-            final Predicate<ItemStack> predicate = new Stack(inputStorage);
+            final Predicate<ItemStack> predicate = stack -> new Stack(stack).matches(inputStorage.getItemStack());
             if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), predicate))
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
@@ -201,7 +201,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
 
         if (maxCraftingCount == 0)
         {
-            craftCounter = AbstractCraftingRequestResolver.calculateMaxCraftingCount(job.getCurrentTask().getDelivery(), currentRecipeStorage);
+            craftCounter = AbstractCraftingRequestResolver.calculateMaxCraftingCount(job.getCurrentTask().getRequest().getStack(), currentRecipeStorage);
         }
 
         if (craftCounter == 0)
@@ -225,6 +225,16 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
                 getOwnBuilding().fullFillRecipe(currentRecipeStorage);
                 progress = 0;
                 craftCounter++;
+
+                if (craftCounter >= maxCraftingCount)
+                {
+                    incrementActionsDoneAndDecSaturation();
+                    getOwnBuilding().getColony().getRequestManager().updateRequestState(job.getCurrentTask().getToken(), RequestState.COMPLETED);
+                    maxCraftingCount = 0;
+                    progress = 0;
+                    craftCounter = 0;
+                    return START_WORKING;
+                }
             }
             else
             {

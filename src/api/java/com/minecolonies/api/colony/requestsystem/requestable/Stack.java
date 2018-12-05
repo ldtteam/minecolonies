@@ -8,12 +8,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Predicate;
-
 /**
  * Deliverable that can only be fulfilled by a single stack with a given minimal amount of items.
  */
-public class Stack implements IDeliverable, Predicate<ItemStack>
+public class Stack implements IDeliverable
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_STACK       = "Stack";
@@ -174,7 +172,9 @@ public class Stack implements IDeliverable, Predicate<ItemStack>
     public ItemStack getStack()
     {
         return theStack;
-    }    @Override
+    }
+
+    @Override
     public void setResult(@NotNull final ItemStack result)
     {
         this.result = result;
@@ -235,12 +235,6 @@ public class Stack implements IDeliverable, Predicate<ItemStack>
         result1 = 31 * result1 + (matchOreDic ? 1 : 0);
         result1 = 31 * result1 + getResult().hashCode();
         return result1;
-    }
-
-    @Override
-    public boolean test(final ItemStack stack)
-    {
-        return this.equals(new Stack(stack, matchMeta, matchNBT, matchOreDic, getResult()));
     }
 }
 
