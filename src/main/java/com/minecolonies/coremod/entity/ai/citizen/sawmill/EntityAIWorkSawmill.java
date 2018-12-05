@@ -206,7 +206,6 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
 
         if (craftCounter == 0)
         {
-            incrementActionsDoneAndDecSaturation();
             getOwnBuilding().getColony().getRequestManager().updateRequestState(job.getCurrentTask().getToken(), RequestState.CANCELLED);
             maxCraftingCount = 0;
             progress = 0;
@@ -229,7 +228,6 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
                 if (craftCounter >= maxCraftingCount)
                 {
                     incrementActionsDoneAndDecSaturation();
-                    getOwnBuilding().getColony().getRequestManager().updateRequestState(job.getCurrentTask().getToken(), RequestState.COMPLETED);
                     maxCraftingCount = 0;
                     progress = 0;
                     craftCounter = 0;
@@ -242,6 +240,13 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
             }
         }
         return START_WORKING;
+    }
+
+    @Override
+    public AIState afterDump()
+    {
+        getOwnBuilding().getColony().getRequestManager().updateRequestState(job.getCurrentTask().getToken(), RequestState.COMPLETED);
+        return super.afterDump();
     }
 
     @Override
