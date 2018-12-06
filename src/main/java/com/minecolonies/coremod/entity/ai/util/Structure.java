@@ -142,6 +142,11 @@ public class Structure
          */
         public boolean doesStructureBlockEqualWorldBlock()
         {
+            if (metadata == null)
+            {
+                return true;
+            }
+            
             final IBlockState structureBlockState = metadata;
             final Block structureBlock = structureBlockState.getBlock();
 
