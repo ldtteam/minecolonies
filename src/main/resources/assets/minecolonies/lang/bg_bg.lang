@@ -10,12 +10,12 @@ tile.minecolonies.blockHutMiner.name=Мина
 tile.minecolonies.blockHutStonemason.name=Кариера
 tile.minecolonies.blockHutTownHall.name=Кметство
 tile.minecolonies.blockSubstitution.name=Заместващблок
-tile.minecolonies.blockConstructionTapeCorner.name=Construction tape corner
-tile.minecolonies.blockConstructionTape.name=Construction tape
+tile.minecolonies.blockConstructionTapeCorner.name=Ъгъл на строителната лента
+tile.minecolonies.blockConstructionTape.name=Строителна лента
 tile.blockHut.messageNoPermission=Вие нямате разрешение да отрваряте това в %s.
 tile.blockHut.messageNoPermissionPlace=Вие нямате разрешение да поставяте това в %s.
 tile.blockHutTownHall.messageMaxSize=%d достигна максималния си размер
-tile.blockHutTownHall.messageColonistDead=The colonist %s has died at %d %d %d of %s!
+tile.blockHutTownHall.messageColonistDead=Колонизаторът %s е умрял в %d %d %d от %s!
 tile.blockHutTownHall.messagePlacedAlready=Вече сте поставяли Кметство
 tile.blockHutTownHall.messageInvalidWorld=Не можете да поставяте Кметство в този тип свят
 tile.blockHutTownHall.messageTooClose=Твърде близо до съществуващо вече Кметство
@@ -30,7 +30,7 @@ event.minecolonies.raidMessage=Пригответе си! Тази вечер з
 
 item.minecolonies.scepterGold.name=Строителен инструмент
 item.minecolonies.scepterSteel.name=Инструмент за сканиране
-item.minecolonies.caliper.name=Caliper
+item.minecolonies.caliper.name=Дебеломер
 
 item.scepterSteel.point=Първа точка записана
 item.scepterSteel.point2=Втора точка записана, кликнете с десния бутон за да запазите образеца
