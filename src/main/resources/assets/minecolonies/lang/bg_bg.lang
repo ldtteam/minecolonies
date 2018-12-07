@@ -425,7 +425,7 @@ com.minecolonies.coremod.gui.townHall.housing=Housing assignment mode:
 com.minecolonies.coremod.gui.home.assign=Assign %d citizens
 com.minecolonies.coremod.gui.workerHuts.unassign=Remove citizen
 tile.minecolonies.blockTimberFrame.name=Plain Timber Frame
-tile.minecolonies.blockMinecoloniesRack.name=Rack
+tile.minecolonies.blockMinecoloniesRack.name=Поставка
 
 com.minecolonies.coremod.status.waitingForWork=Searching job
 com.minecolonies.coremod.status.sleeping=Let me sleep
@@ -488,15 +488,15 @@ com.minecolonies.coremod.request.tool.pretype=Tool of class:
 com.minecolonies.coremod.request.tool.preminlevel=with minimal level:
 com.minecolonies.coremod.request.tool.premaxlevel=with maximal level:
 
-com.minecolonies.coremod.general.and=and
+com.minecolonies.coremod.general.and=и
 
 com.minecolonies.coremod.tooltype.none=Unknown
 com.minecolonies.coremod.tooltype.pickaxe=Pickaxe
 com.minecolonies.coremod.tooltype.shovel=Shovel
-com.minecolonies.coremod.tooltype.axe=Axe
-com.minecolonies.coremod.tooltype.hoe=Hoe
+com.minecolonies.coremod.tooltype.axe=Брадва
+com.minecolonies.coremod.tooltype.hoe=Mотика
 com.minecolonies.coremod.tooltype.sword=Sword
-com.minecolonies.coremod.tooltype.bow=Bow
+com.minecolonies.coremod.tooltype.bow=Лък
 com.minecolonies.coremod.tooltype.fishingrod=Fishingrod
 com.minecolonies.coremod.tooltype.shears=Shears
 com.minecolonies.coremod.tooltype.shield=Shield
