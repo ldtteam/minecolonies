@@ -460,7 +460,7 @@ tile.minecolonies.blockHutBarracks.name=Barracks
 com.minecolonies.coremod.gui.workerHuts.buildBarracks=Barracks
 
 com.minecolonies.coremod.permission.teleport_to_colony=Teleport to Colony
-com.minecolonies.coremod.gui.hiring.buttonFire=Fire
+com.minecolonies.coremod.gui.hiring.buttonFire=Yволни
 com.minecolonies.coremod.worker.noUpgrade=No Upgrade available.
 com.minecolonies.coremod.worker.needBarracks=Please upgrade the Barracks first.
 com.minecolonies.coremod.gui.warehouse.upgrade=Upgrade Storage
