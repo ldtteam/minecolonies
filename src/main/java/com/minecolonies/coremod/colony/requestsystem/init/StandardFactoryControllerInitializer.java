@@ -61,6 +61,8 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestSystemDeliveryManJobDataStore.Factory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRequestSystemCrafterJobDataStore.Factory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardDataStoreManager.Factory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.PublicCraftingRequestFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new StandardRequestFactories.PrivateCraftingRequestFactory());
 
         StandardFactoryController.getInstance().registerNewTypeOverrideHandler(new TypeTokenFactory.TypeTokenSubTypeOverrideHandler());
 

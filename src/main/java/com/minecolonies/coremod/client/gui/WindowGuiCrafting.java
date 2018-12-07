@@ -22,7 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Crafting gui.
+ * AbstractCrafting gui.
  */
 public class WindowGuiCrafting extends GuiContainer
 {

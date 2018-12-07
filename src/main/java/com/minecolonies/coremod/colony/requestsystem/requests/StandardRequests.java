@@ -3,6 +3,9 @@ package com.minecolonies.coremod.colony.requestsystem.requests;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.*;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCrafting;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCrafting;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -172,6 +175,121 @@ public final class StandardRequests
         }
     }
 
+    public abstract static class AbstractCraftingRequest<C extends AbstractCrafting> extends AbstractRequest<C>
+    {
+
+        protected AbstractCraftingRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final C requested)
+        {
+            super(requester, token, requested);
+        }
+
+        protected AbstractCraftingRequest(
+          @NotNull final IRequester requester,
+          @NotNull final IToken token,
+          @NotNull final RequestState state,
+          @NotNull final C requested)
+        {
+            super(requester, token, state, requested);
+        }
+
+        @NotNull
+        @Override
+        public final ITextComponent getShortDisplayString()
+        {
+            final ITextComponent result = new NonSiblingFormattingTextComponent();
+            final ITextComponent preType = new TextComponentTranslation(getTranslationKey());
+
+            result.appendSibling(preType);
+
+            preType.appendSibling(getRequest().getStack().getTextComponent());
+
+            return result;
+        }
+
+        protected abstract String getTranslationKey();
+
+        @NotNull
+        @Override
+        public final List<ItemStack> getDisplayStacks()
+        {
+            return ImmutableList.of();
+        }
+
+        @NotNull
+        @Override
+        public final ResourceLocation getDisplayIcon()
+        {
+            return new ResourceLocation(getDisplayIconFile());
+        }
+
+        protected abstract String getDisplayIconFile();
+
+    }
+
+    public static class PrivateCraftingRequest extends AbstractCraftingRequest<PrivateCrafting>
+    {
+
+        protected PrivateCraftingRequest(
+          @NotNull final IRequester requester,
+          @NotNull final IToken token,
+          @NotNull final PrivateCrafting requested)
+        {
+            super(requester, token, requested);
+        }
+
+        protected PrivateCraftingRequest(
+          @NotNull final IRequester requester,
+          @NotNull final IToken token,
+          @NotNull final RequestState state, @NotNull final PrivateCrafting requested)
+        {
+            super(requester, token, state, requested);
+        }
+
+        @Override
+        protected String getTranslationKey()
+        {
+            return TranslationConstants.COM_MINECOLONIES_REQUESTS_CRAFTING;
+        }
+
+        @Override
+        protected String getDisplayIconFile()
+        {
+            return "minecolonies:textures/gui/citizen/crafting_public.png";
+        }
+    }
+
+    public static class PublicCraftingRequest extends AbstractCraftingRequest<PublicCrafting>
+    {
+
+        protected PublicCraftingRequest(
+          @NotNull final IRequester requester,
+          @NotNull final IToken token,
+          @NotNull final PublicCrafting requested)
+        {
+            super(requester, token, requested);
+        }
+
+        protected PublicCraftingRequest(
+          @NotNull final IRequester requester,
+          @NotNull final IToken token,
+          @NotNull final RequestState state, @NotNull final PublicCrafting requested)
+        {
+            super(requester, token, state, requested);
+        }
+
+        @Override
+        protected String getTranslationKey()
+        {
+            return TranslationConstants.COM_MINECOLONIES_REQUESTS_CRAFTING;
+        }
+
+        @Override
+        protected String getDisplayIconFile()
+        {
+            return "minecolonies:textures/gui/citizen/crafting_public.png";
+        }
+    }
+
     /**
      * Generic Tool Request.
      */
@@ -196,29 +314,29 @@ public final class StandardRequests
 
             result.appendSibling(preType);
 
-            preType.appendSibling(getRequest().getToolClass().getDisplayName());
+            result.appendSibling(getRequest().getToolClass().getDisplayName());
 
             if (getRequest().getMinLevel() > ToolLevelConstants.TOOL_LEVEL_HAND)
             {
-                preType.appendText(" ");
-                preType.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMINLEVEL));
-                preType.appendText(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMinLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMinLevel()));
+                result.appendText(" ");
+                result.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMINLEVEL));
+                result.appendText(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMinLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMinLevel()));
             }
 
             if (getRequest().getMaxLevel() < ToolLevelConstants.TOOL_LEVEL_MAXIMUM)
             {
                 if (getRequest().getMinLevel() > ToolLevelConstants.TOOL_LEVEL_HAND)
                 {
-                    preType.appendText(" ");
-                    preType.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_GENERAL_AND));
+                    result.appendText(" ");
+                    result.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_GENERAL_AND));
                 }
 
-                preType.appendText(" ");
-                preType.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMAXLEVEL));
-                preType.appendText(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMaxLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMaxLevel()));
+                result.appendText(" ");
+                result.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMAXLEVEL));
+                result.appendText(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMaxLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMaxLevel()));
             }
 
-            return preType;
+            return result;
         }
 
         @NotNull

@@ -116,6 +116,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_BURNABLE                                  = "com.minecolonies.coremod.request.burnable";
     @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_CRAFTING                                 = "com.minecolonies.coremod.request.crafting";
+    @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_TOOL_PRETYPE                              = "com.minecolonies.coremod.request.tool.pretype";
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_TOOL_PREMINLEVEL                          = "com.minecolonies.coremod.request.tool.preminlevel";

@@ -163,6 +163,25 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     }
 
     /**
+     * Check if is the worker has the knowledge to craft something.
+     * @param stackPredicate the predicate to check for fullfillment.
+     * @return the recipe storage if so.
+     */
+    @Nullable
+    public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
+    {
+        for(final IToken token : recipes)
+        {
+            final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
+            if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
+            {
+                return storage;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Get a fullfillable recipe to execute.
      * @param tempStack the stack which should be crafted.
      * @return the recipe or null.
@@ -173,6 +192,28 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
         {
             final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
             if(storage != null && storage.getPrimaryOutput().isItemEqual(tempStack))
+            {
+                final List<IItemHandler> handlers = getHandlers();
+                if(storage.canFullFillRecipe(handlers.toArray(new IItemHandler[handlers.size()])))
+                {
+                    return storage;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get a fullfillable recipe to execute.
+     * @param stackPredicate the predicate to check for fullfillment.
+     * @return the recipe or null.
+     */
+    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate)
+    {
+        for(final IToken token : recipes)
+        {
+            final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
+            if(storage != null && stackPredicate.test(storage.getPrimaryOutput()))
             {
                 final List<IItemHandler> handlers = getHandlers();
                 if(storage.canFullFillRecipe(handlers.toArray(new IItemHandler[handlers.size()])))

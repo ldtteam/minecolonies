@@ -6,6 +6,9 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.IRequestFactory;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.*;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCrafting;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCrafting;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.Suppression;
@@ -252,6 +255,95 @@ public final class StandardRequestFactories
                                                                 @NotNull final RequestState initialState)
         {
             return new StandardRequests.DeliveryRequest(location, token, initialState, input);
+        }
+    }
+
+    @SuppressWarnings(Suppression.BIG_CLASS)
+    public static abstract class AbstractCraftingRequestFactory<C extends AbstractCrafting, R extends StandardRequests.AbstractCraftingRequest<C>> implements IRequestFactory<C, R>
+    {
+        private final IObjectConstructor<C, R> constructor;
+        private final Class<C> cClass;
+        private final Class<R> rClass;
+        private final IObjectToNBTConverter<C> serializer;
+        private final INBTToObjectConverter<C> deserializer;
+
+        protected AbstractCraftingRequestFactory(
+          final IObjectConstructor<C, R> constructor,
+          final Class<C> cClass,
+          final Class<R> rClass,
+          final IObjectToNBTConverter<C> serializer, final INBTToObjectConverter<C> deserializer) {
+            this.constructor = constructor;
+            this.cClass = cClass;
+            this.rClass = rClass;
+            this.serializer = serializer;
+            this.deserializer = deserializer;
+        }
+
+        @Override
+        public R getNewInstance(
+          @NotNull final C input, @NotNull final IRequester location, @NotNull final IToken<?> token, @NotNull final RequestState initialState)
+        {
+            return constructor.construct(input, token, location, initialState);
+        }
+
+        @NotNull
+        @Override
+        public TypeToken<? extends R> getFactoryOutputType()
+        {
+            return TypeToken.of(rClass);
+        }
+
+        @NotNull
+        @Override
+        public TypeToken<? extends C> getFactoryInputType()
+        {
+            return TypeToken.of(cClass);
+        }
+
+        @NotNull
+        @Override
+        public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final R r)
+        {
+            return serializeToNBT(controller, r, serializer);
+        }
+
+        @NotNull
+        @Override
+        public R deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt) throws Throwable
+        {
+            return deserializeFromNBT(controller, nbt, deserializer, (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(rClass),
+              requested,
+              token,
+              requester,
+              requestState));
+        }
+    }
+
+    @SuppressWarnings(Suppression.BIG_CLASS)
+    public static final class PrivateCraftingRequestFactory extends StandardRequestFactories.AbstractCraftingRequestFactory<PrivateCrafting, StandardRequests.PrivateCraftingRequest>
+    {
+
+        public PrivateCraftingRequestFactory()
+        {
+            super((requested, token, requester, requestState) -> new StandardRequests.PrivateCraftingRequest(requester, token, requestState, requested),
+              PrivateCrafting.class,
+              StandardRequests.PrivateCraftingRequest.class,
+              PrivateCrafting::serialize,
+              PrivateCrafting::deserialize);
+        }
+    }
+
+    @SuppressWarnings(Suppression.BIG_CLASS)
+    public static final class PublicCraftingRequestFactory extends StandardRequestFactories.AbstractCraftingRequestFactory<PublicCrafting, StandardRequests.PublicCraftingRequest>
+    {
+
+        public PublicCraftingRequestFactory()
+        {
+            super((requested, token, requester, requestState) -> new StandardRequests.PublicCraftingRequest(requester, token, requestState, requested),
+              PublicCrafting.class,
+              StandardRequests.PublicCraftingRequest.class,
+              PublicCrafting::serialize,
+              PublicCrafting::deserialize);
         }
     }
 
