@@ -26,11 +26,11 @@ item.minecolonies.supplyChestDeployer.name=Apoti Oko Ipese
 item.minecolonies.supplyCampDeployer.name=Apoti Ibudo Ipese
 item.minecolonies.ancienttome.name=Iwe idan atijọ
 item.minecolonies.chiefsword.name=Ida nla
-event.minecolonies.raidMessage=Sun splits re ko le ọmọdekunrin! Awon ologun kan nbo wa ka e mo laleyi!
+event.minecolonies.raidMessage=Gbaradi ọmọdekunrin! Awon ologun kan nbo wa ka e mo Laleyi!
 
 item.minecolonies.scepterGold.name=Irinse Ikole
 item.minecolonies.scepterSteel.name=Irinse ayewo
-item.minecolonies.caliper.name=Kaliba
+item.minecolonies.caliper.name=Calipali
 
 item.scepterSteel.point=Oju ikinni ti wa ni ipamo
 item.scepterSteel.point2=Oju ikeji ti wa ni ipamo, te otun lẹẹkansi lati fi eto imulo naa sipamọ
@@ -43,7 +43,7 @@ item.caliper.message.line=Ila bulooki %d niyen.
 item.caliper.message.square=Onihamerin %d by %d niyen.
 item.caliper.message.cube=Kuubu %d by %d by %d niyen.
 itemGroup.minecolonies=MineColonies
-entity.worker.inventoryFullChestFull=Jowo fi aye sile ninu apoti ile mi, mi kole ja akojo oja mi sile.
+entity.worker.inventoryFullChestFull=Jowo fi aye sile ninu apoti ile mi. Mi kole ja akojo oja mi sile.
 entity.builder.messageBuildStart=Ti bere si ni kọ %s
 entity.builder.messageBuildComplete=Ti pari kikọ %s
 entity.builder.messageNeedMaterial=Mo nilo %s (Iye: %d)
