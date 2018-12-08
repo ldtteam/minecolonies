@@ -104,7 +104,7 @@ public class ClientEventHandler
         final EntityPlayer player = Minecraft.getMinecraft().player;
         if (structure != null)
         {
-            if (Settings.instance.getStructureName().contains(AbstractEntityAIStructure.WAYPOINT_STRING))
+            if (Settings.instance.getStructureName() != null && Settings.instance.getStructureName().contains(AbstractEntityAIStructure.WAYPOINT_STRING))
             {
                 final ColonyView tempView = ColonyManager.getClosestColonyView(world, player.getPosition());
                 if (tempView != null)
