@@ -3,7 +3,6 @@ package com.minecolonies.coremod.proxy;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.client.gui.WindowBuildTool;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
@@ -13,10 +12,10 @@ import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityPirate;
-import com.minecolonies.coremod.entity.ai.mobs.util.MobSpawnUtils;
 import com.minecolonies.coremod.inventory.GuiHandler;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.*;
+import com.structurize.coremod.client.gui.WindowBuildTool;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -127,7 +126,6 @@ public class CommonProxy implements IProxy
         GameRegistry.registerTileEntity(TileEntityWareHouse.class, Constants.MOD_ID + ":warehouse");
         GameRegistry.registerTileEntity(TileEntityRack.class, Constants.MOD_ID + ":rack");
         GameRegistry.registerTileEntity(TileEntityInfoPoster.class, Constants.MOD_ID + ":infoposter");
-        GameRegistry.registerTileEntity(TileEntityMultiBlock.class, Constants.MOD_ID + ":multiblock");
         GameRegistry.registerTileEntity(TileEntityBarrel.class, Constants.MOD_ID + ":barrel");
 
         NetworkRegistry.INSTANCE.registerGuiHandler(MineColonies.instance, new GuiHandler());
@@ -268,22 +266,6 @@ public class CommonProxy implements IProxy
 
     @Override
     public void openBuildToolWindow(final BlockPos pos)
-    {
-        /*
-         * Intentionally left empty.
-         */
-    }
-
-    @Override
-    public void openScanToolWindow(final BlockPos pos1, final BlockPos pos2)
-    {
-        /*
-         * Intentionally left empty.
-         */
-    }
-
-    @Override
-    public void openMultiBlockWindow(final BlockPos pos)
     {
         /*
          * Intentionally left empty.

@@ -680,7 +680,6 @@ com.minecolonies.coremod.gui.workerHuts.barbpoints=Последние точки
 com.minecolonies.coremod.barbarians.left=Осталось %d Варваров!
 com.minecolonies.coremod.barbarians.killed=Вы удачно отразили атаку варваров!
 com.minecolonies.coremod.gui.workerHuts.reposition=Переместить
-tile.minecolonies.multiBlock.name=MultiBlock
 
 com.minecolonies.coremod.tooClose=Слишком близко к точке спауна, вы должны быть на расстоянии минимум на %d блоков.
 com.minecolonies.coremod.tooFar=Слишком далеко от точки спауна, вы должны быть на расстоянии минимум %d блоков.

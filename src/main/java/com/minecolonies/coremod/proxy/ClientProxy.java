@@ -3,12 +3,6 @@ package com.minecolonies.coremod.proxy;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.*;
-import com.minecolonies.coremod.blocks.cactus.BlockCactusDoor;
-import com.minecolonies.coremod.blocks.decorative.BlockPaperwall;
-import com.minecolonies.coremod.blocks.decorative.BlockShingle;
-import com.minecolonies.coremod.blocks.decorative.BlockTimberFrame;
-import com.minecolonies.coremod.blocks.schematic.BlockSubstitution;
-import com.minecolonies.coremod.blocks.types.PaperwallType;
 import com.minecolonies.coremod.client.gui.*;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
@@ -18,7 +12,6 @@ import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
@@ -32,23 +25,18 @@ import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
-import com.minecolonies.structures.client.TemplateBlockAccessTransformHandler;
-import com.minecolonies.structures.event.RenderEventHandler;
-import com.minecolonies.structures.helpers.Settings;
+import com.structurize.coremod.client.gui.WindowBuildTool;
+import com.structurize.coremod.management.Structures;
+import com.structurize.structures.helpers.Settings;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockPlanks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.stats.RecipeBook;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -86,7 +74,6 @@ public class ClientProxy extends CommonProxy
     {
         super.registerEvents();
 
-        MinecraftForge.EVENT_BUS.register(new RenderEventHandler());
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
     }
 
@@ -126,26 +113,7 @@ public class ClientProxy extends CommonProxy
             return;
         }
 
-        @Nullable final WindowBuildTool window = new WindowBuildTool(pos);
-        window.open();
-    }
-
-    @Override
-    public void openScanToolWindow(@Nullable final BlockPos pos1, @Nullable final BlockPos pos2)
-    {
-        if (pos1 == null || pos2 == null)
-        {
-            return;
-        }
-
-        @Nullable final WindowScan window = new WindowScan(pos1, pos2);
-        window.open();
-    }
-
-    @Override
-    public void openMultiBlockWindow(@Nullable final BlockPos pos)
-    {
-        @Nullable final WindowMultiBlock window = new WindowMultiBlock(pos);
+        @Nullable final WindowMinecoloniesBuildTool window = new WindowMinecoloniesBuildTool(pos);
         window.open();
     }
 
@@ -157,7 +125,7 @@ public class ClientProxy extends CommonProxy
             return;
         }
 
-        @Nullable final WindowBuildTool window = new WindowBuildTool(pos, structureName, rotation, mode);
+        @Nullable final WindowMinecoloniesBuildTool window = new WindowMinecoloniesBuildTool(pos, structureName, rotation, mode);
         window.open();
     }
 
@@ -206,7 +174,6 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutTownHall);
         createCustomModel(ModBlocks.blockHutWareHouse);
         createCustomModel(ModBlocks.blockHutDeliveryman);
-        createCustomModel(ModBlocks.blockSubstitution);
         createCustomModel(ModBlocks.blockBarracksTowerSubstitution);
         createCustomModel(ModBlocks.blockHutField);
         createCustomModel(ModBlocks.blockHutGuardTower);
@@ -218,25 +185,17 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutSwineHerder);
         createCustomModel(ModBlocks.blockHutChickenHerder);
         createCustomModel(ModBlocks.blockHutSmeltery);
-        createCustomModel(ModBlocks.blockCactusPlank);
-        createCustomModel(ModBlocks.blockCactusTrapdoor);
-        createCustomModel(ModBlocks.blockCactusStair);
-        createCustomModel(ModBlocks.blockCactusSlabHalf);
-        createCustomModel(ModBlocks.blockCactusSlabDouble);
         createCustomModel(ModBlocks.blockHutComposter);
         createCustomModel(ModBlocks.blockHutLibrary);
         createCustomModel(ModBlocks.blockHutArchery);
         createCustomModel(ModBlocks.blockHutCombatAcademy);
 
-        createCustomModel(ModBlocks.blockSolidSubstitution);
         createCustomModel(ModBlocks.blockConstructionTape);
         createCustomModel(ModBlocks.blockRack);
         createCustomModel(ModBlocks.blockWayPoint);
 
         createCustomModel(ModItems.clipboard);
-        createCustomModel(ModItems.buildTool);
         createCustomModel(ModItems.caliper);
-        createCustomModel(ModItems.scanTool);
         createCustomModel(ModItems.scepterGuard);
         createCustomModel(ModItems.supplyChest);
         createCustomModel(ModItems.supplyCamp);
@@ -260,57 +219,9 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModItems.itemAchievementProxyTown);
         createCustomModel(ModItems.itemAchievementProxyCity);
         createCustomModel(ModItems.itemAchievementProxyMetropolis);
-        createCustomModel(ModBlocks.blockShingleSlab);
-        createCustomModel(ModBlocks.multiBlock);
         createCustomModel(ModBlocks.blockBarrel);
-        createCustomModel(ModItems.itemCactusDoor);
         createCustomModel(ModItems.compost);
         createCustomModel(ModItems.resourceScroll);
-
-        ModelLoader.setCustomStateMapper(ModBlocks.blockCactusDoor, new StateMap.Builder().ignore(BlockCactusDoor.POWERED).build());
-        ModelLoader.setCustomStateMapper(ModBlocks.blockPaperWall, new StateMap.Builder().withName(BlockPaperwall.VARIANT).withSuffix("_blockPaperwall").build());
-
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleOak), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
-                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.OAK.getName()), INVENTORY));
-
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleBirch), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
-                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.BIRCH.getName()), INVENTORY));
-
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleSpruce), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
-                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.SPRUCE.getName()), INVENTORY));
-
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleJungle), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
-                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.JUNGLE.getName()), INVENTORY));
-
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleDarkOak), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
-                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.DARK_OAK.getName()), INVENTORY));
-
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockShingleAcacia), 0,
-                new ModelResourceLocation(new ResourceLocation(Constants.MOD_ID,
-                        BlockShingle.BLOCK_PREFIX + "_" + BlockPlanks.EnumType.ACACIA.getName()), INVENTORY));
-
-        for (final PaperwallType type : PaperwallType.values())
-        {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.blockPaperWall), type.getMetadata(),
-              new ModelResourceLocation(ModBlocks.blockPaperWall.getRegistryName() + "_" + type.getName(), INVENTORY));
-        }
-
-        for (final BlockTimberFrame frame : ModBlocks.getTimberFrames())
-        {
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(frame), 0,
-                        new ModelResourceLocation(frame.getRegistryName(), INVENTORY));
-        }
-
-        //Additionally we register an exclusion handler here;
-        TemplateBlockAccessTransformHandler.getInstance().AddTransformHandler(
-          (b) -> b.blockState.getBlock() instanceof BlockSubstitution,
-          (b) -> new Template.BlockInfo(b.pos, Blocks.AIR.getDefaultState(), null)
-        );
     }
 
     @Override

@@ -3,6 +3,8 @@ package com.minecolonies.coremod.fixers;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -39,7 +41,7 @@ public class EventBasedIdFixer
 
             @Nullable
             final T target = missingMapping.registry.getValue(remappedTargetId);
-            if (target != null)
+            if (target != null && target != Blocks.AIR && target != Items.AIR)
             {
                 Log.getLogger().info("Remapping: " + missingMapping.key + " to: " + remappedTargetId);
                 missingMapping.remap(target);

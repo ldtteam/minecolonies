@@ -66,6 +66,11 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     private int pickUpPriority = 1;
 
     /**
+     * Priority state of the building in the pickUpList.
+     */
+    private boolean priorityStatic = false;
+
+    /**
      * The constructor for the building container.
      * @param pos the position of it.
      */
@@ -133,6 +138,24 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         {
             this.pickUpPriority += value;
         }
+    }
+
+    /**
+     * Get the priority state of the building.
+     *
+     * @return the priority state, a boolean.
+     */
+    public boolean getPriorityState()
+    {
+        return this.priorityStatic;
+    }
+
+    /**
+     * Change the current priority state.
+     */
+    public void alterPriorityState()
+    {
+        this.priorityStatic = !this.priorityStatic;
     }
 
     /**

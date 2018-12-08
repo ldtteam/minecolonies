@@ -37,10 +37,6 @@ public final class ModAchievements
      * Place a supply chest.
      */
     public static final MineColoniesAchievement achievementGetSupply      = new MineColoniesAchievement("supply", 0, -2, ModItems.supplyChest, null);
-    /**
-     * Use the building tool.
-     */
-    public static final MineColoniesAchievement achievementWandOfbuilding = new MineColoniesAchievement("wandofbuilding", 0, -2, ModItems.buildTool, null);
 
     /**
      * Place a townhall.
@@ -307,7 +303,6 @@ public final class ModAchievements
     private static final MineColoniesAchievementPage achievementPageMineColonies = new MineColoniesAchievementPage(
                                                                                                         Constants.MOD_NAME,
                                                                                                         achievementGetSupply,
-                                                                                                        achievementWandOfbuilding,
                                                                                                         achievementTownhall,
                                                                                                         achievementBuildingTownhall,
                                                                                                         achievementUpgradeTownhallMax,
