@@ -10,6 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +21,19 @@ public class EventBasedIdFixer
     public static void onItemRegistryMissingMappings(final RegistryEvent.MissingMappings<Item> event)
     {
         Log.getLogger().warn("Remapping of minecolonies items started.");
-        final int remappedCount = onRegistryMissingMappings(event);
+        final int remappedCount = event.getMappings().stream().mapToInt(missingMapping -> {
+            if (missingMapping.key.getNamespace().equals(Constants.MOD_ID))
+            {
+                final String path = missingMapping.key.getPath();
+                final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation("structurize", path));
+                if (item != null && item != Items.AIR)
+                {
+                    missingMapping.remap(item);
+                    return 1;
+                }
+            }
+            return 0;
+        }).sum();
         Log.getLogger().warn("Remapping completed. Remapped: " + remappedCount + " entries.");
     }
 
@@ -28,40 +41,19 @@ public class EventBasedIdFixer
     public static void onBlockRegistryMissingMappings(final RegistryEvent.MissingMappings<Block> event)
     {
         Log.getLogger().warn("Remapping of minecolonies blocks started.");
-        final int remappedCount = onRegistryMissingMappings(event);
-        Log.getLogger().warn("Remapping completed. Remapped: " + remappedCount + " entries.");
-    }
-
-
-    private static <T extends IForgeRegistryEntry<T>> int onRegistryMissingMappings(final RegistryEvent.MissingMappings<T> event)
-    {
-        return event.getMappings().stream().mapToInt(missingMapping -> {
+        final int remappedCount = event.getMappings().stream().mapToInt(missingMapping -> {
             if (missingMapping.key.getNamespace().equals(Constants.MOD_ID))
             {
                 final String path = missingMapping.key.getPath();
-                final ResourceLocation remappedTargetId = new ResourceLocation("structurize", path);
-                @Nullable final T target = missingMapping.registry.getValue(remappedTargetId);
-                if (target != null && target != Blocks.AIR && target != Items.AIR)
+                final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation("structurize", path));
+                if (block != null && block != Blocks.AIR)
                 {
-                    missingMapping.remap(target);
-                    return 1;
-                }
-            }
-            else
-            {
-                final String path = missingMapping.key.getPath();
-                final ResourceLocation remappedTargetId = new ResourceLocation("structurize", path);
-
-                @Nullable final T target = missingMapping.registry.getValue(remappedTargetId);
-                if (target != null)
-                {
-                    Log.getLogger().info("Remapping: " + missingMapping.key + " to: " + remappedTargetId);
-                    missingMapping.remap(target);
+                    missingMapping.remap(block);
                     return 1;
                 }
             }
             return 0;
-
         }).sum();
+        Log.getLogger().warn("Remapping completed. Remapped: " + remappedCount + " entries.");
     }
 }
