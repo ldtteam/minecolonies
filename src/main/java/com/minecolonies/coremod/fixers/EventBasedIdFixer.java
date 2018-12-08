@@ -36,10 +36,10 @@ public class EventBasedIdFixer
     private static <T extends IForgeRegistryEntry<T>> int onRegistryMissingMappings(final RegistryEvent.MissingMappings<T> event)
     {
         return event.getMappings().stream().mapToInt(missingMapping -> {
-            if (missingMapping.key.getNamespace().equals(Constants.MINECOLONIES_MOD_ID))
+            if (missingMapping.key.getNamespace().equals(Constants.MOD_ID))
             {
                 final String path = missingMapping.key.getPath();
-                final ResourceLocation remappedTargetId = new ResourceLocation(Constants.MOD_ID.toLowerCase(), path);
+                final ResourceLocation remappedTargetId = new ResourceLocation("structurize", path);
                 @Nullable final T target = missingMapping.registry.getValue(remappedTargetId);
                 if (target != null && target != Blocks.AIR && target != Items.AIR)
                 {
@@ -50,7 +50,7 @@ public class EventBasedIdFixer
             else
             {
                 final String path = missingMapping.key.getPath();
-                final ResourceLocation remappedTargetId = new ResourceLocation(Constants.MOD_ID.toLowerCase() + ":" + path);
+                final ResourceLocation remappedTargetId = new ResourceLocation("structurize", path);
 
                 @Nullable final T target = missingMapping.registry.getValue(remappedTargetId);
                 if (target != null)
