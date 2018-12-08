@@ -1,18 +1,23 @@
 package com.minecolonies.coremod.entity.ai.citizen.trainingcamps;
 
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingArchery;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.blockout.Log;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCombatAcademy;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
-import com.minecolonies.coremod.entity.ai.citizen.guard.GuardArrow;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.util.SoundUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.entity.MoverType;
-import net.minecraft.entity.projectile.EntityTippedArrow;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemShield;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
@@ -33,34 +38,24 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     private static final int DEXTERITY_MULTIPLIER = 1;
 
     /**
-     * Xp per successful shot.
+     * How many actions on one target are done per building level.
      */
-    private static final int XP_PER_SUCCESSFUL_HIT = 1;
-
-    /**
-     * Number of target tries per building level.
-     */
-    private static final int BUILDING_LEVEL_TARGET_MULTIPLIER = 5;
-
-    /**
-     * Min distance to be considered successful shot.
-     */
-    private static final double MIN_DISTANCE_FOR_SUCCESS = 2.0;
-
-    /**
-     * Physical Attack delay in ticks.
-     */
-    private static final int COMBAT_ATTACK_DELAY_BASE = 10;
+    private static final int ACTIONS_PER_BUILDING_LEVEL = 5;
 
     /**
      * Base rate experience for every shot.
      */
-    private static final double XP_BASE_RATE  = 0.1;
+    private static final double XP_BASE_RATE = 0.1;
 
     /**
-     * Time to wait before analyzing the shot.
+     * Chance for a guard to do partner training.
      */
-    private static final int CHECK_HIT_DELAY = TICKS_20 * 3;
+    private static final int PARTNER_TRAINING_CHANCE = 10;
+
+    /**
+     * Trainings delay between hit an defend.
+     */
+    private static final int TRAININGS_DELAY = TICKS_20 * 3;
 
     /**
      * The current pathing target to walk to.
@@ -68,21 +63,14 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     private BlockPos currentCombatTarget;
 
     /**
+     * The current training partner of this guard.
+     */
+    private EntityCitizen trainingPartner;
+
+    /**
      * Counter of how often we tried to hit the target.
      */
     private int targetCounter;
-
-    /**
-     * Shooting arrow in progress.
-     */
-    private EntityTippedArrow arrowInProgress;
-
-    /**
-     * How many more ticks we have until next attack.
-     */
-    protected int currentAttackDelay = 0;
-
-    //todo Tasks: Wander around (same) find hitting target (same), hit it (same), find other guard (hit forth and back for a bit)
 
     /**
      * Creates the abstract part of the AI.inte
@@ -95,11 +83,12 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
         //Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
         super(job);
         super.registerTargets(
-          new AITarget(ARCHER_FIND_SHOOTING_STAND_POSITION, true, this::findShootingStandPosition),
-          new AITarget(ARCHER_SELECT_TARGET, true, this::selectTarget),
-          new AITarget(ARCHER_CHECK_SHOT, true, this::checkShot),
-          new AITarget(ARCHER_SHOOT, true, this::shoot)
-
+          new AITarget(COMBAT_TRAINING, true, this::decideOnTrainingType),
+          new AITarget(FIND_TRAINING_PARTNER, true, this::findTrainingPartner),
+          new AITarget(KNIGHT_TRAIN_WITH_PARTNER, true, this::trainWithPartner),
+          new AITarget(FIND_DUMMY_PARTNER, true, this::findDummyPartner),
+          new AITarget(KNIGHT_ATTACK_DUMMY, true, this::attackDummy),
+          new AITarget(KNIGHT_ATTACK_PROTECT, true, this::attack)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(
           STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
@@ -107,90 +96,121 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     }
 
     /**
-     * Select a random target from the building.
+     * Decide on which training type to pursue.
      *
      * @return the next state to go to.
      */
-    private AIState selectTarget()
+    private AIState decideOnTrainingType()
     {
         setDelay(STANDARD_DELAY);
-        final BuildingArchery archeryBuilding = getOwnBuilding();
-        if (targetCounter >= archeryBuilding.getBuildingLevel() * BUILDING_LEVEL_TARGET_MULTIPLIER)
+        if (getOwnBuilding(BuildingCombatAcademy.class).hasCombatPartner(worker) || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < PARTNER_TRAINING_CHANCE)
         {
-            targetCounter = 0;
-            return DECIDE;
+            return FIND_TRAINING_PARTNER;
         }
-        final BlockPos targetPos = archeryBuilding.getRandomShootingTarget(worker.getRandom());
-        if (targetPos == null)
-        {
-            return DECIDE;
-        }
-
-        currentShootingTarget = targetPos;
-        targetCounter++;
-        return ARCHER_SHOOT;
+        return FIND_DUMMY_PARTNER;
     }
 
     /**
-     * Get a shooting stand position.
+     * Find a training partner to train with.
      *
      * @return the next state to go to.
      */
-    private AIState findShootingStandPosition()
+    private AIState findTrainingPartner()
     {
         setDelay(STANDARD_DELAY);
-        final BuildingArchery archeryBuilding = getOwnBuilding();
-        final BlockPos shootingPos = archeryBuilding.getRandomShootingStandPosition(worker.getRandom());
-
-        if (shootingPos == null)
+        final BuildingCombatAcademy academy = getOwnBuilding();
+        if (academy.hasCombatPartner(worker))
         {
-            return DECIDE;
+            trainingPartner = academy.getCombatPartner(worker);
+        }
+        else
+        {
+            trainingPartner = academy.getRandomCombatPartner(worker);
         }
 
-        currentPathingTarget = shootingPos;
-        return ARCHER_GO_TO_SHOOTING_STAND;
+        if (trainingPartner == null)
+        {
+            return COMBAT_TRAINING;
+        }
+        return KNIGHT_TRAIN_WITH_PARTNER;
     }
 
     /**
-     * The ranged attack modus.
-     *
+     * Train with a partner. Find the partner and path to him.
      * @return the next state to go to.
      */
-    protected AIState shoot()
+    private AIState trainWithPartner()
     {
+        setDelay(worker.getRandom().nextInt(STANDARD_DELAY * STANDARD_DELAY));
+        if (trainingPartner == null)
+        {
+            return COMBAT_TRAINING;
+        }
+
+        if (BlockPosUtil.getDistance2D(worker.getPosition(), trainingPartner.getPosition()) > 5.0)
+        {
+            currentPathingTarget = trainingPartner.getPosition();
+            stateAfterPathing = KNIGHT_TRAIN_WITH_PARTNER;
+            return GO_TO_TARGET;
+        }
+
+        return KNIGHT_ATTACK_PROTECT;
+    }
+
+    /**
+     * Attack the training partner or block.
+     * @return the next state to go to.
+     */
+    private AIState attack()
+    {
+        if (trainingPartner == null)
+        {
+            return START_WORKING;
+        }
+
+        if (BlockPosUtil.getDistance2D(worker.getPosition(), trainingPartner.getPosition()) > 5.0)
+        {
+            currentPathingTarget = trainingPartner.getPosition();
+            stateAfterPathing = KNIGHT_TRAIN_WITH_PARTNER;
+            return GO_TO_TARGET;
+        }
+
         if (worker.isHandActive())
         {
-            setDelay(STANDARD_DELAY);
-            WorkerUtil.faceBlock(currentShootingTarget, worker);
-            //worker.face(target, (float) TURN_AROUND, (float) TURN_AROUND);
-            worker.swingArm(EnumHand.MAIN_HAND);
-
-            final EntityTippedArrow arrow = new GuardArrow(world, worker);
-            final double xVector = currentShootingTarget.getX() - worker.posX;
-            final double yVector = currentShootingTarget.getY() - arrow.posY;
-            final double zVector = currentShootingTarget.getZ() - worker.posZ;
-            final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
-
-            final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getLevel() + 1);
-            arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
-
-            worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-            worker.world.spawnEntity(arrow);
-
-            final double xDiff = currentShootingTarget.getX() - worker.posX;
-            final double zDiff = currentShootingTarget.getZ() - worker.posZ;
-            final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
-            final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
-            worker.move(MoverType.SELF, goToX, 0, goToZ);
+            worker.getCitizenExperienceHandler().addExperience(XP_BASE_RATE);
+            worker.decreaseSaturationForContinuousAction();
+            worker.faceEntity(trainingPartner, (float) TURN_AROUND, (float) TURN_AROUND);
+            worker.resetActiveHand();
 
             if (worker.getRandom().nextBoolean())
             {
+                final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventory()),
+                  Items.SHIELD,
+                  -1);
+                Log.getLogger().warn("shield");
+                if (shieldSlot != -1)
+                {
+                    worker.playSound(SoundEvents.ITEM_SHIELD_BLOCK, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+                    worker.getCitizenItemHandler().setHeldItem(EnumHand.OFF_HAND, shieldSlot);
+                    worker.setActiveHand(EnumHand.OFF_HAND);
+                    worker.getLookHelper().setLookPositionWithEntity(trainingPartner, (float) TURN_AROUND, (float) TURN_AROUND);
+                }
+            }
+            else
+            {
+                worker.swingArm(EnumHand.MAIN_HAND);
+                worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+                trainingPartner.attackEntityFrom(new DamageSource(worker.getName()), 0.0F);
                 worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
             }
-            worker.resetActiveHand();
-            this.incrementActionsDoneAndDecSaturation();
-            arrowInProgress = arrow;
-            currentAttackDelay = COMBAT_ATTACK_DELAY_BASE;
+
+            targetCounter++;
+
+            if (targetCounter > getOwnBuilding().getBuildingLevel() * ACTIONS_PER_BUILDING_LEVEL)
+            {
+                targetCounter = 0;
+                return START_WORKING;
+            }
         }
         else
         {
@@ -199,35 +219,111 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             {
                 worker.setActiveHand(EnumHand.MAIN_HAND);
             }
-            return ARCHER_SHOOT;
+            return KNIGHT_ATTACK_PROTECT;
         }
 
-        setDelay(CHECK_HIT_DELAY);
-        return ARCHER_CHECK_SHOT;
+        worker.resetActiveHand();
+        setDelay(TRAININGS_DELAY);
+        return KNIGHT_ATTACK_PROTECT;
     }
 
     /**
-     * Reduces the attack delay by the given Tickrate
+     * Find a dummy partner.
+     * @return the next state to go to.
      */
-    private void reduceAttackDelay()
+    private AIState findDummyPartner()
     {
-        if (currentAttackDelay > 0)
+        setDelay(STANDARD_DELAY);
+        final BuildingCombatAcademy academy = getOwnBuilding();
+        if (targetCounter >= academy.getBuildingLevel() * ACTIONS_PER_BUILDING_LEVEL)
         {
-            currentAttackDelay--;
+            targetCounter = 0;
+            return DECIDE;
         }
+
+        final BlockPos targetPos = academy.getRandomCombatTarget(worker.getRandom());
+        if (targetPos == null)
+        {
+            return DECIDE;
+        }
+
+        currentCombatTarget = targetPos;
+        targetCounter++;
+
+        currentPathingTarget = targetPos;
+        stateAfterPathing = KNIGHT_ATTACK_DUMMY;
+        return GO_TO_TARGET;
     }
 
-    private AIState checkShot()
+    /**
+     * Attack the dummy.
+     * @return the next state to go to.
+     */
+    private AIState attackDummy()
     {
-        if (arrowInProgress.getDistanceSq(currentShootingTarget) < MIN_DISTANCE_FOR_SUCCESS)
+        if (currentCombatTarget == null)
         {
-            worker.getCitizenExperienceHandler().addExperience(XP_PER_SUCCESSFUL_HIT);
+            return START_WORKING;
+        }
+
+        if (currentAttackDelay <= 0)
+        {
+            worker.getCitizenExperienceHandler().addExperience(XP_BASE_RATE);
+            worker.decreaseSaturationForContinuousAction();
+            WorkerUtil.faceBlock(currentCombatTarget, worker);
+            worker.resetActiveHand();
+
+            if (worker.getRandom().nextBoolean())
+            {
+                final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventory()),
+                  Items.SHIELD,
+                  -1);
+                if (shieldSlot != -1)
+                {
+                    worker.playSound(SoundEvents.ITEM_SHIELD_BLOCK, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+                    worker.getCitizenItemHandler().setHeldItem(EnumHand.OFF_HAND, shieldSlot);
+                    worker.setActiveHand(EnumHand.OFF_HAND);
+                }
+            }
+            else
+            {
+                worker.swingArm(EnumHand.MAIN_HAND);
+                worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
+                worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
+            }
+            currentAttackDelay = RANGED_ATTACK_DELAY_BASE;
         }
         else
         {
-            worker.getCitizenExperienceHandler().addExperience(XP_BASE_RATE);
+            reduceAttackDelay();
+            return KNIGHT_ATTACK_DUMMY;
         }
 
-        return ARCHER_SELECT_TARGET;
+        worker.resetActiveHand();
+        setDelay(TRAININGS_DELAY);
+        return FIND_DUMMY_PARTNER;
+    }
+
+    @Override
+    protected boolean isSetup()
+    {
+        if (checkForToolOrWeapon(ToolType.SWORD))
+        {
+            setDelay(REQUEST_DELAY);
+            return false;
+        }
+
+        if (checkForToolOrWeapon(ToolType.SHIELD))
+        {
+            setDelay(REQUEST_DELAY);
+            return false;
+        }
+
+        final int weaponSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.SWORD, 0, getOwnBuilding().getMaxToolLevel());
+        if (weaponSlot != -1)
+        {
+            worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, weaponSlot);
+        }
+        return true;
     }
 }

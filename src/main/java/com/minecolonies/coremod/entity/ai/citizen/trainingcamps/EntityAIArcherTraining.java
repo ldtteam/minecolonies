@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.trainingcamps;
 
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingArchery;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
 import com.minecolonies.coremod.entity.ai.citizen.guard.GuardArrow;
@@ -13,6 +15,7 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
@@ -76,11 +79,6 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
      * Shooting arrow in progress.
      */
     private EntityTippedArrow arrowInProgress;
-
-    /**
-     * How many more ticks we have until next attack.
-     */
-    protected int currentAttackDelay = 0;
 
     /**
      * Creates the abstract part of the AI.inte
@@ -157,6 +155,11 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
      */
     protected AIState shoot()
     {
+        if (currentShootingTarget == null)
+        {
+            return START_WORKING;
+        }
+
         if (worker.isHandActive())
         {
             setDelay(STANDARD_DELAY);
@@ -204,17 +207,6 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
         return ARCHER_CHECK_SHOT;
     }
 
-    /**
-     * Reduces the attack delay by the given Tickrate
-     */
-    private void reduceAttackDelay()
-    {
-        if (currentAttackDelay > 0)
-        {
-            currentAttackDelay--;
-        }
-    }
-
     private AIState checkShot()
     {
         if (arrowInProgress.getDistanceSq(currentShootingTarget) < MIN_DISTANCE_FOR_SUCCESS)
@@ -227,5 +219,19 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
         }
 
         return ARCHER_SELECT_TARGET;
+    }
+
+    @Override
+    protected boolean isSetup()
+    {
+        if (checkForToolOrWeapon(ToolType.BOW))
+        {
+            setDelay(REQUEST_DELAY);
+            return false;
+        }
+
+        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.BOW, 0, getOwnBuilding().getMaxToolLevel());
+        worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, bowSlot);
+        return true;
     }
 }

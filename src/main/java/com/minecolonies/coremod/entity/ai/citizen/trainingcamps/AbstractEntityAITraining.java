@@ -1,17 +1,13 @@
 package com.minecolonies.coremod.entity.ai.citizen.trainingcamps;
 
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -30,7 +26,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
     /**
      * 100% chance to compare it with smaller percentages.
      */
-    private static final int ONE_HUNDRED_PERCENT = 100;
+    protected static final int ONE_HUNDRED_PERCENT = 100;
 
     /**
      * The building range.
@@ -48,6 +44,11 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
     protected AIState stateAfterPathing;
 
     /**
+     * How many more ticks we have until next attack.
+     */
+    protected int currentAttackDelay = 0;
+
+    /**
      * Creates the abstract part of the AI.inte
      * Always use this constructor!
      *
@@ -60,7 +61,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
         super.registerTargets(
           new AITarget(IDLE, true, () -> DECIDE),
           new AITarget(DECIDE, true, this::decide),
-          new AITarget(TRANING_WANDER, true, this::wander),
+          new AITarget(TRAINING_WANDER, true, this::wander),
           new AITarget(GO_TO_TARGET, true, this::pathToTarget)
         );
         worker.setCanPickUpLoot(true);
@@ -73,22 +74,24 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
      */
     private AIState decide()
     {
-        if (checkForToolOrWeapon(ToolType.BOW))
+        if (!isSetup())
         {
-            setDelay(REQUEST_DELAY);
             return DECIDE;
         }
-
-        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.BOW, 0, getOwnBuilding().getMaxToolLevel());
-        worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, bowSlot);
         setDelay(STANDARD_DELAY);
 
         if (worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < TARGET_SEARCH_CHANCE)
         {
             return COMBAT_TRAINING;
         }
-        return TRANING_WANDER;
+        return TRAINING_WANDER;
     }
+
+    /**
+     * Method to check if the worker is ready to start.
+     * @return true if so.
+     */
+    protected abstract boolean isSetup();
 
     /**
      * Wander randomly around within the premises of the building.
@@ -109,7 +112,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
             return DECIDE;
         }
 
-        return TRANING_WANDER;
+        return TRAINING_WANDER;
     }
 
     /**
@@ -120,7 +123,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
     private AIState pathToTarget()
     {
         setDelay(STANDARD_DELAY);
-        if (walkToBlock(currentPathingTarget, 1))
+        if (walkToBlock(currentPathingTarget, 2))
         {
             return getState();
         }
@@ -147,5 +150,16 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
         }
 
         return getOwnBuilding().getLocation();
+    }
+
+    /**
+     * Reduces the attack delay by the given Tickrate
+     */
+    protected void reduceAttackDelay()
+    {
+        if (currentAttackDelay > 0)
+        {
+            currentAttackDelay--;
+        }
     }
 }

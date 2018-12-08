@@ -7,6 +7,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
+import net.minecraft.item.EnumAction;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -83,6 +86,45 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         if (mainModel == null)
         {
             mainModel = citizen.isFemale() ? defaultModelFemale : defaultModelMale;
+        }
+
+        ModelBiped citizenModel = (ModelBiped) mainModel;
+
+        ItemStack itemstack = citizen.getHeldItemMainhand();
+        ItemStack itemstack1 = citizen.getHeldItemOffhand();
+        ModelBiped.ArmPose modelbiped$armpose = ModelBiped.ArmPose.EMPTY;
+        ModelBiped.ArmPose modelbiped$armpose1 = ModelBiped.ArmPose.EMPTY;
+        EnumAction enumaction1;
+        if (!itemstack.isEmpty()) {
+            modelbiped$armpose = ModelBiped.ArmPose.ITEM;
+            if (citizen.getItemInUseCount() > 0) {
+                enumaction1 = itemstack.getItemUseAction();
+                if (enumaction1 == EnumAction.BLOCK) {
+                    modelbiped$armpose = ModelBiped.ArmPose.BLOCK;
+                } else if (enumaction1 == EnumAction.BOW) {
+                    modelbiped$armpose = ModelBiped.ArmPose.BOW_AND_ARROW;
+                }
+            }
+        }
+
+        if (!itemstack1.isEmpty()) {
+            modelbiped$armpose1 = ModelBiped.ArmPose.ITEM;
+            if (citizen.getItemInUseCount() > 0) {
+                enumaction1 = itemstack1.getItemUseAction();
+                if (enumaction1 == EnumAction.BLOCK) {
+                    modelbiped$armpose1 = ModelBiped.ArmPose.BLOCK;
+                } else if (enumaction1 == EnumAction.BOW) {
+                    modelbiped$armpose1 = ModelBiped.ArmPose.BOW_AND_ARROW;
+                }
+            }
+        }
+
+        if (citizen.getPrimaryHand() == EnumHandSide.RIGHT) {
+            citizenModel.rightArmPose = modelbiped$armpose;
+            citizenModel.leftArmPose = modelbiped$armpose1;
+        } else {
+            citizenModel.rightArmPose = modelbiped$armpose1;
+            citizenModel.leftArmPose = modelbiped$armpose;
         }
 
         super.doRender(citizen, d, d1, d2, f, f1);

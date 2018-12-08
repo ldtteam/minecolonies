@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.blockout.views.Window;
@@ -9,9 +11,11 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
+import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
+import net.minecraft.block.BlockHay;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -20,9 +24,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -49,6 +51,11 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     private final List<BlockPos> fightingPos = new ArrayList<>();
 
     /**
+     * List of training partners.
+     */
+    private final BiMap<Integer, Integer> trainingPartners = HashBiMap.create();
+
+    /**
      * The abstract constructor of the building.
      *
      * @param c the colony
@@ -63,15 +70,15 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     @Override
     public AbstractJob createJob(final CitizenData citizen)
     {
-        return new JobArcherTraining(citizen);
+        return new JobCombatTraining(citizen);
     }
 
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        if (block == Blocks.PUMPKIN && world.getBlockState(pos.down()).getBlock() instanceof BlockFence)
+        if (block == Blocks.PUMPKIN && world.getBlockState(pos.down()).getBlock() instanceof BlockHay)
         {
-            fightingPos.add(pos);
+            fightingPos.add(pos.down());
         }
         super.registerBlockPosition(block, pos, world);
     }
@@ -85,6 +92,9 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
 
         final NBTTagList targetTagList = compound.getTagList(TAG_COMBAT_TARGET, Constants.NBT.TAG_COMPOUND);
         fightingPos.addAll(NBTUtils.streamCompound(targetTagList).map(targetCompound -> BlockPosUtil.readFromNBT(targetCompound, TAG_TARGET)).collect(Collectors.toList()));
+
+        final NBTTagList partnersTagList = compound.getTagList(TAG_COMBAT_PARTNER, Constants.NBT.TAG_COMPOUND);
+        trainingPartners.putAll(NBTUtils.streamCompound(partnersTagList).collect(Collectors.toMap(targetCompound -> targetCompound.getInteger(TAG_PARTNER1), targetCompound -> targetCompound.getInteger(TAG_PARTNER2))));
     }
 
     @Override
@@ -94,6 +104,22 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
 
         final NBTTagList targetTagList = fightingPos.stream().map(target -> BlockPosUtil.writeToNBT(new NBTTagCompound(), TAG_TARGET, target)).collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_COMBAT_TARGET, targetTagList);
+
+        final NBTTagList partnersTagList = trainingPartners.entrySet().stream().map(BuildingCombatAcademy::writePartnerTupleToNBT).collect(NBTUtils.toNBTTagList());
+        compound.setTag(TAG_COMBAT_PARTNER, partnersTagList);
+    }
+
+    /**
+     * Writes the partner tuple to NBT
+     * @param tuple the tuple to write to NBT
+     * @return a compound with the data.
+     */
+    private static NBTTagCompound writePartnerTupleToNBT(final Map.Entry<Integer, Integer> tuple)
+    {
+        final NBTTagCompound compound = new NBTTagCompound();
+        compound.setInteger(TAG_PARTNER1, tuple.getKey());
+        compound.setInteger(TAG_PARTNER2, tuple.getValue());
+        return compound;
     }
 
     @Override
@@ -135,6 +161,74 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
             return fightingPos.get(random.nextInt(fightingPos.size()));
         }
         return null;
+    }
+
+    /**
+     * Get a random trainings partner in the building.
+     * @return the entityCitizen partner or null.
+     * @param citizen the worker to get the partner for.
+     */
+    public EntityCitizen getRandomCombatPartner(final EntityCitizen citizen)
+    {
+        final CitizenData citizenData = citizen.getCitizenData();
+        if (citizenData != null)
+        {
+            final CitizenData partner = getAssignedCitizen().stream()
+                                              .filter(data -> data.getId() != citizenData.getId())
+                                              .filter(data -> !trainingPartners.containsKey(data.getId()))
+                                              .filter(data -> !trainingPartners.containsValue(data.getId()))
+                                              .findFirst()
+                                              .orElse(null);
+            if (partner != null)
+            {
+                return partner.getCitizenEntity().orElse(null);
+            }
+            return null;
+        }
+        return null;
+    }
+
+    /**
+     * Get the citizen of the combat partner or null if not existing or available.
+     * @param citizen the citizen.
+     * @return the citizen or null.
+     */
+    public EntityCitizen getCombatPartner(final EntityCitizen citizen)
+    {
+        final CitizenData data = citizen.getCitizenData();
+        if (data != null)
+        {
+            final int citizenId;
+            if (trainingPartners.containsKey(data.getId()))
+            {
+                citizenId = trainingPartners.get(data.getId());
+            }
+            else if (trainingPartners.containsValue(data.getId()))
+            {
+                citizenId = trainingPartners.inverse().get(data.getId());
+            }
+            else
+            {
+                return null;
+            }
+
+            final CitizenData citizenData = getAssignedCitizen().stream().filter(cit -> cit.getId() != data.getId()).filter(cit -> cit.getId() == citizenId).findFirst().orElse(null);
+            if (citizenData != null)
+            {
+                return citizenData.getCitizenEntity().orElse(null);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Check if the worker has a combat partner assigned to him right now.
+     * @param citizen the citizen to check for.
+     * @return true if so.
+     */
+    public boolean hasCombatPartner(final EntityCitizen citizen)
+    {
+        return getCombatPartner(citizen) != null;
     }
 
     /**

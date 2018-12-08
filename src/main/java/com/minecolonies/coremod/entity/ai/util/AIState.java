@@ -431,7 +431,7 @@ public enum AIState
     /**
      * Wander around the building
      */
-    TRANING_WANDER,
+    TRAINING_WANDER,
 
     /**
      * Go to the shooting position.
@@ -439,7 +439,7 @@ public enum AIState
     GO_TO_TARGET,
 
     /**
-     * Do the real training
+     * Find the position to train from.
      */
     COMBAT_TRAINING,
 
@@ -474,6 +474,25 @@ public enum AIState
     /**
      *  Guard attack a dummy.
      */
-    KNIGHT_TRAIN_DUMMY,
+    KNIGHT_ATTACK_DUMMY,
 
+    /**
+     * Find dummy to attack
+     */
+    FIND_DUMMY_PARTNER,
+
+    /**
+     * Find a training partner
+     */
+    FIND_TRAINING_PARTNER,
+
+    /**
+     * Attack the training partner.
+     */
+    KNIGHT_TRAIN_WITH_PARTNER,
+
+    /**
+     * Attack protect in a certain direction.
+     */
+    KNIGHT_ATTACK_PROTECT
 }
