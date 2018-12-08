@@ -36,19 +36,32 @@ public class EventBasedIdFixer
     private static <T extends IForgeRegistryEntry<T>> int onRegistryMissingMappings(final RegistryEvent.MissingMappings<T> event)
     {
         return event.getMappings().stream().mapToInt(missingMapping -> {
-            final String path = missingMapping.key.getPath();
-            final ResourceLocation remappedTargetId = new ResourceLocation(Constants.MOD_ID.toLowerCase() + ":" + path);
-
-            @Nullable
-            final T target = missingMapping.registry.getValue(remappedTargetId);
-            if (target != null && target != Blocks.AIR && target != Items.AIR)
+            if (missingMapping.key.getNamespace().equals(Constants.MINECOLONIES_MOD_ID))
             {
-                Log.getLogger().info("Remapping: " + missingMapping.key + " to: " + remappedTargetId);
-                missingMapping.remap(target);
-                return 1;
+                final String path = missingMapping.key.getPath();
+                final ResourceLocation remappedTargetId = new ResourceLocation(Constants.MOD_ID.toLowerCase(), path);
+                @Nullable final T target = missingMapping.registry.getValue(remappedTargetId);
+                if (target != null && target != Blocks.AIR && target != Items.AIR)
+                {
+                    missingMapping.remap(target);
+                    return 1;
+                }
             }
+            else
+            {
+                final String path = missingMapping.key.getPath();
+                final ResourceLocation remappedTargetId = new ResourceLocation(Constants.MOD_ID.toLowerCase() + ":" + path);
 
+                @Nullable final T target = missingMapping.registry.getValue(remappedTargetId);
+                if (target != null)
+                {
+                    Log.getLogger().info("Remapping: " + missingMapping.key + " to: " + remappedTargetId);
+                    missingMapping.remap(target);
+                    return 1;
+                }
+            }
             return 0;
+
         }).sum();
     }
 }
