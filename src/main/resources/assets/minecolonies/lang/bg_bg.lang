@@ -250,7 +250,7 @@ com.minecolonies.coremod.gui.workerHuts.Deliveryman=Deliveryman
 com.minecolonies.coremod.gui.workerHuts.cancelBuild=Cancel Build
 com.minecolonies.coremod.gui.workerHuts.cancelUpgrade=Cancel Upgrade
 com.minecolonies.coremod.gui.workerHuts.cancelRepair=Cancel Repair
-com.minecolonies.coremod.gui.buildtool.hut.level=Level %s
+com.minecolonies.coremod.gui.buildtool.hut.level=Ниво %s
 com.minecolonies.coremod.network.messages.schematicsavemassage.toobig=Schematic size too big, can not be bigger than %s bytes
 com.minecolonies.coremod.gui.buildtool.decorations=Decorations
 com.minecolonies.coremod.gui.buildtool.scans=My schematics
@@ -504,7 +504,7 @@ com.minecolonies.coremod.tooltype.shield=Щит
 com.minecolonies.coremod.gui.citizen.requests=Open requests:
 com.minecolonies.coremod.gui.citizen.requestTitle=Requests
 com.minecolonies.coremod.gui.citizen.requestsCancel=Отмени
-com.minecolonies.coremod.gui.citizen.requestsFulfill=Fulfill
+com.minecolonies.coremod.gui.citizen.requestsFulfill=Изпълни
 
 item.minecolonies.clipboard.name=Clipboard
 
@@ -537,6 +537,6 @@ com.minecolonies.coremod.resolvers.crafter=Crafting Resolver
 com.minecolonies.coremod.request.smeltableore=Smeltable Ore
 tile.minecolonies.blockHutSmeltery.name=Smeltery
 com.minecolonies.coremod.gui.workerHuts.Smeltery=Smeltery
-com.minecolonies.coremod.job.smelter=Smelter
+com.minecolonies.coremod.job.smelter=Tопилник
 
 tile.minecolonies.blockShingleSlab.name=Shingle slab
