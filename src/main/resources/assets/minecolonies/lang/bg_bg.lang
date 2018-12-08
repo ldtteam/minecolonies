@@ -465,8 +465,8 @@ com.minecolonies.coremod.worker.noUpgrade=No Upgrade available.
 com.minecolonies.coremod.worker.needBarracks=Please upgrade the Barracks first.
 com.minecolonies.coremod.gui.warehouse.upgrade=Upgrade Storage
 
-com.minecolonies.coremod.job.cook=Cook
-com.minecolonies.coremod.gui.workerHuts.cook=Cook
+com.minecolonies.coremod.job.cook=Готвач
+com.minecolonies.coremod.gui.workerHuts.cook=Готвач
 com.minecolonies.coremod.gui.townHall.population.cooks=Cooks: %d
 tile.minecolonies.blockHutCook.name=Restaurant
 com.minecolonies.coremod.ai.noRestaurant=Please build a restaurant or get me something to eat!
@@ -482,7 +482,7 @@ com.minecolonies.coremod.status.mining=Mining
 item.minecolonies.scepterPermission.name=PermissionScepter
 
 com.minecolonies.coremod.request.delivery=Delivery of:
-com.minecolonies.coremod.request.food=Food
+com.minecolonies.coremod.request.food=Храна
 com.minecolonies.coremod.request.burnable=Fuel
 com.minecolonies.coremod.request.tool.pretype=Tool of class:
 com.minecolonies.coremod.request.tool.preminlevel=with minimal level:
