@@ -490,8 +490,8 @@ com.minecolonies.coremod.request.tool.premaxlevel=with maximal level:
 
 com.minecolonies.coremod.general.and=и
 
-com.minecolonies.coremod.tooltype.none=Unknown
-com.minecolonies.coremod.tooltype.pickaxe=Pickaxe
+com.minecolonies.coremod.tooltype.none=Непознат
+com.minecolonies.coremod.tooltype.pickaxe=Киркa
 com.minecolonies.coremod.tooltype.shovel=Лопатa
 com.minecolonies.coremod.tooltype.axe=Брадва
 com.minecolonies.coremod.tooltype.hoe=Mотика
