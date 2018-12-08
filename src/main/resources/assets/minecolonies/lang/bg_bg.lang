@@ -477,7 +477,7 @@ com.minecolonies.coremod.status.cooking=Cooking
 com.minecolonies.coremod.status.serving=Serving
 com.minecolonies.coremod.status.retrieving=Retrieving
 com.minecolonies.coremod.status.idling=Idling
-com.minecolonies.coremod.status.mining=Mining
+com.minecolonies.coremod.status.mining=Добиване
 
 item.minecolonies.scepterPermission.name=PermissionScepter
 
@@ -492,18 +492,18 @@ com.minecolonies.coremod.general.and=и
 
 com.minecolonies.coremod.tooltype.none=Unknown
 com.minecolonies.coremod.tooltype.pickaxe=Pickaxe
-com.minecolonies.coremod.tooltype.shovel=Shovel
+com.minecolonies.coremod.tooltype.shovel=Лопатa
 com.minecolonies.coremod.tooltype.axe=Брадва
 com.minecolonies.coremod.tooltype.hoe=Mотика
 com.minecolonies.coremod.tooltype.sword=Меч
 com.minecolonies.coremod.tooltype.bow=Лък
 com.minecolonies.coremod.tooltype.fishingrod=Fishingrod
-com.minecolonies.coremod.tooltype.shears=Shears
-com.minecolonies.coremod.tooltype.shield=Shield
+com.minecolonies.coremod.tooltype.shears=Ножици за стригане
+com.minecolonies.coremod.tooltype.shield=Щит
 
 com.minecolonies.coremod.gui.citizen.requests=Open requests:
 com.minecolonies.coremod.gui.citizen.requestTitle=Requests
-com.minecolonies.coremod.gui.citizen.requestsCancel=Cancel
+com.minecolonies.coremod.gui.citizen.requestsCancel=Отмени
 com.minecolonies.coremod.gui.citizen.requestsFulfill=Fulfill
 
 item.minecolonies.clipboard.name=Clipboard
@@ -529,7 +529,7 @@ tile.minecolonies.blockshingle_jungle.name=Jungle Shingle
 tile.minecolonies.blockshingle_dark_oak.name=Dark Oak Shingle
 tile.minecolonies.blockshingle_acacia.name=Acacia Shingle
 
-com.minecolonies.coremod.gui.recipe.remove=Remove
+com.minecolonies.coremod.gui.recipe.remove=Премахни
 com.minecolonies.coremod.gui.workerHuts.crafting=Teach recipe
 com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
 com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
