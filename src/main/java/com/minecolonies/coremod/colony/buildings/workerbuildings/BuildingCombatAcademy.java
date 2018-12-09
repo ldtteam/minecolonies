@@ -181,6 +181,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
                                               .orElse(null);
             if (partner != null)
             {
+                trainingPartners.put(citizenData.getId(), partner.getId());
                 return partner.getCitizenEntity().orElse(null);
             }
             return null;

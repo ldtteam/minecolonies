@@ -59,7 +59,8 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
         //Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, true, () -> DECIDE),
+          new AITarget(IDLE, true, () -> START_WORKING),
+          new AITarget(START_WORKING, true, () -> DECIDE),
           new AITarget(DECIDE, true, this::decide),
           new AITarget(TRAINING_WANDER, true, this::wander),
           new AITarget(GO_TO_TARGET, true, this::pathToTarget)

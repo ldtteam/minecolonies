@@ -183,18 +183,19 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             return START_WORKING;
         }
 
-        if (BlockPosUtil.getDistance2D(worker.getPosition(), trainingPartner.getPosition()) > 5.0)
+        if (BlockPosUtil.getDistance2D(worker.getPosition(), trainingPartner.getPosition()) > MIN_DISTANCE_TO_TRAIN)
         {
             currentPathingTarget = trainingPartner.getPosition();
             stateAfterPathing = KNIGHT_TRAIN_WITH_PARTNER;
             return GO_TO_TARGET;
         }
 
-        if (worker.isHandActive())
+        if (currentAttackDelay <= 0)
         {
             worker.getCitizenExperienceHandler().addExperience(XP_BASE_RATE);
-            worker.decreaseSaturationForContinuousAction();
+            worker.decreaseSaturationForAction();
             worker.faceEntity(trainingPartner, (float) TURN_AROUND, (float) TURN_AROUND);
+            WorkerUtil.faceBlock(trainingPartner.getPosition().up(), worker);
             worker.resetActiveHand();
 
             if (worker.getRandom().nextBoolean())
@@ -217,7 +218,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
                 trainingPartner.attackEntityFrom(new DamageSource(worker.getName()), 0.0F);
                 worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
             }
-
+            worker.getNavigator().moveAwayFromXYZ(trainingPartner.getPosition(), 4.0, worker.getAIMoveSpeed());
             targetCounter++;
 
             if (targetCounter > getOwnBuilding().getBuildingLevel() * ACTIONS_PER_BUILDING_LEVEL)
@@ -226,14 +227,11 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
                 targetCounter = 0;
                 return START_WORKING;
             }
+            currentAttackDelay = RANGED_ATTACK_DELAY_BASE;
         }
         else
         {
             reduceAttackDelay();
-            if (currentAttackDelay <= 0)
-            {
-                worker.setActiveHand(EnumHand.MAIN_HAND);
-            }
             return KNIGHT_ATTACK_PROTECT;
         }
 
@@ -254,6 +252,12 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             worker.resetActiveHand();
             targetCounter = 0;
             return DECIDE;
+        }
+
+        if (getOwnBuilding(BuildingCombatAcademy.class).hasCombatPartner(worker))
+        {
+            setDelay(STANDARD_DELAY);
+            return KNIGHT_TRAIN_WITH_PARTNER;
         }
 
         final BlockPos targetPos = academy.getRandomCombatTarget(worker.getRandom());
@@ -277,6 +281,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
      */
     private AIState attackDummy()
     {
+        setDelay(STANDARD_DELAY);
         if (currentCombatTarget == null)
         {
             return START_WORKING;
@@ -285,7 +290,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
         if (currentAttackDelay <= 0)
         {
             worker.getCitizenExperienceHandler().addExperience(XP_BASE_RATE);
-            worker.decreaseSaturationForContinuousAction();
+            worker.decreaseSaturationForAction();
             WorkerUtil.faceBlock(currentCombatTarget, worker);
             worker.resetActiveHand();
 
@@ -307,6 +312,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
                 worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
                 worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
             }
+
             currentAttackDelay = RANGED_ATTACK_DELAY_BASE;
         }
         else
