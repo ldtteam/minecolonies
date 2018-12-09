@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemCrafterJobDataStore;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.Stack;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -119,14 +119,14 @@ public abstract class AbstractJobCrafter extends AbstractJob
      * @return {@link IRequest} of the current Task.
      */
     @SuppressWarnings(UNCHECKED)
-    public IRequest<? extends Stack>  getCurrentTask()
+    public IRequest<? extends PublicCrafting>  getCurrentTask()
     {
         if (getTaskQueueFromDataStore().isEmpty())
         {
             return null;
         }
 
-        return (IRequest<? extends Stack>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
+        return (IRequest<? extends PublicCrafting>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
     }
 
     /**

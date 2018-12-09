@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.sawmill;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
@@ -10,7 +11,6 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobSawmill;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingProductionResolver;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -71,7 +71,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
     /**
      * The current request.
      */
-    private IRequest<? extends Stack> currentRequest;
+    private IRequest<? extends PublicCrafting> currentRequest;
 
     /**
      * Initialize the sawmill and add all his tasks.
@@ -127,7 +127,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
      */
     private AIState getRecipe()
     {
-        final IRequest<? extends Stack> currentTask = job.getCurrentTask();
+        final IRequest<? extends PublicCrafting> currentTask = job.getCurrentTask();
         final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         currentRecipeStorage = buildingWorker.getFirstFullFillableRecipe(currentTask.getRequest().getStack());
 
