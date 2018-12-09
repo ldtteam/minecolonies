@@ -169,7 +169,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
             return;
         }
 
-        final int craftingCount = CraftingUtils.calculateMaxCraftingCount(request.getRequest().getStack(), storage);
+        final int craftingCount = CraftingUtils.calculateMaxCraftingCount(request.getRequest().getCount(), storage);
         for (int i = 0; i < craftingCount; i++)
         {
             buildingWorker.fullFillRecipe(storage);

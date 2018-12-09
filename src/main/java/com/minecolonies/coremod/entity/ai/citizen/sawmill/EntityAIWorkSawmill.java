@@ -208,7 +208,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
 
         if (maxCraftingCount == 0)
         {
-            craftCounter = CraftingUtils.calculateMaxCraftingCount(job.getCurrentTask().getRequest().getStack(), currentRecipeStorage);
+            craftCounter = CraftingUtils.calculateMaxCraftingCount(job.getCurrentTask().getRequest().getCount(), currentRecipeStorage);
         }
 
         if (craftCounter == 0)

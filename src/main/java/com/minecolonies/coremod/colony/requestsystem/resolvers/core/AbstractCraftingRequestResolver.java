@@ -66,6 +66,13 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
         return Optional.empty();
     }
 
+    @NotNull
+    @Override
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    {
+
+    }
+
     @Override
     public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends IDeliverable> requestToCheck)
     {
