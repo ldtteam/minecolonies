@@ -6,7 +6,9 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
+import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -28,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.RSConstants.CONST_CRAFTING_RESOLVER_PRIORITY;
 
@@ -48,72 +51,14 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public IRequest<?> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
     {
-        if (manager.getColony().getWorld().isRemote)
-        {
-            return null;
-        }
-
-        final List<IToken<?>> result = super.attemptResolve(manager, request);
-
-        if (result == null)
-        {
-            return null;
-        }
-
-        final Colony colony = (Colony) manager.getColony();
-        //We can do an instant get here, since we are already filtering on anything that has no entity.
-        final CitizenData freeCrafter = colony.getCitizenManager()
-                                              .getCitizens()
-                                              .stream()
-                                              .filter(c -> c.getJob() instanceof AbstractJobCrafter)
-                                              .min(Comparator.comparing((CitizenData c) -> ((AbstractJobCrafter) c.getJob()).getTaskQueue().size()))
-                                              .orElse(null);
-
-        if (freeCrafter == null)
-        {
-            return null;
-        }
-
-        return result;
-    }
-
-    @Override
-    public boolean canBuildingCraftStack(@NotNull final AbstractBuildingWorker building, final ItemStack stack)
-    {
-        return building.getFirstRecipe(stack) != null;
-    }
-
-    @Nullable
-    @Override
-    public IRequest<?> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> completedRequest)
-    {
-        final IColony colony = manager.getColony();
-        if (colony instanceof Colony)
-        {
-            final IRequestResolver resolver = colony.getRequestManager().getResolverForRequest(completedRequest.getToken());
-            if(resolver instanceof PublicWorkerCraftingRequestResolver)
-            {
-                final Delivery delivery = new Delivery(resolver.getRequesterLocation(), completedRequest.getRequester().getRequesterLocation(), completedRequest.getDelivery().copy());
-
-                final IToken<?> requestToken =
-                        manager.createRequest(this,
-                                delivery);
-                return manager.getRequestForToken(requestToken);
-            }
-        }
+        //Noop. The production resolver already took care of that.
         return null;
     }
 
     @Override
-    public IToken<?> getRequesterId()
-    {
-        return super.getRequesterId();
-    }
-
-    @Override
-    public void onRequestBeingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
+    public void onRequestBeingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         onRequestCancelled(manager, request);
     }
@@ -134,57 +79,9 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
 
     @Nullable
     @Override
-    public IRequest<?> onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request)
+    public IRequest<?> onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        if (!manager.getColony().getWorld().isRemote)
-        {
-            final Colony colony = (Colony) manager.getColony();
-            final CitizenData holdingCrafter = colony.getCitizenManager().getCitizens()
-                                                  .stream()
-                                                  .filter(c -> c.getJob() instanceof AbstractJobCrafter && ((AbstractJobCrafter) c.getJob()).getTaskQueue().contains(request.getToken()))
-                                                  .findFirst()
-                                                  .orElse(null);
-
-            if (holdingCrafter == null)
-            {
-                MineColonies.getLogger().error("Parent cancellation failed! Unknown request: " + request.getToken());
-            }
-            else
-            {
-                final AbstractJobCrafter job = (AbstractJobCrafter) holdingCrafter.getJob();
-                job.onTaskDeletion(request.getToken());
-            }
-        }
-
         return null;
-    }
-
-    @Override
-    public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Stack> request, @NotNull final AbstractBuilding building)
-    {
-        final Colony colony = (Colony) manager.getColony();
-        //We can do an instant get here, since we are already filtering on anything that has no entity.
-        final CitizenData freeCrafter = building.getAssignedCitizen()
-                                          .stream()
-                                          .filter(c -> c.getJob() instanceof AbstractJobCrafter)
-                                          .min(Comparator.comparing((CitizenData c) -> ((AbstractJobCrafter) c.getJob()).getTaskQueue().size())
-                                                 .thenComparing(Comparator.comparing(c -> {
-                                                     BlockPos targetPos = request.getRequester().getRequesterLocation().getInDimensionLocation();
-                                                     //We can do an instant get here, since we are already filtering on anything that has no entity.
-                                                     BlockPos entityLocation = c.getCitizenEntity().get().getLocation().getInDimensionLocation();
-
-                                                     return BlockPosUtil.getDistanceSquared(targetPos, entityLocation);
-                                                 })))
-                                          .orElse(null);
-
-        if (freeCrafter == null)
-        {
-            onRequestCancelled(manager, request);
-            return;
-        }
-
-        final AbstractJobCrafter job = (AbstractJobCrafter) freeCrafter.getJob();
-        job.addRequest(request.getToken());
     }
 
     @NotNull
@@ -205,5 +102,17 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
     public int getPriority()
     {
         return CONST_CRAFTING_RESOLVER_PRIORITY;
+    }
+
+    @Override
+    public boolean canBuildingCraftStack(@NotNull final AbstractBuildingWorker building, final Predicate<ItemStack> stackPredicate)
+    {
+        return building.getFirstRecipe(stackPredicate) != null;
+    }
+
+    @Override
+    protected IRequestable createNewRequestableForStack(final ItemStack stack)
+    {
+        return new PublicCrafting(stack);
     }
 }

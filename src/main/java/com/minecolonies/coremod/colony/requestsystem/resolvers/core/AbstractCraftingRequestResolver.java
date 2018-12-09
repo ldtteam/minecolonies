@@ -9,27 +9,19 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
-import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCrafting;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.omg.CORBA.portable.IDLEntity;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.MAX_CRAFTING_CYCLE_DEPTH;
 
@@ -104,7 +96,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             return false;
         }
 
-        return building instanceof AbstractBuildingWorker && canBuildingCraftStack((AbstractBuildingWorker) building, request.getRequest()::matches);
+        return building instanceof AbstractBuildingWorker && canBuildingCraftStack((AbstractBuildingWorker) building, itemStack -> request.getRequest().matches(itemStack));
     }
 
     /**
@@ -171,7 +163,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     public List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
-        return attemptResolveForBuildingAndStack(manager, buildingWorker, request.getRequest()::matches);
+        return attemptResolveForBuildingAndStack(manager, buildingWorker, itemStack -> request.getRequest().matches(itemStack));
     }
 
     @Nullable

@@ -97,6 +97,9 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     @Nullable
     protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, final ItemStack stack)
     {
+        if (!canBuildingCraftStack(manager, building, stack))
+            return null;
+
         final IRecipeStorage fullfillableCrafting = building.getFirstFullFillableRecipe(stack);
         if (fullfillableCrafting != null)
         {
@@ -110,6 +113,11 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
         }
 
         return createRequestsForRecipe(manager, building, stack, craftableCrafting);
+    }
+
+    protected boolean canBuildingCraftStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, @NotNull final ItemStack stack)
+    {
+        return true;
     }
 
     /**
