@@ -22,6 +22,7 @@ public class ModelEntityCrafterMale extends ModelBiped
         ModelRenderer SpecMid;
         ModelRenderer SpecR;
         ModelRenderer SpecRB;
+
         ModelRenderer FingerL;
         ModelRenderer RArmRot;
         ModelRenderer FingerM;
@@ -179,19 +180,14 @@ public class ModelEntityCrafterMale extends ModelBiped
         SpecRB.mirror = true;
         setRotation(SpecRB, -0.3346075F, 0F, 0F);
 
+        // Start arm decoration
+
         FingerL = new ModelRenderer(this, 60, 48);
         FingerL.addBox(4.8F, 4.5F, -2.3F, 1, 3, 1);
         FingerL.setRotationPoint(-5F, 2F, 0F);
         FingerL.setTextureSize(256, 128);
         FingerL.mirror = true;
         setRotation(FingerL, 0F, 0F, 0F);
-
-        RArmRot = new ModelRenderer(this, 58, 27);
-        RArmRot.addBox(2.7F, -3.5F, -1.5F, 1, 1, 3);
-        RArmRot.setRotationPoint(-5.2F, 1.65F, 0F);
-        RArmRot.setTextureSize(256, 128);
-        RArmRot.mirror = true;
-        setRotation(RArmRot, 0F, 0F, 0.7853982F);
 
         FingerM = new ModelRenderer(this, 56, 48);
         FingerM.addBox(3.5F, 4.5F, -2.3F, 1, 3, 1);
@@ -200,8 +196,15 @@ public class ModelEntityCrafterMale extends ModelBiped
         FingerM.mirror = true;
         setRotation(FingerM, 0F, 0F, 0F);
 
+        RArmRot = new ModelRenderer(this, 58, 27);
+        RArmRot.addBox(-0.2F, -6.5F, -1.5F, 1, 1, 3);
+        RArmRot.setRotationPoint(-5.2F, 1.65F, 0F);
+        RArmRot.setTextureSize(256, 128);
+        RArmRot.mirror = true;
+        setRotation(RArmRot, 0F, 0F, 0.7853982F);
+
         FingerR = new ModelRenderer(this, 52, 48);
-        FingerR.addBox(3.2F, 4.5F, -2.3F, 1, 3, 1);
+        FingerR.addBox(2.2F, 4.5F, -2.3F, 1, 3, 1);
         FingerR.setRotationPoint(-5F, 2F, 0F);
         FingerR.setTextureSize(256, 128);
         FingerR.mirror = true;
@@ -271,11 +274,18 @@ public class ModelEntityCrafterMale extends ModelBiped
         setRotation(RArmM, 0F, 0F, 0F);
 
         CoreF = new ModelRenderer(this, 75, 32);
-        CoreF.addBox(3.7F, -0.8F, 1.7F, 2, 2, 1);
+        CoreF.addBox(0.8F, -3.7F, 1.7F, 2, 2, 1);
         CoreF.setRotationPoint(-4F, 2.7F, 0F);
         CoreF.setTextureSize(256, 128);
         CoreF.mirror = true;
         setRotation(CoreF, 0F, 0F, 0.7853982F);
+
+        CoreB = new ModelRenderer(this, 67, 31);
+        CoreB.addBox(0.8F, -3.7F, 1.5F, 3, 3, 1);
+        CoreB.setRotationPoint(-4F, 2F, 0F);
+        CoreB.setTextureSize(256, 128);
+        CoreB.mirror = true;
+        setRotation(CoreB, 0F, 0F, 0.7853982F);
 
         RArmFT = new ModelRenderer(this, 58, 31);
         RArmFT.addBox(2.7F, -4.5F, -2.3F, 1, 3, 1);
@@ -311,13 +321,6 @@ public class ModelEntityCrafterMale extends ModelBiped
         RArmBBM.setTextureSize(256, 128);
         RArmBBM.mirror = true;
         setRotation(RArmBBM, 0F, 0F, 0F);
-
-        CoreB = new ModelRenderer(this, 67, 31);
-        CoreB.addBox(3.7F, -0.8F, 1.5F, 3, 3, 1);
-        CoreB.setRotationPoint(-4F, 2F, 0F);
-        CoreB.setTextureSize(256, 128);
-        CoreB.mirror = true;
-        setRotation(CoreB, 0F, 0F, 0.7853982F);
 
         Vent12 = new ModelRenderer(this, 40, 66);
         Vent12.addBox(1.7F, 3F, -1.5F, 1, 0, 3);
@@ -381,26 +384,26 @@ public class ModelEntityCrafterMale extends ModelBiped
         this.bipedHead.addChild(SpecR);
         this.bipedHead.addChild(SpecRB);
 
-        this.bipedRightArm.addChild(FingerL);
+
         this.bipedRightArm.addChild(RArmRot);
+
+        this.bipedRightArm.addChild(FingerL);
         this.bipedRightArm.addChild(FingerM);
         this.bipedRightArm.addChild(FingerR);
-        this.bipedRightArm.addChild(Vent13);
+
         this.bipedRightArm.addChild(RArmB2);
         this.bipedRightArm.addChild(RArmB);
-        this.bipedRightArm.addChild(Vent5);
-        this.bipedRightArm.addChild(Vent7);
-        this.bipedRightArm.addChild(Vent9);
-        this.bipedRightArm.addChild(Vent11);
         this.bipedRightArm.addChild(RArmL);
         this.bipedRightArm.addChild(RArmM);
+
         this.bipedRightArm.addChild(CoreF);
+        this.bipedRightArm.addChild(CoreB);
+
         this.bipedRightArm.addChild(RArmFT);
-        this.bipedRightArm.addChild(Vent3);
         this.bipedRightArm.addChild(RArmBT);
         this.bipedRightArm.addChild(RArmBBB);
         this.bipedRightArm.addChild(RArmBBM);
-        this.bipedRightArm.addChild(CoreB);
+
         this.bipedRightArm.addChild(Vent12);
         this.bipedRightArm.addChild(Vent10);
         this.bipedRightArm.addChild(Vent8);
@@ -408,6 +411,12 @@ public class ModelEntityCrafterMale extends ModelBiped
         this.bipedRightArm.addChild(Vent4);
         this.bipedRightArm.addChild(Vent1);
         this.bipedRightArm.addChild(Vent2);
+        this.bipedRightArm.addChild(Vent5);
+        this.bipedRightArm.addChild(Vent7);
+        this.bipedRightArm.addChild(Vent9);
+        this.bipedRightArm.addChild(Vent13);
+        this.bipedRightArm.addChild(Vent11);
+        this.bipedRightArm.addChild(Vent3);
     }
 
     @Override
