@@ -424,14 +424,28 @@ public enum AIState
      */
 
     STUDY,
+
     /*
-### Archers in Training ###
-     */
+### General Training AI ###
 
     /**
      * Wander around the building
      */
-    ARCHER_WANDER,
+    TRAINING_WANDER,
+
+    /**
+     * Go to the shooting position.
+     */
+    GO_TO_TARGET,
+
+    /**
+     * Find the position to train from.
+     */
+    COMBAT_TRAINING,
+
+    /*
+### Archers in Training ###
+     */
 
     /**
      * Find a good position to shoot from.
@@ -444,11 +458,6 @@ public enum AIState
     ARCHER_SELECT_TARGET,
 
     /**
-     * Go to the shooting position.
-     */
-    ARCHER_GO_TO_SHOOTING_STAND,
-
-    /**
      * Check the shot result.
      */
     ARCHER_CHECK_SHOT,
@@ -457,4 +466,33 @@ public enum AIState
      * Archer shoot target.
      */
     ARCHER_SHOOT,
+
+        /*
+### Knights in Training ###
+     */
+
+    /**
+     *  Guard attack a dummy.
+     */
+    KNIGHT_ATTACK_DUMMY,
+
+    /**
+     * Find dummy to attack
+     */
+    FIND_DUMMY_PARTNER,
+
+    /**
+     * Find a training partner
+     */
+    FIND_TRAINING_PARTNER,
+
+    /**
+     * Attack the training partner.
+     */
+    KNIGHT_TRAIN_WITH_PARTNER,
+
+    /**
+     * Attack protect in a certain direction.
+     */
+    KNIGHT_ATTACK_PROTECT
 }
