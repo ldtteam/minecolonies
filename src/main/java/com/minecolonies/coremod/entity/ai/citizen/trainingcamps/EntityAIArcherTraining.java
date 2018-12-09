@@ -155,6 +155,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
      */
     protected AIState shoot()
     {
+        setDelay(STANDARD_DELAY);
         if (currentShootingTarget == null)
         {
             return START_WORKING;
@@ -162,7 +163,6 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
 
         if (worker.isHandActive())
         {
-            setDelay(STANDARD_DELAY);
             WorkerUtil.faceBlock(currentShootingTarget, worker);
             worker.swingArm(EnumHand.MAIN_HAND);
 

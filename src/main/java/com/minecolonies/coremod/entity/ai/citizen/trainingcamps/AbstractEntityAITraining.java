@@ -74,11 +74,11 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
      */
     public AIState decide()
     {
+        setDelay(STANDARD_DELAY);
         if (!isSetup())
         {
             return DECIDE;
         }
-        setDelay(STANDARD_DELAY);
 
         if (worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < TARGET_SEARCH_CHANCE)
         {

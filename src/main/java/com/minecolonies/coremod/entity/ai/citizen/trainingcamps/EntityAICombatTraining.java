@@ -58,6 +58,11 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     private static final int TRAININGS_DELAY = TICKS_20 * 3;
 
     /**
+     * Min distance to train with the other guard.
+     */
+    private static final int MIN_DISTANCE_TO_TRAIN = 5;
+
+    /**
      * The current pathing target to walk to.
      */
     private BlockPos currentCombatTarget;
@@ -158,11 +163,9 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             return COMBAT_TRAINING;
         }
 
-        if (BlockPosUtil.getDistance2D(worker.getPosition(), trainingPartner.getPosition()) > 5.0)
+        if (BlockPosUtil.getDistance2D(worker.getPosition(), trainingPartner.getPosition()) > MIN_DISTANCE_TO_TRAIN && walkToBlock(trainingPartner.getPosition()))
         {
-            currentPathingTarget = trainingPartner.getPosition();
-            stateAfterPathing = KNIGHT_TRAIN_WITH_PARTNER;
-            return GO_TO_TARGET;
+            return KNIGHT_TRAIN_WITH_PARTNER;
         }
 
         return KNIGHT_ATTACK_PROTECT;
@@ -174,6 +177,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
      */
     private AIState attack()
     {
+        setDelay(STANDARD_DELAY);
         if (trainingPartner == null)
         {
             return START_WORKING;
