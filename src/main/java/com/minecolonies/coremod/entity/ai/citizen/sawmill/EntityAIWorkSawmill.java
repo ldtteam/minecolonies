@@ -128,6 +128,11 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
     private AIState getRecipe()
     {
         final IRequest<? extends PublicCrafting> currentTask = job.getCurrentTask();
+
+        if (currentTask == null)
+        {
+            return START_WORKING;
+        }
         final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         currentRecipeStorage = buildingWorker.getFirstFullFillableRecipe(currentTask.getRequest().getStack());
 
