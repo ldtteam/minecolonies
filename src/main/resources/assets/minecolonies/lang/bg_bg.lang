@@ -378,7 +378,7 @@ com.minecolonies.coremod.permission.no=You have no permission to do this in this
 com.minecolonies.coremod.gui.townHall.freeBlocks=Free for interaction
 
 com.minecolonies.coremod.permission.access_huts=Access GUIs
-com.minecolonies.coremod.permission.guards_attack=Fight guards
+com.minecolonies.coremod.permission.guards_attack=Бори охраната
 com.minecolonies.coremod.permission.place_huts=Постави колибите
 com.minecolonies.coremod.permission.break_huts=Унищожи колибите
 
