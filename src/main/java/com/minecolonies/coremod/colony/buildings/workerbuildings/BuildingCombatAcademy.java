@@ -232,6 +232,26 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     }
 
     /**
+     * Reset the combat partner for a worker.
+     * @param worker the worker to reset it for.
+     */
+    public void resetPartner(final EntityCitizen worker)
+    {
+        final CitizenData data = worker.getCitizenData();
+        if (data != null)
+        {
+            if (trainingPartners.containsKey(data.getId()))
+            {
+                trainingPartners.remove(data.getId());
+            }
+            else if (trainingPartners.containsValue(data.getId()))
+            {
+                trainingPartners.inverse().remove(data.getId());
+            }
+        }
+    }
+
+    /**
      * The client view for the baker building.
      */
     public static class View extends AbstractBuildingWorker.View

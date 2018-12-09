@@ -88,43 +88,58 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
             mainModel = citizen.isFemale() ? defaultModelFemale : defaultModelMale;
         }
 
-        ModelBiped citizenModel = (ModelBiped) mainModel;
+        final ModelBiped citizenModel = (ModelBiped) mainModel;
 
-        ItemStack itemstack = citizen.getHeldItemMainhand();
-        ItemStack itemstack1 = citizen.getHeldItemOffhand();
-        ModelBiped.ArmPose modelbiped$armpose = ModelBiped.ArmPose.EMPTY;
-        ModelBiped.ArmPose modelbiped$armpose1 = ModelBiped.ArmPose.EMPTY;
-        EnumAction enumaction1;
-        if (!itemstack.isEmpty()) {
-            modelbiped$armpose = ModelBiped.ArmPose.ITEM;
-            if (citizen.getItemInUseCount() > 0) {
-                enumaction1 = itemstack.getItemUseAction();
-                if (enumaction1 == EnumAction.BLOCK) {
-                    modelbiped$armpose = ModelBiped.ArmPose.BLOCK;
-                } else if (enumaction1 == EnumAction.BOW) {
-                    modelbiped$armpose = ModelBiped.ArmPose.BOW_AND_ARROW;
+        final ItemStack mainHandStack = citizen.getHeldItemMainhand();
+        final ItemStack offHandStack = citizen.getHeldItemOffhand();
+        ModelBiped.ArmPose armPoseMainHand = ModelBiped.ArmPose.EMPTY;
+        ModelBiped.ArmPose armPoseOffHand = ModelBiped.ArmPose.EMPTY;
+
+        final EnumAction enumActionMainHand;
+        if (!mainHandStack.isEmpty())
+        {
+            armPoseMainHand = ModelBiped.ArmPose.ITEM;
+            if (citizen.getItemInUseCount() > 0)
+            {
+                enumActionMainHand = mainHandStack.getItemUseAction();
+                if (enumActionMainHand == EnumAction.BLOCK)
+                {
+                    armPoseMainHand = ModelBiped.ArmPose.BLOCK;
+                }
+                else if (enumActionMainHand == EnumAction.BOW)
+                {
+                    armPoseMainHand = ModelBiped.ArmPose.BOW_AND_ARROW;
                 }
             }
         }
 
-        if (!itemstack1.isEmpty()) {
-            modelbiped$armpose1 = ModelBiped.ArmPose.ITEM;
-            if (citizen.getItemInUseCount() > 0) {
-                enumaction1 = itemstack1.getItemUseAction();
-                if (enumaction1 == EnumAction.BLOCK) {
-                    modelbiped$armpose1 = ModelBiped.ArmPose.BLOCK;
-                } else if (enumaction1 == EnumAction.BOW) {
-                    modelbiped$armpose1 = ModelBiped.ArmPose.BOW_AND_ARROW;
+        final EnumAction enumActionOffHand;
+        if (!offHandStack.isEmpty())
+        {
+            armPoseOffHand = ModelBiped.ArmPose.ITEM;
+            if (citizen.getItemInUseCount() > 0)
+            {
+                enumActionOffHand = offHandStack.getItemUseAction();
+                if (enumActionOffHand == EnumAction.BLOCK)
+                {
+                    armPoseOffHand = ModelBiped.ArmPose.BLOCK;
+                }
+                else if (enumActionOffHand == EnumAction.BOW)
+                {
+                    armPoseOffHand = ModelBiped.ArmPose.BOW_AND_ARROW;
                 }
             }
         }
 
-        if (citizen.getPrimaryHand() == EnumHandSide.RIGHT) {
-            citizenModel.rightArmPose = modelbiped$armpose;
-            citizenModel.leftArmPose = modelbiped$armpose1;
-        } else {
-            citizenModel.rightArmPose = modelbiped$armpose1;
-            citizenModel.leftArmPose = modelbiped$armpose;
+        if (citizen.getPrimaryHand() == EnumHandSide.RIGHT)
+        {
+            citizenModel.rightArmPose = armPoseMainHand;
+            citizenModel.leftArmPose = armPoseOffHand;
+        }
+        else
+        {
+            citizenModel.rightArmPose = armPoseOffHand;
+            citizenModel.leftArmPose = armPoseMainHand;
         }
 
         super.doRender(citizen, d, d1, d2, f, f1);

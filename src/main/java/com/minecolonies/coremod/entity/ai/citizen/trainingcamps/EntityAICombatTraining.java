@@ -50,7 +50,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     /**
      * Chance for a guard to do partner training.
      */
-    private static final int PARTNER_TRAINING_CHANCE = 10;
+    private static final int PARTNER_TRAINING_CHANCE = 25;
 
     /**
      * Trainings delay between hit an defend.
@@ -108,6 +108,17 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             return FIND_TRAINING_PARTNER;
         }
         return FIND_DUMMY_PARTNER;
+    }
+
+    @Override
+    public AIState decide()
+    {
+        if (getOwnBuilding(BuildingCombatAcademy.class).hasCombatPartner(worker))
+        {
+            setDelay(STANDARD_DELAY);
+            return KNIGHT_TRAIN_WITH_PARTNER;
+        }
+        return super.decide();
     }
 
     /**
@@ -208,6 +219,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
             if (targetCounter > getOwnBuilding().getBuildingLevel() * ACTIONS_PER_BUILDING_LEVEL)
             {
+                getOwnBuilding(BuildingCombatAcademy.class).resetPartner(worker);
                 targetCounter = 0;
                 return START_WORKING;
             }
@@ -222,7 +234,6 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             return KNIGHT_ATTACK_PROTECT;
         }
 
-        worker.resetActiveHand();
         setDelay(TRAININGS_DELAY);
         return KNIGHT_ATTACK_PROTECT;
     }
@@ -237,6 +248,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
         final BuildingCombatAcademy academy = getOwnBuilding();
         if (targetCounter >= academy.getBuildingLevel() * ACTIONS_PER_BUILDING_LEVEL)
         {
+            worker.resetActiveHand();
             targetCounter = 0;
             return DECIDE;
         }
@@ -244,6 +256,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
         final BlockPos targetPos = academy.getRandomCombatTarget(worker.getRandom());
         if (targetPos == null)
         {
+            worker.resetActiveHand();
             return DECIDE;
         }
 
@@ -299,7 +312,6 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             return KNIGHT_ATTACK_DUMMY;
         }
 
-        worker.resetActiveHand();
         setDelay(TRAININGS_DELAY);
         return FIND_DUMMY_PARTNER;
     }

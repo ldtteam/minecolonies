@@ -72,7 +72,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
      *
      * @return the next state to go to.
      */
-    private AIState decide()
+    public AIState decide()
     {
         if (!isSetup())
         {
