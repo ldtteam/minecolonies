@@ -291,7 +291,6 @@ public class ModelEntityCrafterFemale extends ModelBiped
         this.bipedRightArm.addChild(frontBeam);
         this.bipedRightArm.addChild(SideBeam);
 
-
         this.bipedBody.addChild(skirtBa);
         this.bipedBody.addChild(skirtF);
         this.bipedBody.addChild(skirtR);
@@ -321,9 +320,6 @@ public class ModelEntityCrafterFemale extends ModelBiped
         this.bipedHead.addChild(HairBack12);
         this.bipedHead.addChild(HairBack13);
         this.bipedHead.addChild(HairBack14);
-
-
-
     }
 
     @Override
