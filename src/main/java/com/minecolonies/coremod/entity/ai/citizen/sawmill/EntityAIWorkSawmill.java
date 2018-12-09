@@ -6,11 +6,11 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobSawmill;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingProductionResolver;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -208,7 +208,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
 
         if (maxCraftingCount == 0)
         {
-            craftCounter = AbstractCraftingProductionResolver.calculateMaxCraftingCount(job.getCurrentTask().getRequest().getStack(), currentRecipeStorage);
+            craftCounter = CraftingUtils.calculateMaxCraftingCount(job.getCurrentTask().getRequest().getStack(), currentRecipeStorage);
         }
 
         if (craftCounter == 0)

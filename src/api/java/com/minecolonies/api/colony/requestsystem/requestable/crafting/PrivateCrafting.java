@@ -12,10 +12,11 @@ public class PrivateCrafting extends AbstractCrafting
      * Create a Stack deliverable.
      *
      * @param stack the required stack.
+     * @param count
      */
-    public PrivateCrafting(@NotNull final ItemStack stack)
+    public PrivateCrafting(@NotNull final ItemStack stack, final int count)
     {
-        super(stack);
+        super(stack, count);
     }
 
     /**
@@ -29,6 +30,7 @@ public class PrivateCrafting extends AbstractCrafting
     {
         final NBTTagCompound compound = new NBTTagCompound();
         compound.setTag(NBT_STACK, input.getStack().serializeNBT());
+        compound.setInteger(NBT_COUNT, input.getCount());
 
         return compound;
     }
@@ -43,7 +45,8 @@ public class PrivateCrafting extends AbstractCrafting
     public static PrivateCrafting deserialize(final IFactoryController controller, final NBTTagCompound compound)
     {
         final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_STACK));
+        final int count = compound.getInteger(NBT_COUNT);
 
-        return new PrivateCrafting(stack);
+        return new PrivateCrafting(stack, count);
     }
 }

@@ -163,11 +163,11 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     public List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
-        return attemptResolveForBuildingAndStack(manager, buildingWorker, itemStack -> request.getRequest().matches(itemStack));
+        return attemptResolveForBuildingAndStack(manager, buildingWorker, itemStack -> request.getRequest().matches(itemStack), request.getRequest().getCount());
     }
 
     @Nullable
-    protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, final Predicate<ItemStack> stackPrecicate)
+    protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, final Predicate<ItemStack> stackPrecicate, int count)
     {
         final IRecipeStorage fullfillableCrafting = building.getFirstFullFillableRecipe(stackPrecicate);
         if (fullfillableCrafting != null)
@@ -181,24 +181,19 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
             return null;
         }
 
-        return createRequestsForRecipe(manager, craftableCrafting.getPrimaryOutput());
+        return createRequestsForRecipe(manager, craftableCrafting.getPrimaryOutput(), count);
     }
 
     @Nullable
     protected List<IToken<?>> createRequestsForRecipe(
             @NotNull final IRequestManager manager,
-            final ItemStack requestStack)
+            final ItemStack requestStack,
+            int count)
     {
-        return ImmutableList.of(manager.createRequest(this, createNewRequestableForStack(requestStack)));
+        return ImmutableList.of(manager.createRequest(this, createNewRequestableForStack(requestStack, count)));
     }
 
-    protected abstract IRequestable createNewRequestableForStack(ItemStack stack);
-
-    @Nullable
-    protected IToken<?> createNewRequestForStack(@NotNull final IRequestManager manager, final ItemStack stack)
-    {
-        return manager.createRequest(this, new Stack(stack.copy()));
-    }
+    protected abstract IRequestable createNewRequestableForStack(ItemStack stack, final int count);
 
     @Override
     public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)

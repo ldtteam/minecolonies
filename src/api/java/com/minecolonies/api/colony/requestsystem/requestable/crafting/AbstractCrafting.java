@@ -1,29 +1,35 @@
 package com.minecolonies.api.colony.requestsystem.requestable.crafting;
 
-import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public abstract class AbstractCrafting implements IRequestable
 {
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     protected static final String NBT_STACK       = "Stack";
+    protected static final String NBT_COUNT       = "Count";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     @NotNull
     private final ItemStack theStack;
 
+    @NotNull
+    private final int count;
+
     /**
      * Create a Stack deliverable.
      * @param stack the required stack.
+     * @param count
      */
-    public AbstractCrafting(@NotNull final ItemStack stack)
+    public AbstractCrafting(@NotNull final ItemStack stack, final int count)
     {
         this.theStack = stack.copy();
+        this.count = count;
 
         if (ItemStackUtils.isEmpty(stack))
         {
@@ -32,38 +38,16 @@ public abstract class AbstractCrafting implements IRequestable
 
         this.theStack.setCount(Math.min(this.theStack.getCount(), this.theStack.getMaxStackSize()));
     }
-/*
-    *//**
-     * Serialize the deliverable.
-     * @param controller the controller.
-     * @param input the input.
-     * @return the compound.
-     *//*
-    public static NBTTagCompound serialize(final IFactoryController controller, final AbstractCrafting input)
-    {
-        final NBTTagCompound compound = new NBTTagCompound();
-        compound.setTag(NBT_STACK, input.theStack.serializeNBT());
-
-        return compound;
-    }
-
-    *//**
-     * Deserialize the deliverable.
-     * @param controller the controller.
-     * @param compound the compound.
-     * @return the deliverable.
-     *//*
-    public static AbstractCrafting deserialize(final IFactoryController controller, final NBTTagCompound compound)
-    {
-        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_STACK));
-
-        return new AbstractCrafting(stack);
-    }*/
 
     @NotNull
     public ItemStack getStack()
     {
         return theStack;
+    }
+
+    public int getCount()
+    {
+        return count;
     }
 
     @Override
@@ -77,15 +61,14 @@ public abstract class AbstractCrafting implements IRequestable
         {
             return false;
         }
-
-        final AbstractCrafting stack1 = (AbstractCrafting) o;
-
-        return ItemStackUtils.compareItemStacksIgnoreStackSize(getStack(), stack1.getStack());
+        final AbstractCrafting that = (AbstractCrafting) o;
+        return getCount() == that.getCount() &&
+                 theStack.equals(that.theStack);
     }
 
     @Override
     public int hashCode()
     {
-        return getStack().hashCode();
+        return Objects.hash(theStack, getCount());
     }
 }

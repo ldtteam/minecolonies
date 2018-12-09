@@ -11,7 +11,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCr
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
@@ -26,8 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static com.minecolonies.api.util.constant.Constants.MAX_CRAFTING_CYCLE_DEPTH;
 
 /**
  * Abstract crafting resolver for all crafting tasks.
@@ -91,11 +89,11 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     public List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, @NotNull final AbstractBuilding building)
     {
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
-        return attemptResolveForBuildingAndStack(manager, buildingWorker, request.getRequest().getStack());
+        return attemptResolveForBuildingAndStack(manager, buildingWorker, request.getRequest().getStack(), request.getRequest().getCount());
     }
 
     @Nullable
-    protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, final ItemStack stack)
+    protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, final ItemStack stack, final int count)
     {
         if (!canBuildingCraftStack(manager, building, stack))
             return null;
@@ -112,7 +110,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
             return null;
         }
 
-        return createRequestsForRecipe(manager, building, stack, craftableCrafting);
+        return createRequestsForRecipe(manager, building, stack, count, craftableCrafting);
     }
 
     protected boolean canBuildingCraftStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, @NotNull final ItemStack stack)
@@ -120,42 +118,15 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
         return true;
     }
 
-    /**
-     * Calculate the max time a recipe has to be executed.
-     * @param outputStack the output stack.
-     * @param storage the storage.
-     * @return the quantity.
-     */
-    public static int calculateMaxCraftingCount(@NotNull final ItemStack outputStack, @NotNull final IRecipeStorage storage)
-    {
-        //Calculate the initial crafting count from the request and the storage output.
-        int craftingCount = (int)Math.ceil(Math.max(ItemStackUtils.getSize(outputStack), ItemStackUtils.getSize(storage.getPrimaryOutput())) / (double)ItemStackUtils.getSize(storage.getPrimaryOutput()));
-
-        //Now check if we excede an ingredients max stack size.
-        for(final ItemStorage ingredientStorage : storage.getCleanedInput())
-        {
-            final ItemStack ingredient = ingredientStorage.getItemStack();
-            //Calculate the input count for the ingredient.
-            final int ingredientInputCount = ItemStackUtils.getSize(ingredient) * craftingCount;
-            //Check if we are above the max stacksize.
-            if (ingredientInputCount > ingredient.getMaxStackSize())
-            {
-                //Recalculate the crafting limit using the maxstacksize of the ingredient.
-                craftingCount = Math.max(ingredient.getMaxStackSize(), ItemStackUtils.getSize(storage.getPrimaryOutput())) / ItemStackUtils.getSize(storage.getPrimaryOutput());
-            }
-        }
-
-        return craftingCount;
-    }
-
     @Nullable
     protected List<IToken<?>> createRequestsForRecipe(
             @NotNull final IRequestManager manager,
             @NotNull final AbstractBuildingWorker building,
             final ItemStack requestStack,
+            final int count,
             @NotNull final IRecipeStorage storage)
     {
-        final int craftingCount = calculateMaxCraftingCount(requestStack, storage);
+        final int craftingCount = CraftingUtils.calculateMaxCraftingCount(count, storage);
         return storage.getCleanedInput().stream()
                  .filter(s -> !ItemStackUtils.isEmpty(s.getItemStack()))
                  .filter(s -> InventoryUtils.getItemCountInItemHandler(new InvWrapper(building.getMainCitizen().getInventory()),
@@ -198,7 +169,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
             return;
         }
 
-        final int craftingCount = calculateMaxCraftingCount(request.getRequest().getStack(), storage);
+        final int craftingCount = CraftingUtils.calculateMaxCraftingCount(request.getRequest().getStack(), storage);
         for (int i = 0; i < craftingCount; i++)
         {
             buildingWorker.fullFillRecipe(storage);
