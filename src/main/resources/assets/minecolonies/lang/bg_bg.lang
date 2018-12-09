@@ -522,7 +522,7 @@ item.supplyChestDeployer.missing=Are you trying to trick me, pick up that Supply
 com.minecolonies.coremod.citizen.rename.same=Renaming failed: 2 Citizen are not allowed to have the same name!
 com.minecolonies.coremod.citizen.rename.notAllowed=Renaming failed: You're not allowed to rename your Citizen.
 
-tile.minecolonies.blockshingle_oak.name=Oak Shingle
+tile.minecolonies.blockshingle_oak.name=Дъбова Kеремида
 tile.minecolonies.blockshingle_birch.name=Birch Shingle
 tile.minecolonies.blockshingle_spruce.name=Spruce Shingle
 tile.minecolonies.blockshingle_jungle.name=Jungle Shingle
