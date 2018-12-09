@@ -152,7 +152,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
      */
     private AIState trainWithPartner()
     {
-        setDelay(worker.getRandom().nextInt(STANDARD_DELAY * STANDARD_DELAY));
+        setDelay(STANDARD_DELAY);
         if (trainingPartner == null)
         {
             return COMBAT_TRAINING;
