@@ -3,44 +3,42 @@ package com.minecolonies.coremod.client.model;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class ModelEntityCrafterFemale extends ModelBiped
 {
-    //fields
-    ModelRenderer core;
-    ModelRenderer frontBeam;
-    ModelRenderer SideBeam;
-    ModelRenderer skirtBa;
-    ModelRenderer skirtF;
-    ModelRenderer skirtR;
-    ModelRenderer skirtBo1;
-    ModelRenderer skirtT1;
-    ModelRenderer skirtL;
-    ModelRenderer skirtBo2;
-    ModelRenderer chest;
-    ModelRenderer HairBack1;
-    ModelRenderer HairBack3;
-    ModelRenderer HairBack2;
-    ModelRenderer HairBack6;
-    ModelRenderer HairBack5;
-    ModelRenderer HairBack4;
-    ModelRenderer HairBack7;
-    ModelRenderer HairBack8;
-    ModelRenderer HairBack9;
-    ModelRenderer HairBack10;
-    ModelRenderer HairBack11;
-    ModelRenderer HairBack12;
-    ModelRenderer HairBack13;
-    ModelRenderer HairBack14;
-    ModelRenderer lens2;
-    ModelRenderer strap;
-    ModelRenderer lens1;
-    ModelRenderer back;
-
     public ModelEntityCrafterFemale()
     {
+        ModelRenderer core;
+        ModelRenderer frontBeam;
+        ModelRenderer SideBeam;
+        ModelRenderer skirtBa;
+        ModelRenderer skirtF;
+        ModelRenderer skirtR;
+        ModelRenderer skirtBo1;
+        ModelRenderer skirtT1;
+        ModelRenderer skirtL;
+        ModelRenderer skirtBo2;
+        ModelRenderer chest;
+        ModelRenderer HairBack1;
+        ModelRenderer HairBack3;
+        ModelRenderer HairBack2;
+        ModelRenderer HairBack6;
+        ModelRenderer HairBack5;
+        ModelRenderer HairBack4;
+        ModelRenderer HairBack7;
+        ModelRenderer HairBack8;
+        ModelRenderer HairBack9;
+        ModelRenderer HairBack10;
+        ModelRenderer HairBack11;
+        ModelRenderer HairBack12;
+        ModelRenderer HairBack13;
+        ModelRenderer HairBack14;
+        ModelRenderer lens2;
+        ModelRenderer strap;
+        ModelRenderer lens1;
+        ModelRenderer back;
+
         textureWidth = 256;
         textureHeight = 128;
 
@@ -52,21 +50,21 @@ public class ModelEntityCrafterFemale extends ModelBiped
         setRotation(bipedHead, 0F, 0F, 0F);
 
         core = new ModelRenderer(this, 38, 93);
-        core.addBox(-2F, 8.6F, -2F, 2, 2, 2);
+        core.addBox(3F, 8.6F, -2F, 2, 2, 2);
         core.setRotationPoint(-4.6F, 2F, 0F);
         core.setTextureSize(256, 128);
         core.mirror = true;
         setRotation(core, 0F, 0.7853982F, 0F);
 
         frontBeam = new ModelRenderer(this, 25, 78);
-        frontBeam.addBox(-1.5F, -2.49F, -2.5F, 1, 13, 5);
+        frontBeam.addBox(3.5F, -4.5F, -2.5F, 1, 13, 5);
         frontBeam.setRotationPoint(-5F, 2F, 0F);
         frontBeam.setTextureSize(256, 128);
         frontBeam.mirror = true;
         setRotation(frontBeam, 0F, 0F, 0F);
 
         SideBeam = new ModelRenderer(this, 38, 78);
-        SideBeam.addBox(-3.5F, -2.5F, -0.5F, 5, 13, 1);
+        SideBeam.addBox(1.5F, -4.5F, -0.5F, 5, 13, 1);
         SideBeam.setRotationPoint(-5F, 2F, 0F);
         SideBeam.setTextureSize(256, 128);
         SideBeam.mirror = true;
@@ -288,55 +286,58 @@ public class ModelEntityCrafterFemale extends ModelBiped
         back.setTextureSize(256, 128);
         back.mirror = true;
         setRotation(back, 0F, 0F, 0F);
+
+        this.bipedRightArm.addChild(core);
+        this.bipedRightArm.addChild(frontBeam);
+        this.bipedRightArm.addChild(SideBeam);
+
+
+        this.bipedBody.addChild(skirtBa);
+        this.bipedBody.addChild(skirtF);
+        this.bipedBody.addChild(skirtR);
+        this.bipedBody.addChild(skirtBo1);
+        this.bipedBody.addChild(skirtT1);
+        this.bipedBody.addChild(skirtL);
+        this.bipedBody.addChild(skirtBo2);
+
+        this.bipedBody.addChild(chest);
+
+        this.bipedHead.addChild(strap);
+        this.bipedHead.addChild(back);
+
+        this.bipedHead.addChild(lens1);
+        this.bipedHead.addChild(lens2);
+        this.bipedHead.addChild(HairBack1);
+        this.bipedHead.addChild(HairBack2);
+        this.bipedHead.addChild(HairBack3);
+        this.bipedHead.addChild(HairBack4);
+        this.bipedHead.addChild(HairBack5);
+        this.bipedHead.addChild(HairBack6);
+        this.bipedHead.addChild(HairBack7);
+        this.bipedHead.addChild(HairBack8);
+        this.bipedHead.addChild(HairBack9);
+        this.bipedHead.addChild(HairBack10);
+        this.bipedHead.addChild(HairBack11);
+        this.bipedHead.addChild(HairBack12);
+        this.bipedHead.addChild(HairBack13);
+        this.bipedHead.addChild(HairBack14);
+
+
+
     }
 
     @Override
     public void render(
-            final Entity entity,
-            final float limbSwing,
-            final float limbSwingAmount,
-            final float ageInTicks,
-            final float netHeadYaw,
-            final float headPitch,
-            final float scaleFactor)
+      @NotNull final Entity entity,
+      final float limbSwing,
+      final float limbSwingAmount,
+      final float ageInTicks,
+      final float netHeadYaw,
+      final float headPitch,
+      final float scaleFactor)
     {
         super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
         setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
-        core.render(scaleFactor);
-        frontBeam.render(scaleFactor);
-        SideBeam.render(scaleFactor);
-        skirtBa.render(scaleFactor);
-        skirtF.render(scaleFactor);
-        skirtR.render(scaleFactor);
-        skirtBo1.render(scaleFactor);
-        skirtT1.render(scaleFactor);
-        skirtL.render(scaleFactor);
-        skirtBo2.render(scaleFactor);
-        bipedHead.render(scaleFactor);
-        chest.render(scaleFactor);
-        bipedHead.render(scaleFactor);
-        bipedRightLeg.render(scaleFactor);
-        bipedBody.render(scaleFactor);
-        bipedLeftLeg.render(scaleFactor);
-        bipedRightArm.render(scaleFactor);
-        HairBack1.render(scaleFactor);
-        HairBack3.render(scaleFactor);
-        HairBack2.render(scaleFactor);
-        HairBack6.render(scaleFactor);
-        HairBack5.render(scaleFactor);
-        HairBack4.render(scaleFactor);
-        HairBack7.render(scaleFactor);
-        HairBack8.render(scaleFactor);
-        HairBack9.render(scaleFactor);
-        HairBack10.render(scaleFactor);
-        HairBack11.render(scaleFactor);
-        HairBack12.render(scaleFactor);
-        HairBack13.render(scaleFactor);
-        HairBack14.render(scaleFactor);
-        lens2.render(scaleFactor);
-        strap.render(scaleFactor);
-        lens1.render(scaleFactor);
-        back.render(scaleFactor);
     }
 
     private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
@@ -345,73 +346,4 @@ public class ModelEntityCrafterFemale extends ModelBiped
         model.rotateAngleY = y;
         model.rotateAngleZ = z;
     }
-
-    @Override
-    public void setRotationAngles(
-            final float limbSwing,
-            final float limbSwingAmount,
-            final float ageInTicks,
-            final float netHeadYaw,
-            final float headPitch,
-            final float scaleFactor,
-            final Entity entityIn)
-    {
-        bipedHead.rotateAngleY = netHeadYaw / 57.29578F;
-        bipedHead.rotateAngleX = headPitch / 57.29578F;
-        bipedHeadwear.rotateAngleY = bipedHead.rotateAngleY;
-        bipedHeadwear.rotateAngleX = bipedHead.rotateAngleX;
-
-        HairBack1.rotateAngleY = bipedHead.rotateAngleY;
-        HairBack1.rotateAngleX = bipedHead.rotateAngleX;
-        HairBack2.rotateAngleY = bipedHead.rotateAngleY;
-        HairBack2.rotateAngleX = bipedHead.rotateAngleX;
-        HairBack3.rotateAngleY = bipedHead.rotateAngleY;
-        HairBack3.rotateAngleX = bipedHead.rotateAngleX;
-        HairBack4.rotateAngleY = bipedHead.rotateAngleY;
-        HairBack4.rotateAngleX = bipedHead.rotateAngleX;
-        HairBack5.rotateAngleY = bipedHead.rotateAngleY;
-        HairBack5.rotateAngleX = bipedHead.rotateAngleX;
-        HairBack6.rotateAngleY = bipedHead.rotateAngleY;
-        HairBack6.rotateAngleX = bipedHead.rotateAngleX;
-        HairBack7.rotateAngleY = bipedHead.rotateAngleY;
-        HairBack7.rotateAngleX = bipedHead.rotateAngleX;
-        HairBack8.rotateAngleY = bipedHead.rotateAngleY;
-        HairBack8.rotateAngleX = bipedHead.rotateAngleX;
-        HairBack9.rotateAngleY = bipedHead.rotateAngleY;
-        HairBack9.rotateAngleX = bipedHead.rotateAngleX;
-        HairBack10.rotateAngleY = bipedHead.rotateAngleY;
-        HairBack10.rotateAngleX = bipedHead.rotateAngleX;
-        HairBack11.rotateAngleY = bipedHead.rotateAngleY;
-        HairBack11.rotateAngleX = bipedHead.rotateAngleX;
-        HairBack12.rotateAngleY = bipedHead.rotateAngleY;
-        HairBack12.rotateAngleX = bipedHead.rotateAngleX;
-        HairBack13.rotateAngleY = bipedHead.rotateAngleY;
-        HairBack13.rotateAngleX = bipedHead.rotateAngleX;
-        HairBack14.rotateAngleY = bipedHead.rotateAngleY;
-        HairBack14.rotateAngleX = bipedHead.rotateAngleX;
-        lens1.rotateAngleX = bipedHead.rotateAngleX;
-        lens1.rotateAngleY = bipedHead.rotateAngleY;
-        lens2.rotateAngleX = bipedHead.rotateAngleX;
-        lens2.rotateAngleY = bipedHead.rotateAngleY;
-        strap.rotateAngleY = bipedHead.rotateAngleY;
-        strap.rotateAngleX = bipedHead.rotateAngleX;
-        back.rotateAngleX = bipedHead.rotateAngleX;
-        back.rotateAngleY = bipedHead.rotateAngleY;
-
-
-
-
-        frontBeam.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
-        core.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
-        bipedRightArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 2.0F * limbSwingAmount * 0.5F;
-        bipedLeftArm.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount * 0.5F;
-        bipedRightLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 0.73F * limbSwingAmount;
-        bipedLeftLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 0.73F * limbSwingAmount;
-
-        frontBeam.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
-        core.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
-        bipedRightArm.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
-        bipedLeftArm.rotateAngleX -= MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
-    }
-
 }

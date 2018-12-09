@@ -15,6 +15,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
@@ -226,6 +227,8 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
         }
 
         progress++;
+
+        worker.setHeldItem(EnumHand.MAIN_HAND, currentRecipeStorage.getInput().get(worker.getRandom().nextInt(currentRecipeStorage.getInput().size())).copy());
         worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getLocation());
         setDelay(HIT_DELAY);
         if (progress >= 10) //TODO set up afterwards again!
@@ -245,6 +248,8 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
                     craftCounter = 0;
                     currentRecipeStorage = null;
                     currentRequest = job.getCurrentTask();
+                    worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+
                     return START_WORKING;
                 }
             }
