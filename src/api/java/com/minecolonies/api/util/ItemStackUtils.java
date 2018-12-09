@@ -373,6 +373,10 @@ public final class ItemStackUtils
         {
             isATool = itemStack.getItem() instanceof ItemArmor;
         }
+        else if (ToolType.SHIELD.equals(toolType))
+        {
+            isATool = itemStack.getItem() instanceof ItemShield;
+        }
         return isATool;
     }
 

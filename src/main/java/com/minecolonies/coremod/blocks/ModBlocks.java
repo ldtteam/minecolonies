@@ -48,6 +48,7 @@ public final class ModBlocks
     public static        BlockHutComposter              blockHutComposter;
     public static        BlockHutLibrary                blockHutLibrary;
     public static        BlockHutArchery                blockHutArchery;
+    public static        BlockHutCombatAcademy          blockHutCombatAcademy;
     public static BlockHutSawmill             blockHutSawmill;
 
     /**
@@ -137,6 +138,7 @@ public final class ModBlocks
         blockHutComposter.registerItemBlock(registry);
         blockHutLibrary.registerItemBlock(registry);
         blockHutArchery.registerItemBlock(registry);
+        blockHutCombatAcademy.registerItemBlock(registry);
         blockHutSawmill.registerItemBlock(registry);
 
         blockConstructionTape.registerItemBlock(registry);

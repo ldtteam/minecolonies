@@ -255,6 +255,13 @@ public class Tree
 
             for (final ItemStack stack : list)
             {
+
+                // Skip bad stacks from drops calc
+                if (stack.isEmpty())
+                {
+                    continue;
+                }
+
                 final int[] oreIds = OreDictionary.getOreIDs(stack);
                 for (final int oreId : oreIds)
                 {

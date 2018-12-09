@@ -39,6 +39,7 @@ public class JobRegistry
     private static final String MAPPING_COMPOSTER      = "Composter";
     private static final String MAPPING_STUDENT        = "Student";
     private static final String MAPPING_ARCHER         = "ArcherTraining";
+    private static final String MAPPING_COMBAT         = "CombatTraining";
     private static final String MAPPING_SAWMILL        = "Sawmill";
 
     /**
@@ -69,6 +70,7 @@ public class JobRegistry
         addMapping(MAPPING_COMPOSTER, JobComposter.class);
         addMapping(MAPPING_STUDENT, JobStudent.class);
         addMapping(MAPPING_ARCHER, JobArcherTraining.class);
+        addMapping(MAPPING_COMBAT, JobCombatTraining.class);
         addMapping(MAPPING_SAWMILL, JobSawmill.class);
     }
 
