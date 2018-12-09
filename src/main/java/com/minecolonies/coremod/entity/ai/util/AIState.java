@@ -494,7 +494,7 @@ public enum AIState
     /**
      * Attack protect in a certain direction.
      */
-    KNIGHT_ATTACK_PROTECT
+    KNIGHT_ATTACK_PROTECT,
 
         /*
 ### Crafter Workers ###
