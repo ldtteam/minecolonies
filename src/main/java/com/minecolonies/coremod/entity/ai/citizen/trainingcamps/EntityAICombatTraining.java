@@ -198,7 +198,6 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
                 final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventory()),
                   Items.SHIELD,
                   -1);
-                Log.getLogger().warn("shield");
                 if (shieldSlot != -1)
                 {
                     worker.playSound(SoundEvents.ITEM_SHIELD_BLOCK, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
