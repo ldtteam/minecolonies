@@ -481,7 +481,7 @@ com.minecolonies.coremod.status.mining=Добиване
 
 item.minecolonies.scepterPermission.name=PermissionScepter
 
-com.minecolonies.coremod.request.delivery=Delivery of:
+com.minecolonies.coremod.request.delivery=Доставка на:
 com.minecolonies.coremod.request.food=Храна
 com.minecolonies.coremod.request.burnable=Гориво
 com.minecolonies.coremod.request.tool.pretype=Tool of class:
@@ -511,7 +511,7 @@ item.minecolonies.clipboard.name=Клипборд
 com.minecolonies.coremod.item.clipboard.needColony=Please shift-right click the colony to register your clipboard to it.
 com.minecolonies.coremod.item.clipboard.registered=Registered to colony %d.
 achievement.upgrade.guard.first=Убиецът
-achievement.upgrade.guard.last=Cleanup crew
+achievement.upgrade.guard.last=Почистващ екипаж
 com.minecolonies.requestsystem.playerresolver=%s is in need of %s at %s.
 com.minecolonies.coremod.buildings.warehouse.name=Склад
 tile.minecolonies.blockPaperwall.name=Хартиена стена
@@ -530,7 +530,7 @@ tile.minecolonies.blockshingle_dark_oak.name=Dark Oak Shingle
 tile.minecolonies.blockshingle_acacia.name=Acacia Shingle
 
 com.minecolonies.coremod.gui.recipe.remove=Премахни
-com.minecolonies.coremod.gui.workerHuts.crafting=Teach recipe
+com.minecolonies.coremod.gui.workerHuts.crafting=Научи рецепта
 com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
 com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
 com.minecolonies.coremod.resolvers.crafter=Crafting Resolver
