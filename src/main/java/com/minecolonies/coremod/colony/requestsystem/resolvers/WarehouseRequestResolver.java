@@ -102,7 +102,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
             matchingStack.setCount(Math.min(request.getRequest().getCount(), matchingStack.getCount()));
 
             final ItemStack deliveryStack = matchingStack.copy();
-            request.setDelivery(deliveryStack.copy());
+            request.addDelivery(deliveryStack.copy());
 
             final BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> ItemStack.areItemsEqual(itemStack, deliveryStack));
             final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().provider.getDimension());
@@ -125,7 +125,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     @Nullable
     @Override
-    public IRequest<?> getFollowupRequestForCompletion(
+    public List<IRequest<?>> getFollowupRequestForCompletion(
                                                      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
     {
         //No followup needed.

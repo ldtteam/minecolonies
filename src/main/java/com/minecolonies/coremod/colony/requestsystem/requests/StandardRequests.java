@@ -134,21 +134,13 @@ public final class StandardRequests
             super(requester, token, state, requested);
         }
 
-        /**
-         * Method to get the ItemStack used for the getDelivery.
-         *
-         * @return The ItemStack that the Deliveryman transports around. ItemStack.Empty means no delivery possible.
-         */
-        @Nullable
+        @NotNull
         @Override
-        public ItemStack getDelivery()
+        public ImmutableList<ItemStack> getDeliveries()
         {
-            if (getResult() != null && !ItemStackUtils.isEmpty(getResult().getStack()))
-            {
-                return getResult().getStack();
-            }
-
-            return ItemStackUtils.EMPTY;
+            //This request type has no deliverable.
+            //It is the delivery.
+            return ImmutableList.of();
         }
 
         @NotNull

@@ -86,7 +86,7 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      * @return The followup request for the completed request. Null if none is needed.
      */
     @Nullable
-    IRequest<?> getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> completedRequest);
+    List<IRequest<?>> getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> completedRequest);
 
     /**
      * Method used to indicate to this resolver that a parent of a request assigned to him has been cancelled,

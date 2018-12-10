@@ -34,6 +34,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -536,7 +537,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             @SuppressWarnings(RAWTYPES) final ImmutableList<IRequest> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
 
             completedRequests.stream().filter(r -> !(r.canBeDelivered())).forEach(r -> getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), r.getToken()));
-            @SuppressWarnings(RAWTYPES) final IRequest firstDeliverableRequest = completedRequests.stream().filter(IRequest::canBeDelivered).findFirst().orElse(null);
+            final IRequest<?> firstDeliverableRequest = completedRequests.stream().filter(IRequest::canBeDelivered).findFirst().orElse(null);
 
             if (firstDeliverableRequest != null)
             {
@@ -548,25 +549,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 }
 
                 getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getToken());
+                final List<IItemHandler> validHandlers = Lists.newArrayList();
+                validHandlers.add(new InvWrapper(worker.getInventoryCitizen()));
+                validHandlers.addAll(InventoryUtils.getItemHandlersFromProvider(getOwnBuilding()));
 
-                final ItemStack deliveredItemStack = firstDeliverableRequest.getDelivery();
-                final int count = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
-                  stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(deliveredItemStack, stack, true, true));
-                if (count >= deliveredItemStack.getCount())
+                //Check if we either have the requested Items in our inventory or if they are in the building.
+                if (InventoryUtils.areAllItemsInItemHandlerList(firstDeliverableRequest.getDeliveries(), validHandlers))
                 {
-                    return NEEDS_ITEM;
-                }
-
-                //Takes one Stack from the hut if existent
-                if (InventoryUtils.getItemCountInProvider(getOwnBuilding(),
-                  stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(deliveredItemStack, stack, true, true)) >= deliveredItemStack.getCount() &&
-                      InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
-                        getOwnBuilding(),
-                        stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(deliveredItemStack, stack, true, true),
-                        deliveredItemStack.getCount(),
-                        new InvWrapper(worker.getInventoryCitizen())))
-                {
-
                     return NEEDS_ITEM;
                 }
                 else

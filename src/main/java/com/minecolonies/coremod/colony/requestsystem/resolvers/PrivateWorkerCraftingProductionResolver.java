@@ -9,6 +9,8 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraf
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class PrivateWorkerCraftingProductionResolver extends AbstractCraftingProductionResolver<PrivateCrafting>
 {
     /**
@@ -26,7 +28,7 @@ public class PrivateWorkerCraftingProductionResolver extends AbstractCraftingPro
 
     @Nullable
     @Override
-    public IRequest<?> getFollowupRequestForCompletion(
+    public List<IRequest<?>> getFollowupRequestForCompletion(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends PrivateCrafting> completedRequest)
     {
         return null;

@@ -1,5 +1,8 @@
 package com.minecolonies.api.util;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
@@ -2149,5 +2152,92 @@ public class InventoryUtils
             entityitem.motionZ = random.nextGaussian() * MOTION_MULTIPLIER;
             worldIn.spawnEntity(entityitem);
         }
+    }
+
+    public static int getItemCountInStackLick(@NotNull final List<ItemStack> stacks, Predicate<ItemStack> stackPredicate)
+    {
+        return stacks.stream().filter(ItemStackUtils::isNotEmpty).filter(stackPredicate).mapToInt(ItemStackUtils::getSize).sum();
+    }
+
+    public static boolean areAllItemsInItemHandler(@NotNull final List<ItemStack> stacks, @NotNull final IItemHandler handler)
+    {
+        return areAllItemsInItemHandlerList(stacks, ImmutableList.of(handler));
+    }
+
+    public static boolean areAllItemsInProvider(@NotNull final List<ItemStack> stacks, @NotNull final ICapabilityProvider provider)
+    {
+        return areAllItemsInItemHandlerList(stacks, getItemHandlersFromProvider(provider));
+    }
+
+    public static boolean areAllItemsInItemHandlerList(@NotNull final List<ItemStack> stacks, @NotNull final Collection<IItemHandler> handlers)
+    {
+        if (stacks.isEmpty())
+        {
+            return true;
+        }
+
+        if (handlers.isEmpty())
+        {
+            return false;
+        }
+
+        final Map<ItemStack, Integer> requiredCountForStacks = getMergedCountedStacksFromList(stacks);
+
+        return requiredCountForStacks.keySet().stream().allMatch(itemStack -> {
+            final int countInHandlerList = handlers.stream().mapToInt(handler -> getItemCountInItemHandler(handler, itemStack1 -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, itemStack1))).sum();
+            return countInHandlerList >= requiredCountForStacks.get(itemStack);
+        });
+    }
+
+    public static Map<ItemStack, Integer> getMergedCountedStacksFromList(@NotNull final List<ItemStack> stacks)
+    {
+        final Map<ItemStack, Integer> requiredCountForStacks = Maps.newHashMap();
+        stacks.forEach(targetStack -> {
+            final Optional<ItemStack>
+              alreadyContained = requiredCountForStacks.keySet().stream().filter(itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack)).findFirst();
+
+            if (alreadyContained.isPresent())
+            {
+                requiredCountForStacks.put(alreadyContained.get(), requiredCountForStacks.get(alreadyContained.get()) + targetStack.getCount());
+            }
+            else
+            {
+                requiredCountForStacks.put(targetStack, targetStack.getCount());
+            }
+        });
+
+        return requiredCountForStacks;
+    }
+
+    public static List<ItemStack> splitMergedCountedStacksIntoMaxContentStacks(@NotNull final Map<ItemStack, Integer> mergedCountedStacks)
+    {
+        final List<ItemStack> list = Lists.newArrayList();
+        mergedCountedStacks.entrySet().forEach(itemStackIntegerEntry -> {
+            final int minimalFullStacks = itemStackIntegerEntry.getValue() / itemStackIntegerEntry.getKey().getMaxStackSize();
+            final int residualStackSize = itemStackIntegerEntry.getValue() % itemStackIntegerEntry.getKey().getMaxStackSize();
+
+            for (int i = 0; i < minimalFullStacks; i++)
+            {
+                final ItemStack tobeAdded = itemStackIntegerEntry.getKey().copy();
+                tobeAdded.setCount(tobeAdded.getMaxStackSize());
+
+                list.add(tobeAdded);
+            }
+
+            if (residualStackSize > 0)
+            {
+                final ItemStack tobeAdded = itemStackIntegerEntry.getKey().copy();
+                tobeAdded.setCount(residualStackSize);
+
+                list.add(tobeAdded);
+            }
+        });
+
+        return list;
+    }
+
+    public static List<ItemStack> processItemStackListAndMerge(@NotNull final List<ItemStack> stacks)
+    {
+        return splitMergedCountedStacksIntoMaxContentStacks(getMergedCountedStacksFromList(stacks));
     }
 }

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
+import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProductionResolver<PublicCrafting>
@@ -39,7 +41,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
     @Nullable
     @Override
-    public IRequest<?> getFollowupRequestForCompletion(
+    public List<IRequest<?>> getFollowupRequestForCompletion(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> completedRequest)
     {
         final IColony colony = manager.getColony();
@@ -51,12 +53,20 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
             final IRequest<?> parentRequest = manager.getRequestForToken(completedRequest.getParent());
             final IRequester parentRequestRequester = parentRequest.getRequester();
 
-            final Delivery delivery = new Delivery(getRequesterLocation(), parentRequestRequester.getDeliveryLocation(), completedRequest.getDelivery().copy());
+            final List<IRequest<?>> deliveries = Lists.newArrayList();
 
-            final IToken<?> requestToken =
-              manager.createRequest(this,
-                delivery);
-            return manager.getRequestForToken(requestToken);
+            completedRequest.getDeliveries().forEach(parentRequest::addDelivery);
+            completedRequest.getDeliveries().forEach(itemStack -> {
+                final Delivery delivery = new Delivery(getRequesterLocation(), parentRequestRequester.getDeliveryLocation(), itemStack);
+
+                final IToken<?> requestToken =
+                  manager.createRequest(this,
+                    delivery);
+
+                deliveries.add(manager.getRequestForToken(requestToken));
+            });
+
+            return deliveries;
         }
         return null;
     }

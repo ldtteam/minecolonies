@@ -1,13 +1,16 @@
 package com.minecolonies.api.colony.requestsystem.request;
 
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.manager.AssigningStrategy;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -216,22 +219,16 @@ public interface IRequest<R extends IRequestable>
     boolean canBeDelivered();
 
     /**
-     * Method to get the ItemStack used for the getDelivery.
+     * Method to get the ItemStacks used for the delivery.
      *
-     * @return The ItemStack that the Deliveryman transports around. ItemStack.Empty means no delivery possible.
+     * @return The ItemStacks that the Deliveryman transports around. {@link NonNullList#isEmpty()} means no delivery possible.
      */
     @NotNull
-    ItemStack getDelivery();
+    ImmutableList<ItemStack> getDeliveries();
 
-    /**
-     * Method used to set the delivery on a Request.
-     * Should set the result.
-     * <p>
-     * Noop this if it is not supported.
-     *
-     * @param delivery The delivery that is being made.
-     */
-    void setDelivery(@Nullable final ItemStack delivery);
+    void overrideCurrentDeliveries(@NotNull final ImmutableList<ItemStack> stacks);
+
+    void addDelivery(@NotNull final ItemStack stack);
 
     /**
      * Method used to get a {@link ITextComponent} that can be displayed to the Player and describes the request in short.

@@ -276,7 +276,7 @@ public final class RequestHandler
         request.getRequester().onRequestComplete(manager, token);
 
         //Retrieve a followup request.
-        @SuppressWarnings(RAWTYPES) final IRequest followupRequest = resolver.getFollowupRequestForCompletion(manager, request);
+        final List<IRequest<?>> followupRequests = resolver.getFollowupRequestForCompletion(manager, request);
 
         //Check if the request has a parent
         if (request.hasParent())
@@ -284,9 +284,9 @@ public final class RequestHandler
             @SuppressWarnings(RAWTYPES) final IRequest parentRequest = getRequest(manager, request.getParent());
 
             //Assign the followup to the parent as a child so that processing is still halted.
-            if (followupRequest != null)
+            if (followupRequests != null && !followupRequests.isEmpty())
             {
-                parentRequest.addChild(followupRequest.getToken());
+                followupRequests.forEach(followupRequest -> parentRequest.addChild(followupRequest.getToken()));
             }
 
             manager.updateRequestState(request.getToken(), RequestState.RECEIVED);
@@ -301,9 +301,12 @@ public final class RequestHandler
         }
 
         //Assign the followup request if need be
-        if (followupRequest != null && !isAssigned(manager, followupRequest.getToken()))
+        if (followupRequests != null && !followupRequests.isEmpty() &&
+              followupRequests.stream().anyMatch(followupRequest -> !isAssigned(manager, followupRequest.getToken())))
         {
-            assignRequest(manager, followupRequest);
+            followupRequests.stream()
+              .filter(followupRequest -> !isAssigned(manager, followupRequest.getToken()))
+              .forEach(unassignedFollowupRequest -> assignRequest(manager, unassignedFollowupRequest));
         }
     }
 

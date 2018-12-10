@@ -108,7 +108,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Nullable
     @Override
-    public IRequest<?> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> completedRequest)
+    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> completedRequest)
     {
         return null;
     }

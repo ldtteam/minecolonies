@@ -408,7 +408,7 @@ public class StandardRequestManagerTest
         @SuppressWarnings(RAWTYPES)
         @Nullable
         @Override
-        public IRequest getFollowupRequestForCompletion(
+        public List<IRequest<?>> getFollowupRequestForCompletion(
                                                          @NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> completedRequest)
         {
             return null;

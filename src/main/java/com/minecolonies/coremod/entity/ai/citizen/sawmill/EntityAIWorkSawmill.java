@@ -214,10 +214,10 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
 
         if (maxCraftingCount == 0)
         {
-            craftCounter = CraftingUtils.calculateMaxCraftingCount(job.getCurrentTask().getRequest().getCount(), currentRecipeStorage);
+            maxCraftingCount = CraftingUtils.calculateMaxCraftingCount(job.getCurrentTask().getRequest().getCount(), currentRecipeStorage);
         }
 
-        if (craftCounter == 0)
+        if (maxCraftingCount == 0)
         {
             getOwnBuilding().getColony().getRequestManager().updateRequestState(job.getCurrentTask().getToken(), RequestState.CANCELLED);
             maxCraftingCount = 0;
@@ -231,12 +231,15 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
         worker.setHeldItem(EnumHand.MAIN_HAND, currentRecipeStorage.getInput().get(worker.getRandom().nextInt(currentRecipeStorage.getInput().size())).copy());
         worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getLocation());
         setDelay(HIT_DELAY);
+
+        currentRequest = job.getCurrentTask();
         if (progress >= 10) //TODO set up afterwards again!
         {
             final AIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
             {
                 getOwnBuilding().fullFillRecipe(currentRecipeStorage);
+                currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
                 progress = 0;
                 craftCounter++;
 
@@ -247,7 +250,6 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
                     progress = 0;
                     craftCounter = 0;
                     currentRecipeStorage = null;
-                    currentRequest = job.getCurrentTask();
                     worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
 
                     return START_WORKING;

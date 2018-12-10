@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.requests;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -11,8 +12,10 @@ import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCra
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagList;
@@ -36,6 +39,7 @@ public final class StandardRequestFactories
     private static final String NBT_RESULT    = "Result";
     private static final String NBT_PARENT    = "Parent";
     private static final String NBT_CHILDREN  = "Children";
+    private static final String NBT_DELIVERIES = "Deliveries";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     @SuppressWarnings(Suppression.BIG_CLASS)
@@ -578,6 +582,9 @@ public final class StandardRequestFactories
 
         compound.setTag(NBT_CHILDREN, childrenCompound);
 
+        final NBTTagList deliveriesList = new NBTTagList();
+        request.getDeliveries().forEach(itemStack -> deliveriesList.appendTag(itemStack.writeToNBT(new NBTTagCompound())));
+
         return compound;
     }
 
@@ -611,6 +618,15 @@ public final class StandardRequestFactories
         if (compound.hasKey(NBT_RESULT))
         {
             request.setResult(typeDeserialization.apply(controller, compound.getCompoundTag(NBT_RESULT)));
+        }
+
+        if (compound.hasKey(NBT_DELIVERIES))
+        {
+            final ImmutableList.Builder<ItemStack> stackBuilder = ImmutableList.builder();
+            final NBTTagList deliveriesList = compound.getTagList(NBT_DELIVERIES, Constants.NBT.TAG_COMPOUND);
+            NBTUtils.streamCompound(deliveriesList).forEach(itemStackCompound -> stackBuilder.add(new ItemStack(itemStackCompound)));
+
+            request.overrideCurrentDeliveries(stackBuilder.build());
         }
 
         return request;

@@ -97,11 +97,14 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
 
         for (final CitizenData data : getAssignedCitizen())
         {
-            for (final IRequest request : getOpenRequests(data))
+            for (final IRequest<?> request : getOpenRequests(data))
             {
-                if (request.getDelivery().isItemEqualIgnoreDurability(stack))
+                for(final ItemStack deliveryStack : request.getDeliveries())
                 {
-                    return true;
+                    if (deliveryStack.isItemEqualIgnoreDurability(stack))
+                    {
+                        return true;
+                    }
                 }
             }
         }
