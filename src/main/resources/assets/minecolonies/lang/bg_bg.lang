@@ -320,7 +320,7 @@ achievement.farmer.potatoesHarvested.500=Фабрика за чипсове.
 achievement.farmer.potatoesHarvested.1000=Картофи господин Фродо.
 achievement.farmer.wheatHarvested.one=Пшеница?
 achievement.farmer.wheatHarvested.25=Нека да направим малко хляб
-achievement.farmer.wheatHarvested.100=Smoke wheat everyday!
+achievement.farmer.wheatHarvested.100=Пуши жито всеки ден!
 achievement.farmer.wheatHarvested.500=Whole grain flower? No thank you!
 achievement.farmer.wheatHarvested.1000=Житница.
 achievement.builder.hutsBuilt.one.desc=Вашите строители построиха една сграда.
@@ -410,7 +410,7 @@ com.minecolonies.coremod.saturation.7=I'm quite saturated, but I'll have to eat 
 
 com.minecolonies.coremod.item.permissionscepter.setmode=Set to mode '%s'
 com.minecolonies.coremod.item.permissionscepter.permission.deny=You do not have permission to edit blocks with this tool.
-com.minecolonies.coremod.item.permissionscepter.addblock.success=Added block type '%s'
+com.minecolonies.coremod.item.permissionscepter.addblock.success=Добавих блоков тип '%s'
 com.minecolonies.coremod.item.permissionscepter.addposition.success=Added location '%d %d %d'
 com.minecolonies.coremod.item.permissionscepter.removeblock.success=Премахнат блок '%s'
 com.minecolonies.coremod.item.permissionscepter.removelocation.success=Removed location '%d %d %d'
@@ -461,7 +461,7 @@ com.minecolonies.coremod.gui.workerHuts.buildBarracks=Казарма
 
 com.minecolonies.coremod.permission.teleport_to_colony=Телепортирай до Kолония
 com.minecolonies.coremod.gui.hiring.buttonFire=Yволни
-com.minecolonies.coremod.worker.noUpgrade=No Upgrade available.
+com.minecolonies.coremod.worker.noUpgrade=Няма налични Подобрения.
 com.minecolonies.coremod.worker.needBarracks=Please upgrade the Barracks first.
 com.minecolonies.coremod.gui.warehouse.upgrade=Подобри Съхранението
 
