@@ -424,7 +424,7 @@ com.minecolonies.coremod.gui.workerHuts.saplingList=Задачи списък
 com.minecolonies.coremod.gui.townHall.housing=Housing assignment mode:
 com.minecolonies.coremod.gui.home.assign=Присвои %d граждани
 com.minecolonies.coremod.gui.workerHuts.unassign=Премахни гражданина
-tile.minecolonies.blockTimberFrame.name=Plain Timber Frame
+tile.minecolonies.blockTimberFrame.name=Обикновена Дървена Рамка
 tile.minecolonies.blockMinecoloniesRack.name=Поставка
 
 com.minecolonies.coremod.status.waitingForWork=Търсим работа
@@ -459,7 +459,7 @@ tile.minecolonies.blockHutBarracksTower.name=КазармаКула
 tile.minecolonies.blockHutBarracks.name=Казарма
 com.minecolonies.coremod.gui.workerHuts.buildBarracks=Казарма
 
-com.minecolonies.coremod.permission.teleport_to_colony=Teleport to Colony
+com.minecolonies.coremod.permission.teleport_to_colony=Телепортирай до Kолония
 com.minecolonies.coremod.gui.hiring.buttonFire=Yволни
 com.minecolonies.coremod.worker.noUpgrade=No Upgrade available.
 com.minecolonies.coremod.worker.needBarracks=Please upgrade the Barracks first.
@@ -516,7 +516,7 @@ com.minecolonies.requestsystem.playerresolver=%s is in need of %s at %s.
 com.minecolonies.coremod.buildings.warehouse.name=Склад
 tile.minecolonies.blockPaperwall.name=Хартиена стена
 
-com.minecolonies.coremod.gui.workerHuts.buildPrio=Delivery Priority:
+com.minecolonies.coremod.gui.workerHuts.buildPrio=Доставка Приоритет:
 item.supplyChestDeployer.invalid=You must place it in a fitting pool of water.
 item.supplyChestDeployer.missing=Are you trying to trick me, pick up that Supplyship again?
 com.minecolonies.coremod.citizen.rename.same=Renaming failed: 2 Citizen are not allowed to have the same name!
