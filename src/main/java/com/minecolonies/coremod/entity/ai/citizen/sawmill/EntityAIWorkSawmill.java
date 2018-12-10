@@ -238,22 +238,20 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
             final AIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
             {
-                getOwnBuilding().fullFillRecipe(currentRecipeStorage);
-                currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
-                progress = 0;
-                craftCounter++;
-
-                if (craftCounter >= maxCraftingCount)
+                while (craftCounter < maxCraftingCount)
                 {
-                    incrementActionsDoneAndDecSaturation();
-                    maxCraftingCount = 0;
-                    progress = 0;
-                    craftCounter = 0;
-                    currentRecipeStorage = null;
-                    worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
-
-                    return START_WORKING;
+                    getOwnBuilding().fullFillRecipe(currentRecipeStorage);
+                    currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
+                    craftCounter++;
                 }
+
+                incrementActionsDoneAndDecSaturation();
+                maxCraftingCount = 0;
+                progress = 0;
+                craftCounter = 0;
+                currentRecipeStorage = null;
+                worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+                return START_WORKING;
             }
             else
             {

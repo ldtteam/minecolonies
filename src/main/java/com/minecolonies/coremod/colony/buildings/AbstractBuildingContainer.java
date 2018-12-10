@@ -309,32 +309,10 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     @Override
     public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final EnumFacing facing)
     {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null)
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null && getTileEntity() != null)
         {
-            final Set<ICapabilityProvider> providers = new HashSet<>();
-            final World world = colony.getWorld();
-            if (world != null)
-            {
-                //Add myself
-                providers.add(getTileEntity());
-
-                //Add additional containers
-                providers.addAll(getAdditionalCountainers().stream()
-                                   .map(world::getTileEntity)
-                                   .collect(Collectors.toSet()));
-                providers.removeIf(Objects::isNull);
-            }
-
-            //Map all providers to IItemHandlers.
-
-            return (T) new CombinedItemHandler(getSchematicName(), providers
-                                                                     .stream()
-                                                                     .flatMap(provider -> InventoryUtils.getItemHandlersFromProvider(provider).stream())
-                                                                     .filter(handler -> handler instanceof IItemHandlerModifiable
-                                                                                          && handler.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
-                                                                     .map(handler -> (IItemHandlerModifiable) handler).distinct().toArray(IItemHandlerModifiable[]::new));
+           return tileEntity.getCapability(capability, facing);
         }
-
         return null;
     }
 
