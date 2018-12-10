@@ -452,7 +452,7 @@ com.minecolonies.coremod.status.guarding=Защитава
 com.minecolonies.coremod.status.following=Следва
 com.minecolonies.coremod.status.hunting=Лов
 com.minecolonies.coremod.status.searchingtree=Търсим Дървото
-com.minecolonies.coremod.status.chopping=Chopping
+com.minecolonies.coremod.status.chopping=Нарязва
 com.minecolonies.coremod.status.stuckinleaves=Stuck in leaves!
 tile.minecolonies.blockWayPoint.name=Заместител на ориентир
 tile.minecolonies.blockHutBarracksTower.name=КазармаКула
@@ -476,7 +476,7 @@ com.minecolonies.coremod.gui.workerHuts.Cook=Ресторант
 com.minecolonies.coremod.status.cooking=Готвиса
 com.minecolonies.coremod.status.serving=Cлужи
 com.minecolonies.coremod.status.retrieving=Извлича
-com.minecolonies.coremod.status.idling=Idling
+com.minecolonies.coremod.status.idling=Чака
 com.minecolonies.coremod.status.mining=Добиване
 
 item.minecolonies.scepterPermission.name=PазрешениеCкиптър
