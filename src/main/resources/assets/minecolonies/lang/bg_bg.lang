@@ -422,7 +422,7 @@ com.minecolonies.coremod.job.baker=Пекар
 com.minecolonies.coremod.gui.workerHuts.saplingList=Задачи списък
 
 com.minecolonies.coremod.gui.townHall.housing=Housing assignment mode:
-com.minecolonies.coremod.gui.home.assign=Assign %d citizens
+com.minecolonies.coremod.gui.home.assign=Присвои %d граждани
 com.minecolonies.coremod.gui.workerHuts.unassign=Премахни гражданина
 tile.minecolonies.blockTimberFrame.name=Plain Timber Frame
 tile.minecolonies.blockMinecoloniesRack.name=Поставка
