@@ -6,10 +6,13 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.entity.ai.citizen.fisherman.Pond;
-import net.minecraft.init.Blocks;
+import com.structurize.coremod.management.Structures;
+import com.structurize.structures.helpers.StructureProxy;
+import net.minecraft.block.material.Material;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,6 +21,7 @@ import java.util.List;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
+import static com.minecolonies.coremod.entity.ai.mobs.util.PirateEventUtils.PIRATESHIP_FOLDER;
 
 /**
  * Utils for Colony mob events
@@ -27,12 +31,7 @@ public final class MobEventsUtils
     /**
      * Spawn modifier to decrease the spawn-rate.
      */
-    private static final int SPAWN_MODIFIER         = 3;
-
-    /**
-     * Pirate ship water pool size.
-     */
-    private static final int PIRATE_SHIP_WATER_SIZE = 15;
+    private static final int SPAWN_MODIFIER = 3;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -50,7 +49,7 @@ public final class MobEventsUtils
 
         final Horde horde = numberOfSpawns(colony);
         final int hordeSize = horde.hordeSize;
-        if(hordeSize == 0)
+        if (hordeSize == 0)
         {
             return;
         }
@@ -73,17 +72,17 @@ public final class MobEventsUtils
 
         int raidNumber = HUGE_HORDE_MESSAGE_ID;
         String shipSize = BIG_PIRATE_SHIP;
-        if(hordeSize < SMALL_HORDE_SIZE)
+        if (hordeSize < SMALL_HORDE_SIZE)
         {
             raidNumber = SMALL_HORDE_MESSAGE_ID;
             shipSize = SMALL_PIRATE_SHIP;
         }
-        else if(hordeSize < MEDIUM_HORDE_SIZE)
+        else if (hordeSize < MEDIUM_HORDE_SIZE)
         {
             raidNumber = MEDIUM_HORDE_MESSAGE_ID;
             shipSize = MEDIUM_PIRATE_SHIP;
         }
-        else if(hordeSize < BIG_HORDE_SIZE)
+        else if (hordeSize < BIG_HORDE_SIZE)
         {
             raidNumber = BIG_HORDE_MESSAGE_ID;
             shipSize = MEDIUM_PIRATE_SHIP;
@@ -91,11 +90,21 @@ public final class MobEventsUtils
 
         colony.setNightsSinceLastRaid(0);
 
-        if ((world.getBlockState(targetSpawnPoint).getBlock() == Blocks.WATER && Pond.checkWater(world, targetSpawnPoint, PIRATE_SHIP_WATER_SIZE, PIRATE_SHIP_WATER_SIZE))
-              || (world.getBlockState(targetSpawnPoint.down()).getBlock() == Blocks.WATER && Pond.checkWater(world, targetSpawnPoint.down(), PIRATE_SHIP_WATER_SIZE, PIRATE_SHIP_WATER_SIZE))
+        // Calculate size/offset of the pirate ship
+        final StructureProxy structure = new StructureProxy(world, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize);
+        structure.rotateWithMirror(0, world, targetSpawnPoint, Mirror.NONE);
+
+        if ((world.getBlockState(targetSpawnPoint).getMaterial() == Material.WATER && isSurfaceAreaMostlyWater(world,
+          targetSpawnPoint.add(-structure.getOffset().getX(), 0, -structure.getOffset().getZ()),
+          targetSpawnPoint.add(structure.getWidth() - 1, 0, structure.getLength() - 1).subtract(structure.getOffset()),
+          0.8))
+              || (world.getBlockState(targetSpawnPoint.down()).getMaterial() == Material.WATER && isSurfaceAreaMostlyWater(world,
+          targetSpawnPoint.add(-structure.getOffset().getX(), 0, -structure.getOffset().getZ()).down(),
+          targetSpawnPoint.add(structure.getWidth() - 1, structure.getHeight(), structure.getLength() - 1).subtract(structure.getOffset()).down(),
+          0.8))
         )
         {
-            if (world.getBlockState(targetSpawnPoint).getBlock() != Blocks.WATER)
+            if (world.getBlockState(targetSpawnPoint).getMaterial() != Material.WATER)
             {
                 targetSpawnPoint = targetSpawnPoint.down();
             }
@@ -104,6 +113,59 @@ public final class MobEventsUtils
         }
 
         BarbarianEventUtils.barbarianEvent(world, colony, targetSpawnPoint, raidNumber, horde);
+    }
+
+    /**
+     * Returns true when most parts of the given area are water, > 90%
+     *
+     * @param world Blockacces to use
+     * @param from  First corner of search rectangle
+     * @param to    Second corner of search rectangle
+     * @return true if enough water surface blocks are found
+     */
+    public static boolean isSurfaceAreaMostlyWater(
+      @NotNull final IBlockAccess world,
+      @NotNull final BlockPos from,
+      @NotNull final BlockPos to,
+      @NotNull final double percentRequired)
+    {
+        final int xDist = Math.abs(from.getX() - to.getX());
+        final int zDist = Math.abs(from.getZ() - to.getZ());
+
+        int nonWaterBlocks = 0;
+        final int neededWaterBlocks = (int) (percentRequired * (xDist * zDist));
+        final int nonWaterBlockThreshold = (xDist * zDist) - neededWaterBlocks;
+
+        int xDir = 1;
+        int zDir = 1;
+        if (from.getX() > to.getX())
+        {
+            xDir = -1;
+        }
+
+        if (from.getZ() > to.getZ())
+        {
+            zDir = -1;
+        }
+
+        // Check the area
+        for (int x = 0; x < xDist; x++)
+        {
+            for (int z = 0; z < zDist; z++)
+            {
+                // Count surface waterblocks
+                if (world.getBlockState(from.add(x * xDir, 0, z * zDir)).getMaterial() != Material.WATER || !world.isAirBlock(from.add(x * xDir, 1, z * zDir)))
+                {
+                    nonWaterBlocks++;
+                    // Skip when we already found too many non water blocks
+                    if (nonWaterBlocks > nonWaterBlockThreshold)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -119,9 +181,10 @@ public final class MobEventsUtils
             return new Horde(0, 0, 0, 0);
         }
 
-        final int raidLevel = Math.min(Configurations.gameplay.maxBarbarianSize,(int) ((getColonyRaidLevel(colony) / SPAWN_MODIFIER) * ((double) Configurations.gameplay.spawnBarbarianSize * 0.1)));
+        final int raidLevel =
+          Math.min(Configurations.gameplay.maxBarbarianSize, (int) ((getColonyRaidLevel(colony) / SPAWN_MODIFIER) * ((double) Configurations.gameplay.spawnBarbarianSize * 0.1)));
         final int numberOfChiefs = Math.max(1, (int) (raidLevel * CHIEF_BARBARIANS_MULTIPLIER));
-        final int numberOfArchers = Math.max(1,(int) (raidLevel * ARCHER_BARBARIANS_MULTIPLIER));
+        final int numberOfArchers = Math.max(1, (int) (raidLevel * ARCHER_BARBARIANS_MULTIPLIER));
         final int numberOfBarbarians = raidLevel - numberOfChiefs - numberOfArchers;
 
         return new Horde(raidLevel, numberOfBarbarians, numberOfArchers, numberOfChiefs);
@@ -220,7 +283,7 @@ public final class MobEventsUtils
     private static boolean raidThisNight(final World world, final Colony colony)
     {
         return colony.getNightsSinceLastRaid() > Configurations.gameplay.minimumNumberOfNightsBetweenRaids
-                && world.rand.nextDouble() < 1.0 / Configurations.gameplay.averageNumberOfNightsBetweenRaids;
+                 && world.rand.nextDouble() < 1.0 / Configurations.gameplay.averageNumberOfNightsBetweenRaids;
     }
 
     /**
@@ -235,10 +298,11 @@ public final class MobEventsUtils
 
         /**
          * Create a new horde.
-         * @param hordeSize the size.
+         *
+         * @param hordeSize       the size.
          * @param numberOfRaiders the number of raiders.
          * @param numberOfArchers the number of archers.
-         * @param numberOfBosses the number of bosses.
+         * @param numberOfBosses  the number of bosses.
          */
         Horde(final int hordeSize, final int numberOfRaiders, final int numberOfArchers, final int numberOfBosses)
         {
