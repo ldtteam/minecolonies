@@ -25,7 +25,7 @@ public final class PirateEventUtils
     /**
      * Folder name for the pirate ship schematics
      */
-    private static final String PIRATESHIP_FOLDER = "/Ships/";
+    public static final String PIRATESHIP_FOLDER = "/Ships/";
 
     /**
      * Private constructor to hide the implicit public one.
@@ -48,12 +48,12 @@ public final class PirateEventUtils
      */
     public static void pirateEvent(final BlockPos targetSpawnPoint, final World world, final Colony colony, final String shipSize, final int raidNumber)
     {
-
-
         final StructureProxy structure = new StructureProxy(world, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize);
+        structure.rotateWithMirror(0, world, targetSpawnPoint, Mirror.NONE);
+
         if (!ItemScanTool.saveStructureOnServer(world,
-          targetSpawnPoint.down(3),
-          targetSpawnPoint.add(structure.getWidth(), structure.getHeight(), structure.getLength()),
+          targetSpawnPoint.add(structure.getWidth() - 1, structure.getHeight(), structure.getLength() - 1).subtract(structure.getOffset()),
+          targetSpawnPoint.down(3).subtract(structure.getOffset()),
           Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize + colony.getID() + colony.getDimension() + targetSpawnPoint.down(3)))
         {
             // No event if we didnt successfully save the surroundings before
