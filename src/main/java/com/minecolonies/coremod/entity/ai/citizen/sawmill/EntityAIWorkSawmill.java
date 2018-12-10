@@ -108,6 +108,12 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
             return START_WORKING;
         }
 
+        if (job.getCurrentTask() == null)
+        {
+            setDelay(TICKS_20);
+            return START_WORKING;
+        }
+
         if (walkToBuilding())
         {
             setDelay(STANDARD_DELAY);
@@ -258,7 +264,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
                 return check;
             }
         }
-        return START_WORKING;
+        return getState();
     }
 
     @Override
