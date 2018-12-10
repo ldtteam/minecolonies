@@ -398,10 +398,10 @@ com.minecolonies.coremod.permission.throw_potion=Хвърляй отвари
 com.minecolonies.coremod.permission.shoot_arrow=Стреляй стрелки
 com.minecolonies.coremod.permission.attack_citizen=Атакувай гражданите
 com.minecolonies.coremod.permission.attack_entity=Атакувай обектите
-com.minecolonies.coremod.permission.access_free_blocks=Access free-blocks
+com.minecolonies.coremod.permission.access_free_blocks=Достъп до свободни-блокове
 
 item.supplyCampDeployer.invalid=Requiring a flat ground of at least 16*17.
-com.minecolonies.coremod.gui.townHall.currentHappiness=Overall happiness:
+com.minecolonies.coremod.gui.townHall.currentHappiness=Общо щастие:
 com.minecolonies.coremod.job.guard.toolClickGuardTooFar=Too far away from guard tower, please upgrade your guardtower.
 com.minecolonies.coremod.saturation.0=I'm starving, I can't work anymore
 com.minecolonies.coremod.saturation.3=I'm quite hungry, I feel very unproductive
@@ -412,7 +412,7 @@ com.minecolonies.coremod.item.permissionscepter.setmode=Set to mode '%s'
 com.minecolonies.coremod.item.permissionscepter.permission.deny=You do not have permission to edit blocks with this tool.
 com.minecolonies.coremod.item.permissionscepter.addblock.success=Added block type '%s'
 com.minecolonies.coremod.item.permissionscepter.addposition.success=Added location '%d %d %d'
-com.minecolonies.coremod.item.permissionscepter.removeblock.success=Removed block '%s'
+com.minecolonies.coremod.item.permissionscepter.removeblock.success=Премахнат блок '%s'
 com.minecolonies.coremod.item.permissionscepter.removelocation.success=Removed location '%d %d %d'
 tile.blockHut.warehouse.limit=The amount of warehouses is limited to 1 per colony.
 
@@ -479,7 +479,7 @@ com.minecolonies.coremod.status.retrieving=Извлича
 com.minecolonies.coremod.status.idling=Idling
 com.minecolonies.coremod.status.mining=Добиване
 
-item.minecolonies.scepterPermission.name=PermissionScepter
+item.minecolonies.scepterPermission.name=PазрешениеCкиптър
 
 com.minecolonies.coremod.request.delivery=Доставка на:
 com.minecolonies.coremod.request.food=Храна
@@ -533,7 +533,7 @@ com.minecolonies.coremod.gui.recipe.remove=Премахни
 com.minecolonies.coremod.gui.workerHuts.crafting=Научи рецепта
 com.minecolonies.coremod.gui.recipe.done=Succesfully saved recipe!
 com.minecolonies.coremod.gui.workerHuts.listRecipes=Списък на рецепти
-com.minecolonies.coremod.resolvers.crafter=Crafting Resolver
+com.minecolonies.coremod.resolvers.crafter=Преобразувател на Изработване
 com.minecolonies.coremod.request.smeltableore=Топилна Руда
 tile.minecolonies.blockHutSmeltery.name=Tопилня
 com.minecolonies.coremod.gui.workerHuts.Smeltery=Tопилня
