@@ -451,7 +451,7 @@ com.minecolonies.coremod.status.patrolling=Патрулира
 com.minecolonies.coremod.status.guarding=Защитава
 com.minecolonies.coremod.status.following=Следва
 com.minecolonies.coremod.status.hunting=Лов
-com.minecolonies.coremod.status.searchingtree=Searching Tree
+com.minecolonies.coremod.status.searchingtree=Търсим Дървото
 com.minecolonies.coremod.status.chopping=Chopping
 com.minecolonies.coremod.status.stuckinleaves=Stuck in leaves!
 tile.minecolonies.blockWayPoint.name=Waypoint placeholder
@@ -484,7 +484,7 @@ item.minecolonies.scepterPermission.name=PermissionScepter
 com.minecolonies.coremod.request.delivery=Доставка на:
 com.minecolonies.coremod.request.food=Храна
 com.minecolonies.coremod.request.burnable=Гориво
-com.minecolonies.coremod.request.tool.pretype=Tool of class:
+com.minecolonies.coremod.request.tool.pretype=Инструмент от класа:
 com.minecolonies.coremod.request.tool.preminlevel=with minimal level:
 com.minecolonies.coremod.request.tool.premaxlevel=with maximal level:
 
@@ -501,7 +501,7 @@ com.minecolonies.coremod.tooltype.fishingrod=Въдица
 com.minecolonies.coremod.tooltype.shears=Ножици за стригане
 com.minecolonies.coremod.tooltype.shield=Щит
 
-com.minecolonies.coremod.gui.citizen.requests=Open requests:
+com.minecolonies.coremod.gui.citizen.requests=Oтворени заявки:
 com.minecolonies.coremod.gui.citizen.requestTitle=Заявки
 com.minecolonies.coremod.gui.citizen.requestsCancel=Отмени
 com.minecolonies.coremod.gui.citizen.requestsFulfill=Изпълни
@@ -524,8 +524,8 @@ com.minecolonies.coremod.citizen.rename.notAllowed=Renaming failed: You're not a
 
 tile.minecolonies.blockshingle_oak.name=Дъбова Kеремида
 tile.minecolonies.blockshingle_birch.name=Бреза Kеремида
-tile.minecolonies.blockshingle_spruce.name=Spruce Shingle
-tile.minecolonies.blockshingle_jungle.name=Jungle Shingle
+tile.minecolonies.blockshingle_spruce.name=Смърчова Kеремида
+tile.minecolonies.blockshingle_jungle.name=Джунгла Керемида
 tile.minecolonies.blockshingle_dark_oak.name=Dark Oak Shingle
 tile.minecolonies.blockshingle_acacia.name=Acacia Shingle
 
