@@ -129,8 +129,8 @@ public final class MobEventsUtils
       @NotNull final BlockPos to,
       @NotNull final double percentRequired)
     {
-        int xDist = Math.abs(from.getX() - to.getX());
-        int zDist = Math.abs(from.getZ() - to.getZ());
+        final int xDist = Math.abs(from.getX() - to.getX());
+        final int zDist = Math.abs(from.getZ() - to.getZ());
 
         int nonWaterBlocks = 0;
         final int neededWaterBlocks = (int) (percentRequired * (xDist * zDist));
