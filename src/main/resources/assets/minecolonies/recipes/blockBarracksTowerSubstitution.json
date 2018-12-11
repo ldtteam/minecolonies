@@ -2,11 +2,11 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecolonies:blocksubstitution",
+      "item": "structurize:blocksubstitution",
       "data": 1
     },
     {
-      "item": "minecolonies:sceptersteel",
+      "item": "structurize:sceptersteel",
       "data": 1
     }
   ],
