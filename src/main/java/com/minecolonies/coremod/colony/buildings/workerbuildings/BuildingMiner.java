@@ -132,16 +132,16 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         final ItemStack stackPlanks = new ItemStack(Blocks.PLANKS);
         final ItemStack stackDirt = new ItemStack(Blocks.DIRT);
 
-        keepX.put(stackLadder::isItemEqual, STACKSIZE);
-        keepX.put(stackFence::isItemEqual, STACKSIZE);
-        keepX.put(stackTorch::isItemEqual, STACKSIZE);
-        keepX.put(stackCobble::isItemEqual, STACKSIZE);
-        keepX.put(stackSlab::isItemEqual, STACKSIZE);
-        keepX.put(stackPlanks::isItemEqual, STACKSIZE);
-        keepX.put(stackDirt::isItemEqual, STACKSIZE);
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
+        keepX.put(stackLadder::isItemEqual, new Tuple<>(STACKSIZE, true));
+        keepX.put(stackFence::isItemEqual, new Tuple<>(STACKSIZE, true));
+        keepX.put(stackTorch::isItemEqual, new Tuple<>(STACKSIZE, true));
+        keepX.put(stackCobble::isItemEqual, new Tuple<>(STACKSIZE, true));
+        keepX.put(stackSlab::isItemEqual, new Tuple<>(STACKSIZE, true));
+        keepX.put(stackPlanks::isItemEqual, new Tuple<>(STACKSIZE, true));
+        keepX.put(stackDirt::isItemEqual, new Tuple<>(STACKSIZE, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
     }
 
     /**

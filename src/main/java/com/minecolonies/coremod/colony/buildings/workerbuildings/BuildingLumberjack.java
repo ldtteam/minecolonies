@@ -18,6 +18,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -78,13 +79,13 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     {
         super(c, l);
 
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
     }
 
     @Override
-    public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
+    public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
-        final Map<Predicate<ItemStack>, Integer> tempKeep = super.getRequiredItemsAndAmount();
+        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
 
         if(getMainCitizen() != null && getMainCitizen().getInventory() != null)
         {
@@ -100,7 +101,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
                 }
 
                 boolean isAlreadyInList = false;
-                for (final Map.Entry<Predicate<ItemStack>, Integer> entry : tempKeep.entrySet())
+                for (final Map.Entry<Predicate<ItemStack>, Tuple<Integer, Boolean>> entry : toKeep.entrySet())
                 {
                     if (entry.getKey().test(stack))
                     {
@@ -110,18 +111,18 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
                 if (!isAlreadyInList)
                 {
-                    tempKeep.put(stack::isItemEqual, com.minecolonies.api.util.constant.Constants.STACKSIZE);
+                    toKeep.put(stack::isItemEqual, new Tuple<>(com.minecolonies.api.util.constant.Constants.STACKSIZE, true));
                     keptStacks++;
 
                     if (keptStacks >= getMaxBuildingLevel() * 2)
                     {
-                        return tempKeep;
+                        return toKeep;
                     }
                 }
             }
         }
 
-        return tempKeep;
+        return toKeep;
     }
 
     /**

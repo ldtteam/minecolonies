@@ -27,6 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -114,13 +115,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
      *
      * @return a list of objects which should be kept.
      */
-    public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
+    public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
-        final Map<Predicate<ItemStack>, Integer> toKeep = new HashMap<>();
-        toKeep.putAll(keepX);
-        toKeep.putAll(super.getRequiredItemsAndAmount());
-        toKeep.put(ItemStackUtils.ISFOOD, getBuildingLevel() * 2);
-
+        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
+        toKeep.put(ItemStackUtils.ISFOOD, new Tuple<>(getBuildingLevel() * 2, true));
         return toKeep;
     }
 

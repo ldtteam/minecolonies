@@ -20,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -76,9 +77,7 @@ public class BuildingComposter extends AbstractBuildingWorker
     public BuildingComposter(@NotNull final Colony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put((stack) -> isAllowedItem(new ItemStorage(stack))
-          , Integer.MAX_VALUE);
-
+        keepX.put((stack) -> isAllowedItem(new ItemStorage(stack)), new Tuple<>(Integer.MAX_VALUE, true));
     }
 
     /**
