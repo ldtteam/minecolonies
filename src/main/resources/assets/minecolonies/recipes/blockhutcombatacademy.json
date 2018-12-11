@@ -14,11 +14,11 @@
       "item": "minecraft:iron_sword"
     },
     "T": {
-      "item": "minecolonies:sceptergold"
+      "item": "structurize:sceptergold"
     }
   },
   "result": {
-    "item": "minecolonies:blockhutarchery",
+    "item": "minecolonies:blockhutcombatacademy",
     "count": 1
   }
 }
