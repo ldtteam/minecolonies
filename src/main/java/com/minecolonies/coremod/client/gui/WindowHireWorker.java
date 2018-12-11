@@ -141,6 +141,8 @@ public class WindowHireWorker extends Window implements ButtonHandler
     public void onOpened()
     {
         updateCitizens();
+        findPaneOfTypeByID(AUTO_HIRE_WARN, Label.class).off();
+
         citizenList.setDataProvider(new ScrollingList.DataProvider()
         {
             /**
@@ -166,8 +168,6 @@ public class WindowHireWorker extends Window implements ButtonHandler
                 final AbstractBuildingWorker.Skill secondary = building.getSecondarySkill();
 
                 final Button isPaused = rowPane.findPaneOfTypeByID(BUTTON_PAUSE, Button.class);
-
-                findPaneOfTypeByID(AUTO_HIRE_WARN, Label.class).off();
 
                 if (citizen.getWorkBuilding() == null)
                 {
