@@ -9,7 +9,7 @@ import net.minecraftforge.common.util.EnumHelper;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Class handling the Pirate Gear.
+ * Class handling the Santa hat.
  */
 public class ItemSantaHead extends ItemArmor
 {
