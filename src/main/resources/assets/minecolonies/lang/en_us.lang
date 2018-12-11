@@ -841,3 +841,4 @@ tile.minecolonies.blockHutArchery.name=Archery
 com.minecolonies.coremod.gui.workerHuts.Archery=Archery
 tile.minecolonies.blockHutCombatAcademy.name=Combat Academy
 com.minecolonies.coremod.gui.workerHuts.CombatAcademy=Combat Academy
+item.santa_hat.name=Santa hat
