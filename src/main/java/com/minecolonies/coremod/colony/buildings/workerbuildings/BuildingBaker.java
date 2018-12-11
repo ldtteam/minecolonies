@@ -26,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -127,7 +128,7 @@ public class BuildingBaker extends AbstractBuildingWorker
         {
             for (final ItemStack stack : storage.getInput())
             {
-                keepX.put(stack::isItemEqual, WHEAT_TO_KEEP);
+                keepX.put(stack::isItemEqual, new Tuple<>(WHEAT_TO_KEEP, true));
             }
         }
         recipesAllowed = new boolean[BakerRecipes.getRecipes().size()];

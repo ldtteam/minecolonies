@@ -23,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -118,12 +119,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
         final ItemStack stackPotatoe = new ItemStack(Items.POTATO);
         final ItemStack stackReed = new ItemStack(Items.BEETROOT_SEEDS);
 
-        keepX.put(stackSeed::isItemEqual, SEEDS_TO_KEEP);
-        keepX.put(stackCarrot::isItemEqual, SEEDS_TO_KEEP);
-        keepX.put(stackPotatoe::isItemEqual, SEEDS_TO_KEEP);
-        keepX.put(stackReed::isItemEqual, SEEDS_TO_KEEP);
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
+        keepX.put(stackSeed::isItemEqual, new Tuple<>(SEEDS_TO_KEEP, true));
+        keepX.put(stackCarrot::isItemEqual, new Tuple<>(SEEDS_TO_KEEP, true));
+        keepX.put(stackPotatoe::isItemEqual, new Tuple<>(SEEDS_TO_KEEP, true));
+        keepX.put(stackReed::isItemEqual, new Tuple<>(SEEDS_TO_KEEP, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
     }
 
     /**
@@ -402,17 +403,16 @@ public class BuildingFarmer extends AbstractBuildingWorker
      * @return a list of objects which should be kept.
      */
     @Override
-    public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
+    public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
-        final Map<Predicate<ItemStack>, Integer> toKeep = new HashMap<>(keepX);
-        toKeep.putAll(keepX);
+        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
         for (final BlockPos field : farmerFields)
         {
             final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
             if (scareCrow instanceof ScarecrowTileEntity && !ItemStackUtils.isEmpty(((ScarecrowTileEntity) scareCrow).getSeed()))
             {
                 final ItemStack seedStack = ((ScarecrowTileEntity) scareCrow).getSeed();
-                toKeep.put(seedStack::isItemEqual, SEEDS_TO_KEEP);
+                toKeep.put(seedStack::isItemEqual, new Tuple<>(SEEDS_TO_KEEP, true));
             }
         }
         return toKeep;

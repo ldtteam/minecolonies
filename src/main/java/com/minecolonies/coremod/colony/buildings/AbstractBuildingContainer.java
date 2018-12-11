@@ -19,6 +19,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -51,9 +52,9 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     protected final List<BlockPos> containerList = new ArrayList<>();
 
     /**
-     * List of items the worker should keep.
+     * List of items the worker should keep. With the quantity and if he should keep it in the inventory as well.
      */
-    protected final Map<Predicate<ItemStack>, Integer> keepX = new HashMap<>();
+    protected final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> keepX = new HashMap<>();
 
     /**
      * The tileEntity of the building.
