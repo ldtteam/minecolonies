@@ -233,11 +233,6 @@ public class EntityAIEatTask extends EntityAIBase
             waitingTicks = 0;
             return EAT;
         }
-        // Reset AI after eating action
-        if (citizen.getCitizenJobHandler().getColonyJob() != null)
-        {
-            citizen.getCitizenJobHandler().getColonyJob().resetAIAfterEating();
-        }
         return IDLE;
     }
 
@@ -395,6 +390,11 @@ public class EntityAIEatTask extends EntityAIBase
             citizenData.getCitizenHappinessHandler().setFoodModifier(false);
             if ((citizenData.getSaturation() < CitizenConstants.LOW_SATURATION || citizen.isIdlingAtJob()) && citizenData.getSaturation() < CitizenConstants.HIGH_SATURATION)
             {
+                // Reset AI when going to the restaurant to eat
+                if (citizen.getCitizenJobHandler().getColonyJob() != null)
+                {
+                    citizen.getCitizenJobHandler().getColonyJob().resetAIAfterEating();
+                }
                 return SEARCH_RESTAURANT;
             }
 
