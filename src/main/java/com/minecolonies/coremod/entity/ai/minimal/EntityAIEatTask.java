@@ -233,11 +233,6 @@ public class EntityAIEatTask extends EntityAIBase
             waitingTicks = 0;
             return EAT;
         }
-        // Reset AI after eating action
-        if (citizen.getCitizenJobHandler().getColonyJob() != null)
-        {
-            citizen.getCitizenJobHandler().getColonyJob().resetAIAfterEating();
-        }
         return IDLE;
     }
 
@@ -377,7 +372,11 @@ public class EntityAIEatTask extends EntityAIBase
             chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.ai.noRestaurant");
             return CHECK_FOR_FOOD;
         }
-
+        // Reset AI when going to the restaurant to eat
+        if (citizen.getCitizenJobHandler().getColonyJob() != null)
+        {
+            citizen.getCitizenJobHandler().getColonyJob().resetAIAfterEating();
+        }
         return GO_TO_RESTAURANT;
     }
 
