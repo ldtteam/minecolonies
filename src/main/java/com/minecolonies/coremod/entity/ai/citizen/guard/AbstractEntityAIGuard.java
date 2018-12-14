@@ -269,7 +269,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     {
         if (target != null && target.isDead)
         {
-            incrementActionsDone();
+            incrementActionsDoneAndDecSaturation();
             worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
             target = null;
         }

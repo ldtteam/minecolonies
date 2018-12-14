@@ -26,7 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.util.AIState.GUARD_ATTACK_PHYSICAL;
+import static com.minecolonies.coremod.entity.ai.util.AIState.GUARD_ATTACK_PROTECT;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
@@ -184,6 +185,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
             target.attackEntityFrom(source, (float) damageToBeDealt);
             target.setRevengeTarget(worker);
+            worker.decreaseSaturationForContinuousAction();
 
             worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
         }
@@ -209,7 +211,6 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
                     addDmg += TinkersWeaponHelper.getDamage(heldItem);
                 }
                 addDmg += EnchantmentHelper.getModifierForCreature(heldItem, target.getCreatureAttribute()) / 2.5;
-                this.incrementActionsDoneAndDecSaturation();
             }
 
             addDmg += getLevelDamage();
