@@ -42,6 +42,8 @@ public final class ModItems
     public static Item itemAchievementProxyCity;
     public static Item itemAchievementProxyMetropolis;
 
+    public static Item santaHat;
+
     /**
      * Private constructor to hide the implicit public one.
      */
@@ -68,6 +70,8 @@ public final class ModItems
         clipboard = new ItemClipBoard();
         compost = new ItemCompost();
         resourceScroll = new ItemResourceScroll();
+
+        santaHat = new ItemSantaHead("santa_hat", ModCreativeTabs.MINECOLONIES, ItemSantaHead.SANTA_HAT, 0, EntityEquipmentSlot.HEAD);
 
         pirateHelmet_1 = new ItemPirateGear("pirate_hat", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EntityEquipmentSlot.HEAD);
         pirateChest_1 = new ItemPirateGear("pirate_top", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EntityEquipmentSlot.CHEST);
@@ -111,6 +115,6 @@ public final class ModItems
         registry.register(itemAchievementProxyCity);
         registry.register(itemAchievementProxyMetropolis);
 
-
+        registry.register(santaHat);
     }
 }
