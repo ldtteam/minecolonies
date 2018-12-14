@@ -154,6 +154,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public AIState gather()
     {
+        if (job.getCurrentTask() != null)
+        {
+            return START_WORKING;
+        }
+
         if (maximalGatherCount < 0)
         {
             maximalGatherCount = Configurations.requestSystem.minimalBuildingsToGather
@@ -650,7 +655,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final AbstractBuildingWorker ownBuilding = getOwnBuilding();
 
         //get task via colony, requestmananger
-
         if (job.getCurrentTask() == null)
         {
             ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(null);
