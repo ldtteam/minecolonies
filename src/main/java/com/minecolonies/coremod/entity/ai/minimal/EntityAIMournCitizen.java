@@ -4,6 +4,7 @@ import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
 
@@ -169,7 +170,13 @@ public class EntityAIMournCitizen extends EntityAIBase
     protected Vec3d getMournLocation()
     {
         Vec3d vec3d = null;
-        final BlockPos pos = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getTownHall().getLocation();
+        final Colony colony = citizen.getCitizenColonyHandler().getColony();
+        if (colony == null || !colony.getBuildingManager().hasTownHall())
+        {
+            return new Vec3d(citizen.getHomePosition());
+        }
+
+        final BlockPos pos = colony.getBuildingManager().getTownHall().getLocation();
         if (pos != null)
         {
             vec3d = new Vec3d(pos);

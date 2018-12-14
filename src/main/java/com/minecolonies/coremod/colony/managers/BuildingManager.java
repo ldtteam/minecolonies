@@ -288,7 +288,7 @@ public class BuildingManager implements IBuildingManager
     public void addNewField(final ScarecrowTileEntity tileEntity, final BlockPos pos, final World world)
     {
         addField(pos);
-        tileEntity.calculateSize(world, pos);
+        tileEntity.calculateSize(world, pos.down());
         markFieldsDirty();
     }
 
