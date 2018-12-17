@@ -406,7 +406,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
      */
     public boolean addRecipe(final IToken token)
     {
-        if(canRecipeBeAdded(token) && Math.pow(2, getBuildingLevel()) >= (recipes.size() + 1))
+        if(canRecipeBeAdded(token))
         {
             recipes.add(token);
             markDirty();
