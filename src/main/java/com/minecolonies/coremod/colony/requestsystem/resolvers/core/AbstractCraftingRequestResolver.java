@@ -178,12 +178,6 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     @Nullable
     protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, final Predicate<ItemStack> stackPrecicate, int count)
     {
-        final IRecipeStorage fullfillableCrafting = building.getFirstFullFillableRecipe(stackPrecicate);
-        if (fullfillableCrafting != null)
-        {
-            return ImmutableList.of();
-        }
-
         final IRecipeStorage craftableCrafting = building.getFirstRecipe(stackPrecicate);
         if (craftableCrafting == null)
         {

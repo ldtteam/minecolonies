@@ -885,7 +885,7 @@ public class InventoryUtils
      *
      * @param itemHandler {@link IItemHandler} to add itemstack to.
      * @param itemStack   ItemStack to add.
-     * @return Empty when fully transfered without swapping, otherwise return the remain of a partial transfer or the itemStack it has been swapped with.
+     * @return Empty when fully transfered, otherwise return the remain of a partial transfer of the itemStack.
      */
     public static ItemStack addItemStackToItemHandlerWithResult(@NotNull final IItemHandler itemHandler, @Nullable final ItemStack itemStack)
     {
@@ -909,18 +909,18 @@ public class InventoryUtils
             }
             else
             {
-                ItemStack resultStack = itemStack;
+                ItemStack leftOver = itemStack;
                 slot = itemHandler.getSlots() == 0 ? -1 : 0;
-                while (!ItemStackUtils.isEmpty(resultStack) && slot != -1 && slot != itemHandler.getSlots())
+                while (!ItemStackUtils.isEmpty(leftOver) && slot != -1 && slot != itemHandler.getSlots())
                 {
-                    resultStack = itemHandler.insertItem(slot, resultStack, false);
-                    if (!ItemStackUtils.isEmpty(resultStack))
+                    leftOver = itemHandler.insertItem(slot, leftOver, false);
+                    if (!ItemStackUtils.isEmpty(leftOver))
                     {
                         slot++;
                     }
                 }
 
-                return resultStack;
+                return leftOver;
             }
         }
         else
@@ -2196,13 +2196,16 @@ public class InventoryUtils
             final Optional<ItemStack>
               alreadyContained = requiredCountForStacks.keySet().stream().filter(itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack)).findFirst();
 
+            final ItemStack inputUnitStack = targetStack.copy();
+            inputUnitStack.setCount(1);
+
             if (alreadyContained.isPresent())
             {
-                requiredCountForStacks.put(alreadyContained.get(), requiredCountForStacks.get(alreadyContained.get()) + targetStack.getCount());
+                requiredCountForStacks.put(inputUnitStack, requiredCountForStacks.get(alreadyContained.get()) + targetStack.getCount());
             }
             else
             {
-                requiredCountForStacks.put(targetStack, targetStack.getCount());
+                requiredCountForStacks.put(inputUnitStack, targetStack.getCount());
             }
         });
 
@@ -2236,8 +2239,142 @@ public class InventoryUtils
         return list;
     }
 
+    public static List<ItemStack> getMissingFromItemHandler(@NotNull final List<ItemStack> stacks, @NotNull final IItemHandler handler)
+    {
+        final List<ItemStack> result = Lists.newArrayList();
+
+        final Map<ItemStack, Integer> inputCounts = getMergedCountedStacksFromList(stacks);
+        final Map<ItemStack, Integer> inventoryCounts = getMergedCountedStacksFromList(getItemHandlerAsList(handler));
+
+        final Map<ItemStack, Integer> resultingMissing = new HashMap<>();
+        inputCounts
+          .forEach((itemStack, count) -> {
+
+              int remainingCount = count;
+              for (Map.Entry<ItemStack, Integer> entry : inventoryCounts.entrySet())
+              {
+                  ItemStack containedStack = entry.getKey();
+                  Integer containedCount = entry.getValue();
+                  if (ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, containedStack))
+                  {
+                      remainingCount -= containedCount;
+                  }
+              }
+
+              if (remainingCount > 0)
+              {
+                  resultingMissing.put(itemStack, count);
+              }
+          });
+
+        resultingMissing
+          .forEach((itemStack, count) -> {
+              final int fullStackCount = count / itemStack.getMaxStackSize();
+              final int missingPartialCount = count % itemStack.getMaxStackSize();
+
+              for (int i = 0; i < fullStackCount; i++)
+              {
+                  final ItemStack targetStack = itemStack.copy();
+                  targetStack.setCount(targetStack.getMaxStackSize());
+
+                  result.add(targetStack);
+              }
+
+              if (missingPartialCount != 0)
+              {
+                  final ItemStack targetStack = itemStack.copy();
+                  targetStack.setCount(missingPartialCount);
+
+                  result.add(targetStack);
+              }
+          });
+
+        return result;
+    }
+
+    public static List<ItemStack> getContainedFromItemHandler(@NotNull final List<ItemStack> stacks, @NotNull final IItemHandler handler)
+    {
+        final List<ItemStack> result = Lists.newArrayList();
+
+        final Map<ItemStack, Integer> inputCounts = getMergedCountedStacksFromList(stacks);
+        final Map<ItemStack, Integer> inventoryCounts = getMergedCountedStacksFromList(getItemHandlerAsList(handler));
+
+        final Map<ItemStack, Integer> resultingContained = new HashMap<>();
+        inputCounts
+          .forEach((itemStack, count) -> {
+
+              int remainingCount = count;
+              for (Map.Entry<ItemStack, Integer> entry : inventoryCounts.entrySet())
+              {
+                  ItemStack containedStack = entry.getKey();
+                  Integer containedCount = entry.getValue();
+                  if (ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, containedStack))
+                  {
+                      remainingCount -= containedCount;
+                  }
+              }
+
+              if (remainingCount <= 0)
+              {
+                  resultingContained.put(itemStack, count);
+              }
+          });
+
+        resultingContained
+          .forEach((itemStack, count) -> {
+              final int fullStackCount = count / itemStack.getMaxStackSize();
+              final int missingPartialCount = count % itemStack.getMaxStackSize();
+
+              for (int i = 0; i < fullStackCount; i++)
+              {
+                  final ItemStack targetStack = itemStack.copy();
+                  targetStack.setCount(targetStack.getMaxStackSize());
+
+                  result.add(targetStack);
+              }
+
+              if (missingPartialCount != 0)
+              {
+                  final ItemStack targetStack = itemStack.copy();
+                  targetStack.setCount(missingPartialCount);
+
+                  result.add(targetStack);
+              }
+          });
+
+        return result;
+    }
+
+
     public static List<ItemStack> processItemStackListAndMerge(@NotNull final List<ItemStack> stacks)
     {
         return splitMergedCountedStacksIntoMaxContentStacks(getMergedCountedStacksFromList(stacks));
+    }
+
+    public static boolean moveItemStacksWithPossibleSwap(@NotNull final IItemHandler targetInventory, @NotNull final Collection<IItemHandler> sourceInventories, @NotNull final List<ItemStack> toSwap, @NotNull final Predicate<ItemStack> toKeepInTarget)
+    {
+        if (targetInventory.getSlots() < toSwap.size())
+            return false;
+
+        final Predicate<ItemStack> wantToKeep = toKeepInTarget.or(stack -> ItemStackUtils.compareItemStackListIgnoreStackSize(toSwap, stack));
+
+        swapping:
+        for (ItemStack itemStack : toSwap)
+        {
+            for (IItemHandler sourceInventory : sourceInventories)
+            {
+                if (removeStackFromItemHandler(sourceInventory, itemStack))
+                {
+                    ItemStack forcingResult = forceItemStackToItemHandler(targetInventory, itemStack, wantToKeep);
+                    addItemStackToItemHandler(sourceInventory, forcingResult);
+
+                    break swapping;
+                }
+            }
+
+            return false;
+        }
+
+        return true;
     }
 }

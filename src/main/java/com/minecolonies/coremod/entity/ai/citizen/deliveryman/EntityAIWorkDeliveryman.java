@@ -633,7 +633,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         ((BuildingDeliveryman) getOwnBuilding()).setBuildingToDeliver(null);
-        job.finishRequest(true);
+        job.finishRequest(false);
         return START_WORKING;
     }
 

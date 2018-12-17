@@ -550,12 +550,23 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
                 getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getToken());
                 final List<IItemHandler> validHandlers = Lists.newArrayList();
-                validHandlers.add(new InvWrapper(worker.getInventoryCitizen()));
+                validHandlers.add(worker.getItemHandlerCitizen());
                 validHandlers.addAll(InventoryUtils.getItemHandlersFromProvider(getOwnBuilding()));
 
                 //Check if we either have the requested Items in our inventory or if they are in the building.
                 if (InventoryUtils.areAllItemsInItemHandlerList(firstDeliverableRequest.getDeliveries(), validHandlers))
                 {
+                    final List<ItemStack> niceToHave = itemsNiceToHave();
+                    final List<ItemStack> contained = InventoryUtils.getContainedFromItemHandler(firstDeliverableRequest.getDeliveries(), worker.getItemHandlerCitizen());
+                    final List<ItemStack> missing = InventoryUtils.getMissingFromItemHandler(firstDeliverableRequest.getDeliveries(), worker.getItemHandlerCitizen());
+                    InventoryUtils.moveItemStacksWithPossibleSwap(
+                      worker.getItemHandlerCitizen(),
+                      InventoryUtils.getItemHandlersFromProvider(getOwnBuilding()),
+                      missing,
+                      itemStack ->
+                        contained.stream().anyMatch(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack)) ||
+                        niceToHave.stream().anyMatch(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack))
+                    );
                     return NEEDS_ITEM;
                 }
                 else
