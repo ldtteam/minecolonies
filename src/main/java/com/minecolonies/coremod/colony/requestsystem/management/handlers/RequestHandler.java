@@ -287,17 +287,18 @@ public final class RequestHandler
             if (followupRequests != null && !followupRequests.isEmpty())
             {
                 followupRequests.forEach(followupRequest -> parentRequest.addChild(followupRequest.getToken()));
+                followupRequests.forEach(followupRequest -> followupRequest.setParent(parentRequest.getToken()));
             }
 
             manager.updateRequestState(request.getToken(), RequestState.RECEIVED);
             parentRequest.removeChild(request.getToken());
 
+            request.setParent(null);
+
             if (!parentRequest.hasChildren() && parentRequest.getState() == RequestState.IN_PROGRESS)
             {
                 resolveRequest(manager, parentRequest);
             }
-
-            request.setParent(null);
         }
 
         //Assign the followup request if need be

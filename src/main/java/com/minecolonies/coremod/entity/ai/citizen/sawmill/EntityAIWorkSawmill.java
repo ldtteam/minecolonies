@@ -239,7 +239,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
         setDelay(HIT_DELAY);
 
         currentRequest = job.getCurrentTask();
-        if (progress >= 10) //TODO set up afterwards again!
+        if (progress >= 1) //TODO set up afterwards again!
         {
             final AIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
@@ -272,7 +272,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
     {
         if (maxCraftingCount == 0 && progress == 0 && craftCounter == 0 && currentRequest != null)
         {
-            getOwnBuilding().getColony().getRequestManager().updateRequestState(currentRequest.getToken(), RequestState.COMPLETED);
+            job.finishRequest(true);
             currentRequest = null;
         }
         return super.afterDump();

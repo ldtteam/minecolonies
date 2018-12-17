@@ -249,7 +249,14 @@ public class RecipeStorage implements IRecipeStorage
                 while (slotOfStack != -1)
                 {
                     final int count = ItemStackUtils.getSize(handler.getStackInSlot(slotOfStack));
-                    handler.extractItem(slotOfStack, amountNeeded, false);
+                    final ItemStack extractedStack = handler.extractItem(slotOfStack, amountNeeded, false);
+
+                    //This prevents the AI and for that matter the server from getting stuck in case of an emergency.
+                    //Deletes some items, but hey.
+                    if (ItemStackUtils.isEmpty(extractedStack) || extractedStack.getCount() < amountNeeded)
+                    {
+                        return false;
+                    }
 
                     if (count >= amountNeeded)
                     {

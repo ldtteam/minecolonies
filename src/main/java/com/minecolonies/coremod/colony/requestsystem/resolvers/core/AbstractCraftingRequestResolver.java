@@ -12,6 +12,8 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.util.CraftingUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
@@ -217,7 +219,21 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
      */
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        //The crafting completed, so we mark this one as completed and register a followup in the implementing class.
+        final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
+        final IRecipeStorage storage = buildingWorker.getFirstFullFillableRecipe(itemStack -> request.getRequest().matches(itemStack));
+
+        if (storage == null)
+        {
+            Log.getLogger().error("Failed to craft a crafting recipe. Its ingredients are missing.");
+            return;
+        }
+
+        final int craftingCount = CraftingUtils.calculateMaxCraftingCount(request.getRequest().getCount(), storage);
+        for (int i = 0; i < craftingCount; i++)
+        {
+            buildingWorker.fullFillRecipe(storage);
+        }
+
         manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
     }
 
