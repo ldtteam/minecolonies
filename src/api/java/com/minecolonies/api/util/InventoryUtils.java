@@ -1954,37 +1954,34 @@ public class InventoryUtils
      */
     public static boolean removeStackFromItemHandler(final IItemHandler handler, final ItemStack input)
     {
+        final ItemStack workingStack = input.copy();
         int maxTries = 0;
-        maxTries += ItemStackUtils.getSize(input);
+        maxTries += ItemStackUtils.getSize(workingStack);
 
-        boolean success = true;
-        int i = 0;
         int tries = 0;
         while (tries < maxTries)
         {
-            final int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, input::isItemEqual);
+            final int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(workingStack, stack));
 
             if (slot == -1)
             {
-                success = false;
-                i++;
-                continue;
+                return false;
             }
 
-            final int removedSize = ItemStackUtils.getSize(handler.extractItem(slot, ItemStackUtils.getSize(input), false));
+            final int removedSize = ItemStackUtils.getSize(handler.extractItem(slot, ItemStackUtils.getSize(workingStack), false));
 
-            if (removedSize == ItemStackUtils.getSize(input))
+            if (removedSize == ItemStackUtils.getSize(workingStack))
             {
-                i++;
+                return true;
             }
             else
             {
-                ItemStackUtils.changeSize(input, -removedSize);
+                ItemStackUtils.changeSize(workingStack, -removedSize);
             }
             tries++;
         }
 
-        return success && i >= 1;
+        return false;
     }
 
     /**
@@ -2201,7 +2198,7 @@ public class InventoryUtils
 
             if (alreadyContained.isPresent())
             {
-                requiredCountForStacks.put(inputUnitStack, requiredCountForStacks.get(alreadyContained.get()) + targetStack.getCount());
+                requiredCountForStacks.put(alreadyContained.get(), requiredCountForStacks.get(alreadyContained.get()) + targetStack.getCount());
             }
             else
             {

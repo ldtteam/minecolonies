@@ -246,7 +246,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
             {
                 while (craftCounter < maxCraftingCount)
                 {
-                    getOwnBuilding().fullFillRecipe(currentRecipeStorage);
+                    currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen());
                     currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
                     craftCounter++;
                 }
