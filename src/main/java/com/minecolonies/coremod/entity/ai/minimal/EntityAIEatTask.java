@@ -132,7 +132,7 @@ public class EntityAIEatTask extends EntityAIBase
         }
 
         final CitizenData citizenData = citizen.getCitizenData();
-        if (citizenData == null || citizen.getCitizenData().getSaturation() >= CitizenConstants.HIGH_SATURATION || !citizen.isOkayToEat())
+        if (citizenData == null || citizen.getCitizenData().getSaturation() >= CitizenConstants.HIGH_SATURATION || (!citizen.isOkayToEat() && citizen.getCitizenData().getSaturation() > 0))
         {
             return false;
         }
