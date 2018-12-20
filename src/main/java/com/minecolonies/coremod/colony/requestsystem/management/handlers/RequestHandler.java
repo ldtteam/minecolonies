@@ -526,6 +526,24 @@ public final class RequestHandler
     }
 
     /**
+     * Returns all requests made by a given requester.
+     *
+     * @param manager THe manager.
+     * @param requester The requester in question.
+     *
+     * @return A collection with request instances that are made by the given requester.
+     */
+    public static Collection<IRequest<?>> getRequestsMadeByRequester(final IStandardRequestManager manager, final IRequester requester)
+    {
+        return manager.getRequestIdentitiesDataStore()
+          .getIdentities()
+          .values()
+          .stream()
+          .filter(iRequest -> iRequest.getRequester().getRequesterId().equals(requester.getRequesterId()))
+          .collect(Collectors.toList());
+    }
+
+    /**
      * Wrapper for a assignment result.
      */
     private static final class AssigningResult<T> implements Comparable<AssigningResult<T>>

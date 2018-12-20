@@ -213,21 +213,6 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
      */
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
-        final IRecipeStorage storage = buildingWorker.getFirstFullFillableRecipe(itemStack -> request.getRequest().matches(itemStack));
-
-        if (storage == null)
-        {
-            Log.getLogger().error("Failed to craft a crafting recipe. Its ingredients are missing.");
-            return;
-        }
-
-        final int craftingCount = CraftingUtils.calculateMaxCraftingCount(request.getRequest().getCount(), storage);
-        for (int i = 0; i < craftingCount; i++)
-        {
-            buildingWorker.fullFillRecipe(storage);
-        }
-
         manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
     }
 

@@ -2,15 +2,28 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
+import com.minecolonies.coremod.colony.requestsystem.management.handlers.RequestHandler;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingProductionResolver;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
@@ -60,6 +73,47 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     public boolean canCraftComplexRecipes()
     {
         return true;
+    }
+
+    @Override
+    public boolean buildingRequiresItemForCrafting(final ItemStack stack, final List<ItemStorage> localAlreadyKep, final boolean inventory)
+    {
+        final List<StandardRequests.AbstractCraftingRequest<?>> craftingRequests = getResolvers()
+                                                                                     .stream()
+                                                                                     .filter(iRequestResolver -> iRequestResolver instanceof AbstractCraftingRequestResolver)
+                                                                                     .flatMap(iRequestResolver -> RequestHandler.getRequestsMadeByRequester(((IStandardRequestManager) getColony().getRequestManager()), iRequestResolver).stream())
+                                                                                     .filter(iRequest -> iRequest instanceof StandardRequests.AbstractCraftingRequest)
+                                                                                     .map(iRequest -> (StandardRequests.AbstractCraftingRequest<?>) iRequest)
+                                                                                     .collect(Collectors.toList());
+
+        final List<IRequest<? extends IDeliverable>> requirementRequests = getResolvers()
+                                                                             .stream()
+                                                                             .filter(iRequestResolver -> iRequestResolver instanceof AbstractCraftingProductionResolver)
+                                                                             .flatMap(iRequestResolver -> RequestHandler.getRequestsMadeByRequester(((IStandardRequestManager) getColony().getRequestManager()), iRequestResolver).stream())
+                                                                             .filter(iRequest -> iRequest.getRequest() instanceof IDeliverable)
+                                                                             .map(iRequest -> (IRequest<? extends IDeliverable>) iRequest)
+                                                                             .collect(Collectors.toList());
+
+        for (final StandardRequests.AbstractCraftingRequest<?> craftingRequest : craftingRequests)
+        {
+            if (ItemStackUtils.compareItemStacksIgnoreStackSize(craftingRequest.getRequest().getStack(), stack) ||
+                    ItemStackUtils.compareItemStackListIgnoreStackSize(craftingRequest.getDeliveries(), stack))
+            {
+                return true;
+            }
+        }
+
+        for (final IRequest<? extends IDeliverable> requirement :
+            requirementRequests)
+        {
+            if (requirement.getRequest().matches(stack) ||
+                    ItemStackUtils.compareItemStackListIgnoreStackSize(requirement.getDeliveries(), stack))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

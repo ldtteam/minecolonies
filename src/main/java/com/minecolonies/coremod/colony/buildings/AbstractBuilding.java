@@ -138,7 +138,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public void onCleanUp(final CitizenData citizen)
     {
         // Cancel all open requests
-        getOpenRequests(citizen).forEach(r -> colony.getRequestManager().updateRequestState(r.getToken(), RequestState.CANCELLED));
+        //Why is this next line here!!!?!?!?!?!?!?
+        //getOpenRequests(citizen).forEach(r -> colony.getRequestManager().updateRequestState(r.getToken(), RequestState.CANCELLED));
 
         /*
          * Buildings override this if required.
@@ -496,6 +497,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             }
         }
         return stack.getCount();
+    }
+
+    public boolean buildingRequiresItemForCrafting(final ItemStack stack, final List<ItemStorage> localAlreadyKep, final boolean inventory)
+    {
+        return false;
     }
 
     /**
