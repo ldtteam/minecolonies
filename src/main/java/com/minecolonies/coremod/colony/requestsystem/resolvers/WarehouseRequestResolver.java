@@ -61,13 +61,12 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
             try
             {
-                return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchinItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack)));
+                return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack), requestToCheck.getRequest().getCount()));
             }
             catch (Exception e)
             {
                 Log.getLogger().error(e);
             }
-
         }
 
         return false;
@@ -90,31 +89,43 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         final Colony colony = (Colony) manager.getColony();
         final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
 
+        List<IToken<?>> deliveries = Lists.newArrayList();
+        int remainingCount = request.getRequest().getCount();
+
+        tileentities:
         for (final TileEntityWareHouse wareHouse : wareHouses)
         {
-            ItemStack matchingStack = wareHouse.getFirstMatchingItemStackInWarehouse(itemStack -> request.getRequest().matches(itemStack));
-            if (ItemStackUtils.isEmpty(matchingStack))
+            List<ItemStack> targetStacks = wareHouse.getMatchingItemStacksInWarehouse(itemStack -> request.getRequest().matches(itemStack));
+            for (final ItemStack stack :
+              targetStacks)
             {
-                continue;
+                if (ItemStackUtils.isEmpty(stack))
+                    continue;
+
+                ItemStack matchingStack = stack.copy();
+                matchingStack.setCount(Math.min(remainingCount, matchingStack.getCount()));
+
+                final ItemStack deliveryStack = matchingStack.copy();
+                request.addDelivery(deliveryStack.copy());
+
+                final BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> ItemStack.areItemsEqual(itemStack, deliveryStack));
+                final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().provider.getDimension());
+
+                final Delivery delivery = new Delivery(itemStackLocation, request.getRequester().getRequesterLocation(), deliveryStack.copy());
+
+                final IToken<?> requestToken = manager.createRequest(new WarehouseRequestResolver(request.getRequester().getRequesterLocation(), request.getToken()), delivery);
+
+                deliveries.add(requestToken);
+                remainingCount -= ItemStackUtils.getSize(matchingStack);
+
+                if (remainingCount <= 0)
+                {
+                    break tileentities;
+                }
             }
-
-            matchingStack = matchingStack.copy();
-            matchingStack.setCount(Math.min(request.getRequest().getCount(), matchingStack.getCount()));
-
-            final ItemStack deliveryStack = matchingStack.copy();
-            request.addDelivery(deliveryStack.copy());
-
-            final BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> ItemStack.areItemsEqual(itemStack, deliveryStack));
-            final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().provider.getDimension());
-
-            final Delivery delivery = new Delivery(itemStackLocation, request.getRequester().getRequesterLocation(), deliveryStack.copy());
-
-            final IToken<?> requestToken = manager.createRequest(new WarehouseRequestResolver(request.getRequester().getRequesterLocation(), request.getToken()), delivery);
-
-            return ImmutableList.of(requestToken);
         }
 
-        return Lists.newArrayList();
+        return deliveries.isEmpty() ? null : deliveries;
     }
 
     @Override
