@@ -13,7 +13,8 @@
   ],
   "key": {
     "C": {
-      "item": "minecraft:chest"
+      "type": "forge:ore_dict",
+      "ore": "chest"
     }
   },
     "result": {
