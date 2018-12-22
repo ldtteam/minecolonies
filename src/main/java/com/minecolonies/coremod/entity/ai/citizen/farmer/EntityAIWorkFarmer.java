@@ -15,9 +15,9 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.network.messages.CompostParticleMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
@@ -525,7 +525,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         return true;
     }
 
-    @Override
     protected int getLevelDelay()
     {
         return (int) Math.max(SMALLEST_DELAY, STANDARD_DELAY - (this.worker.getCitizenExperienceHandler().getLevel() * DELAY_DIVIDER));

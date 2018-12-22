@@ -19,10 +19,10 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIStatePausedHandler;
+import com.minecolonies.coremod.entity.ai.statemachine.AIEventTarget;
+import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.ai.util.AISpecialTarget;
-import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
@@ -139,27 +139,27 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
             Init safety checks and transition to IDLE
            */
-          new AISpecialTarget(AIBlockingEventType.AI_BLOCKING, this::initSafetyChecks),
+          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::initSafetyChecks),
           /*
             Update chestbelt and nametag
             Will be executed every time
             and does not stop execution
            */
-          new AISpecialTarget(AIBlockingEventType.AI_BLOCKING, this::updateVisualState),
+          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::updateVisualState),
           /*
             If waitingForSomething returns true
             stop execution to wait for it.
             this keeps the current state
             (returning null would not stop execution)
            */
-          new AISpecialTarget(AIBlockingEventType.AI_BLOCKING, this::waitingForSomething, this::getState, 1),
+          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::waitingForSomething, this::getState, 1),
           /*
             Check if any items are needed.
             If yes, transition to NEEDS_ITEM.
             and wait for new items.
            */
           new AITarget(NEEDS_ITEM, this::waitForRequests),
-          new AISpecialTarget(AIBlockingEventType.AI_BLOCKING, () ->
+          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () ->
                                                                   (getState() != NEEDS_ITEM
                                                                      && (this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData())
                                                                            || this.getOwnBuilding()
@@ -176,7 +176,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
             Check if inventory has to be dumped.
            */
-          new AISpecialTarget(AIBlockingEventType.STATE_BLOCKING, this::inventoryNeedsDump, INVENTORY_FULL),
+          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::inventoryNeedsDump, INVENTORY_FULL),
           /*
            * Gather a needed item.
            */
@@ -185,7 +185,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
            * Place any non-restart regarding AITargets before this one
            * Restart AI, building etc.
            */
-          new AISpecialTarget(AIBlockingEventType.STATE_BLOCKING, this::shouldRestart, this::restart),
+          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::shouldRestart, this::restart),
           /*
            * Reset if not paused.
            */
@@ -197,7 +197,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
            * Start paused with inventory dump
            */
-          new AISpecialTarget(AIBlockingEventType.AI_BLOCKING, this::isStartingPaused, INVENTORY_FULL)
+          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::isStartingPaused, INVENTORY_FULL)
         );
     }
 

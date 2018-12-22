@@ -393,7 +393,6 @@ public enum AIWorkerState implements IAIState
         this.isOkayToEat = okayToEat;
     }
 
-    @Override
     public boolean isOkayToEat()
     {
         return isOkayToEat;

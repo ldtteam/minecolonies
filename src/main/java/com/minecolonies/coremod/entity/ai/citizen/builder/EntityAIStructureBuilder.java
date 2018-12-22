@@ -10,10 +10,10 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
+import com.minecolonies.coremod.entity.ai.statemachine.AIEventTarget;
+import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.ai.util.AISpecialTarget;
-import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -115,7 +115,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         super(job);
         super.registerTargets(
           new AITarget(IDLE, START_WORKING),
-          new AISpecialTarget(AIBlockingEventType.STATE_BLOCKING, this::checkIfExecute, this::getState),
+          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::checkIfExecute, this::getState),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
           new AITarget(PICK_UP, this::pickUpMaterial)
         );

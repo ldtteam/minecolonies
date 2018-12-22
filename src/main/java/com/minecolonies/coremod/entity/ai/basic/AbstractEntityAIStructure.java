@@ -10,10 +10,10 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.ai.statemachine.AIEventTarget;
+import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.ai.util.AISpecialTarget;
-import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.ai.util.Structure;
 import com.minecolonies.coremod.util.StructureWrapper;
 import com.minecolonies.coremod.util.WorkerUtil;
@@ -145,7 +145,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
           /*
            * Check if tasks should be executed.
            */
-          new AISpecialTarget(AIBlockingEventType.STATE_BLOCKING, this::checkIfCanceled, IDLE),
+          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::checkIfCanceled, IDLE),
           /*
            * Select the appropriate State to do next.
            */

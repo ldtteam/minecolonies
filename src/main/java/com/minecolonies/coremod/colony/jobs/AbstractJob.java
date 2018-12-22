@@ -391,7 +391,7 @@ public abstract class AbstractJob
     {
         if (workerAI.get() != null)
         {
-            workerAI.get().resetAIToIdle();
+            workerAI.get().resetAI();
         }
     }
 

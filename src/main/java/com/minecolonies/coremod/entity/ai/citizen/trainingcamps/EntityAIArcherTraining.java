@@ -7,8 +7,8 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingArchery
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.entity.ai.citizen.guard.GuardArrow;
-import com.minecolonies.coremod.entity.ai.util.AIState;
-import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.util.SoundUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.entity.MoverType;
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTraining>
@@ -120,14 +120,14 @@ public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTrain
         //Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, true, () -> DECIDE),
-          new AITarget(DECIDE, true, this::decide),
-          new AITarget(ARCHER_WANDER, true, this::wander),
-          new AITarget(ARCHER_FIND_SHOOTING_STAND_POSITION, true, this::findShootingStandPosition),
-          new AITarget(ARCHER_GO_TO_SHOOTING_STAND, true, this::goToShootingStand),
-          new AITarget(ARCHER_SELECT_TARGET, true, this::selectTarget),
-          new AITarget(ARCHER_CHECK_SHOT, true, this::checkShot),
-          new AITarget(ARCHER_SHOOT, true, this::shoot)
+          new AITarget(IDLE, () -> DECIDE),
+          new AITarget(DECIDE, this::decide),
+          new AITarget(ARCHER_WANDER, this::wander),
+          new AITarget(ARCHER_FIND_SHOOTING_STAND_POSITION, this::findShootingStandPosition),
+          new AITarget(ARCHER_GO_TO_SHOOTING_STAND, this::goToShootingStand),
+          new AITarget(ARCHER_SELECT_TARGET, this::selectTarget),
+          new AITarget(ARCHER_CHECK_SHOT, this::checkShot),
+          new AITarget(ARCHER_SHOOT, this::shoot)
 
         );
         worker.getCitizenExperienceHandler().setSkillModifier(
@@ -141,7 +141,7 @@ public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTrain
      *
      * @return the next state to go to.
      */
-    private AIState decide()
+    private IAIState decide()
     {
         if (checkForToolOrWeapon(ToolType.BOW))
         {
@@ -165,7 +165,7 @@ public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTrain
      *
      * @return the next state to go to.
      */
-    private AIState wander()
+    private IAIState wander()
     {
         setDelay(STANDARD_DELAY);
         if (currentPathingTarget == null)
@@ -187,7 +187,7 @@ public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTrain
      *
      * @return the next state to go to.
      */
-    private AIState goToShootingStand()
+    private IAIState goToShootingStand()
     {
         setDelay(STANDARD_DELAY);
         if (walkToBlock(currentPathingTarget, 1))
@@ -202,7 +202,7 @@ public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTrain
      *
      * @return the next state to go to.
      */
-    private AIState selectTarget()
+    private IAIState selectTarget()
     {
         setDelay(STANDARD_DELAY);
         final BuildingArchery archeryBuilding = getOwnBuilding();
@@ -227,7 +227,7 @@ public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTrain
      *
      * @return the next state to go to.
      */
-    private AIState findShootingStandPosition()
+    private IAIState findShootingStandPosition()
     {
         setDelay(STANDARD_DELAY);
         final BuildingArchery archeryBuilding = getOwnBuilding();
@@ -247,7 +247,7 @@ public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTrain
      *
      * @return the next state to go to.
      */
-    protected AIState shoot()
+    protected IAIState shoot()
     {
         if (worker.isHandActive())
         {
@@ -308,7 +308,7 @@ public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTrain
         }
     }
 
-    private AIState checkShot()
+    private IAIState checkShot()
     {
         if (arrowInProgress.getDistanceSq(currentShootingTarget) < MIN_DISTANCE_FOR_SUCCESS)
         {
