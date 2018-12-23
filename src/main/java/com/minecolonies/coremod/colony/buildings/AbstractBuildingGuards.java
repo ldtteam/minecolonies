@@ -31,6 +31,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.EntityEntry;
@@ -183,21 +184,21 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     {
         super(c, l);
 
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.BOW, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), 1);
-        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.doesItemServeAsWeapon(itemStack), 1);
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.BOW, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.doesItemServeAsWeapon(itemStack), new Tuple<>(1, true));
 
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ItemArmor
-                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.CHEST, 1);
+                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.CHEST, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ItemArmor
-                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.HEAD, 1);
+                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.HEAD, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ItemArmor
-                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.LEGS, 1);
+                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.LEGS, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ItemArmor
-                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.FEET, 1);
+                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.FEET, new Tuple<>(1, true));
     }
 
     //// ---- NBT Overrides ---- \\\\

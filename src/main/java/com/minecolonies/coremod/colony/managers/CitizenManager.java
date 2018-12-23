@@ -12,7 +12,7 @@ import com.minecolonies.coremod.colony.HappinessData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingArchery;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.managers.interfaces.ICitizenManager;
@@ -276,9 +276,9 @@ public class CitizenManager implements ICitizenManager
             {
                 if (b instanceof BuildingHome)
                 {
-                    newMaxCitizens += ((BuildingHome) b).getMaxInhabitants();
+                    newMaxCitizens += b.getMaxInhabitants();
                 }
-                else if (b instanceof BuildingArchery)
+                else if (b instanceof BuildingBarracksTower)
                 {
                     newMaxCitizens += b.getBuildingLevel();
                 }

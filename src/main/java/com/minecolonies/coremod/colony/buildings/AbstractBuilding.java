@@ -442,16 +442,22 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      *
      * @param stack            the stack to check it with.
      * @param localAlreadyKept already kept items.
+     * @param inventory if it should be in the inventory or in the building.
      * @return the amount which can get dumped or 0 if not.
      */
-    public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept)
+    public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory)
     {
-        for (final Map.Entry<Predicate<ItemStack>, Integer> entry : getRequiredItemsAndAmount().entrySet())
+        for (final Map.Entry<Predicate<ItemStack>, Tuple<Integer, Boolean>> entry : getRequiredItemsAndAmount().entrySet())
         {
+            if (inventory && !entry.getValue().getSecond())
+            {
+                continue;
+            }
+
             if (entry.getKey().test(stack))
             {
                 final ItemStorage kept = ItemStorage.getItemStackOfListMatchingPredicate(localAlreadyKept, entry.getKey());
-                final int toKeep = entry.getValue();
+                final int toKeep = entry.getValue().getFirst();
                 int rest = stack.getCount() - toKeep;
                 if (kept != null)
                 {
@@ -491,15 +497,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      *
      * @return a list of objects which should be kept.
      */
-    public Map<Predicate<ItemStack>, Integer> getRequiredItemsAndAmount()
+    public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
-        final Map<Predicate<ItemStack>, Integer> toKeep = new HashMap<>();
-        toKeep.putAll(keepX);
+        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
         final IRequestManager manager = colony.getRequestManager();
         toKeep.put(stack -> this.getOpenRequestsByCitizen().values().stream()
                 .anyMatch(list -> list.stream()
                         .anyMatch(token -> manager.getRequestForToken(token).getRequest() instanceof IDeliverable
-                                && ((IDeliverable) manager.getRequestForToken(token).getRequest()).matches(stack))), Integer.MAX_VALUE);
+                                && ((IDeliverable) manager.getRequestForToken(token).getRequest()).matches(stack))), new Tuple<>(Integer.MAX_VALUE, true));
 
         return toKeep;
     }

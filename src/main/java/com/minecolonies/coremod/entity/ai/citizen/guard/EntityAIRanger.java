@@ -350,7 +350,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 currentAttackDelay = getAttackDelay();
                 worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
                 worker.resetActiveHand();
-                this.incrementActionsDoneAndDecSaturation();
+                worker.decreaseSaturationForContinuousAction();
             }
             else
             {

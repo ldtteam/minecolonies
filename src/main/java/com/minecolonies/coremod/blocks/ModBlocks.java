@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.blocks;
 
-import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
+import com.minecolonies.coremod.blocks.decorative.*;
 import com.minecolonies.coremod.blocks.huts.*;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import net.minecraft.block.Block;
@@ -26,28 +26,29 @@ public final class ModBlocks
     public static        BlockHutCitizen                blockHutCitizen;
     public static        BlockHutMiner                  blockHutMiner;
     public static        BlockHutLumberjack             blockHutLumberjack;
-    public static BlockHutBaker                  blockHutBaker;
-    public static BlockHutBuilder                blockHutBuilder;
-    public static BlockHutDeliveryman            blockHutDeliveryman;
-    public static BlockHutBlacksmith             blockHutBlacksmith;
-    public static BlockHutStonemason             blockHutStonemason;
-    public static BlockHutFarmer                 blockHutFarmer;
-    public static BlockHutFisherman              blockHutFisherman;
-    public static BlockBarracksTowerSubstitution blockBarracksTowerSubstitution;
-    public static BlockHutField                  blockHutField;
-    public static BlockHutGuardTower             blockHutGuardTower;
-    public static BlockHutWareHouse              blockHutWareHouse;
-    public static BlockHutShepherd               blockHutShepherd;
-    public static BlockHutCowboy                 blockHutCowboy;
-    public static BlockHutSwineHerder            blockHutSwineHerder;
-    public static BlockHutChickenHerder          blockHutChickenHerder;
-    public static BlockHutBarracks               blockHutBarracks;
-    public static BlockHutBarracksTower          blockHutBarracksTower;
-    public static BlockHutCook                   blockHutCook;
-    public static BlockHutSmeltery               blockHutSmeltery;
-    public static BlockHutComposter              blockHutComposter;
-    public static BlockHutLibrary                blockHutLibrary;
-    public static BlockHutArchery                blockHutArchery;
+    public static        BlockHutBaker                  blockHutBaker;
+    public static        BlockHutBuilder                blockHutBuilder;
+    public static        BlockHutDeliveryman            blockHutDeliveryman;
+    public static        BlockHutBlacksmith             blockHutBlacksmith;
+    public static        BlockHutStonemason             blockHutStonemason;
+    public static        BlockHutFarmer                 blockHutFarmer;
+    public static        BlockHutFisherman              blockHutFisherman;
+    public static        BlockBarracksTowerSubstitution blockBarracksTowerSubstitution;
+    public static        BlockHutField                  blockHutField;
+    public static        BlockHutGuardTower             blockHutGuardTower;
+    public static        BlockHutWareHouse              blockHutWareHouse;
+    public static        BlockHutShepherd               blockHutShepherd;
+    public static        BlockHutCowboy                 blockHutCowboy;
+    public static        BlockHutSwineHerder            blockHutSwineHerder;
+    public static        BlockHutChickenHerder          blockHutChickenHerder;
+    public static        BlockHutBarracks               blockHutBarracks;
+    public static        BlockHutBarracksTower          blockHutBarracksTower;
+    public static        BlockHutCook                   blockHutCook;
+    public static        BlockHutSmeltery               blockHutSmeltery;
+    public static        BlockHutComposter              blockHutComposter;
+    public static        BlockHutLibrary                blockHutLibrary;
+    public static        BlockHutArchery                blockHutArchery;
+    public static        BlockHutCombatAcademy          blockHutCombatAcademy;
 
     /**
      * Utility blocks.
@@ -97,7 +98,8 @@ public final class ModBlocks
         blockHutSmeltery = new BlockHutSmeltery().registerBlock(registry);
         blockHutComposter = new BlockHutComposter().registerBlock(registry);
         blockHutLibrary =  new BlockHutLibrary().registerBlock(registry);
-        blockHutArchery = new BlockHutArchery().registerBlock(registry);
+        blockHutArchery =  new BlockHutArchery().registerBlock(registry);
+        blockHutCombatAcademy =  new BlockHutCombatAcademy().registerBlock(registry);
 
         blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
         blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
@@ -135,6 +137,7 @@ public final class ModBlocks
         blockHutComposter.registerItemBlock(registry);
         blockHutLibrary.registerItemBlock(registry);
         blockHutArchery.registerItemBlock(registry);
+        blockHutCombatAcademy.registerItemBlock(registry);
 
         blockConstructionTape.registerItemBlock(registry);
         blockBarracksTowerSubstitution.registerItemBlock(registry);

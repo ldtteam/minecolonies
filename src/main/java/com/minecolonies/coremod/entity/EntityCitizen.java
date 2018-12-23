@@ -26,6 +26,7 @@ import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.PathResult;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
+import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.util.PermissionUtils;
 import com.minecolonies.coremod.util.SoundUtils;
@@ -40,7 +41,7 @@ import net.minecraft.entity.ai.EntityAIWatchClosest2;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemNameTag;
 import net.minecraft.item.ItemShield;
 import net.minecraft.item.ItemStack;
@@ -52,9 +53,7 @@ import net.minecraft.scoreboard.Team;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -64,6 +63,9 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -579,6 +581,19 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             if (getOffsetTicks() % TICKS_20 == 0)
             {
+                final ItemStack hat = getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+                if (LocalDate.now(Clock.systemDefaultZone()).getMonth() == Month.DECEMBER)
+                {
+                    if (hat.isEmpty())
+                    {
+                        this.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(ModItems.santaHat));
+                    }
+                }
+                else if (!hat.isEmpty() && hat.getItem() == ModItems.santaHat)
+                {
+                    this.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStackUtils.EMPTY);
+                }
+
                 this.setAlwaysRenderNameTag(Configurations.gameplay.alwaysRenderNameTag);
                 citizenItemHandler.pickupItems();
                 citizenChatHandler.cleanupChatMessages();

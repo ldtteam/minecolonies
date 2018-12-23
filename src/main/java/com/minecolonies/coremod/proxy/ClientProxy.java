@@ -191,6 +191,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutComposter);
         createCustomModel(ModBlocks.blockHutLibrary);
         createCustomModel(ModBlocks.blockHutArchery);
+        createCustomModel(ModBlocks.blockHutCombatAcademy);
 
         createCustomModel(ModBlocks.blockConstructionTape);
         createCustomModel(ModBlocks.blockRack);
@@ -215,7 +216,9 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModItems.pirateChest_2);
         createCustomModel(ModItems.pirateHelmet_2);
         createCustomModel(ModItems.pirateLegs_2);
-        
+
+        createCustomModel(ModItems.santaHat);
+
         // Achievement proxy Items
         createCustomModel(ModItems.itemAchievementProxySettlement);
         createCustomModel(ModItems.itemAchievementProxyTown);

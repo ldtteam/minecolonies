@@ -353,13 +353,26 @@ public enum AIWorkerState implements IAIState
 
     STUDY(true),
     /*
-### Archers in Training ###
-     */
+### General Training AI ###
 
     /**
      * Wander around the building
      */
-    ARCHER_WANDER(true),
+    TRAINING_WANDER(true),
+
+    /**
+     * Go to the shooting position.
+     */
+    GO_TO_TARGET(true),
+
+    /**
+     * Find the position to train from.
+     */
+    COMBAT_TRAINING(true),
+
+    /*
+### Archers in Training ###
+     */
 
     /**
      * Find a good position to shoot from.
@@ -372,11 +385,6 @@ public enum AIWorkerState implements IAIState
     ARCHER_SELECT_TARGET(false),
 
     /**
-     * Go to the shooting position.
-     */
-    ARCHER_GO_TO_SHOOTING_STAND(false),
-
-    /**
      * Check the shot result.
      */
     ARCHER_CHECK_SHOT(false),
@@ -384,7 +392,36 @@ public enum AIWorkerState implements IAIState
     /**
      * Archer shoot target.
      */
-    ARCHER_SHOOT(false);
+    ARCHER_SHOOT(false),
+
+            /*
+### Knights in Training ###
+     */
+
+    /**
+     *  Guard attack a dummy.
+     */
+    KNIGHT_ATTACK_DUMMY(true),
+
+    /**
+     * Find dummy to attack
+     */
+    FIND_DUMMY_PARTNER(true),
+
+    /**
+     * Find a training partner
+     */
+    FIND_TRAINING_PARTNER(true),
+
+    /**
+     * Attack the training partner.
+     */
+    KNIGHT_TRAIN_WITH_PARTNER(true),
+
+    /**
+     * Attack protect in a certain direction.
+     */
+    KNIGHT_ATTACK_PROTECT(true);
 
     private boolean isOkayToEat;
 

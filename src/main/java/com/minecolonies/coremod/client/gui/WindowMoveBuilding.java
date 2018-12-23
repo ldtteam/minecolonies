@@ -250,7 +250,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
         if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
             //We need to check that the server have it too using the md5
-            WindowBuildTool.requestScannedSchematic(structureName, false, false);
+            WindowBuildTool.requestScannedSchematic(structureName);
         }
         else
         {

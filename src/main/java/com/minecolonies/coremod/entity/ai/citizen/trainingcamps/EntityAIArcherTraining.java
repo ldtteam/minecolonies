@@ -1,11 +1,9 @@
 package com.minecolonies.coremod.entity.ai.citizen.trainingcamps;
 
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingArchery;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.entity.ai.citizen.guard.GuardArrow;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
@@ -15,10 +13,8 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,13 +23,8 @@ import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTraining>
+public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTraining>
 {
-    /**
-     * Percentual chance for target search being chosen as target job.
-     */
-    private static final int TARGET_SEARCH_CHANCE = 10;
-
     /**
      * How often should intelligence factor into the archer's skill modifier.
      */
@@ -43,11 +34,6 @@ public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTrain
      * How often should dexterity factor into the archer's skill modifier.
      */
     private static final int STRENGTH_MULTIPLIER = 1;
-
-    /**
-     * 100% chance to compare it with smaller percentages.
-     */
-    private static final int ONE_HUNDRED_PERCENT = 100;
 
     /**
      * Xp per successful shot.
@@ -80,16 +66,6 @@ public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTrain
     private static final int CHECK_SHOT_DELAY = TICKS_20 * 3;
 
     /**
-     * The building range.
-     */
-    private AxisAlignedBB range;
-
-    /**
-     * The current pathing target to walk to.
-     */
-    private BlockPos currentPathingTarget;
-
-    /**
      * Current target to shoot at.
      */
     private BlockPos currentShootingTarget;
@@ -105,11 +81,6 @@ public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTrain
     private EntityTippedArrow arrowInProgress;
 
     /**
-     * How many more ticks we have until next attack.
-     */
-    protected int currentAttackDelay = 0;
-
-    /**
      * Creates the abstract part of the AI.inte
      * Always use this constructor!
      *
@@ -120,11 +91,7 @@ public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTrain
         //Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, () -> DECIDE),
-          new AITarget(DECIDE, this::decide),
-          new AITarget(ARCHER_WANDER, this::wander),
-          new AITarget(ARCHER_FIND_SHOOTING_STAND_POSITION, this::findShootingStandPosition),
-          new AITarget(ARCHER_GO_TO_SHOOTING_STAND, this::goToShootingStand),
+          new AITarget(COMBAT_TRAINING, this::findShootingStandPosition),
           new AITarget(ARCHER_SELECT_TARGET, this::selectTarget),
           new AITarget(ARCHER_CHECK_SHOT, this::checkShot),
           new AITarget(ARCHER_SHOOT, this::shoot)
@@ -133,68 +100,6 @@ public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTrain
         worker.getCitizenExperienceHandler().setSkillModifier(
           INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
             + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
-        worker.setCanPickUpLoot(true);
-    }
-
-    /**
-     * Decide on which state to go to.
-     *
-     * @return the next state to go to.
-     */
-    private IAIState decide()
-    {
-        if (checkForToolOrWeapon(ToolType.BOW))
-        {
-            setDelay(REQUEST_DELAY);
-            return DECIDE;
-        }
-
-        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.BOW, 0, getOwnBuilding().getMaxToolLevel());
-        worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, bowSlot);
-        setDelay(STANDARD_DELAY);
-
-        if (worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < TARGET_SEARCH_CHANCE)
-        {
-            return ARCHER_FIND_SHOOTING_STAND_POSITION;
-        }
-        return ARCHER_WANDER;
-    }
-
-    /**
-     * Wander randomly around within the premises of the building.
-     *
-     * @return the next state to go to.
-     */
-    private IAIState wander()
-    {
-        setDelay(STANDARD_DELAY);
-        if (currentPathingTarget == null)
-        {
-            currentPathingTarget = getWanderPosition();
-        }
-
-        if (!walkToBlock(currentPathingTarget) || worker.getCitizenStuckHandler().isStuck())
-        {
-            currentPathingTarget = null;
-            return DECIDE;
-        }
-
-        return ARCHER_WANDER;
-    }
-
-    /**
-     * Walk to the shooting stand position.
-     *
-     * @return the next state to go to.
-     */
-    private IAIState goToShootingStand()
-    {
-        setDelay(STANDARD_DELAY);
-        if (walkToBlock(currentPathingTarget, 1))
-        {
-            return getState();
-        }
-        return ARCHER_SELECT_TARGET;
     }
 
     /**
@@ -238,22 +143,27 @@ public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTrain
             return DECIDE;
         }
 
+        stateAfterPathing = ARCHER_SELECT_TARGET;
         currentPathingTarget = shootingPos;
-        return ARCHER_GO_TO_SHOOTING_STAND;
+        return GO_TO_TARGET;
     }
 
     /**
-     * The ranged attack modus.
+     * The ranged attack modus
      *
      * @return the next state to go to.
      */
     protected IAIState shoot()
     {
+        setDelay(STANDARD_DELAY);
+        if (currentShootingTarget == null)
+        {
+            return START_WORKING;
+        }
+
         if (worker.isHandActive())
         {
-            setDelay(STANDARD_DELAY);
             WorkerUtil.faceBlock(currentShootingTarget, worker);
-            //worker.face(target, (float) TURN_AROUND, (float) TURN_AROUND);
             worker.swingArm(EnumHand.MAIN_HAND);
 
             final EntityTippedArrow arrow = new GuardArrow(world, worker);
@@ -297,17 +207,6 @@ public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTrain
         return ARCHER_CHECK_SHOT;
     }
 
-    /**
-     * Reduces the attack delay by the given Tickrate
-     */
-    private void reduceAttackDelay()
-    {
-        if (currentAttackDelay > 0)
-        {
-            currentAttackDelay--;
-        }
-    }
-
     private IAIState checkShot()
     {
         if (arrowInProgress.getDistanceSq(currentShootingTarget) < MIN_DISTANCE_FOR_SUCCESS)
@@ -322,25 +221,17 @@ public class EntityAIArcherTraining extends AbstractEntityAIBasic<JobArcherTrain
         return ARCHER_SELECT_TARGET;
     }
 
-    /**
-     * Get a wander position within the archer training camp to walk to.
-     *
-     * @return the position or the location of the hut chest if not found.
-     */
-    private BlockPos getWanderPosition()
+    @Override
+    protected boolean isSetup()
     {
-        final BlockPos pos = BlockPosUtil.getRandomPosition(world, worker.getPosition(), getOwnBuilding().getLocation());
-
-        if (range == null)
+        if (checkForToolOrWeapon(ToolType.BOW))
         {
-            range = getOwnBuilding().getTargetableArea(world);
+            setDelay(REQUEST_DELAY);
+            return false;
         }
 
-        if (range.intersectsWithXZ(new Vec3d(pos)))
-        {
-            return pos;
-        }
-
-        return getOwnBuilding().getLocation();
+        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.BOW, 0, getOwnBuilding().getMaxToolLevel());
+        worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, bowSlot);
+        return true;
     }
 }

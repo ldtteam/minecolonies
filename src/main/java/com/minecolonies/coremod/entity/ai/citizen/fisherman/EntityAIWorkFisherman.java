@@ -418,7 +418,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             }
             lastPathResult = pathResult;
             pathResult = null;
-            worker.decreaseSaturationForAction();
             return FISHERMAN_CHECK_WATER;
         }
         if (pathResult.isCancelled())
@@ -447,8 +446,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         {
             return notReadyState;
         }
-
-        worker.decreaseSaturationForContinuousAction();
         
         if (caughtFish())
         {
@@ -629,7 +626,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         worker.captureDrops = true;
         retrieveRod();
         fishingSkill = worker.getCitizenExperienceHandler().getLevel();
-        this.incrementActionsDoneAndDecSaturation();
         return true;
     }
 

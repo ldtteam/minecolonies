@@ -1063,7 +1063,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (buildingWorker != null && !ItemStackUtils.isEmpty(stackToDump))
         {
-            final int amount = dumpAnyway ? stackToDump.getCount() : buildingWorker.buildingRequiresCertainAmountOfItem(stackToDump, alreadyKept);
+            final int amount = dumpAnyway ? stackToDump.getCount() : buildingWorker.buildingRequiresCertainAmountOfItem(stackToDump, alreadyKept, true);
             if (amount > 0)
             {
                 final ItemStack activeStack = new InvWrapper(getInventory()).extractItem(slotAt, amount, false);
