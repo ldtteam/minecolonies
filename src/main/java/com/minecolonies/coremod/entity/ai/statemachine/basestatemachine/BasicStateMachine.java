@@ -13,6 +13,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * Basic statemachine class, can be used for any Transition typed which extends the transition interface.
+ * It contains the current state and a hashmap for events and transitions, which are the minimal requirements to have a working statemachine.
+ */
 public class BasicStateMachine<T extends IStateMachineTransition> implements IStateMachine<T>
 {
     /**

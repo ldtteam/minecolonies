@@ -8,6 +8,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
+/**
+ * Basic event for statemachines, consists of a condition and a statesupplier to transition the statemachine into.
+ * Events are always executed before any state transitions happen.
+ */
 public class BasicEvent extends BasicTransition implements IStateMachineEvent
 {
     /**

@@ -11,7 +11,7 @@ import static com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachi
 import static com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE_VARIANT;
 
 /**
- * Transition with tickrate logic
+ * Transition with tickrate logic, allows to define an intended tickrate at which this transition will be checked.
  */
 public class TickingTransition extends BasicTransition
 {

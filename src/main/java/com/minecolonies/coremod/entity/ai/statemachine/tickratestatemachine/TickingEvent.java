@@ -8,6 +8,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
+/**
+ * Event with a tickrate for a statemachine using a tickrate.
+ */
 public class TickingEvent extends TickingTransition implements IStateMachineEvent
 {
     /**

@@ -8,6 +8,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
+/**
+ * One time event that can be checked at the given tickrate, one time events are removed after causing a state transition.
+ * (Even when transitioning into the same state again)
+ */
 public class TickingOneTimeEvent extends TickingEvent implements IStateMachineOneTimeEvent
 {
     /**

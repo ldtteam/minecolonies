@@ -4,6 +4,11 @@ import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.statemachine.transitions.IStateMachineTransition;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Statemachine interface, implement to add more statemachine types.
+ * Contains all needed functions for a basic statemachine
+ * @param <T>
+ */
 public interface IStateMachine<T extends IStateMachineTransition>
 {
     /**

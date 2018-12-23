@@ -9,7 +9,9 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 /**
- * Transition class for statemachines
+ * Basic Transition class for statemachines.
+ * Consists of a state the transition applies in, a statesupplier which determines its next state and
+ * a condition which has to be true to transition into the next state.
  */
 public class BasicTransition implements IStateMachineTransition
 {
