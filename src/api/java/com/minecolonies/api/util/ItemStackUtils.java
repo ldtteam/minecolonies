@@ -87,6 +87,11 @@ public final class ItemStackUtils
     public static final Predicate<ItemStack> IS_SMELTABLE = itemStack -> !ItemStackUtils.isEmpty(FurnaceRecipes.instance().getSmeltingResult(itemStack));
 
     /**
+     * Predicate describing food which can be eaten (is not raw).
+     */
+    public static final Predicate<ItemStack> CAN_EAT = itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood && !(IS_SMELTABLE.test(itemStack));
+
+    /**
      * Predicate describing cookables.
      */
     public static final Predicate<ItemStack> ISCOOKABLE = ISFOOD.and(IS_SMELTABLE);
