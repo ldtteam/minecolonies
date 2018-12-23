@@ -156,7 +156,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             range = getOwnBuilding().getTargetableArea(world);
         }
 
-        if (!range.intersectsWithXZ(new Vec3d(living.getPosition())) || worker.getCitizenStuckHandler().isStuck())
+        if (!range.intersectsWithXZ(new Vec3d(living.getPosition())))
         {
             worker.getNavigator().clearPath();
             removeFromQueue();
@@ -165,6 +165,11 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
         if (walkToBlock(living.getPosition()))
         {
+            if (worker.getCitizenStuckHandler().isStuck())
+            {
+                worker.getNavigator().clearPath();
+                removeFromQueue();
+            }
             setDelay(2);
             return getState();
         }
@@ -180,7 +185,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         }
         InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
                 new InvWrapper(worker.getInventoryCitizen()),
-                ItemStackUtils.ISFOOD,
+                ItemStackUtils.CAN_EAT,
                 getOwnBuilding().getBuildingLevel() * AMOUNT_OF_FOOD_TO_SERVE, handler
                 );
 
@@ -239,12 +244,12 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             citizenToServe.addAll(citizenList);
             playerToServe.addAll(playerList);
 
-            if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), ItemStackUtils.ISFOOD))
+            if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), ItemStackUtils.CAN_EAT))
             {
                 return COOK_SERVE_FOOD_TO_CITIZEN;
             }
 
-            needsCurrently = ItemStackUtils.ISFOOD;
+            needsCurrently = ItemStackUtils.CAN_EAT;
             return GATHERING_REQUIRED_MATERIALS;
         }
         return START_WORKING;
