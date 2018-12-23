@@ -16,7 +16,7 @@ public class TickingEvent extends TickingTransition implements IStateMachineEven
     /**
      * The type of this Event
      */
-    private IAIEventType eventType;
+    private final IAIEventType eventType;
 
     /**
      * Creates a new TickingEvent

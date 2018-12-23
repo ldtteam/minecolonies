@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine;
 /**
  * Constants for tickrate limited Transitions and statemachines.
  */
-public abstract class TickRateConstants
+public class TickRateConstants
 {
     /**
      * The max delay one can set upon AITarget creation
