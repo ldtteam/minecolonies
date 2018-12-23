@@ -1,14 +1,14 @@
-package com.minecolonies.coremod.entity.ai.statemachine.tickingStateMachine;
+package com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine;
 
-import com.minecolonies.coremod.entity.ai.statemachine.basicStateMachine.BasicTransition;
+import com.minecolonies.coremod.entity.ai.statemachine.basestatemachine.BasicTransition;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-import static com.minecolonies.coremod.entity.ai.statemachine.tickingStateMachine.TickRateConstants.MAX_TICKRATE;
-import static com.minecolonies.coremod.entity.ai.statemachine.tickingStateMachine.TickRateConstants.MAX_TICKRATE_VARIANT;
+import static com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
+import static com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE_VARIANT;
 
 /**
  * Transition with tickrate logic

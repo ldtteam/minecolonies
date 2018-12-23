@@ -1,6 +1,6 @@
-package com.minecolonies.coremod.entity.ai.statemachine.tickingStateMachine;
+package com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine;
 
-import com.minecolonies.coremod.entity.ai.statemachine.basicStateMachine.BasicStateMachine;
+import com.minecolonies.coremod.entity.ai.statemachine.basestatemachine.BasicStateMachine;
 import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import org.jetbrains.annotations.NotNull;
@@ -8,8 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
-import static com.minecolonies.coremod.entity.ai.statemachine.tickingStateMachine.TickRateConstants.MAX_TICKRATE;
-import static com.minecolonies.coremod.entity.ai.statemachine.tickingStateMachine.TickRateConstants.MAX_TICKRATE_VARIANT;
+import static com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
+import static com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE_VARIANT;
 
 public class TickRateStateMachine extends BasicStateMachine<TickingTransition>
 {

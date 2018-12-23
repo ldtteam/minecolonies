@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.statemachine;
 
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.ai.statemachine.tickingStateMachine.TickingTransition;
+import com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

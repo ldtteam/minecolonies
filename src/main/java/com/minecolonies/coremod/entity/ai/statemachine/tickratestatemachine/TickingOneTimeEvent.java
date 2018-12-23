@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.ai.statemachine.tickingStateMachine;
+package com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine;
 
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIEventType;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;

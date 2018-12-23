@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.ai.statemachine.basicStateMachine;
+package com.minecolonies.coremod.entity.ai.statemachine.basestatemachine;
 
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIEventType;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;

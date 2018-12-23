@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.ai.statemachine;
 
 import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.ai.statemachine.tickingStateMachine.TickingEvent;
+import com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.TickingEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;

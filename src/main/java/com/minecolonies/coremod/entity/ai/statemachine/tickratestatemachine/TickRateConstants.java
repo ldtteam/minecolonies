@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.entity.ai.statemachine.tickingStateMachine;
+package com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine;
 
 public abstract class TickRateConstants
 {

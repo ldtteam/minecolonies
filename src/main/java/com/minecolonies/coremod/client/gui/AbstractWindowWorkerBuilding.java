@@ -138,7 +138,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     {
         state = !state;
         stateString = state ? DP_MODE_STATIC : DP_MODE_AUTOMATIC;
-        ;
+
         MineColonies.getNetwork().sendToServer(new ChangeDeliveryPriorityStateMessage(building));
         findPaneOfTypeByID(BUTTON_DP_STATE, Button.class).setLabel(LanguageHandler.format(stateString));
         MineColonies.getLogger().info(state);
