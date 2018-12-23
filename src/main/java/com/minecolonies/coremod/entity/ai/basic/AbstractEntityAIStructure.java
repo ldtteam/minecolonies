@@ -438,8 +438,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                         return false;
                     }
                 }
-                handleBuildingOverBlock(coords);
-                world.setBlockToAir(coords);
+                if (!world.isAirBlock(coords))
+                {
+                    handleBuildingOverBlock(coords);
+                    world.setBlockToAir(coords);
+                }
 
                 final Object result = handlers.handle(world, coords, blockState, job.getStructure().getBlockInfo().tileentityData, false, job.getStructure().getPosition());
                 if (result instanceof IPlacementHandler.ActionProcessingResult)
