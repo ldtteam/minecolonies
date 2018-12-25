@@ -875,6 +875,10 @@ public abstract class AbstractPathJob implements Callable<Path>
                 //  Level path
                 return pos.getY() - i + 1;
             }
+            else if (below.getMaterial() != Material.AIR)
+            {
+                return -1;
+            }
         }
 
         return -1;
