@@ -12,6 +12,7 @@ import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
@@ -122,16 +123,22 @@ public abstract class AbstractPathJob implements Callable<Path>
     private       int                totalNodesVisited            = 0;
 
     /**
+     * The entity this job belongs to.
+     */
+    private EntityLivingBase entity;
+
+    /**
      * AbstractPathJob constructor.
      *
      * @param world the world within which to path.
      * @param start the start position from which to path from.
      * @param end   the end position to path to.
      * @param range maximum path range.
+     * @param entity the entity.
      */
-    public AbstractPathJob(final World world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range)
+    public AbstractPathJob(final World world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range, final EntityLivingBase entity)
     {
-        this(world, start, end, range, new PathResult());
+        this(world, start, end, range, new PathResult(), entity);
     }
 
     /**
@@ -142,9 +149,10 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param end    the end position to path to
      * @param range  maximum path range.
      * @param result path result.
-     * @see AbstractPathJob#AbstractPathJob(World, BlockPos, BlockPos, int)
+     * @param entity the entity.
+     * @see AbstractPathJob#AbstractPathJob(World, BlockPos, BlockPos, int, EntityLivingBase)
      */
-    public AbstractPathJob(final World world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range, final PathResult result)
+    public AbstractPathJob(final World world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range, final PathResult result, final EntityLivingBase entity)
     {
         final int minX = Math.min(start.getX(), end.getX()) - (range / 2);
         final int minZ = Math.min(start.getZ(), end.getZ()) - (range / 2);
@@ -167,6 +175,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             debugNodesNotVisited = new HashSet<>();
             debugNodesPath = new HashSet<>();
         }
+        this.entity = entity;
     }
 
     private static boolean onLadderGoingUp(@NotNull final Node currentNode, @NotNull final BlockPos dPos)
@@ -1026,7 +1035,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     protected boolean isLadder(@NotNull final Block block, final BlockPos pos)
     {
-        return block.isLadder(this.world.getBlockState(pos), world, pos, null);
+        return block.isLadder(this.world.getBlockState(pos), world, pos, entity);
     }
 
     protected boolean isLadder(final BlockPos pos)
