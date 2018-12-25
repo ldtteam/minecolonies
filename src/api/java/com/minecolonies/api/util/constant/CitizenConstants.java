@@ -41,6 +41,11 @@ public final class CitizenConstants
     public static final int MIN_MOVE_AWAY_RANGE = 3;
 
     /**
+     * Number of retries after stuck to move away.
+     */
+    public static final int MOVE_AWAY_RETRIES = 3;
+
+    /**
      * The range for the citizen to move away.
      */
     public static final int MOVE_AWAY_RANGE     = 6;

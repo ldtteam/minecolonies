@@ -65,7 +65,7 @@ public class CitizenStuckHandler
      */
     public boolean isStuck()
     {
-        return stuckTime >= MIN_STUCK_TIME + citizen.getRandom().nextInt(MIN_STUCK_TIME) && movingAwayAttempts > 3;
+        return stuckTime >= MIN_STUCK_TIME + citizen.getRandom().nextInt(MIN_STUCK_TIME) && movingAwayAttempts > MOVE_AWAY_RETRIES;
     }
 
     /**
@@ -86,7 +86,7 @@ public class CitizenStuckHandler
         }
 
         if (!new AxisAlignedBB(citizen.getCurrentPosition()).expand(1, 1, 1)
-               .intersects(new AxisAlignedBB(citizen.getPosition())) && movingAwayAttempts <= 3)
+               .intersects(new AxisAlignedBB(citizen.getPosition())) && movingAwayAttempts <= MOVE_AWAY_RETRIES)
         {
             stuckTime = 0;
             citizen.setCurrentPosition(citizen.getPosition());
@@ -96,7 +96,7 @@ public class CitizenStuckHandler
         stuckTime++;
         Log.getLogger().warn("Increment stuck!");
 
-        if (stuckTime >= MIN_STUCK_TIME + citizen.getRandom().nextInt(MIN_STUCK_TIME) && movingAwayAttempts <= 3)
+        if (stuckTime >= MIN_STUCK_TIME + citizen.getRandom().nextInt(MIN_STUCK_TIME) && movingAwayAttempts <= MOVE_AWAY_RETRIES)
         {
             stuckTime = 0;
             movingAwayAttempts++;
