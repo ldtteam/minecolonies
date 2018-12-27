@@ -183,11 +183,13 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
         updateAvailableResources();
         buf.writeInt(neededResources.size());
+        double qty = 0;
         for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
             ByteBufUtils.writeItemStack(buf, resource.getItemStack());
             buf.writeInt(resource.getAvailable());
             buf.writeInt(resource.getAmount());
+            qty += resource.getAmount();
         }
 
         final CitizenData data = this.getMainCitizen();
@@ -216,18 +218,23 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 }
 
                 ByteBufUtils.writeUTF8String(buf, desc);
+                buf.writeDouble(workOrderBuildDecoration.getAmountOfRes() == 0 ? 0 : qty/workOrderBuildDecoration.getAmountOfRes());
             }
             else
             {
                 ByteBufUtils.writeUTF8String(buf, "-");
                 ByteBufUtils.writeUTF8String(buf, "");
+                buf.writeDouble(0.0);
             }
         }
         else
         {
             ByteBufUtils.writeUTF8String(buf, "-");
             ByteBufUtils.writeUTF8String(buf, "");
+            buf.writeDouble(0.0);
         }
+        ByteBufUtils.writeUTF8String(buf, getMainCitizen() == null ? "" : getMainCitizen().getName());
+
     }
 
     /**

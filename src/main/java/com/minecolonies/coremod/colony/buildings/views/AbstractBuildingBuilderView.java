@@ -34,6 +34,16 @@ public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorker
     private String constructionPos;
 
     /**
+     * The name of the worker at this building.
+     */
+    private String workerName;
+
+    /**
+     * Building progress.
+     */
+    private double progress;
+
+    /**
      * Public constructor of the view, creates an instance of it.
      *
      * @param c the colony.
@@ -63,6 +73,8 @@ public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorker
 
         constructionName = ByteBufUtils.readUTF8String(buf);
         constructionPos = ByteBufUtils.readUTF8String(buf);
+        progress = buf.readDouble();
+        workerName = ByteBufUtils.readUTF8String(buf);
     }
 
     /**
@@ -92,6 +104,24 @@ public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorker
     public Map<String, BuildingBuilderResource> getResources()
     {
         return Collections.unmodifiableMap(resources);
+    }
+
+    /**
+     * Get the name of the worker assigned to this building.
+     * @return the name.
+     */
+    public String getWorkerName()
+    {
+        return workerName;
+    }
+
+    /**
+     * Get the building progress (relative to items used)
+     * @return the progress.
+     */
+    public String getProgress()
+    {
+        return 100 - (int) (progress*100) + "%";
     }
 }
 

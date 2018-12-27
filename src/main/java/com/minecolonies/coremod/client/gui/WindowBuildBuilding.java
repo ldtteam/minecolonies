@@ -14,8 +14,9 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.DropDownList;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
@@ -34,6 +35,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.Template;
@@ -45,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -71,18 +74,29 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     /**
      * Drop down list for style.
      */
-    private       DropDownList     stylesDropDownList;
+    private DropDownList stylesDropDownList;
+
+    /**
+     * Drop down list for style.
+     */
+    private DropDownList buildersDropDownList;
 
     /**
      * White color.
      */
-    private static final int WHITE     = Color.getByName("white", 0);
+    private static final int WHITE = Color.getByName("white", 0);
 
     /**
      * List of style for the section.
      */
     @NotNull
     private List<String> styles = new ArrayList<>();
+
+    /**
+     * List of style for the section.
+     */
+    @NotNull
+    private List<Tuple<String, BlockPos>> builders = new ArrayList<>();
 
     /**
      * Constructor for the window when the player wants to hire a worker for a certain job.
@@ -104,7 +118,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.build"));
             findPaneOfTypeByID(BUTTON_MOVE_BUILDING, Button.class).hide();
         }
-        else if(building.getBuildingLevel() == building.getBuildingMaxLevel())
+        else if (building.getBuildingLevel() == building.getBuildingMaxLevel())
         {
             buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.switchStyle"));
         }
@@ -136,16 +150,31 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
+        final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ORIGIN : builders.get(buildersDropDownList.getSelectedIndex()).getSecond();
         MineColonies.getNetwork().sendToServer(new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())));
-        if(building.getBuildingLevel() == building.getBuildingMaxLevel())
+        if (building.getBuildingLevel() == building.getBuildingMaxLevel())
         {
-            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR));
+            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR, builder));
         }
         else
         {
-            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
+            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD, builder));
         }
         cancelClicked();
+    }
+
+    /**
+     * Update the builders list but try to keep the same one.
+     */
+    private void updateBuilders()
+    {
+        builders.clear();
+        builders.add(new Tuple<>(LanguageHandler.format("com.minecolonies.coremod.job.Builder") + ":", BlockPos.ORIGIN));
+        builders.addAll(building.getColony().getBuildings().stream()
+                          .filter(build -> build instanceof AbstractBuildingBuilderView)
+                          .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), building.getLocation()))
+                          .collect(Collectors.toList()));
+        initBuilderNavigation();
     }
 
     /**
@@ -161,7 +190,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         }
 
         final boolean enabled;
-        if(Settings.instance.isStaticSchematicMode())
+        if (Settings.instance.isStaticSchematicMode())
         {
             enabled = false;
         }
@@ -185,9 +214,9 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         resources.clear();
 
         final int nextLevel = building.getBuildingLevel() == building.getBuildingMaxLevel() ?
-                building.getBuildingMaxLevel() : (building.getBuildingLevel() + 1);
-        final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, styles.get(stylesDropDownList.getSelectedIndex()) ,
-                building.getSchematicName() + nextLevel);
+                                building.getBuildingMaxLevel() : (building.getBuildingLevel() + 1);
+        final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, styles.get(stylesDropDownList.getSelectedIndex()),
+          building.getSchematicName() + nextLevel);
         final StructureWrapper wrapper = new StructureWrapper(world, sn.toString());
         final Structure structure = wrapper.getStructure().getStructure();
         final String md5 = Structures.getMD5(sn.toString());
@@ -241,17 +270,17 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             @Nullable final Block block = blockState.getBlock();
 
             if (wrapper.isStructureBlockEqualWorldBlock()
-                    || (blockState.getBlock() instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
-                    || (blockState.getBlock() instanceof BlockDoor && blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
+                  || (blockState.getBlock() instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
+                  || (blockState.getBlock() instanceof BlockDoor && blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
             {
                 continue;
             }
 
             if (block != null
-                    && block != Blocks.AIR
-                    && !AbstractEntityAIStructure.isBlockFree(block, 0)
-                    && block != com.structurize.coremod.blocks.ModBlocks.blockSolidSubstitution
-                    && block != com.structurize.coremod.blocks.ModBlocks.blockSubstitution)
+                  && block != Blocks.AIR
+                  && !AbstractEntityAIStructure.isBlockFree(block, 0)
+                  && block != com.structurize.coremod.blocks.ModBlocks.blockSolidSubstitution
+                  && block != com.structurize.coremod.blocks.ModBlocks.blockSubstitution)
             {
                 if (wrapper.getBlockInfo().tileentityData != null)
                 {
@@ -307,7 +336,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         registerButton(BUTTON_PREVIOUS_STYLE_ID, this::previousStyle);
         registerButton(BUTTON_NEXT_STYLE_ID, this::nextStyle);
         stylesDropDownList = findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class);
-        stylesDropDownList.setHandler(this::onDropDownListChanged);
+        stylesDropDownList.setHandler(this::onStyleDropDownChanged);
         stylesDropDownList.setDataProvider(new DropDownList.DataProvider()
         {
             @Override
@@ -329,11 +358,38 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     }
 
     /**
+     * Initialise the builder setup..
+     */
+    private void initBuilderNavigation()
+    {
+        buildersDropDownList = findPaneOfTypeByID(DROPDOWN_BUILDER_ID, DropDownList.class);
+        buildersDropDownList.setDataProvider(new DropDownList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return builders.size();
+            }
+
+            @Override
+            public String getLabel(final int index)
+            {
+                if (index >= 0 && index < builders.size())
+                {
+                    return builders.get(index).getFirst();
+                }
+                return "";
+            }
+        });
+        buildersDropDownList.setSelectedIndex(0);
+    }
+
+    /**
      * called every time one of the dropdownlist changed.
      *
      * @param list the dropdown list which change
      */
-    private void onDropDownListChanged(final DropDownList list)
+    private void onStyleDropDownChanged(final DropDownList list)
     {
         updateResources();
     }
@@ -362,6 +418,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     public void onOpened()
     {
         updateStyles();
+        updateBuilders();
         updateResources();
     }
 
