@@ -24,7 +24,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
-import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
+import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
@@ -202,7 +202,7 @@ public class EntityAIEatTask extends EntityAIBase
         }
 
         final ItemStack stack = citizenData.getInventory().getStackInSlot(foodSlot);
-        if (!ISFOOD.test(stack))
+        if (!CAN_EAT.test(stack))
         {
             return WAIT_FOR_FOOD;
         }
@@ -263,7 +263,7 @@ public class EntityAIEatTask extends EntityAIBase
         {
             InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
               cookBuilding.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
-              ISFOOD,
+              CAN_EAT,
               AMOUNT_OF_FOOD_TO_SERVE,
               new InvWrapper(citizen.getInventoryCitizen()));
             return WAIT_FOR_FOOD;
@@ -387,7 +387,7 @@ public class EntityAIEatTask extends EntityAIBase
      */
     private STATE checkForFood(final CitizenData citizenData)
     {
-        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, ISFOOD);
+        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, CAN_EAT);
 
         if (slot == -1)
         {
