@@ -785,7 +785,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     private int getLastLadder(@NotNull final BlockPos pos)
     {
-        if (world.getBlockState(pos).getBlock().isLadder(world.getBlockState(pos), world, pos, null))
+        if (world.getBlockState(pos).getBlock().isLadder(world.getBlockState(pos), world, pos, worker))
         {
             return getLastLadder(pos.down());
         }
@@ -797,7 +797,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     private int getFirstLadder(@NotNull final BlockPos pos)
     {
-        if (world.getBlockState(pos).getBlock().isLadder(world.getBlockState(pos), world, pos, null))
+        if (world.getBlockState(pos).getBlock().isLadder(world.getBlockState(pos), world, pos, worker))
         {
             return getFirstLadder(pos.up());
         }
