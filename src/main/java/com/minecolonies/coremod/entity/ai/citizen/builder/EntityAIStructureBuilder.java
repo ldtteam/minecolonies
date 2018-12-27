@@ -91,12 +91,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     /**
      * Max distance to placing block.
      */
-    private static final int MAX_DISTANCE = 5;
+    private static final int MAX_DISTANCE = 10;
 
     /**
      * After which distance the builder has to recalculate his position.
      */
-    private static final double ACCEPTANCE_DISTANCE = 12;
+    private static final double ACCEPTANCE_DISTANCE = 20;
 
     /**
      * The id in the list of the last picked up item.
@@ -144,6 +144,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
 
         needsCurrently = neededItemsList.get(pickUpCount);
         pickUpCount++;
+
+        if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), needsCurrently))
+        {
+            return getState();
+        }
+
         return GATHERING_REQUIRED_MATERIALS;
     }
 
