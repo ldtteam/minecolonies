@@ -119,13 +119,6 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     }
 
     @Override
-    public boolean overruleNextOpenRequestOfCitizenWithStack(
-      @NotNull final CitizenData citizenData, @NotNull final ItemStack stack)
-    {
-        return super.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
-    }
-
-    @Override
     public boolean canRecipeBeAdded(final IToken token)
     {
         return AbstractBuildingCrafter.canBuildingCanLearnMoreRecipes (getBuildingLevel(), super.getRecipes().size());

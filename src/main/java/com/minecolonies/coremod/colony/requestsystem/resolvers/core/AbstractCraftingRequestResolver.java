@@ -52,9 +52,9 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     }
 
     @Override
-    public TypeToken<? extends Stack> getRequestType()
+    public TypeToken<? extends IDeliverable> getRequestType()
     {
-        return TypeToken.of(Stack.class);
+        return TypeToken.of(IDeliverable.class);
     }
 
     @Override
