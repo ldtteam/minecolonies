@@ -610,7 +610,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             return;
         }
 
-        final List<WorkOrderBuildMiner> list = getColony().getWorkManager().getOrderedList(WorkOrderBuildMiner.class);
+        final List<WorkOrderBuildMiner> list = getColony().getWorkManager().getOrderedList(WorkOrderBuildMiner.class, getLocation());
 
         for (final WorkOrderBuildMiner wo : list)
         {
