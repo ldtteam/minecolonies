@@ -19,20 +19,20 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
  */
 public class WorkManager
 {
-    private static final String TAG_WORK_ORDERS              = "workOrders";
+    private static final String                          TAG_WORK_ORDERS = "workOrders";
     //  Once a second
     //private static final int    WORK_ORDER_FULFILL_INCREMENT = 1 * 20;
     /**
      * The Colony the workManager takes part of.
      */
-    protected final Colony colony;
+    protected final      Colony                          colony;
     @NotNull
-    private final Map<Integer, AbstractWorkOrder> workOrders     = new LinkedHashMap<>();
-    private       int                             topWorkOrderId = 0;
+    private final        Map<Integer, AbstractWorkOrder> workOrders      = new LinkedHashMap<>();
+    private              int                             topWorkOrderId  = 0;
     /**
      * Checks if there has been changes.
      */
-    private       boolean                         dirty          = false;
+    private              boolean                         dirty           = false;
 
     /**
      * Constructor, saves reference to the colony.
@@ -62,10 +62,13 @@ public class WorkManager
     public void removeWorkOrder(final int orderId)
     {
         final AbstractWorkOrder workOrder = workOrders.get(orderId);
-        workOrders.remove(orderId);
-        colony.removeWorkOrderInView(orderId);
-        workOrder.onRemoved(colony);
-        colony.markDirty();
+        if (workOrder != null)
+        {
+            workOrders.remove(orderId);
+            colony.removeWorkOrderInView(orderId);
+            workOrder.onRemoved(colony);
+            colony.markDirty();
+        }
     }
 
     /**
@@ -208,7 +211,7 @@ public class WorkManager
     /**
      * Adds work order to the work manager.
      *
-     * @param order Order to add.
+     * @param order          Order to add.
      * @param readingFromNbt if being read from NBT.
      */
     public void addWorkOrder(@NotNull final AbstractWorkOrder order, final boolean readingFromNbt)
@@ -255,14 +258,15 @@ public class WorkManager
 
     /**
      * Get an ordered list by priority of the work orders.
+     *
      * @param type the type of workOrder which is required.
      * @return the list.
      */
     public <W extends AbstractWorkOrder> List<W> getOrderedList(@NotNull final Class<W> type)
     {
         return workOrders.values().stream().filter(o -> !o.isClaimed() && type.isInstance(o)).map(o -> (W) o)
-                .sorted(Comparator.comparingInt(AbstractWorkOrder::getPriority).reversed())
-                .collect(Collectors.toList());
+                 .sorted(Comparator.comparingInt(AbstractWorkOrder::getPriority).reversed())
+                 .collect(Collectors.toList());
     }
 
     /**
