@@ -133,6 +133,14 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildDecoration.class, getLocation()));
         list.removeIf(order -> order instanceof WorkOrderBuildMiner);
 
+        final WorkOrderBuildDecoration order = list.stream().filter(w -> w.getClaimedBy().equals(getLocation())).findFirst().orElse(null);
+        if (order != null)
+        {
+            citizen.getJob(JobBuilder.class).setWorkOrder(order);
+            order.setClaimedBy(citizen);
+            return;
+        }
+
         for (final WorkOrderBuildDecoration wo: list)
         {
             double distanceToBuilder = Double.MAX_VALUE;
