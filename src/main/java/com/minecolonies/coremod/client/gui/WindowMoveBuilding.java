@@ -7,6 +7,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.BuildingMoveMessage;
+import com.structurize.coremod.Structurize;
 import com.structurize.coremod.client.gui.WindowBuildTool;
 import com.structurize.coremod.management.StructureName;
 import com.structurize.coremod.management.Structures;
@@ -144,7 +145,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
                 Log.getLogger().info("Request To Server for structure " + structureName);
                 if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
                 {
-                    MineColonies.getNetwork().sendToServer(new SchematicRequestMessage(structureName.toString()));
+                    Structurize.getNetwork().sendToServer(new SchematicRequestMessage(structureName.toString()));
                     return;
                 }
                 else
