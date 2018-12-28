@@ -302,15 +302,15 @@ com.minecolonies.coremod.gui.structure.delete=Structuur Verwijderen
 com.minecolonies.coremod.gui.structure.delete.title=Structuur Verwijderen
 com.minecolonies.coremod.gui.structure.delete.body=Wil je %s verwijderen?
 com.minecolonies.coremod.gui.workerHuts.deliveryPrio.static=Static
-com.minecolonies.coremod.gui.workerHuts.deliveryPrio.automatic=Automatic
+com.minecolonies.coremod.gui.workerHuts.deliveryPrio.automatic=Automatisch
 
-com.minecolonies.coremod.gui.happiness.happinessModifier=Happiness Modifiers
-com.minecolonies.coremod.gui.happiness.food=Food Modifier
-com.minecolonies.coremod.gui.happiness.damage=Damage Modifier
-com.minecolonies.coremod.gui.happiness.house=House Modifier
-com.minecolonies.coremod.gui.happiness.job=Job Modifier
-com.minecolonies.coremod.gui.happiness.farms=No Farm Modifier
-com.minecolonies.coremod.gui.happiness.tools=Tool Modifier
+com.minecolonies.coremod.gui.happiness.happinessModifier=Vreugde Aanpassers
+com.minecolonies.coremod.gui.happiness.food=Voedsel Aanpasser
+com.minecolonies.coremod.gui.happiness.damage=Schade Aanpasser
+com.minecolonies.coremod.gui.happiness.house=Huis Aanpasser
+com.minecolonies.coremod.gui.happiness.job=Werk Aanpasser
+com.minecolonies.coremod.gui.happiness.farms=Geen Boederij Aanpasser
+com.minecolonies.coremod.gui.happiness.tools=Gereedschap Aanpasser
 //death=prestaties
 achievement.miner.death.lava=Te diep gegraven.
 achievement.miner.death.fall=Het is de halte aan het einde.
@@ -427,9 +427,9 @@ achievement.farmer.wheatHarvested.100.desc=Je boeren hebben 100 tarwe geoogst.
 achievement.farmer.wheatHarvested.500.desc=Je boeren hebben 500 tarwe geoogst.
 achievement.farmer.wheatHarvested.1000.desc=Je boeren hebben 1000 tarwe geoogst.
 
-com.minecolonies.coremod.permission.no=You do not have permission to do this in this colony!
+com.minecolonies.coremod.permission.no=Je hebt geen toestemming om dit in deze kolonie te doen!
 com.minecolonies.coremod.gui.townHall.freeBlocks=Toegestaan voor interactie
-com.minecolonies.coremod.gui.townHall.add=Add
+com.minecolonies.coremod.gui.townHall.add=Toevoegen
 
 com.minecolonies.coremod.permission.access_huts=Toegang Grafische Interface
 com.minecolonies.coremod.permission.guards_attack=Vecht met de bewakers
@@ -453,7 +453,7 @@ com.minecolonies.coremod.permission.shoot_arrow=Pijlen schieten
 com.minecolonies.coremod.permission.attack_citizen=Val inwoners aan
 com.minecolonies.coremod.permission.attack_entity=Val entiteiten aan
 com.minecolonies.coremod.permission.access_free_blocks=Toegang tot vrije blokken
-com.minecolonies.coremod.permission.explode=Explode
+com.minecolonies.coremod.permission.explode=Exploderen
 
 item.supplyCampDeployer.invalid=Requiring a flat ground of at least 16*17 without grass or flowers on them.
 item.supplyCampDeployer.invalid.solid_block_needed=Placing a supply camp requires flat ground of at least 16*17 without grass or flowers on them..  These blocks must be solid: %s.
