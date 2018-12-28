@@ -26,6 +26,11 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     private static final String TAG_UPGRADE_LEVEL = "upgradeLevel";
     private static final String TAG_UPGRADE_NAME  = "upgrade";
 
+    /**
+     * Max distance a builder can have from the building site.
+     */
+    private static final double MAX_DISTANCE_SQ = 100*100;
+
     private int    upgradeLevel;
     private String upgradeName;
 
@@ -80,13 +85,13 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
 
     /**
      * Read the WorkOrder data from the NBTTagCompound.
-     *
-     * @param compound NBT Tag compound.
+     *  @param compound NBT Tag compound.
+     * @param manager
      */
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound, final WorkManager manager)
     {
-        super.readFromNBT(compound);
+        super.readFromNBT(compound, manager);
         upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
         upgradeName = compound.getString(TAG_UPGRADE_NAME);
     }
@@ -134,11 +139,19 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         //  - The Builder's Work AbstractBuilding is built
         //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
         //  - OR the WorkOrder is for the TownHall
+        //  - OR the WorkOrder is not farther away than 100 blocks from any builder
 
         final int builderLevel = citizen.getWorkBuilding().getBuildingLevel();
-        return builderLevel >= upgradeLevel || builderLevel == BuildingBuilder.MAX_BUILDING_LEVEL
-                 || (citizen.getWorkBuilding() != null && citizen.getWorkBuilding().getID().equals(buildingLocation))
-                 || isLocationTownhall(citizen.getColony(), buildingLocation);
+        return (builderLevel >= upgradeLevel || builderLevel == BuildingBuilder.MAX_BUILDING_LEVEL
+                  || (citizen.getWorkBuilding() != null && citizen.getWorkBuilding().getID().equals(buildingLocation))
+                  || isLocationTownhall(citizen.getColony(), buildingLocation)
+                       && citizen.getWorkBuilding().getLocation().distanceSq(this.getBuildingLocation()) <= MAX_DISTANCE_SQ);
+    }
+
+    @Override
+    public boolean tooFarFromAnyBuilder(final Colony colony, final int level)
+    {
+        return colony.getBuildingManager().getBuildings().values().stream().noneMatch(building -> building instanceof BuildingBuilder && building.getMainCitizen() != null && building.getLocation().distanceSq(this.getBuildingLocation()) <= MAX_DISTANCE_SQ);
     }
 
     /**

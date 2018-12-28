@@ -59,14 +59,18 @@ public final class MobSpawnUtils
     {
         mob.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
         mob.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
-        mob.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(ATTACK_DAMAGE);
+
+        final double attackDamage = Configurations.gameplay.barbarianHordeDifficulty >= 10 ? ATTACK_DAMAGE * 2 : ATTACK_DAMAGE;
+        mob.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attackDamage);
         if(mob instanceof EntityChiefBarbarian || mob instanceof EntityCaptainPirate)
         {
-            mob.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(CHIEF_ARMOR);
+            final double chiefArmor = Configurations.gameplay.barbarianHordeDifficulty > 5 ? CHIEF_ARMOR * 2 : CHIEF_ARMOR;
+            mob.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(chiefArmor);
         }
         else
         {
-            mob.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(ARMOR);
+            final double armor = Configurations.gameplay.barbarianHordeDifficulty * ARMOR;
+            mob.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(armor);
         }
         mob.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getHealthBasedOnRaidLevel(colony));
     }
