@@ -117,7 +117,7 @@ public class BuildingSawmill extends AbstractBuildingCrafter
                     {
                         amountOfValidBlocks++;
                     }
-                    else if(name.contains("ingot") || name.contains("stone") || name.contains("redstone"))
+                    else if(name.contains("ingot") || name.contains("stone") || name.contains("redstone") || name.contains("string"))
                     {
                         return false;
                     }
