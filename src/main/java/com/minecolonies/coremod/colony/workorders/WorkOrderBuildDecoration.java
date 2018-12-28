@@ -20,6 +20,9 @@ import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAM
  */
 public class WorkOrderBuildDecoration extends AbstractWorkOrder
 {
+    /**
+     * NBT Tags for storage.
+     */
     private static final String TAG_BUILDING       = "building";
     private static final String TAG_WORKORDER_NAME = "workOrderName";
     private static final String TAG_IS_CLEARED     = "cleared";
@@ -29,6 +32,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     private static final String TAG_SCHEMATIC_NAME    = "structureName";
     private static final String TAG_SCHEMATIC_MD5     = "schematicMD5";
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
+    private static final String TAG_AMOUNT_OF_RES     = "resQuantity";
 
     protected boolean  isBuildingMirrored;
     protected BlockPos buildingLocation;
@@ -37,9 +41,10 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     protected String   md5;
     protected boolean  cleared;
     protected String   workOrderName;
+    protected int      amountOfRes;
 
     protected boolean hasSentMessageForThisWorkOrder = false;
-    private boolean requested;
+    private   boolean requested;
 
     /**
      * Unused constructor for reflection.
@@ -88,9 +93,9 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      * @param compound NBT Tag compound.
      */
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound, final WorkManager manager)
     {
-        super.readFromNBT(compound);
+        super.readFromNBT(compound, manager);
         buildingLocation = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
         final StructureName sn = new StructureName(compound.getString(TAG_SCHEMATIC_NAME));
         structureName = sn.toString();
@@ -115,6 +120,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
         requested = compound.getBoolean(TAG_IS_REQUESTED);
         isBuildingMirrored = compound.getBoolean(TAG_IS_MIRRORED);
+        amountOfRes = compound.getInteger(TAG_AMOUNT_OF_RES);
     }
 
     /**
@@ -147,6 +153,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
         compound.setBoolean(TAG_IS_REQUESTED, requested);
         compound.setBoolean(TAG_IS_MIRRORED, isBuildingMirrored);
+        compound.setInteger(TAG_AMOUNT_OF_RES, amountOfRes);
     }
 
     @Override
@@ -309,5 +316,23 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     public boolean isMirrored()
     {
         return isBuildingMirrored;
+    }
+
+    /**
+     * Set the amount of resources this building requires.
+     * @param amountOfRes the amount.
+     */
+    public void setAmountOfRes(final int amountOfRes)
+    {
+        this.amountOfRes = amountOfRes;
+    }
+
+    /**
+     * Amount of resources this building requires.
+     * @return the amount.
+     */
+    public int getAmountOfRes()
+    {
+        return amountOfRes;
     }
 }

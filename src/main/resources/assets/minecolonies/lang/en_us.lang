@@ -842,3 +842,5 @@ com.minecolonies.coremod.gui.workerHuts.Archery=Archery
 tile.minecolonies.blockHutCombatAcademy.name=Combat Academy
 com.minecolonies.coremod.gui.workerHuts.CombatAcademy=Combat Academy
 item.santa_hat.name=Santa hat
+
+entity.builder.messageBuildersTooFar=There is no builder close enough to work at this building, assign a builder to it manually in the build screen or build it closer to the existing builders!

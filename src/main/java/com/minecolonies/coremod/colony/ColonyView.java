@@ -896,4 +896,13 @@ public final class ColonyView implements IColony
     {
         return true;
     }
+
+    /**
+     * Get a list of all buildings.
+     * @return a list of their views.
+     */
+    public List<AbstractBuildingView> getBuildings()
+    {
+        return new ArrayList<>(buildings.values());
+    }
 }
