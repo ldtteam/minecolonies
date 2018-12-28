@@ -23,6 +23,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.BuildingSetStyleMessage;
 import com.minecolonies.coremod.util.StructureWrapper;
+import com.structurize.coremod.Structurize;
 import com.structurize.coremod.management.StructureName;
 import com.structurize.coremod.management.Structures;
 import com.structurize.coremod.network.messages.SchematicRequestMessage;
@@ -235,7 +236,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             Log.getLogger().info("Request To Server for structure " + sn);
             if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
             {
-                MineColonies.getNetwork().sendToServer(new SchematicRequestMessage(sn.toString()));
+                Structurize.getNetwork().sendToServer(new SchematicRequestMessage(sn.toString()));
                 return;
             }
             else
