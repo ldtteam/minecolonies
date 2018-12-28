@@ -98,7 +98,7 @@ public class EntityAIRaiderAttackMelee extends EntityAIBase
 
             if (entity instanceof EntityChiefBarbarian)
             {
-                damageToBeDealt += 1.0;
+                damageToBeDealt += 2.0;
             }
 
             if (entity.getDistance(target) <= MIN_DISTANCE_FOR_ATTACK && lastAttack <= 0 && entity.canEntityBeSeen(target))

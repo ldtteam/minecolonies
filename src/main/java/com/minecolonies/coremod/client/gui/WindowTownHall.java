@@ -20,6 +20,8 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.HappinessData;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.permissions.PermissionEvent;
 import com.minecolonies.coremod.colony.workorders.WorkOrderView;
@@ -981,11 +983,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 }
 
                 //Searches citizen of id x
-                for (@NotNull final CitizenDataView citizen : citizens)
+                for (@NotNull final AbstractBuildingView buildingView : building.getColony().getBuildings())
                 {
-                    if (citizen.getId() == workOrder.getClaimedBy())
+                    if (buildingView.getLocation().equals(workOrder.getClaimedBy()) && buildingView instanceof AbstractBuildingBuilderView)
                     {
-                        claimingCitizen = citizen.getName();
+                        claimingCitizen = ((AbstractBuildingBuilderView) buildingView).getWorkerName();
                         break;
                     }
                 }

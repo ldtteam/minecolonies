@@ -27,7 +27,7 @@ public class CitizenStuckHandler
     /**
      * Field to try moving away from a location in order to pass it.
      */
-    private boolean triedMovingAway = false;
+    private int movingAwayAttempts = 0;
 
     /**
      * Time the entity is at the same position already.
@@ -54,7 +54,7 @@ public class CitizenStuckHandler
 
             if (citizen.ticksExisted % (MAX_STUCK_TIME * TICKS_SECOND) == 0)
             {
-                triedMovingAway = false;
+                movingAwayAttempts = 0;
             }
         }
     }
@@ -65,7 +65,7 @@ public class CitizenStuckHandler
      */
     public boolean isStuck()
     {
-        return stuckTime >= MIN_STUCK_TIME + citizen.getRandom().nextInt(MIN_STUCK_TIME) && triedMovingAway;
+        return stuckTime >= MIN_STUCK_TIME + citizen.getRandom().nextInt(MIN_STUCK_TIME) && movingAwayAttempts > MOVE_AWAY_RETRIES;
     }
 
     /**
@@ -81,11 +81,12 @@ public class CitizenStuckHandler
 
         if (citizen.getNavigator().getDestination() == null || citizen.getNavigator().getDestination().distanceSq(citizen.posX, citizen.posY, citizen.posZ) < MOVE_AWAY_RANGE)
         {
+            stuckTime = 0;
             return;
         }
 
         if (!new AxisAlignedBB(citizen.getCurrentPosition()).expand(1, 1, 1)
-               .intersects(new AxisAlignedBB(citizen.getPosition())) && !triedMovingAway)
+               .intersects(new AxisAlignedBB(citizen.getPosition())) && movingAwayAttempts <= MOVE_AWAY_RETRIES)
         {
             stuckTime = 0;
             citizen.setCurrentPosition(citizen.getPosition());
@@ -94,10 +95,11 @@ public class CitizenStuckHandler
 
         stuckTime++;
 
-        if (stuckTime >= MIN_STUCK_TIME + citizen.getRandom().nextInt(MIN_STUCK_TIME) && !triedMovingAway)
+        if (stuckTime >= MIN_STUCK_TIME + citizen.getRandom().nextInt(MIN_STUCK_TIME) && movingAwayAttempts <= MOVE_AWAY_RETRIES)
         {
-            triedMovingAway = true;
-            citizen.getNavigator().moveAwayFromXYZ(citizen.getCurrentPosition(), citizen.getRandom().nextInt(MOVE_AWAY_RANGE), 1);
+            stuckTime = 0;
+            movingAwayAttempts++;
+            citizen.getNavigator().moveAwayFromXYZ(citizen.getCurrentPosition(), MIN_MOVE_AWAY_RANGE + citizen.getRandom().nextInt(MOVE_AWAY_RANGE), 1);
             return;
         }
 
@@ -110,7 +112,7 @@ public class CitizenStuckHandler
                 return;
             }
 
-            triedMovingAway = false;
+            movingAwayAttempts = 0;
 
             final BlockPos destination = BlockPosUtil.getFloor(citizen.getNavigator().getDestination().up(), CompatibilityUtils.getWorld(citizen));
             @Nullable final BlockPos spawnPoint =

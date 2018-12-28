@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.mobs.util;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
@@ -15,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
+import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.TranslationConstants.RAID_EVENT_MESSAGE_PIRATE;
 
 /**
@@ -25,7 +27,12 @@ public final class PirateEventUtils
     /**
      * Folder name for the pirate ship schematics
      */
-    public static final String PIRATESHIP_FOLDER = "/Ships/";
+    public static final String PIRATESHIP_FOLDER      = "/Ships/";
+
+    /**
+     * Colony range divider in which distance to load the pirate spawners.
+     */
+    private static final int SPAWNER_DISTANCE_DIVIDER = 4;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -118,6 +125,8 @@ public final class PirateEventUtils
     {
         world.setBlockState(location, Blocks.MOB_SPAWNER.getDefaultState());
         final TileEntityMobSpawner spawner = new TileEntityMobSpawner();
+
+        spawner.getSpawnerBaseLogic().activatingRangeFromPlayer = Configurations.gameplay.workingRangeTownHallChunks / SPAWNER_DISTANCE_DIVIDER * BLOCKS_PER_CHUNK;
         spawner.getSpawnerBaseLogic().setEntityId(mob);
 
         world.setTileEntity(location, spawner);
