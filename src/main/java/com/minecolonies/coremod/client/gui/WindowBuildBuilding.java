@@ -171,7 +171,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         builders.clear();
         builders.add(new Tuple<>(LanguageHandler.format("com.minecolonies.coremod.job.Builder") + ":", BlockPos.ORIGIN));
         builders.addAll(building.getColony().getBuildings().stream()
-                          .filter(build -> build instanceof AbstractBuildingBuilderView)
+                          .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty())
                           .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), building.getLocation()))
                           .collect(Collectors.toList()));
         initBuilderNavigation();

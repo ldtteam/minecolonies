@@ -233,7 +233,17 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         if (!builder.equals(BlockPos.ORIGIN))
         {
-            workOrderBuildBuilding.setClaimedBy(builder);
+             final AbstractBuilding building =  colony.getBuildingManager().getBuilding(builder);
+             if (building instanceof AbstractBuildingStructureBuilder && (building.getBuildingLevel() >= level || canBeBuiltByBuilder(level)))
+             {
+                 workOrderBuildBuilding.setClaimedBy(builder);
+             }
+             else
+             {
+                 LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+                   "entity.builder.messageBuilderNecessary", Integer.toString(level));
+                 return;
+             }
         }
 
         colony.getWorkManager().addWorkOrder(workOrderBuildBuilding, false);

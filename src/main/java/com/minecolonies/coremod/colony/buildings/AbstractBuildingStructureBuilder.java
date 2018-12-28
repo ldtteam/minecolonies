@@ -233,7 +233,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             ByteBufUtils.writeUTF8String(buf, "");
             buf.writeDouble(0.0);
         }
-        ByteBufUtils.writeUTF8String(buf, getMainCitizen() == null ? "" : getMainCitizen().getName());
+        ByteBufUtils.writeUTF8String(buf, (getMainCitizen() == null || colony.getCitizenManager().getCitizen(getMainCitizen().getId()) == null) ? "" : getMainCitizen().getName());
 
     }
 
