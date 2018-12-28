@@ -13,7 +13,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -32,16 +34,22 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
      * The queue of the store.
      */
     private final LinkedList<IToken<?>> queue;
+    private final List<IToken<?>>             tasks;
 
     /**
      * Constructor to create the data store.
      * @param id the id of it.
      * @param queue the queue to start with.
+     * @param tasks
      */
-    public StandardRequestSystemCrafterJobDataStore(final IToken<?> id, final LinkedList<IToken<?>> queue)
+    public StandardRequestSystemCrafterJobDataStore(
+      final IToken<?> id,
+      final LinkedList<IToken<?>> queue,
+      final List<IToken<?>> tasks)
     {
         this.id = id;
         this.queue = queue;
+        this.tasks = tasks;
     }
 
     /**
@@ -49,13 +57,19 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
      */
     public StandardRequestSystemCrafterJobDataStore()
     {
-        this(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN), new LinkedList<>());
+        this(StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN), new LinkedList<>(), new ArrayList<>());
     }
 
     @Override
     public LinkedList<IToken<?>> getQueue()
     {
         return queue;
+    }
+
+    @Override
+    public List<IToken<?>> getAssignedTasks()
+    {
+        return this.tasks;
     }
 
     @Override
@@ -118,7 +132,11 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
             final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getTagList(TAG_LIST, Constants.NBT.TAG_COMPOUND))
                                                   .map(nbtTagCompound -> (IToken<?>) controller.deserialize(nbtTagCompound))
                                                   .collect(Collectors.toCollection(LinkedList::new));
-            return new StandardRequestSystemCrafterJobDataStore(token, queue);
+            final List<IToken<?>> taskList = NBTUtils.streamCompound(nbt.getTagList(TAG_ASSIGNED_LIST, Constants.NBT.TAG_COMPOUND))
+              .map(nbtTagCompound -> (IToken<?>) controller.deserialize(nbtTagCompound))
+              .collect(Collectors.toList());
+
+            return new StandardRequestSystemCrafterJobDataStore(token, queue, taskList);
         }
     }
 }

@@ -165,6 +165,8 @@ public final class RequestHandler
             LogHandler.log("Finished resolver assignment search for request: " + request + " successfully");
 
             ResolverHandler.addRequestToResolver(manager, resolver, request);
+            //TODO: Change this false to simulation.
+            resolver.onAssignedToThisResolver(manager, request, false);
 
             for (final IToken<?> childRequestToken :
               attemptResult)

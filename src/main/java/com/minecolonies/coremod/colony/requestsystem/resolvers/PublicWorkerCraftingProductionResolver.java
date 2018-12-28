@@ -81,7 +81,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
             final Colony colony = (Colony) manager.getColony();
             final CitizenData holdingCrafter = colony.getCitizenManager().getCitizens()
                                                  .stream()
-                                                 .filter(c -> c.getJob() instanceof AbstractJobCrafter && ((AbstractJobCrafter) c.getJob()).getTaskQueue().contains(request.getToken()))
+                                                 .filter(c -> c.getJob() instanceof AbstractJobCrafter && (((AbstractJobCrafter) c.getJob()).getTaskQueue().contains(request.getToken()) || ((AbstractJobCrafter) c.getJob()).getAssignedTasks().contains(request.getToken())))
                                                  .findFirst()
                                                  .orElse(null);
 
@@ -133,6 +133,29 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
     }
 
     @Override
+    protected void onAssignedToThisResolverForBuilding(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request, final boolean simulation, @NotNull final AbstractBuilding building)
+    {
+        if (manager.getColony().getWorld().isRemote)
+            return;
+
+        final CitizenData freeCrafter = building.getAssignedCitizen()
+                                          .stream()
+                                          .filter(c -> c.getJob() instanceof AbstractJobCrafter)
+                                          .min(Comparator.comparing((CitizenData c) -> ((AbstractJobCrafter) c.getJob()).getTaskQueue().size() + ((AbstractJobCrafter) c.getJob()).getAssignedTasks().size()))
+                                          .orElse(null);
+
+        if (freeCrafter == null)
+        {
+            onRequestCancelled(manager, request);
+            return;
+        }
+
+        final AbstractJobCrafter job = (AbstractJobCrafter) freeCrafter.getJob();
+        job.onTaskBeingScheduled(request.getToken());
+    }
+
+    @Override
     public void resolveForBuilding(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request, @NotNull final AbstractBuilding building)
     {
@@ -142,7 +165,8 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         final CitizenData freeCrafter = building.getAssignedCitizen()
                                              .stream()
                                              .filter(c -> c.getJob() instanceof AbstractJobCrafter)
-                                             .min(Comparator.comparing((CitizenData c) -> ((AbstractJobCrafter) c.getJob()).getTaskQueue().size()))
+                                             .filter(c -> ((AbstractJobCrafter) c.getJob()).getAssignedTasks().contains(request.getToken()))
+                                             .findFirst()
                                              .orElse(null);
 
         if (freeCrafter == null)
@@ -152,6 +176,6 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         }
 
         final AbstractJobCrafter job = (AbstractJobCrafter) freeCrafter.getJob();
-        job.addRequest(request.getToken());
+        job.onTaskBeingResolved(request.getToken());
     }
 }

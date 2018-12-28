@@ -145,6 +145,25 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
         return manager.createRequest(this, new Stack(stack.copy()));
     }
 
+    /**
+     * Called by the manager given to indicate that this request has been assigned to you.
+     *
+     * @param manager    The systems manager.
+     * @param request    The request assigned.
+     * @param simulation True when simulating.
+     */
+    @Override
+    public void onAssignedToThisResolver(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, final boolean simulation)
+    {
+        final AbstractBuilding building = getBuilding(manager, request.getToken()).map(r -> (AbstractBuilding) r).get();
+        onAssignedToThisResolverForBuilding(manager, request, simulation, building);
+    }
+
+    protected void onAssignedToThisResolverForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, final boolean simulation, @NotNull final AbstractBuilding building)
+    {
+        //Noop
+    }
+
     @Override
     public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request)
     {

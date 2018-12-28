@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
@@ -21,6 +22,7 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraf
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -114,6 +116,13 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
         }
 
         return false;
+    }
+
+    @Override
+    public boolean overruleNextOpenRequestOfCitizenWithStack(
+      @NotNull final CitizenData citizenData, @NotNull final ItemStack stack)
+    {
+        return super.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
     }
 
     @Override

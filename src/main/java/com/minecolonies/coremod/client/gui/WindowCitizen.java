@@ -228,6 +228,15 @@ public class WindowCitizen extends AbstractWindowSkeleton
                 rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
                   .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
 
+                if (wrapper.getDepth() > 0)
+                {
+                    rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();
+                }
+                else
+                {
+                    rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).show();
+                }
+
                 if (wrapper.overruleable)
                 {
                     if (wrapper.getDepth() > 0)

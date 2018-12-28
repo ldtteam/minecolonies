@@ -103,6 +103,11 @@ public abstract class AbstractJobCrafter extends AbstractJob
         return getDataStore().getQueue();
     }
 
+    private List<IToken<?>> getAssignedTasksFromDataStore()
+    {
+        return getDataStore().getAssignedTasks();
+    }
+
     /**
      * Returns whether or not the job has a currentTask.
      *
@@ -167,6 +172,21 @@ public abstract class AbstractJobCrafter extends AbstractJob
         {
             getTaskQueueFromDataStore().remove(token);
         }
+        else if (getAssignedTasksFromDataStore().contains(token))
+        {
+            getAssignedTasksFromDataStore().remove(token);
+        }
+    }
+
+    public void onTaskBeingScheduled(@NotNull final IToken<?> token)
+    {
+        getAssignedTasksFromDataStore().add(token);
+    }
+
+    public void onTaskBeingResolved(@NotNull final IToken<?> token)
+    {
+        onTaskDeletion(token);
+        addRequest(token);
     }
 
     /**
@@ -177,6 +197,11 @@ public abstract class AbstractJobCrafter extends AbstractJob
     public List<IToken<?>> getTaskQueue()
     {
         return ImmutableList.copyOf(getTaskQueueFromDataStore());
+    }
+
+    public List<IToken<?>> getAssignedTasks()
+    {
+        return ImmutableList.copyOf(getAssignedTasksFromDataStore());
     }
 
 }
