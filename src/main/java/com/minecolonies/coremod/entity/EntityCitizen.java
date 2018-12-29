@@ -585,7 +585,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                 final ItemStack hat = getItemStackFromSlot(EntityEquipmentSlot.HEAD);
                 if (LocalDate.now(Clock.systemDefaultZone()).getMonth() == Month.DECEMBER
                       && Configurations.gameplay.holidayFeatures
-                      && (getCitizenJobHandler().getColonyJob() == null || !(getCitizenJobHandler().getColonyJob() instanceof JobStudent)))
+                      && !(getCitizenJobHandler().getColonyJob() instanceof JobStudent))
                 {
                     if (hat.isEmpty())
                     {
