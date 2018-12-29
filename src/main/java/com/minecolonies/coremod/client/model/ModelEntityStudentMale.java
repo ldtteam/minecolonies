@@ -5,10 +5,11 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Model for the male students (monks).
+ */
 public class ModelEntityStudentMale extends ModelBiped
 {
-    //fields
-
     public ModelEntityStudentMale()
     {
         ModelRenderer front;
