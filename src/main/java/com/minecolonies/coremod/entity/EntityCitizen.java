@@ -18,6 +18,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.colony.jobs.JobStudent;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
@@ -582,7 +583,9 @@ public class EntityCitizen extends AbstractEntityCitizen
             if (getOffsetTicks() % TICKS_20 == 0)
             {
                 final ItemStack hat = getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-                if (LocalDate.now(Clock.systemDefaultZone()).getMonth() == Month.DECEMBER)
+                if (LocalDate.now(Clock.systemDefaultZone()).getMonth() == Month.DECEMBER
+                      && Configurations.gameplay.holidayFeatures
+                      && (getCitizenJobHandler().getColonyJob() == null || !(getCitizenJobHandler().getColonyJob() instanceof JobStudent)))
                 {
                     if (hat.isEmpty())
                     {
