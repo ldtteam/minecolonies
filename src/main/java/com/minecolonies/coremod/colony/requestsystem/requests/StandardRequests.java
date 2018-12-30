@@ -167,6 +167,9 @@ public final class StandardRequests
         }
     }
 
+	/**
+	 * An abstract implementation for crafting requests
+	 */
     public abstract static class AbstractCraftingRequest<C extends AbstractCrafting> extends AbstractRequest<C>
     {
 
@@ -218,6 +221,9 @@ public final class StandardRequests
 
     }
 
+	/**
+	 * The crafting request for private crafting of a citizen
+	 */
     public static class PrivateCraftingRequest extends AbstractCraftingRequest<PrivateCrafting>
     {
 
@@ -250,6 +256,9 @@ public final class StandardRequests
         }
     }
 
+	/**
+	 * The public crafting requests, used for workers that perform crafting
+	 */
     public static class PublicCraftingRequest extends AbstractCraftingRequest<PublicCrafting>
     {
 

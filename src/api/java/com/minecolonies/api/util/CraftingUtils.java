@@ -5,6 +5,9 @@ import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Utility class that handles crafting duties
+ */
 public final class CraftingUtils
 {
 

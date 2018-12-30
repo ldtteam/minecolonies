@@ -239,7 +239,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
         setDelay(HIT_DELAY);
 
         currentRequest = job.getCurrentTask();
-        if (progress >= 1) //TODO set up afterwards again!
+        if (progress >= getRequiredProgressForMakingRawMaterial()) //TODO set up afterwards again!
         {
             final AIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)

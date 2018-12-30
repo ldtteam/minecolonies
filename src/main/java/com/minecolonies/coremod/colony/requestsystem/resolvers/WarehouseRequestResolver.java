@@ -95,14 +95,16 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         tileentities:
         for (final TileEntityWareHouse wareHouse : wareHouses)
         {
-            List<ItemStack> targetStacks = wareHouse.getMatchingItemStacksInWarehouse(itemStack -> request.getRequest().matches(itemStack));
+            final List<ItemStack> targetStacks = wareHouse.getMatchingItemStacksInWarehouse(itemStack -> request.getRequest().matches(itemStack));
             for (final ItemStack stack :
               targetStacks)
             {
-                if (ItemStackUtils.isEmpty(stack))
+                if (ItemStackUtils.isEmpty(stack))	
+		{
                     continue;
+		}
 
-                ItemStack matchingStack = stack.copy();
+                final ItemStack matchingStack = stack.copy();
                 matchingStack.setCount(Math.min(remainingCount, matchingStack.getCount()));
 
                 final ItemStack deliveryStack = matchingStack.copy();

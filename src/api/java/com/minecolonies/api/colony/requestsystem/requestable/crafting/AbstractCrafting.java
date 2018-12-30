@@ -18,7 +18,6 @@ public abstract class AbstractCrafting implements IRequestable
     @NotNull
     private final ItemStack theStack;
 
-    @NotNull
     private final int count;
 
     /**

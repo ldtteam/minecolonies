@@ -226,8 +226,18 @@ public interface IRequest<R extends IRequestable>
     @NotNull
     ImmutableList<ItemStack> getDeliveries();
 
+    /**
+     * Sets the deliveries of this request to the given stacks
+     * 
+     * @param stacks The stacks that will be the deliveries.
+     */
     void overrideCurrentDeliveries(@NotNull final ImmutableList<ItemStack> stacks);
 
+    /**
+     * Adds a single stack as a delivery to this request.
+     * 
+     * @param stack The stack that should be treated as a new delivery.
+     */
     void addDelivery(@NotNull final ItemStack stack);
 
     /**

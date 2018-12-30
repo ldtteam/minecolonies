@@ -2151,21 +2151,47 @@ public class InventoryUtils
         }
     }
 
-    public static int getItemCountInStackLick(@NotNull final List<ItemStack> stacks, Predicate<ItemStack> stackPredicate)
+    /**
+     * Calculates howmany items match the given predicate that are in the list.
+     *
+     * @return The sum of the itemstack sizes that match the predicate
+     */
+    public static int getItemCountInStackLick(@NotNull final List<ItemStack> stacks, @NotNull final Predicate<ItemStack> stackPredicate)
     {
         return stacks.stream().filter(ItemStackUtils::isNotEmpty).filter(stackPredicate).mapToInt(ItemStackUtils::getSize).sum();
     }
 
+    /**
+	 * Checks if all stacks given in the list are in the itemhandler given
+	 * 
+	 * @param stacks The stacks that should be in the itemhandler
+	 * @param handler The itemhandler to check in
+	 * @return True when all stacks are in the handler, false when not
+	 */
     public static boolean areAllItemsInItemHandler(@NotNull final List<ItemStack> stacks, @NotNull final IItemHandler handler)
     {
         return areAllItemsInItemHandlerList(stacks, ImmutableList.of(handler));
     }
 
+	/**
+	 * Checks if all stacks given in the list are in the capability provider given
+	 * 
+	 * @param stacks The stacks that should be in the itemhandler
+	 * @param provider The provider to check in
+	 * @return True when all stacks are in the handler, false when not
+	 */
     public static boolean areAllItemsInProvider(@NotNull final List<ItemStack> stacks, @NotNull final ICapabilityProvider provider)
     {
         return areAllItemsInItemHandlerList(stacks, getItemHandlersFromProvider(provider));
     }
 
+    /**
+	 * Checks if all stacks given in the list are in at least one of the given the itemhandlers
+	 * 
+	 * @param stacks The stacks that should be in the itemhandlers
+	 * @param handlers The itemhandlers to check in
+	 * @return True when all stacks are in at least one of the handlers, false when not
+	 */
     public static boolean areAllItemsInItemHandlerList(@NotNull final List<ItemStack> stacks, @NotNull final Collection<IItemHandler> handlers)
     {
         if (stacks.isEmpty())
@@ -2186,6 +2212,12 @@ public class InventoryUtils
         });
     }
 
+	/**
+	 * This method calculates the amount of items in itemstacks are contained within a list.
+	 *
+ 	 * @param stacks The stacks to count.
+	 * @return A map with a entry for each unique unified itemstack and its count in the list.
+	 */
     public static Map<ItemStack, Integer> getMergedCountedStacksFromList(@NotNull final List<ItemStack> stacks)
     {
         final Map<ItemStack, Integer> requiredCountForStacks = Maps.newHashMap();
@@ -2208,7 +2240,14 @@ public class InventoryUtils
 
         return requiredCountForStacks;
     }
-
+	
+	/**
+	 * This method splits a map with an entry for each unique unified itemstack and its count
+	 * into a list of itemstacks that represent the maps, taken the max stack size into account.
+	 * 
+	 * @param mergedCountedStacks the map with the unique unified itemstacks and their counts.
+	 * @return The list of itemstacks that represent the map, taken the max stack size into account.
+	 */
     public static List<ItemStack> splitMergedCountedStacksIntoMaxContentStacks(@NotNull final Map<ItemStack, Integer> mergedCountedStacks)
     {
         final List<ItemStack> list = Lists.newArrayList();
@@ -2236,6 +2275,13 @@ public class InventoryUtils
         return list;
     }
 
+	/**
+	 * Method searches a list of itemstacks given and an itemhandler to find the stacks that do not appear in the itemhandler. If multiple of the same itemstack appear their sum will be taken into account.
+	 * 
+	 * @param stacks The stacks to check
+	 * @param handler The handler to check in
+	 * @return The list of missing stacks. Or an empty list if all stacks and at least their sizes are present.
+	 */
     public static List<ItemStack> getMissingFromItemHandler(@NotNull final List<ItemStack> stacks, @NotNull final IItemHandler handler)
     {
         final List<ItemStack> result = Lists.newArrayList();
@@ -2289,6 +2335,13 @@ public class InventoryUtils
         return result;
     }
 
+	/**
+	 * Searches a given itemhandler for the stacks given and returns the list that is contained in the itemhandler
+	 * 
+	 * @param stacks The stacks to search for
+	 * @param handler The handler to search in
+	 * @return The sublist of the stacks list contained in the itemhandler.
+	 */
     public static List<ItemStack> getContainedFromItemHandler(@NotNull final List<ItemStack> stacks, @NotNull final IItemHandler handler)
     {
         final List<ItemStack> result = Lists.newArrayList();
@@ -2304,7 +2357,7 @@ public class InventoryUtils
               for (Map.Entry<ItemStack, Integer> entry : inventoryCounts.entrySet())
               {
                   ItemStack containedStack = entry.getKey();
-                  Integer containedCount = entry.getValue();
+                  final Integer containedCount = entry.getValue();
                   if (ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, containedStack))
                   {
                       remainingCount -= containedCount;
@@ -2342,34 +2395,50 @@ public class InventoryUtils
         return result;
     }
 
-
+	/**
+	 * Unifies a list of stacks so that they are all packed to together to the max stack size.
+	 * 
+	 * @param stacks The stacks to pack.
+	 * @return The packed stacks
+	 */
     public static List<ItemStack> processItemStackListAndMerge(@NotNull final List<ItemStack> stacks)
     {
         return splitMergedCountedStacksIntoMaxContentStacks(getMergedCountedStacksFromList(stacks));
     }
 
+	/**
+	 * Attempts a swap with the given itemstacks, from the source to the target inventory. Itemstacks in the target that match the given toKeepInTarget predicate will not be swapped out, if swapping is needed
+	 *
+	 * @param targetInventory The target inventory.
+	 * @param sourceInventory The source inventory.
+	 * @param toSwap The list of stacks to swap.
+	 * @param toKeepInTarget The predicate that determines what not to swap in the target.
+	 * @return True when moving was successfull, false when not
+	 */
     public static boolean moveItemStacksWithPossibleSwap(@NotNull final IItemHandler targetInventory, @NotNull final Collection<IItemHandler> sourceInventories, @NotNull final List<ItemStack> toSwap, @NotNull final Predicate<ItemStack> toKeepInTarget)
     {
         if (targetInventory.getSlots() < toSwap.size())
+		{
             return false;
-
+		}
+	
         final Predicate<ItemStack> wantToKeep = toKeepInTarget.or(stack -> ItemStackUtils.compareItemStackListIgnoreStackSize(toSwap, stack));
 
         swapping:
-        for (ItemStack itemStack : toSwap)
+        for (final ItemStack itemStack : toSwap)
         {
-            for (IItemHandler sourceInventory : sourceInventories)
+            for (final IItemHandler sourceInventory : sourceInventories)
             {
                 if (removeStackFromItemHandler(sourceInventory, itemStack))
                 {
                     ItemStack forcingResult = forceItemStackToItemHandler(targetInventory, itemStack, wantToKeep);
                     addItemStackToItemHandler(sourceInventory, forcingResult);
 
-                    break swapping;
+                    break;
                 }
             }
 
-            return false;
+			return false;
         }
 
         return true;

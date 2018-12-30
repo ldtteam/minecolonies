@@ -72,7 +72,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     @Override
     public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-
+	//Noop
     }
 
     @Override
@@ -176,7 +176,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     }
 
     @Nullable
-    protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, final Predicate<ItemStack> stackPrecicate, int count)
+    protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, @NotNull final Predicate<ItemStack> stackPrecicate, final int count)
     {
         final IRecipeStorage craftableCrafting = building.getFirstRecipe(stackPrecicate);
         if (craftableCrafting == null)
@@ -191,7 +191,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     protected List<IToken<?>> createRequestsForRecipe(
             @NotNull final IRequestManager manager,
             final ItemStack requestStack,
-            int count)
+            final int count)
     {
         return ImmutableList.of(manager.createRequest(this, createNewRequestableForStack(requestStack, count)));
     }
