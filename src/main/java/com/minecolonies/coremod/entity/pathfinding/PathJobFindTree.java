@@ -5,6 +5,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -45,6 +46,7 @@ public class PathJobFindTree extends AbstractPathJob
      * @param home       the position of the worker hut.
      * @param range      maximum path range.
      * @param treesToCut the trees the lj is supposed to cut.
+     * @param entity the entity.
      */
     public PathJobFindTree(
                             final World world,
@@ -52,9 +54,10 @@ public class PathJobFindTree extends AbstractPathJob
                             final BlockPos home,
                             final int range,
                             final List<ItemStorage> treesToCut,
-                            final Colony colony)
+                            final Colony colony,
+                            final EntityLivingBase entity)
     {
-        super(world, start, start, range, new TreePathResult());
+        super(world, start, start, range, new TreePathResult(), entity);
         this.treesToNotCut = treesToCut;
         this.hutLocation = home;
         this.colony = colony;

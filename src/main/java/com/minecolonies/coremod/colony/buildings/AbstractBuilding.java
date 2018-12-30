@@ -212,8 +212,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * Adds work orders to the {@link Colony#getWorkManager()}.
      *
      * @param level Desired level.
+     * @param builder the assigned builder.
      */
-    protected void requestWorkOrder(final int level)
+    protected void requestWorkOrder(final int level, final BlockPos builder)
     {
         for (@NotNull final WorkOrderBuildBuilding o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildBuilding.class))
         {
@@ -229,6 +230,28 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
               "entity.builder.messageBuilderNecessary", Integer.toString(level));
             return;
+        }
+
+        if (workOrderBuildBuilding.tooFarFromAnyBuilder(colony, level) && builder.equals(BlockPos.ORIGIN))
+        {
+            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+              "entity.builder.messageBuildersTooFar");
+            return;
+        }
+
+        if (!builder.equals(BlockPos.ORIGIN))
+        {
+             final AbstractBuilding building =  colony.getBuildingManager().getBuilding(builder);
+             if (building instanceof AbstractBuildingStructureBuilder && (building.getBuildingLevel() >= level || canBeBuiltByBuilder(level)))
+             {
+                 workOrderBuildBuilding.setClaimedBy(builder);
+             }
+             else
+             {
+                 LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+                   "entity.builder.messageBuilderNecessary", Integer.toString(level));
+                 return;
+             }
         }
 
         colony.getWorkManager().addWorkOrder(workOrderBuildBuilding, false);
@@ -300,11 +323,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                 colony.getWorkManager().removeWorkOrder(o.getID());
                 markDirty();
 
-                final int citizenThatIsBuilding = o.getClaimedBy();
-                final CitizenData data = colony.getCitizenManager().getCitizen(citizenThatIsBuilding);
-                if (data != null && data.getWorkBuilding() != null)
+                final BlockPos buildingPos = o.getClaimedBy();
+                final AbstractBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
+                if (building != null && building.getMainCitizen() != null)
                 {
-                    data.getWorkBuilding().cancelAllRequestsOfCitizen(data);
+                    building.cancelAllRequestsOfCitizen(building.getMainCitizen());
                 }
                 return;
             }
@@ -369,12 +392,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * Requests an upgrade for the current building.
      *
      * @param player the requesting player.
+     * @param builder the assigned builder.
      */
-    public void requestUpgrade(final EntityPlayer player)
+    public void requestUpgrade(final EntityPlayer player, final BlockPos builder)
     {
         if (getBuildingLevel() < getMaxBuildingLevel())
         {
-            requestWorkOrder(getBuildingLevel() + 1);
+            requestWorkOrder(getBuildingLevel() + 1, builder);
         }
         else
         {
@@ -384,12 +408,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     /**
      * Requests a repair for the current building.
+     * @param builder
+     * @param builder the assigned builder.
      */
-    public void requestRepair()
+    public void requestRepair(final BlockPos builder)
     {
         if (getBuildingLevel() > 0)
         {
-            requestWorkOrder(getBuildingLevel());
+            requestWorkOrder(getBuildingLevel(), builder);
         }
     }
 

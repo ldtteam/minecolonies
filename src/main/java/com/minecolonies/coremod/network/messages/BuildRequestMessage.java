@@ -50,6 +50,11 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
      */
     private int dimension;
 
+    /**
+     * The id of the building.
+     */
+    private BlockPos builder;
+
 
     /**
      * Empty constructor used when registering the message.
@@ -65,13 +70,14 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
      * @param building AbstractBuilding of the request.
      * @param mode     Mode of the request, 1 is repair, 0 is build.
      */
-    public BuildRequestMessage(@NotNull final AbstractBuildingView building, final int mode)
+    public BuildRequestMessage(@NotNull final AbstractBuildingView building, final int mode, final BlockPos builder)
     {
         super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.mode = mode;
         this.dimension = building.getColony().getDimension();
+        this.builder = builder;
     }
 
     @Override
@@ -81,6 +87,7 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
         buildingId = BlockPosUtil.readFromByteBuf(buf);
         mode = buf.readInt();
         dimension = buf.readInt();
+        builder = BlockPosUtil.readFromByteBuf(buf);
     }
 
     @Override
@@ -90,6 +97,7 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
         BlockPosUtil.writeToByteBuf(buf, buildingId);
         buf.writeInt(mode);
         buf.writeInt(dimension);
+        BlockPosUtil.writeToByteBuf(buf, builder);
     }
 
     @Override
@@ -122,10 +130,10 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
             switch (message.mode)
             {
                 case BUILD:
-                    building.requestUpgrade(player);
+                    building.requestUpgrade(player, message.builder);
                     break;
                 case REPAIR:
-                    building.requestRepair();
+                    building.requestRepair(message.builder);
                     break;
                 default:
                     break;
