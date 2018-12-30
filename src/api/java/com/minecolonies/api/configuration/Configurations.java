@@ -269,6 +269,9 @@ public class Configurations
 
         @Config.Comment("Days until the pirate ships despawn again.")
         public int daysUntilPirateshipsDespawn = 3;
+
+        @Config.Comment("Should special holiday content be displayed?")
+        public boolean holidayFeatures = true;
     }
 
     public static class Compatibility
