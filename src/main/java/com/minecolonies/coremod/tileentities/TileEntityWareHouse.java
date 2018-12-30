@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.google.common.collect.Lists;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
@@ -13,6 +14,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -33,9 +35,10 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param itemStackSelectionPredicate The predicate to check with.
      * @return True when the warehouse holds a stack, false when not.
      */
-    public boolean hasMatchinItemStackInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public boolean hasMatchingItemStackInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate, int count)
     {
-        return !ItemStackUtils.isEmpty(getFirstMatchingItemStackInWarehouse(itemStackSelectionPredicate));
+        final List<ItemStack> targetStacks = getMatchingItemStacksInWarehouse(itemStackSelectionPredicate);
+        return targetStacks.stream().mapToInt(ItemStackUtils::getSize).sum() >= count;
     }
 
     /**
@@ -44,8 +47,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param itemStackSelectionPredicate The predicate to select the ItemStack with.
      * @return The first matching ItemStack.
      */
-    @Nullable
-    public ItemStack getFirstMatchingItemStackInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    @NotNull
+    public List<ItemStack> getMatchingItemStacksInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         if (getBuilding() != null)
         {
@@ -54,13 +57,13 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             tileEntities.add(this);
 
             return tileEntities.stream()
-                     .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStackSelectionPredicate))
+                     .flatMap(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStackSelectionPredicate).stream())
                      .filter(itemStacks -> !itemStacks.isEmpty())
-                     .map(itemStacks -> itemStacks.get(0))
-                     .findFirst().orElse(ItemStackUtils.EMPTY);
+              .collect(Collectors.toList());
+
         }
 
-        return ItemStackUtils.EMPTY;
+        return Lists.newArrayList();
     }
 
     /**

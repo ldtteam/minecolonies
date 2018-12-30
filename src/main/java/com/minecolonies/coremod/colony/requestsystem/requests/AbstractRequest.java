@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
@@ -50,11 +51,9 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     @Nullable
     private IToken parent;
     @SuppressWarnings("squid:S1170")
-    /**
-     * We don't want this field static.
-     */
-    @NotNull
-    private ItemStack deliveryStack = ItemStackUtils.EMPTY;
+
+    private List<ItemStack> deliveries = Lists.newArrayList();
+
     private ImmutableList<ItemStack> itemExamples;
 
     protected AbstractRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final R requested)
@@ -391,37 +390,27 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     @Override
     public boolean canBeDelivered()
     {
-        return !ItemStackUtils.isEmpty(getDelivery());
+        return !getDeliveries().isEmpty();
     }
 
-    /**
-     * Method to get the ItemStack used for the delivery.
-     *
-     * @return The ItemStack that the Deliveryman transports around. ItemStack.Empty means no delivery possible.
-     */
-    @Nullable
+    @NotNull
     @Override
-    public ItemStack getDelivery()
+    public ImmutableList<ItemStack> getDeliveries()
     {
-        if (getRequest() instanceof IDeliverable)
-        {
-            return ((IDeliverable) getRequest()).getResult();
-        }
-
-        return deliveryStack;
+        return ImmutableList.copyOf(deliveries);
     }
 
     @Override
-    public void setDelivery(@Nullable final ItemStack delivery)
+    public void overrideCurrentDeliveries(@NotNull final ImmutableList<ItemStack> stacks)
     {
-        if (getRequest() instanceof IDeliverable)
-        {
-            ((IDeliverable) getRequest()).setResult(delivery);
-        }
-        else
-        {
-            this.deliveryStack = delivery;
-        }
+        this.deliveries = Lists.newArrayList(stacks);
+    }
+
+    @Override
+    public void addDelivery(@NotNull final ItemStack stack)
+    {
+        this.deliveries.add(stack);
+        this.deliveries = InventoryUtils.processItemStackListAndMerge(this.deliveries);
     }
 
     @NotNull
@@ -524,7 +513,11 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         {
             return false;
         }
-        return deliveryStack.equals(that.deliveryStack);
+        if (!getDeliveries().equals(that.getDeliveries()))
+        {
+            return false;
+        }
+        return Objects.equals(itemExamples, that.itemExamples);
     }
 
     @Override
@@ -537,7 +530,8 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         result1 = 31 * result1 + getState().hashCode();
         result1 = 31 * result1 + (getResult() != null ? getResult().hashCode() : 0);
         result1 = 31 * result1 + (getParent() != null ? getParent().hashCode() : 0);
-        result1 = 31 * result1 + deliveryStack.hashCode();
+        result1 = 31 * result1 + getDeliveries().hashCode();
+        result1 = 31 * result1 + (itemExamples != null ? itemExamples.hashCode() : 0);
         return result1;
     }
 }

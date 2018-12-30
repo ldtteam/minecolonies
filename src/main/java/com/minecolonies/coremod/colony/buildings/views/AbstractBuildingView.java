@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.views;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -8,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -26,10 +28,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
@@ -89,6 +88,16 @@ public abstract class AbstractBuildingView implements IRequester
      * The workOrderLevel.
      */
     private int workOrderLevel   = NO_WORK_ORDER;
+
+    /**
+     * Resolver collection.
+     */
+    private ImmutableCollection<IToken<?>> resolvers;
+
+    /**
+     * Requester ID.
+     */
+    private IToken<?> requesterId;
 
     /**
      * The data store id for request system related data.
@@ -286,6 +295,24 @@ public abstract class AbstractBuildingView implements IRequester
         rotation = buf.readInt();
         isBuildingMirrored = buf.readBoolean();
 
+        final List<IToken<?>> list = new ArrayList<>();
+        final int resolverSize = buf.readInt();
+        for (int i = 0; i < resolverSize; i++)
+        {
+            final NBTTagCompound compound = ByteBufUtils.readTag(buf);
+            if (compound != null)
+            {
+                list.add(StandardFactoryController.getInstance().deserialize(compound));
+            }
+        }
+
+        resolvers = ImmutableList.copyOf(list);
+        final NBTTagCompound compound = ByteBufUtils.readTag(buf);
+        if (compound != null)
+        {
+            requesterId = StandardFactoryController.getInstance().deserialize(compound);
+        }
+
         loadRequestSystemFromNBT(ByteBufUtils.readTag(buf));
     }
 
@@ -376,8 +403,7 @@ public abstract class AbstractBuildingView implements IRequester
     @Override
     public IToken<?> getRequesterId()
     {
-        //NOOP; Is Client side view.
-        return null;
+        return requesterId;
     }
 
     @NotNull
@@ -440,5 +466,10 @@ public abstract class AbstractBuildingView implements IRequester
     public boolean getBuildingDmPrioState()
     {
         return buildingDmPrioState;
+    }
+
+    public ImmutableCollection<IToken<?>> getResolverIds()
+    {
+        return resolvers;
     }
 }

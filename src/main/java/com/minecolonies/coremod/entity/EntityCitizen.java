@@ -59,6 +59,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -839,6 +840,12 @@ public class EntityCitizen extends AbstractEntityCitizen
     public InventoryCitizen getInventoryCitizen()
     {
         return getCitizenData().getInventory();
+    }
+
+    @NotNull
+    public IItemHandler getItemHandlerCitizen()
+    {
+        return new InvWrapper(getInventoryCitizen());
     }
 
     /**
