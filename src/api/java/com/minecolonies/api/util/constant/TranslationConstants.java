@@ -116,6 +116,8 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_BURNABLE                                  = "com.minecolonies.coremod.request.burnable";
     @NonNls
+    public static final String COM_MINECOLONIES_REQUESTS_CRAFTING                                 = "com.minecolonies.coremod.request.crafting";
+    @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_TOOL_PRETYPE                              = "com.minecolonies.coremod.request.tool.pretype";
     @NonNls
     public static final String COM_MINECOLONIES_REQUESTS_TOOL_PREMINLEVEL                          = "com.minecolonies.coremod.request.tool.preminlevel";
@@ -167,6 +169,8 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE                             = "com.minecolonies.coremod.request.smeltableore";
     @NonNls
     public static final String COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME                     = "com.minecolonies.coremod.resolvers.crafter.private";
+    @NonNls
+    public static final String COM_MINECOLONIES_PUBLIC_CRAFTING_RESOLVER_NAME                      = "com.minecolonies.coremod.resolvers.crafter.public";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_COOKING                             = "com.minecolonies.coremod.status.cooking";
     @NonNls
@@ -303,6 +307,8 @@ public final class TranslationConstants
     public static final String CMC_GUI_TOWNHALL_BUILDING_LEVEL                                     = "com.minecolonies.coremod.gui.townHall.buildingLevel";
     @NonNls
     public static final String PIRATES_SAILING_OFF_MESSAGE                                         = "com.minecolonies.coremod.pirates.sailing.away";
+    @NonNls
+    public static final String UNABLE_TO_ADD_RECIPE_MESSAGE                                        = "com.minecolonies.coremod.recipe.unable";
 
     private TranslationConstants()
     {
