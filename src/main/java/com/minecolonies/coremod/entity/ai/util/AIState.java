@@ -494,5 +494,26 @@ public enum AIState
     /**
      * Attack protect in a certain direction.
      */
-    KNIGHT_ATTACK_PROTECT
+    KNIGHT_ATTACK_PROTECT,
+
+        /*
+### Crafter Workers ###
+     */
+
+    /**
+     * Get the recipe.
+     */
+    GET_RECIPE,
+
+    /**
+     * Query the required items for a recipe.
+      */
+    QUERY_ITEMS,
+
+    /**
+     * Execute the crafting action.
+     */
+    CRAFT,
+
+
 }

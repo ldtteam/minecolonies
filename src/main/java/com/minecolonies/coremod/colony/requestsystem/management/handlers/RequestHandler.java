@@ -165,6 +165,8 @@ public final class RequestHandler
             LogHandler.log("Finished resolver assignment search for request: " + request + " successfully");
 
             ResolverHandler.addRequestToResolver(manager, resolver, request);
+            //TODO: Change this false to simulation.
+            resolver.onAssignedToThisResolver(manager, request, false);
 
             for (final IToken<?> childRequestToken :
               attemptResult)
@@ -276,7 +278,7 @@ public final class RequestHandler
         request.getRequester().onRequestComplete(manager, token);
 
         //Retrieve a followup request.
-        @SuppressWarnings(RAWTYPES) final IRequest followupRequest = resolver.getFollowupRequestForCompletion(manager, request);
+        final List<IRequest<?>> followupRequests = resolver.getFollowupRequestForCompletion(manager, request);
 
         //Check if the request has a parent
         if (request.hasParent())
@@ -284,26 +286,30 @@ public final class RequestHandler
             @SuppressWarnings(RAWTYPES) final IRequest parentRequest = getRequest(manager, request.getParent());
 
             //Assign the followup to the parent as a child so that processing is still halted.
-            if (followupRequest != null)
+            if (followupRequests != null && !followupRequests.isEmpty())
             {
-                parentRequest.addChild(followupRequest.getToken());
+                followupRequests.forEach(followupRequest -> parentRequest.addChild(followupRequest.getToken()));
+                followupRequests.forEach(followupRequest -> followupRequest.setParent(parentRequest.getToken()));
             }
 
             manager.updateRequestState(request.getToken(), RequestState.RECEIVED);
             parentRequest.removeChild(request.getToken());
 
+            request.setParent(null);
+
             if (!parentRequest.hasChildren() && parentRequest.getState() == RequestState.IN_PROGRESS)
             {
                 resolveRequest(manager, parentRequest);
             }
-
-            request.setParent(null);
         }
 
         //Assign the followup request if need be
-        if (followupRequest != null && !isAssigned(manager, followupRequest.getToken()))
+        if (followupRequests != null && !followupRequests.isEmpty() &&
+              followupRequests.stream().anyMatch(followupRequest -> !isAssigned(manager, followupRequest.getToken())))
         {
-            assignRequest(manager, followupRequest);
+            followupRequests.stream()
+              .filter(followupRequest -> !isAssigned(manager, followupRequest.getToken()))
+              .forEach(unassignedFollowupRequest -> assignRequest(manager, unassignedFollowupRequest));
         }
     }
 
@@ -519,6 +525,24 @@ public final class RequestHandler
         LogHandler.log("Retrieving the request for: " + token);
 
         return manager.getRequestIdentitiesDataStore().getIdentities().get(token);
+    }
+
+    /**
+     * Returns all requests made by a given requester.
+     *
+     * @param manager THe manager.
+     * @param requester The requester in question.
+     *
+     * @return A collection with request instances that are made by the given requester.
+     */
+    public static Collection<IRequest<?>> getRequestsMadeByRequester(final IStandardRequestManager manager, final IRequester requester)
+    {
+        return manager.getRequestIdentitiesDataStore()
+          .getIdentities()
+          .values()
+          .stream()
+          .filter(iRequest -> iRequest.getRequester().getRequesterId().equals(requester.getRequesterId()))
+          .collect(Collectors.toList());
     }
 
     /**

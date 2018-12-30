@@ -154,6 +154,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public AIState gather()
     {
+        if (job.getCurrentTask() != null)
+        {
+            return START_WORKING;
+        }
+
         if (maximalGatherCount < 0)
         {
             maximalGatherCount = Configurations.requestSystem.minimalBuildingsToGather
@@ -389,7 +394,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public static int workerRequiresItem(final AbstractBuilding building, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
     {
-        return building.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, false);
+        return building.buildingRequiresItemForCrafting(stack, localAlreadyKept, false) ? 0 : building.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, false);
     }
 
     /**
@@ -628,7 +633,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         ((BuildingDeliveryman) getOwnBuilding()).setBuildingToDeliver(null);
-        job.finishRequest(true);
+        job.finishRequest(false);
         return START_WORKING;
     }
 
@@ -650,7 +655,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final AbstractBuildingWorker ownBuilding = getOwnBuilding();
 
         //get task via colony, requestmananger
-
         if (job.getCurrentTask() == null)
         {
             ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(null);

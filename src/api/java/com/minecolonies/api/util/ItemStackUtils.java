@@ -260,6 +260,11 @@ public final class ItemStackUtils
         return stack == null || stack == EMPTY || stack.getCount() <= 0;
     }
 
+    public static Boolean isNotEmpty(@Nullable final ItemStack stack)
+    {
+        return !isEmpty(stack);
+    }
+
     /**
      * Calculate the mining level an item has as a tool of certain type.
      *
