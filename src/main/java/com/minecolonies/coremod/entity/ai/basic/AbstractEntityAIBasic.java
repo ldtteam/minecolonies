@@ -789,18 +789,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Request an Item without spamming the chat.
-     *
-     * @param chat the Item Name
-     */
-    /*
-    private void requestWithoutSpam(@NotNull final TextComponentBase chat)
-    {
-        chatSpamFilter.requestTextComponentWithoutSpam(chat);
-    }
-    */
-
-    /**
      * Finds the first @see ItemStack the type of {@code is}.
      * It will be taken from the chest and placed in the worker inventory.
      * Make sure that the worker stands next the chest to not break immersion.
@@ -1058,7 +1046,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             final long openSlots = InventoryUtils.openSlotCount(new InvWrapper(worker.getInventoryCitizen()));
             if (openSlots < MIN_OPEN_SLOTS * 2)
             {
-                dumpAnyway = worker.getRandom().nextBoolean();
+                if (stackToDump.getCount() < CHANCE_TO_DUMP_50)
+                {
+                    dumpAnyway = worker.getRandom().nextBoolean();
+                }
+                else
+                {
+                    dumpAnyway = worker.getRandom().nextInt(stackToDump.getCount()) < CHANCE_TO_DUMP;
+                }
             }
         }
 
