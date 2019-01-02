@@ -212,11 +212,7 @@ public abstract class WindowFilterableList<B extends FilterableListView> extends
     public boolean onKeyTyped(final char ch, final int key)
     {
         final boolean result = super.onKeyTyped(ch, key);
-        final String name = findPaneOfTypeByID(INPUT_NAME, TextField.class).getText();
-        if (!name.isEmpty())
-        {
-            filter = name;
-        }
+        filter = findPaneOfTypeByID(INPUT_NAME, TextField.class).getText();
         updateResources();
         return result;
     }
