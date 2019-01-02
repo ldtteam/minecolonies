@@ -10,6 +10,9 @@ import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * Composter window class. Specifies the extras the composter has for its list.
+ */
 public class WindowHutComposter extends WindowFilterableList<BuildingComposter.View>
 {
     /**
@@ -22,12 +25,7 @@ public class WindowHutComposter extends WindowFilterableList<BuildingComposter.V
         super(building, stack -> true, LanguageHandler.format("com.minecolonies.gui.workerHuts.composter.compostables"));
     }
 
-    /**
-     * Get the list of blocks which should be added.
-     *
-     * @param filterPredicate the predicate to filter all blocks for.
-     * @return an immutable list of blocks.
-     */
+    @Override
     public Collection<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate)
     {
         return ColonyManager.getCompatibilityManager().getCopyOfCompostableItems().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList());
