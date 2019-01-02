@@ -113,7 +113,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     /**
      * The current structure task to be build.
      */
-    private Structure currentStructure;
+    protected Structure currentStructure;
 
     /**
      * Position where the Builders constructs from.
