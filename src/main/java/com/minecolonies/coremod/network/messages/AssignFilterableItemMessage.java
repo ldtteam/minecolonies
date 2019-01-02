@@ -5,7 +5,8 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
+import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
+import com.minecolonies.coremod.colony.buildings.views.FilterableListView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -15,14 +16,28 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Message which handles the assignment of items to composters
+ * Message which handles the assignment of items to filterable item lists.
  */
-public class AssignComposterItemMessage extends AbstractMessage<AssignComposterItemMessage, IMessage>
+public class AssignFilterableItemMessage extends AbstractMessage<AssignFilterableItemMessage, IMessage>
 {
-
+    /**
+     * The id of the colony.
+     */
     private int         colonyId;
+
+    /**
+     * The id of the building.
+     */
     private BlockPos    buildingId;
+
+    /**
+     * True if assign, false if remove.
+     */
     private boolean     assign;
+
+    /**
+     * The item in question.
+     */
     private ItemStorage item;
 
     /**
@@ -33,7 +48,7 @@ public class AssignComposterItemMessage extends AbstractMessage<AssignComposterI
     /**
      * Empty standard constructor.
      */
-    public AssignComposterItemMessage()
+    public AssignFilterableItemMessage()
     {
         super();
     }
@@ -45,7 +60,7 @@ public class AssignComposterItemMessage extends AbstractMessage<AssignComposterI
      * @param assign   compost if true, dont if false.
      * @param item    the item to assign
      */
-    public AssignComposterItemMessage(@NotNull final BuildingComposter.View building,final ItemStorage item, final boolean assign)
+    public AssignFilterableItemMessage(@NotNull final FilterableListView building,final ItemStorage item, final boolean assign)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -76,7 +91,7 @@ public class AssignComposterItemMessage extends AbstractMessage<AssignComposterI
     }
 
     @Override
-    public void messageOnServerThread(final AssignComposterItemMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final AssignFilterableItemMessage message, final EntityPlayerMP player)
     {
         final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
@@ -87,16 +102,16 @@ public class AssignComposterItemMessage extends AbstractMessage<AssignComposterI
                 return;
             }
 
-            @Nullable final BuildingComposter building = colony.getBuildingManager().getBuilding(message.buildingId, BuildingComposter.class);
+            @Nullable final AbstractFilterableListBuilding building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractFilterableListBuilding.class);
             if (building != null)
             {
                 if(message.assign)
                 {
-                    building.addCompostableItem(message.item);
+                    building.addItem(message.item);
                 }
                 else
                 {
-                    building.removeCompostableItem(message.item);
+                    building.removeItem(message.item);
                 }
             }
         }

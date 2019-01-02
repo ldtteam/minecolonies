@@ -258,7 +258,7 @@ public class MineColonies
         getNetwork().registerMessage(BuildingMoveMessage.class, BuildingMoveMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(RecallSingleCitizenMessage.class, RecallSingleCitizenMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(RemoveEntityMessage.class, RemoveEntityMessage.class, ++id, Side.SERVER);
-        getNetwork().registerMessage(AssignComposterItemMessage.class, AssignComposterItemMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(AssignFilterableItemMessage.class, AssignFilterableItemMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(TeamColonyColorChangeMessage.class, TeamColonyColorChangeMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(ToggleHelpMessage.class, ToggleHelpMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(PauseCitizenMessage.class, PauseCitizenMessage.class, ++id, Side.SERVER);

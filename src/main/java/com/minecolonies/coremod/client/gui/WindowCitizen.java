@@ -642,6 +642,10 @@ public class WindowCitizen extends AbstractWindowSkeleton
         if (getOpenRequestTreeOfCitizen().size() > row && row >= 0)
         {
             @NotNull final IRequest<?> request = getOpenRequestTreeOfCitizen().get(row).getRequest();
+            if (citizen.getWorkBuilding() != null)
+            {
+                colony.getBuilding(citizen.getWorkBuilding()).onRequestCancelled(colony.getRequestManager(), request.getToken());
+            }
             MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.CANCELLED, null));
         }
         updateRequests();
@@ -687,6 +691,11 @@ public class WindowCitizen extends AbstractWindowSkeleton
             else
             {
                 itemStack = inventory.getStackInSlot(InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(inventory), requestPredicate));
+            }
+
+            if (citizen.getWorkBuilding() != null)
+            {
+                colony.getBuilding(citizen.getWorkBuilding()).onRequestComplete(colony.getRequestManager(), tRequest.getToken());
             }
             MineColonies.getNetwork().sendToServer(
               new TransferItemsToCitizenRequestMessage(citizen, itemStack, isCreative ? amount : Math.min(amount, count), citizen.getColonyId()));

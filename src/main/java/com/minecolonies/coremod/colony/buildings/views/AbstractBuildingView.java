@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
-import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -51,12 +50,12 @@ public abstract class AbstractBuildingView implements IRequester
      * It's location.
      */
     @NotNull
-    private final BlockPos   location;
+    private final BlockPos location;
 
     /**
      * The building level.
      */
-    private int buildingLevel    = 0;
+    private int buildingLevel = 0;
 
     /**
      * The max building level.
@@ -66,13 +65,12 @@ public abstract class AbstractBuildingView implements IRequester
     /**
      * The dm priority.
      */
-    private int buildingDmPrio   = 1;
+    private int buildingDmPrio = 1;
 
     /**
      * The dm priority.
      */
-    private boolean buildingDmPrioState   = false;
-
+    private boolean buildingDmPrioState = false;
 
     /**
      * Rotation of the building.
@@ -87,7 +85,7 @@ public abstract class AbstractBuildingView implements IRequester
     /**
      * The workOrderLevel.
      */
-    private int workOrderLevel   = NO_WORK_ORDER;
+    private int workOrderLevel = NO_WORK_ORDER;
 
     /**
      * Resolver collection.
@@ -192,6 +190,7 @@ public abstract class AbstractBuildingView implements IRequester
 
     /**
      * Getter for the schematic name.
+     *
      * @return the schematic name.
      */
     public String getSchematicName()
@@ -201,6 +200,7 @@ public abstract class AbstractBuildingView implements IRequester
 
     /**
      * Getter for the style.
+     *
      * @return the style string.
      */
     public String getStyle()
@@ -210,6 +210,7 @@ public abstract class AbstractBuildingView implements IRequester
 
     /**
      * Getter for the rotation.
+     *
      * @return the rotation.
      */
     public int getRotation()
@@ -219,6 +220,7 @@ public abstract class AbstractBuildingView implements IRequester
 
     /**
      * Getter for the mirror.
+     *
      * @return true if mirrored.
      */
     public boolean isMirrored()
@@ -249,11 +251,12 @@ public abstract class AbstractBuildingView implements IRequester
     /**
      * Open the associated BlockOut window for this building.
      * If the player is sneaking open the inventory else open the GUI directly.
+     *
      * @param shouldOpenInv if the player is sneaking.
      */
     public void openGui(final boolean shouldOpenInv)
     {
-        if(shouldOpenInv)
+        if (shouldOpenInv)
         {
             MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(getID()));
         }
@@ -353,7 +356,7 @@ public abstract class AbstractBuildingView implements IRequester
     {
         if (data == null || getColony() == null || getColony().getRequestManager() == null)
         {
-            return  ImmutableList.of();
+            return ImmutableList.of();
         }
 
         if (!getOpenRequestsByCitizen().containsKey(data.getId()))
@@ -363,15 +366,15 @@ public abstract class AbstractBuildingView implements IRequester
 
         final Collection<IToken<?>> list = getOpenRequestsByCitizen().get(data.getId());
 
-        if(list == null || list.isEmpty())
+        if (list == null || list.isEmpty())
         {
             return ImmutableList.of();
         }
 
         return ImmutableList.copyOf(list
-                .stream().filter(Objects::nonNull)
-                .map(getColony().getRequestManager()::getRequestForToken)
-                .filter(Objects::nonNull).iterator());
+                                      .stream().filter(Objects::nonNull)
+                                      .map(getColony().getRequestManager()::getRequestForToken)
+                                      .filter(Objects::nonNull).iterator());
     }
 
     /**
@@ -386,9 +389,9 @@ public abstract class AbstractBuildingView implements IRequester
 
     @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
-                                                                                               @NotNull final CitizenDataView citizenData,
-                                                                                               final Class<R> requestType,
-                                                                                               final Predicate<IRequest<? extends R>> filter)
+      @NotNull final CitizenDataView citizenData,
+      final Class<R> requestType,
+      final Predicate<IRequest<? extends R>> filter)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
@@ -414,18 +417,28 @@ public abstract class AbstractBuildingView implements IRequester
         return null;
     }
 
-    @NotNull
     @Override
     public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        //NOOP; Is Client side view.
+        final Integer citizenThatRequested = getCitizensByRequest().remove(token);
+        getOpenRequestsByCitizen().get(citizenThatRequested).remove(token);
+
+        if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
+        {
+            getOpenRequestsByCitizen().remove(citizenThatRequested);
+        }
     }
 
-    @NotNull
     @Override
     public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        //NOOP; Is Client side view.
+        final Integer citizenThatRequested = getCitizensByRequest().remove(token);
+        getOpenRequestsByCitizen().get(citizenThatRequested).remove(token);
+
+        if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
+        {
+            getOpenRequestsByCitizen().remove(citizenThatRequested);
+        }
     }
 
     @NotNull
