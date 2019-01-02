@@ -12,8 +12,10 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.entity.ai.util.Structure;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -144,6 +146,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
 
         needsCurrently = neededItemsList.get(pickUpCount);
         pickUpCount++;
+
+        if (currentStructure.getStage() != Structure.Stage.DECORATE)
+        {
+            needsCurrently = needsCurrently.and(stack -> !ItemStackUtils.isDecoration(stack));
+        }
 
         if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), needsCurrently))
         {
