@@ -73,6 +73,8 @@ public class WindowHutLumberjack extends WindowFilterableList<BuildingLumberjack
 
         findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class).addChild(button);
         registerButton(BUTTON_TOGGLE_REPLANT, this::switchReplant);
+
+        this.isInverted = true;
     }
 
     /**
