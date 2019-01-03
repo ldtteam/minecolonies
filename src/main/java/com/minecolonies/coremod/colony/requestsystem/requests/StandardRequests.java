@@ -86,16 +86,36 @@ public final class StandardRequests
          */
         private ImmutableList<ItemStack> displayList;
 
+        /**
+         * The Stacklist which is being requested.
+         */
+        private StackList stackList;
+
+        /**
+         * Constructor of the request.
+         * @param requester the requester.
+         * @param token the token assigned to this request.
+         * @param requested the request data.
+         */
         public ItemStackListRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final StackList requested)
         {
             super(requester, token, requested);
-            displayList = ImmutableList.copyOf(requested.getStacks());
+            this.displayList = ImmutableList.copyOf(requested.getStacks());
+            this.stackList = requested;
         }
 
+        /**
+         * Constructor of the request.
+         * @param requester the requester.
+         * @param token the token assigned to this request.
+         * @param state the state of the request.
+         * @param requested the request data.
+         */
         public ItemStackListRequest(@NotNull final IRequester requester, @NotNull final IToken token, @NotNull final RequestState state, @NotNull final StackList requested)
         {
             super(requester, token, state, requested);
-            displayList = ImmutableList.copyOf(requested.getStacks());
+            this.displayList = ImmutableList.copyOf(requested.getStacks());
+            this.stackList = requested;
         }
 
         @NotNull
@@ -103,7 +123,7 @@ public final class StandardRequests
         public ITextComponent getShortDisplayString()
         {
             final ITextComponent result = new NonSiblingFormattingTextComponent();
-            result.appendSibling(new TextComponentTranslation(TranslationConstants.LIST_REQUEST_DISPLAY_STRING));
+            result.appendSibling(new TextComponentTranslation(stackList.getDescription()));
             return result;
         }
 
