@@ -107,6 +107,11 @@ public abstract class WindowFilterableList<B extends FilterableListView> extends
     private String filter = "";
 
     /**
+     * Check for inversion of the list.
+     */
+    protected boolean isInverted = false;
+
+    /**
      * The filter predicate for the filterable list.
      */
     private Predicate<ItemStack> itemStackPredicate;
@@ -255,7 +260,7 @@ public abstract class WindowFilterableList<B extends FilterableListView> extends
 
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
 
-                if (building.isAllowedItem(new ItemStorage(resource)))
+                if ((isInverted && !building.isAllowedItem(new ItemStorage(resource))) || (!isInverted && building.isAllowedItem(new ItemStorage(resource))))
                 {
                     switchButton.setLabel(ON);
                 }

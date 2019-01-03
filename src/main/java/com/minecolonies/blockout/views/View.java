@@ -231,6 +231,8 @@ public class View extends Pane
         child.setWindow(getWindow());
         children.add(child);
         adjustChild(child);
+        child.setParentView(this);
+
     }
 
     protected void adjustChild(final Pane child)

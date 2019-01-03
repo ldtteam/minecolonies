@@ -4,20 +4,17 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
+import com.minecolonies.coremod.colony.buildings.views.FilterableListView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
 import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
-import com.minecolonies.coremod.network.messages.AssignBakerRecipeMessage;
-
-import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.state.IBlockState;
@@ -47,7 +44,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 /**
  * Building for the baker.
  */
-public class BuildingBaker extends AbstractBuildingWorker
+public class BuildingBaker extends AbstractFilterableListBuilding
 {
     /**
      * General baker description key.
@@ -83,12 +80,7 @@ public class BuildingBaker extends AbstractBuildingWorker
      * Tag used to store the recipes positions.
      */
     private static final String TAG_RECIPE_POS = "recipePos";
-    /**
-     * Tag used to store the recipes map.
-     */
-    private static final String TAG_RECIPES = "recipesBaker";
 
-    
     /**
      * Tag used to store the furnaces map.
      */
@@ -111,11 +103,6 @@ public class BuildingBaker extends AbstractBuildingWorker
     private final Map<ProductState, List<BakingProduct>> tasks = new EnumMap<>(ProductState.class);
 
     /**
-     * Arraylist of all recipes the baker is allower to bake.
-     */
-    private boolean[] recipesAllowed;
-    
-    /**
      * Constructor for the baker building.
      *
      * @param c Colony the building is in.
@@ -131,7 +118,6 @@ public class BuildingBaker extends AbstractBuildingWorker
                 keepX.put(stack::isItemEqual, new Tuple<>(WHEAT_TO_KEEP, true));
             }
         }
-        recipesAllowed = new boolean[BakerRecipes.getRecipes().size()];
     }
 
     /**
@@ -222,24 +208,6 @@ public class BuildingBaker extends AbstractBuildingWorker
             final BakingProduct bakingProduct = BakingProduct.createFromNBT(furnaceCompound);
             furnaces.put(pos, bakingProduct);
         }
-
-        if (compound.hasKey(TAG_RECIPES))
-        {
-            final NBTTagList recipeTagList = compound.getTagList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
-            
-            for (int i = 0; i < recipeTagList.tagCount(); ++i)
-            {
-                final NBTTagCompound recipeCompound = recipeTagList.getCompoundTagAt(i);
-                recipesAllowed[i] = recipeCompound.getBoolean(TAG_RECIPE_POS);
-            }
-        }
-        else
-        {
-            for (int i = 0; i < recipesAllowed.length; ++i)
-            {
-                recipesAllowed[i] = true;
-            }
-        }
     }
 
     @Override
@@ -281,15 +249,6 @@ public class BuildingBaker extends AbstractBuildingWorker
         compound.setTag(TAG_FURNACES, furnacesTagList);
 
         @NotNull final NBTTagList recipesTagList = new NBTTagList();
-        for (int i=0;i< recipesAllowed.length; i++)
-        {
-            @NotNull final NBTTagCompound recipeCompound = new NBTTagCompound();
-            recipeCompound.setBoolean(TAG_RECIPE_POS, recipesAllowed[i]);
-            recipesTagList.appendTag(recipeCompound);
-        }
-        compound.setTag(TAG_RECIPES, recipesTagList);
-    
-    
     }
 
     /**
@@ -473,38 +432,6 @@ public class BuildingBaker extends AbstractBuildingWorker
         furnaces.replace(currentFurnace, bakingProduct);
     }
 
-    
-    /**
-     * Return a boolean to see if the Recipe is Allowed to be produced for this Building.
-     *
-     * @param pos position of the recipe 
-     * @return a boolean if the recipe is allowed to be produced. 
-     */
-    public boolean isRecipeAllowed(final int pos)
-    {
-    	if (pos >= recipesAllowed.length)
-    	{
-    		return false;
-    	}
-    	
-    	return recipesAllowed[pos];
-    }
-
-    
-    /**
-     * update the Recipe Allowed option to the new settings of value
-     *
-     * @param pos   index pointer for array position of which Recipe to alter
-     * @param value boolean value if Recipe is Allowed to be made 
-     */
-    public void setRecipeAllowed(final int pos, final boolean value)
-    {
-    	if (pos < recipesAllowed.length)
-    	{
-    		recipesAllowed[pos] = value;
-    	}
-    }
-
     @Override
     public boolean canCraftComplexRecipes()
     {
@@ -512,33 +439,10 @@ public class BuildingBaker extends AbstractBuildingWorker
     }
 
     /**
-     * Method to serialize data to send it to the view.
-     *
-     * @param buf the used ByteBuffer.
-     */
-    @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
-    {
-        super.serializeToView(buf);
-        
-        buf.writeInt(recipesAllowed.length);
-        for (int i = 0; i < recipesAllowed.length; i++)
-        {
-            buf.writeBoolean(recipesAllowed[i]);
-        }
-    }
-
-    /**
      * The client view for the baker building.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends FilterableListView
     {
-
-        /*
-         * list of recipes for the baker, 
-         * true - indicates baker is able to make recipe
-         */
-        boolean[] recipesAllowed;
 
         /**
          * The client view constructor for the baker building.
@@ -551,40 +455,6 @@ public class BuildingBaker extends AbstractBuildingWorker
             super(c, l);
         }
 
-        
-        /**
-         * Return a boolean to see if the Recipe is Allowed to be produced for this Building.
-         *
-         * @param pos position of the recipe 
-         * @return a boolean if the recipe is allowed to be produced. 
-         */
-        public boolean isRecipeAllowed(final int pos)
-        {
-            if (pos >= recipesAllowed.length)
-            {
-                return false;
-            }
-
-            return recipesAllowed[pos];
-        }
-
-        /**
-         * update the Recipe Allowed option to the new settings of value
-         *
-         * @param pos   index pointer for array position of which Recipe to alter
-         * @param value boolean value if Recipe is Allowed to be made 
-         * @param block block position of the building.
-         */
-        public void setRecipeAllowed(final int pos, final  boolean value,final BlockPos block)
-        {
-            MineColonies.getNetwork().sendToServer(new AssignBakerRecipeMessage(this, pos, value, block));
-            if (pos < recipesAllowed.length)
-            {
-                recipesAllowed[pos] = value;
-            }
-        }
-
-        
         /**
          * Creates a new window for the building.
          *
@@ -610,19 +480,5 @@ public class BuildingBaker extends AbstractBuildingWorker
         {
             return Skill.DEXTERITY;
         }
-
-
-        @Override
-        public void deserialize(@NotNull final ByteBuf buf)
-        {
-            super.deserialize(buf);
-            final int size = buf.readInt();
-            recipesAllowed = new boolean[size];
-            for (int i = 0; i < size; i++)
-            {
-                recipesAllowed[i] = buf.readBoolean();
-            }
-        }
-
     }
 }
