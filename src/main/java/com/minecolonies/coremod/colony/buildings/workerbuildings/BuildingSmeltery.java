@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.views.Window;
+import com.minecolonies.coremod.client.gui.WindowHutSmelter;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -9,6 +10,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.views.FilterableListView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
 import net.minecraft.item.ItemArmor;
@@ -109,9 +111,9 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
     }
 
     /**
-     * BuildingCook View.
+     * Smelter building View.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends FilterableListView
     {
         /**
          * Instantiate the smeltery view.
@@ -128,7 +130,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<>(this, SMELTERY_DESC);
+            return new WindowHutSmelter(this);
         }
 
         @NotNull
