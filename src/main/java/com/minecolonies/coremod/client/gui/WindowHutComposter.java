@@ -34,6 +34,6 @@ public class WindowHutComposter extends WindowFilterableList<BuildingComposter.V
     @Override
     public String getBuildingName()
     {
-        return "Composter Hut";
+        return "com.minecolonies.coremod.gui.workerHuts.composter";
     }
 }
