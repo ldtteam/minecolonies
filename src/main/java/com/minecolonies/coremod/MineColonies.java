@@ -230,7 +230,6 @@ public class MineColonies
         getNetwork().registerMessage(HireFireMessage.class, HireFireMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(WorkOrderChangeMessage.class, WorkOrderChangeMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(AssignFieldMessage.class, AssignFieldMessage.class, ++id, Side.SERVER);
-        getNetwork().registerMessage(AssignBakerRecipeMessage.class, AssignBakerRecipeMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(AssignmentModeMessage.class, AssignmentModeMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(GuardTaskMessage.class, GuardTaskMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(GuardRecalculateMessage.class, GuardRecalculateMessage.class, ++id, Side.SERVER);
@@ -240,7 +239,6 @@ public class MineColonies
         getNetwork().registerMessage(TransferItemsRequestMessage.class, TransferItemsRequestMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(MarkBuildingDirtyMessage.class, MarkBuildingDirtyMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(ChangeFreeToInteractBlockMessage.class, ChangeFreeToInteractBlockMessage.class, ++id, Side.SERVER);
-        getNetwork().registerMessage(LumberjackSaplingSelectorMessage.class, LumberjackSaplingSelectorMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(LumberjackReplantSaplingToggleMessage.class, LumberjackReplantSaplingToggleMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(ToggleHousingMessage.class, ToggleHousingMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(AssignUnassignMessage.class, AssignUnassignMessage.class, ++id, Side.SERVER);

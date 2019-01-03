@@ -70,19 +70,19 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_SATURATION_5                               = "com.minecolonies.coremod.saturation.5";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_SATURATION_7                               = "com.minecolonies.coremod.saturation.7";
+    public static final String COM_MINECOLONIES_COREMOD_SATURATION_7    = "com.minecolonies.coremod.saturation.7";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_BAKER                                  = "com.minecolonies.coremod.gui.workerHuts.baker";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_BAKER       = "com.minecolonies.coremod.gui.workerHuts.baker";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_JOB_BAKER                                  = "com.minecolonies.coremod.job.baker";
+    public static final String COM_MINECOLONIES_COREMOD_JOB_BAKER       = "com.minecolonies.coremod.job.baker";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BAKER_NO_FURNACES                   = "com.minecolonies.coremod.baker.noFurnace";
+    public static final String BAKER_HAS_NO_FURNACES_MESSAGE            = "com.minecolonies.coremod.baker.noFurnace";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_JOB_BUILDER                                = "com.minecolonies.coremod.job.Builder";
+    public static final String COM_MINECOLONIES_COREMOD_JOB_BUILDER     = "com.minecolonies.coremod.job.Builder";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN                            = "com.minecolonies.coremod.job.Deliveryman";
+    public static final String COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN = "com.minecolonies.coremod.job.Deliveryman";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_JOB_MINER                                  = "com.minecolonies.coremod.job.Miner";
+    public static final String COM_MINECOLONIES_COREMOD_JOB_MINER       = "com.minecolonies.coremod.job.Miner";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_JOB_FISHERMAN                              = "com.minecolonies.coremod.job.Fisherman";
     @NonNls
@@ -309,6 +309,8 @@ public final class TranslationConstants
     public static final String PIRATES_SAILING_OFF_MESSAGE                                         = "com.minecolonies.coremod.pirates.sailing.away";
     @NonNls
     public static final String UNABLE_TO_ADD_RECIPE_MESSAGE                                        = "com.minecolonies.coremod.recipe.unable";
+    @NonNls
+    public static final String BAKER_HAS_NO_RECIPES            = "com.minecolonies.coremod.baker.noRecipe";
 
     private TranslationConstants()
     {
