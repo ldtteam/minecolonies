@@ -2,12 +2,14 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.views.Window;
+import com.minecolonies.coremod.client.gui.WindowHutCook;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.views.FilterableListView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import net.minecraft.tileentity.TileEntityFurnace;
@@ -90,7 +92,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     /**
      * BuildingCook View.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends FilterableListView
     {
         /**
          * Instantiate the cook view.
@@ -107,7 +109,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<>(this, COOK_DESC);
+            return new WindowHutCook(this);
         }
 
         @NotNull

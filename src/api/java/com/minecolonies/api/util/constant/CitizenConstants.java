@@ -233,4 +233,14 @@ public final class CitizenConstants
      * Eating particle count.
      */
     public static final int EATING_PARTICLE_COUNT = 5;
+
+    /**
+     * At this stack size or smaller the chance to dump is 50%.
+     */
+    public static final int CHANCE_TO_DUMP_50 = 16;
+
+    /**
+     * Chance to dump, if < this then dump else not.
+     */
+    public static final int CHANCE_TO_DUMP = 8;
 }

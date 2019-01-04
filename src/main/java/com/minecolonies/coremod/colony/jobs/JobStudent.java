@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.student.EntityAIStudy;
@@ -42,5 +43,11 @@ public class JobStudent extends AbstractJob
     public AbstractAISkeleton<JobStudent> generateAI()
     {
         return new EntityAIStudy(this);
+    }
+
+    @Override
+    public RenderBipedCitizen.Model getModel()
+    {
+        return RenderBipedCitizen.Model.STUDENT;
     }
 }

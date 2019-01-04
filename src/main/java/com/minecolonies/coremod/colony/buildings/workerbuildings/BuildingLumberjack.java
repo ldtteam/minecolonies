@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.blockout.views.Window;
@@ -8,20 +7,17 @@ import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutLumberjack;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
+import com.minecolonies.coremod.colony.buildings.views.FilterableListView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -33,18 +29,8 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * The lumberjacks building.
  */
-public class BuildingLumberjack extends AbstractBuildingWorker
+public class BuildingLumberjack extends AbstractFilterableListBuilding
 {
-    /**
-     * NBT tag to store the treesNotToFell map.
-     */
-    private static final String TAG_SAPLINGS = "saplings";
-
-    /**
-     * NBT tag if the lj should cut a certain type of tree.
-     */
-    private static final String TAG_CUT = "shouldCut";
-
     /**
      * NBT tag if the lj should replant saplings
      */
@@ -63,11 +49,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
      * The job description.
      */
     private static final String LUMBERJACK         = "Lumberjack";
-
-    /**
-     * List of saplings the lumberjack should, or should not fell (true if should, false if should not).
-     */
-    private final List<ItemStorage> treesNotToFell = new ArrayList<>();
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -123,38 +104,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         }
 
         return toKeep;
-    }
-
-    /**
-     * Change a tree to not be cut anymore.
-     *
-     * @param stack the stack of the sapling.
-     */
-    public void stopCuttingTree(final ItemStack stack)
-    {
-        treesNotToFell.add(new ItemStorage(stack));
-        markDirty();
-    }
-
-    /**
-     * Change a tree to be cut again..
-     *
-     * @param stack the stack of the sapling.
-     */
-    public void continueCuttingTree(final ItemStack stack)
-    {
-        treesNotToFell.remove(new ItemStorage(stack));
-        markDirty();
-    }
-
-    /**
-     * Get a list of what kind of trees the lumberjack should or should not cut.
-     *
-     * @return the map with ItemStack (sapling) and boolean (should or should not cut).
-     */
-    public List<ItemStorage> getTreesToNotCut()
-    {
-        return Collections.unmodifiableList(treesNotToFell);
     }
 
     /**
@@ -215,21 +164,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        final NBTTagList saplingTagList = compound.getTagList(TAG_SAPLINGS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < saplingTagList.tagCount(); ++i)
-        {
-            final NBTTagCompound saplingCompound = saplingTagList.getCompoundTagAt(i);
-            final ItemStack stack = new ItemStack(saplingCompound);
-            final ItemStorage storage = new ItemStorage(stack);
-            if (!treesNotToFell.contains(storage) && !storage.getItemStack().isEmpty())
-            {
-                if (!saplingCompound.hasKey(TAG_CUT) || !saplingCompound.getBoolean(TAG_CUT))
-                {
-                    treesNotToFell.add(new ItemStorage(stack));
-                }
-            }
-        }
-
         if (compound.hasKey(TAG_REPLANT))
         {
             replant = compound.getBoolean(TAG_REPLANT);
@@ -244,14 +178,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        @NotNull final NBTTagList saplingTagList = new NBTTagList();
-        for (@NotNull final ItemStorage entry : treesNotToFell)
-        {
-            @NotNull final NBTTagCompound saplingCompound = new NBTTagCompound();
-            entry.getItemStack().writeToNBT(saplingCompound);
-            saplingTagList.appendTag(saplingCompound);
-        }
-        compound.setTag(TAG_SAPLINGS, saplingTagList);
         compound.setBoolean(TAG_REPLANT, replant);
     }
 
@@ -271,13 +197,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
-
         buf.writeBoolean(replant);
-        buf.writeInt(treesNotToFell.size());
-        for (final ItemStorage entry : treesNotToFell)
-        {
-            ByteBufUtils.writeItemStack(buf, entry.getItemStack());
-        }
     }
 
     /**
@@ -301,13 +221,8 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     /**
      * Provides a view of the lumberjack building class.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends FilterableListView
     {
-        /**
-         * List of saplings the lumberjack should, or should not fell (true if should, false if should not).
-         */
-        public final Map<ItemStorage, Boolean> treesToFell = new LinkedHashMap<>();
-
         /**
          * Whether or not the LJ should replant saplings
          */
@@ -324,33 +239,11 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             super(c, l);
         }
 
-
-
-
         @Override
         public void deserialize(@NotNull final ByteBuf buf)
         {
             super.deserialize(buf);
             shouldReplant = buf.readBoolean();
-            treesToFell.clear();
-            final int size = buf.readInt();
-            for (int i = 0; i < size; i++)
-            {
-                final ItemStack stack = ByteBufUtils.readItemStack(buf);
-
-                if (stack != null)
-                {
-                    treesToFell.put(new ItemStorage(stack), false);
-                }
-            }
-
-            for (final ItemStorage storage : ColonyManager.getCompatibilityManager().getCopyOfSaplings())
-            {
-                if (!treesToFell.containsKey(storage))
-                {
-                    treesToFell.put(storage, true);
-                }
-            }
         }
 
         @NotNull
