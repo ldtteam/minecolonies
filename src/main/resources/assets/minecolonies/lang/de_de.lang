@@ -833,4 +833,3 @@ com.minecolonies.coremod.gui.workerHuts.CombatAcademy=Kampfschule
 item.santa_hat.name=Nikolausmütze
 
 entity.builder.messageBuildersTooFar=Es ist kein Bauarbeiter nahe genug, um an diesem Gebäude zu arbeiten. Beauftrage einen Bauarbeiter Manuell im Baumenü oder baue näher an deinen existierenden Bauarbeitern!
-
