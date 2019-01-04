@@ -421,7 +421,26 @@ public enum AIWorkerState implements IAIState
     /**
      * Attack protect in a certain direction.
      */
-    KNIGHT_ATTACK_PROTECT(true);
+    KNIGHT_ATTACK_PROTECT(true),
+
+        /*
+### Crafter Workers ###
+     */
+
+    /**
+     * Get the recipe.
+     */
+    GET_RECIPE(true),
+
+    /**
+     * Query the required items for a recipe.
+     */
+    QUERY_ITEMS(true),
+
+    /**
+     * Execute the crafting action.
+     */
+    CRAFT(true);
 
     private boolean isOkayToEat;
 
@@ -434,4 +453,5 @@ public enum AIWorkerState implements IAIState
     {
         return isOkayToEat;
     }
+
 }

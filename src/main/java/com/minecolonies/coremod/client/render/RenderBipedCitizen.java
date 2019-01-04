@@ -44,6 +44,8 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToMaleModelMap.put(Model.PIG_FARMER, new ModelEntityPigFarmerMale());
         idToMaleModelMap.put(Model.COW_FARMER, new ModelEntityCowFarmerMale());
         idToMaleModelMap.put(Model.SMELTER, new ModelEntitySmelterMale());
+        idToMaleModelMap.put(Model.STUDENT, new ModelEntityStudentMale());
+        idToMaleModelMap.put(Model.CRAFTER, new ModelEntityCrafterMale());
 
         idToFemaleModelMap.put(Model.NOBLE, new ModelEntityCitizenFemaleNoble());
         idToFemaleModelMap.put(Model.ARISTOCRAT, new ModelEntityCitizenFemaleAristocrat());
@@ -63,7 +65,10 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToFemaleModelMap.put(Model.PIG_FARMER, new ModelEntityPigFarmerFemale());
         idToFemaleModelMap.put(Model.SHEEP_FARMER, new ModelEntitySheepFarmerFemale());
         idToFemaleModelMap.put(Model.SMELTER, new ModelEntitySmelterFemale());
+        idToFemaleModelMap.put(Model.STUDENT, new ModelEntityCitizenFemaleCitizen());
+        idToFemaleModelMap.put(Model.CRAFTER, new ModelEntityCrafterFemale());
     }
+
     /**
      * Renders model, see {@link RenderBiped}.
      *
@@ -72,7 +77,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     public RenderBipedCitizen(final RenderManager renderManagerIn)
     {
         super(renderManagerIn, defaultModelMale, (float) SHADOW_SIZE);
-        this.addLayer(new LayerBipedArmor(this));
+        super.addLayer(new LayerBipedArmor(this));
     }
 
     @Override
@@ -159,7 +164,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     }
 
     @Override
-    protected void applyRotations(final EntityCitizen entityLiving, final float p_77043_2_, final float rotationYaw, final float partialTicks)
+    protected void applyRotations(final EntityCitizen entityLiving, final float rotationHead, final float rotationYaw, final float partialTicks)
     {
         if (entityLiving.isEntityAlive() && entityLiving.getCitizenSleepHandler().isAsleep())
         {
@@ -169,7 +174,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         }
         else
         {
-            super.applyRotations(entityLiving, p_77043_2_, rotationYaw, partialTicks);
+            super.applyRotations(entityLiving, rotationHead, rotationYaw, partialTicks);
         }
     }
 
@@ -204,7 +209,9 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         CHICKEN_FARMER("chickenfarmer", 1),
         COMPOSTER("composter", 1),
         SMELTER("smelter", 1),
-        COOK("cook", 1);
+        COOK("cook", 1),
+        STUDENT("student", 6),
+        CRAFTER("crafter", 1);
 
         /**
          * String describing the citizen.

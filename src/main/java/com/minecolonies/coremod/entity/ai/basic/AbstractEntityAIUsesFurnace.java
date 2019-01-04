@@ -3,8 +3,10 @@ package com.minecolonies.coremod.entity.ai.basic;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.requestable.Burnable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
@@ -131,6 +133,12 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
             return getState();
         }
 
+        if(getOwnBuilding(AbstractBuildingFurnaceUser.class).getCopyOfAllowedItems().isEmpty())
+        {
+            chatSpamFilter.talkWithoutSpam(FURNACE_USER_NO_FUEL);
+            return getState();
+        }
+
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
 
         final IAIState nextState = checkForImportantJobs();
@@ -158,9 +166,9 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         {
             worker.getCitizenData().createRequestAsync(getSmeltAbleClass());
         }
-        else if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Burnable.class)))
+        else if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(StackList.class)))
         {
-            worker.getCitizenData().createRequestAsync(new Burnable(STACKSIZE));
+            worker.getCitizenData().createRequestAsync(new StackList(getOwnBuilding(AbstractBuildingFurnaceUser.class).getAllowedFuel(), COM_MINECOLONIES_REQUESTS_BURNABLE));
         }
 
         if(amountOfSmeltableInBuilding > 0 && amountOfSmeltableInInv == 0)

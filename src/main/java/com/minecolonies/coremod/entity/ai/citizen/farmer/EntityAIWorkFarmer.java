@@ -47,6 +47,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.BLOCK_BREAK_SOUND_RANGE;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.TranslationConstants.FERTLIZER;
 import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
@@ -171,7 +172,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 final List<ItemStack> compostAbleItems = new ArrayList<>();
                 compostAbleItems.add(new ItemStack(ModItems.compost));
                 compostAbleItems.add(new ItemStack(Items.DYE, 1, 15));
-                worker.getCitizenData().createRequestAsync(new StackList(compostAbleItems));
+                worker.getCitizenData().createRequestAsync(new StackList(compostAbleItems, FERTLIZER));
             }
         }
         else if (amountOfCompostInInv <= 0 && amountOfCompostInBuilding > 0)

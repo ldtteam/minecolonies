@@ -1,0 +1,23 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "minecolonies:blockhutsawmill"
+    },
+    "facing=east": {
+      "model": "minecolonies:blockhutsawmill",
+      "y": 0
+    },
+    "facing=south": {
+      "model": "minecolonies:blockhutsawmill",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "minecolonies:blockhutsawmill",
+      "y": 180
+    },
+    "facing=north": {
+      "model": "minecolonies:blockhutsawmill",
+      "y": 270
+    }
+  }
+}

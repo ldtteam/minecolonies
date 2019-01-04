@@ -106,6 +106,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if(getOwnBuilding(BuildingComposter.class).getCopyOfAllowedItems().isEmpty())
         {
             complain();
+            return getState();
         }
         if(InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> getOwnBuilding(BuildingComposter.class).isAllowedItem(new ItemStorage(stack))))
         {
@@ -139,7 +140,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             }
             if (!itemList.isEmpty())
             {
-                worker.getCitizenData().createRequestAsync(new StackList(itemList));
+                worker.getCitizenData().createRequestAsync(new StackList(itemList, COM_MINECOLONIES_REQUESTS_COMPOSTABLE));
             }
         }
 

@@ -85,6 +85,7 @@ public class BuildingRegistry
         addMapping("Library", BuildingLibrary.class, BuildingLibrary.View.class, BlockHutLibrary.class);
         addMapping("Archery", BuildingArchery.class, BuildingArchery.View.class, BlockHutArchery.class);
         addMapping("CombatAcademy", BuildingCombatAcademy.class, BuildingCombatAcademy.View.class, BlockHutCombatAcademy.class);
+        addMapping("Sawmill", BuildingSawmill.class, BuildingSawmill.View.class, BlockHutSawmill.class);
     }
 
     /**

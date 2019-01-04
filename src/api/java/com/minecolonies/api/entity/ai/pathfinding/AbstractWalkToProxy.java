@@ -26,6 +26,11 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
     private static final int MIN_DISTANCE = 25;
 
     /**
+     * Range to the proxy.
+     */
+    private static final int PROXY_RANGE  = 3;
+
+    /**
      * The entity entity associated with the proxy.
      */
     private final EntityLiving entity;
@@ -124,7 +129,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
             proxyList.remove(0);
         }
 
-        if (currentProxy != null && !isLivingAtSiteWithMove(entity, currentProxy.getX(), currentProxy.getY(), currentProxy.getZ(), range))
+        if (currentProxy != null && !isLivingAtSiteWithMove(entity, currentProxy.getX(), currentProxy.getY(), currentProxy.getZ(), PROXY_RANGE))
         {
             //only walk to the block
             return !onMove;

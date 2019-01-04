@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -227,6 +228,12 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
         }
         job.getWorkOrder().setRequested(true);
+
+        if (job.getWorkOrder().getAmountOfRes() == 0)
+        {
+            job.getWorkOrder().setAmountOfRes(buildingWorker.getNeededResources().values().stream()
+                                                .mapToInt(ItemStorage::getAmount).sum());
+        }
     }
 
     /**

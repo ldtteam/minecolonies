@@ -50,13 +50,13 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
 
     /**
      * Read the WorkOrder data from the NBTTagCompound.
-     *
-     * @param compound NBT Tag compound.
+     *  @param compound NBT Tag compound.
+     * @param manager
      */
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound, final WorkManager manager)
     {
-        super.readFromNBT(compound);
+        super.readFromNBT(compound, manager);
         minerBuilding = BlockPosUtil.readFromNBT(compound, TAG_POS);
     }
 

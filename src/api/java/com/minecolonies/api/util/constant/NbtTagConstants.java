@@ -214,6 +214,8 @@ public final class NbtTagConstants
      */
     public static final String TAG_LIST = "List";
 
+    public static final String TAG_ASSIGNED_LIST = "AssignedList";
+
     /**
      * Tag used when we store a Request.
      */

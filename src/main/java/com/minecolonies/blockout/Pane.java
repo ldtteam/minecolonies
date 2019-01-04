@@ -646,6 +646,15 @@ public class Pane extends Gui
          */
     }
 
+    /**
+     * Set the parent of the child.
+     * @param view the parent view.
+     */
+    public void setParentView(final View view)
+    {
+        this.parent = view;
+    }
+
     private static class ScissorsInfo
     {
         private final int x;
