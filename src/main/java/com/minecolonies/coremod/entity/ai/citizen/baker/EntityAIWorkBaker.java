@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.baker;
 
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
@@ -25,7 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BAKER_NO_FURNACES;
+import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_NO_FURNACES_MESSAGE;
+import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_NO_RECIPES;
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
 /**
@@ -296,56 +298,25 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     private AIState createNewProduct()
     {
     	progress = 0;
-
-        boolean recipeFound = false;
-
-        IRecipeStorage storage = null;
         final BuildingBaker building = getOwnBuilding();
         currentRecipe++;
-        if (currentRecipe + 1 > BakerRecipes.getRecipes().size())
+        if (currentRecipe >= building.getCopyOfAllowedItems().size())
         {
             currentRecipe = 0;
         }
 
-        for (int i = currentRecipe; i < BakerRecipes.getRecipes().size(); i++)
-        {
-            if (building.isRecipeAllowed(i))
-            {
-                storage = BakerRecipes.getRecipes().get(i);
-                currentRecipe = i;
-                recipeFound = true;
-                break;
-            }
-        }
-
-        if (!recipeFound && currentRecipe > 0)
-        {
-            for (int i = 0; i <= currentRecipe; i++)
-            {
-                if (building.isRecipeAllowed(i))
-                {
-                    storage = BakerRecipes.getRecipes().get(i);
-                    currentRecipe = i;
-                    recipeFound = true;
-                    break;
-                }
-            }
-
-        }
-
-        if (recipeFound)
-        {
-            final BakingProduct bakingProduct = new BakingProduct(storage.getPrimaryOutput().copy(), currentRecipe);
-            building.addToTasks(bakingProduct.getState(), bakingProduct);
-            currentBakingProduct = bakingProduct;
-            return getState();
-        }
-        else
+        final ItemStorage itemStorage = building.getCopyOfAllowedItems().get(currentRecipe);
+        IRecipeStorage recipeStorage = BakerRecipes.getRecipes().stream().filter(recipe -> recipe.getPrimaryOutput().isItemEqual(itemStorage.getItemStack())).findFirst().orElse(null);
+        if (recipeStorage == null)
         {
             setDelay(UNABLE_TO_CRAFT_DELAY);
             return IDLE;
         }
 
+        final BakingProduct bakingProduct = new BakingProduct(recipeStorage.getPrimaryOutput().copy(), BakerRecipes.getRecipes().indexOf(recipeStorage));
+        building.addToTasks(bakingProduct.getState(), bakingProduct);
+        currentBakingProduct = bakingProduct;
+        return getState();
     }
 
     /**
@@ -469,7 +440,13 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     {
         if (getOwnBuilding().getFurnaces().isEmpty())
         {
-            chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_ENTITY_BAKER_NO_FURNACES);
+            chatSpamFilter.talkWithoutSpam(BAKER_HAS_NO_FURNACES_MESSAGE);
+            return getState();
+        }
+
+        if (getOwnBuilding().getCopyOfAllowedItems().isEmpty())
+        {
+            chatSpamFilter.talkWithoutSpam(BAKER_HAS_NO_RECIPES);
             return getState();
         }
 

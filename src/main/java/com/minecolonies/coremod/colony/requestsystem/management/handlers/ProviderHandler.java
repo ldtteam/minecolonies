@@ -26,7 +26,13 @@ public final class ProviderHandler
      */
     public static Collection<IToken<?>> getRegisteredResolvers(final IStandardRequestManager manager, final IRequestResolverProvider provider)
     {
-        return manager.getProviderResolverAssignmentDataStore().getAssignments().get(provider.getToken());
+        final Collection<IToken<?>> result = manager.getProviderResolverAssignmentDataStore().getAssignments().get(provider.getToken());
+        if (result == null)
+	{
+            return ImmutableList.of();
+	}
+
+        return result;
     }
 
     /**
@@ -116,7 +122,14 @@ public final class ProviderHandler
      */
     public static Collection<IToken<?>> getRegisteredResolvers(final IStandardRequestManager manager, final IToken<?> token)
     {
-        return manager.getProviderResolverAssignmentDataStore().getAssignments().get(token);
+        Collection<IToken<?>> result =  manager.getProviderResolverAssignmentDataStore().getAssignments().get(token);
+
+        if (result == null)
+	{
+            return ImmutableList.of();
+	}
+
+        return result;
     }
 
     public static void removeProvider(final IStandardRequestManager manager, final IRequestResolverProvider provider)
