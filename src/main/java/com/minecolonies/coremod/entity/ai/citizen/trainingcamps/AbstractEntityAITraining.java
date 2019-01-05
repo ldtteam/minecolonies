@@ -3,14 +3,14 @@ package com.minecolonies.coremod.entity.ai.citizen.trainingcamps;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
-import com.minecolonies.coremod.entity.ai.util.AIState;
-import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Abstract class for all training AIs.
@@ -41,7 +41,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
     /**
      * State to go to after pathing.
      */
-    protected AIState stateAfterPathing;
+    protected IAIState stateAfterPathing;
 
     /**
      * How many more ticks we have until next attack.
@@ -59,11 +59,11 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
         //Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, true, () -> START_WORKING),
-          new AITarget(START_WORKING, true, () -> DECIDE),
-          new AITarget(DECIDE, true, this::decide),
-          new AITarget(TRAINING_WANDER, true, this::wander),
-          new AITarget(GO_TO_TARGET, true, this::pathToTarget)
+          new AITarget(IDLE, () -> START_WORKING),
+          new AITarget(START_WORKING, () -> DECIDE),
+          new AITarget(DECIDE, this::decide),
+          new AITarget(TRAINING_WANDER, this::wander),
+          new AITarget(GO_TO_TARGET, this::pathToTarget)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -73,7 +73,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
      *
      * @return the next state to go to.
      */
-    public AIState decide()
+    public IAIState decide()
     {
         setDelay(STANDARD_DELAY);
         if (!isSetup())
@@ -99,7 +99,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
      *
      * @return the next state to go to.
      */
-    private AIState wander()
+    private IAIState wander()
     {
         setDelay(STANDARD_DELAY);
         if (currentPathingTarget == null)
@@ -121,7 +121,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
      *
      * @return the next state to go to.
      */
-    private AIState pathToTarget()
+    private IAIState pathToTarget()
     {
         setDelay(STANDARD_DELAY);
         if (walkToBlock(currentPathingTarget, 2))

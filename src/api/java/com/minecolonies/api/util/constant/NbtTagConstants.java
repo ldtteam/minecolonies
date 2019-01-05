@@ -387,9 +387,9 @@ public final class NbtTagConstants
      * Archery building constants.
      */
     public static final String TAG_ARCHERY_TARGETS = "archeryTargets";
-    public static final String TAG_STAND = "stand";
-    public static final String TAG_TARGET = "target";
-    public static final String TAG_ARCHERY_STANDS = "archeryStands";
+    public static final String TAG_STAND           = "stand";
+    public static final String TAG_TARGET          = "target";
+    public static final String TAG_ARCHERY_STANDS  = "archeryStands";
 
     /**
      * Archery building constants.

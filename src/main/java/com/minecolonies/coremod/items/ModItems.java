@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.items;
 
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;

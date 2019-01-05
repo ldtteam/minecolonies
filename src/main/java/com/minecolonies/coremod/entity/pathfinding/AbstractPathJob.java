@@ -876,7 +876,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             return -1;
         }
 
-        for (int i = 2; i <= 4; i++ )
+        for (int i = 2; i <= 4; i++)
         {
             final IBlockState below = world.getBlockState(pos.down(i));
             if (isWalkableSurface(below, pos) == SurfaceType.WALKABLE)

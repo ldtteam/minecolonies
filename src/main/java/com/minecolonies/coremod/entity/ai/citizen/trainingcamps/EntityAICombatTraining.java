@@ -3,17 +3,15 @@ package com.minecolonies.coremod.entity.ai.citizen.trainingcamps;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCombatAcademy;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.util.AIState;
-import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.util.SoundUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.ItemShield;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -22,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTraining>
@@ -88,12 +86,12 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
         //Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
         super(job);
         super.registerTargets(
-          new AITarget(COMBAT_TRAINING, true, this::decideOnTrainingType),
-          new AITarget(FIND_TRAINING_PARTNER, true, this::findTrainingPartner),
-          new AITarget(KNIGHT_TRAIN_WITH_PARTNER, true, this::trainWithPartner),
-          new AITarget(FIND_DUMMY_PARTNER, true, this::findDummyPartner),
-          new AITarget(KNIGHT_ATTACK_DUMMY, true, this::attackDummy),
-          new AITarget(KNIGHT_ATTACK_PROTECT, true, this::attack)
+          new AITarget(COMBAT_TRAINING, this::decideOnTrainingType),
+          new AITarget(FIND_TRAINING_PARTNER, this::findTrainingPartner),
+          new AITarget(KNIGHT_TRAIN_WITH_PARTNER, this::trainWithPartner),
+          new AITarget(FIND_DUMMY_PARTNER, this::findDummyPartner),
+          new AITarget(KNIGHT_ATTACK_DUMMY, this::attackDummy),
+          new AITarget(KNIGHT_ATTACK_PROTECT, this::attack)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(
           STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
@@ -105,7 +103,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
      *
      * @return the next state to go to.
      */
-    private AIState decideOnTrainingType()
+    private IAIState decideOnTrainingType()
     {
         setDelay(STANDARD_DELAY);
         if (getOwnBuilding(BuildingCombatAcademy.class).hasCombatPartner(worker) || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < PARTNER_TRAINING_CHANCE)
@@ -116,7 +114,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     }
 
     @Override
-    public AIState decide()
+    public IAIState decide()
     {
         if (getOwnBuilding(BuildingCombatAcademy.class).hasCombatPartner(worker))
         {
@@ -131,7 +129,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
      *
      * @return the next state to go to.
      */
-    private AIState findTrainingPartner()
+    private IAIState findTrainingPartner()
     {
         setDelay(STANDARD_DELAY);
         final BuildingCombatAcademy academy = getOwnBuilding();
@@ -155,7 +153,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
      * Train with a partner. Find the partner and path to him.
      * @return the next state to go to.
      */
-    private AIState trainWithPartner()
+    private IAIState trainWithPartner()
     {
         setDelay(STANDARD_DELAY);
         if (trainingPartner == null)
@@ -175,7 +173,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
      * Attack the training partner or block.
      * @return the next state to go to.
      */
-    private AIState attack()
+    private IAIState attack()
     {
         setDelay(STANDARD_DELAY);
         if (trainingPartner == null)
@@ -243,7 +241,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
      * Find a dummy partner.
      * @return the next state to go to.
      */
-    private AIState findDummyPartner()
+    private IAIState findDummyPartner()
     {
         setDelay(STANDARD_DELAY);
         final BuildingCombatAcademy academy = getOwnBuilding();
@@ -279,7 +277,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
      * Attack the dummy.
      * @return the next state to go to.
      */
-    private AIState attackDummy()
+    private IAIState attackDummy()
     {
         setDelay(STANDARD_DELAY);
         if (currentCombatTarget == null)
