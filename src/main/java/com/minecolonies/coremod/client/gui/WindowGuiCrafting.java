@@ -7,7 +7,6 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.inventory.CraftingGUIBuilding;
 import com.minecolonies.coremod.network.messages.AddRemoveRecipeMessage;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -23,7 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Crafting gui.
+ * AbstractCrafting gui.
  */
 public class WindowGuiCrafting extends GuiContainer
 {
@@ -119,7 +118,7 @@ public class WindowGuiCrafting extends GuiContainer
 
         this.doneButton = this.addButton(new GuiButton(0, guiLeft + BUTTON_X_OFFSET, guiTop + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("gui.done")));
 
-        if(Math.pow(2, building.getBuildingLevel()) < (building.getRecipes().size() + 1))
+        if(!building.canRecipeBeAdded())
         {
             this.doneButton.displayString = LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
             this.doneButton.enabled = false;
@@ -131,7 +130,7 @@ public class WindowGuiCrafting extends GuiContainer
     {
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
-        if (doneButton.isMouseOver())
+        if (building.canRecipeBeAdded() && doneButton.isMouseOver())
         {
             final List<ItemStack> input = new LinkedList<>();
             final List<ItemStack> secondaryOutput = new ArrayList<>();
@@ -155,7 +154,6 @@ public class WindowGuiCrafting extends GuiContainer
             if(!ItemStackUtils.isEmpty(primaryOutput))
             {
                 MineColonies.getNetwork().sendToServer(new AddRemoveRecipeMessage(input, completeCrafting ? 3 : 2, primaryOutput, secondaryOutput, building, false));
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.gui.recipe.done");
             }
         }
     }

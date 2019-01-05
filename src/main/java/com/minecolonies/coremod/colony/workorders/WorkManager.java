@@ -4,6 +4,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -19,20 +20,20 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
  */
 public class WorkManager
 {
-    private static final String TAG_WORK_ORDERS              = "workOrders";
+    private static final String                          TAG_WORK_ORDERS = "workOrders";
     //  Once a second
     //private static final int    WORK_ORDER_FULFILL_INCREMENT = 1 * 20;
     /**
      * The Colony the workManager takes part of.
      */
-    protected final Colony colony;
+    protected final      Colony                          colony;
     @NotNull
-    private final Map<Integer, AbstractWorkOrder> workOrders     = new LinkedHashMap<>();
-    private       int                             topWorkOrderId = 0;
+    private final        Map<Integer, AbstractWorkOrder> workOrders      = new LinkedHashMap<>();
+    private              int                             topWorkOrderId  = 0;
     /**
      * Checks if there has been changes.
      */
-    private       boolean                         dirty          = false;
+    private              boolean                         dirty           = false;
 
     /**
      * Constructor, saves reference to the colony.
@@ -62,10 +63,13 @@ public class WorkManager
     public void removeWorkOrder(final int orderId)
     {
         final AbstractWorkOrder workOrder = workOrders.get(orderId);
-        workOrders.remove(orderId);
-        colony.removeWorkOrderInView(orderId);
-        workOrder.onRemoved(colony);
-        colony.markDirty();
+        if (workOrder != null)
+        {
+            workOrders.remove(orderId);
+            colony.removeWorkOrderInView(orderId);
+            workOrder.onRemoved(colony);
+            colony.markDirty();
+        }
     }
 
     /**
@@ -187,7 +191,7 @@ public class WorkManager
         for (int i = 0; i < list.tagCount(); ++i)
         {
             final NBTTagCompound orderCompound = list.getCompoundTagAt(i);
-            @Nullable final AbstractWorkOrder o = AbstractWorkOrder.createFromNBT(orderCompound);
+            @Nullable final AbstractWorkOrder o = AbstractWorkOrder.createFromNBT(orderCompound, this);
             if (o != null)
             {
                 addWorkOrder(o, true);
@@ -195,7 +199,7 @@ public class WorkManager
                 //  If this Work Order is claimed, and the Citizen who claimed it no longer exists
                 //  then clear the Claimed status
                 //  This is just a failsafe cleanup; this should not happen under normal circumstances
-                if (o.isClaimed() && colony.getCitizenManager().getCitizen(o.getClaimedBy()) == null)
+                if (o.isClaimed() && colony.getBuildingManager().getBuilding(o.getClaimedBy()) == null)
                 {
                     o.clearClaimedBy();
                 }
@@ -208,7 +212,7 @@ public class WorkManager
     /**
      * Adds work order to the work manager.
      *
-     * @param order Order to add.
+     * @param order          Order to add.
      * @param readingFromNbt if being read from NBT.
      */
     public void addWorkOrder(@NotNull final AbstractWorkOrder order, final boolean readingFromNbt)
@@ -255,12 +259,14 @@ public class WorkManager
 
     /**
      * Get an ordered list by priority of the work orders.
+     *
      * @param type the type of workOrder which is required.
+     * @param builder the builder wanting to claim it.
      * @return the list.
      */
-    public <W extends AbstractWorkOrder> List<W> getOrderedList(@NotNull final Class<W> type)
+    public <W extends AbstractWorkOrder> List<W> getOrderedList(@NotNull final Class<W> type, final BlockPos builder)
     {
-        return workOrders.values().stream().filter(o -> !o.isClaimed() && type.isInstance(o)).map(o -> (W) o)
+        return workOrders.values().stream().filter(o -> (!o.isClaimed() || o.getClaimedBy().equals(builder)) && type.isInstance(o)).map(o -> (W) o)
                 .sorted(Comparator.comparingInt(AbstractWorkOrder::getPriority).reversed())
                 .collect(Collectors.toList());
     }

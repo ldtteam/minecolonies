@@ -421,6 +421,11 @@ public final class WindowConstants
     public static final String DROPDOWN_STYLE_ID = "style";
 
     /**
+     * This drop down list is used to choose which builder should be used.
+     */
+    public static final String DROPDOWN_BUILDER_ID = "worker";
+
+    /**
      * This button is used to set the next available style.
      */
     public static final String BUTTON_NEXT_STYLE_ID = "nextStyle";
@@ -676,6 +681,7 @@ public final class WindowConstants
 
     public static final String LABEL_CONSTRUCTION_NAME =  "constructionName";
     public static final String LABEL_CONSTRUCTION_POS =  "constructionPos";
+    public static final String LABEL_PROGRESS =  "progress";
 
     public static final String LABEL_PAGE_NUMBER = "pageNum";
 

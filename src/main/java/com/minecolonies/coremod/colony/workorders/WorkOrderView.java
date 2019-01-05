@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.colony.workorders;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,29 +18,33 @@ public class WorkOrderView
      * The work orders id.
      */
     private int                             id;
+
     /**
      * The priority.
      */
     private int                             priority;
+
     /**
      * Its description.
      */
     private String                          value;
+
     /**
      * The type (defined by an enum).
      */
     private AbstractWorkOrder.WorkOrderType type;
+
     /**
-     * Claimed by citizen id x.
+     * Claimed by building id pos.
      */
-    private int                             claimedBy;
+    private BlockPos                        claimedBy;
 
     /**
      * Public constructor of the WorkOrderView.
      */
     public WorkOrderView()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }
@@ -108,19 +114,9 @@ public class WorkOrderView
      *
      * @return citizen id who claimed the workOrder.
      */
-    public int getClaimedBy()
+    public BlockPos getClaimedBy()
     {
         return claimedBy;
-    }
-
-    /**
-     * ClaimedBy setter.
-     *
-     * @param claimedBy sets a citizen who claims the workOrder.
-     */
-    public void setClaimedBy(final int claimedBy)
-    {
-        this.claimedBy = claimedBy;
     }
 
     /**
@@ -133,7 +129,7 @@ public class WorkOrderView
     {
         id = buf.readInt();
         priority = buf.readInt();
-        claimedBy = buf.readInt();
+        claimedBy = BlockPosUtil.readFromByteBuf(buf);
         type = AbstractWorkOrder.WorkOrderType.values()[buf.readInt()];
         value = ByteBufUtils.readUTF8String(buf);
     }

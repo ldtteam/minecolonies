@@ -7,8 +7,8 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.entity.ai.util.AIState;
-import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -25,7 +25,7 @@ import java.util.Random;
 import static com.minecolonies.api.util.constant.Constants.DOUBLE;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter>
 {
@@ -79,11 +79,11 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, true),
-          new AITarget(GET_MATERIALS, true, this::getMaterials),
-          new AITarget(START_WORKING, true, this::decideWhatToDo),
-          new AITarget(COMPOSTER_FILL, true, this::fillBarrels),
-          new AITarget(COMPOSTER_HARVEST, true, this::harvestBarrels)
+          new AITarget(IDLE, START_WORKING),
+          new AITarget(GET_MATERIALS, this::getMaterials),
+          new AITarget(START_WORKING, this::decideWhatToDo),
+          new AITarget(COMPOSTER_FILL, this::fillBarrels),
+          new AITarget(COMPOSTER_HARVEST, this::harvestBarrels)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(DESTERITY_MULTIPLIER * worker.getCitizenData().getDexterity()
                                                                 + INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence());
@@ -94,9 +94,9 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
     /**
      * Method for the AI to try to get the materials needed for the task he's doing. Will request if there are no materials
-     * @return the new AIState after doing this
+     * @return the new IAIState after doing this
      */
-    private AIState getMaterials()
+    private IAIState getMaterials()
     {
         if (walkToBuilding())
         {
@@ -106,6 +106,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if(getOwnBuilding(BuildingComposter.class).getCopyOfAllowedItems().isEmpty())
         {
             complain();
+            return getState();
         }
         if(InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> getOwnBuilding(BuildingComposter.class).isAllowedItem(new ItemStorage(stack))))
         {
@@ -139,7 +140,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             }
             if (!itemList.isEmpty())
             {
-                worker.getCitizenData().createRequestAsync(new StackList(itemList));
+                worker.getCitizenData().createRequestAsync(new StackList(itemList, COM_MINECOLONIES_REQUESTS_COMPOSTABLE));
             }
         }
 
@@ -151,7 +152,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      * Method for the AI to decide what to do. Possible actions: harvest barrels, fill barrels or idle
      * @return the decision it made
      */
-    private AIState decideWhatToDo()
+    private IAIState decideWhatToDo()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
 
@@ -195,9 +196,9 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
     /**
      * The AI will now fill the barrel that he found empty on his building
-     * @return the nex AIState after doing this
+     * @return the nex IAIState after doing this
      */
-    private AIState fillBarrels()
+    private IAIState fillBarrels()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_FILLING));
 
@@ -241,9 +242,9 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
     /**
      * The AI will harvest the barrels he found finished on his building.
-     * @return the next AIState after doing this
+     * @return the next IAIState after doing this
      */
-    private AIState harvestBarrels()
+    private IAIState harvestBarrels()
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_HARVESTING));
 
