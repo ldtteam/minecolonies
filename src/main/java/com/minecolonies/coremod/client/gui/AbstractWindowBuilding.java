@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -55,7 +56,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
         if(buttonBuild.getLabel().equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.cancelBuild"))
                 || buttonBuild.getLabel().equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.cancelUpgrade")))
         {
-            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
+            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD, BlockPos.ORIGIN));
         }
         else
         {
@@ -69,7 +70,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
      */
     private void repairClicked()
     {
-        MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR));
+        MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR, BlockPos.ORIGIN));
     }
 
     /**

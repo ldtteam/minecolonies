@@ -20,7 +20,6 @@ import com.structurize.coremod.management.Structures;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -51,7 +50,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      */
     private static final int SUPPLY_SHIP_CHEST_HEIGHT = 6;
 
-    private boolean                                                     complete;
+    private boolean                  complete;
     private String                   structureName;
     private String                   workOrderName;
     private int                      rotation;

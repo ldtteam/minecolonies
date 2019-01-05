@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.management.manager;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -298,7 +299,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
         if (!ItemStackUtils.isEmpty(stack))
         {
-            request.setDelivery(stack);
+            request.overrideCurrentDeliveries(ImmutableList.of(stack));
         }
 
         updateRequestState(token, RequestState.OVERRULED);

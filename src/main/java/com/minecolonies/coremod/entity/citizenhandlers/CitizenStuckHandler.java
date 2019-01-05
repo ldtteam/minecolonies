@@ -94,13 +94,11 @@ public class CitizenStuckHandler
         }
 
         stuckTime++;
-        Log.getLogger().warn("Increment stuck!");
 
         if (stuckTime >= MIN_STUCK_TIME + citizen.getRandom().nextInt(MIN_STUCK_TIME) && movingAwayAttempts <= MOVE_AWAY_RETRIES)
         {
             stuckTime = 0;
             movingAwayAttempts++;
-            Log.getLogger().warn("Moving away!");
             citizen.getNavigator().moveAwayFromXYZ(citizen.getCurrentPosition(), MIN_MOVE_AWAY_RANGE + citizen.getRandom().nextInt(MOVE_AWAY_RANGE), 1);
             return;
         }

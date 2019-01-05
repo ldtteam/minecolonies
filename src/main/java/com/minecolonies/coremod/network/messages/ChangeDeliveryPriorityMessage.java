@@ -44,10 +44,10 @@ public class ChangeDeliveryPriorityMessage extends AbstractMessage<ChangeDeliver
     }
 
     /**
-     *  Creates message for player to change the priority of the delivery.
+     * Creates message for player to change the priority of the delivery.
      *
-     * @param building        view of the building to read data from
-     * @param up            up or down?
+     * @param building view of the building to read data from
+     * @param up       up or down?
      */
     public ChangeDeliveryPriorityMessage(@NotNull final AbstractBuildingView building, final boolean up)
     {
@@ -99,7 +99,7 @@ public class ChangeDeliveryPriorityMessage extends AbstractMessage<ChangeDeliver
             }
             final AbstractBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
 
-            if(building instanceof AbstractBuildingWorker)
+            if (building instanceof AbstractBuildingWorker)
             {
                 if (message.up)
                 {
