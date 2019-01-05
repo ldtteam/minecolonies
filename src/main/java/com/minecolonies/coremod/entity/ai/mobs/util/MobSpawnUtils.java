@@ -72,6 +72,7 @@ public final class MobSpawnUtils
             final double armor = Configurations.gameplay.barbarianHordeDifficulty * ARMOR;
             mob.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(armor);
         }
+        mob.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).setBaseValue(SharedMonsterAttributes.ATTACK_SPEED.getDefaultValue() * Configurations.gameplay.barbarianHordeDifficulty/ATTACK_SPEED_DIVIDER);
         mob.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getHealthBasedOnRaidLevel(colony));
     }
 

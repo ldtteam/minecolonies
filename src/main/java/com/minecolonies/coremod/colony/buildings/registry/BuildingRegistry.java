@@ -5,7 +5,7 @@ import com.google.common.collect.HashBiMap;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
-import com.minecolonies.coremod.blocks.BlockHutSawmill;
+import com.minecolonies.coremod.blocks.huts.BlockHutSawmill;
 import com.minecolonies.coremod.blocks.huts.*;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;

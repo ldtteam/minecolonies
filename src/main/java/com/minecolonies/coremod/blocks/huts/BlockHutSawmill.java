@@ -1,5 +1,6 @@
-package com.minecolonies.coremod.blocks;
+package com.minecolonies.coremod.blocks.huts;
 
+import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import org.jetbrains.annotations.NotNull;
 
 /**
