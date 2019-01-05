@@ -4,6 +4,7 @@ import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityArmorStand;
@@ -260,6 +261,11 @@ public final class ItemStackUtils
         return stack == null || stack == EMPTY || stack.getCount() <= 0;
     }
 
+    public static Boolean isNotEmpty(@Nullable final ItemStack stack)
+    {
+        return !isEmpty(stack);
+    }
+
     /**
      * Calculate the mining level an item has as a tool of certain type.
      *
@@ -401,6 +407,21 @@ public final class ItemStackUtils
             return false;
         }
         return (toolLevel + getMaxEnchantmentLevel(itemStack) <= maximumLevel);
+    }
+
+    /**
+     * Check if an itemStack is a decorative item for the decoration step of the structure placement.
+     * @param stack the itemStack to test.
+     * @return true if so.
+     */
+    public static boolean isDecoration(final ItemStack stack)
+    {
+        final Item item = stack.getItem();
+        return item == Items.ITEM_FRAME
+                 || item == Items.ARMOR_STAND
+                 || item == Items.BANNER
+                 || !(item instanceof ItemBlock)
+                 || !Block.getBlockFromItem(item).getDefaultState().getMaterial().isSolid();
     }
 
     private static int getToolLevel(final String material)

@@ -72,7 +72,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     /**
      * Button to increase delivery prio.
      */
-    private static final String BUTTON_DP_UP  = "deliveryPrioUp";
+    private static final String BUTTON_DP_UP = "deliveryPrioUp";
 
     /**
      * Button to decrease delivery prio.
@@ -92,7 +92,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
     private boolean state = building.getBuildingDmPrioState();
 
-    private String stateString = state? DP_MODE_STATIC : DP_MODE_AUTOMATIC;
+    private String stateString = state ? DP_MODE_STATIC : DP_MODE_AUTOMATIC;
 
 
     /**
@@ -116,22 +116,29 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
     private void deliveryPrioUp()
     {
-        if (prio != 10)prio++;
+        if (prio != 10)
+        {
+            prio++;
+        }
         MineColonies.getNetwork().sendToServer(new ChangeDeliveryPriorityMessage(building, true));
         findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabelText(prio + "/10");
-
     }
+
     private void deliveryPrioDown()
     {
-        if (prio != 1)prio--;
+        if (prio != 1)
+        {
+            prio--;
+        }
         MineColonies.getNetwork().sendToServer(new ChangeDeliveryPriorityMessage(building, false));
         findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabelText(prio + "/10");
     }
 
     private void changeDPState()
     {
-        state=!state;
-        stateString = state? DP_MODE_STATIC : DP_MODE_AUTOMATIC;;
+        state = !state;
+        stateString = state ? DP_MODE_STATIC : DP_MODE_AUTOMATIC;
+
         MineColonies.getNetwork().sendToServer(new ChangeDeliveryPriorityStateMessage(building));
         findPaneOfTypeByID(BUTTON_DP_STATE, Button.class).setLabel(LanguageHandler.format(stateString));
         MineColonies.getLogger().info(state);

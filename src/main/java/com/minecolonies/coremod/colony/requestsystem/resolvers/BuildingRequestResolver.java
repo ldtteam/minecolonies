@@ -83,19 +83,19 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
         tileEntities.add(building.getTileEntity());
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).filter(Objects::nonNull).collect(Collectors.toSet()));
 
-        request.setDelivery(tileEntities.stream()
-                              .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
-                              .filter(itemStacks -> !itemStacks.isEmpty())
-                              .flatMap(List::stream)
-                              .findFirst()
-                              .orElse(ItemStackUtils.EMPTY));
+        tileEntities.stream()
+          .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
+          .filter(itemStacks -> !itemStacks.isEmpty())
+          .flatMap(List::stream)
+          .findFirst()
+          .ifPresent(request::addDelivery);
 
         manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
     }
 
     @Nullable
     @Override
-    public IRequest<?> getFollowupRequestForCompletion(
+    public List<IRequest<?>> getFollowupRequestForCompletion(
                                                      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
     {
         return null;

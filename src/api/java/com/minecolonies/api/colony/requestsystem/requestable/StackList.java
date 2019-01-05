@@ -11,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.LIST_REQUEST_DISPLAY_STRING;
+
 /**
  * Deliverable that can only be fulfilled by a single stack with a given minimal amount of items matching one of a list of stacks.
  */
@@ -22,29 +24,49 @@ public class StackList implements IDeliverable
     private static final String NBT_MATCHNBT    = "MatchNBT";
     private static final String NBT_MATCHOREDIC = "MatchOreDic";
     private static final String NBT_RESULT      = "Result";
+    private static final String TAG_DESCRIPTION = "Desc";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
+    /**
+     * The list of stacks.
+     */
     @NotNull
     private final List<ItemStack> theStacks = new ArrayList<>();
 
-    @NotNull
+    /**
+     * If meta should be matched.
+     */
     private boolean matchMeta = false;
 
-    @NotNull
+    /**
+     * If nbt should be matched.
+     */
     private boolean matchNBT = false;
 
-    @NotNull
+    /**
+     * If oredict should be matched.
+     */
     private boolean matchOreDic = false;
 
+    /**
+     * Description of the request.
+     */
+    private final String description;
+
+    /**
+     * The result of the request.
+     */
     @NotNull
     private ItemStack result = ItemStackUtils.EMPTY;
 
     /**
      * Create a Stacks deliverable.
      * @param stacks the required stacks.
+     * @param description the description.
      */
-    public StackList(@NotNull final List<ItemStack> stacks)
+    public StackList(@NotNull final List<ItemStack> stacks, final String description)
     {
+        this.description = description;
         for (final ItemStack stack : stacks)
         {
             final ItemStack tempStack = stack.copy();
@@ -68,14 +90,16 @@ public class StackList implements IDeliverable
      * @param matchNBT if NBT has to be matched.
      * @param matchOreDic if the oredict has to be matched.
      * @param result the result stack.
+     * @param description the description.
      */
     public StackList(
             @NotNull final List<ItemStack> stacks,
             final boolean matchMeta,
             final boolean matchNBT,
             final boolean matchOreDic,
-            @NotNull final ItemStack result)
+            @NotNull final ItemStack result, final String description)
     {
+        this.description = description;
         for (final ItemStack stack : stacks)
         {
             final ItemStack tempStack = stack.copy();
@@ -90,12 +114,20 @@ public class StackList implements IDeliverable
         this.result = result;
     }
 
-    public StackList setMatchNBT(final boolean match)
+    /**
+     * Set to match NBT
+     * @param match boolean var.
+     */
+    public void setMatchNBT(final boolean match)
     {
         this.matchNBT = match;
-        return this;
     }
 
+    /**
+     * Set to match meta
+     * @param match boolean var.
+     * @return this object.
+     */
     public StackList setMatchMeta(final boolean match)
     {
         this.matchMeta = match;
@@ -126,6 +158,7 @@ public class StackList implements IDeliverable
         {
             compound.setTag(NBT_RESULT, input.result.serializeNBT());
         }
+        compound.setString(TAG_DESCRIPTION, input.description);
 
         return compound;
     }
@@ -151,8 +184,8 @@ public class StackList implements IDeliverable
         final boolean matchNBT = compound.getBoolean(NBT_MATCHNBT);
         final boolean matchOreDic = compound.getBoolean(NBT_MATCHOREDIC);
         final ItemStack result = compound.hasKey(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_RESULT)) : ItemStackUtils.EMPTY;
-
-        return new StackList(stacks, matchMeta, matchNBT, matchOreDic, result);
+        final String desc = compound.hasKey(TAG_DESCRIPTION) ? compound.getString(TAG_DESCRIPTION) : LIST_REQUEST_DISPLAY_STRING;
+        return new StackList(stacks, matchMeta, matchNBT, matchOreDic, result, desc);
     }
 
     @Override
@@ -256,6 +289,15 @@ public class StackList implements IDeliverable
         result1 = 31 * result1 + (matchOreDic ? 1 : 0);
         result1 = 31 * result1 + getResult().hashCode();
         return result1;
+    }
+
+    /**
+     * Getter for the display description of the list.
+     * @return the description.
+     */
+    public String getDescription()
+    {
+        return description;
     }
 }
 

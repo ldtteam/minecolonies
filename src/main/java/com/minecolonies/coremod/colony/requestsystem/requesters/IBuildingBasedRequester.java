@@ -16,13 +16,4 @@ public interface IBuildingBasedRequester extends IRequester
      * @return the IRequester or empty.
      */
     Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token);
-
-    /**
-     * Method with counter for recursion detection.
-     * @param manager the manager.
-     * @param token the token.
-     * @param counter the counter.
-     * @return the IRequester or empty.
-     */
-    Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token, final int counter);
 }

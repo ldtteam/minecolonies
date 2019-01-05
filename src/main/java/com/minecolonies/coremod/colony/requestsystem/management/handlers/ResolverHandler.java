@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.management.handlers;
 
+import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
@@ -10,6 +11,7 @@ import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -157,6 +159,25 @@ public final class ResolverHandler
         }
 
         removeResolverInternal(manager, resolver);
+    }
+
+    /**
+     * Method to get all requests currently assigned to a resolver.
+     *
+     * @param manager The manager to get the requests from.
+     * @param resolver The resolver to get the requests from.
+     *
+     * @return A collection with requests tokens.
+     */
+    public static Collection<IToken<?>> getRequestsAssignedToResolver(final IStandardRequestManager manager, final IRequestResolver<?> resolver)
+    {
+        if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments()
+              .containsKey(resolver.getRequesterId()))
+        {
+            return manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getRequesterId());
+        }
+
+        return Lists.newArrayList();
     }
 
     /**

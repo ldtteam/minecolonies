@@ -183,7 +183,8 @@ public class Structure
                                                                @NotNull final Block structureBlock,
                                                                @NotNull final Block worldBlock, @NotNull final IBlockState worldMetadata)
         {
-            return structureBlock == com.structurize.coremod.blocks.ModBlocks.blockSubstitution || (structureBlock == com.structurize.coremod.blocks.ModBlocks.blockSolidSubstitution
+            return structureBlock == com.structurize.coremod.blocks.ModBlocks.blockSubstitution || (
+              structureBlock == com.structurize.coremod.blocks.ModBlocks.blockSolidSubstitution
                     && worldMetadata.getMaterial().isSolid() && !(ColonyManager.getCompatibilityManager().isOre(worldMetadata))
                     && worldBlock != Blocks.AIR);
         }
