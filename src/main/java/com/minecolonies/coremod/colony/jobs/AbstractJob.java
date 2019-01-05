@@ -9,7 +9,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.registry.JobRegistry;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.entity.ai.util.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -94,6 +94,7 @@ public abstract class AbstractJob
 
     /**
      * Getter for the job which will be associated with the experience.
+     *
      * @return the getName() or the specialized class name.
      */
     public String getExperienceTag()
@@ -334,7 +335,7 @@ public abstract class AbstractJob
      */
     public boolean isOkayToEat()
     {
-        return (workerAI.get() != null && workerAI.get().isOkayToEat());
+        return (workerAI.get() != null && workerAI.get().getState().isOkayToEat());
     }
 
     /**
@@ -366,8 +367,7 @@ public abstract class AbstractJob
     }
 
     /**
-     * Get the worker AI associated to this job,
-     * generates the AI when not created yet.
+     * Get the worker AI associated to this job
      * @return worker AI
      */
     public AbstractAISkeleton getWorkerAI()
@@ -381,7 +381,7 @@ public abstract class AbstractJob
      */
     public boolean isIdling()
     {
-        return (workerAI.get() != null && workerAI.get().getState() == AIState.IDLE);
+        return (workerAI.get() != null && workerAI.get().getState() == AIWorkerState.IDLE);
     }
 
     /**
@@ -391,7 +391,7 @@ public abstract class AbstractJob
     {
         if (workerAI.get() != null)
         {
-            workerAI.get().resetAIToIdle();
+            workerAI.get().resetAI();
         }
     }
 

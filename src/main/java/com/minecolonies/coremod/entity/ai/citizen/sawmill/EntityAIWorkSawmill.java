@@ -12,8 +12,8 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobSawmill;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.entity.ai.util.AIState;
-import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Crafts wood related block when needed.
@@ -86,11 +86,11 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
           /*
            * Check if tasks should be executed.
            */
-          new AITarget(IDLE, true, () -> START_WORKING),
-          new AITarget(START_WORKING, true, this::decide),
-          new AITarget(QUERY_ITEMS, true, this::queryItems),
-          new AITarget(GET_RECIPE, true, this::getRecipe),
-          new AITarget(CRAFT, true, this::craft)
+          new AITarget(IDLE, () -> START_WORKING),
+          new AITarget(START_WORKING, this::decide),
+          new AITarget(QUERY_ITEMS, this::queryItems),
+          new AITarget(GET_RECIPE, this::getRecipe),
+          new AITarget(CRAFT, this::craft)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
         worker.setCanPickUpLoot(true);
@@ -100,7 +100,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
      * Main method to decide on what to do.
      * @return the next state to go to.
      */
-    private AIState decide()
+    private IAIState decide()
     {
         if (job.getTaskQueue().isEmpty())
         {
@@ -132,7 +132,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
      * Query the IRecipeStorage of the first request in the queue.
      * @return the next state to go to.
      */
-    private AIState getRecipe()
+    private IAIState getRecipe()
     {
         final IRequest<? extends PublicCrafting> currentTask = job.getCurrentTask();
 
@@ -154,7 +154,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
     }
 
     @Override
-    public AIState getStateAfterPickUp()
+    public IAIState getStateAfterPickUp()
     {
         return GET_RECIPE;
     }
@@ -163,7 +163,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
      * Query the required items to take them in the inventory to craft.
      * @return the next state to go to.
      */
-    private AIState queryItems()
+    private IAIState queryItems()
     {
         setDelay(STANDARD_DELAY);
         if (currentRecipeStorage == null)
@@ -179,7 +179,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
      * Check for all items of the required recipe.
      * @return the next state to go to.
      */
-    private AIState checkForItems(final IRecipeStorage storage)
+    private IAIState checkForItems(final IRecipeStorage storage)
     {
         final List<ItemStorage> input = storage.getCleanedInput();
         for(final ItemStorage inputStorage : input)
@@ -204,7 +204,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
      * The actual crafting logic.
      * @return the next state to go to.
      */
-    private AIState craft()
+    private IAIState craft()
     {
         if (currentRecipeStorage == null)
         {
@@ -241,7 +241,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
         currentRequest = job.getCurrentTask();
         if (progress >= getRequiredProgressForMakingRawMaterial()) //TODO set up afterwards again!
         {
-            final AIState check = checkForItems(currentRecipeStorage);
+            final IAIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
             {
                 while (craftCounter < maxCraftingCount)
@@ -268,7 +268,7 @@ public class EntityAIWorkSawmill extends AbstractEntityAIInteract<JobSawmill>
     }
 
     @Override
-    public AIState afterDump()
+    public IAIState afterDump()
     {
         if (maxCraftingCount == 0 && progress == 0 && craftCounter == 0 && currentRequest != null)
         {
