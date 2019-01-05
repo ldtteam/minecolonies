@@ -122,7 +122,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
 
         findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Label.class).setLabelText(building.getConstructionName());
         findPaneOfTypeByID(LABEL_CONSTRUCTION_POS, Label.class).setLabelText(building.getConstructionPos());
-
+        findPaneOfTypeByID(LABEL_PROGRESS, Label.class).setLabelText(building.getProgress());
     }
 
     /**

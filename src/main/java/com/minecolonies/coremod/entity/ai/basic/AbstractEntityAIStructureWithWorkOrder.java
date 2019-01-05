@@ -2,12 +2,12 @@ package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
-import com.structurize.coremod.blocks.schematic.BlockSolidSubstitution;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
@@ -17,6 +17,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.util.Structure;
+import com.structurize.coremod.blocks.schematic.BlockSolidSubstitution;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
@@ -227,6 +228,12 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
         }
         job.getWorkOrder().setRequested(true);
+
+        if (job.getWorkOrder().getAmountOfRes() == 0)
+        {
+            job.getWorkOrder().setAmountOfRes(buildingWorker.getNeededResources().values().stream()
+                                                .mapToInt(ItemStorage::getAmount).sum());
+        }
     }
 
     /**

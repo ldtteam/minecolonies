@@ -21,6 +21,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -97,11 +98,14 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
 
         for (final CitizenData data : getAssignedCitizen())
         {
-            for (final IRequest request : getOpenRequests(data))
+            for (final IRequest<?> request : getOpenRequests(data))
             {
-                if (request.getDelivery().isItemEqualIgnoreDurability(stack))
+                for(final ItemStack deliveryStack : request.getDeliveries())
                 {
-                    return true;
+                    if (deliveryStack.isItemEqualIgnoreDurability(stack))
+                    {
+                        return true;
+                    }
                 }
             }
         }
@@ -161,6 +165,25 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     }
 
     /**
+     * Check if is the worker has the knowledge to craft something.
+     * @param stackPredicate the predicate to check for fullfillment.
+     * @return the recipe storage if so.
+     */
+    @Nullable
+    public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
+    {
+        for(final IToken token : recipes)
+        {
+            final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
+            if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
+            {
+                return storage;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Get a fullfillable recipe to execute.
      * @param tempStack the stack which should be crafted.
      * @return the recipe or null.
@@ -171,6 +194,28 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
         {
             final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
             if(storage != null && storage.getPrimaryOutput().isItemEqual(tempStack))
+            {
+                final List<IItemHandler> handlers = getHandlers();
+                if(storage.canFullFillRecipe(handlers.toArray(new IItemHandler[handlers.size()])))
+                {
+                    return storage;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get a fullfillable recipe to execute.
+     * @param stackPredicate the predicate to check for fullfillment.
+     * @return the recipe or null.
+     */
+    public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate)
+    {
+        for(final IToken token : recipes)
+        {
+            final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
+            if(storage != null && stackPredicate.test(storage.getPrimaryOutput()))
             {
                 final List<IItemHandler> handlers = getHandlers();
                 if(storage.canFullFillRecipe(handlers.toArray(new IItemHandler[handlers.size()])))
@@ -212,13 +257,22 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
      * Check if a recipe can be added.
      * This is only important for 3x3 crafting.
      * Workers shall override this if necessary.
+     * @param ignored the token of the recipe.
      * @return true if so.
      */
-    public boolean canRecipeBeAdded()
+    public boolean canRecipeBeAdded(final IToken ignored)
     {
-        return true;
+        return AbstractBuildingWorker.canBuildingCanLearnMoreRecipes (getBuildingLevel(), getRecipes().size());
     }
 
+    /**
+     * Get the list of all recipes the worker can learn.
+     * @return a copy of the tokens of the recipes.
+     */
+    public List<IToken> getRecipes()
+    {
+        return new ArrayList<>(recipes);
+    }
 
     /**
      * Get all handlers accociated with this building.
@@ -350,13 +404,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
      * Add a recipe to the building.
      * @param token the id of the recipe.
      */
-    public void addRecipe(final IToken token)
+    public boolean addRecipe(final IToken token)
     {
-        if(canRecipeBeAdded() && Math.pow(2, getBuildingLevel()) >= (recipes.size() + 1))
+        if(canRecipeBeAdded(token))
         {
             recipes.add(token);
             markDirty();
+            return true;
         }
+        return false;
     }
 
     /**
@@ -491,12 +547,14 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     }
 
     @Override
-    public ImmutableCollection<IRequestResolver<?>> getResolvers()
+    public ImmutableCollection<IRequestResolver<?>> createResolvers()
     {
         return ImmutableList.of(
                 new BuildingRequestResolver(getRequester().getRequesterLocation(), getColony().getRequestManager()
                         .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
                 new PrivateWorkerCraftingRequestResolver(getRequester().getRequesterLocation(), getColony().getRequestManager()
+                        .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
+                new PrivateWorkerCraftingProductionResolver(getRequester().getRequesterLocation(), getColony().getRequestManager()
                         .getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
     }
 
@@ -668,5 +726,25 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
         {
             return this.canCraftComplexRecipes;
         }
+
+        /**
+         * Check if an additional recipe can be added.
+         * @return true if so.
+         */
+        public boolean canRecipeBeAdded()
+        {
+            return AbstractBuildingWorker.canBuildingCanLearnMoreRecipes (getBuildingLevel(), getRecipes().size());
+        }
+    }
+
+    /**
+     * Check if an additional recipe can be added.
+     * @param learnedRecipes the learned recipes.
+     * @param buildingLevel the building level.
+     * @return true if so.
+     */
+    public static boolean canBuildingCanLearnMoreRecipes(final int buildingLevel, final int learnedRecipes)
+    {
+        return Math.pow(2, buildingLevel) >= (learnedRecipes + 1);
     }
 }

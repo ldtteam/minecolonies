@@ -80,7 +80,7 @@ public class RecipeStorage implements IRecipeStorage
                 continue;
             }
 
-            ItemStorage storage = new ItemStorage(stack);
+            ItemStorage storage = new ItemStorage(stack.copy());
             if(items.contains(storage))
             {
                 final int index = items.indexOf(storage);
@@ -209,6 +209,7 @@ public class RecipeStorage implements IRecipeStorage
                 secondaryStacks.add(container);
             }
         }
+        secondaryStacks.add(getPrimaryOutput());
         if(secondaryStacks.size() > getInput().size())
         {
             int freeSpace = 0;
@@ -238,18 +239,24 @@ public class RecipeStorage implements IRecipeStorage
             return false;
         }
 
-        for (final ItemStack stack : input)
+        for (final ItemStorage stack : getCleanedInput())
         {
-            int amountNeeded = ItemStackUtils.getSize(stack);
+            int amountNeeded = stack.getAmount();
             for (final IItemHandler handler : handlers)
             {
-                final int slotOfStack = InventoryUtils.
-                        findFirstSlotInItemHandlerNotEmptyWith(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack));
+                final int slotOfStack = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(handler, itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.isItemEqual(stack.getItemStack()));
 
                 while (slotOfStack != -1)
                 {
                     final int count = ItemStackUtils.getSize(handler.getStackInSlot(slotOfStack));
-                    handler.extractItem(slotOfStack, amountNeeded, false);
+                    final ItemStack extractedStack = handler.extractItem(slotOfStack, amountNeeded, false);
+
+                    //This prevents the AI and for that matter the server from getting stuck in case of an emergency.
+                    //Deletes some items, but hey.
+                    if (ItemStackUtils.isEmpty(extractedStack) || extractedStack.getCount() < amountNeeded)
+                    {
+                        return false;
+                    }
 
                     if (count >= amountNeeded)
                     {

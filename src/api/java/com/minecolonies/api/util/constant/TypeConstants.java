@@ -49,6 +49,7 @@ public class TypeConstants
     public static final TypeToken<IDataStoreManager>                                  DATA_STORE_MANAGER                              = TypeToken.of(IDataStoreManager.class);
     public static final TypeToken<IRequestSystemBuildingDataStore> REQUEST_SYSTEM_BUILDING_DATA_STORE = TypeToken.of(IRequestSystemBuildingDataStore.class);
     public static final TypeToken<IRequestSystemDeliveryManJobDataStore> REQUEST_SYSTEM_DELIVERY_MAN_JOB_DATA_STORE = TypeToken.of(IRequestSystemDeliveryManJobDataStore.class);
+    public static final TypeToken<IRequestSystemCrafterJobDataStore> REQUEST_SYSTEM_CRAFTER_JOB_DATA_STORE = TypeToken.of(IRequestSystemCrafterJobDataStore.class);
 
 
     /////Implementations

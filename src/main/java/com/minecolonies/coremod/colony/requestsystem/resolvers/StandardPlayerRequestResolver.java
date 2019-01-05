@@ -158,7 +158,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
     @Nullable
     @Override
-    public IRequest getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest completedRequest)
+    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest completedRequest)
     {
         //This is not what this method is for, but this is the closest we are getting right now, so why not.
         if (assignedRequests.contains(completedRequest.getToken()))
@@ -174,7 +174,8 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     public IRequest<?> onRequestCancelled(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRequestable> request)
     {
-        return getFollowupRequestForCompletion(manager, request);
+        getFollowupRequestForCompletion(manager, request);
+        return null;
     }
 
     @Override

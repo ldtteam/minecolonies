@@ -8,12 +8,10 @@ import com.minecolonies.coremod.network.messages.BuildToolPasteMessage;
 import com.minecolonies.coremod.network.messages.BuildToolPlaceMessage;
 import com.structurize.api.util.BlockUtils;
 import com.structurize.api.util.LanguageHandler;
-import com.structurize.coremod.Structurize;
 import com.structurize.coremod.client.gui.WindowBuildTool;
 import com.structurize.coremod.management.StructureName;
 import com.structurize.coremod.placementhandlers.PlacementError;
 import com.structurize.structures.helpers.Settings;
-import com.structurize.structures.helpers.Structure;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.math.BlockPos;
@@ -30,10 +28,11 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
 {
     /**
      * Creates a window build tool for a specific structure.
-     * @param pos the position.
+     *
+     * @param pos           the position.
      * @param structureName the structure name.
-     * @param rotation the rotation.
-     * @param mode the mode.
+     * @param rotation      the rotation.
+     * @param mode          the mode.
      */
     public WindowMinecoloniesBuildTool(@Nullable final BlockPos pos, final String structureName, final int rotation, final WindowBuildTool.FreeMode mode)
     {
@@ -130,7 +129,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
                         outputList += "...";
                     }
                     final String errorMessage;
-                    switch(placementErrorType)
+                    switch (placementErrorType)
                     {
                         case NOT_SOLID:
                             errorMessage = String.format(TranslationConstants.SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY, outputList);
@@ -153,7 +152,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
             }
         }
 
-        if(!GuiScreen.isShiftKeyDown())
+        if (!GuiScreen.isShiftKeyDown())
         {
             super.cancelClicked();
         }

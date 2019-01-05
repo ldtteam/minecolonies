@@ -128,10 +128,18 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         }
 
         final List<WorkOrderBuildDecoration> list = new ArrayList<>();
-        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildRemoval.class));
-        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildBuilding.class));
-        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildDecoration.class));
+        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildRemoval.class, getLocation()));
+        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildBuilding.class, getLocation()));
+        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildDecoration.class, getLocation()));
         list.removeIf(order -> order instanceof WorkOrderBuildMiner);
+
+        final WorkOrderBuildDecoration order = list.stream().filter(w -> w.getClaimedBy() != null && w.getClaimedBy().equals(getLocation())).findFirst().orElse(null);
+        if (order != null)
+        {
+            citizen.getJob(JobBuilder.class).setWorkOrder(order);
+            order.setClaimedBy(citizen);
+            return;
+        }
 
         for (final WorkOrderBuildDecoration wo: list)
         {

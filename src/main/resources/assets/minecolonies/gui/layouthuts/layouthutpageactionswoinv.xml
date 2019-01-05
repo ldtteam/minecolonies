@@ -21,7 +21,7 @@
                 label="$(com.minecolonies.coremod.gui.workerHuts.recall)"/>
 
     <label size="100 11" pos="30 145" textalign="MIDDLE" color="black"
-                label="$(com.minecolonies.coremod.gui.workerHuts.buildPrio)"/>
+           label="$(com.minecolonies.coremod.gui.workerHuts.buildPrio)"/>
     <label id="type" size="27 11" pos="132 145" textalign="MIDDLE" color="black"/>
 
     <buttonimage id="deliveryPrioState" size="64 17" pos="46 156" textcolor="black"

@@ -7,8 +7,8 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
-import com.minecolonies.coremod.entity.ai.util.AIState;
-import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,8 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.coremod.entity.ai.util.AIState.GUARD_ATTACK_PHYSICAL;
-import static com.minecolonies.coremod.entity.ai.util.AIState.GUARD_ATTACK_PROTECT;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PHYSICAL;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PROTECT;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
@@ -43,8 +43,8 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     {
         super(job);
         super.registerTargets(
-          new AITarget(GUARD_ATTACK_PROTECT, false, this::attackProtect),
-          new AITarget(GUARD_ATTACK_PHYSICAL, false, this::attackPhysical)
+          new AITarget(GUARD_ATTACK_PROTECT, this::attackProtect),
+          new AITarget(GUARD_ATTACK_PHYSICAL, this::attackPhysical)
         );
         toolsNeeded.add(ToolType.SWORD);
 
@@ -55,7 +55,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     }
 
     @Override
-    public AIState getAttackState()
+    public IAIState getAttackState()
     {
         return GUARD_ATTACK_PHYSICAL;
     }
@@ -110,9 +110,9 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
      * Check if the guard can protect himself with a shield
      * And if so, do it.
      *
-     * @return The next AIState.
+     * @return The next IAIState.
      */
-    protected AIState attackProtect()
+    protected IAIState attackProtect()
     {
         setDelay(2);
         final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventory()),
@@ -137,9 +137,9 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     /**
      * attackPhysical tries to launch an attack. Ticked every 4 Ticks
      */
-    protected AIState attackPhysical()
+    protected IAIState attackPhysical()
     {
-        final AIState state = preAttackChecks();
+        final IAIState state = preAttackChecks();
         if (state != getState())
         {
             setDelay(STANDARD_DELAY);
