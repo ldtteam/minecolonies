@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class BlockHutSawmill extends AbstractBlockHut<BlockHutSawmill>
 {
-    protected BlockHutSawmill()
+    public BlockHutSawmill()
     {
         //No different from Abstract parent
         super();

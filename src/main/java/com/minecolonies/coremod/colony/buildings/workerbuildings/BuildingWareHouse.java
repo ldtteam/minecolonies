@@ -320,6 +320,12 @@ public class BuildingWareHouse extends AbstractBuilding
         markDirty();
     }
 
+    @Override
+    public boolean canBeGathered()
+    {
+        return false;
+    }
+
     /**
      * BuildWarehouse View.
      */

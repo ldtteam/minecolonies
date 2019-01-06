@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RS_BUILDING_DATASTORE;
@@ -329,7 +330,7 @@ public abstract class AbstractBuildingView implements IRequester
         return colony.getRequestManager().getDataStoreManager().get(rsDataStoreToken, TypeConstants.REQUEST_SYSTEM_BUILDING_DATA_STORE);
     }
 
-    private Map<Integer, Collection<IToken<?>>> getOpenRequestsByCitizen()
+    public Map<Integer, Collection<IToken<?>>> getOpenRequestsByCitizen()
     {
         return getDataStore().getOpenRequestsByCitizen();
     }
@@ -373,6 +374,15 @@ public abstract class AbstractBuildingView implements IRequester
 
         return ImmutableList.copyOf(list
                                       .stream().filter(Objects::nonNull)
+                                      .map(getColony().getRequestManager()::getRequestForToken)
+                                      .filter(Objects::nonNull).iterator());
+    }
+
+    @SuppressWarnings(RAWTYPES)
+    public ImmutableList<IRequest> getOpenRequestsOfBuilding()
+    {
+        return ImmutableList.copyOf(getOpenRequestsByCitizen().values().stream().flatMap(Collection::stream)
+                                      .filter(Objects::nonNull)
                                       .map(getColony().getRequestManager()::getRequestForToken)
                                       .filter(Objects::nonNull).iterator());
     }

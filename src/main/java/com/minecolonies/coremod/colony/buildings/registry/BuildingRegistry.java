@@ -5,6 +5,7 @@ import com.google.common.collect.HashBiMap;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.coremod.blocks.BlockPostBox;
 import com.minecolonies.coremod.blocks.huts.BlockHutSawmill;
 import com.minecolonies.coremod.blocks.huts.*;
 import com.minecolonies.coremod.colony.Colony;
@@ -87,6 +88,7 @@ public class BuildingRegistry
         addMapping("Archery", BuildingArchery.class, BuildingArchery.View.class, BlockHutArchery.class);
         addMapping("CombatAcademy", BuildingCombatAcademy.class, BuildingCombatAcademy.View.class, BlockHutCombatAcademy.class);
         addMapping("Sawmill", BuildingSawmill.class, BuildingSawmill.View.class, BlockHutSawmill.class);
+        addMapping("Postbox", PostBox.class, PostBox.View.class, BlockPostBox.class);
     }
 
     /**
@@ -231,7 +233,7 @@ public class BuildingRegistry
             Log.getLogger().error(String.format("Unknown Building type '%s' or missing constructor of proper format.", parent.getClass().getName()), exception);
         }
 
-        if (building != null && parent.getWorld() != null)
+        if (building != null && parent.getWorld() != null && !(building instanceof PostBox))
         {
             final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
             final StructureWrapper wrapper = new StructureWrapper(parent.getWorld(), workOrder.getStructureName());

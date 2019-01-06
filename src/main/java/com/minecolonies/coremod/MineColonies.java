@@ -262,6 +262,7 @@ public class MineColonies
         getNetwork().registerMessage(PauseCitizenMessage.class, PauseCitizenMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(RestartCitizenMessage.class, RestartCitizenMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(SortWarehouseMessage.class, SortWarehouseMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(PostBoxRequestMessage.class, PostBoxRequestMessage.class, ++id, Side.SERVER);
 
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage.class, ++id, Side.CLIENT);
