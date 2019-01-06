@@ -17,7 +17,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingContainer;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
@@ -372,7 +371,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         double countWeight = 0.0;
 
         final List<AbstractBuilding> buildings = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values().stream()
-                                                   .filter(building -> !(building instanceof BuildingWareHouse || building instanceof BuildingTownHall || building.isBeingGathered()))
+                                                   .filter(building -> building.canBeGathered() && !building.isBeingGathered())
                                                    .collect(Collectors.toList());
         Collections.shuffle(buildings);
         for (final AbstractBuilding building : buildings)
