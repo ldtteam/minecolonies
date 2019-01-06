@@ -10,12 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class BlockHutSawmill extends AbstractBlockHut<BlockHutSawmill>
 {
-    public BlockHutSawmill()
-    {
-        //No different from Abstract parent
-        super();
-    }
-
     @NotNull
     @Override
     public String getName()

@@ -8,12 +8,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BlockPostBox extends AbstractBlockHut<BlockPostBox>
 {
-    public BlockPostBox()
-    {
-        //No different from Abstract parent
-        super();
-    }
-
     @NotNull
     @Override
     public String getName()

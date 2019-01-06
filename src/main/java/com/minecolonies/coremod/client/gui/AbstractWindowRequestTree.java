@@ -32,7 +32,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 /**
  * Window for the request trees.
  */
-public class AbstractWindowRequestTree extends AbstractWindowSkeleton
+public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
 {
     /**
      * The colony of the citizen.
@@ -62,7 +62,7 @@ public class AbstractWindowRequestTree extends AbstractWindowSkeleton
     /**
      * The building position.
      */
-    private AbstractBuildingView building;
+    private final AbstractBuildingView building;
 
     /**
      * Constructor to initiate the window request tree windows.
@@ -373,7 +373,7 @@ public class AbstractWindowRequestTree extends AbstractWindowSkeleton
          * @param depth        the depth.
          * @param buildingView the building it belongs to.
          */
-        private RequestWrapper(final IRequest request, final int depth, AbstractBuildingView buildingView)
+        public RequestWrapper(@NotNull final IRequest request, final int depth, @NotNull final AbstractBuildingView buildingView)
         {
             this.request = request;
             this.depth = depth;

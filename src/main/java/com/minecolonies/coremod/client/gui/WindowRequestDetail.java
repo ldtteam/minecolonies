@@ -91,7 +91,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     /**
      * The previous window.
      */
-    private Window prevWindow;
+    private final Window prevWindow;
 
     /**
      * Open the request detail.

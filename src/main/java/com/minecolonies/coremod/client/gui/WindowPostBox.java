@@ -46,7 +46,7 @@ public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHa
     /**
      * The building view of this window.
      */
-    private AbstractBuildingView buildingView;
+    private final AbstractBuildingView buildingView;
 
     /**
      * Create the postBox GUI.
