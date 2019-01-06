@@ -1,10 +1,7 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.util.InventoryFunctions;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -20,6 +17,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -276,6 +275,12 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public void setBuilding(final AbstractBuildingContainer b)
     {
         building = b;
+    }
+
+    @Override
+    public ITextComponent getDisplayName()
+    {
+        return new TextComponentString(LanguageHandler.format(blockType.getTranslationKey() + ".name"));
     }
 
     /**
