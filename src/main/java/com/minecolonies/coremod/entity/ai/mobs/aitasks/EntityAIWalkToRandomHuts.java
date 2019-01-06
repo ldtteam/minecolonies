@@ -7,6 +7,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.PathResult;
+import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -256,7 +257,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
                     for (final EnumFacing dir : directions)
                     {
                         final IBlockState state = world.getBlockState(entity.getPosition().offset(dir));
-                        if (state.getMaterial().isSolid() && state.getBlock() != Blocks.LADDER)
+                        if ((state.getMaterial().isSolid() && state.getBlock() != Blocks.LADDER) || state.getBlock() instanceof BlockDoor)
                         {
                             final BlockPos posToDestroy;
                             switch (random.nextInt(4))

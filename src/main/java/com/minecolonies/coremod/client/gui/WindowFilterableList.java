@@ -49,7 +49,7 @@ public abstract class WindowFilterableList<B extends FilterableListView> extends
     /**
      * Description label Id.
      */
-    private static final String DESC_LABEL = "desc";
+    public static final String DESC_LABEL = "desc";
 
     /**
      * Switch button Id.

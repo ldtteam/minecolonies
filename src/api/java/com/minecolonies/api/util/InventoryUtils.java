@@ -1483,6 +1483,50 @@ public class InventoryUtils
 
     /**
      * Method to swap the ItemStacks from the given source {@link IItemHandler}
+     * to the given target {@link IItemHandler}.
+     *
+     * @param sourceHandler The {@link IItemHandler} that works as Source.
+     * @param sourceIndex   The index of the slot that is being extracted from.
+     * @param count the quantity.
+     * @param targetHandler The {@link IItemHandler} that works as Target.
+     * @return True when the swap was successful, false when not.
+     */
+    public static boolean transferXOfItemStackIntoNextFreeSlotInItemHandler(
+      @NotNull final IItemHandler sourceHandler,
+      final int sourceIndex,
+      final int count,
+      @NotNull final IItemHandler targetHandler)
+    {
+        ItemStack sourceStack = sourceHandler.extractItem(sourceIndex, count, true);
+
+        if(ItemStackUtils.isEmpty(sourceStack))
+        {
+            return true;
+        }
+
+        for (int i = 0; i < targetHandler.getSlots(); i++)
+        {
+            sourceStack = targetHandler.insertItem(i, sourceStack, false);
+            if (ItemStackUtils.isEmpty(sourceStack))
+            {
+                sourceHandler.extractItem(sourceIndex, count, false);
+                return true;
+            }
+        }
+
+        final ItemStack originalStack = sourceStack.copy();
+        if (!ItemStack.areItemStacksEqual(sourceStack, originalStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(sourceStack, originalStack))
+        {
+            final int usedAmount = ItemStackUtils.getSize(sourceStack) - ItemStackUtils.getSize(originalStack);
+            sourceHandler.extractItem(sourceIndex, usedAmount, false);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Method to swap the ItemStacks from the given source {@link IItemHandler}
      * to the given target {@link IItemHandler}. Trying to merge existing itemStacks if possible.
      *
      * @param sourceHandler The {@link IItemHandler} that works as Source.
@@ -1798,6 +1842,35 @@ public class InventoryUtils
         for (final IItemHandler handler : getItemHandlersFromProvider(sourceProvider))
         {
             if (transferItemStackIntoNextFreeSlotInItemHandler(handler, sourceIndex, targetHandler))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Method to swap the ItemStacks from the given source {@link
+     * ICapabilityProvider} to the given target {@link IItemHandler}.
+     *
+     * @param sourceProvider The {@link ICapabilityProvider} that works as
+     *                       Source.
+     * @param sourceIndex    The index of the slot that is being extracted
+     *                       from.
+     * @param count the quantity.
+     * @param targetHandler  The {@link IItemHandler} that works as Target.
+     * @return True when the swap was successful, false when not.
+     */
+    public static boolean transferXOfItemStackIntoNextFreeSlotFromProvider(
+      @NotNull final ICapabilityProvider sourceProvider,
+               final int sourceIndex,
+               final int count,
+      @NotNull final IItemHandler targetHandler)
+    {
+        for (final IItemHandler handler : getItemHandlersFromProvider(sourceProvider))
+        {
+            if (transferXOfItemStackIntoNextFreeSlotInItemHandler(handler, sourceIndex, count, targetHandler))
             {
                 return true;
             }
@@ -2410,7 +2483,7 @@ public class InventoryUtils
 	 * Attempts a swap with the given itemstacks, from the source to the target inventory. Itemstacks in the target that match the given toKeepInTarget predicate will not be swapped out, if swapping is needed
 	 *
 	 * @param targetInventory The target inventory.
-	 * @param sourceInventory The source inventory.
+	 * @param sourceInventories The source inventory.
 	 * @param toSwap The list of stacks to swap.
 	 * @param toKeepInTarget The predicate that determines what not to swap in the target.
 	 * @return True when moving was successfull, false when not

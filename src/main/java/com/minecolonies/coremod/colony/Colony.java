@@ -462,9 +462,9 @@ public class Colony implements IColony
         }
 
         this.requestManager.reset();
-        if (getColonyTag().hasKey(TAG_REQUESTMANAGER))
+        if (compound.hasKey(TAG_REQUESTMANAGER))
         {
-            this.requestManager.deserializeNBT(getColonyTag().getCompoundTag(TAG_REQUESTMANAGER));
+            this.requestManager.deserializeNBT(compound.getCompoundTag(TAG_REQUESTMANAGER));
         }
 
         this.colonyTag = compound;

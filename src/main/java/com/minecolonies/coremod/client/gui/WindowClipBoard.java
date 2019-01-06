@@ -79,7 +79,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     /**
      * Scrollinglist of the resources.
      */
-    private final ScrollingList resourceList;
+    private ScrollingList resourceList;
     /**
      * The colony id.
      */
@@ -89,11 +89,25 @@ public class WindowClipBoard extends AbstractWindowSkeleton
      */
     private int lifeCount = 0;
 
-    public WindowClipBoard(@Nullable final int colonyId)
+    /**
+     * Constructor of the clipboard GUI.
+     * @param colonyId the colony id to check the requests for.
+     */
+    public WindowClipBoard(final int colonyId)
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
-        resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
         this.colonyId = colonyId;
+    }
+
+    /**
+     * Constructor of the clipboard GUI.
+     * @param s the description string of the style.
+     * @param colony the colony id.
+     */
+    public WindowClipBoard(final String s, final ColonyView colony)
+    {
+        super(s);
+        this.colonyId = colony.getID();
     }
 
     /**
@@ -103,6 +117,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     @Override
     public void onOpened()
     {
+        resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
         resourceList.setDataProvider(() -> getOpenRequests().size(), (index, rowPane) ->
         {
             final ImmutableList<IRequest> openRequests = getOpenRequests();
@@ -137,7 +152,11 @@ public class WindowClipBoard extends AbstractWindowSkeleton
         });
     }
 
-    private ImmutableList<IRequest> getOpenRequests()
+    /**
+     * The requests to display.
+     * @return the list of requests.
+     */
+    public ImmutableList<IRequest> getOpenRequests()
     {
         final ArrayList<IRequest> requests = Lists.newArrayList();
         final ColonyView view = ColonyManager.getColonyView(colonyId);
@@ -191,6 +210,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
                 cancel(button);
                 break;
             default:
+                super.onButtonClicked(button);
                 break;
         }
     }
