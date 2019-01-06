@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.api.util.constant.Constants;
@@ -22,13 +21,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Window for the replace block GUI.
  */
-public class WindowPostBox extends WindowClipBoard implements ButtonHandler
+public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHandler
 {
     /**
      * List of all item stacks in the game.
@@ -55,7 +53,7 @@ public class WindowPostBox extends WindowClipBoard implements ButtonHandler
      */
     public WindowPostBox(final AbstractBuildingView buildingView)
     {
-        super(Constants.MOD_ID + WINDOW_POSTBOX, buildingView.getColony());
+        super(buildingView.getID(), Constants.MOD_ID + WINDOW_POSTBOX, buildingView.getColony());
         this.buildingView = buildingView;
         this.stackList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
@@ -69,7 +67,8 @@ public class WindowPostBox extends WindowClipBoard implements ButtonHandler
     private void requestClicked(final Button button)
     {
         final int row = stackList.getListElementIndexByPane(button);
-        int qty = allItems.get(row).getMaxStackSize();
+        final ItemStack stack = allItems.get(row);
+        int qty = stack.getMaxStackSize();
         for (final Pane child : button.getParent().getChildren())
         {
             if (child.getID().equals(INPUT_QTY))
@@ -77,6 +76,10 @@ public class WindowPostBox extends WindowClipBoard implements ButtonHandler
                 try
                 {
                     qty = Integer.parseInt(((TextField) child).getText());
+                    if (qty > stack.getMaxStackSize())
+                    {
+                        qty = stack.getMaxStackSize();
+                    }
                 }
                 catch (final NumberFormatException ex)
                 {
@@ -84,7 +87,7 @@ public class WindowPostBox extends WindowClipBoard implements ButtonHandler
                 }
             }
         }
-        MineColonies.getNetwork().sendToServer(new PostBoxRequestMessage(buildingView, allItems.get(row), qty));
+        MineColonies.getNetwork().sendToServer(new PostBoxRequestMessage(buildingView, stack, qty));
     }
 
     @Override
@@ -174,13 +177,6 @@ public class WindowPostBox extends WindowClipBoard implements ButtonHandler
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
             }
         });
-    }
-
-
-    @SuppressWarnings(RAWTYPES)
-    public ImmutableList<IRequest> getOpenRequests()
-    {
-        return buildingView.getOpenRequestsOfBuilding();
     }
 
     @Override
