@@ -272,6 +272,9 @@ public class Configurations
 
         @Config.Comment("Should special holiday content be displayed?")
         public boolean holidayFeatures = true;
+
+        @Config.Comment("AI Update rate, increase to improve performance. Default: 1")
+        public int updateRate = 1;
     }
 
     public static class Compatibility
