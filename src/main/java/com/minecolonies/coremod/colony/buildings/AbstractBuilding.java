@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
-import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
@@ -145,7 +144,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         // Cancel all open requests
         //Why is this next line here!!!?!?!?!?!?!?
-        //getOpenRequests(citizen).forEach(r -> colony.getRequestManager().updateRequestState(r.getToken(), RequestState.CANCELLED));
+        //getOpenRequestsOfBuilding(citizen).forEach(r -> colony.getRequestManager().updateRequestState(r.getToken(), RequestState.CANCELLED));
 
         /*
          * Buildings override this if required.
@@ -687,6 +686,26 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
+     * Create a request for the building.
+     *
+     * @param requested   the request to create.
+     * @param async       if async or not.
+     * @param <R>         the type of the request.
+     * @return the Token of the request.
+     */
+    public <R extends IRequestable> IToken<?> createRequest(@NotNull final R requested, final boolean async)
+    {
+        final IToken requestToken = colony.getRequestManager().createRequest(requester, requested);
+        addRequestToMaps(-1, requestToken, TypeToken.of(requested.getClass()));
+
+        colony.getRequestManager().assignRequest(requestToken);
+
+        markDirty();
+
+        return requestToken;
+    }
+
+    /**
      * Internal method used to register a new Request to the request maps.
      * Helper method.
      *
@@ -1094,7 +1113,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    @NotNull
     public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken token)
     {
         final int citizenThatRequested = getCitizensByRequest().remove(token);
@@ -1152,6 +1170,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         return Optional.of(getColony().getCitizenManager().getCitizen(citizenID));
     }
 
+    /**
+     * Check if the building should be gathered by the dman.
+     * @return true if so.
+     */
+    public boolean canBeGathered()
+    {
+        return true;
+    }
 
     //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//
 }

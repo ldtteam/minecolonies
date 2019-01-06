@@ -854,3 +854,7 @@ com.minecolonies.coremod.request.compostable=Compostable
 com.minecolonies.coremod.request.fertilizer=Fertilizer
 com.minecolonies.coremod.gui.workerHuts.composter=Composter Hut
 com.minecolonies.coremod.furnaceUser.noFuel=Please tell me what kind of fuel to use in my furnace!
+tile.minecolonies.blockpostbox.name=Postbox
+com.minecolonies.coremod.gui.citizen.stacks=Blocks to Request:
+com.minecolonies.coremod.gui.workerHuts.request=Request
+

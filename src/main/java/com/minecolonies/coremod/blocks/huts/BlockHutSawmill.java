@@ -1,5 +1,6 @@
-package com.minecolonies.coremod.blocks;
+package com.minecolonies.coremod.blocks.huts;
 
+import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -9,12 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class BlockHutSawmill extends AbstractBlockHut<BlockHutSawmill>
 {
-    protected BlockHutSawmill()
-    {
-        //No different from Abstract parent
-        super();
-    }
-
     @NotNull
     @Override
     public String getName()

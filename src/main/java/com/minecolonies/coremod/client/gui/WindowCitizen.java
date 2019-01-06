@@ -1,63 +1,45 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Alignment;
-import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.*;
-import com.minecolonies.blockout.views.Box;
-import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsToCitizenRequestMessage;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Window for the citizen.
  */
-public class WindowCitizen extends AbstractWindowSkeleton
+public class WindowCitizen extends AbstractWindowRequestTree
 {
-    /**
-     * The colony of the citizen.
-     */
-    private final ColonyView colony;
-
     /**
      * The citizenData.View object.
      */
@@ -104,11 +86,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
     }
 
     /**
-     * Scrollinglist of the resources.
-     */
-    private ScrollingList resourceList;
-
-    /**
      * Inventory of the player.
      */
     private final InventoryPlayer inventory = this.mc.player.inventory;
@@ -119,31 +96,14 @@ public class WindowCitizen extends AbstractWindowSkeleton
     private final boolean isCreative = this.mc.player.capabilities.isCreativeMode;
 
     /**
-     * Life count.
-     */
-    private int lifeCount = 0;
-
-    /**
      * Constructor to initiate the citizen windows.
      *
      * @param citizen citizen to bind the window to.
      */
     public WindowCitizen(final CitizenDataView citizen)
     {
-        super(Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX);
+        super(citizen.getWorkBuilding(),Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX, ColonyManager.getColonyView(citizen.getColonyId()));
         this.citizen = citizen;
-        colony = ColonyManager.getColonyView(citizen.getColonyId());
-    }
-
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
-
-        if (!GuiScreen.isShiftKeyDown())
-        {
-            lifeCount++;
-        }
     }
 
     /**
@@ -161,9 +121,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
         createSkillContent(citizen, this);
         updateHappiness();
 
-        resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
-        updateRequests();
-
         //Tool of class:§rwith minimal level:§rWood or Gold§r and§rwith maximal level:§rWood or Gold§r
 
         if (citizen.isFemale())
@@ -172,118 +129,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
         }
 
         setPage("");
-    }
-
-    /**
-     * Updates request list.
-     */
-    private void updateRequests()
-    {
-        resourceList.setDataProvider(new ScrollingList.DataProvider()
-        {
-
-            private List<RequestWrapper> requestWrappers = null;
-
-            @Override
-            public int getElementCount()
-            {
-                requestWrappers = getOpenRequestTreeOfCitizen();
-                return requestWrappers.size();
-            }
-
-            @Override
-            public void updateElement(final int index, final Pane rowPane)
-            {
-                if (index < 0 || index >= requestWrappers.size())
-                {
-                    return;
-                }
-
-                final RequestWrapper wrapper = requestWrappers.get(index);
-                final Box wrapperBox = rowPane.findPaneOfTypeByID(WINDOW_ID_REQUEST_BOX, Box.class);
-                wrapperBox.setPosition(wrapperBox.getX() + 10 * wrapper.getDepth(), wrapperBox.getY());
-                wrapperBox.setSize(wrapperBox.getParent().getWidth() - 10 * wrapper.getDepth(), wrapperBox.getHeight());
-                rowPane.findPaneByID(REQUEST_FULLFIL).enable();
-                final IRequest<?> request = wrapper.getRequest();
-                final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
-                final List<ItemStack> displayStacks = request.getDisplayStacks();
-                final Image logo = rowPane.findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
-
-                if (!displayStacks.isEmpty())
-                {
-                    logo.setVisible(false);
-                    exampleStackDisplay.setVisible(true);
-                    exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
-                }
-                else
-                {
-                    exampleStackDisplay.setVisible(false);
-                    logo.setVisible(true);
-                    logo.setImage(request.getDisplayIcon());
-                }
-
-                final ColonyView view = ColonyManager.getColonyView(citizen.getColonyId());
-                rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-                  .setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
-                rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
-                  .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
-
-                if (wrapper.getDepth() > 0)
-                {
-                    rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();
-                }
-                else
-                {
-                    rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).show();
-                }
-
-                if (wrapper.overruleable)
-                {
-                    if (wrapper.getDepth() > 0)
-                    {
-                        if (colony == null
-                              || citizen.getWorkBuilding() == null
-                              || !(request.getRequester() instanceof IBuildingBasedRequester)
-                              || !((IBuildingBasedRequester) request.getRequester())
-                                    .getBuilding(colony.getRequestManager(),
-                                      request.getToken()).map(
-                            iRequester -> iRequester.getRequesterLocation()
-                                            .equals(colony.getBuilding(citizen.getWorkBuilding()).getRequesterLocation())).isPresent())
-                        {
-                            rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                        }
-                        else
-                        {
-                            request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
-                                if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
-                                {
-                                    rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                                }
-                            });
-
-                            if (!(request.getRequest() instanceof IDeliverable))
-                            {
-                                rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                            }
-                        }
-                        rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();
-                    }
-                    else
-                    {
-                        request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
-                            if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
-                            {
-                                rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                            }
-                        });
-                    }
-                }
-                else
-                {
-                    rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                }
-            }
-        });
     }
 
     /**
@@ -511,78 +356,9 @@ public class WindowCitizen extends AbstractWindowSkeleton
           LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.dexterity", citizen.getDexterity()));
     }
 
-    private ImmutableList<RequestWrapper> getOpenRequestTreeOfCitizen()
+    @Override
+    public ImmutableList<IRequest> getOpenRequestsFromBuilding(final AbstractBuildingView building)
     {
-        final ColonyView colonyView = ColonyManager.getClosestColonyView(FMLClientHandler.instance().getWorldClient(),
-          (citizen.getWorkBuilding() != null) ? citizen.getWorkBuilding() : citizen.getHomeBuilding());
-        if (colonyView == null)
-        {
-            return ImmutableList.of();
-        }
-
-        final List<RequestWrapper> treeElements = new ArrayList<>();
-
-        if (citizen.getWorkBuilding() != null)
-        {
-            final AbstractBuildingView view = colonyView.getBuilding(citizen.getWorkBuilding());
-
-            getOpenRequestsOfCitizenFromBuilding(citizen.getWorkBuilding()).forEach(r -> {
-                constructTreeFromRequest(view, colonyView.getRequestManager(), r, treeElements, 0);
-            });
-        }
-
-        if (citizen.getHomeBuilding() != null && citizen.getHomeBuilding() != citizen.getWorkBuilding())
-        {
-            final AbstractBuildingView view = colonyView.getBuilding(citizen.getHomeBuilding());
-
-            getOpenRequestsOfCitizenFromBuilding(citizen.getHomeBuilding()).forEach(r -> {
-                constructTreeFromRequest(view, colonyView.getRequestManager(), r, treeElements, 0);
-            });
-        }
-
-        return ImmutableList.copyOf(treeElements);
-    }
-
-    private void constructTreeFromRequest(
-      @NotNull final AbstractBuildingView buildingView,
-      @NotNull final IRequestManager manager,
-      @NotNull final IRequest<?> request,
-      @NotNull final List<RequestWrapper> list,
-      final int currentDepth)
-    {
-        list.add(new RequestWrapper(request, currentDepth, buildingView));
-        if (request.hasChildren())
-        {
-            for (final Object o : request.getChildren())
-            {
-                if (o instanceof IToken<?>)
-                {
-                    final IToken<?> iToken = (IToken<?>) o;
-                    final IRequest<?> childRequest = manager.getRequestForToken(iToken);
-
-                    if (childRequest != null)
-                    {
-                        constructTreeFromRequest(buildingView, manager, childRequest, list, currentDepth + 1);
-                    }
-                }
-            }
-        }
-    }
-
-    @SuppressWarnings(RAWTYPES)
-    private ImmutableList<IRequest> getOpenRequestsOfCitizenFromBuilding(final BlockPos buildingPos)
-    {
-        final ColonyView colonyView = ColonyManager.getClosestColonyView(FMLClientHandler.instance().getWorldClient(), buildingPos);
-        if (colonyView == null)
-        {
-            return ImmutableList.of();
-        }
-
-        final AbstractBuildingView building = colonyView.getBuilding(buildingPos);
-        if (building == null)
-        {
-            return ImmutableList.of();
-        }
         return building.getOpenRequests(citizen);
     }
 
@@ -609,60 +385,20 @@ public class WindowCitizen extends AbstractWindowSkeleton
             case INVENTORY_BUTTON_ID:
                 MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(citizen.getName(), citizen.getEntityId()));
                 break;
-            case REQUEST_DETAIL:
-                detailedClicked(button);
-                break;
-            case REQUEST_CANCEL:
-                cancel(button);
-                break;
-            case REQUEST_FULLFIL:
-                fulfill(button);
-                break;
             default:
                 super.onButtonClicked(button);
                 break;
         }
     }
 
-    private void detailedClicked(@NotNull final Button button)
+    @Override
+    public void fulfill(@NotNull final Button button)
     {
         final int row = resourceList.getListElementIndexByPane(button);
 
-        if (getOpenRequestTreeOfCitizen().size() > row)
+        if (getOpenRequestTreeOfBuilding().size() > row && row >= 0)
         {
-            @NotNull final WindowRequestDetail window = new WindowRequestDetail(citizen, getOpenRequestTreeOfCitizen().get(row).getRequest(), citizen.getColonyId());
-            window.open();
-        }
-    }
-
-    private void cancel(@NotNull final Button button)
-    {
-        final int row = resourceList.getListElementIndexByPane(button);
-
-        if (getOpenRequestTreeOfCitizen().size() > row && row >= 0)
-        {
-            @NotNull final IRequest<?> request = getOpenRequestTreeOfCitizen().get(row).getRequest();
-            if (citizen.getWorkBuilding() != null)
-            {
-                colony.getBuilding(citizen.getWorkBuilding()).onRequestCancelled(colony.getRequestManager(), request.getToken());
-            }
-            MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.CANCELLED, null));
-        }
-        updateRequests();
-    }
-
-    /**
-     * On Button click transfert Items and fullfil.
-     *
-     * @param button the clicked button.
-     */
-    private void fulfill(@NotNull final Button button)
-    {
-        final int row = resourceList.getListElementIndexByPane(button);
-
-        if (getOpenRequestTreeOfCitizen().size() > row && row >= 0)
-        {
-            @NotNull final IRequest tRequest = getOpenRequestTreeOfCitizen().get(row).getRequest();
+            @NotNull final IRequest tRequest = getOpenRequestTreeOfBuilding().get(row).getRequest();
 
             if (!(tRequest.getRequest() instanceof IDeliverable))
             {
@@ -743,30 +479,6 @@ public class WindowCitizen extends AbstractWindowSkeleton
                 final Image image = findPaneOfTypeByID("modifierImage" + i, Image.class);
                 image.hide();
             }
-        }
-    }
-
-    private final class RequestWrapper
-    {
-        private final IRequest request;
-        private final int      depth;
-        private final boolean overruleable;
-
-        private RequestWrapper(final IRequest request, final int depth, AbstractBuildingView buildingView)
-        {
-            this.request = request;
-            this.depth = depth;
-            this.overruleable = request.getRequester().getRequesterId().equals(buildingView.getRequesterId()) || buildingView.getResolverIds().contains(request.getRequester().getRequesterId());
-        }
-
-        public IRequest getRequest()
-        {
-            return request;
-        }
-
-        public int getDepth()
-        {
-            return depth;
         }
     }
 }
