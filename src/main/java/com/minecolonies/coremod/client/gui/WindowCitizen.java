@@ -112,6 +112,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
     @Override
     public void onOpened()
     {
+        super.onOpened();
         findPaneOfTypeByID(WINDOW_ID_NAME, Label.class).setLabelText(citizen.getName());
 
         createHealthBar(citizen, findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class));

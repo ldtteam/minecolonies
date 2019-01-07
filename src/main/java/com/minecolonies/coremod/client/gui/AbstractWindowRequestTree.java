@@ -101,6 +101,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     @Override
     public void onOpened()
     {
+        super.onOpened();
         resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
         updateRequests();
         if (colony == null || building == null)
