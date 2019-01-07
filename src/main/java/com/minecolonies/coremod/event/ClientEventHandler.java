@@ -85,6 +85,11 @@ public class ClientEventHandler
     private Template partolPointTemplate;
 
     /**
+     *
+     */
+    private TemplateRenderHandler renderHandler = new TemplateRenderHandler();
+
+    /**
      * The colony view required here.
      */
     private ColonyView view = null;
@@ -115,7 +120,8 @@ public class ClientEventHandler
                           "schematics/infrastructure/Waypoint",
                           new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror())).getTemplate();
                     }
-                    TemplateRenderHandler.getInstance().drawTemplateAtListOfPositions(new ArrayList<>(tempView.getWayPoints()), event.getPartialTicks(), wayPointTemplate);
+                    renderHandler.drawTemplateAtListOfPositions(new ArrayList<>(tempView.getWayPoints()), event.getPartialTicks(), wayPointTemplate);
+                    return;
                 }
             }
             else
@@ -138,7 +144,7 @@ public class ClientEventHandler
                 }
                 if (!colonyBorder.isEmpty() && colonyBorderTemplate != null)
                 {
-                    TemplateRenderHandler.getInstance().drawTemplateAtListOfPositions(colonyBorder, event.getPartialTicks(), colonyBorderTemplate);
+                    renderHandler.drawTemplateAtListOfPositions(colonyBorder, event.getPartialTicks(), colonyBorderTemplate);
                 }
             }
             return;
@@ -170,10 +176,11 @@ public class ClientEventHandler
 
             if (hut instanceof AbstractBuildingGuards.View)
             {
-                TemplateRenderHandler.getInstance()
+                renderHandler
                   .drawTemplateAtListOfPositions(((AbstractBuildingGuards.View) hut).getPatrolTargets().stream().map(BlockPos::up).collect(Collectors.toList()),
                     event.getPartialTicks(),
                     partolPointTemplate);
+                return;
             }
         }
         else
@@ -215,6 +222,7 @@ public class ClientEventHandler
                 }
             }
         }
+        renderHandler.reset();
         colonyBorder.clear();
     }
 
