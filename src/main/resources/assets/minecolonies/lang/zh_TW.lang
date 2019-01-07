@@ -833,14 +833,14 @@ tile.minecolonies.blockHutCombatAcademy.name=戰鬥學院
 com.minecolonies.coremod.gui.workerHuts.CombatAcademy=戰鬥學院
 item.santa_hat.name=聖誕帽
 
-com.minecolonies.coremod.gui.workerHuts.Sawmill=Sawmill
-tile.minecolonies.blockHutSawmill.name=Sawmill
+com.minecolonies.coremod.gui.workerHuts.Sawmill=鋸木場
+tile.minecolonies.blockHutSawmill.name=鋸木場
 com.minecolonies.coremod.recipe.unable=Unable to store the blueprint. Either the %s has no space for any more blueprints, or the blueprint doesn't correspond with its profession.
 com.minecolonies.coremod.request.crafting=Crafter
 entity.builder.messageBuildersTooFar=附近沒有足夠的建築工可以在這個建築裡工作，在建築概要裡手動指派一個建築工或是將建築蓋的靠建築工近一點.
-com.minecolonies.coremod.baker.noRecipe=Please tell me which recipe you want me to prepare in the Bakery!
-com.minecolonies.coremod.request.compostable=Compostable
-com.minecolonies.coremod.request.fertilizer=Fertilizer
-com.minecolonies.coremod.gui.workerHuts.composter=Composter Hut
-com.minecolonies.coremod.furnaceUser.noFuel=Please tell me what kind of fuel to use in my furnace!
+com.minecolonies.coremod.baker.noRecipe=請讓我知道你想要我在麵包店裡先準備哪個配方
+com.minecolonies.coremod.request.compostable=可用來堆肥
+com.minecolonies.coremod.request.fertilizer=肥料
+com.minecolonies.coremod.gui.workerHuts.composter=堆肥小屋
+com.minecolonies.coremod.furnaceUser.noFuel=請告訴我要放哪一種燃料在我的爈子裡!
 
