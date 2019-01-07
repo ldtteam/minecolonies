@@ -311,7 +311,7 @@ com.minecolonies.coremod.gui.happiness.house=房屋需求
 com.minecolonies.coremod.gui.happiness.job=就業情況
 com.minecolonies.coremod.gui.happiness.farms=耕地狀況
 com.minecolonies.coremod.gui.happiness.tools=工具滿足度
-//death=成就
+//death=achievements
 achievement.miner.death.lava=我們挖到石油, 不對, 是岩漿啦.
 achievement.miner.death.fall=這是最後的終點.
 achievement.lumberjack.death.tree=我是 格．魯．特!
@@ -325,7 +325,7 @@ achievement.fisher.death.guardian.desc=你的漁夫被守護者殺死了.
 achievement.guard.death.enderman.desc=你的守衛被安德幹掉了.
 achievement.player.death.guard.desc=你被你其中一個守衛背刺了.
 
-//statistics=成就
+//statistics=achievements
 achievement.builder.hutsBuilt.one=我頭上有片屋頂.
 achievement.builder.hutsBuilt.25=我想, 我處理得來.
 achievement.builder.hutsBuilt.100=我們建造了這座城市...
@@ -842,5 +842,5 @@ com.minecolonies.coremod.baker.noRecipe=請讓我知道你想要我在麵包店�
 com.minecolonies.coremod.request.compostable=可用來堆肥
 com.minecolonies.coremod.request.fertilizer=肥料
 com.minecolonies.coremod.gui.workerHuts.composter=堆肥小屋
-com.minecolonies.coremod.furnaceUser.noFuel=請告訴我要放哪一種燃料在我的爈子裡!
+com.minecolonies.coremod.furnaceUser.noFuel=請告訴我要放哪一種燃料在爈子裡!
 
