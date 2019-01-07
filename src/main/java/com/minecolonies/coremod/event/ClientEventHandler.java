@@ -87,7 +87,7 @@ public class ClientEventHandler
     /**
      * Renderer for the colony border/waypoints
      */
-    private TemplateRenderHandler renderHandler = new TemplateRenderHandler();
+    private final TemplateRenderHandler renderHandler = new TemplateRenderHandler();
 
     /**
      * The colony view required here.
