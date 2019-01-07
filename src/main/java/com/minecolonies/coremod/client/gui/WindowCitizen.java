@@ -106,6 +106,12 @@ public class WindowCitizen extends AbstractWindowRequestTree
         this.citizen = citizen;
     }
 
+    @Override
+    public boolean canFulFill()
+    {
+        return true;
+    }
+
     /**
      * Called when the gui is opened by an player.
      */
