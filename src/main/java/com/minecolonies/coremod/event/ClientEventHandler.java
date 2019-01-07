@@ -85,7 +85,7 @@ public class ClientEventHandler
     private Template partolPointTemplate;
 
     /**
-     *
+     * Renderer for the colony border/waypoints
      */
     private TemplateRenderHandler renderHandler = new TemplateRenderHandler();
 
