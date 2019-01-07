@@ -148,12 +148,26 @@ public abstract class WindowFilterableList<B extends FilterableListView> extends
         if (button.getLabel().equals(ON))
         {
             button.setLabel(OFF);
-            building.removeItem(allItems.get(row));
+            if (isInverted)
+            {
+                building.addItem(allItems.get(row));
+            }
+            else
+            {
+                building.removeItem(allItems.get(row));
+            }
         }
         else
         {
             button.setLabel(ON);
-            building.addItem(allItems.get(row));
+            if (isInverted)
+            {
+                building.removeItem(allItems.get(row));
+            }
+            else
+            {
+                building.addItem(allItems.get(row));
+            }
         }
         resourceList.refreshElementPanes();
     }
