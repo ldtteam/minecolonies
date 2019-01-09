@@ -45,9 +45,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
     private static final int MAX_LEVEL = 50;
 
     /**
-     * Times the dough needs to be kneaded.
+     * Times the product needs to be hit.
      */
-    private static final int HITTING_TIME = 5;
+    private static final int HITTING_TIME = 3;
 
     /**
      * The recipe storage he is currently working on.
@@ -228,6 +228,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             maxCraftingCount = 0;
             progress = 0;
             craftCounter = 0;
+            setDelay(TICKS_20);
             return START_WORKING;
         }
 
