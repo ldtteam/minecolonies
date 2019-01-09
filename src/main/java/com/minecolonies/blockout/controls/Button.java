@@ -6,6 +6,10 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.init.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 /**
  * Base button class.
  * Has a handler for when the button is clicked.
@@ -65,6 +69,19 @@ public class Button extends Pane
     }
 
     /**
+     * Gui Timer for reenabling the Button
+     */
+    private final Timer disabledTimer = new Timer(500, new ActionListener()
+    {
+        @Override
+        public void actionPerformed(final ActionEvent actionEvent)
+        {
+            enable();
+            disabledTimer.stop();
+        }
+    });
+
+    /**
      * Play click sound and find the proper handler.
      *
      * @param mx mouse X coordinate, relative to Pane's top-left
@@ -73,6 +90,10 @@ public class Button extends Pane
     @Override
     public void handleClick(final int mx, final int my)
     {
+        // Disable button for 500ms
+        disable();
+        disabledTimer.start();
+
         mc.getSoundHandler().playSound(PositionedSoundRecord.getMusicRecord(SoundEvents.UI_BUTTON_CLICK));
 
         ButtonHandler delegatedHandler = handler;
