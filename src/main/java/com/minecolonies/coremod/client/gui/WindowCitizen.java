@@ -106,12 +106,19 @@ public class WindowCitizen extends AbstractWindowRequestTree
         this.citizen = citizen;
     }
 
+    @Override
+    public boolean canFulFill()
+    {
+        return true;
+    }
+
     /**
      * Called when the gui is opened by an player.
      */
     @Override
     public void onOpened()
     {
+        super.onOpened();
         findPaneOfTypeByID(WINDOW_ID_NAME, Label.class).setLabelText(citizen.getName());
 
         createHealthBar(citizen, findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class));
