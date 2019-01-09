@@ -12,6 +12,9 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobSawmill;
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.oredict.OreDictionary;
@@ -93,14 +96,23 @@ public class BuildingStonemason extends AbstractBuildingCrafter
         {
             if(!ItemStackUtils.isEmpty(stack))
             {
+                if (stack.getItem() instanceof ItemBlock)
+                {
+                    final Block block = ((ItemBlock) stack.getItem()).getBlock();
+                    if (block == Blocks.STONEBRICK || block == Blocks.STONE_BRICK_STAIRS || block == Blocks.STONE_SLAB || block == Blocks.STONE_SLAB2)
+                    {
+                        amountOfValidBlocks++;
+                        continue;
+                    }
+                }
                 for(final int id: OreDictionary.getOreIDs(stack))
                 {
                     final String name = OreDictionary.getOreName(id);
-                    if(name.contains("Wood"))
+                    if(name.contains("stone"))
                     {
                         amountOfValidBlocks++;
                     }
-                    else if(name.contains("ingot") || name.contains("stone") || name.contains("redstone") || name.contains("string"))
+                    else if(name.contains("stick") || name.contains("wood") || name.contains("redstone") || name.contains("string"))
                     {
                         return false;
                     }

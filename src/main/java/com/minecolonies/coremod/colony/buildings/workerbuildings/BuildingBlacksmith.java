@@ -13,9 +13,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBlacksmith;
-import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemTool;
+import net.minecraft.item.*;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,7 +82,7 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
         }
 
         final ItemStack output = storage.getPrimaryOutput();
-        return output.getItem() instanceof ItemTool || output.getItem() instanceof ItemArmor || Compatibility.isTinkersWeapon(output);
+        return output.getItem() instanceof ItemTool || output.getItem() instanceof ItemSword || output.getItem() instanceof ItemArmor || output.getItem() instanceof ItemHoe || Compatibility.isTinkersWeapon(output);
     }
 
     /**
