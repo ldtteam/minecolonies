@@ -2,20 +2,21 @@ package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.entity.ai.citizen.blacksmith.EntityAIWorkBlacksmith;
+import com.minecolonies.coremod.entity.ai.citizen.sawmill.EntityAIWorkSawmill;
+import com.minecolonies.coremod.entity.ai.citizen.stonemason.EntityAIWorkStonemason;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Class of the Blacksmith job.
+ * Class of the Stonemason job.
  */
-public class JobBlacksmith extends AbstractJobCrafter
+public class JobStonemason extends AbstractJobCrafter
 {
     /**
-     * Instantiates the job for the Blacksmith.
+     * Instantiates the job for the Stonemason.
      *
      * @param entity the citizen who becomes a Sawmill
      */
-    public JobBlacksmith(final CitizenData entity)
+    public JobStonemason(final CitizenData entity)
     {
         super(entity);
     }
@@ -24,7 +25,7 @@ public class JobBlacksmith extends AbstractJobCrafter
     @Override
     public String getName()
     {
-        return "com.minecolonies.coremod.job.Blacksmith";
+        return "com.minecolonies.coremod.job.Stonemason";
     }
 
     /**
@@ -34,8 +35,8 @@ public class JobBlacksmith extends AbstractJobCrafter
      */
     @NotNull
     @Override
-    public AbstractAISkeleton<JobBlacksmith> generateAI()
+    public AbstractAISkeleton<JobStonemason> generateAI()
     {
-        return new EntityAIWorkBlacksmith(this);
+        return new EntityAIWorkStonemason(this);
     }
 }
