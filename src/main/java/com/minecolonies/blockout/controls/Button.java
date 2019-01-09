@@ -24,7 +24,7 @@ public class Button extends Pane
     Timer timer = new Timer();
 
     /**
-     * The delay for disabling the button
+     * The delay for disabling the button in miliseconds.
      */
     private int buttonDisabledTime = 500;
 
