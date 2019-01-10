@@ -124,7 +124,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     public static class View extends AbstractBuildingWorker.View
     {
         /**
-         * Instantiate the deliveryman view.
+         * Instantiate the crafter view.
          *
          * @param c the colonyview to put it in
          * @param l the positon

@@ -11,7 +11,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.JobSawmill;
+import com.minecolonies.coremod.colony.jobs.JobStonemason;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
 /**
- * Class of the sawmill building.
+ * Class of the stonemason building.
  */
 public class BuildingStonemason extends AbstractBuildingCrafter
 {
@@ -33,12 +33,12 @@ public class BuildingStonemason extends AbstractBuildingCrafter
     private static final String STONEMASON = "Stonemason";
 
     /**
-     * The min percentage something has to have out of wood to be craftable by this worker.
+     * The min percentage something has to have out of stone to be craftable by this worker.
      */
     private static final double MIN_PERCENTAGE_TO_CRAFT = 0.75;
 
     /**
-     * Instantiates a new sawmill building.
+     * Instantiates a new stonemason building.
      *
      * @param c the colony.
      * @param l the location
@@ -66,7 +66,7 @@ public class BuildingStonemason extends AbstractBuildingCrafter
     @Override
     public AbstractJob createJob(final CitizenData citizen)
     {
-        return new JobSawmill(citizen);
+        return new JobStonemason(citizen);
     }
 
     @NotNull
@@ -125,13 +125,13 @@ public class BuildingStonemason extends AbstractBuildingCrafter
     }
 
     /**
-     * BuildingDeliveryman View.
+     * Crafter building View.
      */
     public static class View extends AbstractBuildingCrafter.View
     {
 
         /**
-         * Instantiate the deliveryman view.
+         * Instantiate the stonemason view.
          *
          * @param c the colonyview to put it in
          * @param l the positon

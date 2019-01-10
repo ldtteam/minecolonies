@@ -10,13 +10,13 @@ import org.jetbrains.annotations.NotNull;
 public class EntityAIWorkStonemason extends AbstractEntityAICrafting<JobStonemason>
 {
     /**
-     * Initialize the sawmill and add all his tasks.
+     * Initialize the Stonemason and add all his tasks.
      *
-     * @param sawmill the job he has.
+     * @param stonemason the job he has.
      */
-    public EntityAIWorkStonemason(@NotNull final JobStonemason sawmill)
+    public EntityAIWorkStonemason(@NotNull final JobStonemason stonemason)
     {
-        super(sawmill);
+        super(stonemason);
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getStrength());
     }
 }
