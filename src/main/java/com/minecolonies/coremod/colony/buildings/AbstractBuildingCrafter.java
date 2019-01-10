@@ -26,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +80,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     @Override
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
-        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
+        final Map<ItemStorage, Tuple<Integer, Boolean>> recipeOutputs = new HashMap<>();
         for (final CitizenData citizen : getAssignedCitizen())
         {
             if (citizen.getJob() instanceof AbstractJobCrafter)
@@ -90,11 +91,18 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
                     final IRecipeStorage recipeStorage = getFirstFullFillableRecipe(request.getRequest().getStack());
                     for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
                     {
-                        toKeep.put(stack -> !stack.isEmpty() && stack.isItemEqual(itemStorage.getItemStack()), new Tuple<>(itemStorage.getAmount(), true));
+                        if (recipeOutputs.containsKey(itemStorage))
+                        {
+                            itemStorage.setAmount(recipeOutputs.get(itemStorage).getFirst() + itemStorage.getAmount());
+                        }
+                        recipeOutputs.put(itemStorage, new Tuple<>(itemStorage.getAmount(), true));
                     }
                 }
             }
         }
+
+        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
+        toKeep.putAll(recipeOutputs.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.isItemEqual(key.getKey().getItemStack())), Map.Entry::getValue)));
         return toKeep;
     }
 
@@ -102,47 +110,6 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     public boolean canCraftComplexRecipes()
     {
         return true;
-    }
-
-    @Override
-    public boolean buildingRequiresItemForCrafting(final ItemStack stack, final List<ItemStorage> localAlreadyKep, final boolean inventory)
-    {
-        final List<StandardRequests.AbstractCraftingRequest<?>> craftingRequests = getResolvers()
-                                                                                     .stream()
-                                                                                     .filter(iRequestResolver -> iRequestResolver instanceof AbstractCraftingRequestResolver)
-                                                                                     .flatMap(iRequestResolver -> RequestHandler.getRequestsMadeByRequester(((IStandardRequestManager) getColony().getRequestManager()), iRequestResolver).stream())
-                                                                                     .filter(iRequest -> iRequest instanceof StandardRequests.AbstractCraftingRequest)
-                                                                                     .map(iRequest -> (StandardRequests.AbstractCraftingRequest<?>) iRequest)
-                                                                                     .collect(Collectors.toList());
-
-        final List<IRequest<? extends IDeliverable>> requirementRequests = getResolvers()
-                                                                             .stream()
-                                                                             .filter(iRequestResolver -> iRequestResolver instanceof AbstractCraftingProductionResolver)
-                                                                             .flatMap(iRequestResolver -> RequestHandler.getRequestsMadeByRequester(((IStandardRequestManager) getColony().getRequestManager()), iRequestResolver).stream())
-                                                                             .filter(iRequest -> iRequest.getRequest() instanceof IDeliverable)
-                                                                             .map(iRequest -> (IRequest<? extends IDeliverable>) iRequest)
-                                                                             .collect(Collectors.toList());
-
-        for (final StandardRequests.AbstractCraftingRequest<?> craftingRequest : craftingRequests)
-        {
-            if (ItemStackUtils.compareItemStacksIgnoreStackSize(craftingRequest.getRequest().getStack(), stack) ||
-                    ItemStackUtils.compareItemStackListIgnoreStackSize(craftingRequest.getDeliveries(), stack))
-            {
-                return true;
-            }
-        }
-
-        for (final IRequest<? extends IDeliverable> requirement :
-            requirementRequests)
-        {
-            if (requirement.getRequest().matches(stack) ||
-                    ItemStackUtils.compareItemStackListIgnoreStackSize(requirement.getDeliveries(), stack))
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     @Override
