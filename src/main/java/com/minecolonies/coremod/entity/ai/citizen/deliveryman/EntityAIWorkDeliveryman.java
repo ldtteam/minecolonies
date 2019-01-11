@@ -405,7 +405,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public static int workerRequiresItem(final AbstractBuilding building, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
     {
-        return building.buildingRequiresItemForCrafting(stack, localAlreadyKept, false) ? 0 : building.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, false);
+        return building.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, false);
     }
 
     /**
