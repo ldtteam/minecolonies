@@ -87,7 +87,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
             {
                 for (final IToken<?> taskToken : ((AbstractJobCrafter) citizen.getJob()).getAssignedTasksFromDataStore())
                 {
-                    IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
+                    final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
                     final IRecipeStorage recipeStorage = getFirstFullFillableRecipe(request.getRequest().getStack());
                     for (final ItemStorage itemStorage : recipeStorage.getCleanedInput())
                     {
