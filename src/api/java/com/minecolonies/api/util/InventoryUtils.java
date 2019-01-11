@@ -232,9 +232,9 @@ public class InventoryUtils
      * @return Amount of occurrences of stacks that match the given block and
      * ItemDamage
      */
-    public static int getItemCountInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Block block, final int itemDamage)
+    public static int getItemCountInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Block block, final int itemDamage)
     {
-        return getItemCountInItemHandler(itemHandler, getItemFromBlock(block), itemDamage);
+        return itemHandler == null ? 0 : getItemCountInItemHandler(itemHandler, getItemFromBlock(block), itemDamage);
     }
 
     /**
@@ -246,9 +246,9 @@ public class InventoryUtils
      * @return Amount of occurrences of stacks that match the given item and
      * ItemDamage
      */
-    public static int getItemCountInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Item targetItem, final int itemDamage)
+    public static int getItemCountInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Item targetItem, final int itemDamage)
     {
-        return getItemCountInItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, targetItem, itemDamage));
+        return itemHandler == null ? 0 : getItemCountInItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, targetItem, itemDamage));
     }
 
     /**
@@ -259,9 +259,9 @@ public class InventoryUtils
      *                                    stacks to count.
      * @return Amount of occurrences of stacks that match the given predicate.
      */
-    public static int getItemCountInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public static int getItemCountInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return filterItemHandler(itemHandler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum();
+        return itemHandler == null ? 0 : filterItemHandler(itemHandler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum();
     }
 
     /**
@@ -273,9 +273,9 @@ public class InventoryUtils
      * @param itemDamage  the damage value.
      * @return True when in {@link IItemHandler}, otherwise false
      */
-    public static boolean hasItemInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Block block, final int itemDamage)
+    public static boolean hasItemInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Block block, final int itemDamage)
     {
-        return hasItemInItemHandler(itemHandler, getItemFromBlock(block), itemDamage);
+        return itemHandler == null ? false : hasItemInItemHandler(itemHandler, getItemFromBlock(block), itemDamage);
     }
 
     /**
