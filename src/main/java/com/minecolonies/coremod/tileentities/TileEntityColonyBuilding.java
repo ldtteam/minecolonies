@@ -280,6 +280,10 @@ public class TileEntityColonyBuilding extends TileEntityChest
     @Override
     public ITextComponent getDisplayName()
     {
+        if (blockType == null)
+        {
+            return super.getDisplayName();
+        }
         return new TextComponentString(LanguageHandler.format(blockType.getTranslationKey() + ".name"));
     }
 
