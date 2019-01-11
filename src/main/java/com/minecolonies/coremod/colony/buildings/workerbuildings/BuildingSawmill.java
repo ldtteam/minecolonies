@@ -130,13 +130,13 @@ public class BuildingSawmill extends AbstractBuildingCrafter
     }
 
     /**
-     * BuildingDeliveryman View.
+     * Sawmill View.
      */
     public static class View extends AbstractBuildingCrafter.View
     {
 
         /**
-         * Instantiate the deliveryman view.
+         * Instantiate the sawmill view.
          *
          * @param c the colonyview to put it in
          * @param l the positon

@@ -337,7 +337,7 @@ public class BuildingWareHouse extends AbstractBuilding
         private boolean allowUpgrade = true;
 
         /**
-         * Instantiate the deliveryman view.
+         * Instantiate the warehouse view.
          *
          * @param c the colonyview to put it in
          * @param l the positon

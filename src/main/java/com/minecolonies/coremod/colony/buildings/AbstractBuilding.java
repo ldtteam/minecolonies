@@ -532,11 +532,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         return stack.getCount();
     }
 
-    public boolean buildingRequiresItemForCrafting(final ItemStack stack, final List<ItemStorage> localAlreadyKep, final boolean inventory)
-    {
-        return false;
-    }
-
     /**
      * Override this method if you want to keep an amount of items in inventory.
      * When the inventory is full, everything get's dumped into the building chest.

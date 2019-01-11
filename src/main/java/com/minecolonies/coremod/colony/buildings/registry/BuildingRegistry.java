@@ -62,13 +62,11 @@ public class BuildingRegistry
     static
     {
         addMapping("Baker", BuildingBaker.class, BuildingBaker.View.class, BlockHutBaker.class);
-        addMapping("Blacksmith", BuildingBlacksmith.class, BuildingBlacksmith.View.class, BlockHutBlacksmith.class);
         addMapping("Builder", BuildingBuilder.class, BuildingBuilder.View.class, BlockHutBuilder.class);
         addMapping("Home", BuildingHome.class, BuildingHome.View.class, BlockHutCitizen.class);
         addMapping("Farmer", BuildingFarmer.class, BuildingFarmer.View.class, BlockHutFarmer.class);
         addMapping("Lumberjack", BuildingLumberjack.class, BuildingLumberjack.View.class, BlockHutLumberjack.class);
         addMapping("Miner", BuildingMiner.class, BuildingMiner.View.class, BlockHutMiner.class);
-        addMapping("Stonemason", BuildingStonemason.class, BuildingStonemason.View.class, BlockHutStonemason.class);
         addMapping("TownHall", BuildingTownHall.class, BuildingTownHall.View.class, BlockHutTownHall.class);
         addMapping("Deliveryman", BuildingDeliveryman.class, BuildingDeliveryman.View.class, BlockHutDeliveryman.class);
         addMapping("Fisherman", BuildingFisherman.class, BuildingFisherman.View.class, BlockHutFisherman.class);
@@ -87,6 +85,8 @@ public class BuildingRegistry
         addMapping("Archery", BuildingArchery.class, BuildingArchery.View.class, BlockHutArchery.class);
         addMapping("CombatAcademy", BuildingCombatAcademy.class, BuildingCombatAcademy.View.class, BlockHutCombatAcademy.class);
         addMapping("Sawmill", BuildingSawmill.class, BuildingSawmill.View.class, BlockHutSawmill.class);
+        addMapping("Blacksmith", BuildingBlacksmith.class, BuildingBlacksmith.View.class, BlockHutBlacksmith.class);
+        addMapping("Stonemason", BuildingStonemason.class, BuildingStonemason.View.class, BlockHutStonemason.class);
         addMapping("Postbox", PostBox.class, PostBox.View.class, BlockPostBox.class);
     }
 
