@@ -232,9 +232,13 @@ public class InventoryUtils
      * @return Amount of occurrences of stacks that match the given block and
      * ItemDamage
      */
-    public static int getItemCountInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Block block, final int itemDamage)
+    public static int getItemCountInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Block block, final int itemDamage)
     {
-        return getItemCountInItemHandler(itemHandler, getItemFromBlock(block), itemDamage);
+        if (itemHandler == null)
+        {
+            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("getItemCountInItemHandler got a null itemHandler"));
+        }
+        return itemHandler == null ? 0 : getItemCountInItemHandler(itemHandler, getItemFromBlock(block), itemDamage);
     }
 
     /**
@@ -246,9 +250,13 @@ public class InventoryUtils
      * @return Amount of occurrences of stacks that match the given item and
      * ItemDamage
      */
-    public static int getItemCountInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Item targetItem, final int itemDamage)
+    public static int getItemCountInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Item targetItem, final int itemDamage)
     {
-        return getItemCountInItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, targetItem, itemDamage));
+        if (itemHandler == null)
+        {
+            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("getItemCountInItemHandler got a null itemHandler"));
+        }
+        return itemHandler == null ? 0 : getItemCountInItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, targetItem, itemDamage));
     }
 
     /**
@@ -259,9 +267,13 @@ public class InventoryUtils
      *                                    stacks to count.
      * @return Amount of occurrences of stacks that match the given predicate.
      */
-    public static int getItemCountInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public static int getItemCountInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return filterItemHandler(itemHandler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum();
+        if (itemHandler == null)
+        {
+            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("getItemCountInItemHandler got a null itemHandler"));
+        }
+        return itemHandler == null ? 0 : filterItemHandler(itemHandler, itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum();
     }
 
     /**
@@ -273,9 +285,13 @@ public class InventoryUtils
      * @param itemDamage  the damage value.
      * @return True when in {@link IItemHandler}, otherwise false
      */
-    public static boolean hasItemInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Block block, final int itemDamage)
+    public static boolean hasItemInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Block block, final int itemDamage)
     {
-        return hasItemInItemHandler(itemHandler, getItemFromBlock(block), itemDamage);
+        if (itemHandler == null)
+        {
+            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
+        }
+        return itemHandler != null && hasItemInItemHandler(itemHandler, getItemFromBlock(block), itemDamage);
     }
 
     /**
@@ -287,9 +303,13 @@ public class InventoryUtils
      * @param itemDamage  the damage value of the item.
      * @return True when in {@link IItemHandler}, otherwise false
      */
-    public static boolean hasItemInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Item item, final int itemDamage)
+    public static boolean hasItemInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Item item, final int itemDamage)
     {
-        return hasItemInItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, item, itemDamage));
+        if (itemHandler == null)
+        {
+            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
+        }
+        return itemHandler != null && hasItemInItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, item, itemDamage));
     }
 
     /**
@@ -302,9 +322,13 @@ public class InventoryUtils
      *                                    to.
      * @return True when in {@link IItemHandler}, otherwise false
      */
-    public static boolean hasItemInItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public static boolean hasItemInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return getItemCountInItemHandler(itemHandler, itemStackSelectionPredicate) > 0;
+        if (itemHandler == null)
+        {
+            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
+        }
+        return itemHandler != null && getItemCountInItemHandler(itemHandler, itemStackSelectionPredicate) > 0;
     }
 
     /**
@@ -313,9 +337,13 @@ public class InventoryUtils
      * @param itemHandler The {@link IItemHandler}.
      * @return True if the {@link IItemHandler} is full, false when not.
      */
-    public static boolean isItemHandlerFull(@NotNull final IItemHandler itemHandler)
+    public static boolean isItemHandlerFull(@Nullable final IItemHandler itemHandler)
     {
-        return getFirstOpenSlotFromItemHandler(itemHandler) == -1;
+        if (itemHandler == null)
+        {
+            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
+        }
+        return itemHandler == null || getFirstOpenSlotFromItemHandler(itemHandler) == -1;
     }
 
     /**
@@ -324,8 +352,13 @@ public class InventoryUtils
      * @param itemHandler The {@link IItemHandler} to check.
      * @return slot index or -1 if none found.
      */
-    public static int getFirstOpenSlotFromItemHandler(@NotNull final IItemHandler itemHandler)
+    public static int getFirstOpenSlotFromItemHandler(@Nullable final IItemHandler itemHandler)
     {
+        if (itemHandler == null)
+        {
+            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
+            return -1;
+        }
         //Test with two different ItemStacks to insert in simulation mode.
         return IntStream.range(0, itemHandler.getSlots())
                  .filter(slot -> ItemStackUtils.isEmpty(itemHandler.getStackInSlot(slot)))
@@ -338,8 +371,13 @@ public class InventoryUtils
      * @param itemHandler the inventory.
      * @return the amount of open slots.
      */
-    public static long openSlotCount(final IItemHandler itemHandler)
+    public static long openSlotCount(@Nullable final IItemHandler itemHandler)
     {
+        if (itemHandler == null)
+        {
+            Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
+            return 0;
+        }
         return IntStream.range(0, itemHandler.getSlots())
                  .filter(slot -> ItemStackUtils.isEmpty(itemHandler.getStackInSlot(slot)))
                  .count();
