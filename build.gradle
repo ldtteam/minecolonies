@@ -167,9 +167,11 @@ task minimalJar(type: Jar) {
     classifier = 'minimal'
 
     manifest {
-        'Maven-Artifact': "${project.group}:${project.archivesBaseName}:${project.version}:universal",
-        'Timestamp': System.currentTimeMillis(),
-        'FMLAT': "minecolonies_at.cfg"
+        attributes([
+            'Maven-Artifact': "${project.group}:${project.archivesBaseName}:${project.version}:universal",
+            'Timestamp': System.currentTimeMillis(),
+            'FMLAT': "minecolonies_at.cfg"
+        ])
     }
 }
 
