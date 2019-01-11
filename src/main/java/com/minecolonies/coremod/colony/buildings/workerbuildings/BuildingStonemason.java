@@ -96,6 +96,7 @@ public class BuildingStonemason extends AbstractBuildingCrafter
         {
             if(!ItemStackUtils.isEmpty(stack))
             {
+                blocks++;
                 if (stack.getItem() instanceof ItemBlock)
                 {
                     final Block block = ((ItemBlock) stack.getItem()).getBlock();
@@ -108,7 +109,7 @@ public class BuildingStonemason extends AbstractBuildingCrafter
                 for(final int id: OreDictionary.getOreIDs(stack))
                 {
                     final String name = OreDictionary.getOreName(id);
-                    if(name.contains("stone"))
+                    if(name.contains("stone") || name.contains("sand"))
                     {
                         amountOfValidBlocks++;
                     }
@@ -117,7 +118,6 @@ public class BuildingStonemason extends AbstractBuildingCrafter
                         return false;
                     }
                 }
-                blocks++;
             }
         }
 
