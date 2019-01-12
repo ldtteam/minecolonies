@@ -167,7 +167,11 @@ task minimalJar(type: Jar) {
     classifier = 'minimal'
 
     manifest {
-        attributes 'FMLAT': "minecolonies_at.cfg"
+        attributes([
+            'Maven-Artifact': "${project.group}:${project.archivesBaseName}:${project.version}:universal",
+            'Timestamp': System.currentTimeMillis(),
+            'FMLAT': "minecolonies_at.cfg"
+        ])
     }
 }
 
@@ -196,6 +200,7 @@ jar {
 reobf {
     jar {}
     apiJar {}
+    minimalJar {}
     blockOutJar {}
 }
 
@@ -240,6 +245,7 @@ curseforge {
             releaseType = System.getenv().CURSERELEASETYPE
 
             addArtifact apiJar
+            addArtifact minimalJar
         }
     }
     else

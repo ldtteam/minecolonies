@@ -23,7 +23,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.client.gui.WindowTownHall.BLACK;
 
 /**
- * Window for the fisherman hut.
+ * Window for the lumberjack hut.
  */
 public class WindowHutLumberjack extends WindowFilterableList<BuildingLumberjack.View>
 {
