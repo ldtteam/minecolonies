@@ -43,6 +43,7 @@ public class JobRegistry
     private static final String MAPPING_SAWMILL        = "Sawmill";
     private static final String MAPPING_BLACKSMITH     = "Blacksmith";
     private static final String MAPPING_STONEMASON     = "Stonemason";
+    private static final String MAPPING_STONE_SMELTERY = "StoneSmeltery";
 
     /**
      * Map to resolve names to class.
@@ -75,7 +76,9 @@ public class JobRegistry
         addMapping(MAPPING_SAWMILL, JobSawmill.class);
         addMapping(MAPPING_BLACKSMITH, JobBlacksmith.class);
         addMapping(MAPPING_STONEMASON, JobStonemason.class);
+        addMapping(MAPPING_STONE_SMELTERY, JobStoneSmeltery.class);
     }
+
     /**
      * Private constructor to hide implicit public one.
      */

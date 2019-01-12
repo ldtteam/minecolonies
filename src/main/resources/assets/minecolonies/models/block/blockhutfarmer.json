@@ -1,12 +1,2756 @@
 {
-  "parent": "block/cube_all",
+  "credit": "created by:OddRobbia02 with Blockbench",
   "textures": {
-    "particle": "blocks/planks_oak",
-    "down": "blocks/planks_oak",
-    "up": "minecolonies:blocks/blockHutFarmerTop",
-    "north": "minecolonies:blocks/sideChest",
-    "east": "minecolonies:blocks/sideChest",
-    "south": "minecolonies:blocks/sideChest",
-    "west": "minecolonies:blocks/sideChest"
-  }
+    "1": "items/iron_hoe",
+    "5": "minecolonies:blocks/map",
+    "11": "minecolonies:blocks/sketchbook",
+    "12": "blocks/hay_block_side",
+    "13": "blocks/hay_block_top",
+    "particle": "blocks/hay_block_side"
+  },
+  "elements": [
+    {
+      "name": "base",
+      "from": [0, 0, 0],
+      "to": [16, 11, 16],
+      "faces": {
+        "north": {"uv": [0, 0, 16, 16], "texture": "#12"},
+        "east": {"uv": [0, 0, 16, 16], "texture": "#12"},
+        "south": {"uv": [0, 0, 16, 16], "texture": "#12"},
+        "west": {"uv": [0, 0, 16, 16], "texture": "#12"},
+        "up": {"uv": [0, 0, 16, 16], "texture": "#13"},
+        "down": {"uv": [0, 0, 16, 16], "texture": "#13"}
+      }
+    },
+    {
+      "name": "sketchbook",
+      "from": [3, 1, -0.5],
+      "to": [13, 10, 1.5],
+      "faces": {
+        "north": {"uv": [0, 0, 16, 16], "texture": "#11"},
+        "east": {"uv": [15.28865, 0, 15.86596, 15.75495], "rotation": 90, "texture": "#11"},
+        "south": {"uv": [0, 0, 16, 16], "texture": "#11"},
+        "west": {"uv": [0, 0, 0.71053, 16], "rotation": 90, "texture": "#11"},
+        "up": {"uv": [0, 0, 0.75494, 15.86595], "rotation": 90, "texture": "#11"},
+        "down": {"uv": [0, 0, 0.75494, 15.86595], "rotation": 90, "texture": "#11"}
+      }
+    },
+    {
+      "name": "Hoe handle 1",
+      "from": [8.5, 11, 11],
+      "to": [9, 11.5, 11.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "east": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "south": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "west": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "up": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"},
+        "down": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 2",
+      "from": [8.5, 11, 11.5],
+      "to": [9, 11.5, 12],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 3",
+      "from": [8.5, 11, 10.5],
+      "to": [9, 11.5, 11],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 13, 3, 14], "texture": "#1"},
+        "east": {"uv": [2, 13, 3, 14], "texture": "#1"},
+        "south": {"uv": [2, 13, 3, 14], "texture": "#1"},
+        "west": {"uv": [2, 13, 3, 14], "texture": "#1"},
+        "up": {"uv": [2, 13, 3, 14], "rotation": 180, "texture": "#1"},
+        "down": {"uv": [2, 13, 3, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 4",
+      "from": [8, 11, 10.5],
+      "to": [8.5, 11.5, 11],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 5",
+      "from": [8, 11, 11],
+      "to": [8.5, 11.5, 11.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 6",
+      "from": [9.5, 11, 12],
+      "to": [10, 11.5, 12.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "east": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "south": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "west": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "up": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"},
+        "down": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 7",
+      "from": [9.5, 11, 12.5],
+      "to": [10, 11.5, 13],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 8",
+      "from": [9.5, 11, 11.5],
+      "to": [10, 11.5, 12],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 9",
+      "from": [9, 11, 11.5],
+      "to": [9.5, 11.5, 12],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 10",
+      "from": [9, 11, 12],
+      "to": [9.5, 11.5, 12.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 11",
+      "from": [10, 11, 12],
+      "to": [10.5, 11.5, 12.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 12",
+      "from": [11.5, 11, 14],
+      "to": [12, 11.5, 14.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "east": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "south": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "west": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "up": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"},
+        "down": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 13",
+      "from": [11.5, 11, 14.5],
+      "to": [12, 11.5, 15],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 14",
+      "from": [11.5, 11, 13.5],
+      "to": [12, 11.5, 14],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 15",
+      "from": [11, 11, 13.5],
+      "to": [11.5, 11.5, 14],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 16",
+      "from": [11, 11, 14],
+      "to": [11.5, 11.5, 14.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 17",
+      "from": [12, 11, 14],
+      "to": [12.5, 11.5, 14.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [1.59983, 13.33333, 2.09983, 13.83333], "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 18",
+      "from": [10.5, 11, 13],
+      "to": [11, 11.5, 13.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "east": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "south": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "west": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "up": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"},
+        "down": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 19",
+      "from": [10.5, 11, 13.5],
+      "to": [11, 11.5, 14],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 20",
+      "from": [10.5, 11, 12.5],
+      "to": [11, 11.5, 13],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 21",
+      "from": [10, 11, 12.5],
+      "to": [10.5, 11.5, 13],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 22",
+      "from": [10, 11, 13],
+      "to": [10.5, 11.5, 13.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 23",
+      "from": [11, 11, 13],
+      "to": [11.5, 11.5, 13.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 24",
+      "from": [12.5, 11, 15],
+      "to": [13, 11.5, 15.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [3, 13, 3.5, 13.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [3, 13, 3.5, 13.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [3, 13, 3.5, 13.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [3, 13, 3.5, 13.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [3, 13, 3.5, 13.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [3, 13, 3.5, 13.5], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 25",
+      "from": [12.5, 11, 15.5],
+      "to": [13, 11.5, 16],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 26",
+      "from": [12.5, 11, 14.5],
+      "to": [13, 11.5, 15],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 27",
+      "from": [12, 11, 14.5],
+      "to": [12.5, 11.5, 15],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [1.70573, 14.50608, 2.20573, 15.00608], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [1.70573, 14.50608, 2.20573, 15.00608], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [1.70573, 14.50608, 2.20573, 15.00608], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [1.70573, 14.50608, 2.20573, 15.00608], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [1.70573, 14.50608, 2.20573, 15.00608], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 28",
+      "from": [12, 11, 15],
+      "to": [12.5, 11.5, 15.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 29",
+      "from": [13, 11, 15],
+      "to": [13.5, 11.5, 15.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 30",
+      "from": [9, 11, 11],
+      "to": [9.5, 11.5, 11.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 1",
+      "from": [14, 11, 16.5],
+      "to": [14.5, 11.5, 17],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [13.54605, 2.87993, 14.04605, 3.37993], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [13, 3, 13.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 2",
+      "from": [14, 11, 16],
+      "to": [14.5, 11.5, 16.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 2",
+      "from": [13.5, 11, 16.5],
+      "to": [14, 11.5, 17],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [13, 4, 13.5, 4.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [13.54605, 3.94655, 14.04605, 4.44655], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 4",
+      "from": [13, 11, 16.5],
+      "to": [13.5, 11.5, 17],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [13, 5, 13.5, 5.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [13.43997, 5.01316, 13.93997, 5.51316], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 5",
+      "from": [13, 11, 16],
+      "to": [13.5, 11.5, 16.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [10, 4, 10.5, 4.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 6",
+      "from": [12.5, 11, 16],
+      "to": [13, 11.5, 16.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 7",
+      "from": [13.5, 11, 16],
+      "to": [14, 11.5, 16.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [12, 4, 12.5, 4.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 8",
+      "from": [13, 11, 15.5],
+      "to": [13.5, 11.5, 16],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [13, 5, 13.5, 5.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [13.43997, 5.01316, 13.93997, 5.51316], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [11, 5, 11.5, 5.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [12.26645, 3.19984, 12.76645, 3.69984], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 9",
+      "from": [14, 11, 15.5],
+      "to": [14.5, 11.5, 16],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 10",
+      "from": [13.5, 11, 15.5],
+      "to": [14, 11.5, 16],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [10, 4, 10.5, 4.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 11",
+      "from": [14.5, 11, 15],
+      "to": [15, 11.5, 15.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 12",
+      "from": [14, 11, 15],
+      "to": [14.5, 11.5, 15.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [10, 3, 10.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 13",
+      "from": [13.5, 11, 15],
+      "to": [14, 11.5, 15.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [10, 4, 10.5, 4.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 14",
+      "from": [13.5, 11, 14.5],
+      "to": [14, 11.5, 15],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 15",
+      "from": [14, 11, 14.5],
+      "to": [14.5, 11.5, 15],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 16",
+      "from": [14.5, 11, 14.5],
+      "to": [15, 11.5, 15],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 17",
+      "from": [15, 11, 14.5],
+      "to": [15.5, 11.5, 15],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 18",
+      "from": [16, 11, 13],
+      "to": [16.5, 11.5, 13.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 19",
+      "from": [14.5, 11, 14],
+      "to": [15, 11.5, 14.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 20",
+      "from": [14, 11, 14],
+      "to": [14.5, 11.5, 14.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 21",
+      "from": [16, 11, 12.5],
+      "to": [16.5, 11.5, 13],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 22",
+      "from": [14.5, 11, 13.5],
+      "to": [15, 11.5, 14],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 23",
+      "from": [15.5, 11, 11.5],
+      "to": [16, 11.5, 12],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 24",
+      "from": [15, 11, 12],
+      "to": [15.5, 11.5, 12.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 25",
+      "from": [15, 11, 13.5],
+      "to": [15.5, 11.5, 14],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 26",
+      "from": [15, 11, 14],
+      "to": [15.5, 11.5, 14.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [10, 3, 10.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 27",
+      "from": [15.5, 11, 13.5],
+      "to": [16, 11.5, 14],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 28",
+      "from": [15.5, 11, 13],
+      "to": [16, 11.5, 13.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 29",
+      "from": [15.5, 11, 14],
+      "to": [16, 11.5, 14.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 30",
+      "from": [16, 11, 13.5],
+      "to": [16.5, 11.5, 14],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 31",
+      "from": [5.5, 11, 5],
+      "to": [6, 11.5, 5.5],
+      "rotation": {"angle": -45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [8, 2, 8.5, 2.5], "texture": "#1"},
+        "down": {"uv": [8, 2, 8.5, 2.5], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 32",
+      "from": [15, 11, 13],
+      "to": [15.5, 11.5, 13.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [10, 3, 10.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 33",
+      "from": [15.5, 11, 12],
+      "to": [16, 11.5, 12.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [8, 2, 8.5, 2.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [8, 2, 8.5, 2.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 34",
+      "from": [14.5, 11, 13],
+      "to": [15, 11.5, 13.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 35",
+      "from": [16, 11, 12],
+      "to": [16.5, 11.5, 12.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe head 36",
+      "from": [15, 11, 12.5],
+      "to": [15.5, 11.5, 13],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9.38651, 4.05263, 9.88651, 4.55263], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 31",
+      "from": [8.5, 11, 10.5],
+      "to": [9, 11.5, 11],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 32",
+      "from": [8, 11, 11],
+      "to": [8.5, 11.5, 11.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 33",
+      "from": [8, 11, 10.5],
+      "to": [8.5, 11.5, 11],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 34",
+      "from": [8, 11, 10],
+      "to": [8.5, 11.5, 10.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 35",
+      "from": [7.5, 11, 10.5],
+      "to": [8, 11.5, 11],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 36",
+      "from": [7.5, 11, 10],
+      "to": [8, 11.5, 10.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "east": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "south": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "west": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "up": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"},
+        "down": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 37",
+      "from": [7.5, 11, 9.5],
+      "to": [8, 11.5, 10],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 38",
+      "from": [7, 11, 9.5],
+      "to": [7.5, 11.5, 10],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 39",
+      "from": [7, 11, 10],
+      "to": [7.5, 11.5, 10.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 40",
+      "from": [7, 11, 9],
+      "to": [7.5, 11.5, 9.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 41",
+      "from": [6.5, 11, 9],
+      "to": [7, 11.5, 9.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "east": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "south": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "west": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "up": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"},
+        "down": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 42",
+      "from": [6.5, 11, 9.5],
+      "to": [7, 11.5, 10],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 43",
+      "from": [6.5, 11, 8.5],
+      "to": [7, 11.5, 9],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 44",
+      "from": [6, 11, 8.5],
+      "to": [6.5, 11.5, 9],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 45",
+      "from": [6, 11, 9],
+      "to": [6.5, 11.5, 9.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 46",
+      "from": [6, 11, 8],
+      "to": [6.5, 11.5, 8.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 47",
+      "from": [5.5, 11, 8],
+      "to": [6, 11.5, 8.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "east": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "south": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "west": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "up": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"},
+        "down": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 48",
+      "from": [5.5, 11, 8.5],
+      "to": [6, 11.5, 9],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 49",
+      "from": [5.5, 11, 7.5],
+      "to": [6, 11.5, 8],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 13, 3, 14], "texture": "#1"},
+        "east": {"uv": [2, 13, 3, 14], "texture": "#1"},
+        "south": {"uv": [2, 13, 3, 14], "texture": "#1"},
+        "west": {"uv": [2, 13, 3, 14], "texture": "#1"},
+        "up": {"uv": [2, 13, 3, 14], "rotation": 180, "texture": "#1"},
+        "down": {"uv": [2, 13, 3, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 50",
+      "from": [5, 11, 7.5],
+      "to": [5.5, 11.5, 8],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Hoe handle 51",
+      "from": [5, 11, 8],
+      "to": [5.5, 11.5, 8.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [7, 9, 14]},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 1",
+      "from": [17, 14.5, 13.5],
+      "to": [17.5, 15, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "east": {"uv": [3, 13, 4, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "west": {"uv": [3, 13, 4, 14], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "down": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 2",
+      "from": [17, 14, 13.5],
+      "to": [17.5, 14.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 2",
+      "from": [17, 15, 13.5],
+      "to": [17.5, 15.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 13, 3, 14], "texture": "#1"},
+        "east": {"uv": [2, 13, 3, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [2, 13, 3, 14], "texture": "#1"},
+        "west": {"uv": [2, 13, 3, 14], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 13, 3, 14], "texture": "#1"},
+        "down": {"uv": [2, 13, 3, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 3",
+      "from": [17.5, 15, 13.5],
+      "to": [18, 15.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 14, 2.5, 14.5], "texture": "#1"},
+        "south": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 14, 2.5, 14.5], "rotation": 180, "texture": "#1"},
+        "up": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 4",
+      "from": [17.5, 14.5, 13.5],
+      "to": [18, 15, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 5",
+      "from": [16, 13.5, 13.5],
+      "to": [16.5, 14, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "east": {"uv": [3, 13, 4, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "west": {"uv": [3, 13, 4, 14], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "down": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 6",
+      "from": [16, 13, 13.5],
+      "to": [16.5, 13.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 7",
+      "from": [16, 14, 13.5],
+      "to": [16.5, 14.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 180, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 8",
+      "from": [16.5, 14, 13.5],
+      "to": [17, 14.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 14, 2.5, 14.5], "texture": "#1"},
+        "south": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 14, 2.5, 14.5], "rotation": 180, "texture": "#1"},
+        "up": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 9",
+      "from": [16.5, 13.5, 13.5],
+      "to": [17, 14, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 10",
+      "from": [15.5, 13.5, 13.5],
+      "to": [16, 14, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 180, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 11",
+      "from": [14, 11.5, 13.5],
+      "to": [14.5, 12, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "east": {"uv": [3, 13, 4, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "west": {"uv": [3, 13, 4, 14], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "down": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 12",
+      "from": [14, 11, 13.5],
+      "to": [14.5, 11.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 13",
+      "from": [14, 12, 13.5],
+      "to": [14.5, 12.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 180, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 14",
+      "from": [14.5, 12, 13.5],
+      "to": [15, 12.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 14, 2.5, 14.5], "texture": "#1"},
+        "south": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 14, 2.5, 14.5], "rotation": 180, "texture": "#1"},
+        "up": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 15",
+      "from": [14.5, 11.5, 13.5],
+      "to": [15, 12, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 16",
+      "from": [13.5, 11.5, 13.5],
+      "to": [14, 12, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [1.59983, 13.33333, 2.09983, 13.83333], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 180, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 17",
+      "from": [15, 12.5, 13.5],
+      "to": [15.5, 13, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "east": {"uv": [3, 13, 4, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "west": {"uv": [3, 13, 4, 14], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "down": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 18",
+      "from": [15, 12, 13.5],
+      "to": [15.5, 12.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 19",
+      "from": [15, 13, 13.5],
+      "to": [15.5, 13.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 180, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 20",
+      "from": [15.5, 13, 13.5],
+      "to": [16, 13.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 14, 2.5, 14.5], "texture": "#1"},
+        "south": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 14, 2.5, 14.5], "rotation": 180, "texture": "#1"},
+        "up": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 21",
+      "from": [15.5, 12.5, 13.5],
+      "to": [16, 13, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 22",
+      "from": [14.5, 12.5, 13.5],
+      "to": [15, 13, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 180, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 23",
+      "from": [13, 10.5, 13.5],
+      "to": [13.5, 11, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [3, 13, 3.5, 13.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [3, 13, 3.5, 13.5], "rotation": 180, "texture": "#1"},
+        "south": {"uv": [3, 13, 3.5, 13.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [3, 13, 3.5, 13.5], "texture": "#1"},
+        "up": {"uv": [3, 13, 3.5, 13.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [3, 13, 3.5, 13.5], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 24",
+      "from": [13, 10, 13.5],
+      "to": [13.5, 10.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 25",
+      "from": [13, 11, 13.5],
+      "to": [13.5, 11.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 180, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 26",
+      "from": [13.5, 11, 13.5],
+      "to": [14, 11.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "south": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 27",
+      "from": [13.5, 10.5, 13.5],
+      "to": [14, 11, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 29",
+      "from": [16.5, 14.5, 13.5],
+      "to": [17, 15, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "rotation": 180, "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 30",
+      "from": [16, 14, 13.5],
+      "to": [16.5, 14.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 180, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 31",
+      "from": [12.5, 10.5, 13.5],
+      "to": [13, 11, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"},
+        "south": {"uv": [3, 12, 4, 13], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 32",
+      "from": [18, 15, 13.5],
+      "to": [18.5, 15.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 33",
+      "from": [17.5, 15.5, 13.5],
+      "to": [18, 16, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 180, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 34",
+      "from": [18, 15.5, 13.5],
+      "to": [18.5, 16, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "east": {"uv": [3, 13, 4, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "west": {"uv": [3, 13, 4, 14], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "down": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 35",
+      "from": [18.5, 15.5, 13.5],
+      "to": [19, 16, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 36",
+      "from": [18, 16, 13.5],
+      "to": [18.5, 16.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 180, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 37",
+      "from": [18.5, 16, 13.5],
+      "to": [19, 16.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 14, 2.5, 14.5], "texture": "#1"},
+        "south": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 14, 2.5, 14.5], "rotation": 180, "texture": "#1"},
+        "up": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 38",
+      "from": [19, 16, 13.5],
+      "to": [19.5, 16.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 39",
+      "from": [18.5, 16.5, 13.5],
+      "to": [19, 17, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "rotation": 180, "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 40",
+      "from": [19, 16.5, 13.5],
+      "to": [19.5, 17, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "east": {"uv": [3, 13, 4, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "west": {"uv": [3, 13, 4, 14], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "down": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 41",
+      "from": [19.5, 17, 13.5],
+      "to": [20, 17.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 14, 2.5, 14.5], "texture": "#1"},
+        "south": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 14, 2.5, 14.5], "rotation": 180, "texture": "#1"},
+        "up": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 42",
+      "from": [19.5, 16.5, 13.5],
+      "to": [20, 17, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 43",
+      "from": [19, 17, 13.5],
+      "to": [19.5, 17.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "rotation": 180, "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 44",
+      "from": [19.5, 17, 13.5],
+      "to": [20, 17.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 14, 2.5, 14.5], "texture": "#1"},
+        "south": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 14, 2.5, 14.5], "rotation": 180, "texture": "#1"},
+        "up": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 45",
+      "from": [20, 17, 13.5],
+      "to": [20.5, 17.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 46",
+      "from": [19.5, 17.5, 13.5],
+      "to": [20, 18, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [2, 13, 2.5, 13.5], "rotation": 180, "texture": "#1"},
+        "south": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [2, 13, 2.5, 13.5], "texture": "#1"},
+        "up": {"uv": [2, 13, 2.5, 13.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [2, 13, 2.5, 13.5], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 47",
+      "from": [20, 17.5, 13.5],
+      "to": [20.5, 18, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "east": {"uv": [3, 13, 4, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "west": {"uv": [3, 13, 4, 14], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [3, 13, 4, 14], "texture": "#1"},
+        "down": {"uv": [3, 13, 4, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 48",
+      "from": [20.5, 17.5, 13.5],
+      "to": [21, 18, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [4, 13, 5, 14], "rotation": 180, "texture": "#1"},
+        "south": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [4, 13, 5, 14], "texture": "#1"},
+        "up": {"uv": [4, 13, 5, 14], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [4, 13, 5, 14], "rotation": 270, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 49",
+      "from": [20, 18, 13.5],
+      "to": [20.5, 18.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 13, 3, 14], "texture": "#1"},
+        "east": {"uv": [2, 13, 3, 14], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [2, 13, 3, 14], "texture": "#1"},
+        "west": {"uv": [2, 13, 3, 14], "rotation": 270, "texture": "#1"},
+        "up": {"uv": [2, 13, 3, 14], "texture": "#1"},
+        "down": {"uv": [2, 13, 3, 14], "rotation": 180, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork handle 50",
+      "from": [20.5, 18, 13.5],
+      "to": [21, 18.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "east": {"uv": [2, 14, 2.5, 14.5], "texture": "#1"},
+        "south": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "west": {"uv": [2, 14, 2.5, 14.5], "rotation": 180, "texture": "#1"},
+        "up": {"uv": [2, 14, 2.5, 14.5], "rotation": 270, "texture": "#1"},
+        "down": {"uv": [2, 14, 2.5, 14.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 1",
+      "from": [12, 10.5, 13.5],
+      "to": [12.5, 11, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 2",
+      "from": [12.5, 10, 13.5],
+      "to": [13, 10.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 3",
+      "from": [11, 11.5, 13.5],
+      "to": [11.5, 12, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 4",
+      "from": [11.5, 11, 13.5],
+      "to": [12, 11.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 5",
+      "from": [13.5, 9, 13.5],
+      "to": [14, 9.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 6",
+      "from": [13, 9.5, 13.5],
+      "to": [13.5, 10, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 7",
+      "from": [14, 8.5, 13.5],
+      "to": [14.5, 9, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 8",
+      "from": [14.5, 8, 13.5],
+      "to": [15, 8.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 9",
+      "from": [10.5, 12, 13.5],
+      "to": [11, 12.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 10",
+      "from": [10.5, 11.5, 13.5],
+      "to": [11, 12, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 11",
+      "from": [10, 11.5, 13.5],
+      "to": [10.5, 12, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 12",
+      "from": [10.5, 11, 13.5],
+      "to": [11, 11.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 13",
+      "from": [10, 11, 13.5],
+      "to": [10.5, 11.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 14",
+      "from": [10, 10.5, 13.5],
+      "to": [10.5, 11, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 15",
+      "from": [9.5, 10, 13.5],
+      "to": [10, 10.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 16",
+      "from": [9, 10.5, 13.5],
+      "to": [9.5, 11, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 17",
+      "from": [9.5, 10.5, 13.5],
+      "to": [10, 11, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 18",
+      "from": [9.5, 11, 13.5],
+      "to": [10, 11.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 19",
+      "from": [9, 10, 13.5],
+      "to": [9.5, 10.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 20",
+      "from": [9, 9.5, 13.5],
+      "to": [9.5, 10, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 21",
+      "from": [8.5, 10, 13.5],
+      "to": [9, 10.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 22",
+      "from": [7, 8, 13.5],
+      "to": [7.5, 8.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 23",
+      "from": [10.5, 8.5, 13.5],
+      "to": [11, 9, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 24",
+      "from": [10.5, 8, 13.5],
+      "to": [11, 8.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 25",
+      "from": [11, 8.5, 13.5],
+      "to": [11.5, 9, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 26",
+      "from": [12, 9, 13.5],
+      "to": [12.5, 9.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 27",
+      "from": [12.5, 9.5, 13.5],
+      "to": [13, 10, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 28",
+      "from": [11.5, 9, 13.5],
+      "to": [12, 9.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 29",
+      "from": [12, 9.5, 13.5],
+      "to": [12.5, 10, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 30",
+      "from": [12, 10, 13.5],
+      "to": [12.5, 10.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 31",
+      "from": [12.5, 10, 13.5],
+      "to": [13, 10.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 32",
+      "from": [12, 10.5, 13.5],
+      "to": [12.5, 11, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 33",
+      "from": [11.5, 9.5, 13.5],
+      "to": [12, 10, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 34",
+      "from": [11, 9, 13.5],
+      "to": [11.5, 9.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 35",
+      "from": [11.5, 8.5, 13.5],
+      "to": [12, 9, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 36",
+      "from": [11, 8, 13.5],
+      "to": [11.5, 8.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 37",
+      "from": [12.5, 6, 13.5],
+      "to": [13, 6.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 38",
+      "from": [12, 6.5, 13.5],
+      "to": [12.5, 7, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 39",
+      "from": [12.5, 6.5, 13.5],
+      "to": [13, 7, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 40",
+      "from": [13, 6.5, 13.5],
+      "to": [13.5, 7, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 41",
+      "from": [12.5, 7, 13.5],
+      "to": [13, 7.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 42",
+      "from": [13, 7, 13.5],
+      "to": [13.5, 7.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 43",
+      "from": [13.5, 7, 13.5],
+      "to": [14, 7.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 44",
+      "from": [13, 7.5, 13.5],
+      "to": [13.5, 8, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 45",
+      "from": [13.5, 7.5, 13.5],
+      "to": [14, 8, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 46",
+      "from": [13.5, 8, 13.5],
+      "to": [14, 8.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 47",
+      "from": [14, 7.5, 13.5],
+      "to": [14.5, 8, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 48",
+      "from": [14, 8, 13.5],
+      "to": [14.5, 8.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 49",
+      "from": [14.5, 8, 13.5],
+      "to": [15, 8.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 50",
+      "from": [14, 8.5, 13.5],
+      "to": [14.5, 9, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 51",
+      "from": [11, 11, 13.5],
+      "to": [11.5, 11.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 52",
+      "from": [11.5, 10.5, 13.5],
+      "to": [12, 11, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 53",
+      "from": [13, 9, 13.5],
+      "to": [13.5, 9.5, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "Pitch Fork head 54",
+      "from": [13.5, 8.5, 13.5],
+      "to": [14, 9, 14],
+      "rotation": {"angle": 45, "axis": "z", "origin": [8, 8, 8], "rescale": true},
+      "faces": {
+        "north": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "east": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "south": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "west": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "up": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"},
+        "down": {"uv": [9, 3, 9.5, 3.5], "rotation": 90, "texture": "#1"}
+      }
+    },
+    {
+      "name": "map",
+      "from": [3, 10.2, 3],
+      "to": [12, 11.2, 12],
+      "faces": {
+        "north": {"uv": [0, 0, 9, 1], "texture": "#5"},
+        "east": {"uv": [0, 0, 9, 1], "texture": "#5"},
+        "south": {"uv": [0, 0, 9, 1], "texture": "#5"},
+        "west": {"uv": [0, 0, 9, 1], "texture": "#5"},
+        "up": {"uv": [0, 0, 16, 16], "texture": "#5"},
+        "down": {"uv": [0, 0, 9, 9], "texture": "#5"}
+      }
+    }
+  ],
+  "groups": [
+    {
+      "name": "blockhutfarmer",
+      "children": [0, 1,
+        {
+          "name": "hoe handle",
+          "children": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+            {
+              "name": "hoe head",
+              "children": [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67]
+            },
+            {
+              "name": "group",
+              "children": [68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88]
+            }
+          ]
+        },
+        {
+          "name": "pitch fork handle",
+          "origin": [11, 8, 8],
+          "children": [89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138,
+            {
+              "name": "group",
+              "origin": [11, 8, 8],
+              "children": [139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192]
+            }
+          ]
+        }, 193]
+    }
+  ]
 }

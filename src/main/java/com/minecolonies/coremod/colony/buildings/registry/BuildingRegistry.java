@@ -88,6 +88,8 @@ public class BuildingRegistry
         addMapping("Blacksmith", BuildingBlacksmith.class, BuildingBlacksmith.View.class, BlockHutBlacksmith.class);
         addMapping("Stonemason", BuildingStonemason.class, BuildingStonemason.View.class, BlockHutStonemason.class);
         addMapping("Postbox", PostBox.class, PostBox.View.class, BlockPostBox.class);
+        addMapping("StoneSmeltery", BuildingStoneSmeltery.class, BuildingStoneSmeltery.View.class, BlockHutStoneSmeltery.class);
+
     }
 
     /**
