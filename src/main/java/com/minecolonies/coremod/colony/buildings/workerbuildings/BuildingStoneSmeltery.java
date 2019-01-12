@@ -109,13 +109,13 @@ public class BuildingStoneSmeltery extends AbstractBuildingCrafter
             if ( block == Blocks.STONE
                    || block == Blocks.STONEBRICK
                    || block instanceof BlockGlazedTerracotta
-                   || block instanceof BlockHardenedClay
-                   || item == Items.BRICK)
+                   || block instanceof BlockHardenedClay)
             {
                 return true;
             }
         }
-       return false;
+
+       return item == Items.BRICK;
     }
 
     /**

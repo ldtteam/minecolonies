@@ -5,7 +5,7 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.inventory.CraftingGUIBuilding;
+import com.minecolonies.coremod.inventory.ContainerGUICraftingFurnace;
 import com.minecolonies.coremod.network.messages.AddRemoveRecipeMessage;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -17,17 +17,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * AbstractCrafting gui.
+ * Furnace crafting gui.
  */
-public class WindowGuiCrafting extends GuiContainer
+public class WindowGuiFurnaceCrafting extends GuiContainer
 {
-    private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES = new ResourceLocation(Constants.MOD_ID, "textures/gui/crafting2x2.png");
-
-    private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES3X3 = new ResourceLocation(Constants.MOD_ID, "textures/gui/crafting3x3.png");
+    private static final ResourceLocation CRAFTING_FURNACE = new ResourceLocation(Constants.MOD_ID, "textures/gui/furnace.png");
 
     /**
      * X offset of the button.
@@ -65,16 +63,6 @@ public class WindowGuiCrafting extends GuiContainer
     private static final int Y_OFFSET = 8;
 
     /**
-     * Size of the crafting grid.
-     */
-    private static final int CRAFTING_GRID_SIZE = 4;
-
-    /**
-     * Size of the crafting grid.
-     */
-    private static final int MAX_CRAFTING_GRID_SIZE = 9;
-
-    /**
      * The button to click done after finishing the recipe.
      */
     private GuiButton doneButton;
@@ -85,22 +73,16 @@ public class WindowGuiCrafting extends GuiContainer
     private final AbstractBuildingWorker.View building;
 
     /**
-     * Check if the GUI should display for 9 or 4 slots.
-     */
-    private final boolean completeCrafting;
-
-    /**
      * Create a crafting gui window.
      *
      * @param playerInv     the player.
      * @param worldIn       the world.
      * @param building      the building.
      */
-    public WindowGuiCrafting(final InventoryPlayer playerInv, final World worldIn, final AbstractBuildingWorker.View building)
+    public WindowGuiFurnaceCrafting(final InventoryPlayer playerInv, final World worldIn, final AbstractBuildingWorker.View building)
     {
-        super(new CraftingGUIBuilding(playerInv, worldIn, building.canCraftComplexRecipes()));
+        super(new ContainerGUICraftingFurnace(playerInv, worldIn));
         this.building = building;
-        completeCrafting = building.canCraftComplexRecipes();
     }
 
     @Override
@@ -124,22 +106,13 @@ public class WindowGuiCrafting extends GuiContainer
 
         if (building.canRecipeBeAdded() && doneButton.isMouseOver())
         {
-            final List<ItemStack> input = new LinkedList<>();
-
-            for(int i = 1; i <= (completeCrafting ? MAX_CRAFTING_GRID_SIZE : CRAFTING_GRID_SIZE); i++)
-            {
-                final ItemStack stack = inventorySlots.getInventory().get(i);
-                final ItemStack copy = stack.copy();
-                ItemStackUtils.setSize(copy, 1);
-
-                input.add(copy);
-            }
-
-            final ItemStack primaryOutput =  inventorySlots.getSlot(0).getStack().copy();
+            final List<ItemStack> input = new ArrayList<>();
+            input.add(inventorySlots.getInventory().get(0));
+            final ItemStack primaryOutput =  inventorySlots.getSlot(1).getStack().copy();
 
             if(!ItemStackUtils.isEmpty(primaryOutput))
             {
-                MineColonies.getNetwork().sendToServer(new AddRemoveRecipeMessage(input, completeCrafting ? 3 : 2, primaryOutput, building, false));
+                MineColonies.getNetwork().sendToServer(new AddRemoveRecipeMessage(input, 1, primaryOutput, building, false));
             }
         }
     }
@@ -150,7 +123,7 @@ public class WindowGuiCrafting extends GuiContainer
     @Override
     protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
     {
-        this.fontRenderer.drawString(I18n.format("container.crafting"), X_OFFSET, Y_OFFSET, GUI_COLOR);
+        this.fontRenderer.drawString(I18n.format("container.furnace", new Object[0]), X_OFFSET, Y_OFFSET, GUI_COLOR);
     }
 
     /**
@@ -159,14 +132,7 @@ public class WindowGuiCrafting extends GuiContainer
     protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY)
     {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        if(completeCrafting)
-        {
-            this.mc.getTextureManager().bindTexture(CRAFTING_TABLE_GUI_TEXTURES3X3);
-        }
-        else
-        {
-            this.mc.getTextureManager().bindTexture(CRAFTING_TABLE_GUI_TEXTURES);
-        }
+        this.mc.getTextureManager().bindTexture(CRAFTING_FURNACE);
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
     }
 }
