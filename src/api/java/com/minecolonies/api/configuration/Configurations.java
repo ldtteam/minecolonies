@@ -30,7 +30,7 @@ public class Configurations
         @Config.Comment("Colony size (radius) - deprecated, don't use")
         public int workingRangeTownHall = 200;
 
-        @Config.Comment("Colony size (radius in chunks around central colony chunk)")
+        @Config.Comment("Colony size (radius in chunks around central colony chunk). Changing this affects only newly placed colonies, for old ones use the /mc colony claim command")
         public int workingRangeTownHallChunks = 8;
 
         @Config.Comment("Padding between colonies  - deprecated, don't use")
