@@ -4,9 +4,9 @@ import com.minecolonies.coremod.client.gui.WindowGuiCrafting;
 import com.minecolonies.coremod.client.gui.WindowGuiFurnaceCrafting;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingStoneSmeltery;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
@@ -41,7 +41,7 @@ public class GuiHandler implements IGuiHandler
             else
             {
                 @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, new BlockPos(x,y,z));
-                if (building instanceof BuildingStoneSmeltery)
+                if (building instanceof AbstractBuildingSmelterCrafter)
                 {
                     return new ContainerGUICraftingFurnace(player.inventory, world);
                 }
@@ -96,7 +96,7 @@ public class GuiHandler implements IGuiHandler
             else
             {
                 @Nullable final AbstractBuildingView building = ColonyManager.getBuildingView(new BlockPos(x,y,z));
-                if (building instanceof BuildingStoneSmeltery.View)
+                if (building instanceof AbstractBuildingSmelterCrafter.View)
                 {
                     return new WindowGuiFurnaceCrafting(player.inventory, world, (AbstractBuildingWorker.View) building);
                 }

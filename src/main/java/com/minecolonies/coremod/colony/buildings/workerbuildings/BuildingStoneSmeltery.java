@@ -3,12 +3,14 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.blockout.views.Window;
+import com.minecolonies.coremod.client.gui.WindowHutStoneSmelter;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobStoneSmeltery;
 import net.minecraft.block.Block;
@@ -28,7 +30,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 /**
  * Class of the stone smeltery building.
  */
-public class BuildingStoneSmeltery extends AbstractBuildingCrafter
+public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
 {
     /**
      * Description string of the building.
@@ -121,7 +123,7 @@ public class BuildingStoneSmeltery extends AbstractBuildingCrafter
     /**
      * Stone smeltery View.
      */
-    public static class View extends AbstractBuildingCrafter.View
+    public static class View extends AbstractBuildingSmelterCrafter.View
     {
 
         /**
@@ -139,7 +141,7 @@ public class BuildingStoneSmeltery extends AbstractBuildingCrafter
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<>(this, STONE_SMELTERY);
+            return new WindowHutStoneSmelter(this);
         }
 
         @NotNull

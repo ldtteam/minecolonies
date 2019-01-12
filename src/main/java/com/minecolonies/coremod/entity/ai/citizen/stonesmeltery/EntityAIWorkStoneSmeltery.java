@@ -1,13 +1,14 @@
 package com.minecolonies.coremod.entity.ai.citizen.stonesmeltery;
 
 import com.minecolonies.coremod.colony.jobs.JobStoneSmeltery;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIRequestSmelter;
 import org.jetbrains.annotations.NotNull;
+
 
 /**
  * Crafts furnace stone related block when needed.
  */
-public class EntityAIWorkStoneSmeltery extends AbstractEntityAICrafting<JobStoneSmeltery>
+public class EntityAIWorkStoneSmeltery extends AbstractEntityAIRequestSmelter<JobStoneSmeltery>
 {
     /**
      * Initialize the stone smeltery and add all his tasks.
