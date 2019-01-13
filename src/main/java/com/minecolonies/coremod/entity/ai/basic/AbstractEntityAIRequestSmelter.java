@@ -32,7 +32,7 @@ import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerSta
 /**
  * Crafts furnace stone related block when needed.
  */
-public class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafter> extends AbstractEntityAICrafting<J>
+public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafter> extends AbstractEntityAICrafting<J>
 {
     /**
      * Base xp gain for the smelter.
@@ -77,8 +77,8 @@ public class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafter> extend
             if (entity instanceof TileEntityFurnace)
             {
                 final TileEntityFurnace furnace = (TileEntityFurnace) entity;
-                final int countInResultSlot = ItemStackUtils.isEmpty(furnace.getStackInSlot(RESULT_SLOT)) ? 0 : furnace.getStackInSlot(RESULT_SLOT).getCount();
-                if ((!furnace.isBurning() && countInResultSlot > 0 && ItemStackUtils.isEmpty(furnace.getStackInSlot(SMELTABLE_SLOT))))
+                final int countInResultSlot = isEmpty(furnace.getStackInSlot(RESULT_SLOT)) ? 0 : furnace.getStackInSlot(RESULT_SLOT).getCount();
+                if ((!furnace.isBurning() && countInResultSlot > 0 && isEmpty(furnace.getStackInSlot(SMELTABLE_SLOT))))
                 {
                     worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
                     return pos;
@@ -94,7 +94,7 @@ public class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafter> extend
         final List<ItemStorage> input = storage.getCleanedInput();
         for(final ItemStorage inputStorage : input)
         {
-            final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
+            final Predicate<ItemStack> predicate = stack -> !isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
             if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), predicate))
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
@@ -149,7 +149,7 @@ public class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafter> extend
         }
 
         final TileEntity entity = world.getTileEntity(walkTo);
-        if (!(entity instanceof TileEntityFurnace) || (ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(RESULT_SLOT))))
+        if (!(entity instanceof TileEntityFurnace) || (isEmpty(((TileEntityFurnace) entity).getStackInSlot(RESULT_SLOT))))
         {
             walkTo = null;
             return START_WORKING;

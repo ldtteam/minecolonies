@@ -41,6 +41,7 @@ public class ContainerGUICraftingFurnace extends Container
      */
     public ContainerGUICraftingFurnace(final InventoryPlayer playerInventory, final World worldIn)
     {
+        super();
         this.furnaceInventory = new TileEntityFurnace();
         this.worldObj = worldIn;
         this.player = playerInventory.player;
