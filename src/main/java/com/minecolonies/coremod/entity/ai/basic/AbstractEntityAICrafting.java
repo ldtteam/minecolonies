@@ -273,6 +273,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         if (maxCraftingCount == 0 && progress == 0 && craftCounter == 0 && currentRequest != null)
         {
             job.finishRequest(true);
+            worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount()/2.0);
             currentRequest = null;
         }
         return super.afterDump();
