@@ -99,7 +99,7 @@ public abstract class WindowFilterableList<B extends FilterableListView> extends
     /**
      * The building this belongs to.
      */
-    private final FilterableListView building;
+    protected final FilterableListView building;
 
     /**
      * The filter for the resource list.
