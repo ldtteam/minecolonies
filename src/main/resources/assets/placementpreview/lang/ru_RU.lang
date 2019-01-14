@@ -1,0 +1,8 @@
+language.name=Russian
+language.region=RU
+language.code=ru_RU
+
+category.placementpreview=Предварительный просмотр места размещения
+placementpreview.key.toggle.enabled=Переключение включено
+placementpreview.key.toggle.ghost=Переключение блоков-призраков
+placementpreview.key.toggle.wire=Переключить проводную раму
