@@ -13,11 +13,11 @@ public class EntityAIWorkStoneSmeltery extends AbstractEntityAIRequestSmelter<Jo
     /**
      * Initialize the stone smeltery and add all his tasks.
      *
-     * @param sawmill the job he has.
+     * @param jobStoneSmeltery the job he has.
      */
-    public EntityAIWorkStoneSmeltery(@NotNull final JobStoneSmeltery sawmill)
+    public EntityAIWorkStoneSmeltery(@NotNull final JobStoneSmeltery jobStoneSmeltery)
     {
-        super(sawmill);
+        super(jobStoneSmeltery);
         worker.getCitizenExperienceHandler().setSkillModifier(2 * worker.getCitizenData().getDexterity() + worker.getCitizenData().getCharisma());
     }
 }
