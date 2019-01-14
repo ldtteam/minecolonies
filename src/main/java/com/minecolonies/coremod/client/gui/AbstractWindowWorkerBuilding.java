@@ -150,7 +150,10 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
         window.open();
     }
 
-    private void craftingClicked()
+    /**
+     * If crafting is clicked this happens. Override if needed.
+     */
+    public void craftingClicked()
     {
         final BlockPos pos = building.getLocation();
         Minecraft.getMinecraft().player.openGui(MineColonies.instance, 0, Minecraft.getMinecraft().world, pos.getX(), pos.getY(), pos.getZ());

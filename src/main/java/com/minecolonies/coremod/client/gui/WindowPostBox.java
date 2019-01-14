@@ -76,10 +76,6 @@ public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHa
                 try
                 {
                     qty = Integer.parseInt(((TextField) child).getText());
-                    if (qty > stack.getMaxStackSize())
-                    {
-                        qty = stack.getMaxStackSize();
-                    }
                 }
                 catch (final NumberFormatException ex)
                 {
@@ -87,7 +83,13 @@ public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHa
                 }
             }
         }
-        MineColonies.getNetwork().sendToServer(new PostBoxRequestMessage(buildingView, stack, qty));
+
+        while (qty > 0)
+        {
+            final int requestSize = qty > stack.getMaxStackSize() ? stack.getMaxStackSize() : qty;
+            qty -= requestSize;
+            MineColonies.getNetwork().sendToServer(new PostBoxRequestMessage(buildingView, stack.copy(), requestSize));
+        }
     }
 
     @Override

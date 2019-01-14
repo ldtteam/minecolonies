@@ -52,7 +52,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
     /**
      * The recipe storage he is currently working on.
      */
-    private IRecipeStorage currentRecipeStorage;
+    protected IRecipeStorage currentRecipeStorage;
 
     /**
      * Max crafting count for current recipe.
@@ -72,7 +72,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
     /**
      * The current request.
      */
-    private IRequest<? extends PublicCrafting> currentRequest;
+    protected IRequest<? extends PublicCrafting> currentRequest;
 
     /**
      * Initialize the crafter job and add all his tasks.
@@ -178,7 +178,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
      * Check for all items of the required recipe.
      * @return the next state to go to.
      */
-    private IAIState checkForItems(final IRecipeStorage storage)
+    protected IAIState checkForItems(final IRecipeStorage storage)
     {
         final List<ItemStorage> input = storage.getCleanedInput();
         for(final ItemStorage inputStorage : input)
@@ -203,7 +203,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
      * The actual crafting logic.
      * @return the next state to go to.
      */
-    private IAIState craft()
+    protected IAIState craft()
     {
         if (currentRecipeStorage == null)
         {
@@ -239,7 +239,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         setDelay(HIT_DELAY);
 
         currentRequest = job.getCurrentTask();
-        if (progress >= getRequiredProgressForMakingRawMaterial()) //TODO set up afterwards again!
+        if (progress >= getRequiredProgressForMakingRawMaterial())
         {
             final IAIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
@@ -273,6 +273,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         if (maxCraftingCount == 0 && progress == 0 && craftCounter == 0 && currentRequest != null)
         {
             job.finishRequest(true);
+            worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount()/2.0);
             currentRequest = null;
         }
         return super.afterDump();

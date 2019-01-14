@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:block/blockhutfarmer",
+  "parent": "minecolonies:block/blockhutstonesmeltery",
   "display": {
     "gui": {
       "rotation": [30, 50, 0],
