@@ -103,8 +103,12 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     {
         super.onOpened();
         resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
-        updateRequests();
-        if (colony == null || building == null)
+
+        if (building != null)
+        {
+            updateRequests();
+        }
+        if (colony == null)
         {
             Log.getLogger().warn("Colony and/or building null, closing window.");
             close();
