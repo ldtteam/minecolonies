@@ -619,10 +619,16 @@ public class Colony implements IColony
      */
     public void onServerTick(@NotNull final TickEvent.ServerTickEvent event)
     {
+        packageManager.updateSubscribers();
+
+        if (packageManager.getSubscribers().isEmpty())
+        {
+            return;
+        }
+
         buildingManager.tick(event);
 
         getRequestManager().update();
-        packageManager.updateSubscribers();
 
         final List<EntityPlayer> visitors = new ArrayList<>(visitingPlayers);
 
@@ -740,14 +746,15 @@ public class Colony implements IColony
             return;
         }
 
+        // Clean up or spawn citizens.
+        if (packageManager.getSubscribers().isEmpty())
+        {
+            return;
+        }
+
         //  Cleanup Buildings whose Blocks have gone AWOL
         buildingManager.cleanUpBuildings(event);
-
-        // Clean up or spawn citizens.
-        if (!packageManager.getSubscribers().isEmpty())
-        {
-            citizenManager.onWorldTick(event);
-        }
+        citizenManager.onWorldTick(event);
 
         if (shallUpdate(world, TICKS_SECOND)
                 && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
