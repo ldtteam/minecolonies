@@ -212,6 +212,11 @@ public class Colony implements IColony
     private boolean mourning = false;
 
     /**
+     * If the colony is dirty.
+     */
+    private boolean isActive = true;
+
+    /**
      * The colony team color.
      */
     private TextFormatting colonyTeamColor = TextFormatting.WHITE;
@@ -564,6 +569,7 @@ public class Colony implements IColony
         compound.setInteger(TAG_TEAM_COLOR, colonyTeamColor.ordinal());
         this.colonyTag = compound;
 
+        isActive = false;
         return compound;
     }
 
@@ -625,6 +631,7 @@ public class Colony implements IColony
         {
             return;
         }
+        isActive = true;
 
         buildingManager.tick(event);
 
@@ -751,6 +758,7 @@ public class Colony implements IColony
         {
             return;
         }
+        isActive = true;
 
         //  Cleanup Buildings whose Blocks have gone AWOL
         buildingManager.cleanUpBuildings(event);
@@ -991,6 +999,7 @@ public class Colony implements IColony
     public void markDirty()
     {
         packageManager.setDirty();
+        isActive = true;
     }
 
     @Override
@@ -1295,7 +1304,7 @@ public class Colony implements IColony
      */
     public NBTTagCompound getColonyTag()
     {
-        if(this.colonyTag == null)
+        if(this.colonyTag == null || this.isActive)
         {
             this.writeToNBT(new NBTTagCompound());
         }
