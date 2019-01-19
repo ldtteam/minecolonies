@@ -221,7 +221,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
         if (getOpenRequests().size() > row && row >= 0)
         {
-            @NotNull final WindowRequestDetail window = new WindowRequestDetail(null, getOpenRequests().get(row), colonyId);
+            @NotNull final WindowRequestDetail window = new WindowRequestDetail(this, getOpenRequests().get(row), colonyId);
             window.open();
         }
     }
