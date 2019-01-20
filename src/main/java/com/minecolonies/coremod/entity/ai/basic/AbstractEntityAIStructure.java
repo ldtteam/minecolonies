@@ -19,8 +19,8 @@ import com.minecolonies.coremod.util.StructureWrapper;
 import com.minecolonies.coremod.util.WorkerUtil;
 import com.structurize.coremod.placementhandlers.IPlacementHandler;
 import com.structurize.coremod.placementhandlers.PlacementHandlers;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockGrassPath;
+import net.minecraft.block.*;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
@@ -280,6 +280,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
     private IAIState pickUpResiduals()
     {
+        if (currentStructure.getStage() != Structure.Stage.COMPLETE)
+        {
+            return IDLE;
+        }
+
         if (getItemsForPickUp() == null)
         {
             fillItemsList();
@@ -439,7 +444,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                         return false;
                     }
                 }
-                if (!world.isAirBlock(coords))
+
+                final IBlockState worldState = world.getBlockState(coords);
+
+                if (worldState.getMaterial() != Material.AIR
+                      && (!(worldState.getBlock() instanceof BlockDoublePlant) || !blockState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.UPPER)))
                 {
                     handleBuildingOverBlock(coords);
                     world.setBlockToAir(coords);
@@ -810,6 +819,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         }
 
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.clearing"));
+
         //Don't break bedrock etc.
         //Don't break bedrock etc.
         if (!BlockUtils.shouldNeverBeMessedWith(currentBlock.worldBlock))
@@ -819,6 +829,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             if (!walkToConstructionSite(currentStructure.getCurrentBlockPosition()))
             {
                 return false;
+            }
+
+            if (job.getStructure().isStructureBlockEqualWorldBlock()
+                  || (currentBlock.block instanceof BlockBed && currentBlock.metadata.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
+                  || (currentBlock.block instanceof BlockDoor && currentBlock.metadata.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
+            {
+                return true;
             }
 
             WorkerUtil.faceBlock(currentBlock.blockPosition, worker);

@@ -111,7 +111,6 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
                 new InvWrapper(worker.getInventoryCitizen()));
         worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         this.incrementActionsDoneAndDecSaturation();
-
     }
 
     @Override

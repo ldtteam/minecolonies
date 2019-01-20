@@ -269,12 +269,12 @@ public class BuildingBarracks extends AbstractBuilding
     */
 
     /**
-     * BuildingDeliveryman View.
+     * Barracks building View.
      */
     public static class View extends AbstractBuildingView
     {
         /**
-         * Instantiate the deliveryman view.
+         * Instantiate the barracks view.
          *
          * @param c the colonyview to put it in
          * @param l the positon

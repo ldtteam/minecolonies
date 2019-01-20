@@ -1,12 +1,10 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.reflect.TypeToken;
-import com.minecolonies.api.colony.requestsystem.requestable.Burnable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
@@ -20,6 +18,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
@@ -332,39 +331,6 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         walkTo = null;
         setDelay(STANDARD_DELAY);
         return START_WORKING;
-    }
-
-    /**
-     * Check if the furnace has smeltable in it and fuel empty.
-     * @param entity the furnace.
-     * @return true if so.
-     */
-    private static boolean hasSmeltableInFurnaceAndNoFuel(final TileEntityFurnace entity)
-    {
-        return !ItemStackUtils.isEmpty(entity.getStackInSlot(SMELTABLE_SLOT))
-                && ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
-    }
-
-    /**
-     * Check if the furnace has smeltable in it and fuel empty.
-     * @param entity the furnace.
-     * @return true if so.
-     */
-    private static boolean hasNeitherFuelNorSmeltAble(final TileEntityFurnace entity)
-    {
-        return ItemStackUtils.isEmpty(entity.getStackInSlot(SMELTABLE_SLOT))
-                && ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
-    }
-
-    /**
-     * Check if the furnace has fuel in it and smeltable empty.
-     * @param entity the furnace.
-     * @return true if so.
-     */
-    private static boolean hasFuelInFurnaceAndNoSmeltable(final TileEntityFurnace entity)
-    {
-        return ItemStackUtils.isEmpty(entity.getStackInSlot(SMELTABLE_SLOT))
-                && !ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
     }
 
     /**

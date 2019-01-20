@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.util.CompatibilityUtils;
@@ -16,6 +17,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Skeleton class for worker ai.
@@ -44,6 +46,11 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     private final TickRateStateMachine stateMachine;
 
     /**
+     * Counter for updateTask ticks received
+     */
+    private int tickCounter = 0;
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class.
@@ -63,6 +70,9 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         this.world = CompatibilityUtils.getWorld(this.worker);
         this.chatSpamFilter = new ChatSpamFilter(job.getCitizen());
         stateMachine = new TickRateStateMachine(AIWorkerState.INIT, this::onException);
+
+        // Start at a random tickcounter to spread AI updates over all ticks
+        tickCounter = new Random().nextInt(Configurations.gameplay.updateRate) + 1;
     }
 
     /**
@@ -131,7 +141,15 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     @Override
     public final void updateTask()
     {
-        stateMachine.tick();
+        if (tickCounter < Configurations.gameplay.updateRate)
+        {
+            tickCounter++;
+        }
+        else
+        {
+            stateMachine.tick();
+            tickCounter = 1;
+        }
     }
 
     protected void onException(final RuntimeException e)

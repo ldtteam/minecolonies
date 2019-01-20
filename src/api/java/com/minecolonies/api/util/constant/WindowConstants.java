@@ -1083,6 +1083,14 @@ public final class WindowConstants
     public static final String SORT_WAREHOUSE_BUTTON         = "sort";
 
     /**
+     * Postbox constants.
+     */
+    public static final String INPUT_NAME     = "name";
+    public static final String WINDOW_POSTBOX = ":gui/windowpostbox.xml";
+    public static final String INPUT_QTY    = "qty";
+    public static final String BUTTON_REQUEST = "request";
+
+    /**
      * public constructor to hide implicit public one.
      */
     private WindowConstants()

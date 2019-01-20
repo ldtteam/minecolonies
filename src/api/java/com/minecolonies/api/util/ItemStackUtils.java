@@ -31,7 +31,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.Constants.FUEL_SLOT;
 import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
+import static com.minecolonies.api.util.constant.Constants.SMELTABLE_SLOT;
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
 /**
@@ -802,6 +804,39 @@ public final class ItemStackUtils
             }
         }
         return false;
+    }
+
+    /**
+     * Check if the furnace has smeltable in it and fuel empty.
+     * @param entity the furnace.
+     * @return true if so.
+     */
+    public static boolean hasSmeltableInFurnaceAndNoFuel(final TileEntityFurnace entity)
+    {
+        return !ItemStackUtils.isEmpty(entity.getStackInSlot(SMELTABLE_SLOT))
+                 && ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
+    }
+
+    /**
+     * Check if the furnace has smeltable in it and fuel empty.
+     * @param entity the furnace.
+     * @return true if so.
+     */
+    public static boolean hasNeitherFuelNorSmeltAble(final TileEntityFurnace entity)
+    {
+        return ItemStackUtils.isEmpty(entity.getStackInSlot(SMELTABLE_SLOT))
+                 && ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
+    }
+
+    /**
+     * Check if the furnace has fuel in it and smeltable empty.
+     * @param entity the furnace.
+     * @return true if so.
+     */
+    public static boolean hasFuelInFurnaceAndNoSmeltable(final TileEntityFurnace entity)
+    {
+        return ItemStackUtils.isEmpty(entity.getStackInSlot(SMELTABLE_SLOT))
+                 && !ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
     }
 }
 
