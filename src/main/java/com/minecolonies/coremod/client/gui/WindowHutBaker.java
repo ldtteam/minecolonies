@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class WindowHutBaker extends WindowFilterableList<BuildingBaker.View>
 {
     /**
-     * Constructor for the window of the fisherman.
+     * Constructor for the window of the baker.
      *
      * @param building {@link BuildingBaker.View}.
      */

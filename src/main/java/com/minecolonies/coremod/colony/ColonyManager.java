@@ -1164,6 +1164,6 @@ public final class ColonyManager
                 }
             }
         }
-        return 0;
+        return top;
     }
 }

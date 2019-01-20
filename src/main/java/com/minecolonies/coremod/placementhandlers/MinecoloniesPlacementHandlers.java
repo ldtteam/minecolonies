@@ -228,21 +228,23 @@ public final class MinecoloniesPlacementHandlers
           final boolean complete,
           final BlockPos centerPos)
         {
-            if (tileEntityData != null)
-            {
-                handleTileEntityPlacement(tileEntityData, world, pos);
-            }
-
             final TileEntity entity = world.getTileEntity(pos);
             final Colony colony = ColonyManager.getClosestColony(world, pos);
             if (colony != null && entity instanceof TileEntityChest && colony.getBuildingManager().getBuilding(centerPos) instanceof BuildingWareHouse)
             {
                 BuildingWareHouse.handleBuildingOverChest(pos, (TileEntityChest) entity, world);
             }
-
-            if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
+            else
             {
-                return ActionProcessingResult.DENY;
+                if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
+                {
+                    return ActionProcessingResult.DENY;
+                }
+
+                if (tileEntityData != null)
+                {
+                    handleTileEntityPlacement(tileEntityData, world, pos);
+                }
             }
 
             return blockState;

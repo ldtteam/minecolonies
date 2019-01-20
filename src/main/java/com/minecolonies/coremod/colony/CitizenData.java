@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.configuration.NameConfiguration;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.LanguageHandler;
@@ -10,7 +10,6 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingArchery;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
@@ -527,17 +526,17 @@ public class CitizenData
 
         if (female)
         {
-            firstName = getRandomElement(rand, Configurations.names.femaleFirstNames);
+            firstName = getRandomElement(rand, NameConfiguration.names.femaleFirstNames);
         }
         else
         {
-            firstName = getRandomElement(rand, Configurations.names.maleFirstNames);
+            firstName = getRandomElement(rand, NameConfiguration.names.maleFirstNames);
         }
 
         middleInitial = String.valueOf(getRandomLetter(rand));
-        lastName = getRandomElement(rand, Configurations.names.lastNames);
+        lastName = getRandomElement(rand, NameConfiguration.names.lastNames);
 
-        if (Configurations.names.useMiddleInitial)
+        if (NameConfiguration.names.useMiddleInitial)
         {
             citizenName = String.format("%s %s. %s", firstName, middleInitial, lastName);
         }
