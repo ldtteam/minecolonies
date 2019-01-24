@@ -83,7 +83,7 @@ public class BuildingBarracks extends AbstractBuilding
 
         if (world != null)
         {
-            for (final BlockPos tower: towers)
+            for (final BlockPos tower : towers)
             {
                 world.setBlockState(tower, Blocks.AIR.getDefaultState());
             }
@@ -95,7 +95,6 @@ public class BuildingBarracks extends AbstractBuilding
     public void registerBlockPosition(@NotNull final IBlockState block, @NotNull final BlockPos pos, @NotNull final World world)
     {
         super.registerBlockPosition(block, pos, world);
-
         if (block.getBlock() == ModBlocks.blockBarracksTowerSubstitution)
         {
             if (world.getBlockState(pos).getBlock() != ModBlocks.blockHutBarracksTower)
@@ -108,7 +107,10 @@ public class BuildingBarracks extends AbstractBuilding
             {
                 building.setStyle(this.getStyle());
                 ((BuildingBarracksTower) building).addBarracks(getLocation());
-                towers.add(pos);
+                if (!towers.contains(pos))
+                {
+                    towers.add(pos);
+                }
             }
         }
     }
@@ -118,7 +120,9 @@ public class BuildingBarracks extends AbstractBuilding
     {
         super.readFromNBT(compound);
         towers.clear();
-        towers.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_TOWERS, Constants.NBT.TAG_COMPOUND)).map(resultCompound -> BlockPosUtil.readFromNBT(resultCompound, TAG_POS)).collect(Collectors.toList()));
+        towers.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_TOWERS, Constants.NBT.TAG_COMPOUND))
+                        .map(resultCompound -> BlockPosUtil.readFromNBT(resultCompound, TAG_POS))
+                        .collect(Collectors.toList()));
     }
 
     @Override

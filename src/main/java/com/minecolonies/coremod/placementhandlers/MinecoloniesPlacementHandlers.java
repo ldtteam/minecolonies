@@ -282,16 +282,6 @@ public final class MinecoloniesPlacementHandlers
           final boolean complete,
           final BlockPos centerPos)
         {
-            if (world.getBlockState(pos).equals(blockState))
-            {
-                return ActionProcessingResult.ACCEPT;
-            }
-
-            if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
-            {
-                return ActionProcessingResult.DENY;
-            }
-
             return blockState;
         }
 
