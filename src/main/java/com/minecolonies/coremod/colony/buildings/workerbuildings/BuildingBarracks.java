@@ -98,7 +98,7 @@ public class BuildingBarracks extends AbstractBuilding
 
         if (block.getBlock() == ModBlocks.blockBarracksTowerSubstitution)
         {
-            if (world.getBlockState(pos).getBlock() != ModBlocks.blockHutBarracks)
+            if (world.getBlockState(pos).getBlock() != ModBlocks.blockHutBarracksTower)
             {
                 world.setBlockState(pos, ModBlocks.blockHutBarracksTower.getDefaultState().withProperty(BlockHorizontal.FACING, block.getValue(BlockHorizontal.FACING)));
                 getColony().getBuildingManager().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(pos), world);
