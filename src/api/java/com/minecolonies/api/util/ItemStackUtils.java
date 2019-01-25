@@ -2,6 +2,7 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.block.*;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.FUEL_SLOT;
 import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
@@ -178,15 +180,19 @@ public final class ItemStackUtils
      * @param placer the entity placer.
      * @return a list of stacks.
      */
-    public static List<ItemStack> getListOfStackForEntityInfo(final Template.EntityInfo entityInfo, final World world, final Entity placer)
+    public static List<ItemStorage> getListOfStackForEntityInfo(final Template.EntityInfo entityInfo, final World world, final Entity placer)
     {
         if (entityInfo != null)
         {
             final Entity entity = getEntityFromEntityInfoOrNull(entityInfo, world);
-
             if (entity != null)
             {
-                return getListOfStackForEntity(entity, placer);
+                final List<ItemStorage> reqs = getListOfStackForEntity(entity, placer);
+                if (EntityUtils.isEntityAtPosition(entity, world, placer))
+                {
+                    return Collections.emptyList();
+                }
+                return reqs;
             }
         }
         return Collections.emptyList();
@@ -198,33 +204,33 @@ public final class ItemStackUtils
      * @param placer the entity placer.
      * @return a list of stacks.
      */
-    public static List<ItemStack> getListOfStackForEntity(final Entity entity, final Entity placer)
+    public static List<ItemStorage> getListOfStackForEntity(final Entity entity, final Entity placer)
     {
         if (entity != null)
         {
-            final List<ItemStack> request = new ArrayList<>();
+            final List<ItemStorage> request = new ArrayList<>();
             if (entity instanceof EntityItemFrame)
             {
                 final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
                 if (!ItemStackUtils.isEmpty(stack))
                 {
                     ItemStackUtils.setSize(stack, 1);
-                    request.add(stack);
+                    request.add(new ItemStorage(stack));
                 }
-                request.add(new ItemStack(Items.ITEM_FRAME, 1));
+                request.add(new ItemStorage(new ItemStack(Items.ITEM_FRAME, 1)));
             }
             else if (entity instanceof EntityArmorStand)
             {
-                request.add(entity.getPickedResult(new RayTraceResult(placer)));
-                entity.getArmorInventoryList().forEach(request::add);
-                entity.getHeldEquipment().forEach(request::add);
+                request.add(new ItemStorage(entity.getPickedResult(new RayTraceResult(placer))));
+                entity.getArmorInventoryList().forEach(item -> request.add(new ItemStorage(item)));
+                entity.getHeldEquipment().forEach(item -> request.add(new ItemStorage(item)));
             }
             else if (!(entity instanceof EntityMob))
             {
-                request.add(entity.getPickedResult(new RayTraceResult(placer)));
+                request.add(new ItemStorage(entity.getPickedResult(new RayTraceResult(placer))));
             }
 
-            return request;
+            return request.stream().filter(stack -> !stack.getItemStack().isEmpty()).collect(Collectors.toList());
         }
         return Collections.emptyList();
     }
