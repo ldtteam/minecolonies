@@ -87,6 +87,10 @@ public final class BlockUtils
     public static IBlockState getSubstitutionBlockAtWorld(@NotNull final World world, @NotNull final BlockPos location)
     {
         final IBlockState filler = world.getBiome(location).fillerBlock;
+        if (filler.getBlock() == Blocks.SAND)
+        {
+            return Blocks.SANDSTONE.getDefaultState();
+        }
         if (filler.getBlock() instanceof BlockFalling)
         {
             return Blocks.DIRT.getDefaultState();
