@@ -73,6 +73,7 @@ public final class MobSpawnUtils
             mob.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(armor);
         }
         mob.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getHealthBasedOnRaidLevel(colony));
+        mob.setHealth(mob.getMaxHealth());
     }
 
     /**

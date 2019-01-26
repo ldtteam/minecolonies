@@ -48,9 +48,9 @@ public final class BackUpHelper
             @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
             final ZipOutputStream zos = new ZipOutputStream(fos);
 
-            for (int i = 1; i <= ColonyManager.getTopColonyId() + 1; i++)
+            for (int dim = 0; dim < FMLCommonHandler.instance().getMinecraftServerInstance().worlds.length; dim++)
             {
-                for (int dim = 0; dim < FMLCommonHandler.instance().getMinecraftServerInstance().worlds.length; dim++)
+                for (int i = 1; i <= ColonyManager.getTopColonyId() + 1; i++)
                 {
                     @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dim));
                     if (file.exists())
@@ -60,7 +60,6 @@ public final class BackUpHelper
                 }
             }
             addToZipFile(getSaveLocation().getName(), zos, saveDir);
-
             zos.close();
         }
         catch (final Exception e)

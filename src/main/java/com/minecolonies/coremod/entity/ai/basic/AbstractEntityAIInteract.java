@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  *
  * @param <J> the job type this AI has to do.
  */
-public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends AbstractEntityAICrafting<J>
+public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends AbstractEntityAISkill<J>
 {
     /**
      * The amount of xp the entity gains per block mined.

@@ -105,6 +105,12 @@ public class BuildingTownHall extends BuildingHome
         }
     }
 
+    @Override
+    public boolean canBeGathered()
+    {
+        return false;
+    }
+
     /**
      * ClientSide representation of the building.
      */

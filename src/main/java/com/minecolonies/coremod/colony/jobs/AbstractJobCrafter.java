@@ -103,7 +103,7 @@ public abstract class AbstractJobCrafter extends AbstractJob
         return getDataStore().getQueue();
     }
 
-    private List<IToken<?>> getAssignedTasksFromDataStore()
+    public List<IToken<?>> getAssignedTasksFromDataStore()
     {
         return getDataStore().getAssignedTasks();
     }
