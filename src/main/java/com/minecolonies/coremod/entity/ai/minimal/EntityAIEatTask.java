@@ -25,6 +25,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
+import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
@@ -367,9 +368,20 @@ public class EntityAIEatTask extends EntityAIBase
         final Colony colony = citizenData.getColony();
         placeToPath = colony.getBuildingManager().getBestRestaurant(citizen);
 
+        final int uncookedFood = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, ISFOOD);
+        boolean complained = false;
+        if (uncookedFood != -1)
+        {
+            complained = true;
+            chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.ai.wrongFood");
+        }
+
         if (placeToPath == null)
         {
-            chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.ai.noRestaurant");
+            if (!complained)
+            {
+                chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.ai.noRestaurant");
+            }
             return CHECK_FOR_FOOD;
         }
         // Reset AI when going to the restaurant to eat

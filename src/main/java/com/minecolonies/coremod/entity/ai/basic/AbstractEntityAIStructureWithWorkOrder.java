@@ -178,11 +178,11 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
             if (entityInfo != null)
             {
-                for (final ItemStack stack : ItemStackUtils.getListOfStackForEntityInfo(entityInfo, world, worker))
+                for (final ItemStorage stack : ItemStackUtils.getListOfStackForEntityInfo(entityInfo, world, worker))
                 {
-                    if (!ItemStackUtils.isEmpty(stack))
+                    if (!ItemStackUtils.isEmpty(stack.getItemStack()))
                     {
-                        buildingWorker.addNeededResource(stack, 1);
+                        buildingWorker.addNeededResource(stack.getItemStack(), 1);
                     }
                 }
             }

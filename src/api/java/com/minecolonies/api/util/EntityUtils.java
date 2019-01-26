@@ -1,11 +1,13 @@
 package com.minecolonies.api.util;
 
+import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
@@ -315,6 +317,21 @@ public final class EntityUtils
         }
 
         return EntityUtils.isLivingAtSite(entity, x, y, z, range);
+    }
+
+    /**
+     * Checks if a certain entity is in the world at a certain position already.
+     *
+     * @param entity the entity.
+     * @param world  the world.
+     * @return true if there.
+     */
+    public static boolean isEntityAtPosition(final Entity entity, final World world, final Entity placer)
+    {
+        final List<ItemStorage> existingReq = ItemStackUtils.getListOfStackForEntity(entity, placer);
+        return world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(entity.getPosition().add(1, 1, 1), entity.getPosition().add(-1, -1, -1)))
+                 .stream()
+                 .anyMatch(ent -> ent.posX == entity.posX && ent.posY == entity.posY && ent.posZ == entity.posZ && ItemStackUtils.getListOfStackForEntity(entity, placer).equals(existingReq));
     }
 
     /**
