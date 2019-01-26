@@ -36,7 +36,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -980,7 +979,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.spawning"));
 
         final Entity entity = ItemStackUtils.getEntityFromEntityInfoOrNull(entityInfo, world);
-        if (entity != null && !isEntityAtPosition(entity, world))
+        if (entity != null && !EntityUtils.isEntityAtPosition(entity, world, worker))
         {
             final List<ItemStack> request = new ArrayList<>();
 
@@ -1042,18 +1041,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         }
 
         return true;
-    }
-
-    /**
-     * Checks if a certain entity is in the world at a certain position already.
-     *
-     * @param entity the entity.
-     * @param world  the world.
-     * @return true if there.
-     */
-    private static boolean isEntityAtPosition(final Entity entity, final World world)
-    {
-        return !world.getEntitiesWithinAABB(entity.getClass(), new AxisAlignedBB(entity.posX, entity.posY, entity.posZ, entity.posX, entity.posY, entity.posZ)).isEmpty();
     }
 
     /**
