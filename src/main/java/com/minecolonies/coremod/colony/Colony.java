@@ -1454,4 +1454,13 @@ public class Colony implements IColony
     {
         return colonyTeamColor;
     }
+
+    /**
+     * Set the colony to be active.
+     * @param isActive if active.
+     */
+    public void setActive(final boolean isActive)
+    {
+        this.isActive = isActive;
+    }
 }
