@@ -187,12 +187,11 @@ public final class ItemStackUtils
             final Entity entity = getEntityFromEntityInfoOrNull(entityInfo, world);
             if (entity != null)
             {
-                final List<ItemStorage> reqs = getListOfStackForEntity(entity, placer);
                 if (EntityUtils.isEntityAtPosition(entity, world, placer))
                 {
                     return Collections.emptyList();
                 }
-                return reqs;
+                return getListOfStackForEntity(entity, placer);
             }
         }
         return Collections.emptyList();
