@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
@@ -16,7 +17,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingContainer;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
@@ -289,7 +289,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final int random = worker.getRandom().nextInt(buildingArray.length);
         final AbstractBuilding building = (AbstractBuilding) buildingArray[random];
 
-        if (building instanceof BuildingWareHouse || building instanceof BuildingTownHall)
+        if (!building.canBeGathered())
         {
             return null;
         }
@@ -371,7 +371,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         double countWeight = 0.0;
 
         final List<AbstractBuilding> buildings = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values().stream()
-                                                   .filter(building -> !(building instanceof BuildingWareHouse || building instanceof BuildingTownHall || building.isBeingGathered()))
+                                                   .filter(building -> building.canBeGathered() && !building.isBeingGathered())
                                                    .collect(Collectors.toList());
         Collections.shuffle(buildings);
         for (final AbstractBuilding building : buildings)
@@ -405,7 +405,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public static int workerRequiresItem(final AbstractBuilding building, final ItemStack stack, final List<ItemStorage> localAlreadyKept)
     {
-        return building.buildingRequiresItemForCrafting(stack, localAlreadyKept, false) ? 0 : building.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, false);
+        return building.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, false);
     }
 
     /**
@@ -640,7 +640,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType(), true);
         }
 
-        if (isInTileEntity(tileEntity, request.getRequest().getStack()))
+        if (gatherIfInTileEntity(tileEntity, request.getRequest().getStack()))
         {
             setDelay(DUMP_AND_GATHER_DELAY);
             return DELIVERY;
@@ -649,6 +649,28 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         ((BuildingDeliveryman) getOwnBuilding()).setBuildingToDeliver(null);
         job.finishRequest(false);
         return START_WORKING;
+    }
+
+
+    /**
+     * Finds the first @see ItemStack the type of {@code is}.
+     * It will be taken from the chest and placed in the worker inventory.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the stack.
+     *
+     * @param entity the tileEntity chest or building or rack.
+     * @param is     the itemStack.
+     * @return true if found the stack.
+     */
+    public boolean gatherIfInTileEntity(final TileEntity entity, final ItemStack is)
+    {
+        return is != null
+                 && InventoryFunctions
+                      .matchFirstInProviderWithAction(
+                        entity,
+                        stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true),
+                        (provider, index) -> InventoryUtils.transferXOfItemStackIntoNextFreeSlotFromProvider(provider, index, is.getCount() == 1 ? is.getMaxStackSize() : is.getCount(), new InvWrapper(worker.getInventoryCitizen()))
+                      );
     }
 
     /**

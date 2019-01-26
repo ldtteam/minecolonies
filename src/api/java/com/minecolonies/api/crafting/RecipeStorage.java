@@ -53,7 +53,7 @@ public class RecipeStorage implements IRecipeStorage
      * @param primaryOutput   the primary output of the recipe.
      * @param intermediate    the intermediate to use (e.g furnace).
      */
-    public RecipeStorage(final IToken token, final List<ItemStack> input, final int gridSize, final ItemStack primaryOutput, final Block intermediate)
+    public RecipeStorage(final IToken token, final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate)
     {
         this.input = Collections.unmodifiableList(input);
         this.primaryOutput = primaryOutput;
@@ -93,6 +93,7 @@ public class RecipeStorage implements IRecipeStorage
         return items;
     }
 
+    @NotNull
     @Override
     public ItemStack getPrimaryOutput()
     {
@@ -218,10 +219,7 @@ public class RecipeStorage implements IRecipeStorage
                 freeSpace+= handler.getSlots() - InventoryUtils.getAmountOfStacksInItemHandler(handler);
             }
 
-            if(freeSpace < secondaryStacks.size() - getInput().size())
-            {
-                return false;
-            }
+            return freeSpace >= secondaryStacks.size() - getInput().size();
         }
         return true;
     }
@@ -234,7 +232,7 @@ public class RecipeStorage implements IRecipeStorage
     @Override
     public boolean fullfillRecipe(final List<IItemHandler> handlers)
     {
-        if(!checkForFreeSpace(handlers) || !canFullFillRecipe(handlers.toArray(new IItemHandler[handlers.size()])))
+        if(!checkForFreeSpace(handlers) || !canFullFillRecipe(handlers.toArray(new IItemHandler[0])))
         {
             return false;
         }

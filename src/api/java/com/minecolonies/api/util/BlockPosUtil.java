@@ -234,7 +234,7 @@ public final class BlockPosUtil
     {
         return sender.getBlockState(blockPos).getBlock() != Blocks.AIR
                  && !sender.getBlockState(blockPos).getMaterial().isLiquid()
-                 && !sender.getBlockState(blockPos.up()).getMaterial().isLiquid()
+                 && !sender.getBlockState(blockPos.down()).getMaterial().isLiquid()
           && sender.getWorldBorder().contains(blockPos);
     }
 

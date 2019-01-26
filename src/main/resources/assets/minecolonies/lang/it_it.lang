@@ -630,6 +630,7 @@ com.minecolonies.coremod.gui.workerHuts.listRecipes=Lista delle ricette
 com.minecolonies.coremod.resolvers.crafter.private=Crafting
 com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOn=Replant (on)
 com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOff=Replant (off)
+com.minecolonies.coremod.resolvers.crafter.public=Crafter
 
 com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe=You have not learned this recipe yet!
 
@@ -832,5 +833,14 @@ tile.minecolonies.blockHutCombatAcademy.name=Academia del combattimento
 com.minecolonies.coremod.gui.workerHuts.CombatAcademy=Accademia del combattimento
 item.santa_hat.name=Cappello di Babbo Natale
 
+com.minecolonies.coremod.gui.workerHuts.Sawmill=Sawmill
+tile.minecolonies.blockHutSawmill.name=Sawmill
+com.minecolonies.coremod.recipe.unable=Unable to store the blueprint. Either the %s has no space for any more blueprints, or the blueprint doesn't correspond with its profession.
+com.minecolonies.coremod.request.crafting=Crafter
 entity.builder.messageBuildersTooFar=Non c'è un muratore abbastanza vicino per lavorare a questa costruzione, assegna manualmente un muratore nella impostazione della costruzione o costruiscilo più vicino ad un esistente muratore!
+com.minecolonies.coremod.baker.noRecipe=Please tell me which recipe you want me to prepare in the Bakery!
+com.minecolonies.coremod.request.compostable=Compostable
+com.minecolonies.coremod.request.fertilizer=Fertilizer
+com.minecolonies.coremod.gui.workerHuts.composter=Composter Hut
+com.minecolonies.coremod.furnaceUser.noFuel=Please tell me what kind of fuel to use in my furnace!
 

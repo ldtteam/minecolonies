@@ -41,13 +41,15 @@ public class JobRegistry
     private static final String MAPPING_ARCHER         = "ArcherTraining";
     private static final String MAPPING_COMBAT         = "CombatTraining";
     private static final String MAPPING_SAWMILL        = "Sawmill";
+    private static final String MAPPING_BLACKSMITH     = "Blacksmith";
+    private static final String MAPPING_STONEMASON     = "Stonemason";
+    private static final String MAPPING_STONE_SMELTERY = "StoneSmeltery";
 
     /**
      * Map to resolve names to class.
      */
     @NotNull
     private static final BiMap<String, Class<? extends AbstractJob>> nameToClassMap = HashBiMap.create();
-
     //fix for the annotation
     static
     {
@@ -72,6 +74,9 @@ public class JobRegistry
         addMapping(MAPPING_ARCHER, JobArcherTraining.class);
         addMapping(MAPPING_COMBAT, JobCombatTraining.class);
         addMapping(MAPPING_SAWMILL, JobSawmill.class);
+        addMapping(MAPPING_BLACKSMITH, JobBlacksmith.class);
+        addMapping(MAPPING_STONEMASON, JobStonemason.class);
+        addMapping(MAPPING_STONE_SMELTERY, JobStoneSmeltery.class);
     }
 
     /**
@@ -81,7 +86,7 @@ public class JobRegistry
     {
         /*
          * Intentionally left empty.
-          */
+         */
     }
 
     /**

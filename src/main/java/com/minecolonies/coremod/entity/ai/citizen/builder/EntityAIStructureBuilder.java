@@ -149,6 +149,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         needsCurrently = neededItemsList.get(pickUpCount);
         pickUpCount++;
 
+        if (currentStructure == null)
+        {
+            return IDLE;
+        }
+
         if (currentStructure.getStage() != Structure.Stage.DECORATE)
         {
             needsCurrently = needsCurrently.and(stack -> !ItemStackUtils.isDecoration(stack));

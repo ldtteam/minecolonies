@@ -9,8 +9,6 @@ import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.controls.*;
 import com.minecolonies.blockout.views.Box;
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import net.minecraft.client.gui.GuiScreen;
@@ -68,11 +66,6 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     private static final int Y_OFFSET_EACH_TEXTFIELD = 10;
 
     /**
-     * Wrap after x amount of symbols the text.
-     */
-    //private static final int WRAP_AFTER_X = 30;
-
-    /**
      * Resolver string.
      */
     private static final String RESOLVER = "resolver";
@@ -81,10 +74,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
      * Resolver string.
      */
     private static final String DELIVERY_IMAGE = "deliveryImage";
-    /**
-     * The citizen of the request.
-     */
-    private final CitizenDataView citizen;
+
     /**
      * The request itself.
      */
@@ -99,15 +89,20 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     private int lifeCount = 0;
 
     /**
-     * Constructor for the window when the player wants to hire a worker for a certain job.
-     *
-     * @param c       the colony view.
-     * @param request the building position.
+     * The previous window.
      */
-    public WindowRequestDetail(@Nullable final CitizenDataView c, final IRequest request, final int colonyId)
+    private final Window prevWindow;
+
+    /**
+     * Open the request detail.
+     * @param prevWindow the window we're coming from.
+     * @param request the request.
+     * @param colonyId the colony id.
+     */
+    public WindowRequestDetail(@Nullable final Window prevWindow, final IRequest request, final int colonyId)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
-        this.citizen = c;
+        this.prevWindow = prevWindow;
         this.request = request;
         this.colonyId = colonyId;
     }
@@ -218,13 +213,6 @@ public class WindowRequestDetail extends Window implements ButtonHandler
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        if (citizen != null)
-        {
-            MineColonies.proxy.showCitizenWindow(citizen);
-        }
-        else
-        {
-            MineColonies.proxy.openClipBoardWindow(colonyId);
-        }
+        prevWindow.open();
     }
 }

@@ -64,7 +64,7 @@ entity.minecolonies.ChiefBarbarian.name=Barbarenhäuptling
 entity.ChiefBarbarian.name=Barbarenhäuptling
 death.attack.entity.Barbarian=%d wurde durch einen Barbaren kurz und klein gehackt!
 death.attack.entity.ChiefBarbarian=%d wurde durch einen großen Häuptling geschreddert!
-death.attack.entity.ArcherBarbarian=%d wurde durch einen Barbaren-Bogenschützen ruiniert!
+death.attack.entity.ArcherBarbarian=%d wurde durch einen Barbaren-Bogenschützen niedergemacht
 entity.ArcherBarbarian.name=Barbaren-Bogenschütze
 achievement.supply=Ein neuer Anfang
 achievement.supply.desc=Stocke auf
@@ -630,6 +630,7 @@ com.minecolonies.coremod.gui.workerHuts.listRecipes=Erlernte Rezepte
 com.minecolonies.coremod.resolvers.crafter.private=Herstellung
 com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOn=Wieder einpflanzen (an)
 com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOff=Wieder einpflanzen (aus)
+com.minecolonies.coremod.resolvers.crafter.public=Crafter
 
 com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe=Du hast dieses Rezept noch nicht gelernt!
 
@@ -832,4 +833,14 @@ tile.minecolonies.blockHutCombatAcademy.name=Kampfschule
 com.minecolonies.coremod.gui.workerHuts.CombatAcademy=Kampfschule
 item.santa_hat.name=Nikolausmütze
 
+com.minecolonies.coremod.gui.workerHuts.Sawmill=Sawmill
+tile.minecolonies.blockHutSawmill.name=Sawmill
+com.minecolonies.coremod.recipe.unable=Unable to store the blueprint. Either the %s has no space for any more blueprints, or the blueprint doesn't correspond with its profession.
+com.minecolonies.coremod.request.crafting=Crafter
 entity.builder.messageBuildersTooFar=Es ist kein Bauarbeiter nahe genug, um an diesem Gebäude zu arbeiten. Beauftrage einen Bauarbeiter Manuell im Baumenü oder baue näher an deinen existierenden Bauarbeitern!
+com.minecolonies.coremod.baker.noRecipe=Please tell me which recipe you want me to prepare in the Bakery!
+com.minecolonies.coremod.request.compostable=Compostable
+com.minecolonies.coremod.request.fertilizer=Fertilizer
+com.minecolonies.coremod.gui.workerHuts.composter=Composter Hut
+com.minecolonies.coremod.furnaceUser.noFuel=Please tell me what kind of fuel to use in my furnace!
+

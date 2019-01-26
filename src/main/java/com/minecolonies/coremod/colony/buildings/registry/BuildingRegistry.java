@@ -5,7 +5,7 @@ import com.google.common.collect.HashBiMap;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
-import com.minecolonies.coremod.blocks.BlockHutSawmill;
+import com.minecolonies.coremod.blocks.BlockPostBox;
 import com.minecolonies.coremod.blocks.huts.*;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -62,13 +62,11 @@ public class BuildingRegistry
     static
     {
         addMapping("Baker", BuildingBaker.class, BuildingBaker.View.class, BlockHutBaker.class);
-        addMapping("Blacksmith", BuildingBlacksmith.class, BuildingBlacksmith.View.class, BlockHutBlacksmith.class);
         addMapping("Builder", BuildingBuilder.class, BuildingBuilder.View.class, BlockHutBuilder.class);
         addMapping("Home", BuildingHome.class, BuildingHome.View.class, BlockHutCitizen.class);
         addMapping("Farmer", BuildingFarmer.class, BuildingFarmer.View.class, BlockHutFarmer.class);
         addMapping("Lumberjack", BuildingLumberjack.class, BuildingLumberjack.View.class, BlockHutLumberjack.class);
         addMapping("Miner", BuildingMiner.class, BuildingMiner.View.class, BlockHutMiner.class);
-        addMapping("Stonemason", BuildingStonemason.class, BuildingStonemason.View.class, BlockHutStonemason.class);
         addMapping("TownHall", BuildingTownHall.class, BuildingTownHall.View.class, BlockHutTownHall.class);
         addMapping("Deliveryman", BuildingDeliveryman.class, BuildingDeliveryman.View.class, BlockHutDeliveryman.class);
         addMapping("Fisherman", BuildingFisherman.class, BuildingFisherman.View.class, BlockHutFisherman.class);
@@ -87,6 +85,11 @@ public class BuildingRegistry
         addMapping("Archery", BuildingArchery.class, BuildingArchery.View.class, BlockHutArchery.class);
         addMapping("CombatAcademy", BuildingCombatAcademy.class, BuildingCombatAcademy.View.class, BlockHutCombatAcademy.class);
         addMapping("Sawmill", BuildingSawmill.class, BuildingSawmill.View.class, BlockHutSawmill.class);
+        addMapping("Blacksmith", BuildingBlacksmith.class, BuildingBlacksmith.View.class, BlockHutBlacksmith.class);
+        addMapping("Stonemason", BuildingStonemason.class, BuildingStonemason.View.class, BlockHutStonemason.class);
+        addMapping("Postbox", PostBox.class, PostBox.View.class, BlockPostBox.class);
+        addMapping("StoneSmeltery", BuildingStoneSmeltery.class, BuildingStoneSmeltery.View.class, BlockHutStoneSmeltery.class);
+
     }
 
     /**
@@ -231,7 +234,7 @@ public class BuildingRegistry
             Log.getLogger().error(String.format("Unknown Building type '%s' or missing constructor of proper format.", parent.getClass().getName()), exception);
         }
 
-        if (building != null && parent.getWorld() != null)
+        if (building != null && parent.getWorld() != null && !(building instanceof PostBox))
         {
             final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
             final StructureWrapper wrapper = new StructureWrapper(parent.getWorld(), workOrder.getStructureName());

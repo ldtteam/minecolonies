@@ -86,7 +86,9 @@ public final class RaiderConstants
     public static final double CHIEF_ARMOR                 = 8D;
     public static final double BARBARIAN_BASE_HEALTH       = 5;
     public static final double BARBARIAN_HEALTH_MULTIPLIER = 0.2;
-    
+    public static final double ATTACK_SPEED_DIVIDER = 3;
+
+
     /**
      * Private constructor to hide implicit one.
      */
