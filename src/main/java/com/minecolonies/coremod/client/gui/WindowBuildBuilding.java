@@ -254,11 +254,11 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
 
             if (entityInfo != null)
             {
-                for (final ItemStack stack : ItemStackUtils.getListOfStackForEntityInfo(entityInfo, world, Minecraft.getMinecraft().player))
+                for (final ItemStorage stack : ItemStackUtils.getListOfStackForEntityInfo(entityInfo, world, Minecraft.getMinecraft().player))
                 {
-                    if (!ItemStackUtils.isEmpty(stack))
+                    if (!ItemStackUtils.isEmpty(stack.getItemStack()))
                     {
-                        addNeededResource(stack, 1);
+                        addNeededResource(stack.getItemStack(), 1);
                     }
                 }
             }
