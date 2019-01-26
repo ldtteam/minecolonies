@@ -20,6 +20,9 @@ repositories {
         name 'LDTTeam - Modding'
         url 'https://ldtteam.jfrog.io/ldtteam/modding/'
     }
+    flatDir {
+        dirs 'libs'
+    }
 }
 
 apply plugin: 'idea'
