@@ -60,7 +60,7 @@ public final class MinecoloniesPlacementHandlers
         PlacementHandlers.handlers.add(new PlacementHandlers.FlowerPotPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.BlockGrassPathPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.StairBlockPlacementHandler());
-        PlacementHandlers.handlers.add(new BlockSolidSubstitutionPlacementHandler());
+        PlacementHandlers.handlers.add(new PlacementHandlers.BlockSolidSubstitutionPlacementHandler());
         PlacementHandlers.handlers.add(new ChestPlacementHandler());
         PlacementHandlers.handlers.add(new WayPointBlockPlacementHandler());
         PlacementHandlers.handlers.add(new RackPlacementHandler());
@@ -163,52 +163,6 @@ public final class MinecoloniesPlacementHandlers
                     itemList.add(stack);
                 }
             }
-            return itemList;
-        }
-    }
-
-    public static class BlockSolidSubstitutionPlacementHandler implements IPlacementHandler
-    {
-        @Override
-        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
-        {
-            return blockState.getBlock() instanceof BlockSolidSubstitution;
-        }
-
-        @Override
-        public Object handle(
-          @NotNull final World world,
-          @NotNull final BlockPos pos,
-          @NotNull final IBlockState blockState,
-          @Nullable final NBTTagCompound tileEntityData,
-          final boolean complete,
-          final BlockPos centerPos)
-        {
-            final IBlockState newBlockState = BlockUtils.getSubstitutionBlockAtWorld(world, pos);
-            if (complete)
-            {
-                if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
-                {
-                    return ActionProcessingResult.DENY;
-                }
-            }
-            else
-            {
-                if (!world.setBlockState(pos, newBlockState, UPDATE_FLAG))
-                {
-                    return ActionProcessingResult.DENY;
-                }
-            }
-
-            return newBlockState;
-        }
-
-        @Override
-        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
-        {
-            final IBlockState newBlockState = BlockUtils.getSubstitutionBlockAtWorld(world, pos);
-            final List<ItemStack> itemList = new ArrayList<>();
-            itemList.add(BlockUtils.getItemStackFromBlockState(newBlockState));
             return itemList;
         }
     }
