@@ -1,13 +1,13 @@
 {
   "credit": "Made with Blockbench",
   "textures": {
-    "0": "blocks/dirt_podzol_top",
-    "1": "blocks/door_iron_lower",
-    "2": "blocks/hay_block_side",
-    "3": "blocks/hay_block_top",
-    "4": "blocks/planks_oak",
-    "5": "blocks/iron_block",
-    "particle": "blocks/dirt_podzol_top"
+    "0": "minecraft:blocks/dirt_podzol_top",
+    "1": "minecraft:blocks/door_iron_lower",
+    "2": "minecraft:blocks/hay_block_side",
+    "3": "minecraft:blocks/hay_block_top",
+    "4": "minecraft:blocks/planks_oak",
+    "5": "minecraft:blocks/iron_block",
+    "particle": "minecraft:blocks/dirt_podzol_top"
   },
   "elements": [
     {
@@ -65,8 +65,8 @@
     },
     {
       "name": "bucket",
-      "from": [9, 0, 1],
-      "to": [10, 7, 6],
+      "from": [9, 0, 2],
+      "to": [10, 7, 5],
       "faces": {
         "north": {"uv": [1, 0, 2, 7], "texture": "#5"},
         "east": {"uv": [1, 0, 6, 7], "texture": "#5"},
@@ -78,8 +78,8 @@
     },
     {
       "name": "bucket",
-      "from": [14, 0, 1],
-      "to": [15, 7, 6],
+      "from": [14, 0, 2],
+      "to": [15, 7, 5],
       "faces": {
         "north": {"uv": [1, 0, 2, 7], "texture": "#5"},
         "east": {"uv": [1, 0, 6, 7], "texture": "#5"},
@@ -92,14 +92,14 @@
     {
       "name": "bucket-bottom",
       "from": [10, 0, 2],
-      "to": [14, 6, 5],
+      "to": [14, 1, 5],
       "faces": {
         "down": {"uv": [2, 2, 6, 5], "texture": "#5"}
       }
     },
     {
       "name": "Sileage",
-      "from": [10, 0, 2],
+      "from": [10, 5, 2],
       "to": [14, 6, 5],
       "faces": {
         "up": {"uv": [0, 0, 4, 3], "texture": "#0"}
