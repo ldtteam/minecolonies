@@ -22,6 +22,9 @@
         </view>
     </dropdown>
 
+    <buttonimage id="cancel" size="14 15" pos="400 0"
+                 source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
+
     <list id="resources" size="80% 80%" pos="30 20">
         <box size="100% 30" linewidth="2">
             <itemicon id="resourceIcon" size="24 24" pos="3 3"/>
@@ -29,9 +32,9 @@
             <label id="resourceQuantity" align="MIDDLE_RIGHT" size="12 12" pos="20 0" color="white"/>
         </box>
     </list>
-    <buttonimage id="cancel" align="TOP_MIDDLE" size="129 17" pos="-120 220"
+    <buttonimage id="repair" align="TOP_MIDDLE" size="129 17" pos="-120 220"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 label="$(gui.cancel)" textcolor="black"/>
+                 label="$(com.minecolonies.coremod.gui.workerHuts.repair)" textcolor="black"/>
     <buttonimage id="build" align="TOP_MIDDLE" size="129 17" pos="10 220"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerHuts.upgrade)" textcolor="black"/>
