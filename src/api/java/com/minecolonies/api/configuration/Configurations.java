@@ -109,15 +109,9 @@ public class Configurations
 
         @Config.Comment("Should players be allowed to build their colonies over existing villages?")
         public boolean protectVillages         = false;
-        /* schematics usage */
-        @Config.Comment("Should the default schematics be ignored (from the jar)?")
-        public boolean ignoreSchematicsFromJar = false;
 
         @Config.Comment("Should player made schematics be allowed")
         public boolean allowPlayerSchematics = false;
-
-        @Config.Comment("Max amount of schematics to be cached on the server")
-        public int maxCachedSchematics = 100;
 
         @Config.Comment("Should players be allowed to change names? -1 for false, 0 for specific groups, 1 for true")
         public int allowGlobalNameChanges = 1;
@@ -272,6 +266,9 @@ public class Configurations
 
         @Config.Comment("AI Update rate, increase to improve performance. Default: 1")
         public int updateRate = 1;
+
+        @Config.Comment("Quantity of dirt per Compost filling. Default: 1")
+        public int dirtFromCompost = 1;
     }
 
     public static class Compatibility
