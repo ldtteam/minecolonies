@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.Colony;
@@ -348,6 +349,16 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         }
 
         return MINER_MINING_SHAFT;
+    }
+
+    @Override
+    protected void triggerMinedBlock(@NotNull final IBlockState blockToMine)
+    {
+        super.triggerMinedBlock(blockToMine);
+        if (ColonyManager.getCompatibilityManager().isLuckyBlock(new ItemStack(blockToMine.getBlock())))
+        {
+            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(ColonyManager.getCompatibilityManager().getRandomLuckyOre(), new InvWrapper(worker.getInventoryCitizen()));
+        }
     }
 
     private IAIState advanceLadder(final IAIState state)

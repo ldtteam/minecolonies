@@ -183,9 +183,6 @@ public class Configurations
         @Config.Comment("Min distance from world spawn")
         public int minDistanceFromWorldSpawn = 512;
 
-        @Config.Comment("Should the dman create resources out of hot air (Not implemented)")
-        public boolean deliverymanInfiniteResources = false;
-
         @Config.Comment("Amount of initial citizens")
         public int maxCitizens = 4;
 
@@ -269,6 +266,28 @@ public class Configurations
 
         @Config.Comment("Quantity of dirt per Compost filling. Default: 1")
         public int dirtFromCompost = 1;
+
+        @Config.Comment("Chance to get a lucky block in percent. Default: 1")
+        public int luckyBlockChance = 1;
+
+        @Config.Comment("The blocks where the miner has a chance to get a random ore.")
+        public String[] luckyBlocks = new String[]
+                                                {
+                                                  "minecraft:stone",
+                                                  "minecraft:cobblestone",
+                                                };
+
+        @Config.Comment("The random ores the miner can get separated by ! for rarity")
+        public String[] luckyOres = new String[]
+                                              {
+                                                "minecraft:coal_ore!64",
+                                                "minecraft:iron_ore!32",
+                                                "minecraft:gold_ore!16",
+                                                "minecraft:redstone_ore!8",
+                                                "minecraft:lapis_ore!4",
+                                                "minecraft:diamond_ore!2",
+                                                "minecraft:emerald_ore!1"
+                                              };
     }
 
     public static class Compatibility
