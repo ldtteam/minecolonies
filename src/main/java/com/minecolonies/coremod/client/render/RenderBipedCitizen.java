@@ -46,6 +46,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToMaleModelMap.put(Model.SMELTER, new ModelEntitySmelterMale());
         idToMaleModelMap.put(Model.STUDENT, new ModelEntityStudentMale());
         idToMaleModelMap.put(Model.CRAFTER, new ModelEntityCrafterMale());
+        idToMaleModelMap.put(Model.BLACKSMITH, new ModelEntityBlacksmithMale());
 
         idToFemaleModelMap.put(Model.NOBLE, new ModelEntityCitizenFemaleNoble());
         idToFemaleModelMap.put(Model.ARISTOCRAT, new ModelEntityCitizenFemaleAristocrat());
@@ -67,6 +68,8 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToFemaleModelMap.put(Model.SMELTER, new ModelEntitySmelterFemale());
         idToFemaleModelMap.put(Model.STUDENT, new ModelEntityCitizenFemaleCitizen());
         idToFemaleModelMap.put(Model.CRAFTER, new ModelEntityCrafterFemale());
+        idToFemaleModelMap.put(Model.BLACKSMITH, new ModelEntityCrafterFemale());
+
     }
 
     /**
@@ -211,7 +214,8 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         SMELTER("smelter", 1),
         COOK("cook", 1),
         STUDENT("student", 6),
-        CRAFTER("crafter", 1);
+        CRAFTER("crafter", 1),
+        BLACKSMITH("Blacksmith", 1);
 
         /**
          * String describing the citizen.
