@@ -33,5 +33,12 @@ public class EntityAIWorkCrusher extends AbstractEntityAIBasic<JobCrusher>
         worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                 + STRENGTH_MULTIPLIER_2 * worker.getCitizenData().getStrength());
         worker.setCanPickUpLoot(true);
+
+        //TODO GUI with all three blocks (cobble => Gravel, Gravel => Sand, Sand => Clay) and qty to be produced per day
+        //TODO building needs to store how much to do for each (off = 0)
+        //TODO AI checks if it has anything to do (else it complains)
+        //TODO If AI has something to do it async requests all inputs (with x amount per day, x qty also depends on building level)
+        //TODO worker hits the block on his worker block and after some time it produced 1/2 of the goal block.
+        //TODO 
     }
 }
