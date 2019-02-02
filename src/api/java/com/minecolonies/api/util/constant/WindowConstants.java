@@ -1091,6 +1091,41 @@ public final class WindowConstants
     public static final String BUTTON_REQUEST = "request";
 
     /**
+     * Id of the done button in the GUI.
+     */
+    public static final String BUTTON_DONE = "done";
+
+    /**
+     * Id of the citizen name in the GUI.
+     */
+    public static final String CITIZEN_LABEL = "citizen";
+
+    /**
+     * Id of the citizen list in the GUI.
+     */
+    public static final String CITIZEN_LIST = "unassigned";
+
+    /**
+     * Assign button of the gui.
+     */
+    public static final String CITIZEN_DONE = "done";
+
+    /**
+     * Link to the xml file of the window.
+     */
+    public static final String ASSIGN_CITIZEN_RESOURCE_SUFFIX = ":gui/windowAssignCitizen.xml";
+
+    /**
+     * Id of the job label in the GUI.
+     */
+    public static final String CITIZEN_JOB = "job";
+
+    /**
+     * Id of the job label in the GUI.
+     */
+    public static final String CITIZEN_LIVING = "living";
+
+    /**
      * public constructor to hide implicit public one.
      */
     private WindowConstants()

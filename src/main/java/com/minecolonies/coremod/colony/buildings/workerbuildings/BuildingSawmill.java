@@ -22,6 +22,10 @@ import com.minecolonies.coremod.colony.requestsystem.management.handlers.Resolve
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
+import com.structurize.coremod.blocks.decorative.BlockShingle;
+import com.structurize.coremod.blocks.decorative.BlockShingleSlab;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -124,6 +128,12 @@ public class BuildingSawmill extends AbstractBuildingCrafter
                 }
                 blocks++;
             }
+        }
+
+        final Item item = storage.getPrimaryOutput().getItem();
+        if (item instanceof ItemBlock && (((ItemBlock) item).getBlock() instanceof BlockShingle || ((ItemBlock) item).getBlock() instanceof BlockShingleSlab))
+        {
+            return true;
         }
 
         return amountOfValidBlocks > 0 && blocks/amountOfValidBlocks > MIN_PERCENTAGE_TO_CRAFT;
