@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -103,7 +104,13 @@ public class CrusherSetModeMessage extends AbstractMessage<CrusherSetModeMessage
             @Nullable final BuildingCrusher building = colony.getBuildingManager().getBuilding(message.buildingId, BuildingCrusher.class);
             if (building != null)
             {
-                building.setCrusherMode(BuildingCrusher.CrusherMode.values()[message.crusherMode], message.quantity);
+                int qty = message.quantity;
+                if (qty > building.getMaxDailyQuantity())
+                {
+                    qty = building.getMaxDailyQuantity();
+                    player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.crusher.toomuch", qty));
+                }
+                building.setCrusherMode(BuildingCrusher.CrusherMode.values()[message.crusherMode], qty);
             }
         }
     }

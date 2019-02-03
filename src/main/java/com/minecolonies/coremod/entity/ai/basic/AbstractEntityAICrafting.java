@@ -32,17 +32,17 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
     /**
      * Time the worker delays until the next hit.
      */
-    private static final int HIT_DELAY = 20;
+    protected static final int HIT_DELAY = 20;
 
     /**
      * Increase this value to make the product creation progress way slower.
      */
-    private static final int PROGRESS_MULTIPLIER = 50;
+    public static final int PROGRESS_MULTIPLIER = 50;
 
     /**
      * Max level which should have an effect on the speed of the worker.
      */
-    private static final int MAX_LEVEL = 50;
+    protected static final int MAX_LEVEL = 50;
 
     /**
      * Times the product needs to be hit.
@@ -57,17 +57,17 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
     /**
      * Max crafting count for current recipe.
      */
-    private int maxCraftingCount = 0;
+    protected int maxCraftingCount = 0;
 
     /**
      * Count of already executed recipes.
      */
-    private int craftCounter = 0;
+    protected int craftCounter = 0;
 
     /**
      * Progress of hitting the block.
      */
-    private int progress = 0;
+    protected int progress = 0;
 
     /**
      * The current request.
@@ -99,7 +99,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
      * Main method to decide on what to do.
      * @return the next state to go to.
      */
-    private IAIState decide()
+    protected IAIState decide()
     {
         if (job.getTaskQueue().isEmpty())
         {
