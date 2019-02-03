@@ -132,16 +132,6 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     public BuildingCrusher(final Colony c, final BlockPos l)
     {
         super(c, l);
-        if (super.recipes.isEmpty())
-        {
-            final IToken token1 = ColonyManager.getRecipeManager().checkOrAddRecipe(cobbleCrushing);
-            final IToken token2 = ColonyManager.getRecipeManager().checkOrAddRecipe(gravelCrushing);
-            final IToken token3 = ColonyManager.getRecipeManager().checkOrAddRecipe(sandCrushing);
-
-            addRecipe(token1);
-            addRecipe(token2);
-            addRecipe(token3);
-        }
     }
 
     /**
@@ -264,6 +254,17 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         this.dailyQuantity = compound.getInteger(TAG_DAILY);
         this.currentDailyQuantity = compound.getInteger(TAG_CURRENT_DAILY);
         this.crusherMode = CrusherMode.values()[compound.getInteger(TAG_MODE)];
+
+        if (super.recipes.isEmpty())
+        {
+            final IToken token1 = ColonyManager.getRecipeManager().checkOrAddRecipe(cobbleCrushing);
+            final IToken token2 = ColonyManager.getRecipeManager().checkOrAddRecipe(gravelCrushing);
+            final IToken token3 = ColonyManager.getRecipeManager().checkOrAddRecipe(sandCrushing);
+
+            addRecipe(token1);
+            addRecipe(token2);
+            addRecipe(token3);
+        }
     }
 
     @Override

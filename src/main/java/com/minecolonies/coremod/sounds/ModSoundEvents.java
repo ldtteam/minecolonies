@@ -35,11 +35,6 @@ public final class ModSoundEvents
     }
 
     /**
-     * The crusher sound for the crushing sound effect.
-     */
-    public static final SoundEvent crusher = ModSoundEvents.getSoundID("tile.crusher.crush");
-
-    /**
      * Private constructor to hide the implicit public one.
      */
     private ModSoundEvents()

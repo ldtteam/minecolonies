@@ -2851,16 +2851,5 @@
         "stream": false
       }
     ]
-  },
-
-  "tile.crusher.crush": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:tile/crusher/crush",
-        "stream": false
-      }
-    ]
   }
-
 }

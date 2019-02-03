@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.ai.citizen.crusher;
 
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.util.CraftingUtils;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
@@ -11,17 +10,14 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.network.messages.CrusherParticleEffectMessage;
-import com.minecolonies.coremod.sounds.ModSoundEvents;
 import com.minecolonies.coremod.util.SoundUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
@@ -106,17 +102,23 @@ public class EntityAIWorkCrusher<J extends AbstractJobCrafter> extends AbstractE
             return START_WORKING;
         }
 
+        final IAIState check = checkForItems(currentRecipeStorage);
         if (progress > MAX_LEVEL - Math.min(worker.getCitizenExperienceHandler().getLevel() + 1, MAX_LEVEL))
         {
             progress = 0;
-            final IAIState check = checkForItems(currentRecipeStorage);
+
             if (check == CRAFT)
             {
                 if (getState() != CRAFT)
                 {
                     crusherBuilding.setCurrentDailyQuantity(crusherBuilding.getCurrentDailyQuantity() + 1);
+                    if (crusherBuilding.getCurrentDailyQuantity() >= crusherBuilding.getCrusherMode().getSecond())
+                    {
+                        incrementActionsDoneAndDecSaturation();
+                    }
                 }
 
+                craftCounter++;
                 currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen());
                 worker.decreaseSaturationForContinuousAction();
                 worker.getCitizenExperienceHandler().addExperience(0.1);
@@ -124,15 +126,14 @@ public class EntityAIWorkCrusher<J extends AbstractJobCrafter> extends AbstractE
             else if (getState() != CRAFT)
             {
                 currentRecipeStorage = crusherBuilding.getCurrentRecipe();
-                final int requestQty = Math.min(crusherBuilding.getCrusherMode().getSecond() - crusherBuilding.getCurrentDailyQuantity(), STACKSIZE);
-
+                final int requestQty = Math.min((crusherBuilding.getCrusherMode().getSecond() - crusherBuilding.getCurrentDailyQuantity()) * 2, STACKSIZE);
                 if (requestQty <= 0)
                 {
                     return START_WORKING;
                 }
                 final ItemStack stack = currentRecipeStorage.getInput().get(0).copy();
                 stack.setCount(requestQty);
-                checkIfRequestForItemExistOrCreate(stack);
+                checkIfRequestForItemExistOrCreateAsynch(stack);
                 return START_WORKING;
             }
             else
@@ -140,8 +141,11 @@ public class EntityAIWorkCrusher<J extends AbstractJobCrafter> extends AbstractE
                 return check;
             }
         }
-        MineColonies.getNetwork().sendToAllTracking(new CrusherParticleEffectMessage(currentRecipeStorage.getInput().get(0).copy(), crusherBuilding.getID()), worker);
-        SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.BLOCK_STONE_BREAK);
+        if (check == CRAFT)
+        {
+            MineColonies.getNetwork().sendToAllTracking(new CrusherParticleEffectMessage(currentRecipeStorage.getInput().get(0).copy(), crusherBuilding.getID()), worker);
+            SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.BLOCK_STONE_BREAK);
+        }
         return getState();
     }
 
@@ -180,19 +184,24 @@ public class EntityAIWorkCrusher<J extends AbstractJobCrafter> extends AbstractE
 
         currentRequest = job.getCurrentTask();
         final IAIState nextState = crush();
-        craftCounter++;
         if (nextState == getState())
         {
             if (craftCounter >= maxCraftingCount)
             {
-                currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
+                final ItemStack primaryOutput = currentRecipeStorage.getPrimaryOutput();
+                primaryOutput.setCount(currentRequest.getRequest().getCount());
+                currentRequest.addDelivery(primaryOutput);
+                incrementActionsDoneAndDecSaturation();
+                maxCraftingCount = 0;
+                craftCounter = 0;
+                currentRecipeStorage = null;
+                return START_WORKING;
             }
-
-            incrementActionsDoneAndDecSaturation();
+        }
+        else
+        {
             maxCraftingCount = 0;
             craftCounter = 0;
-            currentRecipeStorage = null;
-            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
             return START_WORKING;
         }
         return getState();
