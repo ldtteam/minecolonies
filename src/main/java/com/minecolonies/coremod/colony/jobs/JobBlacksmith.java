@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.blacksmith.EntityAIWorkBlacksmith;
@@ -25,6 +26,13 @@ public class JobBlacksmith extends AbstractJobCrafter
     public String getName()
     {
         return "com.minecolonies.coremod.job.Blacksmith";
+    }
+
+    @NotNull
+    @Override
+    public RenderBipedCitizen.Model getModel()
+    {
+        return RenderBipedCitizen.Model.BLACKSMITH;
     }
 
     /**
