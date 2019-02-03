@@ -876,3 +876,5 @@ com.minecolonies.coremod.gui.homeHut.current=Current home: %d %d %d
 com.minecolonies.coremod.gui.homeHut.currently=Currently: %d blocks
 tile.minecolonies.blockHutCrusher.name=Crusher
 com.minecolonies.coremod.gui.workerHuts.Crusher=Crusher
+com.minecolonies.coremod.gui.workerHuts.crusherSettings=Settings
+com.minecolonies.coremod.gui.workerHuts.save=save

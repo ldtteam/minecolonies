@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The crusher job class.
  */
-public class JobCrusher extends AbstractJob
+public class JobCrusher extends AbstractJobCrafter
 {
     /**
      * Create a crusher job.

@@ -1,14 +1,17 @@
 package com.minecolonies.coremod.entity.ai.citizen.crusher;
 
+import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
+import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
- * Cook AI class.
+ * Crusher AI class.
  */
-public class EntityAIWorkCrusher extends AbstractEntityAIBasic<JobCrusher>
+public class EntityAIWorkCrusher<J extends AbstractJobCrafter> extends AbstractEntityAICrafting<JobCrusher>
 {
     /**
      * How often should charisma factor into the cook's skill modifier.
@@ -29,7 +32,9 @@ public class EntityAIWorkCrusher extends AbstractEntityAIBasic<JobCrusher>
     public EntityAIWorkCrusher(@NotNull final JobCrusher job)
     {
         super(job);
-        super.registerTargets();
+        super.registerTargets(
+          new AITarget(IDLE, START_WORKING)
+        );
         worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
                 + STRENGTH_MULTIPLIER_2 * worker.getCitizenData().getStrength());
         worker.setCanPickUpLoot(true);
@@ -39,6 +44,6 @@ public class EntityAIWorkCrusher extends AbstractEntityAIBasic<JobCrusher>
         //TODO AI checks if it has anything to do (else it complains)
         //TODO If AI has something to do it async requests all inputs (with x amount per day, x qty also depends on building level)
         //TODO worker hits the block on his worker block and after some time it produced 1/2 of the goal block.
-        //TODO 
+        //TODO particle effect on crushing
     }
 }
