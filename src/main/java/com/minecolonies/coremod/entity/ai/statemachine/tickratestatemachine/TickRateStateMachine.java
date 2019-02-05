@@ -47,6 +47,11 @@ public class TickRateStateMachine extends BasicStateMachine<TickingTransition>
             tickCounter = 1;
         }
 
+        if (!transitionMap.containsKey(getState()))
+        {
+            return;
+        }
+
         if (!eventTransitionMap.get(AIBlockingEventType.AI_BLOCKING).stream().anyMatch(this::checkTransition)
               && !eventTransitionMap.get(AIBlockingEventType.EVENT).stream().anyMatch(this::checkTransition)
               && !eventTransitionMap.get(AIBlockingEventType.STATE_BLOCKING).stream().anyMatch(this::checkTransition))
