@@ -416,6 +416,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 if (((ScarecrowTileEntity) entity).getOwnerId() != worker.getCitizenId())
                 {
+                    buildingFarmer.freeField(buildingFarmer.getCurrentField());
                     buildingFarmer.setCurrentField(null);
                     return getState();
                 }
