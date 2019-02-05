@@ -327,19 +327,22 @@ public class EventHandler
                 //Checks to see if player tries to sleep in a bed belonging to a Citizen, ancels the event, and Notifies Player that bed is occuppied
                 if (colony != null)
                 {
-                    final List<CitizenData> citizenList = colony.getCitizenManager().getCitizens();
-                    if (world.getBlockState(event.getPos()).getBlock().isBedFoot(world, event.getPos()))
+                    if (world.getBlockState(event.getPos()).getPropertyKeys().contains(BlockBed.PART))
                     {
-                        bedBlockPos = bedBlockPos.offset(world.getBlockState(event.getPos()).getValue(BlockBed.FACING));
-                    }
-                    //Searches through the nearest Colony's Citizen and sees if the bed belongs to a Citizen, and if the Citizen is asleep
-
-                    for (final CitizenData citizen : citizenList)
-                    {
-                        if (citizen.getBedPos().equals(bedBlockPos) && citizen.isAsleep())
+                        final List<CitizenData> citizenList = colony.getCitizenManager().getCitizens();
+                        if (world.getBlockState(event.getPos()).getBlock().isBedFoot(world, event.getPos()))
                         {
-                            event.setCanceled(true);
-                            LanguageHandler.sendPlayerMessage(player, "tile.bed.occupied");
+                            bedBlockPos = bedBlockPos.offset(world.getBlockState(event.getPos()).getValue(BlockBed.FACING));
+                        }
+                        //Searches through the nearest Colony's Citizen and sees if the bed belongs to a Citizen, and if the Citizen is asleep
+
+                        for (final CitizenData citizen : citizenList)
+                        {
+                            if (citizen.getBedPos().equals(bedBlockPos) && citizen.isAsleep())
+                            {
+                                event.setCanceled(true);
+                                LanguageHandler.sendPlayerMessage(player, "tile.bed.occupied");
+                            }
                         }
                     }
                 }
