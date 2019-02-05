@@ -440,18 +440,37 @@ public enum AIWorkerState implements IAIState
     /**
      * Execute the crafting action.
      */
-    CRAFT(true);
+    CRAFT(true),
 
+        /*
+### Crusher ###
+     */
+
+    /**
+     * Let the crusher crush blocks.
+     */
+    CRUSH(true),;
+
+    /**
+     * Is it okay to eat.
+     */
     private boolean isOkayToEat;
 
+    /**
+     * Create a new one.
+     * @param okayToEat if okay.
+     */
     AIWorkerState(final boolean okayToEat)
     {
         this.isOkayToEat = okayToEat;
     }
 
+    /**
+     * Method to check if it is okay.
+     * @return true if so.
+     */
     public boolean isOkayToEat()
     {
         return isOkayToEat;
     }
-
 }
