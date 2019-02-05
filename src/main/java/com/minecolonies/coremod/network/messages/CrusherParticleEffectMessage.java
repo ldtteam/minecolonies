@@ -53,6 +53,7 @@ public class CrusherParticleEffectMessage extends AbstractMessage<CrusherParticl
      */
     public CrusherParticleEffectMessage(final ItemStack stack, final BlockPos pos)
     {
+        super();
         this.stack = stack;
         this.posX = pos.getX() + 0.5;
         this.posY = pos.getY() + 0.5;
@@ -85,8 +86,8 @@ public class CrusherParticleEffectMessage extends AbstractMessage<CrusherParticl
 
         for (int i = 0; i < 5; ++i)
         {
-            Vec3d randomPos = new Vec3d((RAND.nextDouble() - 0.5D) * 0.1D, RAND.nextDouble() * 0.1D + 0.1D, 0.0D);
-            Vec3d randomOffset = new Vec3d((RAND.nextDouble() - 0.5D) * 0.1D, RAND.nextDouble() - 0.5D * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D);
+            final Vec3d randomPos = new Vec3d((RAND.nextDouble() - 0.5D) * 0.1D, RAND.nextDouble() * 0.1D + 0.1D, 0.0D);
+            final Vec3d randomOffset = new Vec3d((RAND.nextDouble() - 0.5D) * 0.1D, RAND.nextDouble() - 0.5D * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D);
             if (localStack.getHasSubtypes())
             {
                 world.spawnParticle(EnumParticleTypes.ITEM_CRACK,

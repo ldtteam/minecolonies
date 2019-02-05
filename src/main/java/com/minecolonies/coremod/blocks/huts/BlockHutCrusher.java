@@ -9,12 +9,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BlockHutCrusher extends AbstractBlockHut<BlockHutCrusher>
 {
-    public BlockHutCrusher()
-    {
-        //No different from Abstract parent
-        super();
-    }
-
     @NotNull
     @Override
     public String getName()
