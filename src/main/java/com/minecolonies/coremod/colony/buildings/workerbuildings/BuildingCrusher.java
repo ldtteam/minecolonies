@@ -44,9 +44,9 @@ public class BuildingCrusher extends AbstractBuildingCrafter
      */
     public enum CrusherMode
     {
-        COBBLESTONE,
         GRAVEL,
-        SAND
+        SAND,
+        CLAY
     }
 
     /**
@@ -121,7 +121,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     /**
      * The current productionmode.
      */
-    private CrusherMode crusherMode = CrusherMode.COBBLESTONE;
+    private CrusherMode crusherMode = CrusherMode.GRAVEL;
 
     /**
      * Instantiates a new crusher building.
@@ -142,9 +142,9 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     {
         switch(crusherMode)
         {
-            case GRAVEL:
-                return gravelCrushing;
             case SAND:
+                return gravelCrushing;
+            case CLAY:
                 return sandCrushing;
             default:
                 return cobbleCrushing;
@@ -297,7 +297,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         /**
          * The current production mode.
          */
-        private CrusherMode crusherMode = CrusherMode.COBBLESTONE;
+        private CrusherMode crusherMode = CrusherMode.GRAVEL;
 
         /**
          * Instantiate the crusher view.

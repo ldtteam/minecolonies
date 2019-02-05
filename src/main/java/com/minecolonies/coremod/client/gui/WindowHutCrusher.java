@@ -81,17 +81,17 @@ public class WindowHutCrusher extends AbstractWindowWorkerBuilding<BuildingCrush
      */
     private void switchCrushingMode(final Button crushingSettingsButton)
     {
-        if (crushingSettingsButton.getLabel().equals(Blocks.COBBLESTONE.getLocalizedName()))
+        if (crushingSettingsButton.getLabel().equals(Blocks.GRAVEL.getLocalizedName()))
         {
             this.mode = BuildingCrusher.CrusherMode.GRAVEL;
         }
-        else if (crushingSettingsButton.getLabel().equals(Blocks.GRAVEL.getLocalizedName()))
+        else if (crushingSettingsButton.getLabel().equals(Blocks.SAND.getLocalizedName()))
         {
             this.mode = BuildingCrusher.CrusherMode.SAND;
         }
         else
         {
-            this.mode = BuildingCrusher.CrusherMode.COBBLESTONE;
+            this.mode = BuildingCrusher.CrusherMode.CLAY;
         }
         setupSettings(crushingSettingsButton);
     }
@@ -103,17 +103,17 @@ public class WindowHutCrusher extends AbstractWindowWorkerBuilding<BuildingCrush
      */
     private void setupSettings(final Button crushingSettingsButton)
     {
-        if (this.mode == BuildingCrusher.CrusherMode.COBBLESTONE)
-        {
-            crushingSettingsButton.setLabel(Blocks.COBBLESTONE.getLocalizedName());
-        }
-        else if (this.mode == BuildingCrusher.CrusherMode.GRAVEL)
+        if (this.mode == BuildingCrusher.CrusherMode.GRAVEL)
         {
             crushingSettingsButton.setLabel(Blocks.GRAVEL.getLocalizedName());
         }
-        else
+        else if (this.mode == BuildingCrusher.CrusherMode.SAND)
         {
             crushingSettingsButton.setLabel(Blocks.SAND.getLocalizedName());
+        }
+        else
+        {
+            crushingSettingsButton.setLabel(Blocks.CLAY.getLocalizedName());
         }
     }
 
