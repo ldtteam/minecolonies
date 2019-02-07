@@ -60,7 +60,7 @@ public class BuildingHome extends AbstractBuilding
      * Interval at which the childen are created, in ticks.
      * Every 20 min it tries to spawn a child, 20min*60s*20ticks
      */
-    private int childCreationInterval = 2 * 60 * 20;
+    private int childCreationInterval = 1200;
 
     /**
      * The timer counting ticks to the next time creating a child
@@ -76,6 +76,8 @@ public class BuildingHome extends AbstractBuilding
     public BuildingHome(final Colony c, final BlockPos l)
     {
         super(c, l);
+        Random rand = new Random();
+        childCreationTimer = rand.nextInt(childCreationInterval);
     }
 
     @Override
@@ -223,6 +225,17 @@ public class BuildingHome extends AbstractBuilding
     }
 
     @Override
+    public void secondsWorldTick(@NotNull final TickEvent.WorldTickEvent event)
+    {
+        if (childCreationTimer > childCreationInterval)
+        {
+            childCreationTimer = 0;
+            trySpawnChild();
+        }
+        childCreationTimer++;
+    }
+
+    @Override
     public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
         //
@@ -238,122 +251,120 @@ public class BuildingHome extends AbstractBuilding
             // 'Capture' as many citizens into this house as possible
             addHomelessCitizens();
         }
+    }
 
-        if (childCreationTimer > childCreationInterval)
+    /**
+     * Try to spawn a new citizen as child.
+     */
+    public void trySpawnChild()
+    {
+        // Spawn a child when adults are present and the house has space, so level 3+
+        if (femalePresent && malePresent && colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getMaxCitizens())
         {
-            childCreationTimer = 0;
+            CitizenData mom = null;
+            CitizenData dad = null;
 
-            // Spawn a child when adults are present and the house has space, so level 3+
-            if (femalePresent && malePresent && colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getMaxCitizens())
+            for (CitizenData data : getAssignedCitizen())
             {
-                CitizenData mom = null;
-                CitizenData dad = null;
-
-                for (CitizenData data : getAssignedCitizen())
+                if (data.isFemale() && !data.isChild())
                 {
-                    if (data.isFemale() && !data.isChild())
-                    {
-                        mom = data;
-                    }
-                    else if (!data.isChild())
-                    {
-                        dad = data;
-                    }
-
-                    if (mom != null && dad != null)
-                    {
-                        break;
-                    }
+                    mom = data;
+                }
+                else if (!data.isChild())
+                {
+                    dad = data;
                 }
 
-                if (mom == null || dad == null)
+                if (mom != null && dad != null)
                 {
-                    return;
+                    break;
                 }
+            }
 
-                Log.getLogger().info("Spawning new citizen");
+            if (mom == null || dad == null)
+            {
+                return;
+            }
 
-                CitizenData newCitizen = colony.getCitizenManager().createAndRegisterNewCitizenData();
+            CitizenData newCitizen = colony.getCitizenManager().createAndRegisterNewCitizenData();
 
-                Random rand = new Random();
+            Random rand = new Random();
 
-                // Inheriting stats from parents + some randomness. Capped by happiness
-                int str = (mom.getStrength() + dad.getStrength()) / 2 + rand.nextInt(3) - rand.nextInt(3);
-                str = str > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : str;
+            // Inheriting stats from parents + some randomness. Capped by happiness
+            int str = (mom.getStrength() + dad.getStrength()) / 2 + rand.nextInt(3) - rand.nextInt(3);
+            str = str > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : str;
 
-                int cha = (mom.getCharisma() + dad.getCharisma()) / 2 + rand.nextInt(3) - rand.nextInt(3);
-                cha = cha > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : cha;
+            int cha = (mom.getCharisma() + dad.getCharisma()) / 2 + rand.nextInt(3) - rand.nextInt(3);
+            cha = cha > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : cha;
 
-                int dex = (mom.getDexterity() + dad.getDexterity()) / 2 + rand.nextInt(3) - rand.nextInt(3);
-                dex = dex > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : dex;
+            int dex = (mom.getDexterity() + dad.getDexterity()) / 2 + rand.nextInt(3) - rand.nextInt(3);
+            dex = dex > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : dex;
 
-                int end = (mom.getEndurance() + dad.getEndurance()) / 2 + rand.nextInt(3) - rand.nextInt(3);
-                end = end > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : end;
+            int end = (mom.getEndurance() + dad.getEndurance()) / 2 + rand.nextInt(3) - rand.nextInt(3);
+            end = end > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : end;
 
-                int intelligence = (mom.getIntelligence() + dad.getIntelligence()) / 2 + rand.nextInt(3) - rand.nextInt(3);
-                intelligence = intelligence > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : intelligence;
+            int intelligence = (mom.getIntelligence() + dad.getIntelligence()) / 2 + rand.nextInt(3) - rand.nextInt(3);
+            intelligence = intelligence > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : intelligence;
 
-                newCitizen.setIsChild(true);
-                newCitizen.setStrength(str);
-                newCitizen.setCharisma(cha);
-                newCitizen.setDexterity(dex);
-                newCitizen.setEndurance(end);
-                newCitizen.setIntelligence(intelligence);
+            newCitizen.setIsChild(true);
+            newCitizen.setStrength(str);
+            newCitizen.setCharisma(cha);
+            newCitizen.setDexterity(dex);
+            newCitizen.setEndurance(end);
+            newCitizen.setIntelligence(intelligence);
 
-                // Assign citizen to a house
-                if (assignCitizen(newCitizen))
+            // Assign citizen to a house
+            if (assignCitizen(newCitizen))
+            {
+                // New citizen name for this hut
+                String parentName;
+                if (rand.nextInt(2) == 1)
                 {
-                    // New citizen name for this hut
-                    String parentName;
-                    if (rand.nextInt(2) == 1)
-                    {
-                        parentName = mom.getName().split(" ")[2];
-                    }
-                    else
-                    {
-                        parentName = dad.getName().split(" ")[2];
-                    }
-
-                    String[] newName = newCitizen.getName().split(" ");
-                    newName[2] = parentName;
-                    newCitizen.setName(newName[0] + " " + newName[1] + " " + newName[2]);
-                    Log.getLogger().info("newcitizen name:" + newCitizen.getName());
+                    parentName = mom.getName().split(" ")[2];
                 }
                 else
                 {
-                    // Assign to a different citizen hut and adopt
-                    for (final AbstractBuilding build : colony.getBuildingManager().getBuildings().values())
-                    {
-                        if (!(build instanceof BuildingHome))
-                        {
-                            continue;
-                        }
-
-                        // Try assigning
-                        if (build.assignCitizen(newCitizen))
-                        {
-                            // Get Parent Name
-                            for (CitizenData data : build.getAssignedCitizen())
-                            {
-                                // Exclude child itself
-                                if (data.getId() != newCitizen.getId())
-                                {
-                                    String[] newName = newCitizen.getName().split(" ");
-                                    newName[2] = data.getName().split(" ")[2];
-                                    newCitizen.setName(newName[0] + " " + newName[1] + " " + newName[2]);
-                                    Log.getLogger().info("newcitizen name:" + newCitizen.getName());
-                                    break;
-                                }
-                            }
-                            break;
-                        }
-                    }
+                    parentName = dad.getName().split(" ")[2];
                 }
 
-                colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), this.getLocation());
+                String[] newName = newCitizen.getName().split(" ");
+                newName[2] = parentName;
+                newCitizen.setName(newName[0] + " " + newName[1] + " " + newName[2]);
+                Log.getLogger().info("newcitizen name:" + newCitizen.getName());
             }
+            else
+            {
+                // Assign to a different citizen hut and adopt
+                for (final AbstractBuilding build : colony.getBuildingManager().getBuildings().values())
+                {
+                    if (!(build instanceof BuildingHome))
+                    {
+                        continue;
+                    }
+
+                    // Try assigning
+                    if (build.assignCitizen(newCitizen))
+                    {
+                        // Get Parent Name
+                        for (CitizenData data : build.getAssignedCitizen())
+                        {
+                            // Exclude child itself
+                            if (data.getId() != newCitizen.getId())
+                            {
+                                String[] newName = newCitizen.getName().split(" ");
+                                newName[2] = data.getName().split(" ")[2];
+                                newCitizen.setName(newName[0] + " " + newName[1] + " " + newName[2]);
+                                Log.getLogger().info("newcitizen name:" + newCitizen.getName());
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+
+            colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), this.getLocation());
         }
-        childCreationTimer++;
     }
 
     @Override
