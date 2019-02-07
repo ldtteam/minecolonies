@@ -14,6 +14,7 @@ import net.minecraft.block.BlockOre;
 import net.minecraft.block.BlockRedstoneOre;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -26,13 +27,11 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.Constants.ORE_STRING;
 import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAP_LEAF;
@@ -65,9 +64,19 @@ public class CompatibilityManager implements ICompatibilityManager
     private final List<ItemStorage> compostableItems = new ArrayList<>();
 
     /**
+     * List of lucky ores which get dropped by the miner.
+     */
+    private final List<ItemStorage> luckyOres = new ArrayList<>();
+
+    /**
      * If discovery is finished already.
      */
     private boolean discoveredAlready = false;
+
+    /**
+     * Random obj.
+     */
+    private static final Random random = new Random();
 
     /**
      * Instantiates the compatibilityManager.
@@ -90,6 +99,7 @@ public class CompatibilityManager implements ICompatibilityManager
         }
         Log.getLogger().info("Finished discovering ores");
         discoverCompostableItems();
+        discoverLuckyOres();
 
         discoveredAlready = true;
     }
@@ -103,6 +113,31 @@ public class CompatibilityManager implements ICompatibilityManager
         }
 
         for (final String string : Configurations.gameplay.listOfCompostableItems)
+        {
+            if (itemStack.getItem().getRegistryName().toString().equals(string))
+            {
+                return true;
+            }
+            for (final int id : OreDictionary.getOreIDs(itemStack))
+            {
+                if (OreDictionary.getOreName(id).equals(string))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isLuckyBlock(final ItemStack itemStack)
+    {
+        if (itemStack.isEmpty())
+        {
+            return false;
+        }
+
+        for (final String string : Configurations.gameplay.luckyBlocks)
         {
             if (itemStack.getItem().getRegistryName().toString().equals(string))
             {
@@ -216,6 +251,17 @@ public class CompatibilityManager implements ICompatibilityManager
         return discoveredAlready;
     }
 
+    @Override
+    public ItemStack getRandomLuckyOre()
+    {
+        if (random.nextInt(ONE_HUNDRED_PERCENT) <= Configurations.gameplay.luckyBlockChance)
+        {
+            Collections.shuffle(luckyOres);
+            return luckyOres.get(0).getItemStack().copy();
+        }
+        return ItemStack.EMPTY;
+    }
+
     //------------------------------- Private Utility Methods -------------------------------//
 
     private void discoverOres(final String string)
@@ -306,6 +352,47 @@ public class CompatibilityManager implements ICompatibilityManager
               }).map(ItemStorage::new).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering compostables");
+    }
+
+    /**
+     * Run through all blocks and check if they match one of our lucky ores.
+     */
+    private void discoverLuckyOres()
+    {
+        if (luckyOres.isEmpty())
+        {
+            for (final String ore : Configurations.gameplay.luckyOres)
+            {
+                final String[] split = ore.split("!");
+                if (split.length < 2)
+                {
+                    Log.getLogger().warn("Wrong configured ore: " +  ore);
+                    continue;
+                }
+
+                final Item item = Item.getByNameOrId(split[0]);
+                if (item == null || item == Items.AIR)
+                {
+                    Log.getLogger().warn("Invalid lucky block: " + ore);
+                    continue;
+                }
+
+                final ItemStack stack = new ItemStack(item, 1);
+                try
+                {
+                    final int rarity = Integer.parseInt(split[1]);
+                    for (int i = 0; i < rarity; i++)
+                    {
+                        luckyOres.add(new ItemStorage(stack));
+                    }
+                }
+                catch (final NumberFormatException ex)
+                {
+                    Log.getLogger().warn("Ore has invalid rarity: " + ore);
+                }
+            }
+        }
+        Log.getLogger().info("Finished discovering lucky ores");
     }
 
     private static NBTTagCompound writeLeafSaplingEntryToNBT(final IBlockState state, final ItemStorage storage)

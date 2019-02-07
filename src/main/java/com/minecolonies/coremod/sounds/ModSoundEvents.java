@@ -21,6 +21,7 @@ public final class ModSoundEvents
      */
     @SuppressWarnings(Suppression.MAKE_PROTECTED)
     public static final List<AbstractWorkerSounds> handlers = new ArrayList<>();
+
     static
     {
         handlers.add(new FishermanSounds());
@@ -33,6 +34,7 @@ public final class ModSoundEvents
         handlers.add(new BakerSounds());
         handlers.add(new BuilderSounds());
     }
+
     /**
      * Private constructor to hide the implicit public one.
      */

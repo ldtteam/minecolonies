@@ -6,7 +6,6 @@ import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.inventory.api.CombinedItemHandler;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -26,17 +25,14 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
-import static com.minecolonies.api.util.constant.BuildingConstants.MIN_SLOTS_FOR_RECOGNITION;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CONTAINERS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PRIO;
 
