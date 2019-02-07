@@ -357,7 +357,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         super.triggerMinedBlock(blockToMine);
         if (ColonyManager.getCompatibilityManager().isLuckyBlock(new ItemStack(blockToMine.getBlock())))
         {
-            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(ColonyManager.getCompatibilityManager().getRandomLuckyOre(), new InvWrapper(worker.getInventoryCitizen()));
+            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(ColonyManager.getCompatibilityManager().getRandomLuckyOre(),
+              new InvWrapper(worker.getInventoryCitizen()));
         }
     }
 

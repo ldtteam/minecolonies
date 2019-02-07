@@ -31,9 +31,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
-import static com.minecolonies.api.util.constant.Constants.ORE_STRING;
-import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAP_LEAF;
 
 /**
@@ -366,7 +364,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 final String[] split = ore.split("!");
                 if (split.length < 2)
                 {
-                    Log.getLogger().warn("Wrong configured ore: " +  ore);
+                    Log.getLogger().warn("Wrong configured ore: " + ore);
                     continue;
                 }
 

@@ -11,8 +11,8 @@ import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.CMC_GUI_TOWNHALL_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Manage windows associated with Buildings.
@@ -51,8 +51,8 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
     private void buildClicked()
     {
         final String buttonLabel = buttonBuild.getLabel();
-        if(buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.cancelBuild"))
-                || buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.cancelUpgrade")))
+        if (buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.cancelBuild"))
+              || buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.cancelUpgrade")))
         {
             MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD, BlockPos.ORIGIN));
         }

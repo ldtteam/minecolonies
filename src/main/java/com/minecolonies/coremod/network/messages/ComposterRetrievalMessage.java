@@ -52,7 +52,7 @@ public class ComposterRetrievalMessage extends AbstractMessage<ComposterRetrieva
     /**
      * Creates a message which will be sent to set the retrieval setting in the composter.
      *
-     * @param building      the building view of the composter
+     * @param building the building view of the composter
      * @param retrieve whether or not dirt should be retrieved.
      */
     public ComposterRetrievalMessage(final BuildingComposter.View building, final boolean retrieve)
@@ -99,7 +99,6 @@ public class ComposterRetrievalMessage extends AbstractMessage<ComposterRetrieva
             {
                 ((BuildingComposter) building).setShouldRetrieveDirtFromCompostBin(message.retrieveDirt);
             }
-
         }
     }
 }

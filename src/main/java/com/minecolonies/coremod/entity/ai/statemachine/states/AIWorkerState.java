@@ -449,7 +449,8 @@ public enum AIWorkerState implements IAIState
     /**
      * Let the crusher crush blocks.
      */
-    CRUSH(true),;
+    CRUSH(true),
+    ;
 
     /**
      * Is it okay to eat.
@@ -458,6 +459,7 @@ public enum AIWorkerState implements IAIState
 
     /**
      * Create a new one.
+     *
      * @param okayToEat if okay.
      */
     AIWorkerState(final boolean okayToEat)

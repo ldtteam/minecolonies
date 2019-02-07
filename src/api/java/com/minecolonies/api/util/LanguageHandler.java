@@ -144,7 +144,7 @@ public final class LanguageHandler
     /**
      * Send message to a list of players.
      *
-     * @param players the list of players.
+     * @param players   the list of players.
      * @param component the text component..
      */
     public static void sendPlayersMessage(@Nullable final List<EntityPlayer> players, final ITextComponent component)

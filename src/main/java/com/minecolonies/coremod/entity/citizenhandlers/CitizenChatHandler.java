@@ -14,7 +14,10 @@ import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 
@@ -117,7 +120,13 @@ public class CitizenChatHandler
             final AbstractJob job = citizen.getCitizenJobHandler().getColonyJob();
             if (job != null)
             {
-                final ITextComponent component = new TextComponentTranslation("tile.blockHutTownHall.messageWorkerDead", new TextComponentTranslation(job.getName()), citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY, (int) citizen.posZ, damageSource.damageType);
+                final ITextComponent component = new TextComponentTranslation("tile.blockHutTownHall.messageWorkerDead",
+                  new TextComponentTranslation(job.getName()),
+                  citizen.getCitizenData().getName(),
+                  (int) citizen.posX,
+                  (int) citizen.posY,
+                  (int) citizen.posZ,
+                  damageSource.damageType);
                 LanguageHandler.sendPlayersMessage(
                   citizen.getCitizenColonyHandler().getColony().getMessageEntityPlayers(), component);
             }

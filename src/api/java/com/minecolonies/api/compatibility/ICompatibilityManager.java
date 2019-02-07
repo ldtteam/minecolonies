@@ -95,6 +95,7 @@ public interface ICompatibilityManager
 
     /**
      * If an itemStack is a lucky block which can result in an extra ore drop.
+     *
      * @param itemStack the stack to check.
      * @return true if so.
      */
@@ -102,6 +103,7 @@ public interface ICompatibilityManager
 
     /**
      * Get a random lucky ore from a luckyblock.
+     *
      * @return the lucky ore.
      */
     ItemStack getRandomLuckyOre();
