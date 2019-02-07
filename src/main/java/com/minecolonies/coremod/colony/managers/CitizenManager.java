@@ -464,7 +464,7 @@ public class CitizenManager implements ICitizenManager
             getCitizens().stream().filter(Objects::nonNull).forEach(CitizenData::updateCitizenEntityIfNecessary);
         }
 
-        //  Spawn initial 4 Citizens
+        //  Spawn initial Citizens
         if (colony.hasTownHall() && getCitizens().size() < INITIAL_CITIZENS)
         {
             int respawnInterval = Configurations.gameplay.citizenRespawnInterval * TICKS_SECOND;

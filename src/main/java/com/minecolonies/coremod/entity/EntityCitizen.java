@@ -979,7 +979,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @param width  Width
      * @param height Height
      */
-    public void setCiticenSize(final @NotNull float width, final @NotNull float height)
+    public void setCitizensize(final @NotNull float width, final @NotNull float height)
     {
         this.width = width;
         this.height = height;
@@ -1001,11 +1001,11 @@ public class EntityCitizen extends AbstractEntityCitizen
         if (isChild && !this.isChild)
         {
             tasks.addTask(50, new EntityAICitizenChild(this));
-            setCiticenSize((float) CITIZEN_WIDTH / 2, (float) CITIZEN_HEIGHT / 2);
+            setCitizensize((float) CITIZEN_WIDTH / 2, (float) CITIZEN_HEIGHT / 2);
         }
         else
         {
-            setCiticenSize((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT);
+            setCitizensize((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT);
         }
         this.isChild = isChild;
         this.getDataManager().set(DATA_IS_CHILD, isChild);
