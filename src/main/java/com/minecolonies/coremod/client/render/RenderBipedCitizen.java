@@ -153,18 +153,6 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         super.doRender(citizen, d, d1, d2, f, f1);
     }
 
-
-    /*
-    // Right way to scale the rendering
-
-    @Override
-    public void preRenderCallback(EntityCitizen entity, float partialTickTime)
-    {
-        final float scale = 1f;
-        GlStateManager.scale(scale, scale, scale);
-    }
-    */
-
     @Override
     protected void renderLivingAt(final EntityCitizen entityLivingBaseIn, final double x, final double y, final double z)
     {
