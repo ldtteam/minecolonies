@@ -73,6 +73,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
      * The sand input list.
      */
     private static final List<ItemStack> sandInput = new ArrayList<>();
+
     /*
      * Fill the input lists.
      */
@@ -102,7 +103,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     /**
      * The sand crushing recipe.
      */
-    private static final IRecipeStorage sandCrushing = StandardFactoryController.getInstance().getNewInstance(
+    private static final IRecipeStorage sandCrushing   = StandardFactoryController.getInstance().getNewInstance(
       TypeConstants.RECIPE,
       StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
       sandInput, 2, new ItemStack(Blocks.CLAY, 1), ModBlocks.blockHutCrusher);
@@ -135,12 +136,11 @@ public class BuildingCrusher extends AbstractBuildingCrafter
 
     /**
      * Get the recipe storage of the current mode.
-     *
      * @return the storage.
      */
     public IRecipeStorage getCurrentRecipe()
     {
-        switch (crusherMode)
+        switch(crusherMode)
         {
             case SAND:
                 return gravelCrushing;
@@ -218,7 +218,6 @@ public class BuildingCrusher extends AbstractBuildingCrafter
 
     /**
      * Calculate the max quantity to be crafted per day.
-     *
      * @return the max.
      */
     public int getMaxDailyQuantity()

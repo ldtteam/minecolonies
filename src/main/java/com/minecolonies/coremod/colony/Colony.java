@@ -1304,7 +1304,7 @@ public class Colony implements IColony
      */
     public NBTTagCompound getColonyTag()
     {
-        if (this.colonyTag == null || this.isActive)
+        if(this.colonyTag == null || this.isActive)
         {
             this.writeToNBT(new NBTTagCompound());
         }
@@ -1457,7 +1457,6 @@ public class Colony implements IColony
 
     /**
      * Set the colony to be active.
-     *
      * @param isActive if active.
      */
     public void setActive(final boolean isActive)

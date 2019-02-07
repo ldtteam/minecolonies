@@ -48,8 +48,8 @@ public class CrusherParticleEffectMessage extends AbstractMessage<CrusherParticl
     /**
      * Constructor to trigger an item particle message for crushing.
      *
-     * @param stack the stack.
-     * @param pos   the pos.
+     * @param stack         the stack.
+     * @param pos          the pos.
      */
     public CrusherParticleEffectMessage(final ItemStack stack, final BlockPos pos)
     {

@@ -22,15 +22,11 @@
     "facing=north": {
       "y": 270
     },
-    "base": [
-      {
-        "model": "minecolonies:blockhutswineherder"
-      }
-    ],
-    "overlay": [
-      {
-        "model": "minecolonies:blockhutswineherderitems"
-      }
-    ]
+    "base": [{
+      "model": "minecolonies:blockhutswineherder"
+    }],
+    "overlay": [{
+      "model": "minecolonies:blockhutswineherderitems"
+    }]
   }
 }

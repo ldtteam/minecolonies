@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.managers.interfaces.IStatisticAchievementManager;
 import net.minecraft.block.Block;
@@ -273,7 +274,6 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
 
     /**
      * Trigger that a block was succesfully mined.
-     *
      * @param blockToMine the mined blockState.
      */
     protected void triggerMinedBlock(@NotNull final IBlockState blockToMine)

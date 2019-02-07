@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.blocks;
 
-import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
+import com.minecolonies.coremod.blocks.decorative.*;
 import com.minecolonies.coremod.blocks.huts.*;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import net.minecraft.block.Block;
@@ -37,21 +37,21 @@ public final class ModBlocks
     public static        BlockHutField                  blockHutField;
     public static        BlockHutGuardTower             blockHutGuardTower;
     public static        BlockHutWareHouse              blockHutWareHouse;
-    public static BlockHutShepherd      blockHutShepherd;
-    public static BlockHutCowboy        blockHutCowboy;
-    public static BlockHutSwineHerder   blockHutSwineHerder;
-    public static BlockHutChickenHerder blockHutChickenHerder;
-    public static BlockHutBarracks      blockHutBarracks;
-    public static BlockHutBarracksTower blockHutBarracksTower;
-    public static BlockHutCook          blockHutCook;
-    public static BlockHutSmeltery      blockHutSmeltery;
-    public static BlockHutComposter     blockHutComposter;
-    public static BlockHutLibrary       blockHutLibrary;
-    public static BlockHutArchery       blockHutArchery;
-    public static BlockHutCombatAcademy blockHutCombatAcademy;
-    public static BlockHutSawmill       blockHutSawmill;
-    public static BlockHutStoneSmeltery blockHutStoneSmeltery;
-    public static BlockHutCrusher       blockHutCrusher;
+    public static        BlockHutShepherd               blockHutShepherd;
+    public static        BlockHutCowboy                 blockHutCowboy;
+    public static        BlockHutSwineHerder            blockHutSwineHerder;
+    public static        BlockHutChickenHerder          blockHutChickenHerder;
+    public static        BlockHutBarracks               blockHutBarracks;
+    public static        BlockHutBarracksTower          blockHutBarracksTower;
+    public static        BlockHutCook                   blockHutCook;
+    public static        BlockHutSmeltery               blockHutSmeltery;
+    public static        BlockHutComposter              blockHutComposter;
+    public static        BlockHutLibrary                blockHutLibrary;
+    public static        BlockHutArchery                blockHutArchery;
+    public static        BlockHutCombatAcademy          blockHutCombatAcademy;
+    public static        BlockHutSawmill                blockHutSawmill;
+    public static        BlockHutStoneSmeltery          blockHutStoneSmeltery;
+    public static        BlockHutCrusher                blockHutCrusher;
 
     /**
      * Utility blocks.

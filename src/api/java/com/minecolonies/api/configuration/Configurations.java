@@ -275,22 +275,22 @@ public class Configurations
 
         @Config.Comment("The blocks where the miner has a chance to get a random ore.")
         public String[] luckyBlocks = new String[]
-                                        {
-                                          "minecraft:stone",
-                                          "minecraft:cobblestone",
-                                        };
+                                                {
+                                                  "minecraft:stone",
+                                                  "minecraft:cobblestone",
+                                                };
 
         @Config.Comment("The random ores the miner can get separated by ! for rarity")
         public String[] luckyOres = new String[]
-                                      {
-                                        "minecraft:coal_ore!64",
-                                        "minecraft:iron_ore!32",
-                                        "minecraft:gold_ore!16",
-                                        "minecraft:redstone_ore!8",
-                                        "minecraft:lapis_ore!4",
-                                        "minecraft:diamond_ore!2",
-                                        "minecraft:emerald_ore!1"
-                                      };
+                                              {
+                                                "minecraft:coal_ore!64",
+                                                "minecraft:iron_ore!32",
+                                                "minecraft:gold_ore!16",
+                                                "minecraft:redstone_ore!8",
+                                                "minecraft:lapis_ore!4",
+                                                "minecraft:diamond_ore!2",
+                                                "minecraft:emerald_ore!1"
+                                              };
     }
 
     public static class Compatibility

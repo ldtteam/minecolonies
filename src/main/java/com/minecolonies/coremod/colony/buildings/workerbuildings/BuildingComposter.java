@@ -161,7 +161,6 @@ public class BuildingComposter extends AbstractFilterableListBuilding
 
     /**
      * If the composter should retrieve dirt and not compost from the compost bin.
-     *
      * @return true if so.
      */
     public boolean shouldRetrieveDirtFromCompostBin()
@@ -171,7 +170,6 @@ public class BuildingComposter extends AbstractFilterableListBuilding
 
     /**
      * Set if the composter should retrieve dirt and not compost from the compost bin.
-     *
      * @param shouldRetrieveDirt whether or not to retrieve dirt..
      */
     public void setShouldRetrieveDirtFromCompostBin(final boolean shouldRetrieveDirt)

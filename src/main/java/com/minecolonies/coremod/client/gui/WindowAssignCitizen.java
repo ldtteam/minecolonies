@@ -12,9 +12,9 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.AssignUnassignMessage;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -77,8 +77,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
 
         //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
-                     .filter(cit -> cit.getHomeBuilding() == null || !(colony.getBuilding(cit.getHomeBuilding()) instanceof BuildingBarracksTower.View) && !cit.getHomeBuilding()
-                                                                                                                                                              .equals(building.getID()))
+                     .filter(cit -> cit.getHomeBuilding() == null || !(colony.getBuilding(cit.getHomeBuilding()) instanceof BuildingBarracksTower.View) && !cit.getHomeBuilding().equals(building.getID()))
                      .sorted(Comparator.comparing(CitizenDataView::getName)).collect(Collectors.toList());
     }
 
@@ -134,6 +133,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
                         if (work != null)
                         {
                             homeString = LanguageHandler.format("com.minecolonies.coremod.gui.homeHut.currently", BlockPosUtil.getDistance2D(work, home));
+
                         }
                         else
                         {

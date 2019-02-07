@@ -57,6 +57,8 @@ public class ModelEntityStudentFemale extends ModelBiped
         setRotation(right, 0F, 0F, 0F);
 
 
+
+
         armCHorizontal = new ModelRenderer(this, 0, 56);
         armCHorizontal.addBox(0F, 0F, 0F, 16, 4, 4);
         armCHorizontal.setRotationPoint(-8F, 3.8F, -3.5F);
@@ -171,17 +173,18 @@ public class ModelEntityStudentFemale extends ModelBiped
 
         this.bipedBody.addChild(leftArmC);
         this.bipedBody.addChild(rightArmC);
+
     }
 
     @Override
     public void render(
       @NotNull final Entity entity,
-      final float limbSwing,
-      final float limbSwingAmount,
-      final float ageInTicks,
-      final float netHeadYaw,
-      final float headPitch,
-      final float scaleFactor)
+                       final float limbSwing,
+                       final float limbSwingAmount,
+                       final float ageInTicks,
+                       final float netHeadYaw,
+                       final float headPitch,
+                       final float scaleFactor)
     {
         super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
         setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
