@@ -34,6 +34,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.INITIAL_CITIZENS;
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
@@ -464,7 +465,7 @@ public class CitizenManager implements ICitizenManager
         }
 
         //  Spawn initial 4 Citizens
-        if (colony.hasTownHall() && getCitizens().size() < 4)
+        if (colony.hasTownHall() && getCitizens().size() < INITIAL_CITIZENS)
         {
             int respawnInterval = Configurations.gameplay.citizenRespawnInterval * TICKS_SECOND;
             respawnInterval -= (SECONDS_A_MINUTE * colony.getBuildingManager().getTownHall().getBuildingLevel());
@@ -474,18 +475,8 @@ public class CitizenManager implements ICitizenManager
                 // Make sure the initial citizen contain both genders
                 CitizenData newCitizen = createAndRegisterNewCitizenData();
 
-                boolean femaleExists = false;
-
-                for (CitizenData data : citizens.values())
-                {
-                    if (data.isFemale())
-                    {
-                        femaleExists = true;
-                        break;
-                    }
-                }
-
-                if (!femaleExists)
+                // 50 - 50 Female male ratio for initial citizens
+                if (citizens.size() % 2 == 0)
                 {
                     newCitizen.setIsFemale(true);
                 }
