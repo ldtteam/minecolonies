@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutCitizen;
@@ -76,7 +75,7 @@ public class BuildingHome extends AbstractBuilding
     public BuildingHome(final Colony c, final BlockPos l)
     {
         super(c, l);
-        Random rand = new Random();
+        final Random rand = new Random();
         childCreationTimer = rand.nextInt(childCreationInterval);
     }
 
@@ -286,9 +285,9 @@ public class BuildingHome extends AbstractBuilding
                 return;
             }
 
-            CitizenData newCitizen = colony.getCitizenManager().createAndRegisterNewCitizenData();
+            final CitizenData newCitizen = colony.getCitizenManager().createAndRegisterNewCitizenData();
 
-            Random rand = new Random();
+            final Random rand = new Random();
 
             // Inheriting stats from parents + some randomness. Capped by happiness
             int str = (mom.getStrength() + dad.getStrength()) / 2 + rand.nextInt(3) - rand.nextInt(3);
@@ -330,7 +329,6 @@ public class BuildingHome extends AbstractBuilding
                 String[] newName = newCitizen.getName().split(" ");
                 newName[2] = parentName;
                 newCitizen.setName(newName[0] + " " + newName[1] + " " + newName[2]);
-                Log.getLogger().info("newcitizen name:" + newCitizen.getName());
             }
             else
             {
@@ -346,7 +344,7 @@ public class BuildingHome extends AbstractBuilding
                     if (build.assignCitizen(newCitizen))
                     {
                         // Get Parent Name
-                        for (CitizenData data : build.getAssignedCitizen())
+                        for (final CitizenData data : build.getAssignedCitizen())
                         {
                             // Exclude child itself
                             if (data.getId() != newCitizen.getId())
@@ -354,7 +352,6 @@ public class BuildingHome extends AbstractBuilding
                                 String[] newName = newCitizen.getName().split(" ");
                                 newName[2] = data.getName().split(" ")[2];
                                 newCitizen.setName(newName[0] + " " + newName[1] + " " + newName[2]);
-                                Log.getLogger().info("newcitizen name:" + newCitizen.getName());
                                 break;
                             }
                         }
@@ -508,7 +505,7 @@ public class BuildingHome extends AbstractBuilding
     }
 
     /**
-     * Sets the child creation interval
+     * Sets the child creation interval in seconds
      */
     public void setCitizenCreationInterval(final int childCreationInterval)
     {
