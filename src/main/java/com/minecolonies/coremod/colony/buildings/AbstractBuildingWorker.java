@@ -122,7 +122,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
-        toKeep.put(ItemStackUtils.ISFOOD, new Tuple<>(getBuildingLevel() * 2, true));
+        toKeep.put(ItemStackUtils.CAN_EAT, new Tuple<>(getBuildingLevel() * 2, true));
         return toKeep;
     }
 
