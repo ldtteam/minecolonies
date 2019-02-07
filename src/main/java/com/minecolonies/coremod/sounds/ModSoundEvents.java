@@ -26,6 +26,7 @@ public final class ModSoundEvents
         handlers.add(new FishermanSounds());
         handlers.add(new DeliverymanSounds());
         handlers.add(new CitizenSounds());
+        handlers.add(new ChildrenSounds());
         handlers.add(new FarmerSounds());
         handlers.add(new KnightSounds());
         handlers.add(new ArcherSounds());

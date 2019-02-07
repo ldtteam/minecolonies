@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.NameConfiguration;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
@@ -36,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MAX_HEALTH;
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -99,6 +99,11 @@ public class CitizenData
      * Boolean gender, true = female, false = male.
      */
     private boolean female;
+
+    /**
+     * Whether the citizen is still a child
+     */
+    private boolean isChild = false;
 
     /**
      * Boolean paused, true = paused, false = working.
@@ -234,6 +239,7 @@ public class CitizenData
         name = compound.getString(TAG_NAME);
         female = compound.getBoolean(TAG_FEMALE);
         paused = compound.getBoolean(TAG_PAUSED);
+        isChild = compound.getBoolean(TAG_CHILD);
         textureId = compound.getInteger(TAG_TEXTURE);
 
         health = compound.getFloat(TAG_HEALTH);
@@ -468,27 +474,20 @@ public class CitizenData
     }
 
     /**
-     * Create a CitizenData given a CitizenEntity.
-     *
-     * @param entity Entity to initialize from.
+     * Initializes a new citizen, when not read from nbt
      */
-    public void initializeFromEntity(@NotNull final EntityCitizen entity)
+    public void initForNewCitizen()
     {
-        final Random rand = entity.getRNG();
-
-        setCitizenEntity(entity);
-
+        final Random rand = new Random();
         //Assign the gender before name
         female = rand.nextBoolean();
         paused = false;
         name = generateName(rand);
 
-        textureId = CompatibilityUtils.getWorld(entity).rand.nextInt(Integer.MAX_VALUE);
-        health = entity.getHealth();
-        maxHealth = entity.getMaxHealth();
+        health = BASE_MAX_HEALTH;
+        maxHealth = BASE_MAX_HEALTH;
         saturation = MAX_SATURATION;
         final int levelCap = (int) colony.getOverallHappiness();
-        @NotNull final Random random = new Random();
 
         if (levelCap <= 1)
         {
@@ -500,11 +499,11 @@ public class CitizenData
         }
         else
         {
-            intelligence = random.nextInt(levelCap - 1) + 1;
-            charisma = random.nextInt(levelCap - 1) + 1;
-            strength = random.nextInt(levelCap - 1) + 1;
-            endurance = random.nextInt(levelCap - 1) + 1;
-            dexterity = random.nextInt(levelCap - 1) + 1;
+            intelligence = rand.nextInt(levelCap - 1) + 1;
+            charisma = rand.nextInt(levelCap - 1) + 1;
+            strength = rand.nextInt(levelCap - 1) + 1;
+            endurance = rand.nextInt(levelCap - 1) + 1;
+            dexterity = rand.nextInt(levelCap - 1) + 1;
         }
         //Initialize the citizen skills and make sure they are never 0
 
@@ -576,6 +575,17 @@ public class CitizenData
     public boolean isFemale()
     {
         return female;
+    }
+
+    /**
+     * Sets wether this citizen is female.
+     *
+     * @param isFemale true if female
+     */
+    public void setIsFemale(@NotNull final boolean isFemale)
+    {
+        this.female = isFemale;
+        markDirty();
     }
 
     /**
@@ -753,7 +763,7 @@ public class CitizenData
 
         //The current citizen entity seems to be gone (either on purpose or the game unloaded the entity)
         //No biggy lets respawn an entity.
-        colony.getCitizenManager().spawnCitizen(this, colony.getWorld());
+        colony.getCitizenManager().spawnOrCreateCitizen(this, colony.getWorld());
 
         //Since we might have respawned an entity in an unloaded chunk (Townhall is not loaded)
         //We check if we created one or not.
@@ -833,6 +843,7 @@ public class CitizenData
         compound.setString(TAG_NAME, name);
         compound.setBoolean(TAG_FEMALE, female);
         compound.setBoolean(TAG_PAUSED, paused);
+        compound.setBoolean(TAG_CHILD, isChild);
         compound.setInteger(TAG_TEXTURE, textureId);
 
         //  Attributes
@@ -892,6 +903,8 @@ public class CitizenData
         buf.writeInt(getCitizenEntity().map(Entity::getEntityId).orElse(-1));
 
         buf.writeBoolean(paused);
+
+        buf.writeBoolean(isChild);
 
         buf.writeBoolean(homeBuilding != null);
         if (homeBuilding != null)
@@ -1343,5 +1356,92 @@ public class CitizenData
     {
         restartScheduled = false;
         LanguageHandler.sendPlayerMessage(originPlayerRestart, "com.minecolonies.coremod.gui.hiring.restartMessageDone", getName());
+    }
+
+    /**
+     * Set the child flag.
+     *
+     * @param isChild boolean
+     */
+    public void setIsChild(final boolean isChild)
+    {
+        this.isChild = isChild;
+        markDirty();
+    }
+
+    /**
+     * Is this citizen a child?
+     *
+     * @return boolean
+     */
+    public boolean isChild()
+    {
+        return isChild;
+    }
+
+    /**
+     * Set the strength of the citizen
+     *
+     * @param strength value to set
+     */
+    public void setStrength(@NotNull final int strength)
+    {
+        this.strength = strength;
+    }
+
+    /**
+     * Set the endurance of the citizen
+     *
+     * @param endurance value to set
+     */
+    public void setEndurance(@NotNull final int endurance)
+    {
+        this.endurance = endurance;
+    }
+
+    /**
+     * Set the charisma of the citizen
+     *
+     * @param charisma value to set
+     */
+    public void setCharisma(@NotNull final int charisma)
+    {
+        this.charisma = charisma;
+    }
+
+    /**
+     * Set the intelligence of the citizen
+     *
+     * @param intelligence value to set
+     */
+    public void setIntelligence(@NotNull final int intelligence)
+    {
+        this.intelligence = intelligence;
+    }
+
+    /**
+     * Set the dexterity of the citizen
+     *
+     * @param dexterity value to set
+     */
+    public void setDexterity(@NotNull final int dexterity)
+    {
+        this.dexterity = dexterity;
+    }
+
+    /**
+     * Get the max health
+     */
+    public double getMaxHealth()
+    {
+        return maxHealth;
+    }
+
+    /**
+     * Get the current healh
+     */
+    public double getHealth()
+    {
+        return health;
     }
 }

@@ -788,6 +788,7 @@ com.minecolonies.coremod.progress.resource_prod_built=§6 Producing resources co
 com.minecolonies.coremod.progress.food_prod_built=§6 Your town starts to flourish! To improve the productivity, you might want to upgrade the buildings.
 com.minecolonies.coremod.progress.four_citizen_employed=§6 All your initial settlers are now employed. To attract more settlers, you have to build or upgrade housing for them.
 com.minecolonies.coremod.progress.all_citizens_homed=§6 I see all your settlers have a nice home now. If you build or upgrade one more citizen hut, you will get a new settler, but beware this will attract barbarians.
+com.minecolonies.coremod.progress.four_citizens_spawned=§6 The last initial citizen arrived at your colony, to spawn new children build a citizen hut and assign a male and female citizen.
 com.minecolonies.coremod.progress.five_citizens_spawned=§6 A new settler arrived at your colony, and he brings word that barbarian spies have found the growing village. You might want to build a guard tower!
 com.minecolonies.coremod.progress.six_citizens_spawned=§6 A growing settlement means a growing responsibility. You should consider placing a restaurant to keep your settlers well fed.
 com.minecolonies.coremod.progress.seven_citizens_spawned=§6 Your citizens urge you to build a warehouse. This will lighten your backpack, and also so they may get their merchandise faster!

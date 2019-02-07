@@ -22,7 +22,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,6 +43,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements INp
     public static final DataParameter<String>   DATA_MODEL           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.STRING);
     public static final DataParameter<String>   DATA_RENDER_METADATA = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.STRING);
     public static final DataParameter<Boolean>  DATA_IS_ASLEEP       = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean>  DATA_IS_CHILD        = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BOOLEAN);
     public static final DataParameter<BlockPos> DATA_BED_POS         = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BLOCK_POS);
 
     /**
@@ -177,6 +177,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements INp
         dataManager.register(DATA_MODEL, RenderBipedCitizen.Model.SETTLER.name());
         dataManager.register(DATA_RENDER_METADATA, "");
         dataManager.register(DATA_IS_ASLEEP, false);
+        dataManager.register(DATA_IS_CHILD, false);
         dataManager.register(DATA_BED_POS, new BlockPos(0, 0, 0));
     }
 

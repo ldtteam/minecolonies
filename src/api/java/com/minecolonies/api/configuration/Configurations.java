@@ -198,6 +198,9 @@ public class Configurations
         @Config.Comment("Should citizen name tags be rendered?")
         public boolean alwaysRenderNameTag = true;
 
+        @Config.Comment("Child growth modifier, default on avg they take about 20min to grow. Setting to 2 = 2x as fast. Default value: 1")
+        public int growthModifier = 1;
+
         @Config.Comment("Should Guard Rangers benefit from Power/Smite/Bane of Arthropods enchants?")
         public boolean rangerEnchants = true;
 

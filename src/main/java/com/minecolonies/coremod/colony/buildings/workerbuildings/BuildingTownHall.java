@@ -60,6 +60,17 @@ public class BuildingTownHall extends BuildingHome
         return MAX_BUILDING_LEVEL;
     }
 
+    /**
+     * Townhall does not house any citizens.
+     *
+     * @return 0
+     */
+    @Override
+    public int getMaxInhabitants()
+    {
+        return 0;
+    }
+
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
