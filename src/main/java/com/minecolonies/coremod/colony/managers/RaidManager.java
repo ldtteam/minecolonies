@@ -243,7 +243,7 @@ public class RaidManager implements IRaiderManager
                           Mirror.NONE,
                           true);
                     }
-                    catch(final NullPointerException e)
+                    catch(final NullPointerException | ArrayIndexOutOfBoundsException e)
                     {
                         Log.getLogger().warn("Unable to retrieve backed up structure. This can happen when updating to a newer version!");
                     }
