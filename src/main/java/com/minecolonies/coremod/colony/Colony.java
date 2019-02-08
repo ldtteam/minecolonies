@@ -1157,8 +1157,8 @@ public class Colony implements IColony
          
         happinessTotal = happinessAverage + happinessData.getTotalHappinessModifier();  
         if (happinessTotal > HappinessData.MAX_HAPPINESS) 
-        { 
-            happinessTotal = HappinessData.MIN_HAPPINESS; 
+        {
+            happinessTotal = HappinessData.MAX_HAPPINESS;
         } 
         return happinessTotal; 
     }
