@@ -15,11 +15,13 @@ import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.inventory.GuiHandler;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.*;
+import com.minecolonies.coremod.util.TownHallRecipe;
 import com.structurize.coremod.client.gui.WindowBuildTool;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.ResourceLocation;
@@ -97,6 +99,16 @@ public class CommonProxy implements IProxy
     public static void registerBlocks(@NotNull final RegistryEvent.Register<Block> event)
     {
         ModBlocks.init(event.getRegistry());
+    }
+
+    /**
+     * Called when registering recipes.
+     * @param event the registery event for recipes.
+     */
+    @SubscribeEvent
+    public static void registerRecipes(@NotNull final RegistryEvent.Register<IRecipe> event)
+    {
+        event.getRegistry().register(new TownHallRecipe());
     }
 
     /**

@@ -39,6 +39,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.*;
+import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
@@ -63,12 +65,23 @@ import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.NbtTagConstants.FIRST_POS_STRING;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
+import static com.minecolonies.coremod.commands.colonycommands.DeleteColonyCommand.DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED;
 
 /**
  * Handles all forge events.
  */
 public class EventHandler
 {
+    /**
+     * String to abandon a colony.
+     */
+    private static final String ABANDON_COLONY_CONFIRM_COMMAND_SUGGESTED = "/mc colony ownerchange colony: %d player: [abandoned]";
+
+    /**
+     * String to add an officer to the colony.
+     */
+    private static final String ADD_OFFICER_COLONY_COMMAND_SUGGESTED = "/mc colony addofficer colony: %d player: %s";
+
     /**
      * Event when the debug screen is opened. Event gets called by displayed
      * text on the screen, we only need it when f3 is clicked.
@@ -515,10 +528,38 @@ public class EventHandler
 
     private static boolean canOwnerPlaceTownHallHere(final World world, @NotNull final EntityPlayer player, @NotNull final IColony colony, final BlockPos pos)
     {
-        if (!colony.isCoordInColony(world, pos) || colony.hasTownHall())
+        if (!colony.isCoordInColony(world, pos))
         {
+            final ITextComponent deleteButton = new TextComponentString("[DELETE]")
+                                                  .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+                                                    new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                                                      String.format(DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED,
+                                                        colony.getID(), true
+                                                    ))));
+            if (Configurations.gameplay.allowInfiniteColonies)
+            {
+                final ITextComponent abandonButton = new TextComponentString("[ABANDON]")
+                                                      .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD)
+                                                                  .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                                                                    String.format(ABANDON_COLONY_CONFIRM_COMMAND_SUGGESTED, colony.getID())))
+                                                                  .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                                                                    String.format(ADD_OFFICER_COLONY_COMMAND_SUGGESTED, colony.getID(), player.getName())))
+                                                      );
+                player.sendMessage(new TextComponentTranslation("tile.blockHutTownHall.messagePlacedAlreadyInfi"));
+                player.sendMessage(abandonButton);
+            }
+            else
+            {
+                player.sendMessage(new TextComponentTranslation("tile.blockHutTownHall.messagePlacedAlreadyDel"));
+            }
+            player.sendMessage(deleteButton);
+
             //  Players are currently only allowed a single colony
-            LanguageHandler.sendPlayerMessage(player, "tile.blockHutTownHall.messagePlacedAlready");
+            return false;
+        }
+        else if (colony.hasTownHall())
+        {
+            player.sendMessage(new TextComponentTranslation("tile.blockHutTownHall.messagePlacedAlready"));
             return false;
         }
 

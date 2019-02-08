@@ -20,7 +20,6 @@ tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
 tile.blockHut.messageNoPermissionPlace=You don't have permission to place hutes in %s.
 tile.blockHutTownHall.messageMaxSize=%d has reached max size
 tile.blockHutTownHall.messageColonistDead=The colonist %s has died at %d %d %d of %s!
-tile.blockHutTownHall.messagePlacedAlready=You have placed a Town Hall already
 tile.blockHutTownHall.messageInvalidWorld=You can't place a town hall in this world type
 tile.blockHutTownHall.messageTooClose=Too close to existing town hall
 tile.blockHutTownHall.messageTooFar=Too far away from your Colony
@@ -879,3 +878,7 @@ com.minecolonies.coremod.gui.workerHuts.Crusher=Crusher
 com.minecolonies.coremod.gui.workerHuts.crusherSettings=Settings
 com.minecolonies.coremod.gui.workerHuts.save=save
 com.minecolonies.coremod.crusher.toomuch=Set to the current daily max of %d.
+
+tile.blockHutTownHall.messagePlacedAlreadyDel=You have placed a Town Hall already, if you want to delete your colony to start a new one click [DELETE].
+tile.blockHutTownHall.messagePlacedAlreadyInfi=You have placed a Town Hall already, if you want to delete your colony to start a new one click [DELETE], if you want to abandon it and become officer click [ABANDON].
+tile.blockHutTownHall.messagePlacedAlready=You have placed a Town Hall already

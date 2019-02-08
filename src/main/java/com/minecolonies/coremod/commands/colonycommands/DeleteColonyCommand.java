@@ -34,8 +34,8 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.D
 public class DeleteColonyCommand extends AbstractSingleCommand implements IActionCommand
 {
 
-    public static final  String DESC                                           = "delete";
-    private static final String DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED = "/mc colony delete colony: %d canDestroy: %s confirmDelete: true";
+    public static final String DESC                                           = "delete";
+    public static final String DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED = "/mc colony delete colony: %d canDestroy: %s confirmDelete: true";
 
     /**
      * no-args constructor called by new CommandEntryPoint executer.

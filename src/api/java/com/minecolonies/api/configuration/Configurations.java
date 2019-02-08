@@ -45,6 +45,9 @@ public class Configurations
         @Config.Comment("Should players be able to place an infinite amount of supplychests?")
         public boolean allowInfiniteSupplyChests = false;
 
+        @Config.Comment("Should players be allowed to abandon their colony to create a new one easily?")
+        public boolean allowInfiniteColonies = false;
+
         @Config.RangeInt(min = (CITIZEN_RESPAWN_INTERVAL_MIN), max = CITIZEN_RESPAWN_INTERVAL_MAX)
         @Config.Comment("Average citizen respawn interval (in seconds)")
         public int citizenRespawnInterval = 60;
