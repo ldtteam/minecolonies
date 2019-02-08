@@ -1,0 +1,23 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "minecolonies:blockhutcrusher"
+    },
+    "facing=east": {
+      "model": "minecolonies:blockhutcrusher",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "minecolonies:blockhutcrusher",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "minecolonies:blockhutcrusher",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "minecolonies:blockhutcrusher",
+      "y": 0
+    }
+  }
+}
