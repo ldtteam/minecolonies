@@ -879,6 +879,10 @@ com.minecolonies.coremod.gui.workerHuts.crusherSettings=Settings
 com.minecolonies.coremod.gui.workerHuts.save=save
 com.minecolonies.coremod.crusher.toomuch=Set to the current daily max of %d.
 
-tile.blockHutTownHall.messagePlacedAlreadyDel=You have placed a Town Hall already, if you want to delete your colony to start a new one click [DELETE].
-tile.blockHutTownHall.messagePlacedAlreadyInfi=You have placed a Town Hall already, if you want to delete your colony to start a new one click [DELETE], if you want to abandon it and become officer click [ABANDON].
+tile.blockHutTownHall.messagePlacedAlreadyDel=You have placed a Town Hall already, if you want to delete your colony to start a new one click:
+tile.blockHutTownHall.messagePlacedAlreadyInfi=You have placed a Town Hall already, if you want to delete your colony to start a new one click [DELETE], if you want to start a new colony but not delete your old one click [ABANDON].
 tile.blockHutTownHall.messagePlacedAlready=You have placed a Town Hall already
+tile.blockHutTownHall.abandonAddOfficer=If you want to add yourself as an officer to the abandoned colony to retain control click:
+tile.blockHutTownHall.deleteMessageLink=[DELETE]
+tile.blockHutTownHall.abandonMessageLink=[ABANDON]
+tile.blockHutTownHall.addOfficerMessageLink=[ADD AS OFFICER]

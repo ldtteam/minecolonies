@@ -78,11 +78,6 @@ public class EventHandler
     private static final String ABANDON_COLONY_CONFIRM_COMMAND_SUGGESTED = "/mc colony ownerchange colony: %d player: [abandoned]";
 
     /**
-     * String to add an officer to the colony.
-     */
-    private static final String ADD_OFFICER_COLONY_COMMAND_SUGGESTED = "/mc colony addofficer colony: %d player: %s";
-
-    /**
      * Event when the debug screen is opened. Event gets called by displayed
      * text on the screen, we only need it when f3 is clicked.
      *
@@ -530,7 +525,7 @@ public class EventHandler
     {
         if (!colony.isCoordInColony(world, pos))
         {
-            final ITextComponent deleteButton = new TextComponentString("[DELETE]")
+            final ITextComponent deleteButton = new TextComponentTranslation("tile.blockHutTownHall.deleteMessageLink")
                                                   .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
                                                     new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                                       String.format(DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED,
@@ -538,12 +533,10 @@ public class EventHandler
                                                     ))));
             if (Configurations.gameplay.allowInfiniteColonies)
             {
-                final ITextComponent abandonButton = new TextComponentString("[ABANDON]")
+                final ITextComponent abandonButton = new TextComponentTranslation("tile.blockHutTownHall.abandonMessageLink")
                                                       .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD)
                                                                   .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                                                     String.format(ABANDON_COLONY_CONFIRM_COMMAND_SUGGESTED, colony.getID())))
-                                                                  .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                                                    String.format(ADD_OFFICER_COLONY_COMMAND_SUGGESTED, colony.getID(), player.getName())))
                                                       );
                 player.sendMessage(new TextComponentTranslation("tile.blockHutTownHall.messagePlacedAlreadyInfi"));
                 player.sendMessage(abandonButton);
