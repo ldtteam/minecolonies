@@ -6,7 +6,9 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
+import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.huts.BlockHutDeliveryman;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
@@ -24,6 +26,7 @@ import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -204,23 +207,8 @@ public class BuildingWareHouse extends AbstractBuilding
     @Override
     public TileEntityWareHouse getTileEntity()
     {
-        final Colony colony = getColony();
-        if ((tileEntity == null || tileEntity.isInvalid()) && colony != null && colony.getWorld() != null && getLocation() != null
-              && colony.getWorld().getBlockState(getLocation()) != null && colony.getWorld().getBlockState(this.getLocation()).getBlock() instanceof BlockHutWareHouse)
-        {
-            final TileEntity te = getColony().getWorld().getTileEntity(this.getLocation());
-            if (te instanceof TileEntityWareHouse)
-            {
-                tileEntity = (TileEntityWareHouse) te;
-                if (tileEntity.getBuilding() == null)
-                {
-                    tileEntity.setColony(colony);
-                    tileEntity.setBuilding(this);
-                }
-            }
-        }
-
-        return tileEntity;
+        final TileEntity entity = super.getTileEntity();
+        return entity == null ? null : (TileEntityWareHouse) entity;
     }
 
     @Override
