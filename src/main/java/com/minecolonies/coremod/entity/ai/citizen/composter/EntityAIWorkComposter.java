@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.composter;
 
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -11,6 +12,7 @@ import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
@@ -259,10 +261,16 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             worker.getCitizenItemHandler().hitBlockWithToolInHand(currentTarget);
 
             final TileEntityBarrel te = (TileEntityBarrel) world.getTileEntity(currentTarget);
-
             final ItemStack compost = te.retrieveCompost(getLootMultiplier(new Random()));
 
-            InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), compost);
+            if (getOwnBuilding(BuildingComposter.class).shouldRetrieveDirtFromCompostBin())
+            {
+                InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(Blocks.DIRT, Configurations.gameplay.dirtFromCompost));
+            }
+            else
+            {
+                InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), compost);
+            }
 
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
             this.incrementActionsDoneAndDecSaturation();
