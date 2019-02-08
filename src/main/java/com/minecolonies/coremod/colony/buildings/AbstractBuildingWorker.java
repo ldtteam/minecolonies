@@ -61,7 +61,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     /**
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
      */
-    private final List<IToken> recipes = new ArrayList<>();
+    protected final List<IToken> recipes = new ArrayList<>();
 
     /**
      * The abstract constructor of the building.
@@ -122,27 +122,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
-        toKeep.put(ItemStackUtils.ISFOOD, new Tuple<>(getBuildingLevel() * 2, true));
+        toKeep.put(ItemStackUtils.CAN_EAT, new Tuple<>(getBuildingLevel() * 2, true));
         return toKeep;
-    }
-
-    /**
-     * Method to check if the worker assigned to this building can craft an input stack.
-     * Checks a) if he knows the recipe and
-     *        b) if he has the required items in his inventory or in the hut.
-     * @param stack the stack which shall be crafted.
-     * @return true if possible.
-     */
-    public boolean canCraft(final ItemStack stack)
-    {
-        final Colony colony = getColony();
-
-        if(colony == null)
-        {
-            return false;
-        }
-
-        return getFirstFullFillableRecipe(stack) != null;
     }
 
     /**
