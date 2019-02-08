@@ -9,8 +9,5 @@
 
     <buttonimage id="build" size="129 17" pos="30 110" textcolor="black"
                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                label="$(com.minecolonies.coremod.gui.workerHuts.upgrade)"/>
-    <buttonimage id="repair" size="129 17" pos="30 128" textcolor="black"
-                source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                label="$(com.minecolonies.coremod.gui.workerHuts.repair)"/>
+                label="$(com.minecolonies.coremod.gui.workerHuts.upgradeRepair)"/>
 </window>
