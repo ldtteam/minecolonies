@@ -3,13 +3,14 @@ package com.minecolonies.coremod.colony.jobs;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.registry.JobRegistry;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.entity.ai.util.AIState;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -94,6 +95,7 @@ public abstract class AbstractJob
 
     /**
      * Getter for the job which will be associated with the experience.
+     *
      * @return the getName() or the specialized class name.
      */
     public String getExperienceTag()
@@ -163,6 +165,7 @@ public abstract class AbstractJob
 
     /**
      * Get a set of async requests connected to this job.
+     *
      * @return a set of ITokens.
      */
     public Set<IToken> getAsyncRequests()
@@ -178,6 +181,23 @@ public abstract class AbstractJob
     public void addWorkerAIToTaskList(@NotNull final EntityAITasks tasks)
     {
         final AbstractAISkeleton tempAI = generateAI();
+
+        if (tempAI == null)
+        {
+            Log.getLogger().error("Failed to create AI for citizen!");
+            if (citizen == null)
+            {
+                Log.getLogger().error("CitizenData is null for job: " + nameTag + " jobClass: " + this.getClass());
+                return;
+            }
+            Log.getLogger()
+              .error(
+                "Affected Citizen name:" + citizen.getName() + " id:" + citizen.getId() + " job:" + citizen.getJob() + " jobForAICreation:" + nameTag + " class:" + this.getClass()
+                  + " entityPresent:"
+                  + citizen.getCitizenEntity().isPresent());
+            return;
+        }
+
         workerAI = new WeakReference<>(tempAI);
         tasks.addTask(TASK_PRIORITY, tempAI);
     }
@@ -197,6 +217,7 @@ public abstract class AbstractJob
 
     /**
      * Check if the citizen already checked for food in his chest today.
+     *
      * @return true if so.
      */
     public boolean hasCheckedForFoodToday()
@@ -330,15 +351,17 @@ public abstract class AbstractJob
 
     /**
      * Check if it is okay to eat
+     *
      * @return true if so.
      */
     public boolean isOkayToEat()
     {
-        return (workerAI.get() != null && workerAI.get().isOkayToEat());
+        return (workerAI.get() != null && workerAI.get().getState().isOkayToEat());
     }
 
     /**
      * Getter for the amount of actions done.
+     *
      * @return the quantity.
      */
     public int getActionsDone()
@@ -366,8 +389,8 @@ public abstract class AbstractJob
     }
 
     /**
-     * Get the worker AI associated to this job,
-     * generates the AI when not created yet.
+     * Get the worker AI associated to this job
+     *
      * @return worker AI
      */
     public AbstractAISkeleton getWorkerAI()
@@ -377,11 +400,12 @@ public abstract class AbstractJob
 
     /**
      * Check if the citizen is in an idle state.
+     *
      * @return true if so.
      */
     public boolean isIdling()
     {
-        return (workerAI.get() != null && workerAI.get().getState() == AIState.IDLE);
+        return (workerAI.get() != null && workerAI.get().getState() == AIWorkerState.IDLE);
     }
 
     /**
@@ -391,8 +415,7 @@ public abstract class AbstractJob
     {
         if (workerAI.get() != null)
         {
-            workerAI.get().resetAIToIdle();
+            workerAI.get().resetAI();
         }
     }
-
 }

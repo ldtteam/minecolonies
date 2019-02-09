@@ -244,6 +244,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      */
     private void updateAvailableResources()
     {
+
         getMainCitizenEntity().ifPresent(structureBuilder -> {
             final InventoryCitizen structureBuilderInventory = getMainCitizen().getInventory();
             if (structureBuilderInventory == null)
@@ -264,9 +265,11 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                             stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
-                resource.addAvailable(InventoryUtils.getItemCountInItemHandler(this.getCapability(ITEM_HANDLER_CAPABILITY, null),
-                  stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
-
+                if (getTileEntity() != null)
+                {
+                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(this.getCapability(ITEM_HANDLER_CAPABILITY, null),
+                      stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
+                }
             }
         });
     }

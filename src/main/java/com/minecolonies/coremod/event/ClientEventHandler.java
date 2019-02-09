@@ -30,9 +30,9 @@ import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;

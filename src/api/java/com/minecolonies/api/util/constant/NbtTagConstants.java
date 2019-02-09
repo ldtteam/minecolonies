@@ -387,9 +387,9 @@ public final class NbtTagConstants
      * Archery building constants.
      */
     public static final String TAG_ARCHERY_TARGETS = "archeryTargets";
-    public static final String TAG_STAND = "stand";
-    public static final String TAG_TARGET = "target";
-    public static final String TAG_ARCHERY_STANDS = "archeryStands";
+    public static final String TAG_STAND           = "stand";
+    public static final String TAG_TARGET          = "target";
+    public static final String TAG_ARCHERY_STANDS  = "archeryStands";
 
     /**
      * Archery building constants.
@@ -398,6 +398,13 @@ public final class NbtTagConstants
     public static final String TAG_COMBAT_PARTNER = "combatPartner";
     public static final String TAG_PARTNER1 = "combatPartner1";
     public static final String TAG_PARTNER2 = "combatPartner2";
+
+    /**
+     * Crusher building constants.
+     */
+    public static final String TAG_DAILY         = "daily";
+    public static final String TAG_CURRENT_DAILY = "currentDaily";
+    public static final String TAG_MODE          = "mode";
 
     /**
      * Private constructor to hide the implicit one.

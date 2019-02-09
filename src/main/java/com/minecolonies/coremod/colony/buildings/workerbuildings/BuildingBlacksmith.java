@@ -1,35 +1,36 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.JobPlaceholder;
+import com.minecolonies.coremod.colony.jobs.JobBlacksmith;
+import net.minecraft.item.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
 /**
  * Creates a new building for the blacksmith.
  */
-public class BuildingBlacksmith extends AbstractBuildingWorker
+public class BuildingBlacksmith extends AbstractBuildingCrafter
 {
     /**
      * Description of the job executed in the hut.
      */
     private static final String BLACKSMITH = "Blacksmith";
-
-    /**
-     * Description of the block used to set this block.
-     */
-    private static final String BLACKSMITH_HUT_NAME = "blacksmithHut";
-
-    /**
-     * Max building level of the hut.
-     */
-    private static final int MAX_BUILDING_LEVEL = 3;
 
     /**
      * Instantiates the building.
@@ -52,15 +53,14 @@ public class BuildingBlacksmith extends AbstractBuildingWorker
     @Override
     public int getMaxBuildingLevel()
     {
-        return MAX_BUILDING_LEVEL;
+        return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
-    //TODO Implement Later
     @NotNull
     @Override
     public AbstractJob createJob(final CitizenData citizen)
     {
-        return new JobPlaceholder(citizen);
+        return new JobBlacksmith(citizen);
     }
 
     @NotNull
@@ -68,6 +68,42 @@ public class BuildingBlacksmith extends AbstractBuildingWorker
     public String getJobName()
     {
         return BLACKSMITH;
+    }
+
+    @Override
+    public boolean canRecipeBeAdded(final IToken token)
+    {
+        if(!super.canRecipeBeAdded(token))
+        {
+            return false;
+        }
+
+        final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
+        if(storage == null)
+        {
+            return false;
+        }
+
+        final int size = storage.getCleanedInput().size();
+        int ingots = 0;
+        for(final ItemStorage itemStorage : storage.getCleanedInput())
+        {
+            final ItemStack stack = itemStorage.getItemStack();
+            if(!ItemStackUtils.isEmpty(stack))
+            {
+                for(final int id: OreDictionary.getOreIDs(stack))
+                {
+                    final String name = OreDictionary.getOreName(id);
+                    if(name.contains("ingot"))
+                    {
+                        ingots++;
+                    }
+                }
+            }
+        }
+
+        final ItemStack output = storage.getPrimaryOutput();
+        return output.getItem() instanceof ItemTool || output.getItem() instanceof ItemSword || output.getItem() instanceof ItemArmor || output.getItem() instanceof ItemHoe || Compatibility.isTinkersWeapon(output) || ingots == size;
     }
 
     /**
@@ -89,7 +125,7 @@ public class BuildingBlacksmith extends AbstractBuildingWorker
         @NotNull
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, BLACKSMITH_HUT_NAME);
+            return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, BLACKSMITH);
         }
 
         @NotNull

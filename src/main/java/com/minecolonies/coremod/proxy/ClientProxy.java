@@ -2,8 +2,11 @@ package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.blocks.*;
-import com.minecolonies.coremod.client.gui.*;
+import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.client.gui.WindowCitizen;
+import com.minecolonies.coremod.client.gui.WindowClipBoard;
+import com.minecolonies.coremod.client.gui.WindowMinecoloniesBuildTool;
+import com.minecolonies.coremod.client.gui.WindowResourceList;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
@@ -190,10 +193,13 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutArchery);
         createCustomModel(ModBlocks.blockHutCombatAcademy);
         createCustomModel(ModBlocks.blockHutSawmill);
+        createCustomModel(ModBlocks.blockHutStoneSmeltery);
+        createCustomModel(ModBlocks.blockHutCrusher);
 
         createCustomModel(ModBlocks.blockConstructionTape);
         createCustomModel(ModBlocks.blockRack);
         createCustomModel(ModBlocks.blockWayPoint);
+        createCustomModel(ModBlocks.blockPostBox);
 
         createCustomModel(ModItems.clipboard);
         createCustomModel(ModItems.caliper);

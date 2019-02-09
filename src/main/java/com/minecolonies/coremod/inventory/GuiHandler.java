@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.coremod.client.gui.WindowGuiCrafting;
+import com.minecolonies.coremod.client.gui.WindowGuiFurnaceCrafting;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
@@ -39,7 +41,11 @@ public class GuiHandler implements IGuiHandler
             else
             {
                 @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, new BlockPos(x,y,z));
-                if (building instanceof AbstractBuildingWorker)
+                if (building instanceof AbstractBuildingSmelterCrafter)
+                {
+                    return new ContainerGUICraftingFurnace(player.inventory, world);
+                }
+                else if (building instanceof AbstractBuildingWorker)
                 {
                     return new CraftingGUIBuilding(player.inventory, world, ((AbstractBuildingWorker) building).canCraftComplexRecipes());
                 }
@@ -90,7 +96,11 @@ public class GuiHandler implements IGuiHandler
             else
             {
                 @Nullable final AbstractBuildingView building = ColonyManager.getBuildingView(new BlockPos(x,y,z));
-                if (building instanceof AbstractBuildingWorker.View)
+                if (building instanceof AbstractBuildingSmelterCrafter.View)
+                {
+                    return new WindowGuiFurnaceCrafting(player.inventory, world, (AbstractBuildingWorker.View) building);
+                }
+                else if (building instanceof AbstractBuildingWorker.View)
                 {
                     return new WindowGuiCrafting(player.inventory, world, (AbstractBuildingWorker.View) building);
                 }

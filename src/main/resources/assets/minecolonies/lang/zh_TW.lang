@@ -846,8 +846,8 @@ com.minecolonies.coremod.request.fertilizer=肥料
 com.minecolonies.coremod.gui.workerHuts.composter=堆肥小屋
 com.minecolonies.coremod.furnaceUser.noFuel=請告訴我要放哪一種燃料在爐子裡!
 tile.minecolonies.blockpostbox.name=Postbox
-com.minecolonies.coremod.gui.citizen.stacks=Blocks to Request:
 com.minecolonies.coremod.gui.workerHuts.request=Request
+com.minecolonies.coremod.gui.citizen.stacks=Blocks to Request:
 
 com.minecolonies.coremod.gui.workerHuts.Blacksmith=Blacksmith
 com.minecolonies.coremod.gui.workerHuts.Stonemason=Stonemason

@@ -24,12 +24,14 @@ public class BlockHutArchery extends AbstractBlockHut<BlockHutArchery>
 
     /**
      * This returns a complete list of items dropped from this block.
-     * @deprecated but we still need it.
+     *
      * @param world   The current world
      * @param pos     Block position in world
      * @param state   Current state
      * @param fortune Breakers fortune level
      * @return A ArrayList containing all items this block drops
+     *
+     * @deprecated but we still need it.
      */
     @NotNull
     @Override
