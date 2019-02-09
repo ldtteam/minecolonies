@@ -1,0 +1,14 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "minecolonies:blockhutstonesmeltery"
+  },
+  "variants": {
+    "facing": {
+      "north": {"y": 270},
+      "east": {"y": 0},
+      "south": {"y": 90},
+      "west": {"y": 180}
+    }
+  }
+}

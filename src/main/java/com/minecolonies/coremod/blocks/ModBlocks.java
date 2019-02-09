@@ -50,6 +50,8 @@ public final class ModBlocks
     public static        BlockHutArchery                blockHutArchery;
     public static        BlockHutCombatAcademy          blockHutCombatAcademy;
     public static        BlockHutSawmill                blockHutSawmill;
+    public static        BlockHutStoneSmeltery          blockHutStoneSmeltery;
+    public static        BlockHutCrusher                blockHutCrusher;
 
     /**
      * Utility blocks.
@@ -59,6 +61,7 @@ public final class ModBlocks
     public static BlockWaypoint               blockWayPoint;
     public static BlockInfoPoster             blockInfoPoster;
     public static BlockBarrel                 blockBarrel;
+    public static BlockPostBox                blockPostBox;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -102,12 +105,15 @@ public final class ModBlocks
         blockHutArchery =  new BlockHutArchery().registerBlock(registry);
         blockHutSawmill = new BlockHutSawmill().registerBlock(registry);
         blockHutCombatAcademy = new BlockHutCombatAcademy().registerBlock(registry);
+        blockHutStoneSmeltery = new BlockHutStoneSmeltery().registerBlock(registry);
+        blockHutCrusher = new BlockHutCrusher().registerBlock(registry);
 
         blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
         blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
         blockBarracksTowerSubstitution = new BlockBarracksTowerSubstitution().registerBlock(registry);
         blockRack = new BlockMinecoloniesRack().registerBlock(registry);
         blockWayPoint = new BlockWaypoint().registerBlock(registry);
+        blockPostBox = new BlockPostBox().registerBlock(registry);
 
         blockBarrel = new BlockBarrel().registerBlock(registry);
     }
@@ -141,6 +147,8 @@ public final class ModBlocks
         blockHutArchery.registerItemBlock(registry);
         blockHutCombatAcademy.registerItemBlock(registry);
         blockHutSawmill.registerItemBlock(registry);
+        blockHutStoneSmeltery.registerItemBlock(registry);
+        blockHutCrusher.registerItemBlock(registry);
 
         blockConstructionTape.registerItemBlock(registry);
         blockBarracksTowerSubstitution.registerItemBlock(registry);
@@ -148,5 +156,6 @@ public final class ModBlocks
         blockWayPoint.registerItemBlock(registry);
         blockInfoPoster.registerItemBlock(registry);
         blockBarrel.registerItemBlock(registry);
+        blockPostBox.registerItemBlock(registry);
     }
 }

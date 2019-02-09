@@ -17,7 +17,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -101,14 +100,7 @@ public class WindowGuiCrafting extends GuiContainer
     {
         super(new CraftingGUIBuilding(playerInv, worldIn, building.canCraftComplexRecipes()));
         this.building = building;
-        if(building.canCraftComplexRecipes())
-        {
-            completeCrafting = true;
-        }
-        else
-        {
-            completeCrafting = false;
-        }
+        completeCrafting = building.canCraftComplexRecipes();
     }
 
     @Override
@@ -133,7 +125,6 @@ public class WindowGuiCrafting extends GuiContainer
         if (building.canRecipeBeAdded() && doneButton.isMouseOver())
         {
             final List<ItemStack> input = new LinkedList<>();
-            final List<ItemStack> secondaryOutput = new ArrayList<>();
 
             for(int i = 1; i <= (completeCrafting ? MAX_CRAFTING_GRID_SIZE : CRAFTING_GRID_SIZE); i++)
             {
@@ -142,18 +133,13 @@ public class WindowGuiCrafting extends GuiContainer
                 ItemStackUtils.setSize(copy, 1);
 
                 input.add(copy);
-
-                if(copy.getItem().hasContainerItem(copy))
-                {
-                    secondaryOutput.add(copy.getItem().getContainerItem(copy));
-                }
             }
 
             final ItemStack primaryOutput =  inventorySlots.getSlot(0).getStack().copy();
 
             if(!ItemStackUtils.isEmpty(primaryOutput))
             {
-                MineColonies.getNetwork().sendToServer(new AddRemoveRecipeMessage(input, completeCrafting ? 3 : 2, primaryOutput, secondaryOutput, building, false));
+                MineColonies.getNetwork().sendToServer(new AddRemoveRecipeMessage(input, completeCrafting ? 3 : 2, primaryOutput, building, false));
             }
         }
     }
@@ -164,7 +150,7 @@ public class WindowGuiCrafting extends GuiContainer
     @Override
     protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
     {
-        this.fontRenderer.drawString(I18n.format("container.crafting", new Object[0]), X_OFFSET, Y_OFFSET, GUI_COLOR);
+        this.fontRenderer.drawString(I18n.format("container.crafting"), X_OFFSET, Y_OFFSET, GUI_COLOR);
     }
 
     /**

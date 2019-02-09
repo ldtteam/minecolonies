@@ -8,7 +8,6 @@ import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
-import com.structurize.coremod.blocks.schematic.BlockSolidSubstitution;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
@@ -18,6 +17,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.util.Structure;
+import com.structurize.coremod.blocks.schematic.BlockSolidSubstitution;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
@@ -178,11 +178,11 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
             if (entityInfo != null)
             {
-                for (final ItemStack stack : ItemStackUtils.getListOfStackForEntityInfo(entityInfo, world, worker))
+                for (final ItemStorage stack : ItemStackUtils.getListOfStackForEntityInfo(entityInfo, world, worker))
                 {
-                    if (!ItemStackUtils.isEmpty(stack))
+                    if (!ItemStackUtils.isEmpty(stack.getItemStack()))
                     {
-                        buildingWorker.addNeededResource(stack, 1);
+                        buildingWorker.addNeededResource(stack.getItemStack(), 1);
                     }
                 }
             }
@@ -206,6 +206,10 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             {
                 blockState = getSolidSubstitution(job.getStructure().getBlockPosition());
                 block = blockState.getBlock();
+            }
+            if (block == Blocks.GRASS)
+            {
+                block = Blocks.DIRT;
             }
 
             final Block worldBlock = BlockPosUtil.getBlock(world, job.getStructure().getBlockPosition());

@@ -69,7 +69,6 @@ public class BlockParticleEffectMessage extends AbstractMessage<BlockParticleEff
         buf.writeInt(side);
     }
 
-    @Nullable
     @Override
     protected void messageOnClientThread(final BlockParticleEffectMessage message, final MessageContext ctx)
     {

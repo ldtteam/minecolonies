@@ -212,6 +212,11 @@ public class Colony implements IColony
     private boolean mourning = false;
 
     /**
+     * If the colony is dirty.
+     */
+    private boolean isActive = true;
+
+    /**
      * The colony team color.
      */
     private TextFormatting colonyTeamColor = TextFormatting.WHITE;
@@ -462,9 +467,9 @@ public class Colony implements IColony
         }
 
         this.requestManager.reset();
-        if (getColonyTag().hasKey(TAG_REQUESTMANAGER))
+        if (compound.hasKey(TAG_REQUESTMANAGER))
         {
-            this.requestManager.deserializeNBT(getColonyTag().getCompoundTag(TAG_REQUESTMANAGER));
+            this.requestManager.deserializeNBT(compound.getCompoundTag(TAG_REQUESTMANAGER));
         }
 
         this.colonyTag = compound;
@@ -564,6 +569,7 @@ public class Colony implements IColony
         compound.setInteger(TAG_TEAM_COLOR, colonyTeamColor.ordinal());
         this.colonyTag = compound;
 
+        isActive = false;
         return compound;
     }
 
@@ -619,10 +625,17 @@ public class Colony implements IColony
      */
     public void onServerTick(@NotNull final TickEvent.ServerTickEvent event)
     {
+        packageManager.updateSubscribers();
+
+        if (packageManager.getSubscribers().isEmpty())
+        {
+            return;
+        }
+        isActive = true;
+
         buildingManager.tick(event);
 
         getRequestManager().update();
-        packageManager.updateSubscribers();
 
         final List<EntityPlayer> visitors = new ArrayList<>(visitingPlayers);
 
@@ -740,14 +753,16 @@ public class Colony implements IColony
             return;
         }
 
+        // Clean up or spawn citizens.
+        if (packageManager.getSubscribers().isEmpty())
+        {
+            return;
+        }
+        isActive = true;
+
         //  Cleanup Buildings whose Blocks have gone AWOL
         buildingManager.cleanUpBuildings(event);
-
-        // Clean up or spawn citizens.
-        if (!packageManager.getSubscribers().isEmpty())
-        {
-            citizenManager.onWorldTick(event);
-        }
+        citizenManager.onWorldTick(event);
 
         if (shallUpdate(world, TICKS_SECOND)
                 && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
@@ -984,6 +999,7 @@ public class Colony implements IColony
     public void markDirty()
     {
         packageManager.setDirty();
+        isActive = true;
     }
 
     @Override
@@ -1141,8 +1157,8 @@ public class Colony implements IColony
          
         happinessTotal = happinessAverage + happinessData.getTotalHappinessModifier();  
         if (happinessTotal > HappinessData.MAX_HAPPINESS) 
-        { 
-            happinessTotal = HappinessData.MIN_HAPPINESS; 
+        {
+            happinessTotal = HappinessData.MAX_HAPPINESS;
         } 
         return happinessTotal; 
     }
@@ -1288,7 +1304,7 @@ public class Colony implements IColony
      */
     public NBTTagCompound getColonyTag()
     {
-        if(this.colonyTag == null)
+        if(this.colonyTag == null || this.isActive)
         {
             this.writeToNBT(new NBTTagCompound());
         }
@@ -1437,5 +1453,14 @@ public class Colony implements IColony
     public TextFormatting getTeamColonyColor()
     {
         return colonyTeamColor;
+    }
+
+    /**
+     * Set the colony to be active.
+     * @param isActive if active.
+     */
+    public void setActive(final boolean isActive)
+    {
+        this.isActive = isActive;
     }
 }

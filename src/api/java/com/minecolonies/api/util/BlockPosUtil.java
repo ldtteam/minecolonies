@@ -3,7 +3,6 @@ package com.minecolonies.api.util;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.init.Blocks;
@@ -79,9 +78,10 @@ public final class BlockPosUtil
 
     /**
      * Gets a random position within a certain range for wandering around.
-     * @param world the world.
+     *
+     * @param world           the world.
      * @param currentPosition the current position.
-     * @param def the default position if none was found.
+     * @param def             the default position if none was found.
      * @return the BlockPos.
      */
     public static BlockPos getRandomPosition(final World world, final BlockPos currentPosition, final BlockPos def)
@@ -234,7 +234,7 @@ public final class BlockPosUtil
     {
         return sender.getBlockState(blockPos).getBlock() != Blocks.AIR
                  && !sender.getBlockState(blockPos).getMaterial().isLiquid()
-                 && !sender.getBlockState(blockPos.up()).getMaterial().isLiquid()
+                 && !sender.getBlockState(blockPos.down()).getMaterial().isLiquid()
           && sender.getWorldBorder().contains(blockPos);
     }
 
@@ -598,6 +598,7 @@ public final class BlockPosUtil
 
     /**
      * Get the rotation enum value from the amount of rotations.
+     *
      * @param rotations the amount of rotations.
      * @return the enum Rotation.
      */

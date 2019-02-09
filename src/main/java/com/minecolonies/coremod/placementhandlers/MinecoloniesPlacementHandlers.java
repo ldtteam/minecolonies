@@ -5,11 +5,11 @@ import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.ModBlocks;
-import com.structurize.coremod.blocks.schematic.BlockSolidSubstitution;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
+import com.structurize.coremod.blocks.schematic.BlockSolidSubstitution;
 import com.structurize.coremod.placementhandlers.IPlacementHandler;
 import com.structurize.coremod.placementhandlers.PlacementHandlers;
 import net.minecraft.block.BlockChest;
@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.UPDATE_FLAG;
@@ -59,12 +60,13 @@ public final class MinecoloniesPlacementHandlers
         PlacementHandlers.handlers.add(new PlacementHandlers.FlowerPotPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.BlockGrassPathPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.StairBlockPlacementHandler());
-        PlacementHandlers.handlers.add(new BlockSolidSubstitutionPlacementHandler());
+        PlacementHandlers.handlers.add(new PlacementHandlers.BlockSolidSubstitutionPlacementHandler());
         PlacementHandlers.handlers.add(new ChestPlacementHandler());
         PlacementHandlers.handlers.add(new WayPointBlockPlacementHandler());
         PlacementHandlers.handlers.add(new RackPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.FallingBlockPlacementHandler());
         PlacementHandlers.handlers.add(new PlacementHandlers.BannerPlacementHandler());
+        PlacementHandlers.handlers.add(new BuildingSubstitutionBlock());
         PlacementHandlers.handlers.add(new GeneralBlockPlacementHandler());
     }
 
@@ -165,52 +167,6 @@ public final class MinecoloniesPlacementHandlers
         }
     }
 
-    public static class BlockSolidSubstitutionPlacementHandler implements IPlacementHandler
-    {
-        @Override
-        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
-        {
-            return blockState.getBlock() instanceof BlockSolidSubstitution;
-        }
-
-        @Override
-        public Object handle(
-          @NotNull final World world,
-          @NotNull final BlockPos pos,
-          @NotNull final IBlockState blockState,
-          @Nullable final NBTTagCompound tileEntityData,
-          final boolean complete,
-          final BlockPos centerPos)
-        {
-            final IBlockState newBlockState = BlockUtils.getSubstitutionBlockAtWorld(world, pos);
-            if (complete)
-            {
-                if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
-                {
-                    return ActionProcessingResult.DENY;
-                }
-            }
-            else
-            {
-                if (!world.setBlockState(pos, newBlockState, UPDATE_FLAG))
-                {
-                    return ActionProcessingResult.DENY;
-                }
-            }
-
-            return newBlockState;
-        }
-
-        @Override
-        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
-        {
-            final IBlockState newBlockState = BlockUtils.getSubstitutionBlockAtWorld(world, pos);
-            final List<ItemStack> itemList = new ArrayList<>();
-            itemList.add(BlockUtils.getItemStackFromBlockState(newBlockState));
-            return itemList;
-        }
-    }
-
     public static class ChestPlacementHandler implements IPlacementHandler
     {
         @Override
@@ -228,21 +184,23 @@ public final class MinecoloniesPlacementHandlers
           final boolean complete,
           final BlockPos centerPos)
         {
-            if (tileEntityData != null)
-            {
-                handleTileEntityPlacement(tileEntityData, world, pos);
-            }
-
             final TileEntity entity = world.getTileEntity(pos);
             final Colony colony = ColonyManager.getClosestColony(world, pos);
             if (colony != null && entity instanceof TileEntityChest && colony.getBuildingManager().getBuilding(centerPos) instanceof BuildingWareHouse)
             {
                 BuildingWareHouse.handleBuildingOverChest(pos, (TileEntityChest) entity, world);
             }
-
-            if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
+            else
             {
-                return ActionProcessingResult.DENY;
+                if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
+                {
+                    return ActionProcessingResult.DENY;
+                }
+
+                if (tileEntityData != null)
+                {
+                    handleTileEntityPlacement(tileEntityData, world, pos);
+                }
             }
 
             return blockState;
@@ -258,6 +216,33 @@ public final class MinecoloniesPlacementHandlers
             itemList.removeIf(ItemStackUtils::isEmpty);
 
             return itemList;
+        }
+    }
+
+    public static class BuildingSubstitutionBlock implements IPlacementHandler
+    {
+        @Override
+        public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
+        {
+            return blockState.getBlock() == ModBlocks.blockBarracksTowerSubstitution;
+        }
+
+        @Override
+        public Object handle(
+          @NotNull final World world,
+          @NotNull final BlockPos pos,
+          @NotNull final IBlockState blockState,
+          @Nullable final NBTTagCompound tileEntityData,
+          final boolean complete,
+          final BlockPos centerPos)
+        {
+            return blockState;
+        }
+
+        @Override
+        public List<ItemStack> getRequiredItems(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState, @Nullable final NBTTagCompound tileEntityData, final boolean complete)
+        {
+            return Collections.emptyList();
         }
     }
 
@@ -285,7 +270,7 @@ public final class MinecoloniesPlacementHandlers
 
             if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
             {
-                return ActionProcessingResult.DENY;
+                return ActionProcessingResult.ACCEPT;
             }
 
             if (tileEntityData != null)

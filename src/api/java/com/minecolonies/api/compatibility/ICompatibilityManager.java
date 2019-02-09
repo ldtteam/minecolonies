@@ -92,4 +92,17 @@ public interface ICompatibilityManager
      * @return true if so.
      */
     boolean isDiscoveredAlready();
+
+    /**
+     * If an itemStack is a lucky block which can result in an extra ore drop.
+     * @param itemStack the stack to check.
+     * @return true if so.
+     */
+    boolean isLuckyBlock(final ItemStack itemStack);
+
+    /**
+     * Get a random lucky ore from a luckyblock.
+     * @return the lucky ore.
+     */
+    ItemStack getRandomLuckyOre();
 }
