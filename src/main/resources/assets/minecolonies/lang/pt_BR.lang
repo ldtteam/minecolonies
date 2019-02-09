@@ -1,4 +1,3 @@
-#X-Generator: crowdin.com
 tile.minecolonies.blockHutCitizen.name=Cabana do cidadão
 tile.minecolonies.blockHutShepherd.name=Cabana do Pastor
 tile.minecolonies.blockHutSwineHerder.name=Cabana do Tratador de porcos
@@ -64,7 +63,7 @@ entity.minecolonies.ChiefBarbarian.name=Chefe dos barbáros
 entity.ChiefBarbarian.name=Líder dos Bárbaros
 death.attack.entity.Barbarian=%d foi cortado e feito em pedaçinhos por um barbáro!
 death.attack.entity.ChiefBarbarian=%d foi macerado por um grande chefe!
-death.attack.entity.ArcherBarbarian=%d foi devastado por um arqueiro bárbaro
+death.attack.entity.ArcherBarbarian=%d foi devastado por um Arqueiro Bárbaro
 entity.ArcherBarbarian.name=Arqueiro bárbaro
 achievement.supply=Um novo começo
 achievement.supply.desc=Consiga suprimentos
@@ -103,7 +102,7 @@ entity.citizen.noJob=%s gostaría de ter um emprego.
 entity.citizen.demandsJob=%s exige ter um trabalho e está ficando muito chateado por não fazer nada.
 entity.citizen.noHouse=%s gostaría de ter uma casa para dormir todas as noites.
 entity.citizen.demandsHouse=%s exige ter uma casa para morar e está ficando muito chateado.
-entity.citizen.noTool=%s gostava de ter %s.
+entity.citizen.noTool=%s gostaría de ter %s.
 entity.citizen.demandsTool=%s exige obter um(a) %s.
 achievement.upgrade.fisher.max=O caçador de baleia.
 achievement.upgrade.farmer.first=Um fazendeiro.
@@ -190,7 +189,7 @@ com.minecolonies.coremod.gui.townHall.addBlock=Adicionar bloco/Posição:
 
 com.minecolonies.coremod.gui.warehouse.visitCitizenChests=Visitar os baús dos cidadãos:
 com.minecolonies.coremod.gui.workerHuts.mobsList=Mob Attack List
-com.minecolonies.coremod.job.Ranger=Knight
+com.minecolonies.coremod.job.Ranger=Cavaleiro
 com.minecolonies.coremod.job.Knight=Arqueiro
 com.minecolonies.coremod.gui.townHall.population.unemployed=Desempregado: %d
 com.minecolonies.coremod.gui.workerHuts.minerNode=Nodes
@@ -211,7 +210,7 @@ com.minecolonies.coremod.gui.buildtool.nohut=Nenhuma cabana
 com.minecolonies.coremod.gui.citizen.skills=Habilidades
 com.minecolonies.coremod.gui.townHall.repair=Reparar a prefeitura
 com.minecolonies.coremod.gui.townHall.recall=Chamar os cidadãos
-com.minecolonies.coremod.gui.townHall.recallOne=Recall Citizen
+com.minecolonies.coremod.gui.townHall.recallOne=Chamar o cidadão
 com.minecolonies.coremod.gui.workerHuts.minerNodeList=Níveis
 com.minecolonies.coremod.gui.workerHuts.resourceList=Recursos requeridos
 com.minecolonies.coremod.gui.warehouse.toBlacksmith=Entregar para o ferreiro:
@@ -301,10 +300,10 @@ com.minecolonies.coremod.gui.structure.rename=Renomear estrutura
 com.minecolonies.coremod.gui.structure.delete=Deletar estrutura
 com.minecolonies.coremod.gui.structure.delete.title=Deletar estrutura
 com.minecolonies.coremod.gui.structure.delete.body=Você quer deletar %s?
-com.minecolonies.coremod.gui.workerHuts.deliveryPrio.static=Estática
-com.minecolonies.coremod.gui.workerHuts.deliveryPrio.automatic=Automático(a)
+com.minecolonies.coremod.gui.workerHuts.deliveryPrio.static=Estático
+com.minecolonies.coremod.gui.workerHuts.deliveryPrio.automatic=Automático
 
-com.minecolonies.coremod.gui.happiness.happinessModifier=Modificador de Felicidade
+com.minecolonies.coremod.gui.happiness.happinessModifier=Modificadores de Felicidade
 com.minecolonies.coremod.gui.happiness.food=Modificador de Comida
 com.minecolonies.coremod.gui.happiness.damage=Modificador de Dano
 com.minecolonies.coremod.gui.happiness.house=Modificador de Casa
@@ -427,7 +426,7 @@ achievement.farmer.wheatHarvested.100.desc=Seus fazendeiros colheram 100 trigos.
 achievement.farmer.wheatHarvested.500.desc=Seus fazendeiros colheram 500 trigos.
 achievement.farmer.wheatHarvested.1000.desc=Seus fazendeiros colheram 1000 trigos.
 
-com.minecolonies.coremod.permission.no=Não tem permissão de fazer isso nesta colónia!
+com.minecolonies.coremod.permission.no=Você não tem permissão de fazer isso nesta colônia!
 com.minecolonies.coremod.gui.townHall.freeBlocks=Livre para interação
 com.minecolonies.coremod.gui.townHall.add=Adicionar
 
@@ -455,16 +454,16 @@ com.minecolonies.coremod.permission.attack_entity=Atacar entidades
 com.minecolonies.coremod.permission.access_free_blocks=Acessar blocos livres
 com.minecolonies.coremod.permission.explode=Explodir
 
-item.supplyCampDeployer.invalid=Requerer uma terra completamente plana e 16*17 sem ervas ou flores nela.
-item.supplyCampDeployer.invalid.solid_block_needed=Placing a supply camp requires flat ground of at least 16*17 without grass or flowers on them..  These blocks must be solid: %s.
-item.supplyCampDeployer.invalid.air_block_needed=Placing a supply camp requires flat ground of at least 16*17 without grass or flowers on them..  These blocks must be air: %s.
-item.supplyCampDeployer.invalid.inside_existing_colony=You cannot place your supply camp near an existing colony.
+item.supplyCampDeployer.invalid=É preciso uma terra plana com pelo menos 16*17 blocos sem ervas ou flores nela.
+item.supplyCampDeployer.invalid.solid_block_needed=Para colocar um acampamento de suprimentos é preciso uma terra plana com pelo menos 16*17 sem grama e flores nela. Os blocos a seguir precisam ser sólidos: %s.
+item.supplyCampDeployer.invalid.air_block_needed=Para colocar um acampamento de suprimentos é preciso uma terra plana com pelo menos 16*17 sem grama e flores nela. Os blocos a seguir precisam ser ar: %s.
+item.supplyCampDeployer.invalid.inside_existing_colony=Não é permitido colocar seu acampamento de suprimentos perto de uma colônia já existente.
 com.minecolonies.coremod.gui.townHall.currentHappiness=Felicidade geral:
-com.minecolonies.coremod.job.guard.toolClickGuardTooFar=Demasiado longe da torre de guarda, por favor atualize a sua torre de guarda.
+com.minecolonies.coremod.job.guard.toolClickGuardTooFar=Muito distante da torre de guarda. Por favor, aprimore a torre de guarda.
 com.minecolonies.coremod.saturation.0=Estou morrendo de fome, não posso mais trabalhar
 com.minecolonies.coremod.saturation.3=Estou com muita fome, me sinto muito improdutivo
 com.minecolonies.coremod.saturation.5=Estou com fome! Eu não estou mais tão produtivo.
-com.minecolonies.coremod.saturation.7=I'm quite saturated, but I'll have to eat again soon
+com.minecolonies.coremod.saturation.7=Estou satisfeito, mas terei que comer em breve novamente
 
 com.minecolonies.coremod.item.permissionscepter.setmode=Defina para o modo '%s'
 com.minecolonies.coremod.item.permissionscepter.permission.deny=Você não tem permissão para editar blocos com esta ferramenta.
@@ -609,17 +608,17 @@ com.minecolonies.coremod.leavingColony=Adeus, você está saindo da colônia de 
 com.minecolonies.coremod.enteringColonyNotify=Tome cuidado, %s acabou de entrar na %s.
 com.minecolonies.coremod.leavingColonyNotify=Adeus %s, eles acabaram de sair da %s.
 
-com.minecolonies.coremod.mourning=Houve uma morte na colônia. A colônia estará de luto %s amanhã como forma de respeito.
+com.minecolonies.coremod.mourning=Houve uma morte na colônia. A colônia estará de luto pelo(a) %s amanhã como forma de respeito.
 
 event.minecolonies.raidMessage1=§4Guerreiros Misteriosos foram avistados perto de %s.
 event.minecolonies.raidMessage2=§4 Os cidadãos estão espalhando rumores de invasores perto de %s!
 event.minecolonies.raidMessage3=§4Buckle up cowboy! There's some darn raiders comin' for %s tonight!
-event.minecolonies.raidMessage4=§4A um bando gigante de invasores estão a vir para %s, e eles não vieram aqui para brincar!
+event.minecolonies.raidMessage4=§4A um bando gigante de invasores estão vindo para %s, e eles não vieram aqui para brincar!
 
 event.minecolonies.raidMessage_p1=§4Marinheiros misteriosos foram avistados perto de %s. Eles navegaram em um pequeno saveiro que você deveria considerar destruir.
 event.minecolonies.raidMessage_p2=§4Os cidadãos estão espalhando rumores sobre piratas perto de %s, eles trouxeram um barco, é melhor destruí-lo!
-event.minecolonies.raidMessage_p3=§4Arr Comrade! There's some darn pirates comin' for %s tonight, they sailed here and will continue attacking until we destroy their Caravel!
-event.minecolonies.raidMessage_p4=§4 Um bando enorme de piratas estão a navegar para %s e eles não vieram para brincar! As suas ondas rigorosas vão nos atingir a não ser que destroçamos o seu Galeão!
+event.minecolonies.raidMessage_p3=§4 Arrr! Tem alguns piratas vindo para %s hoje à noite. Eles navegaram até aqui e vão continuar atacando até que nós destruamos a Caravela deles!
+event.minecolonies.raidMessage_p4=§4 Um bando enorme de piratas estão navegando para %s e eles não vieram para brincar! As suas ondas rigorosas vão nos atingir a não ser que destruamos o seu Galeão!
 
 com.minecolonies.coremod.gui.workerHuts.toggleAllOn=Toggle all (on)
 com.minecolonies.coremod.gui.workerHuts.toggleAllOff=Toggle all (off)
@@ -638,7 +637,7 @@ com.minecolonies.coremod.gui.townHall.allies=Aliados:
 com.minecolonies.coremod.gui.townHall.feuds=Disputas:
 com.minecolonies.coremod.gui.townHall.tp=Você realmente quer se teletransportar para: %s[YES]
 com.minecolonies.coremod.gui.workerHuts.switchStyle=Mudar Estilo
-com.minecolonies.coremod.gui.townHall.tooLow=TH muito baixo
+com.minecolonies.coremod.gui.townHall.tooLow=Prefeitura muito baixa
 com.minecolonies.coremod.gui.recipe.full=Máximo alcançado para este nível
 com.minecolonies.coremod.cook.full=Não foi possível trazer comida ao trabalhador visto que o seu inventário está cheio.
 
@@ -708,7 +707,7 @@ item.minecolonies.cactusdoor.name=Porta de cacto
 tile.minecolonies.blockcactusslab_half.name=Cactus Slab
 
 
-com.minecolonies.coremod.request.toolow=Não é possível minerar o bloco %s na %s. É necessário atualizar a construção para usar a ferramenta com maior nível de mineração.
+com.minecolonies.coremod.request.toolow=Não é possível minerar o bloco %s na %s. É necessário aprimorar a construção para usar a ferramenta com maior nível de mineração.
 com.minecolonies.coremod.dimension.no=Você não tem permissão de colocar colônias em outras dimensões. (Definido pela configuração)
 com.minecolonies.coremod.max.schematic.reached=Max schematic size of %d blocks reached.
 
@@ -727,10 +726,10 @@ com.minecolonies.coremod.gui.scanTool.showRes=Mostrar Recursos
 com.minecolonies.coremod.gui.scanTool.to=Para:
 com.minecolonies.coremod.gui.scanTool.from=De:
 com.minecolonies.coremod.gui.scanTool.name=Scan Name:
-com.minecolonies.coremod.gui.scanTool.remove=Remova
-com.minecolonies.coremod.gui.scanTool.replace=Substitua
+com.minecolonies.coremod.gui.scanTool.remove=Remover
+com.minecolonies.coremod.gui.scanTool.replace=Substituir
 com.minecolonies.coremod.gui.scan.replace.title=Block Replacement GUI
-com.minecolonies.coremod.gui.scanTool.select=Selecione
+com.minecolonies.coremod.gui.scanTool.select=Selecionar
 
 com.minecolonies.coremod.gui.townHall.guards=Número de guardas:
 com.minecolonies.coremod.gui.townHall.house=Número de casas:
@@ -742,7 +741,7 @@ com.minecolonies.coremod.gui.townHall.population.knights=Cavaleiros: %d
 
 tile.minecolonies.barrel_block.name=Barril
 item.minecolonies.compost.name=Adubo
-tile.minecolonies.blockHutComposter.name=Composter Hut
+tile.minecolonies.blockHutComposter.name=Cabana do Compostor
 com.minecolonies.gui.workerHuts.composter.compostables=Items para compostagem
 
 com.minecolonies.coremod.gui.townHall.citizens.unemployed=Desempregado
@@ -757,7 +756,7 @@ com.minecolonies.coremod.status.fillingBarrels=Enchendo os barris
 com.minecolonies.coremod.status.harvestingBarrels=Colectando os barris
 
 com.minecolonies.coremod.pvp.townhall.break.start=Tome cuidado! %s começou a quebrar a sua prefeitura!
-com.minecolonies.coremod.pvp.townhall.broke=Beware!!! %s broke your town-hall by over %d%%! At 100%% it will be lost!!!
+com.minecolonies.coremod.pvp.townhall.broke=Cuidado!!! %s quebrou a sua prefeitura mais do que %d%%! Em 100%% será perdida!!!
 com.minecolonies.coremod.gui.townHall.pickTeamColor=Escolha a Cor da Equipa:
 tile.minecolonies.blockhutlibrary.name=Biblioteca
 com.minecolonies.coremod.gui.workerHuts.Library=Biblioteca
@@ -772,34 +771,34 @@ com.minecolonies.coremod.gui.workerHuts.getTool=Get GuardTool
 com.minecolonies.coremod.progress.supplies_placed=§6 Bem-vindo ao Minecolonies. Agora que você tem os suprimentos, que tal procurar por um lugar para colocar a sua prefeitura e criar a sua colônia? Mas longe de uma vila, se possível.
 com.minecolonies.coremod.progress.colony_founded=§6 Word is out about a new colony. Soon the first settlers will join your newly founded colony, if there is enough space around the town hall. (Experienced magistrates can turn off these helpful messages in the Town Hall block.)
 com.minecolonies.coremod.progress.first_citizen_spawned=§6 The first settler arrived at your colony. You should place a builder's hut to start your settlement.
-com.minecolonies.coremod.progress.builder_placed=§6 Great job on the placement of the builder's hut. However, that's not enough. You need to access it and click the build button! Soon your NPC will be creating new structures for the village.
-com.minecolonies.coremod.progress.built_enqueued=§6 While your builder is working, you can check on the resources he needs on the second page of the building GUI.
-com.minecolonies.coremod.progress.builder_built=§6 With the builder's hut completed, we should turn our attention to resource production. I suggest you get a lumberjack or miner.
-com.minecolonies.coremod.progress.resource_prod_built=§6 Producing resources costs energy and makes your settlers hungry. You might want to place a farmer or fisherman.
+com.minecolonies.coremod.progress.builder_placed=$6 Bom trabalho na colocação da cabana dos construtores. Contudo, isso ainda não é tudo. É preciso que você acesse a cabana e clique no botão 'construir'. Em breve, seu NPC estará criando novas estruturas para a vila.
+com.minecolonies.coremod.progress.built_enqueued=Enquanto o seu construtor trabalha, você pode checar os recursos que ele precisa na segunda página da interface gráfica do usuário da construção.
+com.minecolonies.coremod.progress.builder_built=Agora que a cabana do construtor está completa, nós deveríamos dar atenção para a produção de recursos. Sugiro que você contrate um lenhador ou mineiro.
+com.minecolonies.coremod.progress.resource_prod_built=§6 Produzir recursos custa energia e faz os seus pioneiros famintos. Talvez você queira colocar um fazendeiro ou pescador.
 com.minecolonies.coremod.progress.food_prod_built=§6 Your town starts to flourish! To improve the productivity, you might want to upgrade the buildings.
-com.minecolonies.coremod.progress.four_citizen_employed=§6 All your initial settlers are now employed. To attract more settlers, you have to build or upgrade housing for them.
-com.minecolonies.coremod.progress.all_citizens_homed=§6 I see all your settlers have a nice home now. If you build or upgrade one more citizen hut, you will get a new settler, but beware this will attract barbarians.
-com.minecolonies.coremod.progress.five_citizens_spawned=§6 A new settler arrived at your colony, and he brings word that barbarian spies have found the growing village. You might want to build a guard tower!
+com.minecolonies.coremod.progress.four_citizen_employed=§6 Agora todos os seus pioneiros estão empregados. Para atrair mais pioneiros, você tem que construir ou aprimorar moradias para eles.
+com.minecolonies.coremod.progress.all_citizens_homed=§6 Vejo que agora todos os seus pioneiros tem uma boa casa para viver. Se você construir ou aprimorar mais uma cabana de cidadão, você atrairá um novo pioneiro. Mas tenha cuidado, porque isso atrairá bárbaros.
+com.minecolonies.coremod.progress.five_citizens_spawned=§6 Um novo pioneiro chegou na sua colônia e contou que espiões bárbaros encontraram a vila em crescimento. Talvez é melhor construir uma torre de guarda!
 com.minecolonies.coremod.progress.six_citizens_spawned=§6 A growing settlement means a growing responsibility. You should consider placing a restaurant to keep your settlers well fed.
 com.minecolonies.coremod.progress.seven_citizens_spawned=§6 Your citizens urge you to build a warehouse. This will lighten your backpack, and also so they may get their merchandise faster!
 com.minecolonies.coremod.progress.warehouse_built=§6 You've built a warehouse. However, your people are too tasked as it is to fill it. Build some delivery huts to attract the deliverymen. Up to 5 can work per warehouse.
 com.minecolonies.coremod.progress.eight_citizens_spawned=§6 Settlers are saying that their skills influence their leveling speed. You can manually employ citizens, if it is turned on in the Town Hall configurations. The best skills for the job will be highlighted during the employment process.
-com.minecolonies.coremod.progress.manual_employment_on=§6 Workers are complaining about a long walk to their work. You can manually assign them to houses, if the option is turned on in the Town Hall configuration.
+com.minecolonies.coremod.progress.manual_employment_on=§6 Os trabalhadores estão reclamando da longa caminhada até o trabalho deles. Você pode, manualmente, colocá-los em casas caso esta opção esteja ligada na configuração da prefeitura.
 com.minecolonies.coremod.progress.nine_citizens_spawned=§6 A growing colony increases the burdens on your settlers. You should consider upgrading your worker buildings.
-com.minecolonies.coremod.progress.twenty_building_levels=§6 Um espião bárbaro foi capturado junto à nossa colónia e parece vir de um grupo maior. Devia considerar construir quartéis para defender a sua colónia.
-com.minecolonies.coremod.progress.not_enough_jobs=§6 Construir mais barracas de cidadãos do que empregos disponíveis tem uma má influência na felicidade dos seus cidadãos.
+com.minecolonies.coremod.progress.twenty_building_levels=§6 Um espião bárbaro foi pego perto da nossa colônia e parece pertencer a um grupo maior. Você deveria considerar construir quartéis para defender a sua colônia.
+com.minecolonies.coremod.progress.not_enough_jobs=§6 Construir mais cabanas de cidadãos do que empregos disponíveis tem uma má influência na felicidade dos seus cidadãos.
 
-com.minecolonies.coremod.gui.townHall.printProgress=Print help messages:
-com.minecolonies.coremod.gui.townHall.on=On
-com.minecolonies.coremod.gui.townHall.off=Off
+com.minecolonies.coremod.gui.townHall.printProgress=Imprimir mensagens de ajuda:
+com.minecolonies.coremod.gui.townHall.on=Lig
+com.minecolonies.coremod.gui.townHall.off=Desl
 
 com.minecolonies.coremod.gui.hiring.buttonPaused=Pausa
 com.minecolonies.coremod.gui.hiring.buttonUnpaused=Retomar
-com.minecolonies.coremod.gui.hiring.restart=Restart
+com.minecolonies.coremod.gui.hiring.restart=Reiniciar
 com.minecolonies.coremod.gui.hiring.restartMessage=Restart for citizen %s scheduled.
 com.minecolonies.coremod.gui.hiring.restartMessageDone=Citizen %s succesfully restarted.
 com.minecolonies.coremod.gui.townHall.buildingLevel=Nível de construção
-com.minecolonies.coremod.job.composter=Composter
+com.minecolonies.coremod.job.composter=Compostores
 com.minecolonies.coremod.gui.warehouse.sort=Sort
 com.minecolonies.coremod.gui.auto.hire.warning=Turn off Automatic Hiring in your Town Hall options to enable Firing!
 com.minecolonies.coremod.citizens.nospace=<Mysterious Voice> Colonists can't arrive at your colony because there is not enough space around the town hall!
@@ -827,8 +826,8 @@ item.pirate_leggins.name=Pirate Leggings
 item.pirate_shoes.name=Sapatos de Pirata
 com.minecolonies.coremod.pirates.sailing.away=Um navio pirata perto de %s acaba de partir em busca de outras vítimas.
 com.minecolonies.coremod.cook.serve.player=%s: Aqui está a sua comida, senhor!
-tile.minecolonies.blockHutArchery.name=Archery
-com.minecolonies.coremod.gui.workerHuts.Archery=Archery
+tile.minecolonies.blockHutArchery.name=Arquearia
+com.minecolonies.coremod.gui.workerHuts.Archery=Arquearia
 tile.minecolonies.blockHutCombatAcademy.name=Academia de Combate
 com.minecolonies.coremod.gui.workerHuts.CombatAcademy=Academia de Combate
 item.santa_hat.name=Gorro de Papai Noel
@@ -839,8 +838,8 @@ com.minecolonies.coremod.recipe.unable=Unable to store the blueprint. Either the
 com.minecolonies.coremod.request.crafting=Crafter
 entity.builder.messageBuildersTooFar=There is no builder close enough to work at this building, assign a builder to it manually in the build screen or build it closer to the existing builders!
 com.minecolonies.coremod.baker.noRecipe=Please tell me which recipe you want me to prepare in the Bakery!
-com.minecolonies.coremod.request.compostable=Compostable
-com.minecolonies.coremod.request.fertilizer=Fertilizer
-com.minecolonies.coremod.gui.workerHuts.composter=Composter Hut
-com.minecolonies.coremod.furnaceUser.noFuel=Please tell me what kind of fuel to use in my furnace!
+com.minecolonies.coremod.request.compostable=Compostável
+com.minecolonies.coremod.request.fertilizer=Fertilizante
+com.minecolonies.coremod.gui.workerHuts.composter=Cabana do Compostor
+com.minecolonies.coremod.furnaceUser.noFuel=Por favor, me fala que tipo de combustível é para usar no meu forno!
 

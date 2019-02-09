@@ -1,4 +1,3 @@
-#X-Generator: crowdin.com
 tile.minecolonies.blockHutCitizen.name=市民小屋
 tile.minecolonies.blockHutShepherd.name=牧羊人小屋
 tile.minecolonies.blockHutSwineHerder.name=豬農小屋
@@ -134,7 +133,7 @@ com.minecolonies.coremod.gui.workerHuts.swineHerderHut=豬農小屋
 com.minecolonies.coremod.gui.workerHuts.cowboyHut=牛仔
 com.minecolonies.coremod.gui.workerHuts.chickenHerderHut=雞農小屋
 com.minecolonies.coremod.gui.townHall.rename=重新命名殖名地
-com.minecolonies.coremod.gui.workerHuts.minerMineNode=礦井等級
+com.minecolonies.coremod.gui.workerHuts.minerMineNode=礦層
 com.minecolonies.coremod.gui.workerHuts.buildType=建築類型:
 com.minecolonies.coremod.gui.workerHuts.workerLevel=工人等級: %s
 com.minecolonies.coremod.gui.warehouse.toGuards=運送給守衛:
@@ -835,12 +834,12 @@ item.santa_hat.name=聖誕帽
 
 com.minecolonies.coremod.gui.workerHuts.Sawmill=鋸木場
 tile.minecolonies.blockHutSawmill.name=鋸木場
-com.minecolonies.coremod.recipe.unable=Unable to store the blueprint. Either the %s has no space for any more blueprints, or the blueprint doesn't correspond with its profession.
+com.minecolonies.coremod.recipe.unable=無法儲存藍圖或是配方. 也許是%s 沒有足夠的空間或是沒有對應的職業可學習.
 com.minecolonies.coremod.request.crafting=木匠
 entity.builder.messageBuildersTooFar=附近沒有足夠的建築工可以在這個建築裡工作，在建築概要裡手動指派一個建築工或是將建築蓋的靠建築工近一點.
 com.minecolonies.coremod.baker.noRecipe=請讓我知道你想要我在麵包店裡先準備哪個配方
 com.minecolonies.coremod.request.compostable=可用來堆肥
 com.minecolonies.coremod.request.fertilizer=肥料
 com.minecolonies.coremod.gui.workerHuts.composter=堆肥小屋
-com.minecolonies.coremod.furnaceUser.noFuel=請告訴我要放哪一種燃料在爈子裡!
+com.minecolonies.coremod.furnaceUser.noFuel=請告訴我要放哪一種燃料在爐子裡!
 
