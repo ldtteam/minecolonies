@@ -22,6 +22,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
@@ -666,6 +667,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      */
     public <R extends IRequestable> IToken<?> createRequest(@NotNull final CitizenData citizenData, @NotNull final R requested, final boolean async)
     {
+        Log.getLogger().warn("Incoming request!");
         final IToken requestToken = colony.getRequestManager().createRequest(requester, requested);
         if (async)
         {

@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -199,11 +200,13 @@ public final class ColonyView implements IColony
 
         if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || isNewSubScription))
         {
+            Log.getLogger().warn("Serialize requestmanager");
             buf.writeBoolean(true);
             ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
         }
         else
         {
+            Log.getLogger().warn("Don't Serialize requestmanager");
             buf.writeBoolean(false);
         }
 
@@ -517,9 +520,14 @@ public final class ColonyView implements IColony
 
         if (buf.readBoolean())
         {
+            Log.getLogger().warn("Deserialize requestmanager");
             final NBTTagCompound compound = ByteBufUtils.readTag(buf);
             this.requestManager = new StandardRequestManager(this);
             this.requestManager.deserializeNBT(compound);
+        }
+        else
+        {
+            Log.getLogger().warn("Don't Deserialize requestmanager");
         }
 
         final int barbSpawnListSize = buf.readInt();

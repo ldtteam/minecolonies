@@ -17,6 +17,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequ
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.*;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
@@ -164,7 +165,12 @@ public class StandardRequestManager implements IStandardRequestManager
         dirty = true;
         if (colony != null)
         {
+            Log.getLogger().warn("Mark dirty");
             colony.markDirty();
+        }
+        else
+        {
+            Log.getLogger().warn("Colony null, can't mark dirty!");
         }
     }
 
@@ -192,6 +198,7 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public void assignRequest(@NotNull final IToken<?> token)
     {
+        Log.getLogger().warn("Request in manager!");
         RequestHandler.assignRequest(this, RequestHandler.getRequest(this, token));
         markDirty();
     }
