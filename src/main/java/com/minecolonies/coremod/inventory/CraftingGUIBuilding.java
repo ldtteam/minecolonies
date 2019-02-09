@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.inventory;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -11,74 +10,15 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.network.play.server.SPacketSetSlot;
 import net.minecraft.world.World;
-
-import javax.annotation.Nullable;
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
 
+/**
+ * Crafting container for the recipe teaching of normal crafting recipes.
+ */
 public class CraftingGUIBuilding extends Container
 {
-    /**
-     * Initial x-offset of the inventory slot.
-     */
-    private static final int PLAYER_INVENTORY_INITIAL_X_OFFSET = 8;
-
-    /**
-     * Initial y-offset of the inventory slot.
-     */
-    private static final int PLAYER_INVENTORY_INITIAL_Y_OFFSET = 84;
-
-    /**
-     * Each offset of the inventory slots.
-     */
-    private static final int INVENTORY_OFFSET_EACH = 18;
-
-    /**
-     * Initial y-offset of the inventory slots in the hotbar.
-     */
-    private static final int PLAYER_INVENTORY_HOTBAR_OFFSET = 142;
-
-    /**
-     * The x position of the crafting result slot position.
-     */
-    private static final int X_CRAFT_RESULT = 124;
-
-    /**
-     * The y position of the crafting result slot position.
-     */
-    private static final int Y_CRAFT_RESULT = 35;
-
-    /**
-     * The x offset of the crafting slot position.
-     */
-    private static final int X_OFFSET_CRAFTING = 30;
-
-    /**
-     * The y offset of the crafting slot position.
-     */
-    private static final int Y_OFFSET_CRAFTING = 17;
-
-    /**
-     * Amount of slots in the crafting window.
-     */
-    private static final int CRAFTING_SLOTS = 5;
-
-    /**
-     * Amount of slots in the crafting window.
-     */
-    private static final int ADDITIONAL_SLOTS = 5;
-
-    /**
-     * Start slot of the player hotbar.
-     */
-    private static final int HOTBAR_START = 32;
-
-    /**
-     * Total amount of slots in the GUI.
-     */
-    private static final int TOTAL_SLOTS = 41;
-
     /**
      * The crafting matrix inventory (2x2).
      */
@@ -146,12 +86,14 @@ public class CraftingGUIBuilding extends Container
                         return 1;
                     }
 
+                    @NotNull
                     @Override
-                    public ItemStack onTake(final EntityPlayer player, final ItemStack stack)
+                    public ItemStack onTake(final EntityPlayer player, @NotNull final ItemStack stack)
                     {
                         return ItemStack.EMPTY;
                     }
 
+                    @NotNull
                     @Override
                     public ItemStack decrStackSize(final int par1)
                     {
@@ -184,7 +126,7 @@ public class CraftingGUIBuilding extends Container
                         playerInventory,
                         j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
                         PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                        PLAYER_INVENTORY_INITIAL_Y_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH
+                        PLAYER_INVENTORY_INITIAL_Y_OFFSET_CRAFTING + i * PLAYER_INVENTORY_OFFSET_EACH
                 ));
             }
         }
@@ -194,17 +136,11 @@ public class CraftingGUIBuilding extends Container
             addSlotToContainer(new Slot(
                     playerInventory, i,
                     PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-                    PLAYER_INVENTORY_HOTBAR_OFFSET
+              PLAYER_INVENTORY_HOTBAR_OFFSET_CRAFTING
             ));
         }
 
         this.onCraftMatrixChanged(this.craftMatrix);
-    }
-
-    @Override
-    protected final Slot addSlotToContainer(final Slot slotToAdd)
-    {
-        return super.addSlotToContainer(slotToAdd);
     }
 
     /**
@@ -235,11 +171,12 @@ public class CraftingGUIBuilding extends Container
     }
 
     @Override
-    public boolean canInteractWith(final EntityPlayer playerIn)
+    public boolean canInteractWith(@NotNull final EntityPlayer playerIn)
     {
         return true;
     }
 
+    @NotNull
     @Override
     public ItemStack slotClick(final int slotId, final int clickedButton, final ClickType mode, final EntityPlayer playerIn)
     {
@@ -268,6 +205,12 @@ public class CraftingGUIBuilding extends Container
         return super.slotClick(slotId, clickedButton, mode, playerIn);
     }
 
+    /**
+     * Handle a slot click.
+     * @param slot the clicked slot.
+     * @param stack the used stack.
+     * @return the result.
+     */
     public ItemStack handleSlotClick(final Slot slot, final ItemStack stack)
     {
         if (stack.getCount() > 0)
@@ -284,14 +227,17 @@ public class CraftingGUIBuilding extends Container
         return slot.getStack().copy();
     }
 
-    @Nullable
+    @NotNull
     @Override
     public ItemStack transferStackInSlot(final EntityPlayer playerIn, final int index)
     {
-        if (index <= CRAFTING_SLOTS + (complete ? ADDITIONAL_SLOTS : 0))
+        final int total_crafting_slots = CRAFTING_SLOTS + (complete ? ADDITIONAL_SLOTS : 0);
+        if (index <= total_crafting_slots)
         {
             return ItemStack.EMPTY;
         }
+
+        final int total_slots = TOTAL_SLOTS + (complete ? ADDITIONAL_SLOTS : 0);
 
         ItemStack itemstack = ItemStackUtils.EMPTY;
         final Slot slot = this.inventorySlots.get(index);
@@ -301,7 +247,7 @@ public class CraftingGUIBuilding extends Container
             itemstack = itemstack1.copy();
             if (index == 0)
             {
-                if (!this.mergeItemStack(itemstack1, CRAFTING_SLOTS + (complete ? ADDITIONAL_SLOTS : 0), TOTAL_SLOTS+ (complete ? ADDITIONAL_SLOTS : 0), true))
+                if (!this.mergeItemStack(itemstack1, total_crafting_slots, total_slots, true))
                 {
                     return ItemStackUtils.EMPTY;
                 }
@@ -309,16 +255,16 @@ public class CraftingGUIBuilding extends Container
             }
             else if (index < HOTBAR_START)
             {
-                if (!this.mergeItemStack(itemstack1, HOTBAR_START, TOTAL_SLOTS + (complete ? ADDITIONAL_SLOTS : 0), false))
+                if (!this.mergeItemStack(itemstack1, HOTBAR_START, total_slots, false))
                 {
                     return ItemStackUtils.EMPTY;
                 }
             }
-            else if ((index < TOTAL_SLOTS + (complete ? ADDITIONAL_SLOTS : 0)
-                    && !this.mergeItemStack(itemstack1, CRAFTING_SLOTS + (complete ? ADDITIONAL_SLOTS : 0), HOTBAR_START, false))
-                    || !this.mergeItemStack(itemstack1, CRAFTING_SLOTS + (complete ? ADDITIONAL_SLOTS : 0), TOTAL_SLOTS+ (complete ? ADDITIONAL_SLOTS : 0), false))
+            else if ((index < total_slots
+                    && !this.mergeItemStack(itemstack1, total_crafting_slots, HOTBAR_START, false))
+                    || !this.mergeItemStack(itemstack1, total_crafting_slots, total_slots, false))
             {
-                return null;
+                return ItemStack.EMPTY;
             }
             if (itemstack1.getCount() == 0)
             {
@@ -336,31 +282,10 @@ public class CraftingGUIBuilding extends Container
         return itemstack;
     }
 
-    public List<Slot> getCraftingSlots()
-    {
-        if(complete)
-        {
-            return ImmutableList.of(getSlot(1), getSlot(2), getSlot(3), getSlot(4), getSlot(5), getSlot(6), getSlot(7), getSlot(8), getSlot(9));
-        }
-        else
-        {
-            return ImmutableList.of(getSlot(1), getSlot(2), getSlot(3), getSlot(4));
-        }
-    }
-
     @Override
     public boolean canMergeSlot(final ItemStack stack, final Slot slotIn)
     {
         return slotIn.inventory != this.craftResult && super.canMergeSlot(stack, slotIn);
-    }
-
-    /**
-     * Getter for the craft matrix.
-     * @return the matric.
-     */
-    public InventoryCrafting getCraftMatrix()
-    {
-        return craftMatrix;
     }
 
     /**

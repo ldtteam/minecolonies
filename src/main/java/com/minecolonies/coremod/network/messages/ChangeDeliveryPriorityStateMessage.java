@@ -2,7 +2,6 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -40,9 +39,9 @@ public class ChangeDeliveryPriorityStateMessage extends AbstractMessage<ChangeDe
     }
 
     /**
-     *  Creates message for player to change the priority of the delivery.
+     * Creates message for player to change the priority of the delivery.
      *
-     * @param building        view of the building to read data from
+     * @param building view of the building to read data from
      */
     public ChangeDeliveryPriorityStateMessage(@NotNull final AbstractBuildingView building)
     {
@@ -91,7 +90,7 @@ public class ChangeDeliveryPriorityStateMessage extends AbstractMessage<ChangeDe
             }
             final AbstractBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
 
-            if(building instanceof AbstractBuildingWorker)
+            if (building instanceof AbstractBuildingWorker)
             {
                 building.alterPriorityState();
                 building.markDirty();

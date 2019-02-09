@@ -20,7 +20,6 @@ import com.structurize.coremod.management.Structures;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -51,7 +50,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      */
     private static final int SUPPLY_SHIP_CHEST_HEIGHT = 6;
 
-    private boolean                                                     complete;
+    private boolean                  complete;
     private String                   structureName;
     private String                   workOrderName;
     private int                      rotation;
@@ -225,32 +224,14 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             if(InventoryUtils.removeStacksFromItemHandler(new InvWrapper(player.inventory), stacks))
             {
                 StructureWrapper.loadAndPlaceStructureWithRotation(player.world, message.structureName,
-                  message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete, player);
+                  message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
                 player.getServerWorld().setBlockState(message.pos.up(chestHeight), Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, player.getHorizontalFacing()));
-                fillChest((TileEntityChest) player.getServerWorld().getTileEntity(message.pos.up(chestHeight)));
             }
             else
             {
                 LanguageHandler.sendPlayerMessage(player, "item.supplyChestDeployer.missing");
             }
         }
-    }
-
-    /**
-     * Fills the content of the supplychest with the buildTool and townHall.
-     *
-     * @param chest the chest to fill.
-     */
-    private static void fillChest(@Nullable final TileEntityChest chest)
-    {
-        if (chest == null)
-        {
-            Log.getLogger().error("Supply chest tile entity was null.");
-            return;
-        }
-        chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));
-        chest.setInventorySlotContents(1, new ItemStack(com.structurize.coremod.items.ModItems.buildTool));
-        chest.setInventorySlotContents(2, guideBook);
     }
 
     /**

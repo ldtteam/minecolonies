@@ -7,19 +7,20 @@ import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.util.AIState;
-import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.entity.ai.statemachine.AIEventTarget;
+import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
+import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
+import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.util.Structure;
 import com.minecolonies.coremod.util.StructureWrapper;
 import com.minecolonies.coremod.util.WorkerUtil;
 import com.structurize.coremod.placementhandlers.IPlacementHandler;
 import com.structurize.coremod.placementhandlers.PlacementHandlers;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockGrassPath;
+import net.minecraft.block.*;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
@@ -35,7 +36,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +49,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static com.minecolonies.api.util.constant.Suppression.MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED;
-import static com.minecolonies.coremod.entity.ai.util.AIState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * This base ai class is used by ai's who need to build entire structures.
@@ -140,43 +140,43 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
           /*
            * Pick up stuff which might've been
            */
-          new AITarget(PICK_UP_RESIDUALS, true, this::pickUpResiduals),
+          new AITarget(PICK_UP_RESIDUALS, this::pickUpResiduals),
           /*
            * Check if tasks should be executed.
            */
-          new AITarget(this::checkIfCanceled, IDLE, true),
+          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::checkIfCanceled, IDLE),
           /*
            * Select the appropriate State to do next.
            */
-          new AITarget(START_BUILDING, false, this::startBuilding),
+          new AITarget(START_BUILDING, this::startBuilding),
           /*
            * Check if we have to build something.
            */
-          new AITarget(IDLE, true, this::isThereAStructureToBuild, () -> START_BUILDING),
+          new AITarget(IDLE, this::isThereAStructureToBuild, () -> START_BUILDING, 100),
           /*
            * Clean up area completely.
            */
-          new AITarget(REMOVE_STEP, false, generateStructureGenerator(this::clearStep, COMPLETE_BUILD)),
+          new AITarget(REMOVE_STEP, generateStructureGenerator(this::clearStep, COMPLETE_BUILD)),
           /*
            * Clear out the building area.
            */
-          new AITarget(CLEAR_STEP, false, generateStructureGenerator(this::clearStep, BUILDING_STEP)),
+          new AITarget(CLEAR_STEP, generateStructureGenerator(this::clearStep, BUILDING_STEP)),
           /*
            * Build the structure and foundation of the building.
            */
-          new AITarget(BUILDING_STEP, false, generateStructureGenerator(this::structureStep, SPAWN_STEP)),
+          new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, SPAWN_STEP)),
           /*
            * Spawn entities on the structure.
            */
-          new AITarget(SPAWN_STEP, false, generateStructureGenerator(this::spawnEntity, DECORATION_STEP)),
+          new AITarget(SPAWN_STEP, generateStructureGenerator(this::spawnEntity, DECORATION_STEP)),
           /*
            * Decorate the AbstractBuilding with torches etc.
            */
-          new AITarget(DECORATION_STEP, false, generateStructureGenerator(this::decorationStep, COMPLETE_BUILD)),
+          new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, COMPLETE_BUILD)),
           /*
            * Finalize the building and give back control to the ai.
            */
-          new AITarget(COMPLETE_BUILD, true, this::completeBuild)
+          new AITarget(COMPLETE_BUILD, this::completeBuild)
         );
     }
 
@@ -195,7 +195,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * @param nextState          the next state to change to once done iterating.
      * @return the new state this AI will be in after one pass.
      */
-    private Supplier<AIState> generateStructureGenerator(@NotNull final Function<Structure.StructureBlock, Boolean> evaluationFunction, @NotNull final AIState nextState)
+    private Supplier<IAIState> generateStructureGenerator(@NotNull final Function<Structure.StructureBlock, Boolean> evaluationFunction, @NotNull final IAIState nextState)
     {
         //do not replace with method reference, this one stays the same on changing reference for currentStructure
         //URGENT: DO NOT REPLACE FOR ANY MEANS THIS WILL CRASH THE GAME.
@@ -252,7 +252,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     /**
      * Switches the structures stage after the current one has been completed.
      */
-    public AIState switchStage(final AIState state)
+    public IAIState switchStage(final IAIState state)
     {
         if (state.equals(REMOVE_STEP))
         {
@@ -277,8 +277,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         return state;
     }
 
-    private AIState pickUpResiduals()
+    private IAIState pickUpResiduals()
     {
+        if (currentStructure.getStage() != Structure.Stage.COMPLETE)
+        {
+            return IDLE;
+        }
+
         if (getItemsForPickUp() == null)
         {
             fillItemsList();
@@ -318,7 +323,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         searchForItems(new AxisAlignedBB(centerPos).expand(currentStructure.getLength() / 2.0, currentStructure.getHeight(), currentStructure.getWidth()));
     }
 
-    private AIState completeBuild()
+    private IAIState completeBuild()
     {
         storeProgressPos(null, Structure.Stage.CLEAR);
         incrementActionsDoneAndDecSaturation();
@@ -438,7 +443,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                         return false;
                     }
                 }
-                if (!world.isAirBlock(coords))
+
+                final IBlockState worldState = world.getBlockState(coords);
+
+                if (worldState.getMaterial() != Material.AIR
+                      && (worldState.getBlock() instanceof BlockDoublePlant && worldState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.UPPER)))
                 {
                     handleBuildingOverBlock(coords);
                     world.setBlockToAir(coords);
@@ -809,6 +818,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         }
 
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.clearing"));
+
         //Don't break bedrock etc.
         //Don't break bedrock etc.
         if (!BlockUtils.shouldNeverBeMessedWith(currentBlock.worldBlock))
@@ -818,6 +828,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             if (!walkToConstructionSite(currentStructure.getCurrentBlockPosition()))
             {
                 return false;
+            }
+
+            if (job.getStructure().isStructureBlockEqualWorldBlock()
+                  || (currentBlock.block instanceof BlockBed && currentBlock.metadata.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
+                  || (currentBlock.block instanceof BlockDoor && currentBlock.metadata.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
+            {
+                return true;
             }
 
             WorkerUtil.faceBlock(currentBlock.blockPosition, worker);
@@ -887,7 +904,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * @return the new State to start in.
      */
     @NotNull
-    private AIState startBuilding()
+    private IAIState startBuilding()
     {
         if (currentStructure == null)
         {
@@ -962,7 +979,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.spawning"));
 
         final Entity entity = ItemStackUtils.getEntityFromEntityInfoOrNull(entityInfo, world);
-        if (entity != null && !isEntityAtPosition(entity, world))
+        if (entity != null && !EntityUtils.isEntityAtPosition(entity, world, worker))
         {
             final List<ItemStack> request = new ArrayList<>();
 
@@ -1024,18 +1041,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         }
 
         return true;
-    }
-
-    /**
-     * Checks if a certain entity is in the world at a certain position already.
-     *
-     * @param entity the entity.
-     * @param world  the world.
-     * @return true if there.
-     */
-    private static boolean isEntityAtPosition(final Entity entity, final World world)
-    {
-        return !world.getEntitiesWithinAABB(entity.getClass(), new AxisAlignedBB(entity.posX, entity.posY, entity.posZ, entity.posX, entity.posY, entity.posZ)).isEmpty();
     }
 
     /**

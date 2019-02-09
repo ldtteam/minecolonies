@@ -14,7 +14,6 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.DropDownList;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -113,6 +112,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         initStyleNavigation();
         registerButton(BUTTON_BUILD, this::confirmClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
+        registerButton(BUTTON_REPAIR, this::repairClicked);
         registerButton(BUTTON_MOVE_BUILDING, this::moveBuildingClicked);
         final Button buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
         if (building.getBuildingLevel() == 0)
@@ -162,6 +162,16 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         {
             MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD, builder));
         }
+        cancelClicked();
+    }
+
+    /**
+     * Action when repair button is clicked.
+     */
+    private void repairClicked()
+    {
+        final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ORIGIN : builders.get(buildersDropDownList.getSelectedIndex()).getSecond();
+        MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR, builder));
         cancelClicked();
     }
 
@@ -254,11 +264,11 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
 
             if (entityInfo != null)
             {
-                for (final ItemStack stack : ItemStackUtils.getListOfStackForEntityInfo(entityInfo, world, Minecraft.getMinecraft().player))
+                for (final ItemStorage stack : ItemStackUtils.getListOfStackForEntityInfo(entityInfo, world, Minecraft.getMinecraft().player))
                 {
-                    if (!ItemStackUtils.isEmpty(stack))
+                    if (!ItemStackUtils.isEmpty(stack.getItemStack()))
                     {
-                        addNeededResource(stack, 1);
+                        addNeededResource(stack.getItemStack(), 1);
                     }
                 }
             }
