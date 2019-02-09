@@ -302,7 +302,7 @@ public class EventHandler
         BlockPos bedBlockPos = event.getPos();
 
         //Only execute for the main hand our colony events.
-        if (event.getHand() == EnumHand.MAIN_HAND && !(event.getWorld().isRemote))
+        if (event.getHand() == EnumHand.MAIN_HAND)
         {
             // this was the simple way of doing it, minecraft calls onBlockActivated
             // and uses that return value, but I didn't want to call it twice
@@ -458,12 +458,18 @@ public class EventHandler
             final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, world.getSpawnPoint()));
             if (spawnDistance < Configurations.gameplay.minDistanceFromWorldSpawn)
             {
-                LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, Configurations.gameplay.minDistanceFromWorldSpawn);
+                if (!world.isRemote)
+                {
+                    LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, Configurations.gameplay.minDistanceFromWorldSpawn);
+                }
                 return false;
             }
             else if (spawnDistance > Configurations.gameplay.maxDistanceFromWorldSpawn)
             {
-                LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, Configurations.gameplay.maxDistanceFromWorldSpawn);
+                if (!world.isRemote)
+                {
+                    LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, Configurations.gameplay.maxDistanceFromWorldSpawn);
+                }
                 return false;
             }
         }
@@ -523,43 +529,52 @@ public class EventHandler
 
     private static boolean canOwnerPlaceTownHallHere(final World world, @NotNull final EntityPlayer player, @NotNull final IColony colony, final BlockPos pos)
     {
+        final IColony currentColony = ColonyManager.getIColony(world, pos);
+        if (currentColony != null && currentColony != colony)
+        {
+            if (!world.isRemote)
+            {
+                player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.permission.no"));
+            }
+            return false;
+        }
+
         if (!colony.isCoordInColony(world, pos))
         {
-            final ITextComponent deleteButton = new TextComponentTranslation("tile.blockHutTownHall.deleteMessageLink")
-                                                  .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-                                                    new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                                      String.format(DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED,
-                                                        colony.getID(), true
-                                                    ))));
-            if (Configurations.gameplay.allowInfiniteColonies)
+            if (!world.isRemote)
             {
-                final ITextComponent abandonButton = new TextComponentTranslation("tile.blockHutTownHall.abandonMessageLink")
-                                                      .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD)
-                                                                  .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                                                    String.format(ABANDON_COLONY_CONFIRM_COMMAND_SUGGESTED, colony.getID())))
-                                                      );
-                player.sendMessage(new TextComponentTranslation("tile.blockHutTownHall.messagePlacedAlreadyInfi"));
-                player.sendMessage(abandonButton);
+                final ITextComponent deleteButton = new TextComponentTranslation("tile.blockHutTownHall.deleteMessageLink")
+                                                      .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+                                                        new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                                                          String.format(DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED,
+                                                            colony.getID(), true
+                                                          ))));
+                if (Configurations.gameplay.allowInfiniteColonies)
+                {
+                    final ITextComponent abandonButton = new TextComponentTranslation("tile.blockHutTownHall.abandonMessageLink")
+                                                           .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD)
+                                                                       .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                                                                         String.format(ABANDON_COLONY_CONFIRM_COMMAND_SUGGESTED, colony.getID())))
+                                                           );
+                    player.sendMessage(new TextComponentTranslation("tile.blockHutTownHall.messagePlacedAlreadyInfi"));
+                    player.sendMessage(abandonButton);
+                }
+                else
+                {
+                    player.sendMessage(new TextComponentTranslation("tile.blockHutTownHall.messagePlacedAlreadyDel"));
+                }
+                player.sendMessage(deleteButton);
             }
-            else
-            {
-                player.sendMessage(new TextComponentTranslation("tile.blockHutTownHall.messagePlacedAlreadyDel"));
-            }
-            player.sendMessage(deleteButton);
 
             //  Players are currently only allowed a single colony
             return false;
         }
         else if (colony.hasTownHall())
         {
-            player.sendMessage(new TextComponentTranslation("tile.blockHutTownHall.messagePlacedAlready"));
-            return false;
-        }
-
-        final IColony currentColony = ColonyManager.getIColony(world, pos);
-        if (currentColony != colony)
-        {
-            LanguageHandler.sendPlayerMessage(player, "tile.blockHutTownhall.messageTooFar");
+            if (!world.isRemote)
+            {
+                player.sendMessage(new TextComponentTranslation("tile.blockHutTownHall.messagePlacedAlready"));
+            }
             return false;
         }
 
@@ -573,17 +588,23 @@ public class EventHandler
         {
             if (closestColony.hasTownHall() || !closestColony.getPermissions().isColonyMember(player))
             {
-                Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
-                                       + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
-                //Placing in a colony which already has a town hall
-                LanguageHandler.sendPlayerMessage(player, "tile.blockHutTownHall.messageTooClose");
+                if (!world.isRemote)
+                {
+                    Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
+                                           + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
+                    //Placing in a colony which already has a town hall
+                    LanguageHandler.sendPlayerMessage(player, "tile.blockHutTownHall.messageTooClose");
+                }
                 return false;
             }
 
             if (!closestColony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
             {
-                //  No permission to place hut in colony
-                LanguageHandler.sendPlayerMessage(player, "tile.blockHut.messageNoPermissionPlace", closestColony.getName());
+                if (!world.isRemote)
+                {
+                    //  No permission to place hut in colony
+                    LanguageHandler.sendPlayerMessage(player, "tile.blockHut.messageNoPermissionPlace", closestColony.getName());
+                }
                 return false;
             }
 
