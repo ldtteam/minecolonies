@@ -637,11 +637,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             return;
         }
 
-        final int maxCitizens =  ColonyManager.getColonyByPosFromDim(townHall.getColony().getDimension(),townHall.getColony().getCenter()).getCitizenManager().getMaxCitizens();
         final String numberOfCitizens =
             LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens",
-                citizensSize, maxCitizens);
-                //citizensSize, townHall.getColony().getCitizenCount());
+                citizensSize, townHall.getColony().getCitizenCount());
         findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
 
         final Integer unemployed = jobCountMap.get("") == null ? 0 : jobCountMap.get("");
