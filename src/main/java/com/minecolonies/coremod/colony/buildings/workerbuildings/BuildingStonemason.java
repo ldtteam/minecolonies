@@ -20,6 +20,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
+
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
 /**
@@ -92,28 +94,49 @@ public class BuildingStonemason extends AbstractBuildingCrafter
 
         int amountOfValidBlocks = 0;
         int blocks = 0;
+
+
+        if (storage.getPrimaryOutput().getItem() instanceof ItemBlock)
+        {
+            final Block block = ((ItemBlock) storage.getPrimaryOutput().getItem()).getBlock();
+            if (block == Blocks.STONEBRICK
+                  || block == Blocks.STONE_BRICK_STAIRS
+                  || block == Blocks.STONE_SLAB
+                  || block == Blocks.STONE_SLAB2
+                  || block == Blocks.STONE
+                  || block == Blocks.SANDSTONE
+                  || block == Blocks.RED_SANDSTONE)
+            {
+                return true;
+            }
+            else if (block == Blocks.END_BRICKS)
+            {
+                return false;
+            }
+        }
+
         for(final ItemStack stack : storage.getInput())
         {
             if(!ItemStackUtils.isEmpty(stack))
             {
                 blocks++;
-                if (stack.getItem() instanceof ItemBlock)
-                {
-                    final Block block = ((ItemBlock) stack.getItem()).getBlock();
-                    if (block == Blocks.STONEBRICK || block == Blocks.STONE_BRICK_STAIRS || block == Blocks.STONE_SLAB || block == Blocks.STONE_SLAB2)
-                    {
-                        amountOfValidBlocks++;
-                        continue;
-                    }
-                }
                 for(final int id: OreDictionary.getOreIDs(stack))
                 {
+                    if (stack.getItem() instanceof ItemBlock)
+                    {
+                        final Block block = ((ItemBlock) stack.getItem()).getBlock();
+                        if (block == Blocks.STONEBRICK || block == Blocks.STONE_BRICK_STAIRS || block == Blocks.STONE_SLAB || block == Blocks.STONE_SLAB2)
+                        {
+                            amountOfValidBlocks++;
+                            continue;
+                        }
+                    }
                     final String name = OreDictionary.getOreName(id);
-                    if(name.contains("stone") || name.contains("sand"))
+                    if(name.contains("stone"))
                     {
                         amountOfValidBlocks++;
                     }
-                    else if(name.contains("stick") || name.contains("wood") || name.contains("redstone") || name.contains("string"))
+                    else if(name.contains("stick") || name.contains("wood") || name.toLowerCase(Locale.US).contains("redstone") || name.contains("string") || name.contains("gunpowder"))
                     {
                         return false;
                     }
