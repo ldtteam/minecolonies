@@ -191,4 +191,10 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
      * @return true if so.
      */
     boolean isDirty();
+
+    /**
+     * Sets if dirty and needs to be updated.
+     * @param isDirty true if so.
+     */
+    void setDirty(boolean isDirty);
 }
