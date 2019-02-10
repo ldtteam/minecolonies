@@ -175,12 +175,13 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public boolean isDirty()
     {
-        if (dirty)
-        {
-            dirty = false;
-            return true;
-        }
-        return false;
+        return dirty;
+    }
+
+    @Override
+    public void setDirty(final boolean isDirty)
+    {
+        this.dirty = isDirty;
     }
 
     /**

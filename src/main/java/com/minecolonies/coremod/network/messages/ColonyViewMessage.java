@@ -15,8 +15,19 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ColonyViewMessage extends AbstractMessage<ColonyViewMessage, IMessage>
 {
-    private int     colonyId;
+    /**
+     * The colony id.
+     */
+    private int colonyId;
+
+    /**
+     * If this is a new subscription.
+     */
     private boolean isNewSubscription;
+
+    /**
+     * The buffer with the data.
+     */
     private ByteBuf colonyBuffer;
 
     /**
@@ -31,14 +42,14 @@ public class ColonyViewMessage extends AbstractMessage<ColonyViewMessage, IMessa
      * Add or Update a ColonyView on the client.
      *
      * @param colony            Colony of the view to update.
+     * @param buf               the bytebuffer.
      * @param isNewSubscription Boolean whether or not this is a new subscription.
      */
-    public ColonyViewMessage(@NotNull final Colony colony, final boolean isNewSubscription)
+    public ColonyViewMessage(@NotNull final Colony colony, final ByteBuf buf, final boolean isNewSubscription)
     {
         this.colonyId = colony.getID();
         this.isNewSubscription = isNewSubscription;
-        this.colonyBuffer = Unpooled.buffer();
-        ColonyView.serializeNetworkData(colony, colonyBuffer, isNewSubscription);
+        this.colonyBuffer = buf;
     }
 
     @Override
@@ -61,7 +72,7 @@ public class ColonyViewMessage extends AbstractMessage<ColonyViewMessage, IMessa
     @Override
     protected void messageOnClientThread(final ColonyViewMessage message, final MessageContext ctx)
     {
-        if(MineColonies.proxy.getWorldFromMessage(ctx) != null)
+        if (MineColonies.proxy.getWorldFromMessage(ctx) != null)
         {
             ColonyManager.handleColonyViewMessage(message.colonyId, message.colonyBuffer, MineColonies.proxy.getWorldFromMessage(ctx), message.isNewSubscription);
         }

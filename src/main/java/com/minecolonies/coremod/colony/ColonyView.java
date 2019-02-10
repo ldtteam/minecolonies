@@ -162,9 +162,9 @@ public final class ColonyView implements IColony
      *
      * @param colony            Colony to write data about.
      * @param buf               {@link ByteBuf} to write data in.
-     * @param isNewSubScription true if this is a new subscription.
+     * @param hasNewSubscribers true if there is a new subscription.
      */
-    public static void serializeNetworkData(@NotNull final Colony colony, @NotNull final ByteBuf buf, final boolean isNewSubScription)
+    public static void serializeNetworkData(@NotNull final Colony colony, @NotNull final ByteBuf buf, final boolean hasNewSubscribers)
     {
         //  General Attributes
         ByteBufUtils.writeUTF8String(buf, colony.getName());
@@ -203,7 +203,7 @@ public final class ColonyView implements IColony
         buf.writeBoolean(colony.canMoveIn());
         //  Citizens are sent as a separate packet
 
-        if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || isNewSubScription))
+        if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || hasNewSubscribers))
         {
             buf.writeBoolean(true);
             ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());

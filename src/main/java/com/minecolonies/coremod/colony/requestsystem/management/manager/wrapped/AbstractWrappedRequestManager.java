@@ -248,4 +248,10 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     {
         return wrappedManager.isDirty();
     }
+
+    @Override
+    public void setDirty(final boolean isDirty)
+    {
+        wrappedManager.setDirty(isDirty);
+    }
 }
