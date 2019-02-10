@@ -17,6 +17,7 @@ public final class NbtTagConstants
     public static final String TAG_WORK                   = "work";
     public static final String TAG_MANUAL_HIRING          = "manualHiring";
     public static final String TAG_MANUAL_HOUSING         = "manualHousing";
+    public static final String TAG_MOVE_IN                = "moveIn";
     public static final String TAG_REQUESTMANAGER         = "requestManager";
     public static final String TAG_WAYPOINT               = "waypoints";
     public static final String TAG_FREE_BLOCKS            = "freeBlocks";
