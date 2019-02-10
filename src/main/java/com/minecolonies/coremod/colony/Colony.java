@@ -160,6 +160,11 @@ public class Colony implements IColony
     private boolean manualHousing = false;
 
     /**
+     * Whether citizens can move in or not.
+     */
+    private boolean moveIn = true;
+
+    /**
      * The name of the colony.
      */
     private String name = "ERROR(Wasn't placed by player)";
@@ -437,6 +442,7 @@ public class Colony implements IColony
         happinessData.readFromNBT(compound); 
         packageManager.setLastContactInHours(compound.getInteger(TAG_ABANDONED));
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
+        moveIn = compound.getBoolean(TAG_MOVE_IN);
 
         if(compound.hasKey(TAG_STYLE))
         {
@@ -562,6 +568,7 @@ public class Colony implements IColony
         happinessData.writeToNBT(compound); 
         compound.setInteger(TAG_ABANDONED, packageManager.getLastContactInHours());
         compound.setBoolean(TAG_MANUAL_HOUSING, manualHousing);
+        compound.setBoolean(TAG_MOVE_IN, moveIn);
         compound.setTag(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
         compound.setString(TAG_STYLE, style);
         compound.setBoolean(TAG_RAIDABLE, raidManager.canHaveRaiderEvents());
@@ -1061,6 +1068,27 @@ public class Colony implements IColony
     public void setManualHousing(final boolean manualHousing)
     {
         this.manualHousing = manualHousing;
+        markDirty();
+    }
+
+    /**
+     * Getter which checks if houses should be manually allocated.
+     *
+     * @return true of false.
+     */
+    public boolean canMoveIn()
+    {
+        return moveIn;
+    }
+
+    /**
+     * Setter to set the citizen moving in.
+     *
+     * @param moveIn true if can move in, false if can't move in.
+     */
+    public void setMoveIn(final boolean moveIn)
+    {
+        this.moveIn = moveIn;
         markDirty();
     }
 
