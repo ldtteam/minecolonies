@@ -198,16 +198,16 @@ public final class ColonyView implements IColony
         buf.writeBoolean(colony.isManualHousing());
         //  Citizens are sent as a separate packet
 
-        //if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || isNewSubScription))
+        if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || isNewSubScription))
         {
             Log.getLogger().warn("Serialize requestmanager");
-            //buf.writeBoolean(true);
+            buf.writeBoolean(true);
             ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
         }
-        //else
+        else
         {
             Log.getLogger().warn("Don't Serialize requestmanager");
-           // buf.writeBoolean(false);
+            buf.writeBoolean(false);
         }
 
         buf.writeInt(colony.getRaiderManager().getLastSpawnPoints().size());
@@ -518,14 +518,14 @@ public final class ColonyView implements IColony
         this.lastContactInHours = buf.readInt();
         this.manualHousing = buf.readBoolean();
 
-        //if (buf.readBoolean())
+        if (buf.readBoolean())
         {
             Log.getLogger().warn("Deserialize requestmanager");
             final NBTTagCompound compound = ByteBufUtils.readTag(buf);
             this.requestManager = new StandardRequestManager(this);
             this.requestManager.deserializeNBT(compound);
         }
-        //else
+        else
         {
             Log.getLogger().warn("Don't Deserialize requestmanager");
         }

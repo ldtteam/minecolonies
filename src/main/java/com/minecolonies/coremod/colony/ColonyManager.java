@@ -920,6 +920,7 @@ public final class ColonyManager
         ColonyView view = getColonyView(colonyId);
         if (view == null)
         {
+            Log.getLogger().warn("New colony view!");
             view = ColonyView.createFromNetwork(colonyId);
             colonyViews.add(view);
         }
