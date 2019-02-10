@@ -203,15 +203,17 @@ public class ColonyPackageManager implements IColonyPackageManager
     {
         if (isDirty || hasNewSubscribers)
         {
+            final ColonyViewMessage message = new ColonyViewMessage(colony, hasNewSubscribers);
             for (final EntityPlayerMP player : subscribers)
             {
                 final boolean isNewSubscriber = !oldSubscribers.contains(player);
                 if (isDirty || isNewSubscriber)
                 {
-                    MineColonies.getNetwork().sendTo(new ColonyViewMessage(colony, isNewSubscriber), player);
+                    MineColonies.getNetwork().sendTo(message, player);
                 }
             }
         }
+        colony.getRequestManager().setDirty(false);
     }
 
     @Override

@@ -836,7 +836,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType, final int minimalLevel)
     {
-        Log.getLogger().warn("Check for tool or weapon!");
         final ImmutableList<IRequest<? extends Tool>> openToolRequests =
           getOwnBuilding().getOpenRequestsOfTypeFiltered(
             worker.getCitizenData(),
@@ -852,7 +851,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             if (openToolRequests.isEmpty() && completedToolRequests.isEmpty())
             {
-                Log.getLogger().warn("Create request!");
                 final Tool request = new Tool(toolType, minimalLevel, getOwnBuilding().getMaxToolLevel() < minimalLevel ? minimalLevel : getOwnBuilding().getMaxToolLevel());
                 worker.getCitizenData().createRequest(request);
             }

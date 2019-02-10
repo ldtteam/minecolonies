@@ -200,13 +200,11 @@ public final class ColonyView implements IColony
 
         if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || isNewSubScription))
         {
-            Log.getLogger().warn("Serialize requestmanager");
             buf.writeBoolean(true);
             ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
         }
         else
         {
-            Log.getLogger().warn("Don't Serialize requestmanager");
             buf.writeBoolean(false);
         }
 
@@ -520,14 +518,9 @@ public final class ColonyView implements IColony
 
         if (buf.readBoolean())
         {
-            Log.getLogger().warn("Deserialize requestmanager");
             final NBTTagCompound compound = ByteBufUtils.readTag(buf);
             this.requestManager = new StandardRequestManager(this);
             this.requestManager.deserializeNBT(compound);
-        }
-        else
-        {
-            Log.getLogger().warn("Don't Deserialize requestmanager");
         }
 
         final int barbSpawnListSize = buf.readInt();
