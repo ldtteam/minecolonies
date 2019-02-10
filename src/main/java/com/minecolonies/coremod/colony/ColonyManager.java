@@ -797,6 +797,7 @@ public final class ColonyManager
     {
         if (event.phase == TickEvent.Phase.END && Minecraft.getMinecraft().world == null && !colonyViews.isEmpty())
         {
+            Log.getLogger().warn("Clear colony views!");
             //  Player has left the game, clear the Colony View cache
             colonyViews.clear();
         }
