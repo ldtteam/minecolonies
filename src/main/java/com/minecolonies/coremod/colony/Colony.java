@@ -442,7 +442,11 @@ public class Colony implements IColony
         happinessData.readFromNBT(compound); 
         packageManager.setLastContactInHours(compound.getInteger(TAG_ABANDONED));
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
-        moveIn = compound.getBoolean(TAG_MOVE_IN);
+
+        if (compound.hasKey(TAG_MOVE_IN))
+        {
+            moveIn = compound.getBoolean(TAG_MOVE_IN);
+        }
 
         if(compound.hasKey(TAG_STYLE))
         {

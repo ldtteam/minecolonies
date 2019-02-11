@@ -83,15 +83,15 @@ public class WindowHutCrusher extends AbstractWindowWorkerBuilding<BuildingCrush
     {
         if (crushingSettingsButton.getLabel().equals(Blocks.GRAVEL.getLocalizedName()))
         {
-            this.mode = BuildingCrusher.CrusherMode.GRAVEL;
+            this.mode = BuildingCrusher.CrusherMode.SAND;
         }
         else if (crushingSettingsButton.getLabel().equals(Blocks.SAND.getLocalizedName()))
         {
-            this.mode = BuildingCrusher.CrusherMode.SAND;
+            this.mode = BuildingCrusher.CrusherMode.CLAY;
         }
         else
         {
-            this.mode = BuildingCrusher.CrusherMode.CLAY;
+            this.mode = BuildingCrusher.CrusherMode.GRAVEL;
         }
         setupSettings(crushingSettingsButton);
     }

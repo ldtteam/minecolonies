@@ -26,14 +26,14 @@ import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerSta
 public class EntityAIWorkCrusher<J extends AbstractJobCrafter> extends AbstractEntityAICrafting<JobCrusher>
 {
     /**
-     * How often should charisma factor into the cook's skill modifier.
+     * How often should strength factor into the cook's skill modifier.
      */
     private static final int STRENGTH_MULTIPLIER = 2;
 
     /**
-     * How often should intelligence factor into the cook's skill modifier.
+     * How often should endurance factor into the cook's skill modifier.
      */
-    private static final int STRENGTH_MULTIPLIER_2 = 1;
+    private static final int ENDURANCE_MULTIPLIER = 1;
 
     /**
      * Delay for each of the craftings.
@@ -54,7 +54,7 @@ public class EntityAIWorkCrusher<J extends AbstractJobCrafter> extends AbstractE
           new AITarget(CRUSH, this::crush)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
-                                                                + STRENGTH_MULTIPLIER_2 * worker.getCitizenData().getStrength());
+                                                                + ENDURANCE_MULTIPLIER * worker.getCitizenData().getEndurance());
         worker.setCanPickUpLoot(true);
     }
 
