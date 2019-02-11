@@ -222,6 +222,11 @@ public class Colony implements IColony
     private TextFormatting colonyTeamColor = TextFormatting.WHITE;
 
     /**
+     * The amount of citizens bought
+     */
+    private int boughtCitizenCount = 0;
+
+    /**
      * Constructor for a newly created Colony.
      *
      * @param id The id of the colony to create.
@@ -356,6 +361,9 @@ public class Colony implements IColony
             needToMourn = false;
             mourning = false;
         }
+
+        boughtCitizenCount = compound.getInteger(TAG_BOUGHT_CITIZENS);
+
         // Permissions
         permissions.loadPermissions(compound);
 
@@ -503,6 +511,9 @@ public class Colony implements IColony
         compound.setBoolean(TAG_MANUAL_HIRING, manualHiring);
         compound.setBoolean(TAG_NEED_TO_MOURN, needToMourn);
         compound.setBoolean(TAG_MOURNING, mourning);
+
+        // Bought citizen count
+        compound.setInteger(TAG_BOUGHT_CITIZENS, boughtCitizenCount);
 
         // Permissions
         permissions.savePermissions(compound);
@@ -1462,5 +1473,24 @@ public class Colony implements IColony
     public void setActive(final boolean isActive)
     {
         this.isActive = isActive;
+    }
+
+    /**
+     * Get the amount of citizens bought
+     *
+     * @return amount
+     */
+    public int getBoughtCitizenCount()
+    {
+        return boughtCitizenCount;
+    }
+
+    /**
+     * Increases the amount of citizens that have been bought
+     */
+    public void increaseBoughtCitizenCount()
+    {
+        boughtCitizenCount++;
+        markDirty();
     }
 }

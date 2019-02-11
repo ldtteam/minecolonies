@@ -131,6 +131,11 @@ public final class ColonyView implements IColony
     private boolean printProgress;
 
     /**
+     * The amount of citizens bought
+     */
+    private int boughtCitizenCount;
+
+    /**
      * Base constructor for a colony.
      *
      * @param id The current id for the colony.
@@ -216,6 +221,8 @@ public final class ColonyView implements IColony
         buf.writeInt(colony.getTeamColonyColor().ordinal());
 
         buf.writeBoolean(colony.getProgressManager().isPrintingProgress());
+
+        buf.writeInt(colony.getBoughtCitizenCount());
     }
 
     /**
@@ -532,6 +539,8 @@ public final class ColonyView implements IColony
         this.teamColonyColor = TextFormatting.values()[buf.readInt()];
 
         this.printProgress = buf.readBoolean();
+
+        this.boughtCitizenCount = buf.readInt();
         return null;
     }
 
@@ -904,5 +913,10 @@ public final class ColonyView implements IColony
     public List<AbstractBuildingView> getBuildings()
     {
         return new ArrayList<>(buildings.values());
+    }
+
+    public int getBoughtCitizenCount()
+    {
+        return boughtCitizenCount;
     }
 }

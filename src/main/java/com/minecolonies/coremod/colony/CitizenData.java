@@ -551,6 +551,7 @@ public class CitizenData
             {
                 // Oops - recurse this function and try again
                 citizenName = generateName(rand);
+                break;
             }
         }
 
@@ -1386,7 +1387,14 @@ public class CitizenData
      */
     public void setStrength(@NotNull final int strength)
     {
-        this.strength = strength;
+        if (strength < 1)
+        {
+            this.strength = 1;
+        }
+        else
+        {
+            this.strength = strength;
+        }
     }
 
     /**
@@ -1396,7 +1404,14 @@ public class CitizenData
      */
     public void setEndurance(@NotNull final int endurance)
     {
-        this.endurance = endurance;
+        if (endurance < 1)
+        {
+            this.endurance = 1;
+        }
+        else
+        {
+            this.endurance = endurance;
+        }
     }
 
     /**
@@ -1406,7 +1421,14 @@ public class CitizenData
      */
     public void setCharisma(@NotNull final int charisma)
     {
-        this.charisma = charisma;
+        if (charisma < 1)
+        {
+            this.charisma = 1;
+        }
+        else
+        {
+            this.charisma = charisma;
+        }
     }
 
     /**
@@ -1416,7 +1438,14 @@ public class CitizenData
      */
     public void setIntelligence(@NotNull final int intelligence)
     {
-        this.intelligence = intelligence;
+        if (intelligence < 1)
+        {
+            this.intelligence = 1;
+        }
+        else
+        {
+            this.intelligence = intelligence;
+        }
     }
 
     /**
@@ -1426,7 +1455,14 @@ public class CitizenData
      */
     public void setDexterity(@NotNull final int dexterity)
     {
-        this.dexterity = dexterity;
+        if (dexterity < 1)
+        {
+            this.dexterity = 1;
+        }
+        else
+        {
+            this.dexterity = dexterity;
+        }
     }
 
     /**
