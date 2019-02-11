@@ -3,6 +3,7 @@ package com.minecolonies.coremod.util;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
@@ -33,6 +34,11 @@ import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 public final class ChunkDataHelper
 {
     /**
+     * If colony is farther away from a capability then this times the default colony distance it will delete the capability.
+     */
+    private static final int DISTANCE_TO_DELETE = 5;
+
+    /**
      * Private constructor to hide implicit one.
      */
     private ChunkDataHelper()
@@ -54,7 +60,6 @@ public final class ChunkDataHelper
         {
             return;
         }
-        //todo get world cap to get chunksToLoad and decrease it!
         if(cap.getMissingChunksToLoad() > 0)
         {
             final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
@@ -70,6 +75,22 @@ public final class ChunkDataHelper
             {
                 addStorageToChunk(chunk, existingStorage);
                 cap.setMissingChunksToLoad(cap.getMissingChunksToLoad()-1);
+            }
+            else
+            {
+                final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+
+                if (closeCap != null)
+                {
+                     final int owner = closeCap.getOwningColony();
+                     if (owner != 0 && (cap.getColony(owner) == null
+                           || BlockPosUtil.getDistance2D(cap.getColony(owner).getCenter(), new BlockPos(chunk.x * BLOCKS_PER_CHUNK, 0, chunk.z * BLOCKS_PER_CHUNK)) >
+                                Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK * 2 * DISTANCE_TO_DELETE))
+                     {
+                         Log.getLogger().warn("Removing orphaned chunk at:  " + chunk.x * BLOCKS_PER_CHUNK + " " + chunk.z * BLOCKS_PER_CHUNK);
+                         closeCap.removeColony(owner);
+                     }
+                }
             }
         }
     }
@@ -174,6 +195,11 @@ public final class ChunkDataHelper
         {
             for (int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
             {
+                if (i == chunkX && j == chunkZ)
+                {
+                    continue;
+                }
+
                 if (i >= chunkX - DISTANCE_TO_LOAD_IMMEDIATELY && j >= chunkZ - DISTANCE_TO_LOAD_IMMEDIATELY && i <= chunkX + DISTANCE_TO_LOAD_IMMEDIATELY && j <= chunkZ + DISTANCE_TO_LOAD_IMMEDIATELY
                       && loadChunkAndAddData(world, new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK), add, colonyId))
                 {
@@ -191,6 +217,38 @@ public final class ChunkDataHelper
         }
         final IColonyManagerCapability cap = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension).getCapability(COLONY_MANAGER_CAP, null);
         cap.setMissingChunksToLoad(cap.getMissingChunksToLoad() + additionalChunksToLoad);
+    }
+
+    /**
+     * This is a utility methods to detect chunks which are claimed in a certain range.
+     * @param chunkX the chunkX starter position.
+     * @param chunkZ the chunkZ starter position.
+     * @param range the range.
+     * @param buffer the buffer.
+     * @param world the world.
+     */
+    public static void debugChunksInRange(final int chunkX, final int chunkZ, final int range, final int buffer, final World world)
+    {
+        final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
+        if (chunkManager == null)
+        {
+            Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT);
+            return;
+        }
+
+        final int maxRange = range * 2 + buffer;
+        for (int i = chunkX - maxRange; i <= chunkX + maxRange; i++)
+        {
+            for (int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
+            {
+                final BlockPos pos = new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK);
+                final Chunk chunk = world.getChunk(pos);
+                if (chunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() != 0)
+                {
+                    Log.getLogger().warn("Has owner: " + pos.toString());
+                }
+            }
+        }
     }
 
     /**
