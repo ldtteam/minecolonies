@@ -61,7 +61,7 @@ public class WindowTownHallHireCitizen extends Window implements ButtonHandler
         final IItemHandler playerInv = new InvWrapper(Minecraft.getMinecraft().player.inventory);
 
         // Cost of new packages, basecost 1
-        final int buyCitizenCost = colony.getBoughtCitizenCount() + 1;
+        final int buyCitizenCost = colony.getBoughtCitizenCost() + 1;
 
         // Hay Bale
         findPaneOfTypeByID(BUTTON_HAY_BALE_ICON, ItemIcon.class).setItem(Item.getItemFromBlock(Blocks.HAY_BLOCK).getDefaultInstance());

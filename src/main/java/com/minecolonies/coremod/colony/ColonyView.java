@@ -131,9 +131,9 @@ public final class ColonyView implements IColony
     private boolean printProgress;
 
     /**
-     * The amount of citizens bought
+     * The cost of citizens bought
      */
-    private int boughtCitizenCount;
+    private int boughtCitizenCost;
 
     /**
      * Base constructor for a colony.
@@ -540,7 +540,7 @@ public final class ColonyView implements IColony
 
         this.printProgress = buf.readBoolean();
 
-        this.boughtCitizenCount = buf.readInt();
+        this.boughtCitizenCost = buf.readInt();
         return null;
     }
 
@@ -915,8 +915,8 @@ public final class ColonyView implements IColony
         return new ArrayList<>(buildings.values());
     }
 
-    public int getBoughtCitizenCount()
+    public int getBoughtCitizenCost()
     {
-        return boughtCitizenCount;
+        return boughtCitizenCost;
     }
 }
