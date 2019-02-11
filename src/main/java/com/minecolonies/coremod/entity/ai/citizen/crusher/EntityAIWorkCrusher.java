@@ -26,12 +26,12 @@ import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerSta
 public class EntityAIWorkCrusher<J extends AbstractJobCrafter> extends AbstractEntityAICrafting<JobCrusher>
 {
     /**
-     * How often should strength factor into the cook's skill modifier.
+     * How often should strength factor into the crusher's skill modifier.
      */
     private static final int STRENGTH_MULTIPLIER = 2;
 
     /**
-     * How often should endurance factor into the cook's skill modifier.
+     * How often should endurance factor into the crusher's skill modifier.
      */
     private static final int ENDURANCE_MULTIPLIER = 1;
 
