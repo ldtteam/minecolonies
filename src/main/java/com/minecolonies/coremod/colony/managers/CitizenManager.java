@@ -155,7 +155,7 @@ public class CitizenManager implements ICitizenManager
     @Override
     public CitizenData spawnOrCreateCitizen(@Nullable final CitizenData data, @Nullable final World world, final BlockPos spawnPos, final boolean force)
     {
-        if (!colony.getBuildingManager().hasTownHall())
+        if (!colony.getBuildingManager().hasTownHall() || !colony.canMoveIn())
         {
             return data;
         }

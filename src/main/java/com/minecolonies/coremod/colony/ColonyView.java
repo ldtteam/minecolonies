@@ -75,6 +75,11 @@ public final class ColonyView implements IColony
      */
     private boolean manualHousing = false;
 
+    /**
+     * Defines if citizens can move in or not.
+     */
+    private boolean moveIn = true;
+
     //  Buildings
     @Nullable
     private BuildingTownHall.View townHall;
@@ -162,9 +167,9 @@ public final class ColonyView implements IColony
      *
      * @param colony            Colony to write data about.
      * @param buf               {@link ByteBuf} to write data in.
-     * @param isNewSubScription true if this is a new subscription.
+     * @param hasNewSubscribers true if there is a new subscription.
      */
-    public static void serializeNetworkData(@NotNull final Colony colony, @NotNull final ByteBuf buf, final boolean isNewSubScription)
+    public static void serializeNetworkData(@NotNull final Colony colony, @NotNull final ByteBuf buf, final boolean hasNewSubscribers)
     {
         //  General Attributes
         ByteBufUtils.writeUTF8String(buf, colony.getName());
@@ -172,7 +177,7 @@ public final class ColonyView implements IColony
         BlockPosUtil.writeToByteBuf(buf, colony.getCenter());
         buf.writeBoolean(colony.isManualHiring());
         //  Citizenry
-        buf.writeInt(colony.getCitizenManager().getCurrentCitizenCount());
+        buf.writeInt(colony.getCitizenManager().getMaxCitizens());
 
         final Set<Block> freeBlocks = colony.getFreeBlocks();
         final Set<BlockPos> freePos = colony.getFreePositions();
@@ -200,9 +205,10 @@ public final class ColonyView implements IColony
 
         buf.writeInt(colony.getLastContactInHours());
         buf.writeBoolean(colony.isManualHousing());
+        buf.writeBoolean(colony.canMoveIn());
         //  Citizens are sent as a separate packet
 
-        if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || isNewSubScription))
+        if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || hasNewSubscribers))
         {
             buf.writeBoolean(true);
             ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
@@ -334,6 +340,23 @@ public final class ColonyView implements IColony
     {
         this.manualHousing = manualHousing;
     }
+
+    /**
+     * Getter for letting citizens move in or not.
+     *
+     * @return the boolean true or false.
+     */
+    public boolean canMoveIn()
+    {
+        return moveIn;
+    }
+
+    /**
+     * Sets if citizens can move in.
+     *
+     * @param moveIn true if citizens can move in.
+     */
+    public void setMoveIn(final boolean moveIn) { this.moveIn = moveIn; }
 
     /**
      * Get the town hall View for this ColonyView.
@@ -521,6 +544,7 @@ public final class ColonyView implements IColony
         }
         this.lastContactInHours = buf.readInt();
         this.manualHousing = buf.readBoolean();
+        this.moveIn = buf.readBoolean();
 
         if (buf.readBoolean())
         {

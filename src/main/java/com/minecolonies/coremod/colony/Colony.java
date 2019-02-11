@@ -160,6 +160,11 @@ public class Colony implements IColony
     private boolean manualHousing = false;
 
     /**
+     * Whether citizens can move in or not.
+     */
+    private boolean moveIn = true;
+
+    /**
      * The name of the colony.
      */
     private String name = "ERROR(Wasn't placed by player)";
@@ -446,6 +451,11 @@ public class Colony implements IColony
         packageManager.setLastContactInHours(compound.getInteger(TAG_ABANDONED));
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
 
+        if (compound.hasKey(TAG_MOVE_IN))
+        {
+            moveIn = compound.getBoolean(TAG_MOVE_IN);
+        }
+
         if(compound.hasKey(TAG_STYLE))
         {
             this.style = compound.getString(TAG_STYLE);
@@ -573,6 +583,7 @@ public class Colony implements IColony
         happinessData.writeToNBT(compound); 
         compound.setInteger(TAG_ABANDONED, packageManager.getLastContactInHours());
         compound.setBoolean(TAG_MANUAL_HOUSING, manualHousing);
+        compound.setBoolean(TAG_MOVE_IN, moveIn);
         compound.setTag(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
         compound.setString(TAG_STYLE, style);
         compound.setBoolean(TAG_RAIDABLE, raidManager.canHaveRaiderEvents());
@@ -1076,6 +1087,27 @@ public class Colony implements IColony
     }
 
     /**
+     * Getter which checks if houses should be manually allocated.
+     *
+     * @return true of false.
+     */
+    public boolean canMoveIn()
+    {
+        return moveIn;
+    }
+
+    /**
+     * Setter to set the citizen moving in.
+     *
+     * @param moveIn true if can move in, false if can't move in.
+     */
+    public void setMoveIn(final boolean moveIn)
+    {
+        this.moveIn = moveIn;
+        markDirty();
+    }
+
+    /**
      * Send the message of a removed workOrder to the client.
      *
      * @param orderId the workOrder to remove.
@@ -1168,8 +1200,8 @@ public class Colony implements IColony
          
         happinessTotal = happinessAverage + happinessData.getTotalHappinessModifier();  
         if (happinessTotal > HappinessData.MAX_HAPPINESS) 
-        { 
-            happinessTotal = HappinessData.MIN_HAPPINESS; 
+        {
+            happinessTotal = HappinessData.MAX_HAPPINESS;
         } 
         return happinessTotal; 
     }

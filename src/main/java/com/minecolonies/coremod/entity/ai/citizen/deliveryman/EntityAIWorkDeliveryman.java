@@ -624,6 +624,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return START_WORKING;
         }
 
+        if (walkToBlock(location.getInDimensionLocation()))
+        {
+            return getState();
+        }
+
         final TileEntity tileEntity = world.getTileEntity(location.getInDimensionLocation());
         if (tileEntity instanceof TileEntityChest && !(tileEntity instanceof TileEntityColonyBuilding))
         {
