@@ -222,9 +222,9 @@ public class Colony implements IColony
     private TextFormatting colonyTeamColor = TextFormatting.WHITE;
 
     /**
-     * The amount of citizens bought
+     * The cost of citizens bought
      */
-    private int boughtCitizenCount = 0;
+    private int boughtCitizenCost = 0;
 
     /**
      * Constructor for a newly created Colony.
@@ -362,7 +362,7 @@ public class Colony implements IColony
             mourning = false;
         }
 
-        boughtCitizenCount = compound.getInteger(TAG_BOUGHT_CITIZENS);
+        boughtCitizenCost = compound.getInteger(TAG_BOUGHT_CITIZENS);
 
         // Permissions
         permissions.loadPermissions(compound);
@@ -513,7 +513,7 @@ public class Colony implements IColony
         compound.setBoolean(TAG_MOURNING, mourning);
 
         // Bought citizen count
-        compound.setInteger(TAG_BOUGHT_CITIZENS, boughtCitizenCount);
+        compound.setInteger(TAG_BOUGHT_CITIZENS, boughtCitizenCost);
 
         // Permissions
         permissions.savePermissions(compound);
@@ -1480,17 +1480,17 @@ public class Colony implements IColony
      *
      * @return amount
      */
-    public int getBoughtCitizenCount()
+    public int getBoughtCitizenCost()
     {
-        return boughtCitizenCount;
+        return boughtCitizenCost;
     }
 
     /**
      * Increases the amount of citizens that have been bought
      */
-    public void increaseBoughtCitizenCount()
+    public void increaseBoughtCitizenCost()
     {
-        boughtCitizenCount++;
+        boughtCitizenCost = 1 + (int) Math.ceil(boughtCitizenCost * 1.5);
         markDirty();
     }
 }

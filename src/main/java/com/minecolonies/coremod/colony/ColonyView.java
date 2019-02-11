@@ -222,7 +222,7 @@ public final class ColonyView implements IColony
 
         buf.writeBoolean(colony.getProgressManager().isPrintingProgress());
 
-        buf.writeInt(colony.getBoughtCitizenCount());
+        buf.writeInt(colony.getBoughtCitizenCost());
     }
 
     /**

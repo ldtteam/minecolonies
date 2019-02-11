@@ -122,14 +122,14 @@ public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessa
                 BuyCitizenType buyCitizenType = BuyCitizenType.getFromIndex(message.buyItemIndex);
 
                 ItemStack toRemove = buyCitizenType.item.getDefaultInstance();
-                toRemove.setCount(colony.getBoughtCitizenCount() + 1);
+                toRemove.setCount(colony.getBoughtCitizenCost() + 1);
                 final IItemHandler playerInv = new InvWrapper(player.inventory);
 
                 // Remove items from player
                 if (InventoryUtils.removeStackFromItemHandler(playerInv, toRemove))
                 {
                     // Create new citizen
-                    colony.increaseBoughtCitizenCount();
+                    colony.increaseBoughtCitizenCost();
 
                     CitizenData data = colony.getCitizenManager().createAndRegisterNewCitizenData();
 
