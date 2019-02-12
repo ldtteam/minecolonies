@@ -473,7 +473,7 @@ public class CitizenManager implements ICitizenManager
             if ((event.world.getTotalWorldTime() + 1) % (respawnInterval + 1) == 0)
             {
                 // Make sure the initial citizen contain both genders
-                CitizenData newCitizen = createAndRegisterNewCitizenData();
+                final CitizenData newCitizen = createAndRegisterNewCitizenData();
 
                 // 50 - 50 Female male ratio for initial citizens
                 if (citizens.size() % 2 == 0)

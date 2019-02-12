@@ -64,7 +64,7 @@ public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessa
 
         public static BuyCitizenType getFromIndex(final int index)
         {
-            for (BuyCitizenType type : BuyCitizenType.values())
+            for (final BuyCitizenType type : BuyCitizenType.values())
             {
                 if (type.index == index)
                 {
@@ -120,9 +120,9 @@ public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessa
             if (colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getMaxCitizens())
             {
                 // Get item chosen by player
-                BuyCitizenType buyCitizenType = BuyCitizenType.getFromIndex(message.buyItemIndex);
+                final BuyCitizenType buyCitizenType = BuyCitizenType.getFromIndex(message.buyItemIndex);
 
-                ItemStack toRemove = buyCitizenType.item.getDefaultInstance();
+                final ItemStack toRemove = buyCitizenType.item.getDefaultInstance();
                 toRemove.setCount(colony.getBoughtCitizenCost() + 1);
                 final IItemHandler playerInv = new InvWrapper(player.inventory);
 
@@ -132,14 +132,14 @@ public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessa
                     // Create new citizen
                     colony.increaseBoughtCitizenCost();
 
-                    CitizenData data = colony.getCitizenManager().createAndRegisterNewCitizenData();
+                    final CitizenData data = colony.getCitizenManager().createAndRegisterNewCitizenData();
 
                     // Never roll max happiness for buying citizens, so library has to be used.
                     final double maxStat = colony.getHappinessData().getTotalHappinessModifier() - 1;
 
                     final double high = maxStat * buyCitizenType.index / 4;
                     final double low = maxStat * (buyCitizenType.index - 1) / 4;
-                    Random rand = new Random();
+                    final Random rand = new Random();
 
                     data.setIntelligence((int) Math.round(rand.nextDouble() * (high - low) + low));
                     data.setEndurance((int) Math.round(rand.nextDouble() * (high - low) + low));

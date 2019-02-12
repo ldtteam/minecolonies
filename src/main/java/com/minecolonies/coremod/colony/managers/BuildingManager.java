@@ -68,6 +68,11 @@ public class BuildingManager implements IBuildingManager
     private boolean isFieldsDirty    = false;
 
     /**
+     * Counter for world ticks.
+     */
+    private int tickCounter = 0;
+
+    /**
      * The colony of the manager.
      */
     private final Colony colony;
@@ -155,8 +160,6 @@ public class BuildingManager implements IBuildingManager
         isBuildingsDirty = false;
         isFieldsDirty    = false;
     }
-
-    private int tickCounter = 0;
 
     @Override
     public void onWorldTick(final TickEvent.WorldTickEvent event)

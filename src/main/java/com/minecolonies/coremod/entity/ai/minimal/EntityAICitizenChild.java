@@ -223,7 +223,7 @@ public class EntityAICitizenChild extends EntityAIBase
 
             index = rand.nextInt(index);
 
-            List<BlockPos> buildings = new ArrayList<>(child.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().keySet());
+            final List<BlockPos> buildings = new ArrayList<>(child.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().keySet());
             visitHutPos = buildings.get(index);
 
             visitingPath = child.getNavigator().moveToXYZ(visitHutPos.getX(), visitHutPos.getY(), visitHutPos.getZ(), 1.0d);
