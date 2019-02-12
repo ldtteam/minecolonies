@@ -87,7 +87,7 @@ public class CitizenColonyHandler
         citizen.setCitizenId(data.getId());
         citizen.setCitizenData(data);
 
-        citizen.setIsChild(true);
+        citizen.setIsChild(data.isChild());
         citizen.setCustomNameTag(citizen.getCitizenData().getName());
 
         citizen.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(data.getMaxHealth());

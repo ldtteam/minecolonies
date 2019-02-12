@@ -135,7 +135,7 @@ public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessa
                     final CitizenData data = colony.getCitizenManager().createAndRegisterNewCitizenData();
 
                     // Never roll max happiness for buying citizens, so library has to be used.
-                    final double maxStat = colony.getHappinessData().getTotalHappinessModifier() - 1;
+                    final double maxStat = colony.getOverallHappiness() - 1;
 
                     final double high = maxStat * buyCitizenType.index / 4;
                     final double low = maxStat * (buyCitizenType.index - 1) / 4;
