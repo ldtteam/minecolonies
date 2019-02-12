@@ -807,6 +807,8 @@ com.minecolonies.coremod.progress.manual_employment_on=§6 Workers are complaini
 com.minecolonies.coremod.progress.nine_citizens_spawned=§6 A growing colony increases the burdens on your settlers. You should consider upgrading your worker buildings.
 com.minecolonies.coremod.progress.twenty_building_levels=§6 A barbarian spy had been caught next to our colony, and he seems to be from a bigger group. You should consider building barracks to defend your colony.
 com.minecolonies.coremod.progress.not_enough_jobs=§6 Building more citizen huts than available jobs has a bad influence on your citizens happiness.
+com.minecolonies.coremod.progress.newChild=§6 A new child is now happily living in your Colony!
+com.minecolonies.coremod.progress.hireCitizen=§6 Your recruitment package was accepted, a new Citizen arrived!
 
 com.minecolonies.coremod.gui.townHall.printProgress=Print help messages:
 com.minecolonies.coremod.gui.townHall.on=On

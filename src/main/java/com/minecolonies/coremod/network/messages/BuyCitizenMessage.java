@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -146,6 +147,7 @@ public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessa
                     data.setCharisma((int) Math.round(rand.nextDouble() * (high - low) + low));
                     data.setStrength((int) Math.round(rand.nextDouble() * (high - low) + low));
 
+                    LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.progress.hireCitizen");
                     colony.getCitizenManager().spawnOrCreateCitizen(data, colony.getWorld());
                 }
             }

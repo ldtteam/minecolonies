@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutCitizen;
@@ -64,7 +65,7 @@ public class BuildingHome extends AbstractBuilding
     /**
      * The timer counting ticks to the next time creating a child
      */
-    private int childCreationTimer = 0;
+    private int childCreationTimer;
 
     /**
      * Instantiates a new citizen hut.
@@ -258,7 +259,7 @@ public class BuildingHome extends AbstractBuilding
     public void trySpawnChild()
     {
         // Spawn a child when adults are present and the house has space, so level 3+
-        if (femalePresent && malePresent && colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getMaxCitizens())
+        if (colony.canMoveIn() && femalePresent && malePresent && colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getMaxCitizens())
         {
             CitizenData mom = null;
             CitizenData dad = null;
@@ -359,7 +360,7 @@ public class BuildingHome extends AbstractBuilding
                     }
                 }
             }
-
+            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.progress.newChild");
             colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), this.getLocation());
         }
     }

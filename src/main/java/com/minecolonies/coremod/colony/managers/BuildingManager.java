@@ -175,12 +175,11 @@ public class BuildingManager implements IBuildingManager
             }
         }
 
-        tickCounter++;
         if (tickCounter == 20)
         {
             tickCounter = 0;
         }
-
+        tickCounter++;
     }
 
     @Override

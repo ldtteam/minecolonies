@@ -586,6 +586,7 @@ public class CitizenData
     public void setIsFemale(@NotNull final boolean isFemale)
     {
         this.female = isFemale;
+        this.name = generateName(new Random());
         markDirty();
     }
 

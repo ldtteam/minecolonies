@@ -60,7 +60,7 @@ public class EntityAICitizenChild extends EntityAIBase
     /**
      * Distance at which the child starts following around.
      */
-    private final int START_FOLLOW_DISTANCE = 100;
+    private final static int START_FOLLOW_DISTANCE = 10;
 
     /**
      * Timer for how long the AI is active
