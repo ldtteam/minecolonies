@@ -154,6 +154,17 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     }
 
     @Override
+    public void preRenderCallback(EntityCitizen entity, float partialTickTime)
+    {
+        // Special model, doesnt work with the default minecraft child scaling
+        if (entity.isChild() && entity.getModelID() == Model.ARISTOCRAT)
+        {
+            final float scale = 0.5F;
+            GlStateManager.scale(scale, scale, scale);
+        }
+    }
+
+    @Override
     protected void renderLivingAt(final EntityCitizen entityLivingBaseIn, final double x, final double y, final double z)
     {
         if (entityLivingBaseIn.isEntityAlive() && entityLivingBaseIn.getCitizenSleepHandler().isAsleep())
