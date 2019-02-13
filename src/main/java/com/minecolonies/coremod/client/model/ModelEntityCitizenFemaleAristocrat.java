@@ -217,6 +217,7 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
         bipedBody.addChild(leftArm1);
         bipedBody.addChild(leftArm2);
         bipedLeftArm.showModel = false;
+        this.bipedHeadwear.showModel = false;
     }
 
     private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
