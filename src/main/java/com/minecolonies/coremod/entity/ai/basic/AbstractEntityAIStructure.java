@@ -343,6 +343,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
     private Boolean decorationStep(final Structure.StructureBlock structureBlock)
     {
+        checkForExtraBuildingActions();
         if (!BlockUtils.shouldNeverBeMessedWith(structureBlock.worldBlock))
         {
             worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.decorating"));
@@ -679,8 +680,19 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
          */
     }
 
+    /**
+     * Check for extra building options to do with each block.
+     */
+    public void checkForExtraBuildingActions()
+    {
+        /**
+         * Override by worker if necessary.
+         */
+    }
+
     private Boolean structureStep(final Structure.StructureBlock structureBlock)
     {
+        checkForExtraBuildingActions();
         if (!BlockUtils.shouldNeverBeMessedWith(structureBlock.worldBlock))
         {
             worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.building"));
@@ -812,6 +824,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      */
     private boolean clearStep(@NotNull final Structure.StructureBlock currentBlock)
     {
+        checkForExtraBuildingActions();
         if (isAlreadyCleared() || (!currentStructure.getStage().equals(Structure.Stage.CLEAR) && !currentStructure.getStage().equals(Structure.Stage.REMOVE)))
         {
             return true;
@@ -821,7 +834,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
         //Don't break bedrock etc.
         //Don't break bedrock etc.
-        if (!BlockUtils.shouldNeverBeMessedWith(currentBlock.worldBlock))
+        if (!BlockUtils.shouldNeverBeMessedWith(currentBlock.worldBlock) && currentBlock.worldBlock != Blocks.TORCH)
         {
             //Fill workFrom with the position from where the builder should build.
             //also ensure we are at that position.

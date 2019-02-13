@@ -7,6 +7,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilde
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
@@ -17,6 +18,8 @@ import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.util.Structure;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -100,6 +103,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
      * After which distance the builder has to recalculate his position.
      */
     private static final double ACCEPTANCE_DISTANCE = 20;
+
+    /**
+     * Building level to purge mobs at the build site.
+     */
+    private static final int LEVEL_TO_PURGE_MOBS    = 4;
 
     /**
      * The id in the list of the last picked up item.
@@ -228,6 +236,32 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return getState();
         }
         return START_BUILDING;
+    }
+
+    /**
+     * Kill all mobs at the building site.
+     */
+    private void killMobs()
+    {
+        if (getOwnBuilding().getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && job.getWorkOrder() instanceof WorkOrderBuildBuilding)
+        {
+            final BlockPos buildingPos = job.getWorkOrder().getBuildingLocation();
+            final AbstractBuilding building = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(buildingPos);
+            if (building != null)
+            {
+                world.getEntitiesWithinAABB(EntityMob.class, building.getTargetableArea(world)).forEach(Entity::setDead);
+            }
+        }
+    }
+
+    @Override
+    public void checkForExtraBuildingActions()
+    {
+        if (!getOwnBuilding(BuildingBuilder.class).hasPurgedMobsToday())
+        {
+            killMobs();
+            getOwnBuilding(BuildingBuilder.class).setPurgedMobsToday(true);
+        }
     }
 
     @Override
