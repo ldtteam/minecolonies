@@ -1131,6 +1131,12 @@ public final class WindowConstants
     public static final String CITIZEN_LIVING = "living";
 
     /**
+     * General big on and big off
+     */
+    public static final String GENERAL_ON_BIG  = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GENERAL_ONBIG);
+    public static final String GENERAL_OFF_BIG = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG);
+
+    /**
      * public constructor to hide implicit public one.
      */
     private WindowConstants()

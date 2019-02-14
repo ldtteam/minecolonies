@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.blockout.views.Window;
+import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.client.gui.WindowHutShepherd;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -8,8 +10,13 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobShepherd;
+import com.minecolonies.coremod.network.messages.ShepherdSetDyeSheeps;
+
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+
+import io.netty.buffer.ByteBuf;
 
 /**
  * Creates a new building for the Shepherd.
@@ -27,9 +34,19 @@ public class BuildingShepherd extends AbstractBuildingWorker
     private static final String SHEPHERD_HUT_NAME = "shepherdHut";
 
     /**
+     * NBT Tag for dyeSheeps boolean.
+     */
+    private static final String NBT_DYE_SHEEPS = "autoDye";
+
+    /**
      * Max building level of the hut.
      */
     private static final int MAX_BUILDING_LEVEL = 5;
+
+    /**
+     * Dyes sheeps randomly
+     */
+    private boolean dyeSheeps = false;
 
     /**
      * Instantiates the building.
@@ -68,11 +85,48 @@ public class BuildingShepherd extends AbstractBuildingWorker
         return new JobShepherd(citizen);
     }
 
+    @Override
+    public void serializeToView(@NotNull final ByteBuf buf)
+    {
+        super.serializeToView(buf);
+        buf.writeBoolean(dyeSheeps);
+    }
+
+    @Override
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        compound.setBoolean(NBT_DYE_SHEEPS, this.dyeSheeps);
+    }
+
+    @Override
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        this.dyeSheeps = compound.getBoolean(NBT_DYE_SHEEPS);
+    }
+
+    public boolean isDyeSheeps()
+    {
+        return dyeSheeps;
+    }
+
+    public void setDyeSheeps(final boolean dyeSheeps)
+    {
+        this.dyeSheeps = dyeSheeps;
+        markDirty();
+    }
+
     /**
      * ClientSide representation of the building.
      */
     public static class View extends AbstractBuildingWorker.View
     {
+        /**
+         * Dye sheeps automatically or not.
+         */
+        private boolean dyeSheeps = false;
+
         /**
          * Instantiates the view of the building.
          * @param c the colonyView.
@@ -87,7 +141,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, SHEPHERD_HUT_NAME);
+            return new WindowHutShepherd(this);
         }
 
         @NotNull
@@ -102,6 +156,24 @@ public class BuildingShepherd extends AbstractBuildingWorker
         public Skill getSecondarySkill()
         {
             return Skill.STRENGTH;
+        }
+
+        public void setDyeSheeps(final boolean dyeSheeps)
+        {
+            MineColonies.getNetwork().sendToServer(new ShepherdSetDyeSheeps(this));
+            this.dyeSheeps = dyeSheeps;
+        }
+
+        public boolean isDyeSheeps()
+        {
+            return dyeSheeps;
+        }
+
+        @Override
+        public void deserialize(@NotNull final ByteBuf buf)
+        {
+            super.deserialize(buf);
+            dyeSheeps = buf.readBoolean();
         }
     }
 }
