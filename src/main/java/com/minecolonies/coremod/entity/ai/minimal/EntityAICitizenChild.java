@@ -68,6 +68,11 @@ public class EntityAICitizenChild extends EntityAIBase
     private int AIActiveTime = 0;
 
     /**
+     * Minimum time the AI is active before it is allowed to grow
+     */
+    private static final int MIN_ACTIVE_TIME = 6000;
+
+    /**
      * The entity we're following around
      */
     private WeakReference<Entity> followTarget = new WeakReference<>(null);
@@ -257,7 +262,7 @@ public class EntityAICitizenChild extends EntityAIBase
     private boolean tryGrowUp()
     {
 
-        if (AIActiveTime >= 6000)
+        if (AIActiveTime >= MIN_ACTIVE_TIME)
         {
             if (!child.isChild())
             {

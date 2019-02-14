@@ -158,6 +158,11 @@ public class CitizenData
     private boolean dirty;
 
     /**
+     * Minimum for citizen stats
+     */
+    private final static int MIN_STAT = 1;
+
+    /**
      * Its entitity.
      */
     @NotNull
@@ -1388,9 +1393,9 @@ public class CitizenData
      */
     public void setStrength(@NotNull final int strength)
     {
-        if (strength < 1)
+        if (strength < MIN_STAT)
         {
-            this.strength = 1;
+            this.strength = MIN_STAT;
         }
         else
         {
@@ -1405,9 +1410,9 @@ public class CitizenData
      */
     public void setEndurance(@NotNull final int endurance)
     {
-        if (endurance < 1)
+        if (endurance < MIN_STAT)
         {
-            this.endurance = 1;
+            this.endurance = MIN_STAT;
         }
         else
         {
@@ -1422,9 +1427,9 @@ public class CitizenData
      */
     public void setCharisma(@NotNull final int charisma)
     {
-        if (charisma < 1)
+        if (charisma < MIN_STAT)
         {
-            this.charisma = 1;
+            this.charisma = MIN_STAT;
         }
         else
         {
@@ -1439,9 +1444,9 @@ public class CitizenData
      */
     public void setIntelligence(@NotNull final int intelligence)
     {
-        if (intelligence < 1)
+        if (intelligence < MIN_STAT)
         {
-            this.intelligence = 1;
+            this.intelligence = MIN_STAT;
         }
         else
         {
@@ -1456,9 +1461,9 @@ public class CitizenData
      */
     public void setDexterity(@NotNull final int dexterity)
     {
-        if (dexterity < 1)
+        if (dexterity < MIN_STAT)
         {
-            this.dexterity = 1;
+            this.dexterity = MIN_STAT;
         }
         else
         {

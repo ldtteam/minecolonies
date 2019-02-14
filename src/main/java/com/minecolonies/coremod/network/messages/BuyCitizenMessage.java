@@ -34,6 +34,11 @@ public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessa
     private int buyItemIndex;
 
     /**
+     * The dimension of the message.
+     */
+    private int dimension;
+
+    /**
      * Indexable information about the chosen item
      */
     public enum BuyCitizenType
@@ -79,11 +84,6 @@ public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessa
      * Default constructor for forge
      */
     public BuyCitizenMessage() {super();}
-
-    /**
-     * The dimension of the message.
-     */
-    private int dimension;
 
     public BuyCitizenMessage(@NotNull final BuyCitizenType buyCitizenType, @NotNull final int colonyId, @NotNull final int dimension)
     {

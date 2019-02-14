@@ -219,7 +219,7 @@ public class CitizenManager implements ICitizenManager
             }
         }
 
-        CitizenData citizenData = new CitizenData(topCitizenId, colony);
+        final CitizenData citizenData = new CitizenData(topCitizenId, colony);
         citizenData.initForNewCitizen();
         citizens.put(citizenData.getId(), citizenData);
 

@@ -205,7 +205,7 @@ public class BuildingHome extends AbstractBuilding
             femalePresent = false;
             malePresent = false;
 
-            for (CitizenData citizenData : getAssignedCitizen())
+            for (final CitizenData citizenData : getAssignedCitizen())
             {
                 if (citizenData.isFemale())
                 {
@@ -264,7 +264,7 @@ public class BuildingHome extends AbstractBuilding
             CitizenData mom = null;
             CitizenData dad = null;
 
-            for (CitizenData data : getAssignedCitizen())
+            for (final CitizenData data : getAssignedCitizen())
             {
                 if (data.isFemale() && !data.isChild())
                 {
