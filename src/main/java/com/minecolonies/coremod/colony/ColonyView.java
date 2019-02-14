@@ -541,9 +541,16 @@ public final class ColonyView implements IColony
 
         if (buf.readBoolean())
         {
-            final NBTTagCompound compound = ByteBufUtils.readTag(buf);
-            this.requestManager = new StandardRequestManager(this);
-            this.requestManager.deserializeNBT(compound);
+            try
+            {
+                final NBTTagCompound compound = ByteBufUtils.readTag(buf);
+                this.requestManager = new StandardRequestManager(this);
+                this.requestManager.deserializeNBT(compound);
+            }
+            catch (RuntimeException e)
+            {
+                this.requestManager = new StandardRequestManager(this);
+            }
         }
 
         final int barbSpawnListSize = buf.readInt();
