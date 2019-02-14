@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BAKER;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 

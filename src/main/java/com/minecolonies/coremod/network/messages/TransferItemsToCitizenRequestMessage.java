@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
