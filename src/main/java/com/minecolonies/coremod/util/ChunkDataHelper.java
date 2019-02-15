@@ -50,6 +50,7 @@ public final class ChunkDataHelper
 
     /**
      * Load the colony info for a certain chunk.
+     *
      * @param chunk the chunk.
      * @param world the worldg to.
      */
@@ -60,7 +61,7 @@ public final class ChunkDataHelper
         {
             return;
         }
-        if(cap.getMissingChunksToLoad() > 0)
+        if (cap.getMissingChunksToLoad() > 0)
         {
             final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
             if (chunkManager == null)
@@ -70,11 +71,11 @@ public final class ChunkDataHelper
             }
 
             final ChunkLoadStorage existingStorage = chunkManager.getChunkStorage(chunk.x, chunk.z);
-
-            if(existingStorage != null)
+            if (existingStorage != null)
             {
+                Log.getLogger().warn("Loading chunk!");
                 addStorageToChunk(chunk, existingStorage);
-                cap.setMissingChunksToLoad(cap.getMissingChunksToLoad()-1);
+                cap.setMissingChunksToLoad(cap.getMissingChunksToLoad() - 1);
             }
             else
             {
@@ -82,7 +83,7 @@ public final class ChunkDataHelper
 
                 if (closeCap != null)
                 {
-                     final int owner = closeCap.getOwningColony();
+                    final int owner = closeCap.getOwningColony();
 
                     double distance = 0;
                     if (cap.getColony(owner) != null)
@@ -90,21 +91,26 @@ public final class ChunkDataHelper
                         distance = BlockPosUtil.getDistance2D(cap.getColony(owner).getCenter(), new BlockPos(chunk.x * BLOCKS_PER_CHUNK, 0, chunk.z * BLOCKS_PER_CHUNK));
                         Log.getLogger().warn("Owner: " + owner + " " + distance + " " + DISTANCE_TO_DELETE);
                     }
-                     if (owner != 0 && (cap.getColony(owner) == null || distance > DISTANCE_TO_DELETE))
-                     {
-                         Log.getLogger().warn("Removing orphaned chunk at:  " + chunk.x * BLOCKS_PER_CHUNK + " 100 " + chunk.z * BLOCKS_PER_CHUNK);
-                         closeCap.removeColony(owner);
-                         chunk.markDirty();
-                         MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(closeCap, chunk.x, chunk.z));
-                     }
+                    if (owner != 0 && (cap.getColony(owner) == null || distance > DISTANCE_TO_DELETE))
+                    {
+                        Log.getLogger().warn("Removing orphaned chunk at:  " + chunk.x * BLOCKS_PER_CHUNK + " 100 " + chunk.z * BLOCKS_PER_CHUNK);
+                        closeCap.removeColony(owner);
+                        chunk.markDirty();
+                    }
+                    MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(closeCap, chunk.x, chunk.z));
                 }
             }
+        }
+        else
+        {
+            Log.getLogger().warn("No chunks to load!");
         }
     }
 
     /**
      * Add a chunk storage to a chunk.
-     * @param chunk the chunk to add it to.
+     *
+     * @param chunk   the chunk to add it to.
      * @param storage the said storage.
      */
     public static void addStorageToChunk(final Chunk chunk, final ChunkLoadStorage storage)
@@ -121,6 +127,7 @@ public final class ChunkDataHelper
 
     /**
      * Load the chunk storages from the server into the world.
+     *
      * @param world the world to load them to.
      */
     public static void loadChunkStorageToWorldCapability(final World world)
@@ -147,8 +154,8 @@ public final class ChunkDataHelper
                 if (chunkData != null)
                 {
                     final ChunkLoadStorage storage = new ChunkLoadStorage(chunkData);
-                    final int z = (int)(storage.getXz() >> 32);
-                    final int x = (int)storage.getXz();
+                    final int z = (int) (storage.getXz() >> 32);
+                    final int x = (int) storage.getXz();
 
                     chunkManager.addChunkStorage(x, z, storage);
                     file.delete();
@@ -159,8 +166,9 @@ public final class ChunkDataHelper
 
     /**
      * Notify all chunks in the range of the colony about the colony.
+     *
      * @param world the world of the colony.
-     * @param add remove or add
+     * @param add   remove or add
      */
     public static void claimColonyChunks(final World world, final boolean add, final int id, final BlockPos center, final int dimension)
     {
@@ -178,16 +186,25 @@ public final class ChunkDataHelper
 
     /**
      * Claim a number of chunks in a certain range around a position.
-     * @param colonyId the colony id.
+     *
+     * @param colonyId  the colony id.
      * @param dimension the dimension.
-     * @param add if claim or unclaim.
-     * @param chunkX the chunkX starter position.
-     * @param chunkZ the chunkZ starter position.
-     * @param range the range.
-     * @param buffer the buffer.
-     * @param world the world.
+     * @param add       if claim or unclaim.
+     * @param chunkX    the chunkX starter position.
+     * @param chunkZ    the chunkZ starter position.
+     * @param range     the range.
+     * @param buffer    the buffer.
+     * @param world     the world.
      */
-    public static void claimChunksInRange(final int colonyId, final int dimension, final boolean add, final int chunkX, final int chunkZ, final int range, final int buffer, final World world)
+    public static void claimChunksInRange(
+      final int colonyId,
+      final int dimension,
+      final boolean add,
+      final int chunkX,
+      final int chunkZ,
+      final int range,
+      final int buffer,
+      final World world)
     {
         final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
         if (chunkManager == null)
@@ -198,7 +215,7 @@ public final class ChunkDataHelper
 
         final int maxRange = range * 2 + buffer;
         int additionalChunksToLoad = 0;
-        for(int i = chunkX - maxRange; i <= chunkX + maxRange; i++)
+        for (int i = chunkX - maxRange; i <= chunkX + maxRange; i++)
         {
             for (int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
             {
@@ -207,7 +224,8 @@ public final class ChunkDataHelper
                     continue;
                 }
 
-                if (i >= chunkX - DISTANCE_TO_LOAD_IMMEDIATELY && j >= chunkZ - DISTANCE_TO_LOAD_IMMEDIATELY && i <= chunkX + DISTANCE_TO_LOAD_IMMEDIATELY && j <= chunkZ + DISTANCE_TO_LOAD_IMMEDIATELY
+                if (i >= chunkX - DISTANCE_TO_LOAD_IMMEDIATELY && j >= chunkZ - DISTANCE_TO_LOAD_IMMEDIATELY && i <= chunkX + DISTANCE_TO_LOAD_IMMEDIATELY
+                      && j <= chunkZ + DISTANCE_TO_LOAD_IMMEDIATELY
                       && loadChunkAndAddData(world, new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK), add, colonyId))
                 {
                     continue;
@@ -228,11 +246,12 @@ public final class ChunkDataHelper
 
     /**
      * This is a utility methods to detect chunks which are claimed in a certain range.
+     *
      * @param chunkX the chunkX starter position.
      * @param chunkZ the chunkZ starter position.
-     * @param range the range.
+     * @param range  the range.
      * @param buffer the buffer.
-     * @param world the world.
+     * @param world  the world.
      */
     public static void debugChunksInRange(final int chunkX, final int chunkZ, final int range, final int buffer, final World world)
     {
@@ -260,10 +279,11 @@ public final class ChunkDataHelper
 
     /**
      * Add the data to the chunk directly.
+     *
      * @param world the world.
-     * @param pos the position.
-     * @param add if add or delete.
-     * @param id the id.
+     * @param pos   the position.
+     * @param add   if add or delete.
+     * @param id    the id.
      * @return true if successful.
      */
     public static boolean loadChunkAndAddData(final World world, final BlockPos pos, final boolean add, final int id)
@@ -274,7 +294,7 @@ public final class ChunkDataHelper
         }
 
         final Chunk chunk = world.getChunk(pos);
-        if(chunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() == id && add)
+        if (chunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() == id && add)
         {
             return false;
         }
@@ -285,7 +305,7 @@ public final class ChunkDataHelper
             return false;
         }
 
-        if(add)
+        if (add)
         {
             cap.setOwningColony(id);
             cap.addColony(id);
