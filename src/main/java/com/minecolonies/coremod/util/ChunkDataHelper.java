@@ -83,8 +83,13 @@ public final class ChunkDataHelper
                 if (closeCap != null)
                 {
                      final int owner = closeCap.getOwningColony();
-                     final double distance = BlockPosUtil.getDistance2D(cap.getColony(owner).getCenter(), new BlockPos(chunk.x * BLOCKS_PER_CHUNK, 0, chunk.z * BLOCKS_PER_CHUNK));
-                     Log.getLogger().warn("Owner: " + owner + " " + distance + " " + DISTANCE_TO_DELETE);
+
+                    double distance = 0;
+                    if (cap.getColony(owner) != null)
+                    {
+                        distance = BlockPosUtil.getDistance2D(cap.getColony(owner).getCenter(), new BlockPos(chunk.x * BLOCKS_PER_CHUNK, 0, chunk.z * BLOCKS_PER_CHUNK));
+                        Log.getLogger().warn("Owner: " + owner + " " + distance + " " + DISTANCE_TO_DELETE);
+                    }
                      if (owner != 0 && (cap.getColony(owner) == null || distance > DISTANCE_TO_DELETE))
                      {
                          Log.getLogger().warn("Removing orphaned chunk at:  " + chunk.x * BLOCKS_PER_CHUNK + " 100 " + chunk.z * BLOCKS_PER_CHUNK);
