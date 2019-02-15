@@ -87,8 +87,10 @@ public final class ChunkDataHelper
                            || BlockPosUtil.getDistance2D(cap.getColony(owner).getCenter(), new BlockPos(chunk.x * BLOCKS_PER_CHUNK, 0, chunk.z * BLOCKS_PER_CHUNK)) >
                                 Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK * 2 * DISTANCE_TO_DELETE))
                      {
-                         Log.getLogger().warn("Removing orphaned chunk at:  " + chunk.x * BLOCKS_PER_CHUNK + " " + chunk.z * BLOCKS_PER_CHUNK);
+                         Log.getLogger().warn("Removing orphaned chunk at:  " + chunk.x * BLOCKS_PER_CHUNK + " 100 " + chunk.z * BLOCKS_PER_CHUNK);
                          closeCap.removeColony(owner);
+                         chunk.markDirty();
+                         MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(closeCap, chunk.x, chunk.z));
                      }
                 }
             }
