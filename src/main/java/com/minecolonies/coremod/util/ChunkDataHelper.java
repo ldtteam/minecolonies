@@ -56,7 +56,6 @@ public final class ChunkDataHelper
      */
     public static void loadChunk(final Chunk chunk, final World world)
     {
-        Log.getLogger().warn("Loading chunk: " + chunk.x * BLOCKS_PER_CHUNK + " " + chunk.z * BLOCKS_PER_CHUNK);
         final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
         if (cap == null)
         {
@@ -74,41 +73,32 @@ public final class ChunkDataHelper
             final ChunkLoadStorage existingStorage = chunkManager.getChunkStorage(chunk.x, chunk.z);
             if (existingStorage != null)
             {
-                Log.getLogger().warn("Loading chunk!");
                 addStorageToChunk(chunk, existingStorage);
                 cap.setMissingChunksToLoad(cap.getMissingChunksToLoad() - 1);
             }
             else
             {
                 final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null);
-
                 if (closeCap != null)
                 {
-                    final int owner = closeCap.getOwningColony();
-
-                    double distance = 0;
-                    if (cap.getColony(owner) != null)
+                    boolean dirty = false;
+                    for (final int colony : closeCap.getAllCloseColonies())
                     {
-                        distance = BlockPosUtil.getDistance2D(cap.getColony(owner).getCenter(), new BlockPos(chunk.x * BLOCKS_PER_CHUNK, 0, chunk.z * BLOCKS_PER_CHUNK));
-                        Log.getLogger().warn("Owner: " + owner + " " + distance + " " + DISTANCE_TO_DELETE);
+                        final double distance = BlockPosUtil.getDistance2D(cap.getColony(colony).getCenter(), new BlockPos(chunk.x * BLOCKS_PER_CHUNK, 0, chunk.z * BLOCKS_PER_CHUNK));
+                        if (colony != 0 && (cap.getColony(colony) == null || distance > DISTANCE_TO_DELETE))
+                        {
+                            Log.getLogger().warn("Removing orphaned chunk at:  " + chunk.x * BLOCKS_PER_CHUNK + " 100 " + chunk.z * BLOCKS_PER_CHUNK);
+                            closeCap.removeColony(colony);
+                            dirty = true;
+                        }
                     }
-                    if (owner != 0 && (cap.getColony(owner) == null || distance > DISTANCE_TO_DELETE))
+                    if (dirty)
                     {
-                        Log.getLogger().warn("Removing orphaned chunk at:  " + chunk.x * BLOCKS_PER_CHUNK + " 100 " + chunk.z * BLOCKS_PER_CHUNK);
-                        closeCap.removeColony(owner);
                         chunk.markDirty();
+                        MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(closeCap, chunk.x, chunk.z));
                     }
-                    MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(closeCap, chunk.x, chunk.z));
-                }
-                else
-                {
-                    Log.getLogger().warn("Nullcap?");
                 }
             }
-        }
-        else
-        {
-            Log.getLogger().warn("No chunks to load!");
         }
     }
 
