@@ -56,6 +56,7 @@ public final class ChunkDataHelper
      */
     public static void loadChunk(final Chunk chunk, final World world)
     {
+        Log.getLogger().warn("Loading chunk: " + chunk.x * BLOCKS_PER_CHUNK + " " + chunk.z * BLOCKS_PER_CHUNK);
         final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
         if (cap == null)
         {
@@ -98,6 +99,10 @@ public final class ChunkDataHelper
                         chunk.markDirty();
                     }
                     MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(closeCap, chunk.x, chunk.z));
+                }
+                else
+                {
+                    Log.getLogger().warn("Nullcap?");
                 }
             }
         }
