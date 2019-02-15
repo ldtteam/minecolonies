@@ -36,7 +36,7 @@ public final class ChunkDataHelper
     /**
      * If colony is farther away from a capability then this times the default colony distance it will delete the capability.
      */
-    private static final int DISTANCE_TO_DELETE = 5;
+    private static final int DISTANCE_TO_DELETE = Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK * 2 * 5;
 
     /**
      * Private constructor to hide implicit one.
@@ -83,9 +83,9 @@ public final class ChunkDataHelper
                 if (closeCap != null)
                 {
                      final int owner = closeCap.getOwningColony();
-                     if (owner != 0 && (cap.getColony(owner) == null
-                           || BlockPosUtil.getDistance2D(cap.getColony(owner).getCenter(), new BlockPos(chunk.x * BLOCKS_PER_CHUNK, 0, chunk.z * BLOCKS_PER_CHUNK)) >
-                                Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK * 2 * DISTANCE_TO_DELETE))
+                     final double distance = BlockPosUtil.getDistance2D(cap.getColony(owner).getCenter(), new BlockPos(chunk.x * BLOCKS_PER_CHUNK, 0, chunk.z * BLOCKS_PER_CHUNK));
+                     Log.getLogger().warn("Owner: " + owner + " " + distance + " " + DISTANCE_TO_DELETE);
+                     if (owner != 0 && (cap.getColony(owner) == null || distance > DISTANCE_TO_DELETE))
                      {
                          Log.getLogger().warn("Removing orphaned chunk at:  " + chunk.x * BLOCKS_PER_CHUNK + " 100 " + chunk.z * BLOCKS_PER_CHUNK);
                          closeCap.removeColony(owner);
