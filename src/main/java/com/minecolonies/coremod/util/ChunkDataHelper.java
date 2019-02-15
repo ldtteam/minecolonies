@@ -86,9 +86,8 @@ public final class ChunkDataHelper
                         boolean dirty = false;
                         for (final int colony : closeCap.getAllCloseColonies())
                         {
-                            final double distance =
-                              BlockPosUtil.getDistance2D(cap.getColony(colony).getCenter(), new BlockPos(chunk.x * BLOCKS_PER_CHUNK, 0, chunk.z * BLOCKS_PER_CHUNK));
-                            if (colony != 0 && (cap.getColony(colony) == null || distance > DISTANCE_TO_DELETE))
+                            if (colony != 0 && (cap.getColony(colony) == null
+                                                  ||  BlockPosUtil.getDistance2D(cap.getColony(colony).getCenter(), new BlockPos(chunk.x * BLOCKS_PER_CHUNK, 0, chunk.z * BLOCKS_PER_CHUNK)) > DISTANCE_TO_DELETE))
                             {
                                 Log.getLogger().warn("Removing orphaned chunk at:  " + chunk.x * BLOCKS_PER_CHUNK + " 100 " + chunk.z * BLOCKS_PER_CHUNK);
                                 closeCap.removeColony(colony);
