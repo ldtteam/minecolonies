@@ -78,24 +78,28 @@ public final class ChunkDataHelper
             }
             else
             {
-                final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null);
-                if (closeCap != null)
+                if (Configurations.gameplay.fixOrphanedChunks)
                 {
-                    boolean dirty = false;
-                    for (final int colony : closeCap.getAllCloseColonies())
+                    final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+                    if (closeCap != null)
                     {
-                        final double distance = BlockPosUtil.getDistance2D(cap.getColony(colony).getCenter(), new BlockPos(chunk.x * BLOCKS_PER_CHUNK, 0, chunk.z * BLOCKS_PER_CHUNK));
-                        if (colony != 0 && (cap.getColony(colony) == null || distance > DISTANCE_TO_DELETE))
+                        boolean dirty = false;
+                        for (final int colony : closeCap.getAllCloseColonies())
                         {
-                            Log.getLogger().warn("Removing orphaned chunk at:  " + chunk.x * BLOCKS_PER_CHUNK + " 100 " + chunk.z * BLOCKS_PER_CHUNK);
-                            closeCap.removeColony(colony);
-                            dirty = true;
+                            final double distance =
+                              BlockPosUtil.getDistance2D(cap.getColony(colony).getCenter(), new BlockPos(chunk.x * BLOCKS_PER_CHUNK, 0, chunk.z * BLOCKS_PER_CHUNK));
+                            if (colony != 0 && (cap.getColony(colony) == null || distance > DISTANCE_TO_DELETE))
+                            {
+                                Log.getLogger().warn("Removing orphaned chunk at:  " + chunk.x * BLOCKS_PER_CHUNK + " 100 " + chunk.z * BLOCKS_PER_CHUNK);
+                                closeCap.removeColony(colony);
+                                dirty = true;
+                            }
                         }
-                    }
-                    if (dirty)
-                    {
-                        chunk.markDirty();
-                        MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(closeCap, chunk.x, chunk.z));
+                        if (dirty)
+                        {
+                            chunk.markDirty();
+                            MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(closeCap, chunk.x, chunk.z));
+                        }
                     }
                 }
             }
