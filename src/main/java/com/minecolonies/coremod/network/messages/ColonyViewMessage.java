@@ -49,7 +49,7 @@ public class ColonyViewMessage extends AbstractMessage<ColonyViewMessage, IMessa
     {
         this.colonyId = colony.getID();
         this.isNewSubscription = isNewSubscription;
-        this.colonyBuffer = buf;
+        this.colonyBuffer = buf.copy();
     }
 
     @Override
