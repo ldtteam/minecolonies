@@ -52,7 +52,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
     public WindowResourceList(final int colonyId, final BlockPos buildingPos)
     {
         super(Constants.MOD_ID + RESOURCE_SCROLL_RESOURCE_SUFFIX);
-        final ColonyView colonyView = ColonyManager.getColonyView(colonyId);
+        final ColonyView colonyView = ColonyManager.getColonyView(colonyId, Minecraft.getMinecraft().world.provider.getDimension());
         if (colonyView != null)
         {
             final AbstractBuildingView buildingView = colonyView.getBuilding(buildingPos);

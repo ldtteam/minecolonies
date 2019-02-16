@@ -11,6 +11,7 @@ import com.minecolonies.blockout.views.Box;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -170,13 +171,13 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             logo.setImage(request.getDisplayIcon());
         }
 
-        final ColonyView view = ColonyManager.getColonyView(colonyId);
+        final ColonyView view = ColonyManager.getColonyView(colonyId, Minecraft.getMinecraft().world.provider.getDimension());
         findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
         final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
         targetLabel.setLabelText(request.getRequester().getDeliveryLocation().toString());
 
 
-        final ColonyView colony = ColonyManager.getColonyView(colonyId);
+        final ColonyView colony = ColonyManager.getColonyView(colonyId, Minecraft.getMinecraft().world.provider.getDimension());
         if(colony == null)
         {
             Log.getLogger().warn("---Colony Null in WindowRequestDetail---");

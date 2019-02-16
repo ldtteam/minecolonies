@@ -294,7 +294,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      */
     public AbstractBuildingView getBuildingView()
     {
-        final ColonyView c = ColonyManager.getColonyView(colonyId);
+        final ColonyView c = ColonyManager.getColonyView(colonyId, world.provider.getDimension());
         return c == null ? null : c.getBuilding(getPosition());
     }
 

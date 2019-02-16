@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +32,11 @@ public class ColonyViewMessage extends AbstractMessage<ColonyViewMessage, IMessa
     private ByteBuf colonyBuffer;
 
     /**
+     * The dimension of the colony.
+     */
+    private int dim;
+
+    /**
      * Empty constructor used when registering the message.
      */
     public ColonyViewMessage()
@@ -49,6 +55,7 @@ public class ColonyViewMessage extends AbstractMessage<ColonyViewMessage, IMessa
     {
         this.colonyId = colony.getID();
         this.isNewSubscription = isNewSubscription;
+        this.dim = colony.getDimension();
         this.colonyBuffer = buf.copy();
     }
 
@@ -58,6 +65,7 @@ public class ColonyViewMessage extends AbstractMessage<ColonyViewMessage, IMessa
         final ByteBuf newBuf = buf.retain();
         colonyId = newBuf.readInt();
         isNewSubscription = newBuf.readBoolean();
+        dim = newBuf.readInt();
         colonyBuffer = newBuf;
     }
 
@@ -66,6 +74,7 @@ public class ColonyViewMessage extends AbstractMessage<ColonyViewMessage, IMessa
     {
         buf.writeInt(colonyId);
         buf.writeBoolean(isNewSubscription);
+        buf.writeInt(dim);
         buf.writeBytes(colonyBuffer);
     }
 
@@ -74,7 +83,7 @@ public class ColonyViewMessage extends AbstractMessage<ColonyViewMessage, IMessa
     {
         if (MineColonies.proxy.getWorldFromMessage(ctx) != null)
         {
-            ColonyManager.handleColonyViewMessage(message.colonyId, message.colonyBuffer, MineColonies.proxy.getWorldFromMessage(ctx), message.isNewSubscription);
+            ColonyManager.handleColonyViewMessage(message.colonyId, message.colonyBuffer, MineColonies.proxy.getWorldFromMessage(ctx), message.isNewSubscription, message.dim);
         }
     }
 }

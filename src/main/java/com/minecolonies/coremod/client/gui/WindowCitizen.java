@@ -21,6 +21,7 @@ import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsToCitizenRequestMessage;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -102,7 +103,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
      */
     public WindowCitizen(final CitizenDataView citizen)
     {
-        super(citizen.getWorkBuilding(),Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX, ColonyManager.getColonyView(citizen.getColonyId()));
+        super(citizen.getWorkBuilding(),Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX, ColonyManager.getColonyView(citizen.getColonyId(), Minecraft.getMinecraft().world.provider.getDimension()));
         this.citizen = citizen;
     }
 
