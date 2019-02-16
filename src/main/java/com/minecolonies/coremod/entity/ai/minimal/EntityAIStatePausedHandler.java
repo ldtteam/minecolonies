@@ -27,7 +27,7 @@ public final class EntityAIStatePausedHandler
     private static final double           RANDOM_MODIFIER = 1.0D / 30.0D;
 
     /**
-     * Class constructor
+     * Create a new state paused handler
      * 
      * @param w paused worker
      * @param b his building
@@ -39,9 +39,12 @@ public final class EntityAIStatePausedHandler
     }
 
     /**
+     * Proceed pausing <br>
+     * If walking keeps walking <br>
+     * Else pick a new activity
      */
     @SuppressWarnings({"PMD.AvoidLiteralsInIfCondition","PMD.EmptyIfStmt"})
-    public void doPause(final EntityCitizen w, final AbstractBuildingWorker b)
+    public void doPause()
     {
         // Jump out if walking.
         if (wander != null && wander.shouldContinueExecuting())
