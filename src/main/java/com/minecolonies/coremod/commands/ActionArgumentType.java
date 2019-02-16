@@ -475,7 +475,7 @@ public enum ActionArgumentType
             }
             if (colonyNumberStrings.contains(String.valueOf(colonyNumber)))
             {
-                return mineColonyDataProvider.getColony(colonyNumber);
+                return mineColonyDataProvider.getColony(colonyNumber, sender.getEntityWorld().provider.getDimension());
             }
             return null;
         }
