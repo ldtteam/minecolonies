@@ -1,28 +1,25 @@
 package com.minecolonies.coremod.entity.citizenhandlers;
 
 import com.minecolonies.api.util.constant.CitizenConstants;
-import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.FieldDataModifier;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
-
 import io.netty.buffer.ByteBuf;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
-
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Handler for the citizens happiness.
@@ -241,7 +238,7 @@ public class CitizenHappinessHandler
         }
         setHomeModifier(hasHouse);
 
-        if (!hasJob)
+        if (!hasJob && !citizen.isChild())
         {
             numberOfDaysWithoutJob++;
             if (numberOfDaysWithoutJob > DEMANDS_DAYS_WITHOUT_JOB)
