@@ -47,10 +47,9 @@ public final class EntityAIStatePausedHandler
     {
         worker = w;
         building = b;
-        wander = new EntityAICitizenWander(worker, DEFAULT_SPEED, RANDOM_MODIFIER);
 
         // Jump out if walking.
-        if (wander.shouldContinueExecuting())
+        if (wander != null && wander.shouldContinueExecuting())
         {
             return;
         }
