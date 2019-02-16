@@ -838,7 +838,7 @@ public final class ColonyManager
      */
     public static void onWorldLoad(@NotNull final World world)
     {
-        if (!world.isRemote && !(world instanceof WorldServerMulti))
+        if (!world.isRemote)
         {
             if (!loaded)
             {
