@@ -3,8 +3,6 @@ package com.minecolonies.coremod.entity.ai.minimal;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.entity.EntityCitizen;
 
-import java.util.Random;
-
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 
 /**
@@ -12,8 +10,6 @@ import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
  */
 public final class EntityAIStatePausedHandler
 {
-    private static Random                 random = new Random();
-
     /**
      * The worker which is paused
      */
@@ -85,7 +81,7 @@ public final class EntityAIStatePausedHandler
      */
     private void goCheckOwnWorkerBuilding()
     {
-        wander = new EntityAICitizenCheckWorkerBuilding(worker, (random.nextBoolean()) ? DEFAULT_SPEED * 1.5D : DEFAULT_SPEED * 2.2D, building, RANDOM_MODIFIER);
+        wander = new EntityAICitizenCheckWorkerBuilding(worker, (worker.getRNG().nextBoolean()) ? DEFAULT_SPEED * 1.5D : DEFAULT_SPEED * 2.2D, building, RANDOM_MODIFIER);
         if (wander.shouldExecute())
         {
             wander.startExecuting();
