@@ -7,8 +7,8 @@
         </view>
         <view id="pageActions" size="100% 100%">
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
-            <label size="100 17" pos="30 114" label="$(com.minecolonies.coremod.gui.shepherd.autoDye)"/>
-            <button id="dyeSheeps" size="29 17" pos="130 114" label="$(com.minecolonies.coremod.general.offBig)"/>
+            <label size="100 17" pos="20 114" label="$(com.minecolonies.coremod.gui.shepherd.autoDye)" color="black"/>
+            <button id="dyeSheeps" size="29 17" pos="140 114" label="$(com.minecolonies.coremod.general.offBig)"/>
         </view>
     </switch>
     <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>

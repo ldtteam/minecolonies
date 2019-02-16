@@ -3,14 +3,13 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowHutShepherd;
-import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobShepherd;
-import com.minecolonies.coremod.network.messages.ShepherdSetDyeSheeps;
+import com.minecolonies.coremod.network.messages.ShepherdSetDyeSheepsMessage;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -26,12 +25,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
     /**
      * Description of the job executed in the hut.
      */
-    private static final String SHEPHERD          = "Shepherd";
-
-    /**
-     * Description of the block used to set this block.
-     */
-    private static final String SHEPHERD_HUT_NAME = "shepherdHut";
+    private static final String SHEPHERD = "Shepherd";
 
     /**
      * NBT Tag for dyeSheeps boolean.
@@ -106,11 +100,17 @@ public class BuildingShepherd extends AbstractBuildingWorker
         this.dyeSheeps = compound.getBoolean(NBT_DYE_SHEEPS);
     }
 
+    /**
+     * Returns current state of automatical sheep dyeing, true = enabled
+     */
     public boolean isDyeSheeps()
     {
         return dyeSheeps;
     }
 
+    /**
+     * Sets state of automatical sheep dyeing, true = enabled
+     */
     public void setDyeSheeps(final boolean dyeSheeps)
     {
         this.dyeSheeps = dyeSheeps;
@@ -158,12 +158,18 @@ public class BuildingShepherd extends AbstractBuildingWorker
             return Skill.STRENGTH;
         }
 
+        /**
+         * Called from button handler
+         */
         public void setDyeSheeps(final boolean dyeSheeps)
         {
-            MineColonies.getNetwork().sendToServer(new ShepherdSetDyeSheeps(this));
             this.dyeSheeps = dyeSheeps;
+            MineColonies.getNetwork().sendToServer(new ShepherdSetDyeSheepsMessage(this));
         }
 
+        /**
+         * Returns current state of automatical sheep dyeing, true = enabled
+         */
         public boolean isDyeSheeps()
         {
             return dyeSheeps;

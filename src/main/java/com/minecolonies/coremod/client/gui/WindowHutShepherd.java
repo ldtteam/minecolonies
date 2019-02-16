@@ -44,12 +44,18 @@ public class WindowHutShepherd extends AbstractWindowWorkerBuilding<BuildingShep
         setDyeSheepsLabel();
     }
 
+    /**
+     * Called when a player press BUTTON_DYE_SHEEPS
+     */
     private void dyeSheepsClicked()
     {
         building.setDyeSheeps(!building.isDyeSheeps());
         setDyeSheepsLabel();
     }
 
+    /**
+     * Changes BUTTON_DYE_SHEEPS label to correct state
+     */
     private void setDyeSheepsLabel()
     {
         if (building.isDyeSheeps())

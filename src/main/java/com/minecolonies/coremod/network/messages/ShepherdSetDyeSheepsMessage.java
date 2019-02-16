@@ -13,7 +13,10 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ShepherdSetDyeSheeps extends AbstractMessage<ShepherdSetDyeSheeps, IMessage>
+/**
+ * Transfer the current state of automatical sheep dyeing (true = enabled)
+ */
+public class ShepherdSetDyeSheepsMessage extends AbstractMessage<ShepherdSetDyeSheepsMessage, IMessage>
 {
     private int      colonyId;
     private BlockPos buildingId;
@@ -23,7 +26,7 @@ public class ShepherdSetDyeSheeps extends AbstractMessage<ShepherdSetDyeSheeps, 
     /**
      * Empty standard constructor.
      */
-    public ShepherdSetDyeSheeps()
+    public ShepherdSetDyeSheepsMessage()
     {
         super();
     }
@@ -31,9 +34,9 @@ public class ShepherdSetDyeSheeps extends AbstractMessage<ShepherdSetDyeSheeps, 
     /**
      * Creates object for the CowboySetMilk message.
      *
-     * @param building       View of the building to read data from.
+     * @param building View of the building to read data from.
      */
-    public ShepherdSetDyeSheeps(@NotNull final BuildingShepherd.View building)
+    public ShepherdSetDyeSheepsMessage(@NotNull final BuildingShepherd.View building)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -61,7 +64,7 @@ public class ShepherdSetDyeSheeps extends AbstractMessage<ShepherdSetDyeSheeps, 
     }
 
     @Override
-    public void messageOnServerThread(final ShepherdSetDyeSheeps message, final EntityPlayerMP player)
+    public void messageOnServerThread(final ShepherdSetDyeSheepsMessage message, final EntityPlayerMP player)
     {
         final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
