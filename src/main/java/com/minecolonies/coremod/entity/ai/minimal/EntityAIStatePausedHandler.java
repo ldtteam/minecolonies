@@ -24,7 +24,7 @@ public final class EntityAIStatePausedHandler
      * Wander AI task if worker paused
      */
     private EntityAICitizenWander         wander;
-    private static final double           RANDOM_MODIFIER = 1.0D / 30.0D;
+    private static final double           RANDOM_MODIFIER = 1.0D / 40.0D;
 
     /**
      * Create a new state paused handler
@@ -53,12 +53,12 @@ public final class EntityAIStatePausedHandler
         }
 
         // Pick random activity. TODO: add also random near building picker
-        final int percent = random.nextInt(100);
+        final int percent = worker.getRNG().nextInt(100);
         if(percent < 8)
         {
             goCheckOwnWorkerBuilding();
         }
-        else if (percent < 40)
+        else if (percent < 35)
         {
             wanderAround();
         }
