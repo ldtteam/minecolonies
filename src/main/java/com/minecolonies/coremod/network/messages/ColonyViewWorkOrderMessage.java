@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderView;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
@@ -61,7 +62,7 @@ public class ColonyViewWorkOrderMessage extends AbstractMessage<ColonyViewWorkOr
     @Override
     protected void messageOnClientThread(final ColonyViewWorkOrderMessage message, final MessageContext ctx)
     {
-        ColonyManager.handleColonyViewWorkOrderMessage(message.colonyId, message.workOrderBuffer);
+        ColonyManager.handleColonyViewWorkOrderMessage(message.colonyId, message.workOrderBuffer, Minecraft.getMinecraft().world.provider.getDimension());
     }
 }
 

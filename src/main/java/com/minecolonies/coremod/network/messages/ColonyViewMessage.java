@@ -29,6 +29,11 @@ public class ColonyViewMessage extends AbstractMessage<ColonyViewMessage, IMessa
     private ByteBuf colonyBuffer;
 
     /**
+     * The dimension of the colony.
+     */
+    private int dim;
+
+    /**
      * Empty constructor used when registering the message.
      */
     public ColonyViewMessage()
@@ -47,7 +52,8 @@ public class ColonyViewMessage extends AbstractMessage<ColonyViewMessage, IMessa
     {
         this.colonyId = colony.getID();
         this.isNewSubscription = isNewSubscription;
-        this.colonyBuffer = buf;
+        this.dim = colony.getDimension();
+        this.colonyBuffer = buf.copy();
     }
 
     @Override
@@ -56,6 +62,7 @@ public class ColonyViewMessage extends AbstractMessage<ColonyViewMessage, IMessa
         final ByteBuf newBuf = buf.retain();
         colonyId = newBuf.readInt();
         isNewSubscription = newBuf.readBoolean();
+        dim = newBuf.readInt();
         colonyBuffer = newBuf;
     }
 
@@ -64,6 +71,7 @@ public class ColonyViewMessage extends AbstractMessage<ColonyViewMessage, IMessa
     {
         buf.writeInt(colonyId);
         buf.writeBoolean(isNewSubscription);
+        buf.writeInt(dim);
         buf.writeBytes(colonyBuffer);
     }
 
@@ -72,7 +80,7 @@ public class ColonyViewMessage extends AbstractMessage<ColonyViewMessage, IMessa
     {
         if (MineColonies.proxy.getWorldFromMessage(ctx) != null)
         {
-            ColonyManager.handleColonyViewMessage(message.colonyId, message.colonyBuffer, MineColonies.proxy.getWorldFromMessage(ctx), message.isNewSubscription);
+            ColonyManager.handleColonyViewMessage(message.colonyId, message.colonyBuffer, MineColonies.proxy.getWorldFromMessage(ctx), message.isNewSubscription, message.dim);
         }
     }
 }
