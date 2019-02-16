@@ -98,6 +98,10 @@ public class BuildingShepherd extends AbstractBuildingWorker
     {
         super.readFromNBT(compound);
         this.dyeSheeps = compound.getBoolean(NBT_DYE_SHEEPS);
+        if (!compound.hasKey(NBT_DYE_SHEEPS))
+        {
+            this.dyeSheeps = true;
+        }
     }
 
     /**
