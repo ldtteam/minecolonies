@@ -493,7 +493,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public boolean processInteract(final EntityPlayer player, @NotNull final EnumHand hand)
     {
-        final ColonyView colonyView = ColonyManager.getColonyView(citizenColonyHandler.getColonyId());
+        final ColonyView colonyView = ColonyManager.getColonyView(citizenColonyHandler.getColonyId(), player.world.provider.getDimension());
         if (colonyView != null && !colonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             return false;
@@ -815,7 +815,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0)
         {
-            final ColonyView colonyView = ColonyManager.getColonyView(citizenColonyHandler.getColonyId());
+            final ColonyView colonyView = ColonyManager.getColonyView(citizenColonyHandler.getColonyId(), world.provider.getDimension());
             if (colonyView != null)
             {
                 return colonyView.getCitizen(citizenId);

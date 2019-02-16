@@ -291,6 +291,9 @@ public class Configurations
                                                 "minecraft:diamond_ore!2",
                                                 "minecraft:emerald_ore!1"
                                               };
+
+        @Config.Comment("Automatically fix orphaned chunks which were caused by chunk loading and saving issues")
+        public boolean fixOrphanedChunks = false;
     }
 
     public static class Compatibility
