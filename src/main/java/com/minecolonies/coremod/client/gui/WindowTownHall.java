@@ -1233,7 +1233,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void hireClicked()
     {
-        Log.getLogger().warn("hire clicked");
         @NotNull final WindowTownHallHireCitizen window = new WindowTownHallHireCitizen(townHall.getColony());
         window.open();
     }
