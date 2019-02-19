@@ -57,6 +57,11 @@ public class BuildingHome extends AbstractBuilding
     private boolean malePresent = false;
 
     /**
+     * The time in seconds before the initial try to spawn
+     */
+    private static final int MIN_TIME_BEFORE_SPAWNTRY = 300;
+
+    /**
      * Interval at which the childen are created, in ticks.
      * Every 20 min it tries to spawn a child, 20min*60s*20ticks
      */
@@ -77,7 +82,7 @@ public class BuildingHome extends AbstractBuilding
     {
         super(c, l);
         final Random rand = new Random();
-        childCreationTimer = rand.nextInt(childCreationInterval);
+        childCreationTimer = rand.nextInt(childCreationInterval) + MIN_TIME_BEFORE_SPAWNTRY;
     }
 
     @Override
@@ -255,10 +260,14 @@ public class BuildingHome extends AbstractBuilding
 
     /**
      * Try to spawn a new citizen as child.
+     * Mom / dad entities are required and chosen randomly in this hut.
+     * Childs inherit stats from their parents, avergaged +-2
+     * Childs get assigned to a free housing slot in the colony to be raised there,
+     * if the house has an adult living there the child takes its name and gets raised by it.
      */
     public void trySpawnChild()
     {
-        // Spawn a child when adults are present and the house has space, so level 3+
+        // Spawn a child when adults are present
         if (colony.canMoveIn() && femalePresent && malePresent && colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getMaxCitizens())
         {
             CitizenData mom = null;

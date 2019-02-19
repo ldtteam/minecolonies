@@ -238,7 +238,7 @@ public class CitizenHappinessHandler
         }
         setHomeModifier(hasHouse);
 
-        if (!hasJob)
+        if (!hasJob && !citizen.isChild())
         {
             numberOfDaysWithoutJob++;
             if (numberOfDaysWithoutJob > DEMANDS_DAYS_WITHOUT_JOB)

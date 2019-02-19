@@ -770,7 +770,7 @@ public class CitizenData
 
         //The current citizen entity seems to be gone (either on purpose or the game unloaded the entity)
         //No biggy lets respawn an entity.
-        colony.getCitizenManager().spawnOrCreateCitizen(this, colony.getWorld());
+        colony.getCitizenManager().spawnOrCreateCitizen(this, colony.getWorld(), null, true);
 
         //Since we might have respawned an entity in an unloaded chunk (Townhall is not loaded)
         //We check if we created one or not.
