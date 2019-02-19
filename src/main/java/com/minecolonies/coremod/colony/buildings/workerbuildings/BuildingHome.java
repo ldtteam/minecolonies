@@ -305,11 +305,11 @@ public class BuildingHome extends AbstractBuilding
             final Random rand = new Random();
 
             // Inheriting stats from parents + some randomness. Capped by happiness in CitizenData setters.
-            int str = (mom.getStrength() + dad.getStrength()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
-            int cha = (mom.getCharisma() + dad.getCharisma()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
-            int dex = (mom.getDexterity() + dad.getDexterity()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
-            int end = (mom.getEndurance() + dad.getEndurance()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
-            int intelligence = (mom.getIntelligence() + dad.getIntelligence()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
+            final int str = (mom.getStrength() + dad.getStrength()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
+            final int cha = (mom.getCharisma() + dad.getCharisma()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
+            final int dex = (mom.getDexterity() + dad.getDexterity()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
+            final int end = (mom.getEndurance() + dad.getEndurance()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
+            final int intelligence = (mom.getIntelligence() + dad.getIntelligence()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
 
             newCitizen.setIsChild(true);
             newCitizen.setStrength(str);
