@@ -231,10 +231,10 @@ public class Configurations
         @Config.Comment("List of items the Students in the library can use. \n"
                           + "Format: itemname;SkillIncreasePCT[100-1000];BreakPCT[0-100] \n"
                           + "Example: minecraft:paper;300;100 \n"
-                          + "Which adds minecraft Paper with a 300%(3x) increased chance to skillup and a 100% chance to be used up during the try to skillup")
+                          + "Which adds minecraft Paper with a 400%(4x) increased chance to skillup and a 100% chance to be used up during the try to skillup")
         public final String[] configListStudyItems = new String[]
                                                        {
-                                                         "minecraft:paper;300;100"
+                                                         "minecraft:paper;400;100"
                                                        };
 
         @Config.Comment("The items and item-tags that the composter can use to produce compost.")
