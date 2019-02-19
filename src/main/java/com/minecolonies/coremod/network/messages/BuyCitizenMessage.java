@@ -114,42 +114,44 @@ public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessa
     {
         final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
 
-        if (colony != null)
+        if (colony == null)
         {
-            // Check if we spawn a new citizen
-            if (colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getMaxCitizens())
+            return;
+        }
+
+        // Check if we spawn a new citizen
+        if (colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getMaxCitizens())
+        {
+            // Get item chosen by player
+            final BuyCitizenType buyCitizenType = BuyCitizenType.getFromIndex(message.buyItemIndex);
+
+            final ItemStack toRemove = buyCitizenType.item.getDefaultInstance();
+            toRemove.setCount(colony.getBoughtCitizenCost() + 1);
+            final IItemHandler playerInv = new InvWrapper(player.inventory);
+
+            // Remove items from player
+            if (InventoryUtils.removeStackFromItemHandler(playerInv, toRemove))
             {
-                // Get item chosen by player
-                final BuyCitizenType buyCitizenType = BuyCitizenType.getFromIndex(message.buyItemIndex);
+                // Create new citizen
+                colony.increaseBoughtCitizenCost();
 
-                final ItemStack toRemove = buyCitizenType.item.getDefaultInstance();
-                toRemove.setCount(colony.getBoughtCitizenCost() + 1);
-                final IItemHandler playerInv = new InvWrapper(player.inventory);
+                final CitizenData data = colony.getCitizenManager().createAndRegisterNewCitizenData();
 
-                // Remove items from player
-                if (InventoryUtils.removeStackFromItemHandler(playerInv, toRemove))
-                {
-                    // Create new citizen
-                    colony.increaseBoughtCitizenCost();
+                // Never roll max happiness for buying citizens, so library has to be used.
+                final double maxStat = colony.getOverallHappiness() - 1;
 
-                    final CitizenData data = colony.getCitizenManager().createAndRegisterNewCitizenData();
+                final double high = maxStat * buyCitizenType.index / 4;
+                final double low = maxStat * (buyCitizenType.index - 1) / 4;
+                final Random rand = new Random();
 
-                    // Never roll max happiness for buying citizens, so library has to be used.
-                    final double maxStat = colony.getOverallHappiness() - 1;
+                data.setIntelligence((int) Math.round(rand.nextDouble() * (high - low) + low));
+                data.setEndurance((int) Math.round(rand.nextDouble() * (high - low) + low));
+                data.setDexterity((int) Math.round(rand.nextDouble() * (high - low) + low));
+                data.setCharisma((int) Math.round(rand.nextDouble() * (high - low) + low));
+                data.setStrength((int) Math.round(rand.nextDouble() * (high - low) + low));
 
-                    final double high = maxStat * buyCitizenType.index / 4;
-                    final double low = maxStat * (buyCitizenType.index - 1) / 4;
-                    final Random rand = new Random();
-
-                    data.setIntelligence((int) Math.round(rand.nextDouble() * (high - low) + low));
-                    data.setEndurance((int) Math.round(rand.nextDouble() * (high - low) + low));
-                    data.setDexterity((int) Math.round(rand.nextDouble() * (high - low) + low));
-                    data.setCharisma((int) Math.round(rand.nextDouble() * (high - low) + low));
-                    data.setStrength((int) Math.round(rand.nextDouble() * (high - low) + low));
-
-                    LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.progress.hireCitizen");
-                    colony.getCitizenManager().spawnOrCreateCitizen(data, colony.getWorld(), null, true);
-                }
+                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.progress.hireCitizen");
+                colony.getCitizenManager().spawnOrCreateCitizen(data, colony.getWorld(), null, true);
             }
         }
     }
