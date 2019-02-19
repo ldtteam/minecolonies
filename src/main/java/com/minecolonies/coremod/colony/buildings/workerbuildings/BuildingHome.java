@@ -73,6 +73,11 @@ public class BuildingHome extends AbstractBuilding
     private int childCreationTimer;
 
     /**
+     * Defines how much child stats very from parents average(+ or -).
+     */
+    private static final int CHILD_STATS_VARIANCE = 3;
+
+    /**
      * Instantiates a new citizen hut.
      *
      * @param c the colony.
@@ -299,21 +304,12 @@ public class BuildingHome extends AbstractBuilding
 
             final Random rand = new Random();
 
-            // Inheriting stats from parents + some randomness. Capped by happiness
-            int str = (mom.getStrength() + dad.getStrength()) / 2 + rand.nextInt(3) - rand.nextInt(3);
-            str = str > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : str;
-
-            int cha = (mom.getCharisma() + dad.getCharisma()) / 2 + rand.nextInt(3) - rand.nextInt(3);
-            cha = cha > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : cha;
-
-            int dex = (mom.getDexterity() + dad.getDexterity()) / 2 + rand.nextInt(3) - rand.nextInt(3);
-            dex = dex > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : dex;
-
-            int end = (mom.getEndurance() + dad.getEndurance()) / 2 + rand.nextInt(3) - rand.nextInt(3);
-            end = end > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : end;
-
-            int intelligence = (mom.getIntelligence() + dad.getIntelligence()) / 2 + rand.nextInt(3) - rand.nextInt(3);
-            intelligence = intelligence > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : intelligence;
+            // Inheriting stats from parents + some randomness. Capped by happiness in CitizenData setters.
+            int str = (mom.getStrength() + dad.getStrength()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
+            int cha = (mom.getCharisma() + dad.getCharisma()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
+            int dex = (mom.getDexterity() + dad.getDexterity()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
+            int end = (mom.getEndurance() + dad.getEndurance()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
+            int intelligence = (mom.getIntelligence() + dad.getIntelligence()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
 
             newCitizen.setIsChild(true);
             newCitizen.setStrength(str);

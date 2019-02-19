@@ -1399,8 +1399,9 @@ public class CitizenData
         }
         else
         {
-            this.strength = strength;
+            this.strength = strength > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : strength;
         }
+        markDirty();
     }
 
     /**
@@ -1416,8 +1417,9 @@ public class CitizenData
         }
         else
         {
-            this.endurance = endurance;
+            this.endurance = endurance > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : endurance;
         }
+        markDirty();
     }
 
     /**
@@ -1433,8 +1435,9 @@ public class CitizenData
         }
         else
         {
-            this.charisma = charisma;
+            this.charisma = charisma > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : charisma;
         }
+        markDirty();
     }
 
     /**
@@ -1450,8 +1453,9 @@ public class CitizenData
         }
         else
         {
-            this.intelligence = intelligence;
+            this.intelligence = intelligence > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : intelligence;
         }
+        markDirty();
     }
 
     /**
@@ -1467,8 +1471,9 @@ public class CitizenData
         }
         else
         {
-            this.dexterity = dexterity;
+            this.dexterity = dexterity > colony.getOverallHappiness() ? (int) colony.getOverallHappiness() : dexterity;
         }
+        markDirty();
     }
 
     /**
