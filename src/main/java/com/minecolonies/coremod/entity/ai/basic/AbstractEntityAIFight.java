@@ -283,7 +283,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
         {
             return COMBAT_SPEED;
         }
-        double levelAdjustment = worker.getCitizenData().getLevel() * 0.05;
+        double levelAdjustment = worker.getCitizenData().getLevel() * 0.01;
 
         levelAdjustment = levelAdjustment > 1.0 ? 1.0 : levelAdjustment;
         return COMBAT_SPEED + levelAdjustment;
