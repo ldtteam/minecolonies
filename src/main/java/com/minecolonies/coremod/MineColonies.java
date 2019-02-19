@@ -1,5 +1,6 @@
 package com.minecolonies.coremod;
 
+import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
@@ -18,7 +19,7 @@ import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.placementhandlers.MinecoloniesPlacementHandlers;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.util.RecipeHandler;
-import com.structurize.structures.helpers.Structure;
+import com.ldtteam.structures.helpers.Structure;
 import net.minecraft.init.Items;
 import net.minecraft.util.datafix.FixTypes;
 import net.minecraftforge.common.MinecraftForge;
@@ -114,7 +115,7 @@ public class MineColonies
     public void preInit(@NotNull final FMLPreInitializationEvent event)
     {
         FMLCommonHandler.instance().getDataFixer().init(Constants.MOD_ID, TileEntityIdFixer.VERSION).registerFix(FixTypes.BLOCK_ENTITY, new TileEntityIdFixer());
-        Structure.originFolders.add(Constants.MOD_ID);
+        StructureLoadingUtils.originFolders.add(Constants.MOD_ID);
         CapabilityManager.INSTANCE.register(IColonyTagCapability.class, new IColonyTagCapability.Storage(), IColonyTagCapability.Impl::new);
         CapabilityManager.INSTANCE.register(IChunkmanagerCapability.class, new IChunkmanagerCapability.Storage(), IChunkmanagerCapability.Impl::new);
         CapabilityManager.INSTANCE.register(IColonyManagerCapability.class, new IColonyManagerCapability.Storage(), IColonyManagerCapability.Impl::new);

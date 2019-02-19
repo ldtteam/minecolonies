@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.util.StructurePlacementUtils;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
@@ -15,10 +17,9 @@ import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.util.Structure;
-import com.minecolonies.coremod.util.StructureWrapper;
 import com.minecolonies.coremod.util.WorkerUtil;
-import com.structurize.coremod.placementhandlers.IPlacementHandler;
-import com.structurize.coremod.placementhandlers.PlacementHandlers;
+import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
+import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -29,6 +30,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -36,7 +38,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -431,7 +432,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             {
                 if (!Configurations.gameplay.builderInfiniteResources)
                 {
-                    final List<ItemStack> requiredItems = handlers.getRequiredItems(world, coords, blockState, job.getStructure().getBlockInfo().tileentityData, false);
+                    final List<ItemStack> requiredItems = handlers.getRequiredItems(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false);
 
                     final List<ItemStack> itemList = new ArrayList<>();
                     for (final ItemStack stack : requiredItems)
@@ -454,7 +455,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     world.setBlockToAir(coords);
                 }
 
-                final Object result = handlers.handle(world, coords, blockState, job.getStructure().getBlockInfo().tileentityData, false, job.getStructure().getPosition());
+                final Object result = handlers.handle(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false, job.getStructure().getPosition());
                 if (result instanceof IPlacementHandler.ActionProcessingResult)
                 {
                     if (result == IPlacementHandler.ActionProcessingResult.ACCEPT)
@@ -685,7 +686,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      */
     public void checkForExtraBuildingActions()
     {
-        /**
+        /*
          * Override by worker if necessary.
          */
     }
@@ -720,7 +721,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
             @Nullable Block block = structureBlock.block;
             @Nullable IBlockState blockState = structureBlock.metadata;
-            if (block == com.structurize.coremod.blocks.ModBlocks.blockSolidSubstitution
+            if (block == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution
                   || shallReplaceSolidSubstitutionBlock(structureBlock.worldBlock, structureBlock.worldMetadata))
             {
                 blockState = getSolidSubstitution(structureBlock.blockPosition);
@@ -773,9 +774,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         rotation = rotateTimes;
         try
         {
-            final StructureWrapper wrapper = new StructureWrapper(world, name);
-            job.setStructure(wrapper);
-            currentStructure = new Structure(world, wrapper, removal ? Structure.Stage.REMOVE : Structure.Stage.CLEAR);
+            final com.ldtteam.structures.helpers.Structure structure = new com.ldtteam.structures.helpers.Structure(world, name, new PlacementSettings());
+            job.setStructure(structure);
+            currentStructure = new Structure(world, structure, removal ? Structure.Stage.REMOVE : Structure.Stage.CLEAR);
         }
         catch (final IllegalStateException e)
         {
@@ -785,7 +786,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
         try
         {
-            job.getStructure().rotate(rotateTimes, world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
+            job.getStructure().rotate(BlockPosUtil.getRotationFromRotations(rotateTimes), world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
             job.getStructure().setPosition(position);
         }
         catch (final NullPointerException ex)
@@ -843,7 +844,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 return false;
             }
 
-            if (job.getStructure().isStructureBlockEqualWorldBlock()
+            if (StructurePlacementUtils.isStructureBlockEqualWorldBlock(world, currentBlock.blockPosition, job.getStructure().getBlockstate())
                   || (currentBlock.block instanceof BlockBed && currentBlock.metadata.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
                   || (currentBlock.block instanceof BlockDoor && currentBlock.metadata.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
             {
@@ -943,16 +944,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
     protected abstract void onStartWithoutStructure();
 
-    /*
-     * Get specific data of an entity.
-     * Workers should implement this correctly if they require this behavior.
-     * @return the entityInfo or null.
-     */
-    public Template.EntityInfo getEntityInfo()
-    {
-        return null;
-    }
-
     /**
      * Check how much of a certain stuck is actually required.
      *
@@ -983,7 +974,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     @SuppressWarnings(MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED)
     private Boolean spawnEntity(@NotNull final Structure.StructureBlock currentBlock)
     {
-        final Template.EntityInfo entityInfo = currentBlock.entity;
+        final NBTTagCompound entityInfo = currentBlock.entity;
         if (entityInfo == null)
         {
             return true;

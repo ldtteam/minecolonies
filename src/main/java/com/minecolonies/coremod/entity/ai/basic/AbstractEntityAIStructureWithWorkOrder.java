@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.ldtteam.structurize.util.BlockInfo;
+import com.ldtteam.structurize.util.StructurePlacementUtils;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -17,7 +19,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.util.Structure;
-import com.structurize.coremod.blocks.schematic.BlockSolidSubstitution;
+import com.ldtteam.structurize.blocks.schematic.BlockSolidSubstitution;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
@@ -25,9 +27,9 @@ import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -104,7 +106,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                     return;
                 }
 
-                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, job.getStructure().getName());
+                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, job.getStructure().getBluePrint().getName());
 
                 //Don't go through the CLEAR stage for repairs and upgrades
                 if (building.getBuildingLevel() > 0)
@@ -173,8 +175,8 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
         while (job.getStructure().findNextBlock())
         {
-            @Nullable final Template.BlockInfo blockInfo = job.getStructure().getBlockInfo();
-            @Nullable final Template.EntityInfo entityInfo = job.getStructure().getEntityinfo();
+            @Nullable final BlockInfo blockInfo = job.getStructure().getBlockInfo();
+            @Nullable final NBTTagCompound entityInfo = job.getStructure().getEntityData();
 
             if (entityInfo != null)
             {
@@ -192,10 +194,10 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 continue;
             }
 
-            @Nullable IBlockState blockState = blockInfo.blockState;
+            @Nullable IBlockState blockState = blockInfo.getState();
             @Nullable Block block = blockState.getBlock();
 
-            if (job.getStructure().isStructureBlockEqualWorldBlock()
+            if (StructurePlacementUtils.isStructureBlockEqualWorldBlock(world, job.getStructure().getBlockPosition(), blockState)
                   || (blockState.getBlock() instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
                   || (blockState.getBlock() instanceof BlockDoor && blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
             {
@@ -248,7 +250,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
      */
     private void requestBlockToBuildingIfRequired(final AbstractBuildingStructureBuilder building, final IBlockState blockState)
     {
-        if (job.getStructure().getBlockInfo().tileentityData != null)
+        if (job.getStructure().getBlockInfo().getTileEntityData() != null)
         {
             final List<ItemStack> itemList = new ArrayList<>();
             itemList.addAll(getItemsFromTileEntity());
@@ -318,7 +320,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             return;
         }
 
-        final String structureName = job.getStructure().getName();
+        final String structureName = job.getStructure().getBluePrint().getName();
         final WorkOrderBuildDecoration wo = job.getWorkOrder();
 
         if (wo instanceof WorkOrderBuildBuilding)
@@ -360,9 +362,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     public List<ItemStack> getItemsFromTileEntity()
     {
-        if (job.getStructure() != null && job.getStructure().getBlockInfo() != null && job.getStructure().getBlockInfo().tileentityData != null)
+        if (job.getStructure() != null && job.getStructure().getBlockInfo() != null && job.getStructure().getBlockInfo().getTileEntityData() != null)
         {
-            return ItemStackUtils.getItemStacksOfTileEntity(job.getStructure().getBlockInfo().tileentityData, world);
+            return ItemStackUtils.getItemStacksOfTileEntity(job.getStructure().getBlockInfo().getTileEntityData(), world);
         }
         return Collections.emptyList();
     }
@@ -401,16 +403,6 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         {
             loadStructure();
         }
-    }
-
-    @Override
-    public Template.EntityInfo getEntityInfo()
-    {
-        if (job.getStructure() != null && job.getStructure().getEntityinfo() != null)
-        {
-            return job.getStructure().getEntityinfo();
-        }
-        return null;
     }
 
     /**

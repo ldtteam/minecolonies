@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
+import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
@@ -12,9 +14,9 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWor
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.util.StructureWrapper;
+import com.minecolonies.coremod.util.InstantStructurePlacer;
 import com.minecolonies.coremod.util.WorkerUtil;
-import com.structurize.coremod.management.Structures;
+import com.ldtteam.structurize.management.Structures;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.state.IBlockState;
@@ -687,8 +689,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
      */
     private String getCorrectStyleLocation(final String style, final String shaft)
     {
-        final StructureWrapper wrapper = new StructureWrapper(world, Structures.SCHEMATICS_PREFIX + "/" + style + shaft);
-        if (wrapper.getStructure().getStructure().getTemplate() != null)
+        final Structure wrapper = new Structure(world, Structures.SCHEMATICS_PREFIX + "/" + style + shaft, new PlacementSettings());
+        if (wrapper.getBluePrint() != null)
         {
             return Structures.SCHEMATICS_PREFIX + "/" + style + shaft;
         }

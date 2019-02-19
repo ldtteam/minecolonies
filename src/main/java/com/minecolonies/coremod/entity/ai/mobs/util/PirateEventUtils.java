@@ -1,13 +1,15 @@
 package com.minecolonies.coremod.entity.ai.mobs.util;
 
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.util.StructureWrapper;
-import com.structurize.coremod.items.ItemScanTool;
-import com.structurize.coremod.management.Structures;
-import com.structurize.structures.helpers.StructureProxy;
+import com.minecolonies.coremod.util.InstantStructurePlacer;
+import com.ldtteam.structurize.items.ItemScanTool;
+import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structures.helpers.Structure;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.Mirror;
@@ -55,8 +57,8 @@ public final class PirateEventUtils
      */
     public static void pirateEvent(final BlockPos targetSpawnPoint, final World world, final Colony colony, final String shipSize, final int raidNumber)
     {
-        final StructureProxy structure = new StructureProxy(world, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize);
-        structure.rotateWithMirror(0, world, targetSpawnPoint, Mirror.NONE);
+        final Structure structure = new Structure(world, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings());
+        structure.rotate(BlockPosUtil.getRotationFromRotations(0), world, targetSpawnPoint, Mirror.NONE);
 
         if (!ItemScanTool.saveStructureOnServer(world,
           targetSpawnPoint.add(structure.getWidth() - 1, structure.getHeight(), structure.getLength() - 1).subtract(structure.getOffset()),
@@ -68,7 +70,7 @@ public final class PirateEventUtils
             return;
         }
         colony.getRaiderManager().registerRaiderOriginSchematic(Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, targetSpawnPoint.down(3), world.getWorldTime());
-        StructureWrapper.loadAndPlaceStructureWithRotation(world, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, targetSpawnPoint.down(3), 0, Mirror.NONE, false);
+        InstantStructurePlacer.loadAndPlaceStructureWithRotation(world, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, targetSpawnPoint.down(3), 0, Mirror.NONE, false);
         loadSpawners(world, targetSpawnPoint, shipSize);
         LanguageHandler.sendPlayersMessage(
           colony.getMessageEntityPlayers(),

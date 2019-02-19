@@ -1,13 +1,14 @@
 package com.minecolonies.coremod.entity.ai.mobs.util;
 
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.structurize.coremod.management.Structures;
-import com.structurize.structures.helpers.StructureProxy;
+import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structures.helpers.Structure;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
@@ -91,8 +92,8 @@ public final class MobEventsUtils
         colony.setNightsSinceLastRaid(0);
 
         // Calculate size/offset of the pirate ship
-        final StructureProxy structure = new StructureProxy(world, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize);
-        structure.rotateWithMirror(0, world, targetSpawnPoint, Mirror.NONE);
+        final Structure structure = new Structure(world, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings());
+        structure.rotate(BlockPosUtil.getRotationFromRotations(0), world, targetSpawnPoint, Mirror.NONE);
 
         if ((world.getBlockState(targetSpawnPoint).getMaterial() == Material.WATER && isSurfaceAreaMostlyWater(world,
           targetSpawnPoint.add(-structure.getOffset().getX(), 0, -structure.getOffset().getZ()),
