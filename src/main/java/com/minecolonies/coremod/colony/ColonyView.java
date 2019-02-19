@@ -219,7 +219,8 @@ public final class ColonyView implements IColony
             {
                 colony.getRequestManager().reset();
                 buf.setIndex(preState, preSize);
-                buf.writeBoolean(false);
+                buf.writeBoolean(true);
+                ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
             }
         }
         else

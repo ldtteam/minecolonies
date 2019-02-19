@@ -1,10 +1,13 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.WindowConstants;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingShepherd;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GENERAL_ONBIG;
 
 /**
  * Window for the shepherd hut.
@@ -60,11 +63,11 @@ public class WindowHutShepherd extends AbstractWindowWorkerBuilding<BuildingShep
     {
         if (building.isDyeSheeps())
         {
-            findPaneOfTypeByID(BUTTON_DYE_SHEEPS, Button.class).setLabel(WindowConstants.GENERAL_ON_BIG);
+            findPaneOfTypeByID(BUTTON_DYE_SHEEPS, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GENERAL_ONBIG));
         }
         else
         {
-            findPaneOfTypeByID(BUTTON_DYE_SHEEPS, Button.class).setLabel(WindowConstants.GENERAL_OFF_BIG);
+            findPaneOfTypeByID(BUTTON_DYE_SHEEPS, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG));
         }
     }
 }
