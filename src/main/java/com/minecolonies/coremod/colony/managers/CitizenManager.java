@@ -280,7 +280,7 @@ public class CitizenManager implements ICitizenManager
                 }
                 else if (b instanceof BuildingBarracksTower)
                 {
-                    newMaxCitizens += b.getBuildingLevel();
+                    newMaxCitizens += b.getAssignedCitizen().size();
                 }
             }
         }
