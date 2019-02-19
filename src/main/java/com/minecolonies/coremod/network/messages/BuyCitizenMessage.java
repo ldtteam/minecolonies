@@ -148,7 +148,7 @@ public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessa
                     data.setStrength((int) Math.round(rand.nextDouble() * (high - low) + low));
 
                     LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.progress.hireCitizen");
-                    colony.getCitizenManager().spawnOrCreateCitizen(data, colony.getWorld());
+                    colony.getCitizenManager().spawnOrCreateCitizen(data, colony.getWorld(), null, true);
                 }
             }
         }
