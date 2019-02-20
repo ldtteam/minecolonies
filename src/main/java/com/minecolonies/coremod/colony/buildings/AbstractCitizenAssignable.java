@@ -71,11 +71,8 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      */
     public void onDestroyed()
     {
-        if (hasAssignedCitizen())
-        {
-            // EntityCitizen will detect the workplace is gone and fix up it's Entity properly
-            assignedCitizen.clear();
-        }
+        // EntityCitizen will detect the workplace is gone and fix up it's Entity properly
+        assignedCitizen.clear();
     }
 
     /**
