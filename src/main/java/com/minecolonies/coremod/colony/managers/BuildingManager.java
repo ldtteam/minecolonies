@@ -5,7 +5,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.*;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
@@ -66,6 +66,11 @@ public class BuildingManager implements IBuildingManager
      * Variable to check if the fields needs to be synched.
      */
     private boolean isFieldsDirty    = false;
+
+    /**
+     * Counter for world ticks.
+     */
+    private int tickCounter = 0;
 
     /**
      * The colony of the manager.
@@ -164,9 +169,20 @@ public class BuildingManager implements IBuildingManager
         {
             if (event.world.isBlockLoaded(building.getLocation()))
             {
+                if (tickCounter == 20)
+                {
+                    building.secondsWorldTick(event);
+                }
+
                 building.onWorldTick(event);
             }
         }
+
+        if (tickCounter == 20)
+        {
+            tickCounter = 0;
+        }
+        tickCounter++;
     }
 
     @Override

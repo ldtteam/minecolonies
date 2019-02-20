@@ -5,6 +5,8 @@ import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowTownHall;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.permissions.PermissionEvent;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
@@ -19,7 +21,7 @@ import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT
 /**
  * Class used to manage the townHall building block.
  */
-public class BuildingTownHall extends BuildingHome
+public class BuildingTownHall extends AbstractBuilding
 {
     /**
      * Description of the block used to set this block.
@@ -114,7 +116,7 @@ public class BuildingTownHall extends BuildingHome
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends BuildingHome.View
+    public static class View extends AbstractBuildingView
     {
         /**
          * List of permission events of the colony.

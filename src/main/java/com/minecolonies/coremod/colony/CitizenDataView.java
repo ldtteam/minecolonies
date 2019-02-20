@@ -33,11 +33,12 @@ public class CitizenDataView
     /**
      * Attributes.
      */
-    private final int id;
-    private int entityId;
-    private String name;
-    private boolean female;
-    private boolean paused;
+    private final int     id;
+    private       int     entityId;
+    private       String  name;
+    private       boolean female;
+    private       boolean paused;
+    private       boolean isChild;
 
     /**
      * colony id of the citizen.
@@ -158,6 +159,16 @@ public class CitizenDataView
     public boolean isPaused()
     {
         return paused;
+    }
+
+    /**
+     * Check if the entity is a child
+     *
+     * @return true if child
+     */
+    public boolean isChild()
+    {
+        return isChild;
     }
 
     /**
@@ -351,6 +362,7 @@ public class CitizenDataView
         female = buf.readBoolean();
         entityId = buf.readInt();
         paused = buf.readBoolean();
+        isChild = buf.readBoolean();
 
         homeBuilding = buf.readBoolean() ? BlockPosUtil.readFromByteBuf(buf) : null;
         workBuilding = buf.readBoolean() ? BlockPosUtil.readFromByteBuf(buf) : null;
