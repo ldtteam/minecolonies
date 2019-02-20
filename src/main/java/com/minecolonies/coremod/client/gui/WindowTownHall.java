@@ -175,6 +175,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_PROMOTE, this::promoteDemoteClicked);
         registerButton(BUTTON_DEMOTE, this::promoteDemoteClicked);
         registerButton(BUTTON_RECALL, this::recallClicked);
+        registerButton(BUTTON_HIRE, this::hireClicked);
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_TOGGLE_JOB, this::toggleHiring);
         registerButton(BUTTON_TOGGLE_HOUSING, this::toggleHousing);
@@ -1225,6 +1226,15 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private void recallClicked()
     {
         MineColonies.getNetwork().sendToServer(new RecallTownhallMessage(townHall));
+    }
+
+    /**
+     * Action when the hire button is clicked
+     */
+    private void hireClicked()
+    {
+        @NotNull final WindowTownHallHireCitizen window = new WindowTownHallHireCitizen(townHall.getColony());
+        window.open();
     }
 
     /**
