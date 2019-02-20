@@ -178,8 +178,8 @@ com.minecolonies.coremod.gui.townHall.population.students=Students: %d
 
 com.minecolonies.coremod.gui.townHall.population.crusher=Crusher: %d
 com.minecolonies.coremod.gui.townHall.population.sawmill=Miller: %d
-com.minecolonies.coremod.gui.townHall.population.CombatAcademy=Knights(Training): %d
-com.minecolonies.coremod.gui.townHall.population.archery=Archers(Training): %d
+com.minecolonies.coremod.gui.townHall.population.CombatAcademy=Squires: %d
+com.minecolonies.coremod.gui.townHall.population.archery=Bowmen: %d
 com.minecolonies.coremod.gui.townHall.population.stonesmelter=Stonesmelter: %d
 com.minecolonies.coremod.gui.townHall.population.stonemason=Stonemason: %d
 com.minecolonies.coremod.gui.townHall.population.blacksmith=Blacksmiths: %d
