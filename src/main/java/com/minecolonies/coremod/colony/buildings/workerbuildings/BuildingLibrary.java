@@ -159,12 +159,6 @@ public class BuildingLibrary extends AbstractBuildingWorker
     }
 
     @Override
-    public boolean hasAssignedCitizen()
-    {
-        return getAssignedCitizen().size() >= getBuildingLevel() * 2;
-    }
-
-    @Override
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);

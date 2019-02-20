@@ -168,7 +168,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      *
      * @return true if building has worker, otherwise false.
      */
-    public boolean hasAssignedCitizen()
+    public final boolean hasAssignedCitizen()
     {
         return !assignedCitizen.isEmpty();
     }

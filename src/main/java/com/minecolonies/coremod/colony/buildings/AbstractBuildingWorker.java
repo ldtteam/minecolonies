@@ -424,7 +424,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
 
         // If we have no active worker, grab one from the Colony
         // TODO Maybe the Colony should assign jobs out, instead?
-        if (!hasAssignedCitizen()
+        if (!isFull()
               && ((getBuildingLevel() > 0 && isBuilt()) || this instanceof BuildingBuilder)
               && !this.getColony().isManualHiring())
         {

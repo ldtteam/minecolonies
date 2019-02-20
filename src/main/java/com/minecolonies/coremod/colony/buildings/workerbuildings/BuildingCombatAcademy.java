@@ -150,12 +150,6 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
         return getBuildingLevel();
     }
 
-    @Override
-    public boolean hasAssignedCitizen()
-    {
-        return getAssignedCitizen().size() >= getBuildingLevel();
-    }
-
     /**
      * Get a random position to shoot at.
      *

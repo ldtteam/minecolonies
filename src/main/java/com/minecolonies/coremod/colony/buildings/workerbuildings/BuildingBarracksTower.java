@@ -132,12 +132,6 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         return getBuildingLevel();
     }
 
-    @Override
-    public boolean hasAssignedCitizen()
-    {
-        return getAssignedCitizen().size() >= getBuildingLevel();
-    }
-
     /**
      * Adds the position of the main barracks.
      *
