@@ -3,8 +3,6 @@ package com.minecolonies.coremod.commands.colonycommands;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.util.ChunkDataHelper;

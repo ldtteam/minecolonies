@@ -315,6 +315,10 @@ public final class TranslationConstants
     public static final String FERTLIZER                                                           = "com.minecolonies.coremod.request.fertilizer";
     @NonNls
     public static final String FURNACE_USER_NO_FUEL                                                = "com.minecolonies.coremod.furnaceUser.noFuel";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GENERAL_ONBIG                              = "com.minecolonies.coremod.general.onBig";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG                             = "com.minecolonies.coremod.general.offBig";
 
     private TranslationConstants()
     {
