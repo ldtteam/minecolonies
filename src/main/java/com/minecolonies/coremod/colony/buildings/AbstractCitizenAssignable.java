@@ -9,7 +9,10 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -188,7 +191,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      */
     public boolean assignCitizen(final CitizenData citizen)
     {
-        if (assignedCitizen.contains(citizen))
+        if (assignedCitizen.contains(citizen) || isFull())
         {
             return false;
         }
