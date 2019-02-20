@@ -146,7 +146,6 @@ com.minecolonies.coremod.job.SwineHerder=SwineHerder
 com.minecolonies.coremod.job.Shepherd=Shepherd
 com.minecolonies.coremod.job.Cowboy=Cowboy
 com.minecolonies.coremod.job.ChickenHerder=ChickenHerder
-com.minecolonies.coremod.gui.townHall.population.totalCitizens=Number of Citizens: %d/%d
 com.minecolonies.coremod.gui.citizen.skills.intelligence=Intelligence: %d
 com.minecolonies.coremod.gui.townHall.currTownHallName=Colony Name:
 com.minecolonies.coremod.gui.townHall.citizens=Citizens
@@ -157,6 +156,7 @@ com.minecolonies.coremod.gui.workerHuts.information=Information
 com.minecolonies.coremod.gui.hiring.description=Choose a worker for the job.
 com.minecolonies.coremod.gui.assigning.description=Choose a citizen to assign to live here.
 
+com.minecolonies.coremod.gui.townHall.population.totalCitizens=Number of Citizens: %d/%d
 com.minecolonies.coremod.gui.townHall.population.deliverymen=Deliverymen: %d
 com.minecolonies.coremod.gui.townHall.population.miners=Miners: %d
 com.minecolonies.coremod.gui.townHall.population.fishermen=Fishermen: %d
@@ -170,11 +170,25 @@ com.minecolonies.coremod.gui.townHall.population.chickenherders=Chickenherders: 
 com.minecolonies.coremod.gui.townHall.population.cowboys=Cowboys: %d
 com.minecolonies.coremod.gui.townHall.population.swineherders=Swineherders: %d
 com.minecolonies.coremod.gui.townHall.population.composters=Composters: %d
+com.minecolonies.coremod.gui.townHall.population.builders=Builders: %d
+com.minecolonies.coremod.gui.townHall.population.cooks=Cooks: %d
+com.minecolonies.coremod.gui.townHall.population.rangers=Rangers: %d
+com.minecolonies.coremod.gui.townHall.population.knights=Knights: %d
+com.minecolonies.coremod.gui.townHall.population.students=Students: %d
+
+com.minecolonies.coremod.gui.townHall.population.crusher=Crusher: %d
+com.minecolonies.coremod.gui.townHall.population.sawmill=Miller: %d
+com.minecolonies.coremod.gui.townHall.population.CombatAcademy=Kngihts(Training): %d
+com.minecolonies.coremod.gui.townHall.population.archery=Archers(Training): %d
+com.minecolonies.coremod.gui.townHall.population.stonesmelter=Stonesmelter: %d
+com.minecolonies.coremod.gui.townHall.population.stonemason=Stonemason: %d
+com.minecolonies.coremod.gui.townHall.population.blacksmith=Blacksmiths: %d
+
+
 com.minecolonies.coremod.gui.workerHuts.upgradeUnavailable=No Upgrade Available
 com.minecolonies.coremod.gui.townHall.actions=Actions
 com.minecolonies.coremod.gui.warehouse.toStonemason=Deliver to Stonemason:
 com.minecolonies.coremod.workOrderAdded=Build Request Created!
-com.minecolonies.coremod.gui.townHall.population.builders=Builders: %d
 com.minecolonies.coremod.gui.hiring.on=Manual
 com.minecolonies.coremod.gui.workerHuts.build=Build Building
 com.minecolonies.coremod.gui.workerHuts.buildRepair=Build Options
@@ -537,7 +551,6 @@ com.minecolonies.coremod.gui.warehouse.upgrade=Upgrade Storage
 
 com.minecolonies.coremod.job.cook=Cook
 com.minecolonies.coremod.gui.workerHuts.cook=Cook
-com.minecolonies.coremod.gui.townHall.population.cooks=Cooks: %d
 tile.minecolonies.blockHutCook.name=Restaurant
 com.minecolonies.coremod.ai.noChairs=Restaurant does not have any chairs for me to eat something!
 com.minecolonies.coremod.ai.noRestaurant=Please build a restaurant or get me something to eat!
@@ -751,8 +764,7 @@ com.minecolonies.coremod.gui.townHall.house=Number of houses:
 com.minecolonies.coremod.gui.townHall.saturation=Saturation of citizens:
 com.minecolonies.coremod.gui.workerHuts.happiness=Happiness
 
-com.minecolonies.coremod.gui.townHall.population.rangers=Rangers: %d
-com.minecolonies.coremod.gui.townHall.population.knights=Knights: %d
+
 
 tile.minecolonies.barrel_block.name=Barrel
 item.minecolonies.compost.name=Compost
@@ -776,7 +788,6 @@ com.minecolonies.coremod.gui.townHall.pickTeamColor=Pick Team Color:
 tile.minecolonies.blockhutlibrary.name=Library
 com.minecolonies.coremod.gui.workerHuts.Library=Library
 com.minecolonies.coremod.job.student=Student
-com.minecolonies.coremod.gui.townHall.population.students=Students: %d
 item.minecolonies.resourcescroll.name=Resource-Scroll
 com.minecolonies.coremod.gui.resourcescroll.nobuilder=Couldn't find a registered builder, please shift-right-click an existing builders hut.
 
