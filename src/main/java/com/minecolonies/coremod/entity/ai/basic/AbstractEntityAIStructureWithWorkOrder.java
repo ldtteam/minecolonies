@@ -18,7 +18,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
-import com.minecolonies.coremod.entity.ai.util.Structure;
+import com.minecolonies.coremod.entity.ai.util.StructureIterator;
 import com.ldtteam.structurize.blocks.schematic.BlockSolidSubstitution;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
@@ -66,13 +66,13 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     }
 
     @Override
-    public void storeProgressPos(final BlockPos blockPos, final Structure.Stage stage)
+    public void storeProgressPos(final BlockPos blockPos, final StructureIterator.Stage stage)
     {
         getOwnBuilding(AbstractBuildingStructureBuilder.class).setProgressPos(blockPos, stage);
     }
 
     @Override
-    public Tuple<BlockPos, Structure.Stage> getProgressPos()
+    public Tuple<BlockPos, StructureIterator.Stage> getProgressPos()
     {
         return getOwnBuilding(AbstractBuildingStructureBuilder.class).getProgress();
     }
@@ -384,7 +384,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             job.setStructure(null);
             job.setWorkOrder(null);
             resetCurrentStructure();
-            getOwnBuilding(AbstractBuildingStructureBuilder.class).setProgressPos(null, Structure.Stage.CLEAR);
+            getOwnBuilding(AbstractBuildingStructureBuilder.class).setProgressPos(null, StructureIterator.Stage.CLEAR);
             return true;
         }
         return false;

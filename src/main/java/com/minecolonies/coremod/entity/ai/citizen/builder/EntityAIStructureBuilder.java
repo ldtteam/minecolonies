@@ -15,7 +15,7 @@ import com.minecolonies.coremod.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.ai.util.Structure;
+import com.minecolonies.coremod.entity.ai.util.StructureIterator;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -161,7 +161,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return IDLE;
         }
 
-        if (currentStructure.getStage() != Structure.Stage.DECORATE)
+        if (currentStructure.getStage() != StructureIterator.Stage.DECORATE)
         {
             needsCurrently = needsCurrently.and(stack -> !ItemStackUtils.isDecoration(stack));
         }

@@ -28,7 +28,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE
 public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 {
     /**
-     * Structure name and location.
+     * StructureIterator name and location.
      */
     private static final String SUPPLY_SHIP_STRUCTURE_NAME = Structures.SCHEMATICS_PREFIX + "/SupplyShip";
 

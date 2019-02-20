@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.util;
 
+import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -29,11 +30,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents a build task for the Structure AI.
+ * Represents a build task for the StructureIterator AI.
  * <p>
  * It internally uses a structure it transparently loads.
  */
-public class Structure
+public class StructureIterator
 {
     /**
      * This exception get's thrown when a StructureProxy file could not be loaded.
@@ -194,7 +195,7 @@ public class Structure
      * The internal structure loaded.
      */
     @Nullable
-    private final com.ldtteam.structures.helpers.Structure theStructure;
+    private final Structure theStructure;
 
     /**
      * the targetWorld to build the structure in.
@@ -206,13 +207,13 @@ public class Structure
      * Create a new building task.
      *
      * @param targetWorld       the world to build it in
-     * @param buildingLocation  the location where we should build this Structure
+     * @param buildingLocation  the location where we should build this StructureIterator
      * @param schematicFileName the structure file to load it from
      * @param rotation          the rotation it should have
      * @param mirror            the mirror.
      * @throws StructureException when there is an error loading the structure file
      */
-    public Structure(final World targetWorld, final BlockPos buildingLocation, final String schematicFileName, final int rotation, @NotNull final Mirror mirror)
+    public StructureIterator(final World targetWorld, final BlockPos buildingLocation, final String schematicFileName, final int rotation, @NotNull final Mirror mirror)
       throws StructureException
     {
         this(targetWorld, buildingLocation, schematicFileName, rotation, Stage.CLEAR, null, mirror);
@@ -222,7 +223,7 @@ public class Structure
      * Create a new building task.
      *
      * @param targetWorld       the world to build it in
-     * @param buildingLocation  the location where we should build this Structure
+     * @param buildingLocation  the location where we should build this StructureIterator
      * @param structureFileName the structure file to load it from
      * @param rotation          the rotation it should have
      * @param stageProgress     the stage is should start with
@@ -230,7 +231,7 @@ public class Structure
      * @param mirror            the mirror.
      * @throws StructureException when there is an error loading the structure file
      */
-    public Structure(
+    public StructureIterator(
                       final World targetWorld,
                       final BlockPos buildingLocation,
                       final String structureFileName,
@@ -257,7 +258,7 @@ public class Structure
      * @throws StructureException when there is an error loading the structure file
      */
     @Nullable
-    private static com.ldtteam.structures.helpers.Structure loadStructure(
+    private static Structure loadStructure(
                                                    @Nullable final World targetWorld,
                                                    @Nullable final BlockPos buildingLocation,
                                                    @Nullable final String schematicFileName,
@@ -272,11 +273,11 @@ public class Structure
             throw new StructureException(String.format("Some parameters were null! (targetWorld: %s), (buildingLocation: %s), (schematicFileName: %s)",
               targetWorld, buildingLocation, schematicFileName));
         }
-        @Nullable final com.ldtteam.structures.helpers.Structure tempSchematic;
+        @Nullable final Structure tempSchematic;
         //failsafe for faulty structure files
         try
         {
-            tempSchematic = new com.ldtteam.structures.helpers.Structure(targetWorld, schematicFileName, new PlacementSettings());
+            tempSchematic = new Structure(targetWorld, schematicFileName, new PlacementSettings());
         }
         catch (final IllegalStateException e)
         {
@@ -300,7 +301,7 @@ public class Structure
      * @param structure     the structure.
      * @param stageProgress the stage to start off with.
      */
-    public Structure(final World targetWorld, final com.ldtteam.structures.helpers.Structure structure, final Stage stageProgress)
+    public StructureIterator(final World targetWorld, @Nullable final Structure structure, final Stage stageProgress)
     {
         this.theStructure = structure;
         this.stage = stageProgress;
@@ -498,7 +499,7 @@ public class Structure
     }
 
     /**
-     * The different stages a Structure building process can be in.
+     * The different stages a StructureIterator building process can be in.
      */
     public enum Stage
     {

@@ -16,7 +16,7 @@ import com.minecolonies.coremod.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.ai.util.Structure;
+import com.minecolonies.coremod.entity.ai.util.StructureIterator;
 import com.minecolonies.coremod.util.WorkerUtil;
 import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
 import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
@@ -114,7 +114,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     /**
      * The current structure task to be build.
      */
-    protected Structure currentStructure;
+    protected StructureIterator currentStructure;
 
     /**
      * Position where the Builders constructs from.
@@ -196,16 +196,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * @param nextState          the next state to change to once done iterating.
      * @return the new state this AI will be in after one pass.
      */
-    private Supplier<IAIState> generateStructureGenerator(@NotNull final Function<Structure.StructureBlock, Boolean> evaluationFunction, @NotNull final IAIState nextState)
+    private Supplier<IAIState> generateStructureGenerator(@NotNull final Function<StructureIterator.StructureBlock, Boolean> evaluationFunction, @NotNull final IAIState nextState)
     {
         //do not replace with method reference, this one stays the same on changing reference for currentStructure
         //URGENT: DO NOT REPLACE FOR ANY MEANS THIS WILL CRASH THE GAME.
-        @NotNull final Supplier<Structure.StructureBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
-        @NotNull final Supplier<Structure.Result> advanceBlock = () -> currentStructure.advanceBlock();
+        @NotNull final Supplier<StructureIterator.StructureBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
+        @NotNull final Supplier<StructureIterator.Result> advanceBlock = () -> currentStructure.advanceBlock();
 
         return () ->
         {
-            final Structure.StructureBlock currentBlock = getCurrentBlock.get();
+            final StructureIterator.StructureBlock currentBlock = getCurrentBlock.get();
             /*
             check if we have not found a block (when block == null
             if we have a block, apply the eval function
@@ -214,13 +214,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             if (currentBlock.block == null
                   || evaluationFunction.apply(currentBlock))
             {
-                final Structure.Result result = advanceBlock.get();
+                final StructureIterator.Result result = advanceBlock.get();
                 storeProgressPos(currentStructure.getLocalBlockPosition(), currentStructure.getStage());
-                if (result == Structure.Result.AT_END)
+                if (result == StructureIterator.Result.AT_END)
                 {
                     return switchStage(nextState);
                 }
-                if (result == Structure.Result.CONFIG_LIMIT)
+                if (result == StructureIterator.Result.CONFIG_LIMIT)
                 {
                     return getState();
                 }
@@ -233,7 +233,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * Store the progressPos in the building if possible for the worker.
      * @param blockPos the progressResult.
      */
-    public void storeProgressPos(final BlockPos blockPos, final Structure.Stage stage)
+    public void storeProgressPos(final BlockPos blockPos, final StructureIterator.Stage stage)
     {
         /*
          * Override if needed.
@@ -245,7 +245,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * @return the blockPos or null.
      */
     @Nullable
-    public Tuple<BlockPos, Structure.Stage> getProgressPos()
+    public Tuple<BlockPos, StructureIterator.Stage> getProgressPos()
     {
         return null;
     }
@@ -257,30 +257,30 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     {
         if (state.equals(REMOVE_STEP))
         {
-            currentStructure.setStage(Structure.Stage.REMOVE);
+            currentStructure.setStage(StructureIterator.Stage.REMOVE);
         }
         else if (state.equals(BUILDING_STEP))
         {
-            currentStructure.setStage(Structure.Stage.BUILD);
+            currentStructure.setStage(StructureIterator.Stage.BUILD);
         }
         else if (state.equals(DECORATION_STEP))
         {
-            currentStructure.setStage(Structure.Stage.DECORATE);
+            currentStructure.setStage(StructureIterator.Stage.DECORATE);
         }
         else if (state.equals(SPAWN_STEP))
         {
-            currentStructure.setStage(Structure.Stage.SPAWN);
+            currentStructure.setStage(StructureIterator.Stage.SPAWN);
         }
         else if (state.equals(COMPLETE_BUILD))
         {
-            currentStructure.setStage(Structure.Stage.COMPLETE);
+            currentStructure.setStage(StructureIterator.Stage.COMPLETE);
         }
         return state;
     }
 
     private IAIState pickUpResiduals()
     {
-        if (currentStructure.getStage() != Structure.Stage.COMPLETE)
+        if (currentStructure.getStage() != StructureIterator.Stage.COMPLETE)
         {
             return IDLE;
         }
@@ -326,7 +326,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
     private IAIState completeBuild()
     {
-        storeProgressPos(null, Structure.Stage.CLEAR);
+        storeProgressPos(null, StructureIterator.Stage.CLEAR);
         incrementActionsDoneAndDecSaturation();
         if (job instanceof AbstractJobStructure)
         {
@@ -342,7 +342,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      */
     protected abstract void executeSpecificCompleteActions();
 
-    private Boolean decorationStep(final Structure.StructureBlock structureBlock)
+    private Boolean decorationStep(final StructureIterator.StructureBlock structureBlock)
     {
         checkForExtraBuildingActions();
         if (!BlockUtils.shouldNeverBeMessedWith(structureBlock.worldBlock))
@@ -691,7 +691,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
          */
     }
 
-    private Boolean structureStep(final Structure.StructureBlock structureBlock)
+    private Boolean structureStep(final StructureIterator.StructureBlock structureBlock)
     {
         checkForExtraBuildingActions();
         if (!BlockUtils.shouldNeverBeMessedWith(structureBlock.worldBlock))
@@ -776,7 +776,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             final com.ldtteam.structures.helpers.Structure structure = new com.ldtteam.structures.helpers.Structure(world, name, new PlacementSettings());
             job.setStructure(structure);
-            currentStructure = new Structure(world, structure, removal ? Structure.Stage.REMOVE : Structure.Stage.CLEAR);
+            currentStructure = new StructureIterator(world, structure, removal ? StructureIterator.Stage.REMOVE : StructureIterator.Stage.CLEAR);
         }
         catch (final IllegalStateException e)
         {
@@ -793,7 +793,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             handleSpecificCancelActions();
             job.setStructure(null);
-            Log.getLogger().warn("Structure couldn't be found which caused an NPE, removed workOrder, more details in log", ex);
+            Log.getLogger().warn("StructureIterator couldn't be found which caused an NPE, removed workOrder, more details in log", ex);
         }
         if (getProgressPos() != null)
         {
@@ -823,10 +823,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      *
      * @return the next step once done.
      */
-    private boolean clearStep(@NotNull final Structure.StructureBlock currentBlock)
+    private boolean clearStep(@NotNull final StructureIterator.StructureBlock currentBlock)
     {
         checkForExtraBuildingActions();
-        if (isAlreadyCleared() || (!currentStructure.getStage().equals(Structure.Stage.CLEAR) && !currentStructure.getStage().equals(Structure.Stage.REMOVE)))
+        if (isAlreadyCleared() || (!currentStructure.getStage().equals(StructureIterator.Stage.CLEAR) && !currentStructure.getStage().equals(StructureIterator.Stage.REMOVE)))
         {
             return true;
         }
@@ -897,7 +897,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     }
 
     /**
-     * Check if there is a Structure to be build.
+     * Check if there is a StructureIterator to be build.
      *
      * @return true if we should start building.
      */
@@ -911,7 +911,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     }
 
     /**
-     * Start building this Structure.
+     * Start building this StructureIterator.
      * <p>
      * Will determine where to start.
      *
@@ -972,7 +972,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * But in this case the rule does not apply because that would destroy the logic.
      */
     @SuppressWarnings(MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED)
-    private Boolean spawnEntity(@NotNull final Structure.StructureBlock currentBlock)
+    private Boolean spawnEntity(@NotNull final StructureIterator.StructureBlock currentBlock)
     {
         final NBTTagCompound entityInfo = currentBlock.entity;
         if (entityInfo == null)
