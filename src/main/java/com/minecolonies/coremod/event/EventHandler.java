@@ -169,7 +169,7 @@ public class EventHandler
         final Entity entity = event.getEntity();
 
         //  Add nearby players
-        if (entity instanceof EntityPlayerMP && entity.dimension == 0)
+        if (entity instanceof EntityPlayerMP)
         {
             final World world = entity.getEntityWorld();
             final Chunk newChunk = world.getChunk(event.getNewChunkX(), event.getNewChunkZ());

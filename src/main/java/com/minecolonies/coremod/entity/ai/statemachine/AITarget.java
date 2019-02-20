@@ -78,7 +78,7 @@ public class AITarget extends TickingTransition
      * @param state  the state it needs to be | null
      * @param action the action to apply
      */
-    public AITarget(@Nullable final IAIState state, @NotNull final Supplier<IAIState> action)
+    public AITarget(@NotNull final IAIState state, @NotNull final Supplier<IAIState> action)
     {
         this(state, () -> true, action, 1);
     }
@@ -89,7 +89,7 @@ public class AITarget extends TickingTransition
      * @param state  the state it needs to be | null
      * @param action the action to apply
      */
-    public AITarget(@Nullable final IAIState state, @NotNull final Supplier<IAIState> action, @NotNull final int tickRate)
+    public AITarget(@NotNull final IAIState state, @NotNull final Supplier<IAIState> action, @NotNull final int tickRate)
     {
         this(state, () -> true, action, tickRate);
     }

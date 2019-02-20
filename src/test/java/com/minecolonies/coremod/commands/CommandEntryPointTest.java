@@ -14,7 +14,6 @@ import org.assertj.core.api.Fail;
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -161,8 +160,8 @@ public class CommandEntryPointTest
 
         final MineColonyDataProvider mineColonyDataProvider = mock(MineColonyDataProvider.class);
         when(mineColonyDataProvider.getColonies()).thenReturn(colonyList);
-        when(mineColonyDataProvider.getColony(1)).thenReturn(colony1);
-        when(mineColonyDataProvider.getColony(2)).thenReturn(colony2);
+        when(mineColonyDataProvider.getColony(1, 0)).thenReturn(colony1);
+        when(mineColonyDataProvider.getColony(2, 0)).thenReturn(colony2);
         
         moduleContext = mock(ModuleContext.class);
         when(moduleContext.get(MineColonyDataProvider.class)).thenReturn(mineColonyDataProvider);

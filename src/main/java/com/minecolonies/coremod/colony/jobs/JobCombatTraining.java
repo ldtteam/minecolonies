@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony.jobs;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.entity.ai.citizen.trainingcamps.EntityAIArcherTraining;
 import com.minecolonies.coremod.entity.ai.citizen.trainingcamps.EntityAICombatTraining;
 
 /**

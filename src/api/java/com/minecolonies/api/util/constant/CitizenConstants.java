@@ -243,4 +243,9 @@ public final class CitizenConstants
      * Chance to dump, if < this then dump else not.
      */
     public static final int CHANCE_TO_DUMP = 8;
+
+    /**
+     * Amount of citizens that get force spawned at start.
+     */
+    public static final int INITIAL_CITIZENS = 4;
 }

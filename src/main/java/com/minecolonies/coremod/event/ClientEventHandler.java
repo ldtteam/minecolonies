@@ -152,7 +152,7 @@ public class ClientEventHandler
             }
             final NBTTagCompound compound = stack.getTagCompound();
 
-            final ColonyView colony = ColonyManager.getColonyView(compound.getInteger(TAG_ID));
+            final ColonyView colony = ColonyManager.getColonyView(compound.getInteger(TAG_ID), player.world.provider.getDimension());
             if (colony == null)
             {
                 return;

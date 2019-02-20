@@ -192,6 +192,9 @@ public class Configurations
         @Config.Comment("Should citizen name tags be rendered?")
         public boolean alwaysRenderNameTag = true;
 
+        @Config.Comment("Child growth modifier, default on avg they take about 60min to grow (at 1.0x modifier). Setting to 5 = 5x as fast. Default value: 1")
+        public double growthModifier = 1.0;
+
         @Config.Comment("Should Guard Rangers benefit from Power/Smite/Bane of Arthropods enchants?")
         public boolean rangerEnchants = true;
 
@@ -234,10 +237,10 @@ public class Configurations
         @Config.Comment("List of items the Students in the library can use. \n"
                           + "Format: itemname;SkillIncreasePCT[100-1000];BreakPCT[0-100] \n"
                           + "Example: minecraft:paper;300;100 \n"
-                          + "Which adds minecraft Paper with a 300%(3x) increased chance to skillup and a 100% chance to be used up during the try to skillup")
+                          + "Which adds minecraft Paper with a 400%(4x) increased chance to skillup and a 100% chance to be used up during the try to skillup")
         public final String[] configListStudyItems = new String[]
                                                        {
-                                                         "minecraft:paper;300;100"
+                                                         "minecraft:paper;400;100"
                                                        };
 
         @Config.Comment("The items and item-tags that the composter can use to produce compost.")
@@ -291,6 +294,9 @@ public class Configurations
                                                 "minecraft:diamond_ore!2",
                                                 "minecraft:emerald_ore!1"
                                               };
+
+        @Config.Comment("Automatically fix orphaned chunks which were caused by chunk loading and saving issues")
+        public boolean fixOrphanedChunks = false;
     }
 
     public static class Compatibility

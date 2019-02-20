@@ -17,6 +17,7 @@ import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.workorders.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -36,7 +37,17 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     /**
      * The job description.
      */
-    private static final String BUILDER = "Builder";
+    private static final String BUILDER     = "Builder";
+
+    /**
+     * NBT tag to store if mobs already got purged.
+     */
+    private static final String TAG_PURGE_MOBS = "purgedMobs";
+
+    /**
+     * Check if the builder purged mobs already at this day.
+     */
+    private boolean purgedMobsToday = false;
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -84,6 +95,12 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     }
 
     @Override
+    public void onWakeUp()
+    {
+        this.purgedMobsToday = false;
+    }
+
+    @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
         //Only the chests and racks because he shouldn't fill up the furnaces.
@@ -91,6 +108,38 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         {
             addContainerPosition(pos);
         }
+    }
+
+    @Override
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        compound.setBoolean(TAG_PURGE_MOBS, this.purgedMobsToday);
+    }
+
+    @Override
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        this.purgedMobsToday = compound.getBoolean(TAG_PURGE_MOBS);
+    }
+
+    /**
+     * Set if mobs have been purged by this builder at his hut already today.
+     * @param purgedMobsToday true if so.
+     */
+    public void setPurgedMobsToday(final boolean purgedMobsToday)
+    {
+        this.purgedMobsToday = purgedMobsToday;
+    }
+
+    /**
+     * Check if the builder has purged the mobs already.
+     * @return true if so.
+     */
+    public boolean hasPurgedMobsToday()
+    {
+        return purgedMobsToday;
     }
 
     /**

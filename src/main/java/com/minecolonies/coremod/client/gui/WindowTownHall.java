@@ -175,9 +175,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_PROMOTE, this::promoteDemoteClicked);
         registerButton(BUTTON_DEMOTE, this::promoteDemoteClicked);
         registerButton(BUTTON_RECALL, this::recallClicked);
+        registerButton(BUTTON_HIRE, this::hireClicked);
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_TOGGLE_JOB, this::toggleHiring);
         registerButton(BUTTON_TOGGLE_HOUSING, this::toggleHousing);
+        registerButton(BUTTON_TOGGLE_MOVE_IN, this::toggleMoveIn);
         registerButton(BUTTON_TOGGLE_PRINT_PROGRESS, this::togglePrintProgress);
 
         registerButton(NAME_LABEL, this::fillCitizenInfo);
@@ -376,6 +378,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         if (townHall.getColony().isManualHousing())
         {
             findPaneOfTypeByID(BUTTON_TOGGLE_HOUSING, Button.class).setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
+        }
+
+        if (townHall.getColony().canMoveIn())
+        {
+            findPaneOfTypeByID(BUTTON_TOGGLE_MOVE_IN, Button.class).setLabel(LanguageHandler.format(ON_STRING));
         }
     }
 
@@ -1042,6 +1049,27 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
+     * Toggles citizens moving in. Off means citizens stop moving in.
+     *
+     * @param button the pressed button.
+     */
+    private void toggleMoveIn(@NotNull final Button button)
+    {
+        final boolean toggle;
+        if (button.getLabel().equals(LanguageHandler.format(OFF_STRING)))
+        {
+            button.setLabel(LanguageHandler.format(ON_STRING));
+            toggle = true;
+        }
+        else
+        {
+            button.setLabel(LanguageHandler.format(OFF_STRING));
+            toggle = false;
+        }
+        MineColonies.getNetwork().sendToServer(new ToggleMoveInMessage(this.building.getColony(), toggle));
+    }
+
+    /**
      * Toggles printing progress.
      */
     private void togglePrintProgress(@NotNull final Button button)
@@ -1198,6 +1226,15 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private void recallClicked()
     {
         MineColonies.getNetwork().sendToServer(new RecallTownhallMessage(townHall));
+    }
+
+    /**
+     * Action when the hire button is clicked
+     */
+    private void hireClicked()
+    {
+        @NotNull final WindowTownHallHireCitizen window = new WindowTownHallHireCitizen(townHall.getColony());
+        window.open();
     }
 
     /**

@@ -59,7 +59,7 @@ public class SpawnCitizenCommand extends AbstractCitizensCommands implements IAc
     {
         if (isPlayerOpped(sender))
         {
-            colony.getCitizenManager().spawnCitizen(null, colony.getWorld(), true);
+            colony.getCitizenManager().spawnOrCreateCitizen(null, colony.getWorld(), null, true);
         }
     }
 

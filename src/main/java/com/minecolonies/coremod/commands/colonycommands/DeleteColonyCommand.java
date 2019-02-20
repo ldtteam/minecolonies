@@ -160,7 +160,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
         }
         final boolean shouldDestroy = canDestroy;
         // TODO: pass in sender and notify when the delete task finishes.
-        server.addScheduledTask(() -> ColonyManager.deleteColonyByWorld(colony.getID(), shouldDestroy, server.getWorld(0)));
+        server.addScheduledTask(() -> ColonyManager.deleteColonyByWorld(colony.getID(), shouldDestroy, sender.getEntityWorld()));
         sender.sendMessage(new TextComponentString(DELETE_COLONY_TASK_SCHEDULED));
     }
 

@@ -51,6 +51,11 @@ public final class WindowConstants
     public static final String BUTTON_RECALL = "recall";
 
     /**
+     * Id of the hire Citizen button in the GUI.
+     */
+    public static final String BUTTON_HIRE = "hire";
+
+    /**
      * Id of the change specialization button in the GUI.
      */
     public static final String BUTTON_CHANGE_SPEC = "changeSpec";
@@ -74,6 +79,11 @@ public final class WindowConstants
      * Id of the toggle job button in the GUI.
      */
     public static final String BUTTON_TOGGLE_HOUSING = "toggleHousing";
+
+    /**
+     * Id of the toggle move in button in the GUI.
+     */
+    public static final String BUTTON_TOGGLE_MOVE_IN = "toggleMoveIn";
 
     /**
      * Id of the toggle print progress button in the GUI.
