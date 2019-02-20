@@ -132,6 +132,12 @@ public class BuildingArchery extends AbstractBuildingWorker
     }
 
     @Override
+    public int getMaxInhabitants()
+    {
+        return getBuildingLevel();
+    }
+
+    @Override
     public boolean hasAssignedCitizen()
     {
         return getAssignedCitizen().size() >= getBuildingLevel();

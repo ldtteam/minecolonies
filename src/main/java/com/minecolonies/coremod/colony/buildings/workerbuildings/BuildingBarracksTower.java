@@ -127,6 +127,12 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     }
 
     @Override
+    public int getMaxInhabitants()
+    {
+        return getBuildingLevel();
+    }
+
+    @Override
     public boolean hasAssignedCitizen()
     {
         return getAssignedCitizen().size() >= getBuildingLevel();

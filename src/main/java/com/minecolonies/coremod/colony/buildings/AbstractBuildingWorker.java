@@ -290,7 +290,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     {
         if (!super.assignCitizen(citizen))
         {
-            Log.getLogger().warn("Ohoohohoohoh, wasn't abel to assign citizen to work building!!!");
+            Log.getLogger().warn("Unable to assign citizen:" + citizen.getName() + " to building:" + this.getSchematicName() + " jobname:" + this.getJobName());
             return false;
         }
 

@@ -23,7 +23,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -139,6 +142,12 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     public String getJobName()
     {
         return "melee";
+    }
+
+    @Override
+    public int getMaxInhabitants()
+    {
+        return getBuildingLevel();
     }
 
     @Override
