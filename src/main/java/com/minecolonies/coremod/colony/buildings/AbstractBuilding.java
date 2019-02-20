@@ -56,6 +56,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -209,6 +210,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
 
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
+    }
+
+    /**
+     * Ticks once a second(once per 20 ticks) for calculations which do not need to be checked each tick.
+     */
+    public void secondsWorldTick(@NotNull final TickEvent.WorldTickEvent event)
+    {
+        // Empty, override to use
     }
 
     /**

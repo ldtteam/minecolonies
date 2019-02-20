@@ -51,6 +51,11 @@ public final class WindowConstants
     public static final String BUTTON_RECALL = "recall";
 
     /**
+     * Id of the hire Citizen button in the GUI.
+     */
+    public static final String BUTTON_HIRE = "hire";
+
+    /**
      * Id of the change specialization button in the GUI.
      */
     public static final String BUTTON_CHANGE_SPEC = "changeSpec";
