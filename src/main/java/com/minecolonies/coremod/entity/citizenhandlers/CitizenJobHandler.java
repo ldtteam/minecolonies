@@ -9,8 +9,6 @@ import net.minecraft.entity.ai.EntityAITasks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Predicate;
-
 import static com.minecolonies.coremod.entity.AbstractEntityCitizen.DATA_MODEL;
 
 /**
