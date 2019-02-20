@@ -2,7 +2,6 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSmeltery;
 import net.minecraft.tileentity.TileEntityFurnace;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_REQUESTS_BURNABLE;

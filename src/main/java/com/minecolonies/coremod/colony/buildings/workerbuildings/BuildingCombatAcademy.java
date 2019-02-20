@@ -14,7 +14,6 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockHay;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
