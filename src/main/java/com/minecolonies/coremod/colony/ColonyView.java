@@ -40,6 +40,11 @@ import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
  */
 public final class ColonyView implements IColony
 {
+    /**
+     * Max allowed NBTTagCompound in bytes 
+     */
+    private static final int MAX_BYTES_NBTCOMPOUND = (int) 1e6;
+
     //  General Attributes
     private final int id;
     private final Map<Integer, WorkOrderView>         workOrders  = new HashMap<>();
@@ -210,8 +215,18 @@ public final class ColonyView implements IColony
 
         if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || hasNewSubscribers))
         {
+            final int preSize = buf.writerIndex();
+            final int preState = buf.readerIndex();
             buf.writeBoolean(true);
             ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
+            final int postSize = buf.writerIndex();
+            if ((postSize - preSize) >= MAX_BYTES_NBTCOMPOUND)
+            {
+                colony.getRequestManager().reset();
+                buf.setIndex(preState, preSize);
+                buf.writeBoolean(true);
+                ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
+            }
         }
         else
         {

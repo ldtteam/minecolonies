@@ -887,3 +887,7 @@ com.minecolonies.coremod.gui.workerHuts.Crusher=Crusher
 com.minecolonies.coremod.gui.workerHuts.crusherSettings=Settings
 com.minecolonies.coremod.gui.workerHuts.save=save
 com.minecolonies.coremod.crusher.toomuch=Set to the current daily max of %d.
+
+com.minecolonies.coremod.gui.shepherd.autoDye=Random sheep dyeing:
+com.minecolonies.coremod.general.onBig=On
+com.minecolonies.coremod.general.offBig=Off

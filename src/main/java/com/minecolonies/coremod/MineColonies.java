@@ -270,6 +270,7 @@ public class MineColonies
         getNetwork().registerMessage(ComposterRetrievalMessage.class, ComposterRetrievalMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(CrusherSetModeMessage.class, CrusherSetModeMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(BuyCitizenMessage.class, BuyCitizenMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(ShepherdSetDyeSheepsMessage.class, ShepherdSetDyeSheepsMessage.class, ++id, Side.SERVER);
 
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage.class, ++id, Side.CLIENT);
