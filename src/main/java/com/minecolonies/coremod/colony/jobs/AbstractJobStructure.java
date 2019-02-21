@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.ldtteam.structures.helpers.Structure;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +27,7 @@ public abstract class AbstractJobStructure extends AbstractJob
     /**
      * The structure the job should build.
      */
-    protected StructureWrapper structure;
+    protected Structure structure;
 
     /**
      * Initialize citizen data.
@@ -56,7 +56,7 @@ public abstract class AbstractJobStructure extends AbstractJob
      *
      * @return StructureProxy loaded by the Job
      */
-    public StructureWrapper getStructure()
+    public Structure getStructure()
     {
         return structure;
     }
@@ -64,9 +64,9 @@ public abstract class AbstractJobStructure extends AbstractJob
     /**
      * Set the structure of the structure job.
      *
-     * @param structure {@link StructureWrapper} object
+     * @param structure {@link Structure} object
      */
-    public void setStructure(final StructureWrapper structure)
+    public void setStructure(final Structure structure)
     {
         this.structure = structure;
     }

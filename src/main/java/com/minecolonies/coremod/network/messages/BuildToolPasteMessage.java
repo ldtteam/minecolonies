@@ -12,10 +12,10 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.items.ModItems;
-import com.minecolonies.coremod.util.StructureWrapper;
-import com.structurize.coremod.client.gui.WindowBuildTool;
-import com.structurize.coremod.management.StructureName;
-import com.structurize.coremod.management.Structures;
+import com.minecolonies.coremod.util.InstantStructurePlacer;
+import com.ldtteam.structurize.client.gui.WindowBuildTool;
+import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.management.Structures;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
@@ -179,7 +179,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             }
 
 
-            StructureWrapper.loadAndPlaceStructureWithRotation(player.world, message.structureName,
+            InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, message.structureName,
               message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
 
             if (message.isHut)
@@ -221,7 +221,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             player.addStat(StatList.getObjectUseStats(ModItems.supplyChest));
             if(InventoryUtils.removeStacksFromItemHandler(new InvWrapper(player.inventory), stacks))
             {
-                StructureWrapper.loadAndPlaceStructureWithRotation(player.world, message.structureName,
+                InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, message.structureName,
                   message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
                 player.getServerWorld().setBlockState(message.pos.up(chestHeight), Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, player.getHorizontalFacing()));
             }

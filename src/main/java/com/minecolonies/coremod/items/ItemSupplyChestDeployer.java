@@ -6,8 +6,8 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.structurize.coremod.client.gui.WindowBuildTool;
-import com.structurize.coremod.management.Structures;
+import com.ldtteam.structurize.client.gui.WindowBuildTool;
+import com.ldtteam.structurize.management.Structures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -28,7 +28,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE
 public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 {
     /**
-     * Structure name and location.
+     * StructureIterator name and location.
      */
     private static final String SUPPLY_SHIP_STRUCTURE_NAME = Structures.SCHEMATICS_PREFIX + "/SupplyShip";
 

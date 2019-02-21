@@ -39,7 +39,7 @@ public enum AIWorkerState implements IAIState
      */
     NEEDS_ITEM(true),
     /**
-     * Start building a Structure.
+     * Start building a StructureIterator.
      */
     START_BUILDING(false),
     /**
