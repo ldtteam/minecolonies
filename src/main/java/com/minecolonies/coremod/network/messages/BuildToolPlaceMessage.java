@@ -10,9 +10,9 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.event.EventHandler;
-import com.minecolonies.coremod.util.StructureWrapper;
-import com.structurize.coremod.management.StructureName;
-import com.structurize.coremod.management.Structures;
+import com.minecolonies.coremod.util.InstantStructurePlacer;
+import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.management.Structures;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -195,7 +195,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                             String schematic = sn.toString();
                             schematic = schematic.substring(0, schematic.length()-1);
                             schematic += level;
-                            StructureWrapper.loadAndPlaceStructureWithRotation(player.world, schematic,
+                            InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, schematic,
                               buildPos, rotation,mirror ? Mirror.FRONT_BACK : Mirror.NONE, false);
                             complete = true;
                         }

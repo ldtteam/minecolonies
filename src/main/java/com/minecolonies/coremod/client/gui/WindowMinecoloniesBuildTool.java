@@ -6,12 +6,12 @@ import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
 import com.minecolonies.coremod.network.messages.BuildToolPasteMessage;
 import com.minecolonies.coremod.network.messages.BuildToolPlaceMessage;
-import com.structurize.api.util.BlockUtils;
-import com.structurize.api.util.LanguageHandler;
-import com.structurize.coremod.client.gui.WindowBuildTool;
-import com.structurize.coremod.management.StructureName;
-import com.structurize.coremod.placementhandlers.PlacementError;
-import com.structurize.structures.helpers.Settings;
+import com.ldtteam.structurize.api.util.BlockUtils;
+import com.ldtteam.structurize.api.util.LanguageHandler;
+import com.ldtteam.structurize.client.gui.WindowBuildTool;
+import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.placementhandlers.PlacementError;
+import com.ldtteam.structures.helpers.Settings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.math.BlockPos;
@@ -95,7 +95,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         if (WindowBuildTool.FreeMode.SUPPLYSHIP == Settings.instance.getFreeMode())
         {
             if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
-              Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()))))
+              Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()), Settings.instance.getMirror())))
             {
                 super.pasteNice();
             }
@@ -108,7 +108,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         {
             final List<PlacementError> placementErrorList = new ArrayList<>();
             if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
-              Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation())), placementErrorList))
+              Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()), Settings.instance.getMirror()), placementErrorList))
             {
                 super.pasteNice();
             }
