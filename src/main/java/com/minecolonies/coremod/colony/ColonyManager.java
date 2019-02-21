@@ -635,12 +635,15 @@ public final class ColonyManager
      */
     private static IColony getColonyViewByOwner(final UUID owner, final int dimension)
     {
-        for (@NotNull final ColonyView c : colonyViews.get(dimension))
+        if (colonyViews.containsKey(dimension))
         {
-            final Player p = c.getPlayers().get(owner);
-            if (p != null && p.getRank().equals(Rank.OWNER))
+            for (@NotNull final ColonyView c : colonyViews.get(dimension))
             {
-                return c;
+                final Player p = c.getPlayers().get(owner);
+                if (p != null && p.getRank().equals(Rank.OWNER))
+                {
+                    return c;
+                }
             }
         }
 
