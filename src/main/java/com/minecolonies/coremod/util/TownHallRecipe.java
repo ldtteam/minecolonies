@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * To check if a townhall can be crafted.
@@ -62,18 +63,12 @@ public class TownHallRecipe extends ShapedRecipes
     {
         try
         {
-            Field playerField = inventoryCrafting.eventHandler.getClass().getDeclaredField("player");
-            Log.getLogger().warn(Arrays.toString(inventoryCrafting.eventHandler.getClass().getDeclaredFields()));
-            Log.getLogger().warn(Arrays.toString(inventoryCrafting.eventHandler.getClass().getFields()));
 
-            if (playerField == null)
+            final Optional<Field> playerField = Arrays.stream(inventoryCrafting.eventHandler.getClass().getDeclaredFields()).filter(string -> string.getName().equals("player") || string.getName().equals("field_192390_i")).findFirst();
+            if (playerField.isPresent())
             {
-                playerField = inventoryCrafting.eventHandler.getClass().getDeclaredField("field_192390_i");
-            }
-            if (playerField != null)
-            {
-                playerField.setAccessible(true);
-                final EntityPlayer player = (EntityPlayer) playerField.get(inventoryCrafting.eventHandler);
+                playerField.get().setAccessible(true);
+                final EntityPlayer player = (EntityPlayer) playerField.get().get(inventoryCrafting.eventHandler);
                 if (player instanceof EntityPlayerMP)
                 {
                     return ((EntityPlayerMP) player).getStatFile().readStat(Objects.requireNonNull(StatList.getObjectUseStats(ModItems.supplyChest))) > 0 && hasSufficientResources(inventoryCrafting);
@@ -85,7 +80,7 @@ public class TownHallRecipe extends ShapedRecipes
             }
             return false;
         }
-        catch (final NoSuchFieldException | IllegalAccessException e)
+        catch (final IllegalAccessException e)
         {
             return false;
         }
