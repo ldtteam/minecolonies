@@ -35,10 +35,10 @@ public class TownHallRecipe extends ShapedRecipes
     static
     {
         ingredients.add(0, Ingredient.fromItem(Item.getItemFromBlock(Blocks.PLANKS)));
-        ingredients.add(1, Ingredient.fromItem(com.structurize.coremod.items.ModItems.buildTool));
+        ingredients.add(1, Ingredient.fromItem(com.ldtteam.structurize.items.ModItems.buildTool));
         ingredients.add(2, Ingredient.fromItem(Item.getItemFromBlock(Blocks.PLANKS)));
         ingredients.add(3, Ingredient.fromItem(Item.getItemFromBlock(Blocks.PLANKS)));
-        ingredients.add(4, Ingredient.fromItem(com.structurize.coremod.items.ModItems.buildTool));
+        ingredients.add(4, Ingredient.fromItem(com.ldtteam.structurize.items.ModItems.buildTool));
         ingredients.add(5, Ingredient.fromItem(Item.getItemFromBlock(Blocks.PLANKS)));
         ingredients.add(6, Ingredient.fromItem(Item.getItemFromBlock(Blocks.PLANKS)));
         ingredients.add(7, Ingredient.fromItem(Item.getItemFromBlock(Blocks.PLANKS)));
@@ -99,7 +99,7 @@ public class TownHallRecipe extends ShapedRecipes
                 continue;
             }
 
-            if (stack.getItem() == com.structurize.coremod.items.ModItems.buildTool)
+            if (stack.getItem() == com.ldtteam.structurize.items.ModItems.buildTool)
             {
                 hasBuildToolCount++;
             }
