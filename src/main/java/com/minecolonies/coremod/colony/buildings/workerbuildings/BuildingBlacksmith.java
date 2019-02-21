@@ -109,7 +109,7 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingWorker.View
+    public static class View extends AbstractBuildingCrafter.View
     {
         /**
          * Instantiates the view of the building.
