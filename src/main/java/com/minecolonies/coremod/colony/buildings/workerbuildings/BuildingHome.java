@@ -370,14 +370,21 @@ public class BuildingHome extends AbstractBuilding
      */
     private void inheritLastName(@NotNull final CitizenData child, final String parentName)
     {
-        if (parentName == null || parentName.split(" ").length < 3 || child.getName().split(" ").length < 3)
+        if (parentName == null || parentName.split(" ").length < 2 || child.getName().split(" ").length < 2)
         {
             return;
         }
 
         String[] newName = child.getName().split(" ");
-        newName[2] = parentName.split(" ")[2];
-        child.setName(newName[0] + " " + newName[1] + " " + newName[2]);
+        final String[] lastName = parentName.split(" ");
+        newName[newName.length - 1] = lastName[lastName.length - 1];
+
+        String combinedName = "";
+        for (final String namePart : newName)
+        {
+            combinedName = combinedName + " " + namePart;
+        }
+        child.setName(combinedName);
     }
 
     @Override
