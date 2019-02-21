@@ -184,7 +184,7 @@ public class Configurations
         public int minDistanceFromWorldSpawn = 512;
 
         @Config.Comment("Amount of initial citizens")
-        public int maxCitizens = 4;
+        public int initialCitizenAmount = 4;
 
         @Config.Comment("Should citizen name tags be rendered?")
         public boolean alwaysRenderNameTag = true;
