@@ -60,7 +60,11 @@ public class TownHallRecipe extends ShapedRecipes
     {
         try
         {
-            final Field playerField = inventoryCrafting.eventHandler.getClass().getDeclaredField("player");
+            Field playerField = inventoryCrafting.eventHandler.getClass().getDeclaredField("player");
+            if (playerField == null)
+            {
+                playerField = inventoryCrafting.eventHandler.getClass().getDeclaredField("field_192390_i");
+            }
             if (playerField != null)
             {
                 playerField.setAccessible(true);
