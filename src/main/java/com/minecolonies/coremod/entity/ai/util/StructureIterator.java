@@ -1,12 +1,13 @@
 package com.minecolonies.coremod.entity.ai.util;
 
+import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockStairs;
@@ -16,11 +17,11 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,11 +30,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents a build task for the Structure AI.
+ * Represents a build task for the StructureIterator AI.
  * <p>
  * It internally uses a structure it transparently loads.
  */
-public class Structure
+public class StructureIterator
 {
     /**
      * This exception get's thrown when a StructureProxy file could not be loaded.
@@ -102,7 +103,7 @@ public class Structure
         /**
          * The entityInfo block.
          */
-        public final Template.EntityInfo entity;
+        public final NBTTagCompound entity;
 
         /**
          * The entityInfo block.
@@ -122,7 +123,7 @@ public class Structure
          * @param hasWorldEntity if there is an entity at the position in the world.
          */
         public StructureBlock(
-                               final Block block, final BlockPos blockPosition, final IBlockState metadata, final Template.EntityInfo entity,
+                               final Block block, final BlockPos blockPosition, final IBlockState metadata, final NBTTagCompound entity,
                                final Item item, final Block worldBlock, final IBlockState worldMetadata, final boolean hasWorldEntity)
         {
             this.block = block;
@@ -183,8 +184,8 @@ public class Structure
                                                                @NotNull final Block structureBlock,
                                                                @NotNull final Block worldBlock, @NotNull final IBlockState worldMetadata)
         {
-            return structureBlock == com.structurize.coremod.blocks.ModBlocks.blockSubstitution || (
-              structureBlock == com.structurize.coremod.blocks.ModBlocks.blockSolidSubstitution
+            return structureBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution || (
+              structureBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution
                     && worldMetadata.getMaterial().isSolid() && !(ColonyManager.getCompatibilityManager().isOre(worldMetadata))
                     && worldBlock != Blocks.AIR);
         }
@@ -194,7 +195,7 @@ public class Structure
      * The internal structure loaded.
      */
     @Nullable
-    private final StructureWrapper theStructure;
+    private final Structure theStructure;
 
     /**
      * the targetWorld to build the structure in.
@@ -206,13 +207,13 @@ public class Structure
      * Create a new building task.
      *
      * @param targetWorld       the world to build it in
-     * @param buildingLocation  the location where we should build this Structure
+     * @param buildingLocation  the location where we should build this StructureIterator
      * @param schematicFileName the structure file to load it from
      * @param rotation          the rotation it should have
      * @param mirror            the mirror.
      * @throws StructureException when there is an error loading the structure file
      */
-    public Structure(final World targetWorld, final BlockPos buildingLocation, final String schematicFileName, final int rotation, @NotNull final Mirror mirror)
+    public StructureIterator(final World targetWorld, final BlockPos buildingLocation, final String schematicFileName, final int rotation, @NotNull final Mirror mirror)
       throws StructureException
     {
         this(targetWorld, buildingLocation, schematicFileName, rotation, Stage.CLEAR, null, mirror);
@@ -222,7 +223,7 @@ public class Structure
      * Create a new building task.
      *
      * @param targetWorld       the world to build it in
-     * @param buildingLocation  the location where we should build this Structure
+     * @param buildingLocation  the location where we should build this StructureIterator
      * @param structureFileName the structure file to load it from
      * @param rotation          the rotation it should have
      * @param stageProgress     the stage is should start with
@@ -230,7 +231,7 @@ public class Structure
      * @param mirror            the mirror.
      * @throws StructureException when there is an error loading the structure file
      */
-    public Structure(
+    public StructureIterator(
                       final World targetWorld,
                       final BlockPos buildingLocation,
                       final String structureFileName,
@@ -257,7 +258,7 @@ public class Structure
      * @throws StructureException when there is an error loading the structure file
      */
     @Nullable
-    private static StructureWrapper loadStructure(
+    private static Structure loadStructure(
                                                    @Nullable final World targetWorld,
                                                    @Nullable final BlockPos buildingLocation,
                                                    @Nullable final String schematicFileName,
@@ -272,11 +273,11 @@ public class Structure
             throw new StructureException(String.format("Some parameters were null! (targetWorld: %s), (buildingLocation: %s), (schematicFileName: %s)",
               targetWorld, buildingLocation, schematicFileName));
         }
-        @Nullable final StructureWrapper tempSchematic;
+        @Nullable final Structure tempSchematic;
         //failsafe for faulty structure files
         try
         {
-            tempSchematic = new StructureWrapper(targetWorld, schematicFileName);
+            tempSchematic = new Structure(targetWorld, schematicFileName, new PlacementSettings());
         }
         catch (final IllegalStateException e)
         {
@@ -284,7 +285,7 @@ public class Structure
         }
 
         //put the building into place
-        tempSchematic.rotate(rotation, targetWorld, buildingLocation, mirror);
+        tempSchematic.rotate(BlockPosUtil.getRotationFromRotations(rotation), targetWorld, buildingLocation, mirror);
         tempSchematic.setPosition(buildingLocation);
         if (blockProgress != null)
         {
@@ -300,7 +301,7 @@ public class Structure
      * @param structure     the structure.
      * @param stageProgress the stage to start off with.
      */
-    public Structure(final World targetWorld, final StructureWrapper structure, final Stage stageProgress)
+    public StructureIterator(final World targetWorld, @Nullable final Structure structure, final Stage stageProgress)
     {
         this.theStructure = structure;
         this.stage = stageProgress;
@@ -425,8 +426,8 @@ public class Structure
         return new StructureBlock(
                                    this.theStructure.getBlock(),
                                    this.theStructure.getBlockPosition(),
-                                   this.theStructure.getBlockState(),
-                                   this.theStructure.getEntityinfo(),
+                                   this.theStructure.getBlockstate(),
+                                   this.theStructure.getEntityData(),
                                    this.theStructure.getItem(),
                                    BlockPosUtil.getBlock(targetWorld, this.theStructure.getBlockPosition()),
                                    BlockPosUtil.getBlockState(targetWorld, this.theStructure.getBlockPosition()),
@@ -498,7 +499,7 @@ public class Structure
     }
 
     /**
-     * The different stages a Structure building process can be in.
+     * The different stages a StructureIterator building process can be in.
      */
     public enum Stage
     {

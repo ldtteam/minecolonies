@@ -22,7 +22,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.*;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -155,16 +154,16 @@ public final class ItemStackUtils
     /**
      * Get the entity of an entityInfo object.
      *
-     * @param entityInfo the input.
+     * @param entityData the input.
      * @param world the world.
      * @return the output object or null.
      */
     @Nullable
-    public static Entity getEntityFromEntityInfoOrNull(final Template.EntityInfo entityInfo, final World world)
+    public static Entity getEntityFromEntityInfoOrNull(final NBTTagCompound entityData, final World world)
     {
         try
         {
-            return EntityList.createEntityFromNBT(entityInfo.entityData, world);
+            return EntityList.createEntityFromNBT(entityData, world);
         }
         catch (final RuntimeException e)
         {
@@ -175,16 +174,16 @@ public final class ItemStackUtils
 
     /**
      * Adds entities to the builder building if he needs it.
-     * @param entityInfo the entity info object.
+     * @param entityData the entity info object.
      * @param world the world.
      * @param placer the entity placer.
      * @return a list of stacks.
      */
-    public static List<ItemStorage> getListOfStackForEntityInfo(final Template.EntityInfo entityInfo, final World world, final Entity placer)
+    public static List<ItemStorage> getListOfStackForEntityInfo(final NBTTagCompound entityData, final World world, final Entity placer)
     {
-        if (entityInfo != null)
+        if (entityData != null)
         {
-            final Entity entity = getEntityFromEntityInfoOrNull(entityInfo, world);
+            final Entity entity = getEntityFromEntityInfoOrNull(entityData, world);
             if (entity != null)
             {
                 if (EntityUtils.isEntityAtPosition(entity, world, placer))

@@ -16,7 +16,7 @@ import java.util.*;
 import static com.minecolonies.coremod.entity.ai.citizen.miner.Node.NodeType.*;
 
 /**
- * Miner Level Data Structure.
+ * Miner Level Data StructureIterator.
  * <p>
  * A Level contains all the nodes for one level of the mine.
  */

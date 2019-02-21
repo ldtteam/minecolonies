@@ -24,7 +24,7 @@ import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldCapab
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldColonyManagerCapabilityProvider;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import com.minecolonies.coremod.util.ChunkDataHelper;
-import com.structurize.coremod.items.ModItems;
+import com.ldtteam.structurize.items.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockSilverfish;

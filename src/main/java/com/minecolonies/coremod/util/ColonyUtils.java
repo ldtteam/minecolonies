@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.util;
 
+import com.ldtteam.structures.helpers.Structure;
+import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
@@ -19,7 +21,7 @@ public final class ColonyUtils
      */
     private ColonyUtils()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }
@@ -56,11 +58,11 @@ public final class ColonyUtils
     public static Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> calculateCorners(
       final BlockPos pos,
       final World world,
-      final StructureWrapper wrapper,
+      final Structure wrapper,
       final int rotation,
       final boolean isMirrored)
     {
-        wrapper.rotate(rotation, world, pos, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
+        wrapper.rotate(BlockPosUtil.getRotationFromRotations(rotation), world, pos, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
         wrapper.setPosition(pos);
 
         final int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
