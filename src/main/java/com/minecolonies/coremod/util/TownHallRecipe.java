@@ -2,6 +2,7 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.items.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,6 +21,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -61,6 +63,9 @@ public class TownHallRecipe extends ShapedRecipes
         try
         {
             Field playerField = inventoryCrafting.eventHandler.getClass().getDeclaredField("player");
+            Log.getLogger().warn(Arrays.toString(inventoryCrafting.eventHandler.getClass().getDeclaredFields()));
+            Log.getLogger().warn(Arrays.toString(inventoryCrafting.eventHandler.getClass().getFields()));
+
             if (playerField == null)
             {
                 playerField = inventoryCrafting.eventHandler.getClass().getDeclaredField("field_192390_i");
