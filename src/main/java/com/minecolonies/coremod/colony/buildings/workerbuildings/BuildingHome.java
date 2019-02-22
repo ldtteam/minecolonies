@@ -327,7 +327,7 @@ public class BuildingHome extends AbstractBuilding
                 }
                 else
                 {
-                    inheritLastName(newCitizen, mom.getName());
+                    inheritLastName(newCitizen, dad.getName());
                 }
             }
             else
