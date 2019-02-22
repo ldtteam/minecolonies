@@ -33,7 +33,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.CitizenConstants.INITIAL_CITIZENS;
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
@@ -42,7 +41,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MAX_CITIZEN
 public class CitizenManager implements ICitizenManager
 {
     /**
-     * List of citizens.
+     * Map of citizens with ID,CitizenData
      */
     @NotNull
     private final Map<Integer, CitizenData> citizens = new HashMap<>();
@@ -60,17 +59,12 @@ public class CitizenManager implements ICitizenManager
     /**
      * Max citizens without housing.
      */
-    private int maxCitizens = Configurations.gameplay.maxCitizens;
+    private int maxCitizens = 0;
 
     /**
      * The colony of the manager.
      */
     private final Colony colony;
-
-    /**
-     * Datas about the happiness of a colony
-     */
-    //private final HappinessData happinessData = new HappinessData();
 
     /**
      * Creates the Citizenmanager for a colony.
@@ -89,8 +83,8 @@ public class CitizenManager implements ICitizenManager
 
         //  Citizens before Buildings, because Buildings track the Citizens
         citizens.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_CITIZENS, Constants.NBT.TAG_COMPOUND))
-                .map(this::deserializeCitizen)
-                .collect(Collectors.toMap(CitizenData::getId, Function.identity())));
+                          .map(this::deserializeCitizen)
+                          .collect(Collectors.toMap(CitizenData::getId, Function.identity())));
     }
 
     private CitizenData deserializeCitizen(@NotNull final NBTTagCompound compound)
@@ -275,13 +269,11 @@ public class CitizenManager implements ICitizenManager
                 }
             }
         }
-        // Have at least the minimum amount of citizens
-        newMaxCitizens = Math.max(Configurations.gameplay.maxCitizens, newMaxCitizens);
         if (getMaxCitizens() != newMaxCitizens)
         {
-            setMaxCitizens(Math.min(newMaxCitizens,Configurations.gameplay.maxCitizenPerColony));
+            setMaxCitizens(newMaxCitizens);
+            colony.markDirty();
         }
-        colony.markDirty();
     }
 
     /**
@@ -382,10 +374,10 @@ public class CitizenManager implements ICitizenManager
                 housing += home.getBuildingLevel();
             }
 
-            if (citizen.getCitizenEntity().isPresent()) 
-            { 
-              citizen.getCitizenHappinessHandler().processDailyHappiness(hasHouse, hasJob); 
-            } 
+            if (citizen.getCitizenEntity().isPresent())
+            {
+                citizen.getCitizenHappinessHandler().processDailyHappiness(hasHouse, hasJob);
+            }
             saturation += citizen.getSaturation();
         }
 
@@ -449,7 +441,7 @@ public class CitizenManager implements ICitizenManager
         }
 
         //  Spawn initial Citizens
-        if (colony.hasTownHall() && getCitizens().size() < INITIAL_CITIZENS)
+        if (colony.hasTownHall() && getCitizens().size() < Configurations.gameplay.initialCitizenAmount)
         {
             int respawnInterval = Configurations.gameplay.citizenRespawnInterval * TICKS_SECOND;
             respawnInterval -= (SECONDS_A_MINUTE * colony.getBuildingManager().getTownHall().getBuildingLevel());
@@ -473,7 +465,6 @@ public class CitizenManager implements ICitizenManager
             }
         }
     }
-    
 
     @Override
     public void updateCitizenMourn(final boolean mourn)
@@ -485,6 +476,5 @@ public class CitizenManager implements ICitizenManager
                 citizen.getCitizenEntity().get().setMourning(mourn);
             }
         }
-        
     }
 }
