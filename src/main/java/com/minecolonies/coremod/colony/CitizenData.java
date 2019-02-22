@@ -765,6 +765,13 @@ public class CitizenData
         if (!list.isEmpty())
         {
             setCitizenEntity(list.get(0));
+
+            // Remove duplicated entities while we're at it
+            for (int i = 1; i < list.size(); i++)
+            {
+                Log.getLogger().warn("Removing duplicate entity:" + list.get(i).getName());
+                colony.getWorld().removeEntity(list.get(i));
+            }
             return;
         }
 

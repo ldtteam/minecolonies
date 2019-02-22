@@ -321,20 +321,14 @@ public class BuildingHome extends AbstractBuilding
             // Assign citizen to a house
             if (assignCitizen(newCitizen))
             {
-                // New citizen name for this hut
-                String parentName;
                 if (rand.nextInt(2) == 1)
                 {
-                    parentName = mom.getName().split(" ")[2];
+                    inheritLastName(newCitizen, mom.getName());
                 }
                 else
                 {
-                    parentName = dad.getName().split(" ")[2];
+                    inheritLastName(newCitizen, dad.getName());
                 }
-
-                String[] newName = newCitizen.getName().split(" ");
-                newName[2] = parentName;
-                newCitizen.setName(newName[0] + " " + newName[1] + " " + newName[2]);
             }
             else
             {
@@ -355,9 +349,7 @@ public class BuildingHome extends AbstractBuilding
                             // Exclude child itself
                             if (data.getId() != newCitizen.getId())
                             {
-                                String[] newName = newCitizen.getName().split(" ");
-                                newName[2] = data.getName().split(" ")[2];
-                                newCitizen.setName(newName[0] + " " + newName[1] + " " + newName[2]);
+                                inheritLastName(newCitizen, data.getName());
                                 break;
                             }
                         }
@@ -368,6 +360,31 @@ public class BuildingHome extends AbstractBuilding
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.progress.newChild");
             colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), this.getLocation());
         }
+    }
+
+    /**
+     * Inherit the last name of a parent
+     *
+     * @param child      The child who inherits the name
+     * @param parentName the parents name to inherit
+     */
+    private void inheritLastName(@NotNull final CitizenData child, final String parentName)
+    {
+        if (parentName == null || parentName.split(" ").length < 2 || child.getName().split(" ").length < 2)
+        {
+            return;
+        }
+
+        String[] newName = child.getName().split(" ");
+        final String[] lastName = parentName.split(" ");
+        newName[newName.length - 1] = lastName[lastName.length - 1];
+
+        String combinedName = "";
+        for (final String namePart : newName)
+        {
+            combinedName = combinedName + namePart + " ";
+        }
+        child.setName(combinedName.trim());
     }
 
     @Override

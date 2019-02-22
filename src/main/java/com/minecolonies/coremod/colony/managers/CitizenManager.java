@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony.managers;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -116,21 +115,6 @@ public class CitizenManager implements ICitizenManager
             {
                 if (citizen.getCitizenEntity().isPresent())
                 {
-                    final List<EntityCitizen> list = colony.getWorld()
-                            .getEntities(EntityCitizen.class,
-                                    entityCitizen -> entityCitizen.getCitizenColonyHandler().getColony().getID() == colony.getID() && entityCitizen.getCitizenData().getId() == citizen.getId());
-
-                    if (!list.isEmpty() && citizen.getCitizenEntity().get().getEntityId() != list.get(0).getEntityId())
-                    {
-                        citizen.setCitizenEntity(list.get(0));
-                    }
-
-                    for (int i = 1; i < list.size(); i++)
-                    {
-                        Log.getLogger().warn("Removing duplicate entity now!");
-                        colony.getWorld().removeEntity(list.get(i));
-                    }
-
                     if (citizen.isDirty() || hasNewSubscribers)
                     {
                         subscribers.stream()
