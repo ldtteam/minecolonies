@@ -530,7 +530,7 @@ public class EventHandler
     private static boolean canOwnerPlaceTownHallHere(final World world, @NotNull final EntityPlayer player, @NotNull final IColony colony, final BlockPos pos)
     {
         final IColony currentColony = ColonyManager.getIColony(world, pos);
-        if (currentColony != colony)
+        if (currentColony != null && currentColony != colony)
         {
             if (!world.isRemote)
             {
