@@ -382,9 +382,9 @@ public class BuildingHome extends AbstractBuilding
         String combinedName = "";
         for (final String namePart : newName)
         {
-            combinedName = combinedName + " " + namePart;
+            combinedName = combinedName + namePart + " ";
         }
-        child.setName(combinedName);
+        child.setName(combinedName.trim());
     }
 
     @Override
