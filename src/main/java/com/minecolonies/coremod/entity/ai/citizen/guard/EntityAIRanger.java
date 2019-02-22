@@ -65,7 +65,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     /**
      * Physical Attack delay in ticks.
      */
-    public static final int RANGED_ATTACK_DELAY_BASE = 100;
+    public static final int RANGED_ATTACK_DELAY_BASE = 70;
 
     /**
      * The path for fleeing
@@ -92,7 +92,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     {
         super(job);
         super.registerTargets(
-          new AITarget(GUARD_ATTACK_RANGED, this::attackRanged)
+          new AITarget(GUARD_ATTACK_RANGED, this::attackRanged, 10)
         );
         toolsNeeded.add(ToolType.BOW);
     }
@@ -114,6 +114,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
 
     /**
      * Calculates the actual attack range
+     *
      * @return The attack range
      */
     private int getRealAttackRange()
@@ -172,8 +173,6 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
      */
     protected IAIState attackRanged()
     {
-        // Tick once every half second is enough
-        setDelay(10);
         final IAIState state = preAttackChecks();
         if (state != getState())
         {
@@ -242,6 +241,15 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
         {
             tooCloseNumTicks++;
             strafingTime = -1;
+
+            // Fleeing
+            if (!fleeing && !movingToTarget && sqDistanceToEntity < RANGED_FLEE_SQDIST && tooCloseNumTicks > 5)
+            {
+                fleePath = worker.getNavigator().moveAwayFromEntityLiving(target, getRealAttackRange() / 2.0, getCombatMovementSpeed());
+                fleeing = true;
+                worker.getMoveHelper().strafe(0, (float) strafingClockwise * 0.2f);
+                strafingClockwise *= -1;
+            }
         }
         else
         {
@@ -272,21 +280,9 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
             }
 
             // Strafe or flee, when not already fleeing or moving in
-            if ((strafingTime > -1 || tooCloseNumTicks > 0) && !fleeing && !movingToTarget)
+            if ((strafingTime > -1) && !fleeing && !movingToTarget)
             {
-                // Target too close and in vision
-                if (sqDistanceToEntity < RANGED_FLEE_SQDIST && tooCloseNumTicks > 5)
-                {
-                    fleePath = worker.getNavigator().moveAwayFromEntityLiving(target, getRealAttackRange() / 2.0, getCombatMovementSpeed());
-                    fleeing = true;
-                    worker.getMoveHelper().strafe(0, (float) strafingClockwise * 0.2f);
-                    strafingClockwise *= -1;
-                }
-                else if (strafingTime > -1)
-                {
-                    worker.getMoveHelper().strafe(0, (float) (getCombatMovementSpeed() * strafingClockwise * STRAFING_SPEED));
-                }
-
+                worker.getMoveHelper().strafe(0, (float) (getCombatMovementSpeed() * strafingClockwise * STRAFING_SPEED));
                 worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
             }
             else
@@ -389,7 +385,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     {
         if (worker.getCitizenData() != null)
         {
-            final int attackDelay = RANGED_ATTACK_DELAY_BASE - (worker.getCitizenData().getLevel() * 2);
+            final int attackDelay = RANGED_ATTACK_DELAY_BASE - worker.getCitizenData().getLevel();
             return attackDelay < PHYSICAL_ATTACK_DELAY_MIN * 2 ? PHYSICAL_ATTACK_DELAY_MIN * 2 : attackDelay;
         }
         return RANGED_ATTACK_DELAY_BASE;

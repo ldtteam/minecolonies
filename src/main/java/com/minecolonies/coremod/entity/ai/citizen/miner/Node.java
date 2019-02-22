@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.Random;
 
 /**
- * Miner Node Data Structure.
+ * Miner Node Data StructureIterator.
  * <p>
  * When a node is completed we should add the surrounding nodes to level as AVAILABLE
  * also note that we don't want node (0, -1) because there will be a ladder on the back

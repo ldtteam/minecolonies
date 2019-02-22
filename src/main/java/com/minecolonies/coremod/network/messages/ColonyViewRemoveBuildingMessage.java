@@ -4,6 +4,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -54,6 +55,6 @@ public class ColonyViewRemoveBuildingMessage extends AbstractMessage<ColonyViewR
     @Override
     protected void messageOnClientThread(final ColonyViewRemoveBuildingMessage message, final MessageContext ctx)
     {
-        ColonyManager.handleColonyViewRemoveBuildingMessage(message.colonyId, message.buildingId);
+        ColonyManager.handleColonyViewRemoveBuildingMessage(message.colonyId, message.buildingId, Minecraft.getMinecraft().world.provider.getDimension());
     }
 }

@@ -11,6 +11,7 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -100,7 +101,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             {
                 return ActionResult.newResult(EnumActionResult.FAIL, stack);
             }
-            final ColonyView colony = ColonyManager.getColonyView(compound.getInteger(TAG_ID));
+            final ColonyView colony = ColonyManager.getColonyView(compound.getInteger(TAG_ID), Minecraft.getMinecraft().world.provider.getDimension());
             if (colony == null)
             {
                 return ActionResult.newResult(EnumActionResult.FAIL, stack);

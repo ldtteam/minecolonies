@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -69,7 +70,7 @@ public class CitizenColonyHandler
      * @param c    the colony.
      * @param data the data of the new citizen.
      */
-    public void setColony(@Nullable final Colony c, @Nullable final CitizenData data)
+    public void initEntityCitizenValues(@Nullable final Colony c, @Nullable final CitizenData data)
     {
         if (c == null)
         {
@@ -86,7 +87,11 @@ public class CitizenColonyHandler
         citizen.setCitizenId(data.getId());
         citizen.setCitizenData(data);
 
+        citizen.setIsChild(data.isChild());
         citizen.setCustomNameTag(citizen.getCitizenData().getName());
+
+        citizen.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(data.getMaxHealth());
+        citizen.setHealth((float) data.getHealth());
 
         citizen.setFemale(citizen.getCitizenData().isFemale());
         citizen.setTextureId(citizen.getCitizenData().getTextureId());
@@ -96,6 +101,7 @@ public class CitizenColonyHandler
         citizen.getDataManager().set(DATA_IS_FEMALE, citizen.isFemale() ? 1 : 0);
         citizen.getDataManager().set(DATA_TEXTURE, citizen.getTextureId());
         citizen.getDataManager().set(DATA_IS_ASLEEP, citizen.getCitizenData().isAsleep());
+        citizen.getDataManager().set(DATA_IS_CHILD, citizen.getCitizenData().isChild());
         citizen.getDataManager().set(DATA_BED_POS, citizen.getCitizenData().getBedPos());
 
         citizen.getCitizenExperienceHandler().updateLevel();
@@ -168,7 +174,7 @@ public class CitizenColonyHandler
         entityCitizenOptional.filter(entityCitizen -> !citizen.getUniqueID().equals(entityCitizen.getUniqueID()))
           .ifPresent(entityCitizen -> handleExistingCitizen(data, entityCitizen));
 
-        setColony(c, data);
+        initEntityCitizenValues(c, data);
     }
 
     private void handleExistingCitizen(@NotNull final CitizenData data, @NotNull final EntityCitizen existingCitizen)
@@ -206,6 +212,7 @@ public class CitizenColonyHandler
             }
 
             citizen.setFemale(citizen.getDataManager().get(DATA_IS_FEMALE) != 0);
+            citizen.setIsChild(citizen.getDataManager().get(DATA_IS_CHILD));
             citizen.getCitizenExperienceHandler().setLevel(citizen.getDataManager().get(DATA_LEVEL));
             citizen.setModelId(RenderBipedCitizen.Model.valueOf(citizen.getDataManager().get(DATA_MODEL)));
             citizen.setTextureId(citizen.getDataManager().get(DATA_TEXTURE));
@@ -259,7 +266,7 @@ public class CitizenColonyHandler
      */
     public void clearColony()
     {
-        setColony(null, null);
+        initEntityCitizenValues(null, null);
     }
 
     /**

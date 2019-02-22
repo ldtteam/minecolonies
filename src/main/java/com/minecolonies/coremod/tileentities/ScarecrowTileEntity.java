@@ -470,7 +470,7 @@ public class ScarecrowTileEntity extends TileEntityChest
         this.readFromNBT(compound);
         if(compound.hasKey(TAG_COLONY_ID))
         {
-            setOwner(ownerId, ColonyManager.getColonyView(compound.getInteger(TAG_COLONY_ID)));
+            setOwner(ownerId, ColonyManager.getColonyView(compound.getInteger(TAG_COLONY_ID), world.provider.getDimension()));
         }
     }
 

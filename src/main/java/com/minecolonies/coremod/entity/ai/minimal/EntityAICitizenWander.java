@@ -6,7 +6,6 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 /**

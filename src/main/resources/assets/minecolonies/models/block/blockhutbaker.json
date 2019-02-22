@@ -2,8 +2,7 @@
   "credit": "Made with Blockbench",
   "textures": {
     "4": "minecolonies:blocks/baker/sacksmallflour",
-    "5": "minecolonies:blocks/baker/quern",
-    "particle": "minecolonies:blocks/baker/quern"
+    "5": "minecolonies:blocks/baker/quern"
   },
   "elements": [
     {

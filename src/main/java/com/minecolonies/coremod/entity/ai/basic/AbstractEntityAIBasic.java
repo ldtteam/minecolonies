@@ -129,6 +129,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private final List<ItemStorage> alreadyKept = new ArrayList<>();
 
     /**
+     * Paused state handler
+     */
+    private EntityAIStatePausedHandler pausedHandler;
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class
@@ -1460,7 +1465,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private IAIState bePaused()
     {
-        EntityAIStatePausedHandler.doPause(worker, getOwnBuilding());
+        if (pausedHandler == null)
+        {
+            pausedHandler = new EntityAIStatePausedHandler(worker, getOwnBuilding());
+        }
+
+        pausedHandler.doPause();
         setDelay(WALK_DELAY);
         return PAUSED;
     }

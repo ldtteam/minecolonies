@@ -359,7 +359,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         @Override
         public Skill getSecondarySkill()
         {
-            return Skill.STRENGTH;
+            return Skill.ENDURANCE;
         }
     }
 }

@@ -14,7 +14,6 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockHay;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,7 +23,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -143,9 +145,9 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     }
 
     @Override
-    public boolean hasAssignedCitizen()
+    public int getMaxInhabitants()
     {
-        return getAssignedCitizen().size() >= getBuildingLevel();
+        return getBuildingLevel();
     }
 
     /**

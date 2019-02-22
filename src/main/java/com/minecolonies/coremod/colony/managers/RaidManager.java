@@ -9,8 +9,8 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.coremod.util.StructureWrapper;
-import com.structurize.coremod.management.StructureName;
+import com.minecolonies.coremod.util.InstantStructurePlacer;
+import com.ldtteam.structurize.management.StructureName;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -236,7 +236,7 @@ public class RaidManager implements IRaiderManager
                     // Load the backup from before spawning
                     try
                     {
-                        StructureWrapper.loadAndPlaceStructureWithRotation(world,
+                        InstantStructurePlacer.loadAndPlaceStructureWithRotation(world,
                           new StructureName("cache", "backup", entry.getValue().getFirst()).toString() + colony.getID() + colony.getDimension() + entry.getKey(),
                           entry.getKey(),
                           0,

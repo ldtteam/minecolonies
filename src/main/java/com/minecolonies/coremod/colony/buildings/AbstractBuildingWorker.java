@@ -290,7 +290,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     {
         if (!super.assignCitizen(citizen))
         {
-            Log.getLogger().warn("Ohoohohoohoh, wasn't abel to assign citizen to work building!!!");
+            Log.getLogger().warn("Unable to assign citizen:" + citizen.getName() + " to building:" + this.getSchematicName() + " jobname:" + this.getJobName());
             return false;
         }
 
@@ -424,7 +424,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
 
         // If we have no active worker, grab one from the Colony
         // TODO Maybe the Colony should assign jobs out, instead?
-        if (!hasAssignedCitizen()
+        if (!isFull()
               && ((getBuildingLevel() > 0 && isBuilt()) || this instanceof BuildingBuilder)
               && !this.getColony().isManualHiring())
         {

@@ -35,9 +35,9 @@ public class CommandEntryPointNew extends AbstractCommandParser
             return ColonyManager.getIColonyByOwner(entityWorld, sender);
         }
 
-        public Colony getColony(final int colonyNumber)
+        public Colony getColony(final int colonyNumber, final int senderDimension)
         {
-            return ColonyManager.getColonyByWorld(colonyNumber, FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0));
+            return ColonyManager.getColonyByWorld(colonyNumber, FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(senderDimension));
         }
     }
 

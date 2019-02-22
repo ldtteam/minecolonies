@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.configuration.Configurations;
-import com.structurize.coremod.management.Structures;
+import com.ldtteam.structurize.management.Structures;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
