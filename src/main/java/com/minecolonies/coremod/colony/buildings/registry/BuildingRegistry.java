@@ -2,6 +2,8 @@ package com.minecolonies.coremod.colony.buildings.registry;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
@@ -16,7 +18,6 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.ColonyUtils;
-import com.minecolonies.coremod.util.StructureWrapper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Tuple;
@@ -237,7 +238,7 @@ public class BuildingRegistry
         if (building != null && parent.getWorld() != null && !(building instanceof PostBox))
         {
             final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
-            final StructureWrapper wrapper = new StructureWrapper(parent.getWorld(), workOrder.getStructureName());
+            final Structure wrapper = new Structure(parent.getWorld(), workOrder.getStructureName(), new PlacementSettings());
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
                     = ColonyUtils.calculateCorners(building.getLocation(),
                     parent.getWorld(),

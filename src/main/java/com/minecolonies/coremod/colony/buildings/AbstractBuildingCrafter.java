@@ -3,32 +3,23 @@ package com.minecolonies.coremod.colony.buildings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
-import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.RequestHandler;
-import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingProductionResolver;
-import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -99,6 +90,13 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
                             }
                             recipeOutputs.put(itemStorage, new Tuple<>(itemStorage.getAmount(), true));
                         }
+
+                        final ItemStorage output = new ItemStorage(recipeStorage.getPrimaryOutput());
+                        if (recipeOutputs.containsKey(output))
+                        {
+                            output.setAmount(recipeOutputs.get(output).getFirst() + output.getAmount());
+                        }
+                        recipeOutputs.put(output, new Tuple<>(output.getAmount(), true));
                     }
                 }
             }

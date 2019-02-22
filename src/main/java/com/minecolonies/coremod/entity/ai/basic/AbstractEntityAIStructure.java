@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.util.StructurePlacementUtils;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
@@ -14,11 +16,10 @@ import com.minecolonies.coremod.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.ai.util.Structure;
-import com.minecolonies.coremod.util.StructureWrapper;
+import com.minecolonies.coremod.entity.ai.util.StructureIterator;
 import com.minecolonies.coremod.util.WorkerUtil;
-import com.structurize.coremod.placementhandlers.IPlacementHandler;
-import com.structurize.coremod.placementhandlers.PlacementHandlers;
+import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
+import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -29,6 +30,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -36,7 +38,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -113,7 +114,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     /**
      * The current structure task to be build.
      */
-    protected Structure currentStructure;
+    protected StructureIterator currentStructure;
 
     /**
      * Position where the Builders constructs from.
@@ -195,16 +196,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * @param nextState          the next state to change to once done iterating.
      * @return the new state this AI will be in after one pass.
      */
-    private Supplier<IAIState> generateStructureGenerator(@NotNull final Function<Structure.StructureBlock, Boolean> evaluationFunction, @NotNull final IAIState nextState)
+    private Supplier<IAIState> generateStructureGenerator(@NotNull final Function<StructureIterator.StructureBlock, Boolean> evaluationFunction, @NotNull final IAIState nextState)
     {
         //do not replace with method reference, this one stays the same on changing reference for currentStructure
         //URGENT: DO NOT REPLACE FOR ANY MEANS THIS WILL CRASH THE GAME.
-        @NotNull final Supplier<Structure.StructureBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
-        @NotNull final Supplier<Structure.Result> advanceBlock = () -> currentStructure.advanceBlock();
+        @NotNull final Supplier<StructureIterator.StructureBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
+        @NotNull final Supplier<StructureIterator.Result> advanceBlock = () -> currentStructure.advanceBlock();
 
         return () ->
         {
-            final Structure.StructureBlock currentBlock = getCurrentBlock.get();
+            final StructureIterator.StructureBlock currentBlock = getCurrentBlock.get();
             /*
             check if we have not found a block (when block == null
             if we have a block, apply the eval function
@@ -213,13 +214,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             if (currentBlock.block == null
                   || evaluationFunction.apply(currentBlock))
             {
-                final Structure.Result result = advanceBlock.get();
+                final StructureIterator.Result result = advanceBlock.get();
                 storeProgressPos(currentStructure.getLocalBlockPosition(), currentStructure.getStage());
-                if (result == Structure.Result.AT_END)
+                if (result == StructureIterator.Result.AT_END)
                 {
                     return switchStage(nextState);
                 }
-                if (result == Structure.Result.CONFIG_LIMIT)
+                if (result == StructureIterator.Result.CONFIG_LIMIT)
                 {
                     return getState();
                 }
@@ -232,7 +233,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * Store the progressPos in the building if possible for the worker.
      * @param blockPos the progressResult.
      */
-    public void storeProgressPos(final BlockPos blockPos, final Structure.Stage stage)
+    public void storeProgressPos(final BlockPos blockPos, final StructureIterator.Stage stage)
     {
         /*
          * Override if needed.
@@ -244,7 +245,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * @return the blockPos or null.
      */
     @Nullable
-    public Tuple<BlockPos, Structure.Stage> getProgressPos()
+    public Tuple<BlockPos, StructureIterator.Stage> getProgressPos()
     {
         return null;
     }
@@ -256,30 +257,30 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     {
         if (state.equals(REMOVE_STEP))
         {
-            currentStructure.setStage(Structure.Stage.REMOVE);
+            currentStructure.setStage(StructureIterator.Stage.REMOVE);
         }
         else if (state.equals(BUILDING_STEP))
         {
-            currentStructure.setStage(Structure.Stage.BUILD);
+            currentStructure.setStage(StructureIterator.Stage.BUILD);
         }
         else if (state.equals(DECORATION_STEP))
         {
-            currentStructure.setStage(Structure.Stage.DECORATE);
+            currentStructure.setStage(StructureIterator.Stage.DECORATE);
         }
         else if (state.equals(SPAWN_STEP))
         {
-            currentStructure.setStage(Structure.Stage.SPAWN);
+            currentStructure.setStage(StructureIterator.Stage.SPAWN);
         }
         else if (state.equals(COMPLETE_BUILD))
         {
-            currentStructure.setStage(Structure.Stage.COMPLETE);
+            currentStructure.setStage(StructureIterator.Stage.COMPLETE);
         }
         return state;
     }
 
     private IAIState pickUpResiduals()
     {
-        if (currentStructure.getStage() != Structure.Stage.COMPLETE)
+        if (currentStructure.getStage() != StructureIterator.Stage.COMPLETE)
         {
             return IDLE;
         }
@@ -325,7 +326,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
     private IAIState completeBuild()
     {
-        storeProgressPos(null, Structure.Stage.CLEAR);
+        storeProgressPos(null, StructureIterator.Stage.CLEAR);
         incrementActionsDoneAndDecSaturation();
         if (job instanceof AbstractJobStructure)
         {
@@ -341,8 +342,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      */
     protected abstract void executeSpecificCompleteActions();
 
-    private Boolean decorationStep(final Structure.StructureBlock structureBlock)
+    private Boolean decorationStep(final StructureIterator.StructureBlock structureBlock)
     {
+        checkForExtraBuildingActions();
         if (!BlockUtils.shouldNeverBeMessedWith(structureBlock.worldBlock))
         {
             worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.decorating"));
@@ -430,7 +432,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             {
                 if (!Configurations.gameplay.builderInfiniteResources)
                 {
-                    final List<ItemStack> requiredItems = handlers.getRequiredItems(world, coords, blockState, job.getStructure().getBlockInfo().tileentityData, false);
+                    final List<ItemStack> requiredItems = handlers.getRequiredItems(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false);
 
                     final List<ItemStack> itemList = new ArrayList<>();
                     for (final ItemStack stack : requiredItems)
@@ -453,7 +455,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     world.setBlockToAir(coords);
                 }
 
-                final Object result = handlers.handle(world, coords, blockState, job.getStructure().getBlockInfo().tileentityData, false, job.getStructure().getPosition());
+                final Object result = handlers.handle(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false, job.getStructure().getPosition());
                 if (result instanceof IPlacementHandler.ActionProcessingResult)
                 {
                     if (result == IPlacementHandler.ActionProcessingResult.ACCEPT)
@@ -679,8 +681,19 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
          */
     }
 
-    private Boolean structureStep(final Structure.StructureBlock structureBlock)
+    /**
+     * Check for extra building options to do with each block.
+     */
+    public void checkForExtraBuildingActions()
     {
+        /*
+         * Override by worker if necessary.
+         */
+    }
+
+    private Boolean structureStep(final StructureIterator.StructureBlock structureBlock)
+    {
+        checkForExtraBuildingActions();
         if (!BlockUtils.shouldNeverBeMessedWith(structureBlock.worldBlock))
         {
             worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.building"));
@@ -708,7 +721,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
             @Nullable Block block = structureBlock.block;
             @Nullable IBlockState blockState = structureBlock.metadata;
-            if (block == com.structurize.coremod.blocks.ModBlocks.blockSolidSubstitution
+            if (block == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution
                   || shallReplaceSolidSubstitutionBlock(structureBlock.worldBlock, structureBlock.worldMetadata))
             {
                 blockState = getSolidSubstitution(structureBlock.blockPosition);
@@ -761,9 +774,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         rotation = rotateTimes;
         try
         {
-            final StructureWrapper wrapper = new StructureWrapper(world, name);
-            job.setStructure(wrapper);
-            currentStructure = new Structure(world, wrapper, removal ? Structure.Stage.REMOVE : Structure.Stage.CLEAR);
+            final com.ldtteam.structures.helpers.Structure structure = new com.ldtteam.structures.helpers.Structure(world, name, new PlacementSettings());
+            job.setStructure(structure);
+            currentStructure = new StructureIterator(world, structure, removal ? StructureIterator.Stage.REMOVE : StructureIterator.Stage.CLEAR);
         }
         catch (final IllegalStateException e)
         {
@@ -773,14 +786,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
         try
         {
-            job.getStructure().rotate(rotateTimes, world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
+            job.getStructure().rotate(BlockPosUtil.getRotationFromRotations(rotateTimes), world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
             job.getStructure().setPosition(position);
         }
         catch (final NullPointerException ex)
         {
             handleSpecificCancelActions();
             job.setStructure(null);
-            Log.getLogger().warn("Structure couldn't be found which caused an NPE, removed workOrder, more details in log", ex);
+            Log.getLogger().warn("StructureIterator couldn't be found which caused an NPE, removed workOrder, more details in log", ex);
         }
         if (getProgressPos() != null)
         {
@@ -810,9 +823,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      *
      * @return the next step once done.
      */
-    private boolean clearStep(@NotNull final Structure.StructureBlock currentBlock)
+    private boolean clearStep(@NotNull final StructureIterator.StructureBlock currentBlock)
     {
-        if (isAlreadyCleared() || (!currentStructure.getStage().equals(Structure.Stage.CLEAR) && !currentStructure.getStage().equals(Structure.Stage.REMOVE)))
+        checkForExtraBuildingActions();
+        if (isAlreadyCleared() || (!currentStructure.getStage().equals(StructureIterator.Stage.CLEAR) && !currentStructure.getStage().equals(StructureIterator.Stage.REMOVE)))
         {
             return true;
         }
@@ -821,7 +835,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
         //Don't break bedrock etc.
         //Don't break bedrock etc.
-        if (!BlockUtils.shouldNeverBeMessedWith(currentBlock.worldBlock))
+        if (!BlockUtils.shouldNeverBeMessedWith(currentBlock.worldBlock) && currentBlock.worldBlock != Blocks.TORCH)
         {
             //Fill workFrom with the position from where the builder should build.
             //also ensure we are at that position.
@@ -830,7 +844,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 return false;
             }
 
-            if (job.getStructure().isStructureBlockEqualWorldBlock()
+            if (StructurePlacementUtils.isStructureBlockEqualWorldBlock(world, currentBlock.blockPosition, job.getStructure().getBlockstate())
                   || (currentBlock.block instanceof BlockBed && currentBlock.metadata.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
                   || (currentBlock.block instanceof BlockDoor && currentBlock.metadata.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
             {
@@ -883,7 +897,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     }
 
     /**
-     * Check if there is a Structure to be build.
+     * Check if there is a StructureIterator to be build.
      *
      * @return true if we should start building.
      */
@@ -897,7 +911,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     }
 
     /**
-     * Start building this Structure.
+     * Start building this StructureIterator.
      * <p>
      * Will determine where to start.
      *
@@ -930,16 +944,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
     protected abstract void onStartWithoutStructure();
 
-    /*
-     * Get specific data of an entity.
-     * Workers should implement this correctly if they require this behavior.
-     * @return the entityInfo or null.
-     */
-    public Template.EntityInfo getEntityInfo()
-    {
-        return null;
-    }
-
     /**
      * Check how much of a certain stuck is actually required.
      *
@@ -968,9 +972,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * But in this case the rule does not apply because that would destroy the logic.
      */
     @SuppressWarnings(MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED)
-    private Boolean spawnEntity(@NotNull final Structure.StructureBlock currentBlock)
+    private Boolean spawnEntity(@NotNull final StructureIterator.StructureBlock currentBlock)
     {
-        final Template.EntityInfo entityInfo = currentBlock.entity;
+        final NBTTagCompound entityInfo = currentBlock.entity;
         if (entityInfo == null)
         {
             return true;

@@ -16,9 +16,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.HireFireMessage;
 import com.minecolonies.coremod.network.messages.PauseCitizenMessage;
 import com.minecolonies.coremod.network.messages.RestartCitizenMessage;
-
 import net.minecraft.util.math.BlockPos;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -128,6 +126,7 @@ public class WindowHireWorker extends Window implements ButtonHandler
 
         //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
+                     .filter(citizen -> !citizen.isChild())
                      .filter(citizen -> (citizen.getWorkBuilding() == null && !building.hasEnoughWorkers())
                                           || building.getLocation().equals(citizen.getWorkBuilding())).sorted(Comparator.comparing(CitizenDataView::getName))
                      .collect(Collectors.toList());

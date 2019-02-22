@@ -1,11 +1,13 @@
 package com.minecolonies.coremod;
 
+import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
-import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.achievements.ModAchievements;
+import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
@@ -18,7 +20,7 @@ import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.placementhandlers.MinecoloniesPlacementHandlers;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.util.RecipeHandler;
-import com.structurize.structures.helpers.Structure;
+import com.ldtteam.structures.helpers.Structure;
 import net.minecraft.init.Items;
 import net.minecraft.util.datafix.FixTypes;
 import net.minecraftforge.common.MinecraftForge;
@@ -29,7 +31,10 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -39,7 +44,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 @Mod.EventBusSubscriber
-@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION, dependencies="after:gbook;required-after:structurize",
+@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION, dependencies="after:gbook;required-after:structurize@[0.10.59-ALPHA,);",
   /*dependencies = Constants.FORGE_VERSION,*/ acceptedMinecraftVersions = Constants.MC_VERSION)
 public class MineColonies
 {
@@ -114,7 +119,7 @@ public class MineColonies
     public void preInit(@NotNull final FMLPreInitializationEvent event)
     {
         FMLCommonHandler.instance().getDataFixer().init(Constants.MOD_ID, TileEntityIdFixer.VERSION).registerFix(FixTypes.BLOCK_ENTITY, new TileEntityIdFixer());
-        Structure.originFolders.add(Constants.MOD_ID);
+        StructureLoadingUtils.originFolders.add(Constants.MOD_ID);
         CapabilityManager.INSTANCE.register(IColonyTagCapability.class, new IColonyTagCapability.Storage(), IColonyTagCapability.Impl::new);
         CapabilityManager.INSTANCE.register(IChunkmanagerCapability.class, new IChunkmanagerCapability.Storage(), IChunkmanagerCapability.Impl::new);
         CapabilityManager.INSTANCE.register(IColonyManagerCapability.class, new IColonyManagerCapability.Storage(), IColonyManagerCapability.Impl::new);
@@ -241,6 +246,7 @@ public class MineColonies
         getNetwork().registerMessage(ChangeFreeToInteractBlockMessage.class, ChangeFreeToInteractBlockMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(LumberjackReplantSaplingToggleMessage.class, LumberjackReplantSaplingToggleMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(ToggleHousingMessage.class, ToggleHousingMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(ToggleMoveInMessage.class, ToggleMoveInMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(AssignUnassignMessage.class, AssignUnassignMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(OpenCraftingGUIMessage.class, OpenCraftingGUIMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(AddRemoveRecipeMessage.class, AddRemoveRecipeMessage.class, ++id, Side.SERVER);
@@ -265,6 +271,8 @@ public class MineColonies
         getNetwork().registerMessage(PostBoxRequestMessage.class, PostBoxRequestMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(ComposterRetrievalMessage.class, ComposterRetrievalMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(CrusherSetModeMessage.class, CrusherSetModeMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(BuyCitizenMessage.class, BuyCitizenMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(ShepherdSetDyeSheepsMessage.class, ShepherdSetDyeSheepsMessage.class, ++id, Side.SERVER);
 
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage.class, ++id, Side.CLIENT);

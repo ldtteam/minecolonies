@@ -9,7 +9,7 @@ import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.entity.ai.util.Structure;
+import com.minecolonies.coremod.entity.ai.util.StructureIterator;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -68,7 +68,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     /**
      * Progress stage of the builder.
      */
-    private Structure.Stage progressStage;
+    private StructureIterator.Stage progressStage;
 
     /**
      * Contains all resources needed for a certain build.
@@ -144,7 +144,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         if (compound.hasKey(TAG_PROGRESS_POS))
         {
             progressPos = BlockPosUtil.readFromNBT(compound, TAG_PROGRESS_POS);
-            progressStage = Structure.Stage.values()[compound.getInteger(TAG_PROGRESS_STAGE)];
+            progressStage = StructureIterator.Stage.values()[compound.getInteger(TAG_PROGRESS_STAGE)];
         }
     }
 
@@ -368,7 +368,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * @param blockPos the last blockPos.
      * @param stage the stage to set.
      */
-    public void setProgressPos(final BlockPos blockPos, final Structure.Stage stage)
+    public void setProgressPos(final BlockPos blockPos, final StructureIterator.Stage stage)
     {
         this.progressPos = blockPos;
         this.progressStage = stage;
@@ -388,7 +388,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      * @return the current progress and stage.
      */
     @Nullable
-    public Tuple<BlockPos, Structure.Stage> getProgress()
+    public Tuple<BlockPos, StructureIterator.Stage> getProgress()
     {
         if (this.progressPos == null)
         {

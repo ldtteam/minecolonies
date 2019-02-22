@@ -5,6 +5,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -60,6 +61,6 @@ public class ColonyViewBuildingViewMessage extends AbstractMessage<ColonyViewBui
     @Override
     protected void messageOnClientThread(final ColonyViewBuildingViewMessage message, final MessageContext ctx)
     {
-        ColonyManager.handleColonyBuildingViewMessage(message.colonyId, message.buildingId, message.buildingData);
+        ColonyManager.handleColonyBuildingViewMessage(message.colonyId, message.buildingId, message.buildingData, Minecraft.getMinecraft().world.provider.getDimension());
     }
 }

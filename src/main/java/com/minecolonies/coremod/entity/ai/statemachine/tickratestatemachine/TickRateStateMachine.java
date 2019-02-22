@@ -49,6 +49,9 @@ public class TickRateStateMachine extends BasicStateMachine<TickingTransition>
 
         if (!transitionMap.containsKey(getState()))
         {
+            // Reached Trap/Sink state we cannot leave.
+            onException(new RuntimeException("Missing AI transition for state: " + getState()));
+            reset();
             return;
         }
 

@@ -315,7 +315,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
         worker.getCitizenData().getCitizenHappinessHandler().setNoFieldForFarmerModifier(currentField.getPos(), true); 
 
-        final ItemStack seeds = currentField.getSeed();
+        final ItemStack seeds = currentField.getSeed().copy();
         final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(seeds.getItem(), seeds.getItemDamage());
         if (slot != -1)
         {
@@ -327,6 +327,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             return PREPARING;
         }
 
+        seeds.setCount(seeds.getMaxStackSize());
         checkIfRequestForItemExistOrCreateAsynch(seeds);
 
         currentField.nextState();
