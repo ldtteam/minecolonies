@@ -12,7 +12,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.*;
+import net.minecraft.util.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -26,8 +27,15 @@ import static com.minecolonies.api.util.constant.CommandConstants.*;
  */
 public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements IActionCommand
 {
-
+    /**
+     * The description of the command.
+     */
     public static final String DESC = "ownerchange";
+
+    /**
+     * String to add an officer to the colony.
+     */
+    private static final String ADD_OFFICER_COLONY_COMMAND_SUGGESTED = "/mc colony addofficer colony: %d player: %s";
 
     /**
      * no-args constructor called by new CommandEntryPoint executer.
@@ -148,6 +156,17 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
         colony.getPermissions().setOwner(player);
 
         sender.sendMessage(new TextComponentString(String.format(SUCCESS_MESSAGE_OWNERCHANGE, player.getName(), colony.getID())));
+
+        if (player.getName().equals("[abandoned]"))
+        {
+            final ITextComponent abandonButton = new TextComponentTranslation("tile.blockHutTownHall.addOfficerMessageLink")
+                                                   .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD)
+                                                               .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                                                                 String.format(ADD_OFFICER_COLONY_COMMAND_SUGGESTED, colony.getID(), sender.getName())))
+                                                   );
+            sender.sendMessage(new TextComponentTranslation("tile.blockHutTownHall.abandonAddOfficer"));
+            sender.sendMessage(abandonButton);
+        }
     }
 
     @NotNull
