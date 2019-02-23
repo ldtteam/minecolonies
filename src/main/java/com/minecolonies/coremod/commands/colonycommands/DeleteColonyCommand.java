@@ -14,10 +14,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,8 +31,8 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.D
 public class DeleteColonyCommand extends AbstractSingleCommand implements IActionCommand
 {
 
-    public static final  String DESC                                           = "delete";
-    private static final String DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED = "/mc colony delete colony: %d canDestroy: %s confirmDelete: true";
+    public static final String DESC                                           = "delete";
+    public static final String DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED = "/mc colony delete colony: %d canDestroy: %s confirmDelete: true";
 
     /**
      * no-args constructor called by new CommandEntryPoint executer.
@@ -138,7 +135,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
 
         if (!confirmDelete)
         {
-            final ITextComponent deleteButton = new TextComponentString("[DELETE]")
+            final ITextComponent deleteButton = new TextComponentTranslation("tile.blockHutTownHall.deleteMessageLink")
                     .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
                             new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                     String.format(DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED,
