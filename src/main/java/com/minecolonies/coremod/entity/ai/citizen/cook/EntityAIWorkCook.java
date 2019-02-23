@@ -247,6 +247,10 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             {
                 return COOK_SERVE_FOOD_TO_CITIZEN;
             }
+            else if (!InventoryUtils.hasItemInProvider(getOwnBuilding(), ItemStackUtils.CAN_EAT))
+            {
+                return START_WORKING;
+            }
 
             needsCurrently = ItemStackUtils.CAN_EAT;
             return GATHERING_REQUIRED_MATERIALS;

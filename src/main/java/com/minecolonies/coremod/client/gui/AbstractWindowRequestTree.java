@@ -382,8 +382,9 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
         {
             this.request = request;
             this.depth = depth;
-            this.overruleable =
-              request.getRequester().getRequesterId().equals(buildingView.getRequesterId()) || buildingView.getResolverIds().contains(request.getRequester().getRequesterId());
+            this.overruleable = request.getRequester().getRequesterId().equals(buildingView.getRequesterId())
+                                  || buildingView.getResolverIds().contains(request.getRequester().getRequesterId())
+                                  || buildingView.getLocation().equals(request.getRequester().getRequesterLocation().getInDimensionLocation());
         }
 
         /**

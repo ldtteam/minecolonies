@@ -138,6 +138,12 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
             return getState();
         }
 
+        if (getOwnBuilding(AbstractBuildingFurnaceUser.class).getFurnaces().isEmpty())
+        {
+            chatSpamFilter.talkWithoutSpam(BAKER_HAS_NO_FURNACES_MESSAGE);
+            return getState();
+        }
+
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
 
         final IAIState nextState = checkForImportantJobs();
