@@ -175,13 +175,13 @@ com.minecolonies.coremod.gui.townHall.population.rangers=Rangers: %d
 com.minecolonies.coremod.gui.townHall.population.knights=Knights: %d
 com.minecolonies.coremod.gui.townHall.population.students=Students: %d
 
-com.minecolonies.coremod.gui.townHall.population.crusher=Crusher: %d
-com.minecolonies.coremod.gui.townHall.population.sawmill=Miller: %d
-com.minecolonies.coremod.gui.townHall.population.CombatAcademy=Squires: %d
-com.minecolonies.coremod.gui.townHall.population.archery=Bowmen: %d
-com.minecolonies.coremod.gui.townHall.population.stonesmelter=Stonesmelter: %d
-com.minecolonies.coremod.gui.townHall.population.stonemason=Stonemason: %d
-com.minecolonies.coremod.gui.townHall.population.blacksmith=Blacksmiths: %d
+com.minecolonies.coremod.gui.townHall.population.crushers=Crusher: %d
+com.minecolonies.coremod.gui.townHall.population.sawmills=Miller: %d
+com.minecolonies.coremod.gui.townHall.population.combattrainings=Squires: %d
+com.minecolonies.coremod.gui.townHall.population.archertrainings=Bowmen: %d
+com.minecolonies.coremod.gui.townHall.population.stonesmelterys=Stonesmelter: %d
+com.minecolonies.coremod.gui.townHall.population.stonemasons=Stonemason: %d
+com.minecolonies.coremod.gui.townHall.population.blacksmiths=Blacksmiths: %d
 
 
 com.minecolonies.coremod.gui.workerHuts.upgradeUnavailable=No Upgrade Available

@@ -183,7 +183,7 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
                     final Colony colony = ColonyManager.getColonyByPosFromWorld(world, pos);
                     if (colony != null)
                     {
-                        final AbstractBuilding building = colony.getBuildingManager().getBuilding(structure.getLocalPosition());
+                        final AbstractBuilding building = colony.getBuildingManager().getBuilding(structure.getPosition());
 
                         if (building != null)
                         {
