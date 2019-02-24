@@ -65,7 +65,7 @@ public class BuildingHome extends AbstractBuilding
      * Interval at which the childen are created, in ticks.
      * Every 20 min it tries to spawn a child, 20min*60s*20ticks
      */
-    private int childCreationInterval = 1200;
+    private int childCreationInterval = 600;
 
     /**
      * The timer counting ticks to the next time creating a child
