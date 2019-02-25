@@ -111,11 +111,11 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
             currentProxy = fillProxyList(target, distanceToPath);
         }
 
-        final double distanceToProxy = BlockPosUtil.getDistanceSquared2D(entity.getPosition(), currentProxy);
-        final double distanceToNextProxy = proxyList.isEmpty() ? BlockPosUtil.getDistanceSquared2D(entity.getPosition(), target)
-                                             : BlockPosUtil.getDistanceSquared2D(entity.getPosition(), proxyList.get(0));
-        final double distanceProxyNextProxy = proxyList.isEmpty() ? BlockPosUtil.getDistanceSquared2D(currentProxy, target)
-                                                : BlockPosUtil.getDistanceSquared2D(currentProxy, proxyList.get(0));
+        final double distanceToProxy = BlockPosUtil.getDistanceSquared(entity.getPosition(), currentProxy);
+        final double distanceToNextProxy = proxyList.isEmpty() ? BlockPosUtil.getDistanceSquared(entity.getPosition(), target)
+                                             : BlockPosUtil.getDistanceSquared(entity.getPosition(), proxyList.get(0));
+        final double distanceProxyNextProxy = proxyList.isEmpty() ? BlockPosUtil.getDistanceSquared(currentProxy, target)
+                                                : BlockPosUtil.getDistanceSquared(currentProxy, proxyList.get(0));
         if (distanceToProxy < MIN_DISTANCE || distanceToNextProxy < distanceProxyNextProxy)
         {
             if (proxyList.isEmpty())
@@ -271,7 +271,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
             final double simpleDistance = BlockPosUtil.getDistanceSquared(position, wayPoint);
             final double currentWeight = simpleDistance * simpleDistance + BlockPosUtil.getDistanceSquared(wayPoint, target);
             if (currentWeight < weight
-                  && BlockPosUtil.getDistanceSquared2D(wayPoint, target) < distanceToPath
+                  && BlockPosUtil.getDistanceSquared(wayPoint, target) < distanceToPath
                   && simpleDistance > MIN_DISTANCE
                   && simpleDistance < distanceToPath
                   && !proxyList.contains(proxyPoint))
