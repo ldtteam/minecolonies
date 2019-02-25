@@ -274,7 +274,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
                   && BlockPosUtil.getDistanceSquared(wayPoint, target) < distanceToPath
                   && simpleDistance > MIN_DISTANCE
                   && simpleDistance < distanceToPath
-                  && !proxyList.contains(proxyPoint))
+                  && !proxyList.contains(wayPoint))
             {
                 proxyPoint = wayPoint;
                 weight = currentWeight;
