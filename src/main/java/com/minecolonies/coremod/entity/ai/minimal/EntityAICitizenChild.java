@@ -269,8 +269,8 @@ public class EntityAICitizenChild extends EntityAIBase
                 return true;
             }
 
-            // 1/144 Chance to grow up, every 25 seconds = avg 1h. At 2h they directly grow
-            if (rand.nextInt((int) (144 / Configurations.gameplay.growthModifier)) == 1 || AIActiveTime > 144000 / Configurations.gameplay.growthModifier)
+            // 1/144 Chance to grow up, every 25 seconds = avg 1h. Set to half since this AI isnt always active, e.g. sleeping.  At 2h they directly grow
+            if (rand.nextInt((int) (70 / Configurations.gameplay.growthModifier)) == 0 || AIActiveTime > 70000 / Configurations.gameplay.growthModifier)
             {
                 // Grow up
                 child.setIsChild(false);

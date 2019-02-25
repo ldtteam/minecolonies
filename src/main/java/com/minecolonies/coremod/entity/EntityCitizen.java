@@ -561,7 +561,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
         isDay = compound.getBoolean(TAG_DAY);
-        isChild = compound.getBoolean(TAG_CHILD);
+        setIsChild(compound.getBoolean(TAG_CHILD));
 
         if (compound.hasKey(TAG_MOURNING))
         {
