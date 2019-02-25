@@ -370,6 +370,19 @@ public class CompatibilityManager implements ICompatibilityManager
                     continue;
                 }
 
+                int meta = 0;
+                if (split.length == 3)
+                {
+                    try
+                    {
+                        meta = Integer.parseInt(split[1]);
+                    }
+                    catch (final NumberFormatException ex)
+                    {
+                        Log.getLogger().warn("Ore has invalid metadata: " + ore);
+                    }
+                }
+
                 final Item item = Item.getByNameOrId(split[0]);
                 if (item == null || item == Items.AIR)
                 {
@@ -377,10 +390,10 @@ public class CompatibilityManager implements ICompatibilityManager
                     continue;
                 }
 
-                final ItemStack stack = new ItemStack(item, 1);
+                final ItemStack stack = new ItemStack(item, 1, meta);
                 try
                 {
-                    final int rarity = Integer.parseInt(split[1]);
+                    final int rarity = Integer.parseInt(split[split.length - 1]);
                     for (int i = 0; i < rarity; i++)
                     {
                         luckyOres.add(new ItemStorage(stack));

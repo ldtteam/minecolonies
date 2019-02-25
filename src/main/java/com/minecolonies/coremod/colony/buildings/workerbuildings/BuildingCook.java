@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutCook;
@@ -10,11 +11,16 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.views.FilterableListView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobCook;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
+import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
+import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
 
@@ -85,6 +91,22 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     public boolean canWorkDuringTheRain()
     {
         return true;
+    }
+
+    @Override
+    public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory)
+    {
+        if (stack.isEmpty())
+        {
+            return 0;
+        }
+
+        if (ISFOOD.test(stack) || getAllowedFuel().stream().anyMatch(fuelStack -> fuelStack.isItemEqual(stack)))
+        {
+            return 0;
+        }
+
+        return super.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, inventory);
     }
 
     /**
