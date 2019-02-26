@@ -125,7 +125,7 @@ public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessa
             // Get item chosen by player
             final BuyCitizenType buyCitizenType = BuyCitizenType.getFromIndex(message.buyItemIndex);
 
-            final ItemStack toRemove = buyCitizenType.item.getDefaultInstance();
+            final ItemStack toRemove = new ItemStack(buyCitizenType.item, 1);
             toRemove.setCount(colony.getBoughtCitizenCost() + 1);
             final IItemHandler playerInv = new InvWrapper(player.inventory);
 
