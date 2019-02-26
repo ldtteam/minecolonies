@@ -535,7 +535,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      */
     public void resetStartingLevelShaft()
     {
-        this.startingLevelShaft = 0;
+        this.startingLevelShaft = 1;
     }
 
     /**
