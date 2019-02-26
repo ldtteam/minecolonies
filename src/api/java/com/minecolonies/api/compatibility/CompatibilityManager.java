@@ -18,6 +18,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
@@ -211,7 +212,7 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             if (OreDictionary.getOreName(id).contains(ORE_STRING))
             {
-                return true;
+                return !FurnaceRecipes.instance().getSmeltingResult(stack).isEmpty();
             }
         }
         return false;
