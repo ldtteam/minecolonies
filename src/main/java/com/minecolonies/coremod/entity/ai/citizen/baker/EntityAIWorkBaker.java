@@ -327,21 +327,38 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      */
     private IAIState craftNewProduct(final IRecipeStorage storage)
     {
+        final List<ItemStack> requestList = new ArrayList<>();
+        for (final ItemStorage stack : storage.getCleanedInput())
+        {
+            if (stack.getItem() != Items.WHEAT)
+            {
+                requestList.add(stack.getItemStack());
+            }
+            else
+            {
+                final ItemStack copy = stack.getItemStack();
+                copy.setCount(copy.getMaxStackSize());
+                requestList.add(copy);
+            }
+        }
+        checkIfRequestForItemExistOrCreateAsynch(requestList.toArray(new ItemStack[0]));
+
+
         final List<IItemHandler> handlers = getOwnBuilding().getHandlers();
-        if (storage.canFullFillRecipe(handlers.toArray(new IItemHandler[handlers.size()])))
+        if (storage.canFullFillRecipe(handlers.toArray(new IItemHandler[0])))
         {
             final List<ItemStack> list = new ArrayList<>();
 
 	        ItemStack copy = null;
-	        for (final ItemStack stack : storage.getInput())
+	        for (final ItemStorage stack : storage.getCleanedInput())
 	        {
 	            if (stack.getItem() != Items.WHEAT)
 	            {
-	                list.add(stack);
+	                list.add(stack.getItemStack());
 	            }
 	            else
 	            {
-	                copy = stack.copy();
+	                copy = stack.getItemStack().copy();
 	            }
 	        }
 
@@ -358,9 +375,6 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 	            list.add(copy);
 	        }
 
-	        final ItemStack[] arrayToRequestAndRetrieve = list.toArray(new ItemStack[list.size()]);
-	        checkIfRequestForItemExistOrCreateAsynch(arrayToRequestAndRetrieve);
-
             InventoryUtils.removeStacksFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), list);
             currentBakingProduct.nextState();
             getOwnBuilding().removeFromTasks(ProductState.UNCRAFTED, currentBakingProduct);
@@ -368,13 +382,6 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         }
         else
         {
-        	final List<ItemStack> list = new ArrayList<>();
-	        for (final ItemStack stack : storage.getInput())
-	        {
-	              list.add(stack);
-	        }
-	        final ItemStack[] arrayToRequestAndRetrieve = list.toArray(new ItemStack[list.size()]);
-	        checkIfRequestForItemExistOrCreateAsynch(arrayToRequestAndRetrieve);
         	setDelay(UNABLE_TO_CRAFT_DELAY);
         	return NEEDS_ITEM;
         }
