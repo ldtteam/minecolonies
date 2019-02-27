@@ -215,16 +215,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 {
                     job.setReturning(true);
                     this.hasGathered = false;
-                    if (!building.getPriorityState())
-                    {
-                        building.alterPickUpPriority(1);
-                    }
                 }
                 else
                 {
                     if (!building.getPriorityState())
                     {
-                        building.alterPickUpPriority(-1);
+                        building.alterPickUpPriority(-10);
                     }
                     if (job.getCurrentTask() == null)
                     {
@@ -389,7 +385,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
             else
             {
-                if (!building.getPriorityState())
+                if (!building.getPriorityState() && worker.getRandom().nextInt(100) <= 1)
                 {
                     building.alterPickUpPriority(1);
                 }
@@ -534,10 +530,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
             if (tileEntityColonyBuilding.getBuilding() instanceof AbstractBuildingWorker)
             {
-                if (!building.getPriorityState())
-                {
-                    building.alterPickUpPriority(1);
-                }
                 insertionResultStack = InventoryUtils.forceItemStackToItemHandler(
                   tileEntityColonyBuilding.getBuilding().getCapability(ITEM_HANDLER_CAPABILITY, null), stack, ((AbstractBuildingWorker) building)::isItemStackInRequest);
             }
