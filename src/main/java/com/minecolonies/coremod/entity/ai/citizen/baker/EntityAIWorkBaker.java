@@ -31,22 +31,17 @@ import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_
 import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
- * Fisherman AI class.
- * <p>
- * A fisherman has some ponds where
- * he randomly selects one and fishes there.
- * <p>
- * To keep it immersive he chooses his place at random around the pond.
+ * Baker AI class.
  */
 public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 {
     /**
-     * How often should intelligence factor into the fisherman's skill modifier.
+     * How often should intelligence factor into the baker's skill modifier.
      */
     private static final int INTELLIGENCE_MULTIPLIER = 2;
 
     /**
-     * How often should dexterity factor into the fisherman's skill modifier.
+     * How often should dexterity factor into the baker's skill modifier.
      */
     private static final int DEXTERITY_MULTIPLIER = 1;
 
@@ -107,10 +102,10 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      */
     private int currentRecipe = -1;
     /**
-     * Constructor for the Fisherman.
-     * Defines the tasks the fisherman executes.
+     * Constructor for the Baker.
+     * Defines the tasks the baker executes.
      *
-     * @param job a fisherman job to use.
+     * @param job a baker job to use.
      */
     public EntityAIWorkBaker(@NotNull final JobBaker job)
     {
@@ -184,7 +179,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     }
 
     /**
-     * Returns the fisherman's work building.
+     * Returns the baker's work building.
      *
      * @return building instance
      */
@@ -507,7 +502,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     }
 
     /**
-     * Redirects the fisherman to his building.
+     * Redirects the baker to his building.
      *
      * @return the next state.
      */
@@ -521,7 +516,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     }
 
     /**
-     * Returns the fisherman's worker instance. Called from outside this class.
+     * Returns the baker's worker instance. Called from outside this class.
      *
      * @return citizen object.
      */
