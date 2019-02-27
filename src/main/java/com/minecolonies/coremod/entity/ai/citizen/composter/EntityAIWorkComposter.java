@@ -137,7 +137,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             for (final ItemStorage item : getOwnBuilding(BuildingComposter.class).getCopyOfAllowedItems())
             {
                 final ItemStack itemStack = item.getItemStack();
-                itemStack.setCount(STACKSIZE);
+                itemStack.setCount(itemStack.getMaxStackSize());
                 itemList.add(itemStack);
             }
             if (!itemList.isEmpty())
