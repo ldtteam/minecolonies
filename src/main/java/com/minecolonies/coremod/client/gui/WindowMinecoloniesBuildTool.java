@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
 import com.minecolonies.coremod.network.messages.BuildToolPasteMessage;
 import com.minecolonies.coremod.network.messages.BuildToolPlaceMessage;
-import com.ldtteam.structurize.api.util.BlockUtils;
 import com.ldtteam.structurize.api.util.LanguageHandler;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.StructureName;
