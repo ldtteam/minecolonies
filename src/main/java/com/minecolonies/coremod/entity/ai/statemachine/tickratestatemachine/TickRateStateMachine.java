@@ -22,6 +22,12 @@ public class TickRateStateMachine extends BasicStateMachine<TickingTransition>
     private int tickCounter = 0;
 
     /**
+     * Current rate at which the statemachine is ticked.
+     * 100 = updated every 100 game ticks.
+     */
+    private int tickRate = 1;
+
+    /**
      * Construct a new StateMachine
      */
     public TickRateStateMachine(@NotNull final IAIState initialState, @NotNull final Consumer<RuntimeException> exceptionHandler)
@@ -64,6 +70,17 @@ public class TickRateStateMachine extends BasicStateMachine<TickingTransition>
     }
 
     /**
+     * Tick the statemachine and notify it of the rate its being called at.
+     *
+     * @param tickRate update rate of ticks this statemachine receives.
+     */
+    public void tickAtRate(final int tickRate)
+    {
+        this.tickRate = tickRate;
+        tick();
+    }
+
+    /**
      * Check the condition for a transition
      *
      * @param transition the target to check
@@ -78,5 +95,15 @@ public class TickRateStateMachine extends BasicStateMachine<TickingTransition>
             return false;
         }
         return super.checkTransition(transition);
+    }
+
+    /**
+     * Get the current tickrate, used by timers.
+     *
+     * @return tickrate
+     */
+    public int getTickRate()
+    {
+        return tickRate;
     }
 }

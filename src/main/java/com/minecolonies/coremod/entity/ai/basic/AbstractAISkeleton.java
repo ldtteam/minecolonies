@@ -186,4 +186,14 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     {
         stateMachine.addTransition(new AIOneTimeEventTarget(AIWorkerState.IDLE));
     }
+
+    /**
+     * Get the current tickrate of our statemachine.
+     *
+     * @return tickrate
+     */
+    public int getTickRate()
+    {
+        return stateMachine.getTickRate();
+    }
 }

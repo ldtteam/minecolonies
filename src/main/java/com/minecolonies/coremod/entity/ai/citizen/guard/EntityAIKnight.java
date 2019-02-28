@@ -148,7 +148,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
         if (currentAttackDelay > 0)
         {
-            reduceAttackDelay(4);
+            reduceAttackDelay(getTickRate());
             return GUARD_ATTACK_PROTECT;
         }
         else
