@@ -21,10 +21,7 @@ import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.network.messages.CompostParticleMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockCrops;
-import net.minecraft.block.BlockStem;
-import net.minecraft.block.IGrowable;
+import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -543,7 +540,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         return !BlockUtils.isBlockSeed(world, position.up())
                  && !(world.getBlockState(position.up()).getBlock() instanceof BlockHutField)
-                 && (world.getBlockState(position).getBlock() == Blocks.DIRT || world.getBlockState(position).getBlock() == Blocks.GRASS);
+                 && (world.getBlockState(position).getBlock() instanceof BlockDirt || world.getBlockState(position).getBlock() instanceof BlockGrass);
     }
 
     /**
