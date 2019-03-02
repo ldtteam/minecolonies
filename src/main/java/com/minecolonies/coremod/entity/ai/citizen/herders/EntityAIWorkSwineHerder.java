@@ -38,7 +38,9 @@ public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerd
     @Override
     public ItemStack getBreedingItem()
     {
-        return new ItemStack(Items.CARROT);
+        final ItemStack stack = new ItemStack(Items.CARROT);
+        stack.setCount(stack.getMaxStackSize());
+        return stack;
     }
 
     @Override

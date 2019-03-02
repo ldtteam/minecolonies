@@ -159,30 +159,25 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             (returning null would not stop execution)
            */
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::waitingForSomething, this::getState, 1),
-          /*
-            Check if any items are needed.
-            If yes, transition to NEEDS_ITEM.
-            and wait for new items.
-           */
-          new AITarget(NEEDS_ITEM, this::waitForRequests),
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () ->
-                                                                  (getState() != NEEDS_ITEM
-                                                                     && (this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData())
-                                                                           || this.getOwnBuilding()
-                                                                                .hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
-                                                                                  r -> !worker.getCitizenData().isRequestAsync(r.getToken())))
-                                                                  ), () -> NEEDS_ITEM),
 
           /*
             Dumps inventory as long as needs be.
             If inventory is dumped, execution continues
             to resolve state.
            */
-          new AITarget(INVENTORY_FULL, this::dumpInventory),
+          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, () -> (getState() == INVENTORY_FULL || this.inventoryNeedsDump()), this::dumpInventory),
           /*
-            Check if inventory has to be dumped.
+            Check if any items are needed.
+            If yes, transition to NEEDS_ITEM.
+            and wait for new items.
            */
-          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::inventoryNeedsDump, INVENTORY_FULL),
+          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () ->
+                                                                  (getState() == NEEDS_ITEM
+                                                                     || (this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData())
+                                                                           || this.getOwnBuilding()
+                                                                                .hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
+                                                                                  r -> !worker.getCitizenData().isRequestAsync(r.getToken())))
+                                                                  ), this::waitForRequests),
           /*
            * Gather a needed item.
            */
@@ -1008,6 +1003,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         this.itemsNiceToHave().forEach(this::isInHut);
         // we dumped the inventory, reset actions done
         this.clearActionsDone();
+        if (!getOwnBuilding().getPriorityState())
+        {
+            getOwnBuilding().alterPickUpPriority(1);
+        }
         return afterDump();
     }
 
