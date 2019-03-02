@@ -76,13 +76,13 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
     @Override
     public boolean canRecipeBeAdded(final IToken token)
     {
-        if(!super.canRecipeBeAdded(token))
+        if (!super.canRecipeBeAdded(token))
         {
             return false;
         }
 
         final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
-        if(storage == null)
+        if (storage == null)
         {
             return false;
         }
@@ -97,6 +97,7 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
 
     /**
      * Method to check if the stack is craftable for the smeltery.
+     *
      * @param stack the stack to craft.
      * @return true if so.
      */
@@ -106,16 +107,16 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
         if (item instanceof ItemBlock)
         {
             final Block block = ((ItemBlock) item).getBlock();
-            if ( block == Blocks.STONE
-                   || block == Blocks.STONEBRICK
-                   || block instanceof BlockGlazedTerracotta
-                   || block instanceof BlockHardenedClay)
+            if (block == Blocks.STONE
+                  || block == Blocks.STONEBRICK
+                  || block instanceof BlockGlazedTerracotta
+                  || block instanceof BlockHardenedClay)
             {
                 return true;
             }
         }
 
-       return item == Items.BRICK;
+        return item == Items.BRICK || item == Items.COAL;
     }
 
     /**
