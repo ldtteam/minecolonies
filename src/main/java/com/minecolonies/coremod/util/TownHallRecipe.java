@@ -61,29 +61,36 @@ public class TownHallRecipe extends ShapedRecipes
     @Override
     public boolean matches(@NotNull final InventoryCrafting inventoryCrafting, @NotNull final World world)
     {
-        try
+        if (inventoryCrafting.eventHandler != null)
         {
-
-            final Optional<Field> playerField = Arrays.stream(inventoryCrafting.eventHandler.getClass().getDeclaredFields()).filter(string -> string.getName().equals("player") || string.getName().equals("field_192390_i")).findFirst();
-            if (playerField.isPresent())
+            try
             {
-                playerField.get().setAccessible(true);
-                final EntityPlayer player = (EntityPlayer) playerField.get().get(inventoryCrafting.eventHandler);
-                if (player instanceof EntityPlayerMP)
+
+                final Optional<Field> playerField = Arrays.stream(inventoryCrafting.eventHandler.getClass().getDeclaredFields())
+                                                      .filter(string -> string.getName().equals("player") || string.getName().equals("field_192390_i"))
+                                                      .findFirst();
+                if (playerField.isPresent())
                 {
-                    return ((EntityPlayerMP) player).getStatFile().readStat(Objects.requireNonNull(StatList.getObjectUseStats(ModItems.supplyChest))) > 0 && hasSufficientResources(inventoryCrafting);
+                    playerField.get().setAccessible(true);
+                    final EntityPlayer player = (EntityPlayer) playerField.get().get(inventoryCrafting.eventHandler);
+                    if (player instanceof EntityPlayerMP)
+                    {
+                        return ((EntityPlayerMP) player).getStatFile().readStat(Objects.requireNonNull(StatList.getObjectUseStats(ModItems.supplyChest))) > 0
+                                 && hasSufficientResources(inventoryCrafting);
+                    }
+                    else
+                    {
+                        return hasSufficientResources(inventoryCrafting);
+                    }
                 }
-                else
-                {
-                    return hasSufficientResources(inventoryCrafting);
-                }
+                return false;
             }
-            return false;
+            catch (final IllegalAccessException e)
+            {
+                return false;
+            }
         }
-        catch (final IllegalAccessException e)
-        {
-            return false;
-        }
+        return false;
     }
 
     /**
