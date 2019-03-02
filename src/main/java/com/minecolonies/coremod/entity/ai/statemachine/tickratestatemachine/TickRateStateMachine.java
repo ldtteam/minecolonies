@@ -46,18 +46,19 @@ public class TickRateStateMachine extends BasicStateMachine<TickingTransition>
             tickCounter = 1;
         }
 
-        if (!transitionMap.containsKey(getState()))
-        {
-            // Reached Trap/Sink state we cannot leave.
-            onException(new RuntimeException("Missing AI transition for state: " + getState()));
-            reset();
-            return;
-        }
+
 
         if (!eventTransitionMap.get(AIBlockingEventType.AI_BLOCKING).stream().anyMatch(this::checkTransition)
               && !eventTransitionMap.get(AIBlockingEventType.EVENT).stream().anyMatch(this::checkTransition)
               && !eventTransitionMap.get(AIBlockingEventType.STATE_BLOCKING).stream().anyMatch(this::checkTransition))
         {
+            if (!transitionMap.containsKey(getState()))
+            {
+                // Reached Trap/Sink state we cannot leave.
+                onException(new RuntimeException("Missing AI transition for state: " + getState()));
+                reset();
+                return;
+            }
             transitionMap.get(getState()).stream().anyMatch(this::checkTransition);
         }
     }
