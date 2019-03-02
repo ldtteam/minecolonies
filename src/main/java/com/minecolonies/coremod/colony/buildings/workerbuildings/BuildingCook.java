@@ -18,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
@@ -101,8 +102,26 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
             return 0;
         }
 
-        if (ISFOOD.test(stack) || getAllowedFuel().stream().anyMatch(fuelStack -> fuelStack.isItemEqual(stack)))
+        if (ISFOOD.test(stack) && localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory)
         {
+            final ItemStorage kept = new ItemStorage(stack);
+            if (localAlreadyKept.contains(kept))
+            {
+                kept.setAmount(localAlreadyKept.remove(localAlreadyKept.indexOf(kept)).getAmount());
+            }
+            localAlreadyKept.add(kept);
+            return 0;
+        }
+
+        final Predicate<ItemStack> allowedFuel = theStack -> getAllowedFuel().stream().anyMatch(fuelStack -> fuelStack.isItemEqual(theStack));
+        if (allowedFuel.test(stack) && localAlreadyKept.stream().filter(storage -> allowedFuel.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory)
+        {
+            final ItemStorage kept = new ItemStorage(stack);
+            if (localAlreadyKept.contains(kept))
+            {
+                kept.setAmount(localAlreadyKept.remove(localAlreadyKept.indexOf(kept)).getAmount());
+            }
+            localAlreadyKept.add(kept);
             return 0;
         }
 
