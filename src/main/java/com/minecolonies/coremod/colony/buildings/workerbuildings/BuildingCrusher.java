@@ -287,6 +287,8 @@ public class BuildingCrusher extends AbstractBuildingCrafter
             super.deserialize(buf);
             crusherMode = new ItemStorage(ByteBufUtils.readItemStack(buf));
             dailyQuantity = buf.readInt();
+            crusherModes.clear();
+
             final int size = buf.readInt();
             for (int i = 0; i < size; i++)
             {
