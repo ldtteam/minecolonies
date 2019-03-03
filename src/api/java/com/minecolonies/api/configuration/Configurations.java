@@ -295,6 +295,14 @@ public class Configurations
                                                 "minecraft:emerald_ore!1"
                                               };
 
+        @Config.Comment("What the crusher can produce at the cost of 2:1")
+        public String[] crusherProduction = new String[]
+                                              {
+                                                "minecraft:cobblestone!minecraft:gravel",
+                                                "minecraft:gravel!minecraft:sand",
+                                                "minecraft:sand!minecraft:clay"
+                                              };
+
         @Config.Comment("Automatically fix orphaned chunks which were caused by chunk loading and saving issues")
         public boolean fixOrphanedChunks = false;
     }

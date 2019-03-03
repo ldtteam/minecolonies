@@ -1,14 +1,17 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +44,7 @@ public class CrusherSetModeMessage extends AbstractMessage<CrusherSetModeMessage
     /**
      * The crusher mode.
      */
-    private int crusherMode;
+    private ItemStack crusherMode;
 
     /**
      * Empty constructor used when registering the message.
@@ -58,13 +61,13 @@ public class CrusherSetModeMessage extends AbstractMessage<CrusherSetModeMessage
      * @param dailyQuantity the quantity to produce.
      * @param crusherMode   the mode to set.
      */
-    public CrusherSetModeMessage(@NotNull final BuildingCrusher.View building, final int crusherMode, final int dailyQuantity)
+    public CrusherSetModeMessage(@NotNull final BuildingCrusher.View building, final ItemStorage crusherMode, final int dailyQuantity)
     {
         super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.quantity = dailyQuantity;
-        this.crusherMode = crusherMode;
+        this.crusherMode = crusherMode.getItemStack();
         this.dimension = building.getColony().getDimension();
     }
 
@@ -75,7 +78,7 @@ public class CrusherSetModeMessage extends AbstractMessage<CrusherSetModeMessage
         buildingId = BlockPosUtil.readFromByteBuf(buf);
         dimension = buf.readInt();
         quantity = buf.readInt();
-        crusherMode = buf.readInt();
+        crusherMode = ByteBufUtils.readItemStack(buf);
     }
 
     @Override
@@ -85,7 +88,7 @@ public class CrusherSetModeMessage extends AbstractMessage<CrusherSetModeMessage
         BlockPosUtil.writeToByteBuf(buf, buildingId);
         buf.writeInt(dimension);
         buf.writeInt(quantity);
-        buf.writeInt(crusherMode);
+        ByteBufUtils.writeItemStack(buf, crusherMode);
     }
 
     @Override
@@ -110,7 +113,7 @@ public class CrusherSetModeMessage extends AbstractMessage<CrusherSetModeMessage
                     qty = building.getMaxDailyQuantity();
                     player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.crusher.toomuch", qty));
                 }
-                building.setCrusherMode(BuildingCrusher.CrusherMode.values()[message.crusherMode], qty);
+                building.setCrusherMode(new ItemStorage(message.crusherMode), qty);
             }
         }
     }
