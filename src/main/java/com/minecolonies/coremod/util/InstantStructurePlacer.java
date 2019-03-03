@@ -107,7 +107,7 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
 
                     final BlockPos worldPos = pos.add(localPos);
 
-                    if ((localBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution && !complete) || localBlock instanceof AbstractBlockHut)
+                    if ((localBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution && !complete) || (localBlock instanceof AbstractBlockHut && !complete))
                     {
                         continue;
                     }
