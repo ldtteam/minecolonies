@@ -55,7 +55,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     /**
      * His crusherRecipes.
      */
-    private Map<ItemStorage, IRecipeStorage> crusherRecipes = new HashMap<>();
+    private final Map<ItemStorage, IRecipeStorage> crusherRecipes = new HashMap<>();
 
     /**
      * Daily quantity to produce.
@@ -268,7 +268,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         /**
          * The current production mode.
          */
-        private List<ItemStorage> crusherModes = new ArrayList<>();
+        private final List<ItemStorage> crusherModes = new ArrayList<>();
 
         /**
          * Instantiate the crusher view.

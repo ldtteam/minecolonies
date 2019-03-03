@@ -73,7 +73,7 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * What the crusher can work on.
      */
-    private Map<ItemStorage, ItemStorage> crusherModes = new HashMap<>();
+    private final Map<ItemStorage, ItemStorage> crusherModes = new HashMap<>();
 
     /**
      * If discovery is finished already.
