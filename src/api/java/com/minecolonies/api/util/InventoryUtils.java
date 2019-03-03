@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -2553,5 +2554,22 @@ public class InventoryUtils
         }
 
         return true;
+    }
+
+    /**
+     * Search for a certain itemStack in the inventory and decrease it.
+     * @param invWrapper the inventory item handler.
+     * @param itemStack the itemStack to decrease.
+     */
+    public static void reduceStackInItemHandler(final InvWrapper invWrapper, final ItemStack itemStack)
+    {
+        for (int i = 0; i < invWrapper.getSlots(); i++)
+        {
+            if(invWrapper.getStackInSlot(i).isItemEqual(itemStack))
+            {
+                invWrapper.getStackInSlot(i).shrink(1);
+            }
+        }
+
     }
 }
