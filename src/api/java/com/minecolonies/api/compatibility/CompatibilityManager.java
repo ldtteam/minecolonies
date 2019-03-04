@@ -154,6 +154,48 @@ public class CompatibilityManager implements ICompatibilityManager
         discoveredAlready = true;
     }
 
+    /**
+     * Calculate the crusher modes from the config file.
+     */
+    private void discoverCrusherModes()
+    {
+        for (final String string : Configurations.gameplay.crusherProduction)
+        {
+            final String[] split = string.split("!");
+            if (split.length != 2)
+            {
+                Log.getLogger().warn("Invalid crusher mode setting: " + string);
+                continue;
+            }
+
+            final String[] firstItem = split[0].split(":");
+            final String[] secondItem = split[1].split(":");
+
+            final Item item1 = Item.getByNameOrId(firstItem[0] + ":" + firstItem[1]);
+            final Item item2 = Item.getByNameOrId(secondItem[0] + ":" + secondItem[1]);
+
+            try
+            {
+                final int meta1 = firstItem.length > 2 ? Integer.parseInt(firstItem[2]) : 0;
+                final int meta2 = secondItem.length > 2 ? Integer.parseInt(secondItem[2]) : 0;
+
+                if (item1 == null || item2 == null)
+                {
+                    Log.getLogger().warn("Invalid crusher mode setting: " + string);
+                    continue;
+                }
+
+                final ItemStorage storage1 = new ItemStorage(new ItemStack(item1, 2, meta1));
+                final ItemStorage storage2 = new ItemStorage(new ItemStack(item2, 1, meta2));
+                crusherModes.put(storage1, storage2);
+            }
+            catch (final NumberFormatException ex)
+            {
+                Log.getLogger().warn("Error getting metaData", ex);
+            }
+        }
+    }
+
     @Override
     public boolean isCompost(final ItemStack itemStack)
     {
