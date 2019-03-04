@@ -915,3 +915,5 @@ com.minecolonies.coremod.gui.workerHuts.sifterSettings=Settings
 tile.minecolonies.blockHutSifter.name=Sifter
 com.minecolonies.coremod.gui.workerHuts.Sifter=Sifter
 com.minecolonies.coremod.sifter.meshBroke=My current mesh broke and I started to work with the default mesh again!
+com.minecolonies.coremod.gui.workerHuts.buy=Buy
+com.minecolonies.coremod.gui.workerHuts.meshSettings=Mesh Settings

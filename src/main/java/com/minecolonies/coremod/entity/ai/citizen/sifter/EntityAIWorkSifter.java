@@ -144,7 +144,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
         if (progress > MAX_LEVEL - Math.min(worker.getCitizenExperienceHandler().getLevel() + 1, MAX_LEVEL))
         {
             progress = 0;
-            if (getState() != SIFT)
+            if (check == SIFT)
             {
                 sifterBuilding.setCurrentDailyQuantity(sifterBuilding.getCurrentDailyQuantity() + 1);
                 if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getDailyQuantity())
@@ -155,11 +155,9 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
                 final ItemStack result = ColonyManager.getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getFirst(), sifterBuilding.getSievableBlock());
                 if (!result.isEmpty())
                 {
-                    if(InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), result))
-                    {
-                        InventoryUtils.reduceStackInItemHandler(new InvWrapper(worker.getInventoryCitizen()), sifterBuilding.getSievableBlock().getItemStack());
-                    }
+                    InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), result);
                 }
+                InventoryUtils.reduceStackInItemHandler(new InvWrapper(worker.getInventoryCitizen()), sifterBuilding.getSievableBlock().getItemStack());
 
                 if (worker.getRandom().nextDouble() * 100 < sifterBuilding.getMesh().getSecond())
                 {

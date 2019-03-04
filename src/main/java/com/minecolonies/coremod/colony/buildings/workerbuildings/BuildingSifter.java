@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.blockout.views.Window;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowHutSifter;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
@@ -11,7 +12,9 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobSifter;
+import com.minecolonies.coremod.network.messages.SifterSettingsMessage;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -42,6 +45,16 @@ public class BuildingSifter extends AbstractBuildingWorker
      * Max building level of the sifter.
      */
     private static final int MAX_BUILDING_LEVEL = 5;
+
+    /**
+     * The TAG to store the mesh of the building.
+     */
+    private static final String TAG_MESH   = "mesh";
+
+    /**
+     * The TAG to store the probability of the mesh to break.
+     */
+    private static final String TAG_MESH_PROB = "meshProb";
 
     /**
      * Daily quantity to produce.
@@ -168,6 +181,38 @@ public class BuildingSifter extends AbstractBuildingWorker
         return (int) (Math.pow(getBuildingLevel(), 2) * BUILDING_LEVEL_MULTIPLIER);
     }
 
+    /**
+     * Reset the mesh to a default value after the other one broke.
+     */
+    public void resetMesh()
+    {
+        if (!ColonyManager.getCompatibilityManager().getMeshes().isEmpty())
+        {
+            this.sifterMesh = ColonyManager.getCompatibilityManager().getMeshes().get(0);
+        }
+    }
+
+    /**
+     * Setup the settings to be used by the sifter.
+     * @param block the block to be sieved.
+     * @param mesh the mesh to be used.
+     * @param quantity the daily quantity.
+     */
+    public void setup(final ItemStorage block, final ItemStorage mesh, final int quantity)
+    {
+        this.sievableBlock = block;
+        for (final Tuple<ItemStorage, Double> tuple : ColonyManager.getCompatibilityManager().getMeshes())
+        {
+            if (tuple.getFirst().equals(mesh))
+            {
+                this.sifterMesh = new Tuple<>(mesh, tuple.getSecond());
+                break;
+            }
+        }
+        this.dailyQuantity = quantity;
+        markDirty();
+    }
+
     @Override
     public void onWakeUp()
     {
@@ -191,7 +236,11 @@ public class BuildingSifter extends AbstractBuildingWorker
         super.readFromNBT(compound);
         this.dailyQuantity = compound.getInteger(TAG_DAILY);
         this.currentDailyQuantity = compound.getInteger(TAG_CURRENT_DAILY);
-        //todo read and write from file
+
+        this.sievableBlock = new ItemStorage(new ItemStack(compound.getCompoundTag(TAG_BLOCK)));
+        final ItemStorage mesh = new ItemStorage(new ItemStack(compound.getCompoundTag(TAG_MESH)));
+        final double prob = compound.getDouble(TAG_MESH_PROB);
+        this.sifterMesh = new Tuple<>(mesh, prob);
     }
 
     @Override
@@ -200,14 +249,25 @@ public class BuildingSifter extends AbstractBuildingWorker
         super.writeToNBT(compound);
         compound.setInteger(TAG_DAILY, dailyQuantity);
         compound.setInteger(TAG_CURRENT_DAILY, currentDailyQuantity);
+
+        final NBTTagCompound sievableBlockTAG = new NBTTagCompound();
+        sievableBlock.getItemStack().writeToNBT(sievableBlockTAG);
+        compound.setTag(TAG_BLOCK, sievableBlockTAG);
+
+        final NBTTagCompound meshTAG = new NBTTagCompound();
+        sifterMesh.getFirst().getItemStack().writeToNBT(meshTAG);
+        compound.setTag(TAG_MESH, meshTAG);
+        compound.setDouble(TAG_MESH_PROB, sifterMesh.getSecond());
     }
 
     @Override
     public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
-        ByteBufUtils.writeItemStack(buf, sievableBlock.getItemStack());
         buf.writeInt(dailyQuantity);
+
+        ByteBufUtils.writeItemStack(buf, sievableBlock.getItemStack());
+        ByteBufUtils.writeItemStack(buf, sifterMesh.getFirst().getItemStack());
 
         buf.writeInt(ColonyManager.getCompatibilityManager().getSievableBlock().size());
         for (final ItemStorage storage : ColonyManager.getCompatibilityManager().getSievableBlock())
@@ -219,17 +279,6 @@ public class BuildingSifter extends AbstractBuildingWorker
         for (final Tuple<ItemStorage, Double> storage : ColonyManager.getCompatibilityManager().getMeshes())
         {
             ByteBufUtils.writeItemStack(buf, storage.getFirst().getItemStack());
-        }
-    }
-
-    /**
-     * Reset the mesh to a default value after the other one broke.
-     */
-    public void resetMesh()
-    {
-        if (!ColonyManager.getCompatibilityManager().getMeshes().isEmpty())
-        {
-            this.sifterMesh = ColonyManager.getCompatibilityManager().getMeshes().get(0);
         }
     }
 
@@ -296,6 +345,65 @@ public class BuildingSifter extends AbstractBuildingWorker
             {
                 meshes.add(new ItemStorage(ByteBufUtils.readItemStack(buf)));
             }
+        }
+
+        /**
+         * Getter for the current set daily quantity.
+         * @return the quantity set.
+         */
+        public int getDailyQuantity()
+        {
+            return dailyQuantity;
+        }
+
+        /**
+         * Getter for the current sifter block.
+         * @return an ItemStorage.
+         */
+        public ItemStorage getSifterBlock()
+        {
+            return sifterBlock;
+        }
+
+        /**
+         * Getter for the currently used mesh.
+         * @return an ItemStorage.
+         */
+        public ItemStorage getMesh()
+        {
+            return mesh;
+        }
+
+        /**
+         * Get a list of all sievable blocks.
+         * @return the list.
+         */
+        public List<ItemStorage> getSievableBlocks()
+        {
+            return sievableBlocks;
+        }
+
+        /**
+         * Get a list of all meshes.
+         * @return the list.
+         */
+        public List<ItemStorage> getMeshes()
+        {
+            return meshes;
+        }
+
+        /**
+         * Save the setup.
+         * @param sifterBlock the block to sift.
+         * @param mesh the mesh to use.
+         * @param dailyQuantity the daily quantity.
+         * @param buy if buying the mesh is involved.
+         */
+        public void save(final ItemStorage sifterBlock, final ItemStorage mesh, final int dailyQuantity, final boolean buy)
+        {
+            this.sifterBlock = sifterBlock;
+            this.mesh = mesh;
+            MineColonies.getNetwork().sendToServer(new SifterSettingsMessage(this, sifterBlock, mesh, dailyQuantity, buy));
         }
 
         @NotNull
