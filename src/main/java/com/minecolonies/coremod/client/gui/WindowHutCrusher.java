@@ -1,13 +1,15 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.TextField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
-import net.minecraft.init.Blocks;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Window for the crusher hut.
@@ -37,7 +39,7 @@ public class WindowHutCrusher extends AbstractWindowWorkerBuilding<BuildingCrush
     /**
      * The current crusher mode.
      */
-    private BuildingCrusher.CrusherMode mode;
+    private ItemStorage mode;
 
     /**
      * Constructor for the window of the miner hut.
@@ -81,18 +83,15 @@ public class WindowHutCrusher extends AbstractWindowWorkerBuilding<BuildingCrush
      */
     private void switchCrushingMode(final Button crushingSettingsButton)
     {
-        if (crushingSettingsButton.getLabel().equals(Blocks.GRAVEL.getLocalizedName()))
+        final List<ItemStorage> modes = building.getCrusherModes();
+        int index = building.getCrusherModes().indexOf(this.mode) + 1;
+
+        if (index >= modes.size())
         {
-            this.mode = BuildingCrusher.CrusherMode.SAND;
+            index = 0;
         }
-        else if (crushingSettingsButton.getLabel().equals(Blocks.SAND.getLocalizedName()))
-        {
-            this.mode = BuildingCrusher.CrusherMode.CLAY;
-        }
-        else
-        {
-            this.mode = BuildingCrusher.CrusherMode.GRAVEL;
-        }
+
+        this.mode = modes.get(index);
         setupSettings(crushingSettingsButton);
     }
 
@@ -103,18 +102,7 @@ public class WindowHutCrusher extends AbstractWindowWorkerBuilding<BuildingCrush
      */
     private void setupSettings(final Button crushingSettingsButton)
     {
-        if (this.mode == BuildingCrusher.CrusherMode.GRAVEL)
-        {
-            crushingSettingsButton.setLabel(Blocks.GRAVEL.getLocalizedName());
-        }
-        else if (this.mode == BuildingCrusher.CrusherMode.SAND)
-        {
-            crushingSettingsButton.setLabel(Blocks.SAND.getLocalizedName());
-        }
-        else
-        {
-            crushingSettingsButton.setLabel(Blocks.CLAY.getLocalizedName());
-        }
+        crushingSettingsButton.setLabel(this.mode.getItemStack().getDisplayName());
     }
 
     @NotNull
