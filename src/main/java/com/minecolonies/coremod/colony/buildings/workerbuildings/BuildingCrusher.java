@@ -240,7 +240,16 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
-        ByteBufUtils.writeItemStack(buf, crusherMode.getItemStack());
+
+        if (crusherMode == null)
+        {
+            buf.writeBoolean(false);
+        }
+        else
+        {
+            buf.writeBoolean(true);
+            ByteBufUtils.writeItemStack(buf, crusherMode.getItemStack());
+        }
         buf.writeInt(dailyQuantity);
 
         buf.writeInt(crusherRecipes.size());
@@ -285,7 +294,11 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         public void deserialize(@NotNull final ByteBuf buf)
         {
             super.deserialize(buf);
-            crusherMode = new ItemStorage(ByteBufUtils.readItemStack(buf));
+
+            if (buf.readBoolean())
+            {
+                crusherMode = new ItemStorage(ByteBufUtils.readItemStack(buf));
+            }
             dailyQuantity = buf.readInt();
             crusherModes.clear();
 
