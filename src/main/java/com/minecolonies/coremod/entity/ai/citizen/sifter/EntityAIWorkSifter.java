@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
@@ -38,7 +39,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
     /**
      * How often should strength factor into the sifter's skill modifier.
      */
-    private static final int STRENGTH_MULTIPLIER =1;
+    private static final int STRENGTH_MULTIPLIER = 1;
 
     /**
      * How often should endurance factor into the sifter's skill modifier.
@@ -49,6 +50,11 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
      * Delay for each of the craftings.
      */
     private static final int TICK_DELAY = 10;
+
+    /**
+     * Chance for the sifter to dump his inventory.
+     */
+    private static final int CHANCE_TO_DUMP_INV = 10;
 
     /**
      * Progress of hitting the block.
@@ -82,7 +88,8 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
 
     /**
      * Check if we have the block we should be sieving right now, else request.
-     * @param storage the block to sieve.
+     *
+     * @param storage        the block to sieve.
      * @param sifterBuilding the building of the sifter.
      * @return the next state to go.
      */
@@ -109,6 +116,12 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
             return NEEDS_ITEM;
         }
         return getState();
+    }
+
+    @Override
+    protected int getActionsDoneUntilDumping()
+    {
+        return 1;
     }
 
     /**
@@ -147,12 +160,13 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
             if (check == SIFT)
             {
                 sifterBuilding.setCurrentDailyQuantity(sifterBuilding.getCurrentDailyQuantity() + 1);
-                if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getDailyQuantity())
+                if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getDailyQuantity() || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < CHANCE_TO_DUMP_INV)
                 {
                     incrementActionsDoneAndDecSaturation();
                 }
 
-                final ItemStack result = ColonyManager.getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getFirst(), sifterBuilding.getSievableBlock());
+                final ItemStack result =
+                  ColonyManager.getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getFirst(), sifterBuilding.getSievableBlock());
                 if (!result.isEmpty())
                 {
                     InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), result);
@@ -177,8 +191,10 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
         }
         if (check == SIFT)
         {
-            MineColonies.getNetwork().sendToAllTracking(new LocalizedParticleEffectMessage(sifterBuilding.getMesh().getFirst().getItemStack().copy(), sifterBuilding.getID()), worker);
-            MineColonies.getNetwork().sendToAllTracking(new LocalizedParticleEffectMessage(sifterBuilding.getSievableBlock().getItemStack().copy(), sifterBuilding.getID().down()), worker);
+            MineColonies.getNetwork()
+              .sendToAllTracking(new LocalizedParticleEffectMessage(sifterBuilding.getMesh().getFirst().getItemStack().copy(), sifterBuilding.getID()), worker);
+            MineColonies.getNetwork()
+              .sendToAllTracking(new LocalizedParticleEffectMessage(sifterBuilding.getSievableBlock().getItemStack().copy(), sifterBuilding.getID().down()), worker);
 
             SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.BLOCK_CLOTH_BREAK);
         }
