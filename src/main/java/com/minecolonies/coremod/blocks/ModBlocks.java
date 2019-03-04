@@ -52,6 +52,7 @@ public final class ModBlocks
     public static        BlockHutSawmill                blockHutSawmill;
     public static        BlockHutStoneSmeltery          blockHutStoneSmeltery;
     public static        BlockHutCrusher                blockHutCrusher;
+    public static        BlockHutSifter                 blockHutSifter;
 
     /**
      * Utility blocks.
@@ -107,6 +108,7 @@ public final class ModBlocks
         blockHutCombatAcademy = new BlockHutCombatAcademy().registerBlock(registry);
         blockHutStoneSmeltery = new BlockHutStoneSmeltery().registerBlock(registry);
         blockHutCrusher = new BlockHutCrusher().registerBlock(registry);
+        blockHutSifter = new BlockHutSifter().registerBlock(registry);
 
         blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
         blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
@@ -149,7 +151,8 @@ public final class ModBlocks
         blockHutSawmill.registerItemBlock(registry);
         blockHutStoneSmeltery.registerItemBlock(registry);
         blockHutCrusher.registerItemBlock(registry);
-
+        blockHutSifter.registerItemBlock(registry);
+        
         blockConstructionTape.registerItemBlock(registry);
         blockBarracksTowerSubstitution.registerItemBlock(registry);
         blockRack.registerItemBlock(registry);
