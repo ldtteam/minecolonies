@@ -447,6 +447,8 @@ public class Configurations
                                           "3,3,minecraft:skull:3,5",
                                         };
 
+        @Config.Comment("Chance to get a sponge drop for the fisherman starting at level 4.")
+        public double fisherSpongeChance = 0.1;
     }
 
     public static class Compatibility
