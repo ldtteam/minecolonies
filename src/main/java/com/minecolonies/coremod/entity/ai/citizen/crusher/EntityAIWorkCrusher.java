@@ -144,6 +144,8 @@ public class EntityAIWorkCrusher<J extends AbstractJobCrafter> extends AbstractE
         if (check == CRAFT)
         {
             MineColonies.getNetwork().sendToAllTracking(new LocalizedParticleEffectMessage(currentRecipeStorage.getInput().get(0).copy(), crusherBuilding.getID()), worker);
+            MineColonies.getNetwork().sendToAllTracking(new LocalizedParticleEffectMessage(currentRecipeStorage.getPrimaryOutput().copy(), crusherBuilding.getID().down()), worker);
+
             SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.BLOCK_STONE_BREAK);
         }
         return getState();
