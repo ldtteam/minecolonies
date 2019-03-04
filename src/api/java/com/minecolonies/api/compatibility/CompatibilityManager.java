@@ -76,6 +76,21 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Map<ItemStorage, ItemStorage> crusherModes = new HashMap<>();
 
     /**
+     * The meshes the sifter is going to be able to use.
+     */
+    private final List<Tuple<ItemStorage, Double>> sifterMeshes = new ArrayList<>();
+
+    /**
+     * The blocks which can be sifted.
+     */
+    private final List<ItemStorage> sievableBlocks = new ArrayList<>();
+
+    /**
+     * Map of mash -> block -> sieveResult
+     */
+    private final Map<ItemStorage, Map<ItemStorage, List<ItemStorage>>> sieveResult = new HashMap<>();
+
+    /**
      * If discovery is finished already.
      */
     private boolean discoveredAlready = false;
@@ -90,7 +105,33 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     public CompatibilityManager()
     {
+        /*
+         * Intentionally left empty.
+         */
+    }
 
+    @Override
+    public List<Tuple<ItemStorage, Double>> getMeshes()
+    {
+        return new ArrayList<>(this.sifterMeshes);
+    }
+
+    @Override
+    public ArrayList<ItemStorage> getSievableBlock()
+    {
+        return new ArrayList<>(this.sievableBlocks);
+    }
+
+    @Override
+    public ItemStack getRandomSieveResultForMeshAndBlock(final ItemStorage mesh, final ItemStorage block)
+    {
+        if (this.sieveResult.containsKey(mesh) && this.sieveResult.get(mesh).containsKey(block))
+        {
+            final List<ItemStorage> drops = this.sieveResult.get(mesh).get(block);
+            Collections.shuffle(drops);
+            return drops.get(0).getItemStack();
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -108,50 +149,9 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverCompostableItems();
         discoverLuckyOres();
         discoverCrusherModes();
+        discoverSifting();
 
         discoveredAlready = true;
-    }
-
-    /**
-     * Calculate the crusher modes from the config file.
-     */
-    private void discoverCrusherModes()
-    {
-        for (final String string : Configurations.gameplay.crusherProduction)
-        {
-            final String[] split = string.split("!");
-            if (split.length != 2)
-            {
-                Log.getLogger().warn("Invalid crusher mode setting: " + string);
-                continue;
-            }
-
-            final String[] firstItem = split[0].split(":");
-            final String[] secondItem = split[1].split(":");
-
-            final Item item1 = Item.getByNameOrId(firstItem[0] + ":" + firstItem[1]);
-            final Item item2 = Item.getByNameOrId(secondItem[0] + ":" + secondItem[1]);
-
-            try
-            {
-                final int meta1 = firstItem.length > 2 ? Integer.parseInt(firstItem[2]) : 0;
-                final int meta2 = secondItem.length > 2 ? Integer.parseInt(secondItem[2]) : 0;
-
-                if (item1 == null || item2 == null)
-                {
-                    Log.getLogger().warn("Invalid crusher mode setting: " + string);
-                    continue;
-                }
-
-                final ItemStorage storage1 = new ItemStorage(new ItemStack(item1, 2, meta1));
-                final ItemStorage storage2 = new ItemStorage(new ItemStack(item2, 1, meta2));
-                crusherModes.put(storage1, storage2);
-            }
-            catch (final NumberFormatException ex)
-            {
-                Log.getLogger().warn("Error getting metaData", ex);
-            }
-        }
     }
 
     @Override
@@ -466,6 +466,225 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         }
         Log.getLogger().info("Finished discovering lucky ores");
+    }
+
+    /**
+     * Method discovering and loading from the config all materials the sifter needs.
+     */
+    private void discoverSifting()
+    {
+        for (final String string : Configurations.gameplay.sifterMeshes)
+        {
+            final String[] mesh = string.split(",");
+
+            if (mesh.length != 2)
+            {
+                Log.getLogger().warn("Couldn't parse the mesh: " +  string);
+                continue;
+            }
+
+            try
+            {
+                final double probability = Double.parseDouble(mesh[1]);
+
+                final String[] item = mesh[0].split(":");
+                final String itemName = item[0] + ":" + item[1];
+                final Item theItem = Item.getByNameOrId(itemName);
+
+                if (theItem == null)
+                {
+                    Log.getLogger().warn("Couldn't find item for mesh: " + string);
+                    continue;
+                }
+
+                final ItemStack stack = new ItemStack(theItem, 1, item.length > 2 ? Integer.parseInt(item[2]) : 0);
+                sifterMeshes.add(new Tuple<>(new ItemStorage(stack), probability));
+            }
+            catch (final NumberFormatException ex)
+            {
+                Log.getLogger().warn("Couldn't retrieve probability for mesh: " + string, ex);
+            }
+        }
+
+        for (final String string : Configurations.gameplay.siftableBlocks)
+        {
+            try
+            {
+                final String[] item = string.split(":");
+                final String itemName = item[0] + ":" + item[1];
+                final Item theItem = Item.getByNameOrId(itemName);
+
+                if (theItem == null)
+                {
+                    Log.getLogger().warn("Couldn't find item for siftable block: " + string);
+                    continue;
+                }
+
+                final ItemStack stack = new ItemStack(theItem, 1, item.length > 2 ? Integer.parseInt(item[2]) : 0);
+                sievableBlocks.add(new ItemStorage(stack));
+            }
+            catch (final NumberFormatException ex)
+            {
+                Log.getLogger().warn("Couldn't retrieve the metadata for siftable block: " + string, ex);
+            }
+        }
+
+        final Map<ItemStorage, Map<ItemStorage, Map<ItemStorage, Double>>> tempDrops = new HashMap<>();
+        for (final String string : Configurations.gameplay.sifterDrops)
+        {
+            final String[] drop = string.split(",");
+            if (drop.length != 4)
+            {
+                Log.getLogger().warn("Required Parameters: keyBlock, keyMesh, item, probability, not met in: " + string);
+                continue;
+            }
+
+            try
+            {
+                final int block = Integer.parseInt(drop[0]);
+
+                if (sievableBlocks.size() < block)
+                {
+                    Log.getLogger().warn("Trying to add siftresult for not configured block.");
+                    continue;
+                }
+
+                final ItemStorage blockStorage = sievableBlocks.get(block);
+
+                final int mesh = Integer.parseInt(drop[1]);
+
+                if (sifterMeshes.size() < mesh)
+                {
+                    Log.getLogger().warn("Trying to add siftresult for not configured mesh.");
+                    continue;
+                }
+
+                final ItemStorage meshStorage = sifterMeshes.get(mesh).getFirst();
+
+                final String[] item = drop[2].split(":");
+                final String itemName = item[0] + ":" + item[1];
+                final Item theItem = Item.getByNameOrId(itemName);
+
+                if (theItem == null)
+                {
+                    Log.getLogger().warn("Couldn't find item for siftable block: " + string);
+                    continue;
+                }
+
+                final ItemStack stack = new ItemStack(theItem, 1, item.length > 2 ? Integer.parseInt(item[2]) : 0);
+
+                final double probability = Double.parseDouble(drop[3]);
+
+                final Map<ItemStorage, Map<ItemStorage, Double>> map;
+                if (tempDrops.containsKey(meshStorage))
+                {
+                    map = tempDrops.get(meshStorage);
+                }
+                else
+                {
+                    map = new HashMap<>();
+                }
+
+                final Map<ItemStorage, Double> drops;
+                if (map.containsKey(blockStorage))
+                {
+                    drops = map.get(blockStorage);
+                }
+                else
+                {
+                    drops = new HashMap<>();
+                }
+
+                drops.put(new ItemStorage(stack), probability);
+                map.put(blockStorage, drops);
+                tempDrops.put(meshStorage, map);
+            }
+            catch (final NumberFormatException ex)
+            {
+                Log.getLogger().warn("Couldn't retrieve block or mesh for drop: " + string, ex);
+            }
+        }
+
+        for (final Map.Entry<ItemStorage, Map<ItemStorage, Map<ItemStorage, Double>>> meshEntry : tempDrops.entrySet())
+        {
+            for (final Map.Entry<ItemStorage, Map<ItemStorage, Double>> blockEntry : meshEntry.getValue().entrySet())
+            {
+                final List<ItemStorage> theDrops = new ArrayList<>();
+                double probabilitySum = 0;
+                for (final Map.Entry<ItemStorage, Double> drops : blockEntry.getValue().entrySet())
+                {
+                    final ItemStorage storage = drops.getKey();
+                    final double probability = drops.getValue();
+                    probabilitySum+=probability;
+                    for (int i = 0; i < probability; i++)
+                    {
+                        theDrops.add(storage);
+                    }
+                }
+
+                final ItemStorage airStorage = new ItemStorage(ItemStack.EMPTY);
+                for (int i = 0; i < 100 - probabilitySum; i++)
+                {
+                    theDrops.add(airStorage);
+                }
+
+                final Map<ItemStorage, List<ItemStorage>> map;
+                if (this.sieveResult.containsKey(meshEntry.getKey()))
+                {
+                    map = this.sieveResult.get(meshEntry.getKey());
+                }
+                else
+                {
+                    map = new HashMap<>();
+                }
+
+                map.put(blockEntry.getKey(), theDrops);
+                this.sieveResult.put(meshEntry.getKey(), map);
+            }
+        }
+        Log.getLogger().info("Finished initiating sifter config");
+    }
+
+    /**
+     * Calculate the crusher modes from the config file.
+     */
+    private void discoverCrusherModes()
+    {
+        for (final String string : Configurations.gameplay.crusherProduction)
+        {
+            final String[] split = string.split("!");
+            if (split.length != 2)
+            {
+                Log.getLogger().warn("Invalid crusher mode setting: " + string);
+                continue;
+            }
+
+            final String[] firstItem = split[0].split(":");
+            final String[] secondItem = split[1].split(":");
+
+            final Item item1 = Item.getByNameOrId(firstItem[0] + ":" + firstItem[1]);
+            final Item item2 = Item.getByNameOrId(secondItem[0] + ":" + secondItem[1]);
+
+            try
+            {
+                final int meta1 = firstItem.length > 2 ? Integer.parseInt(firstItem[2]) : 0;
+                final int meta2 = secondItem.length > 2 ? Integer.parseInt(secondItem[2]) : 0;
+
+                if (item1 == null || item2 == null)
+                {
+                    Log.getLogger().warn("Invalid crusher mode setting: " + string);
+                    continue;
+                }
+
+                final ItemStorage storage1 = new ItemStorage(new ItemStack(item1, 2, meta1));
+                final ItemStorage storage2 = new ItemStorage(new ItemStack(item2, 1, meta2));
+                crusherModes.put(storage1, storage2);
+            }
+            catch (final NumberFormatException ex)
+            {
+                Log.getLogger().warn("Error getting metaData", ex);
+            }
+        }
     }
 
     private static NBTTagCompound writeLeafSaplingEntryToNBT(final IBlockState state, final ItemStorage storage)

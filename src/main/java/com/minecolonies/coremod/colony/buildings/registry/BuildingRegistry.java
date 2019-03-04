@@ -91,6 +91,8 @@ public class BuildingRegistry
         addMapping("Postbox", PostBox.class, PostBox.View.class, BlockPostBox.class);
         addMapping("StoneSmeltery", BuildingStoneSmeltery.class, BuildingStoneSmeltery.View.class, BlockHutStoneSmeltery.class);
         addMapping("Crusher", BuildingCrusher.class, BuildingCrusher.View.class, BlockHutCrusher.class);
+        addMapping("Sifter", BuildingSifter.class, BuildingSifter.View.class, BlockHutSifter.class);
+
     }
 
     /**
