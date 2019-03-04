@@ -102,16 +102,8 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
         meshList.enable();
         meshList.show();
 
-        final int size;
-        if (building.getBuildingLevel() < 3)
-        {
-            size = 1;
-        }
-        else
-        {
-            size = building.getBuildingLevel() - building.getMeshes().size() + 3;
-        }
-
+        final int size = building.getBuildingLevel() - building.getMeshes().size() + 3;
+        
         //Creates a dataProvider for the unemployed resourceList.
         meshList.setDataProvider(new ScrollingList.DataProvider()
         {

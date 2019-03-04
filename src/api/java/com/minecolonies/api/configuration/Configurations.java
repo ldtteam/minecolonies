@@ -340,8 +340,8 @@ public class Configurations
                                           "0,1,minecraft:sapling:1,5",
                                           "0,1,minecraft:sapling:2,5",
                                           "0,1,minecraft:sapling:3,5",
-                                          "0,1,minecraft:carrot:5,1",
-                                          "0,1,minecraft:potato:5,1",
+                                          "0,1,minecraft:carrot:0,1",
+                                          "0,1,minecraft:potato:0,1",
 
                                           //Dirt with iron mesh
                                           "0,2,minecraft:wheat_seeds,50",
@@ -352,8 +352,8 @@ public class Configurations
                                           "0,2,minecraft:pumpkin_seeds:5,1",
                                           "0,2,minecraft:melon_seeds:5,1",
                                           "0,2,minecraft:beetroot_seeds:5,1",
-                                          "0,2,minecraft:carrot:5,1",
-                                          "0,2,minecraft:potato:5,1",
+                                          "0,2,minecraft:carrot:0,1",
+                                          "0,2,minecraft:potato:0,1",
                                           "0,2,minecraft:sapling:4,1",
                                           "0,2,minecraft:sapling:5,1",
 
@@ -366,8 +366,8 @@ public class Configurations
                                           "0,3,minecraft:pumpkin_seeds:5,5",
                                           "0,3,minecraft:melon_seeds:5,5",
                                           "0,3,minecraft:beetroot_seeds:5,5",
-                                          "0,3,minecraft:carrot:5,5",
-                                          "0,3,minecraft:potato:5,5",
+                                          "0,3,minecraft:carrot:0,5",
+                                          "0,3,minecraft:potato:0,5",
                                           "0,3,minecraft:sapling:4,5",
                                           "0,3,minecraft:sapling:5,5",
 
@@ -398,21 +398,25 @@ public class Configurations
                                           "2,0,minecraft:coal,5",
 
                                           //Gravel with flint mesh
+                                          "2,1,minecraft:redstone,10",
                                           "2,1,minecraft:iron_nugget,10",
                                           "2,1,minecraft:flint,10",
                                           "2,1,minecraft:coal,10",
 
                                           //Gravel with iron mesh
+                                          "2,2,minecraft:redstone,15",
                                           "2,2,minecraft:iron_nugget,15",
                                           "2,2,minecraft:coal,15",
+                                          "2,2,minecraft:dye:4,5",
                                           "2,2,minecraft:iron_ingot,1",
                                           "2,2,minecraft:gold_ingot,1",
                                           "2,2,minecraft:emerald,1",
                                           "2,2,minecraft:diamond,1",
 
                                           //Gravel with diamond mesh
-                                          "2,3,minecraft:iron_nugget,20",
+                                          "2,3,minecraft:redstone,20",
                                           "2,3,minecraft:coal,20",
+                                          "2,3,minecraft:dye:4,10",
                                           "2,3,minecraft:iron_ingot,2.5",
                                           "2,3,minecraft:gold_ingot,2.5",
                                           "2,3,minecraft:emerald,2.5",
