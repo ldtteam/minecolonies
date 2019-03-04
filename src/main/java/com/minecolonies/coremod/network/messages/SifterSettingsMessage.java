@@ -133,7 +133,7 @@ public class SifterSettingsMessage extends AbstractMessage<SifterSettingsMessage
                     qty = building.getMaxDailyQuantity();
                     player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.sifter.toomuch", qty));
                 }
-                building.setup(new ItemStorage(message.block), new ItemStorage(message.mesh), message.quantity);
+                building.setup(new ItemStorage(message.block), new ItemStorage(message.mesh), qty);
 
                 if (message.buy)
                 {
