@@ -7,6 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interface for all compatabilityManagers.
@@ -65,6 +66,12 @@ public interface ICompatibilityManager
      * @return true if so
      */
     boolean isCompost(ItemStack stack);
+
+    /**
+     * Get a map of all the crusher modes.
+     * @return the modes.
+     */
+    Map<ItemStorage, ItemStorage> getCrusherModes();
 
     /**
      * Write colonies to NBT data for saving.

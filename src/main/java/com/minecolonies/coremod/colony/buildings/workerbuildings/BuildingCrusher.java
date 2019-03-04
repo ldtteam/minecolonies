@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
@@ -17,15 +18,17 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.network.messages.CrusherSetModeMessage;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -40,16 +43,6 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     private static final double BUILDING_LEVEL_MULTIPLIER = 16;
 
     /**
-     * The different modes the crusher can have.
-     */
-    public enum CrusherMode
-    {
-        GRAVEL,
-        SAND,
-        CLAY
-    }
-
-    /**
      * The crusher string.
      */
     private static final String CRUSHER_DESC = "Crusher";
@@ -60,53 +53,9 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     private static final int MAX_BUILDING_LEVEL = 5;
 
     /**
-     * The cobble input list.
+     * His crusherRecipes.
      */
-    private static final List<ItemStack> cobbleInput = new ArrayList<>();
-
-    /**
-     * The gravel input list.
-     */
-    private static final List<ItemStack> gravelInput = new ArrayList<>();
-
-    /**
-     * The sand input list.
-     */
-    private static final List<ItemStack> sandInput = new ArrayList<>();
-
-    /*
-     * Fill the input lists.
-     */
-    static
-    {
-        cobbleInput.add(new ItemStack(Blocks.COBBLESTONE, 2));
-        gravelInput.add(new ItemStack(Blocks.GRAVEL, 2));
-        sandInput.add(new ItemStack(Blocks.SAND, 2));
-    }
-
-    /**
-     * The cobble crushing recipe.
-     */
-    private static final IRecipeStorage cobbleCrushing = StandardFactoryController.getInstance().getNewInstance(
-      TypeConstants.RECIPE,
-      StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-      cobbleInput, 2, new ItemStack(Blocks.GRAVEL, 1), ModBlocks.blockHutCrusher);
-
-    /**
-     * The gravel crushing recipe.
-     */
-    private static final IRecipeStorage gravelCrushing = StandardFactoryController.getInstance().getNewInstance(
-      TypeConstants.RECIPE,
-      StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-      gravelInput, 2, new ItemStack(Blocks.SAND, 1), ModBlocks.blockHutCrusher);
-
-    /**
-     * The sand crushing recipe.
-     */
-    private static final IRecipeStorage sandCrushing   = StandardFactoryController.getInstance().getNewInstance(
-      TypeConstants.RECIPE,
-      StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-      sandInput, 2, new ItemStack(Blocks.CLAY, 1), ModBlocks.blockHutCrusher);
+    private final Map<ItemStorage, IRecipeStorage> crusherRecipes = new HashMap<>();
 
     /**
      * Daily quantity to produce.
@@ -121,7 +70,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     /**
      * The current productionmode.
      */
-    private CrusherMode crusherMode = CrusherMode.GRAVEL;
+    private ItemStorage crusherMode = null;
 
     /**
      * Instantiates a new crusher building.
@@ -132,6 +81,21 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     public BuildingCrusher(final Colony c, final BlockPos l)
     {
         super(c, l);
+
+        for (final Map.Entry<ItemStorage, ItemStorage> mode : ColonyManager.getCompatibilityManager().getCrusherModes().entrySet())
+        {
+            if (this.crusherMode == null)
+            {
+                this.crusherMode = mode.getKey();
+            }
+            final List<ItemStack> input = new ArrayList<>();
+            input.add(mode.getKey().getItemStack());
+            final IRecipeStorage recipe = StandardFactoryController.getInstance().getNewInstance(
+              TypeConstants.RECIPE,
+              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+              input, 2, mode.getValue().getItemStack(), ModBlocks.blockHutCrusher);
+            crusherRecipes.put(mode.getKey(), recipe);
+        }
     }
 
     /**
@@ -140,15 +104,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
      */
     public IRecipeStorage getCurrentRecipe()
     {
-        switch(crusherMode)
-        {
-            case SAND:
-                return gravelCrushing;
-            case CLAY:
-                return sandCrushing;
-            default:
-                return cobbleCrushing;
-        }
+        return this.crusherRecipes.get(this.crusherMode);
     }
 
     @NotNull
@@ -190,7 +146,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
      * @param crusherMode   the new mode.
      * @param dailyQuantity the new quantity per dya.
      */
-    public void setCrusherMode(final CrusherMode crusherMode, final int dailyQuantity)
+    public void setCrusherMode(final ItemStorage crusherMode, final int dailyQuantity)
     {
         this.crusherMode = crusherMode;
         this.dailyQuantity = dailyQuantity;
@@ -201,7 +157,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
      *
      * @return the mode and the quantity.
      */
-    public Tuple<CrusherMode, Integer> getCrusherMode()
+    public Tuple<ItemStorage, Integer> getCrusherMode()
     {
         return new Tuple<>(crusherMode, dailyQuantity);
     }
@@ -253,17 +209,19 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         super.readFromNBT(compound);
         this.dailyQuantity = compound.getInteger(TAG_DAILY);
         this.currentDailyQuantity = compound.getInteger(TAG_CURRENT_DAILY);
-        this.crusherMode = CrusherMode.values()[compound.getInteger(TAG_MODE)];
+
+        if (compound.hasKey(TAG_CRUSHER_MODE))
+        {
+            this.crusherMode = new ItemStorage(new ItemStack(compound.getCompoundTag(TAG_CRUSHER_MODE)));
+        }
 
         if (super.recipes.isEmpty())
         {
-            final IToken token1 = ColonyManager.getRecipeManager().checkOrAddRecipe(cobbleCrushing);
-            final IToken token2 = ColonyManager.getRecipeManager().checkOrAddRecipe(gravelCrushing);
-            final IToken token3 = ColonyManager.getRecipeManager().checkOrAddRecipe(sandCrushing);
-
-            addRecipe(token1);
-            addRecipe(token2);
-            addRecipe(token3);
+            for (final IRecipeStorage recipe : crusherRecipes.values())
+            {
+                final IToken token = ColonyManager.getRecipeManager().checkOrAddRecipe(recipe);
+                addRecipe(token);
+            }
         }
     }
 
@@ -273,15 +231,23 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         super.writeToNBT(compound);
         compound.setInteger(TAG_DAILY, dailyQuantity);
         compound.setInteger(TAG_CURRENT_DAILY, currentDailyQuantity);
-        compound.setInteger(TAG_MODE, crusherMode.ordinal());
+        final NBTTagCompound crusherModeNBT = new NBTTagCompound();
+        crusherMode.getItemStack().writeToNBT(crusherModeNBT);
+        compound.setTag(TAG_CRUSHER_MODE, crusherModeNBT);
     }
 
     @Override
     public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
-        buf.writeInt(crusherMode.ordinal());
+        ByteBufUtils.writeItemStack(buf, crusherMode.getItemStack());
         buf.writeInt(dailyQuantity);
+
+        buf.writeInt(crusherRecipes.size());
+        for (final ItemStorage storage : crusherRecipes.keySet())
+        {
+            ByteBufUtils.writeItemStack(buf, storage.getItemStack());
+        }
     }
 
     /**
@@ -297,7 +263,12 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         /**
          * The current production mode.
          */
-        private CrusherMode crusherMode = CrusherMode.GRAVEL;
+        private ItemStorage crusherMode;
+
+        /**
+         * The current production mode.
+         */
+        private final List<ItemStorage> crusherModes = new ArrayList<>();
 
         /**
          * Instantiate the crusher view.
@@ -314,8 +285,15 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         public void deserialize(@NotNull final ByteBuf buf)
         {
             super.deserialize(buf);
-            crusherMode = CrusherMode.values()[buf.readInt()];
+            crusherMode = new ItemStorage(ByteBufUtils.readItemStack(buf));
             dailyQuantity = buf.readInt();
+            crusherModes.clear();
+
+            final int size = buf.readInt();
+            for (int i = 0; i < size; i++)
+            {
+                crusherModes.add(new ItemStorage(ByteBufUtils.readItemStack(buf)));
+            }
         }
 
         /**
@@ -324,11 +302,11 @@ public class BuildingCrusher extends AbstractBuildingCrafter
          * @param crusherMode   the new mode.
          * @param dailyQuantity the new quantity per dya.
          */
-        public void setCrusherMode(final CrusherMode crusherMode, final int dailyQuantity)
+        public void setCrusherMode(final ItemStorage crusherMode, final int dailyQuantity)
         {
             this.crusherMode = crusherMode;
             this.dailyQuantity = dailyQuantity;
-            MineColonies.getNetwork().sendToServer(new CrusherSetModeMessage(this, crusherMode.ordinal(), dailyQuantity));
+            MineColonies.getNetwork().sendToServer(new CrusherSetModeMessage(this, crusherMode, dailyQuantity));
         }
 
         /**
@@ -336,9 +314,18 @@ public class BuildingCrusher extends AbstractBuildingCrafter
          *
          * @return the mode and the quantity.
          */
-        public Tuple<CrusherMode, Integer> getCrusherMode()
+        public Tuple<ItemStorage, Integer> getCrusherMode()
         {
             return new Tuple<>(crusherMode, dailyQuantity);
+        }
+
+        /**
+         * Get all the possible crusher modes.
+         * @return the modes.
+         */
+        public List<ItemStorage> getCrusherModes()
+        {
+            return this.crusherModes;
         }
 
         @NotNull
