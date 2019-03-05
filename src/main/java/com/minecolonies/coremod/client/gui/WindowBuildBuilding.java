@@ -258,19 +258,6 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         while (structure.findNextBlock())
         {
             @Nullable final BlockInfo blockInfo = structure.getBlockInfo();
-            @Nullable final NBTTagCompound entityInfo = structure.getEntityData();
-
-            if (entityInfo != null)
-            {
-                for (final ItemStorage stack : ItemStackUtils.getListOfStackForEntityInfo(entityInfo, world, Minecraft.getMinecraft().player))
-                {
-                    if (!ItemStackUtils.isEmpty(stack.getItemStack()))
-                    {
-                        addNeededResource(stack.getItemStack(), 1);
-                    }
-                }
-            }
-
             @Nullable final IBlockState blockState = blockInfo.getState();
 
             if (blockState == null)
@@ -309,6 +296,21 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
                 addNeededResource(BlockUtils.getItemStackFromBlockState(blockState), 1);
             }
         }
+
+        for (final NBTTagCompound entityInfo : structure.getEntityData())
+        {
+            if (entityInfo != null)
+            {
+                for (final ItemStorage stack : ItemStackUtils.getListOfStackForEntityInfo(entityInfo, world, Minecraft.getMinecraft().player))
+                {
+                    if (!ItemStackUtils.isEmpty(stack.getItemStack()))
+                    {
+                        addNeededResource(stack.getItemStack(), 1);
+                    }
+                }
+            }
+        }
+
         window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).refreshElementPanes();
         updateResourceList();
     }
