@@ -17,6 +17,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -132,28 +133,21 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
             handleBlockPlacement(newWorldPos, localState, complete, this.structure.getBlockInfo(coords).getTileEntityData(), structure.getWorld());
         }
 
-        for (int j = 0; j < structure.getHeight(); j++)
+        for (final NBTTagCompound compound : this.structure.getEntityData())
         {
-            for (int k = 0; k < structure.getLength(); k++)
+            if (compound != null)
             {
-                for (int i = 0; i < structure.getWidth(); i++)
+                try
                 {
-                    @NotNull final BlockPos localPos = new BlockPos(i, j, k);
-                    final NBTTagCompound info = this.structure.getEntityData(localPos);
-
-                    if (info != null)
-                    {
-                        try
-                        {
-                            final Entity entity = EntityList.createEntityFromNBT(info, structure.getWorld());
-                            entity.setUniqueId(UUID.randomUUID());
-                            structure.getWorld().spawnEntity(entity);
-                        }
-                        catch (final RuntimeException e)
-                        {
-                            Log.getLogger().info("Couldn't restore entity", e);
-                        }
-                    }
+                    final Entity entity = EntityList.createEntityFromNBT(compound, structure.getWorld());
+                    entity.setUniqueId(UUID.randomUUID());
+                    final Vec3d worldPos = entity.getPositionVector().add(pos.getX(), pos.getY(), pos.getZ());
+                    entity.setPosition(worldPos.x, worldPos.y, worldPos.z);
+                    structure.getWorld().spawnEntity(entity);
+                }
+                catch (final RuntimeException e)
+                {
+                    com.ldtteam.structurize.api.util.Log.getLogger().info("Couldn't restore entitiy", e);
                 }
             }
         }
