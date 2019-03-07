@@ -407,7 +407,7 @@ public final class NbtTagConstants
      */
     public static final String TAG_DAILY         = "daily";
     public static final String TAG_CURRENT_DAILY = "currentDaily";
-    public static final String TAG_MODE          = "mode";
+    public static final String TAG_CRUSHER_MODE  = "Crushermode";
 
     /**
      * Private constructor to hide the implicit one.

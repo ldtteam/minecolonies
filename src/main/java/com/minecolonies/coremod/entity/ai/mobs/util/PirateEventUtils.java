@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.entity.ai.mobs.util;
 
+import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.items.ItemScanTool;
+import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -7,9 +10,6 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.util.InstantStructurePlacer;
-import com.ldtteam.structurize.items.ItemScanTool;
-import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structures.helpers.Structure;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.Mirror;
@@ -29,7 +29,7 @@ public final class PirateEventUtils
     /**
      * Folder name for the pirate ship schematics
      */
-    public static final String PIRATESHIP_FOLDER      = "/Ships/";
+    public static final String PIRATESHIP_FOLDER = "/Decorations/Ships/";
 
     /**
      * Colony range divider in which distance to load the pirate spawners.

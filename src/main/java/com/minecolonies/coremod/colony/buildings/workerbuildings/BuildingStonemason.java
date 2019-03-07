@@ -14,6 +14,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobStonemason;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -113,6 +114,10 @@ public class BuildingStonemason extends AbstractBuildingCrafter
             {
                 return false;
             }
+        }
+        else if (storage.getPrimaryOutput().getItem() == Items.FLOWER_POT)
+        {
+            return true;
         }
 
         for(final ItemStack stack : storage.getInput())

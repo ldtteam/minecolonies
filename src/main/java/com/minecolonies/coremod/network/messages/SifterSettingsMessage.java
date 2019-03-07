@@ -3,9 +3,10 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -13,13 +14,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Message to set the crusher mode from the GUI.
+ * Message to set the sifter mode from the GUI.
  */
-public class CrusherSetModeMessage extends AbstractMessage<CrusherSetModeMessage, IMessage>
+public class SifterSettingsMessage extends AbstractMessage<SifterSettingsMessage, IMessage>
 {
     /**
      * The colony id.
@@ -27,7 +29,7 @@ public class CrusherSetModeMessage extends AbstractMessage<CrusherSetModeMessage
     private int colonyId;
 
     /**
-     * The building id of the crusher.
+     * The building id of the sifter.
      */
     private BlockPos buildingId;
 
@@ -42,33 +44,47 @@ public class CrusherSetModeMessage extends AbstractMessage<CrusherSetModeMessage
     private int quantity;
 
     /**
-     * The crusher mode.
+     * The sifter mode.
      */
-    private ItemStack crusherMode;
+    private ItemStack block;
+
+    /**
+     * The sifter mode.
+     */
+    private ItemStack mesh;
+
+    /**
+     * If this includes the buy action.
+     */
+    private boolean buy;
 
     /**
      * Empty constructor used when registering the message.
      */
-    public CrusherSetModeMessage()
+    public SifterSettingsMessage()
     {
         super();
     }
 
     /**
-     * Set the mode of the crusher.
+     * Set the mode of the sifter.
      *
      * @param building      the building to set it for.
      * @param dailyQuantity the quantity to produce.
-     * @param crusherMode   the mode to set.
+     * @param block         the mode to set.
+     * @param mesh          the mesh.
+     * @param buy           if its a buy action.
      */
-    public CrusherSetModeMessage(@NotNull final BuildingCrusher.View building, final ItemStorage crusherMode, final int dailyQuantity)
+    public SifterSettingsMessage(@NotNull final BuildingSifter.View building, final ItemStorage block, final ItemStorage mesh, final int dailyQuantity, final boolean buy)
     {
         super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.quantity = dailyQuantity;
-        this.crusherMode = crusherMode.getItemStack();
+        this.block = block.getItemStack();
+        this.mesh = mesh.getItemStack();
         this.dimension = building.getColony().getDimension();
+        this.buy = buy;
     }
 
     @Override
@@ -78,7 +94,9 @@ public class CrusherSetModeMessage extends AbstractMessage<CrusherSetModeMessage
         buildingId = BlockPosUtil.readFromByteBuf(buf);
         dimension = buf.readInt();
         quantity = buf.readInt();
-        crusherMode = ByteBufUtils.readItemStack(buf);
+        block = ByteBufUtils.readItemStack(buf);
+        mesh = ByteBufUtils.readItemStack(buf);
+        buy = buf.readBoolean();
     }
 
     @Override
@@ -88,11 +106,13 @@ public class CrusherSetModeMessage extends AbstractMessage<CrusherSetModeMessage
         BlockPosUtil.writeToByteBuf(buf, buildingId);
         buf.writeInt(dimension);
         buf.writeInt(quantity);
-        ByteBufUtils.writeItemStack(buf, crusherMode);
+        ByteBufUtils.writeItemStack(buf, block);
+        ByteBufUtils.writeItemStack(buf, mesh);
+        buf.writeBoolean(buy);
     }
 
     @Override
-    public void messageOnServerThread(final CrusherSetModeMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final SifterSettingsMessage message, final EntityPlayerMP player)
     {
         final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
@@ -104,16 +124,21 @@ public class CrusherSetModeMessage extends AbstractMessage<CrusherSetModeMessage
                 return;
             }
 
-            @Nullable final BuildingCrusher building = colony.getBuildingManager().getBuilding(message.buildingId, BuildingCrusher.class);
+            @Nullable final BuildingSifter building = colony.getBuildingManager().getBuilding(message.buildingId, BuildingSifter.class);
             if (building != null)
             {
                 int qty = message.quantity;
                 if (qty > building.getMaxDailyQuantity())
                 {
                     qty = building.getMaxDailyQuantity();
-                    player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.crusher.toomuch", qty));
+                    player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.sifter.toomuch", qty));
                 }
-                building.setCrusherMode(new ItemStorage(message.crusherMode), qty);
+                building.setup(new ItemStorage(message.block), new ItemStorage(message.mesh), qty);
+
+                if (message.buy)
+                {
+                    InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.inventory), message.mesh);
+                }
             }
         }
     }

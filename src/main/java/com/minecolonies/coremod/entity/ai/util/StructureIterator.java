@@ -12,19 +12,17 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.Mirror;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -103,12 +101,7 @@ public class StructureIterator
         /**
          * The entityInfo block.
          */
-        public final NBTTagCompound entity;
-
-        /**
-         * The entityInfo block.
-         */
-        public final boolean hasWorldEntity;
+        public final NBTTagCompound[] entity;
 
         /**
          * Create one immutable Block containing all information needed.
@@ -120,11 +113,10 @@ public class StructureIterator
          * @param item           the item needed to place this block
          * @param worldBlock     the block to be replaced with the structure block
          * @param worldMetadata  the metadata of the world block
-         * @param hasWorldEntity if there is an entity at the position in the world.
          */
         public StructureBlock(
-                               final Block block, final BlockPos blockPosition, final IBlockState metadata, final NBTTagCompound entity,
-                               final Item item, final Block worldBlock, final IBlockState worldMetadata, final boolean hasWorldEntity)
+                               final Block block, final BlockPos blockPosition, final IBlockState metadata, final NBTTagCompound[] entity,
+                               final Item item, final Block worldBlock, final IBlockState worldMetadata)
         {
             this.block = block;
             this.blockPosition = blockPosition;
@@ -133,7 +125,6 @@ public class StructureIterator
             this.item = item;
             this.worldBlock = worldBlock;
             this.worldMetadata = worldMetadata;
-            this.hasWorldEntity = hasWorldEntity;
         }
 
         /**
@@ -155,11 +146,6 @@ public class StructureIterator
             if (structureBlockEqualsWorldBlock(structureBlock, worldBlock, worldMetadata))
             {
                 return true;
-            }
-
-            if (entity == null && hasWorldEntity)
-            {
-                return false;
             }
 
             final IBlockState worldBlockState = worldMetadata;
@@ -321,6 +307,15 @@ public class StructureIterator
     }
 
     /**
+     * Get the center pos of the structure.
+     * @return the BlockPos.
+     */
+    public BlockPos getPos()
+    {
+        return this.theStructure.getOffsetPosition();
+    }
+
+    /**
      * Get the current stage we're in.
      *
      * @return the current Stage.
@@ -423,17 +418,31 @@ public class StructureIterator
     @NotNull
     public StructureBlock getCurrentBlock()
     {
-        return new StructureBlock(
-                                   this.theStructure.getBlock(),
+        final NBTTagCompound[] entityData;
+        if (stage == Stage.SPAWN)
+        {
+            entityData = Arrays.stream(this.theStructure.getEntityData()).filter(data -> isAtPos(data, this.theStructure.getLocalPosition())).toArray(NBTTagCompound[]::new);
+        }
+        else
+        {
+            entityData = null;
+        }
+        return new StructureBlock(this.theStructure.getBlock(),
                                    this.theStructure.getBlockPosition(),
                                    this.theStructure.getBlockstate(),
-                                   this.theStructure.getEntityData(),
+                                    entityData,
                                    this.theStructure.getItem(),
                                    BlockPosUtil.getBlock(targetWorld, this.theStructure.getBlockPosition()),
-                                   BlockPosUtil.getBlockState(targetWorld, this.theStructure.getBlockPosition()),
-                                   !targetWorld.getEntitiesWithinAABB(net.minecraft.entity.Entity.class,
-                                     new AxisAlignedBB(this.theStructure.getBlockPosition()),
-                                     entity -> !(entity instanceof EntityLiving || entity instanceof EntityPlayer || entity instanceof EntityItem)).isEmpty());
+                                   BlockPosUtil.getBlockState(targetWorld, this.theStructure.getBlockPosition()));
+    }
+
+    private boolean isAtPos(final NBTTagCompound entityData, final BlockPos pos)
+    {
+        final NBTTagList list = entityData.getTagList("Pos", 6);
+        final int x = (int) list.getDoubleAt(0);
+        final int y = (int) list.getDoubleAt(1);
+        final int z = (int) list.getDoubleAt(2);
+        return new BlockPos(x,y,z).equals(pos);
     }
 
     /**

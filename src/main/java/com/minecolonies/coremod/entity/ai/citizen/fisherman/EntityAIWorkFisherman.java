@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.fisherman;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.IToolType;
@@ -20,6 +21,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemFishingRod;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -30,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
+import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
@@ -120,27 +123,39 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * Chance to play a specific fisherman sound.
      */
     private static final int    CHANCE_TO_PLAY_SOUND = 20;
+
+    /**
+     * Required level for sponge drop.
+     */
+    private static final int LEVEL_FOR_SPONGE        = 4;
+
     @NotNull
     private final        Random random               = new Random();
+
     /**
      * The number of executed adjusts of the fisherman's rotation.
      */
     private              int    executedRotations    = 0;
+
     /**
      * The PathResult when the fisherman searches water.
      */
     @Nullable
     private PathJobFindWater.WaterPathResult pathResult;
+
+
     /**
      * The Previous PathResult when the fisherman already found water.
      */
     @Nullable
     private PathJobFindWater.WaterPathResult lastPathResult;
+
     /**
      * The fishingSkill which directly influences the fisherman's chance to throw his rod.
      * May in the future also influence his luck/charisma.
      */
     private int fishingSkill = worker.getCitizenExperienceHandler().getLevel();
+
     /**
      * Connects the citizen with the fishingHook.
      */
@@ -451,6 +466,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         {
             this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("fish");
             playCaughtFishSound();
+            if (getOwnBuilding().getBuildingLevel() > LEVEL_FOR_SPONGE && random.nextInt(ONE_HUNDRED_PERCENT) < Configurations.gameplay.fisherSpongeChance)
+            {
+                InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(Blocks.SPONGE));
+            }
+
             if (random.nextDouble() < CHANCE_NEW_POND)
             {
                 job.setWater(null);
