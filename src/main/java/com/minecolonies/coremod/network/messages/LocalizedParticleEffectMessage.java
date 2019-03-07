@@ -18,7 +18,7 @@ import java.util.Random;
 /**
  * Handles spawning item particle effects on top of a block..
  */
-public class CrusherParticleEffectMessage extends AbstractMessage<CrusherParticleEffectMessage, IMessage>
+public class LocalizedParticleEffectMessage extends AbstractMessage<LocalizedParticleEffectMessage, IMessage>
 {
     /**
      * Random obj.
@@ -40,7 +40,7 @@ public class CrusherParticleEffectMessage extends AbstractMessage<CrusherParticl
     /**
      * Empty constructor used when registering the message.
      */
-    public CrusherParticleEffectMessage()
+    public LocalizedParticleEffectMessage()
     {
         super();
     }
@@ -51,7 +51,7 @@ public class CrusherParticleEffectMessage extends AbstractMessage<CrusherParticl
      * @param stack         the stack.
      * @param pos          the pos.
      */
-    public CrusherParticleEffectMessage(final ItemStack stack, final BlockPos pos)
+    public LocalizedParticleEffectMessage(final ItemStack stack, final BlockPos pos)
     {
         super();
         this.stack = stack;
@@ -79,7 +79,7 @@ public class CrusherParticleEffectMessage extends AbstractMessage<CrusherParticl
     }
 
     @Override
-    protected void messageOnClientThread(final CrusherParticleEffectMessage message, final MessageContext ctx)
+    protected void messageOnClientThread(final LocalizedParticleEffectMessage message, final MessageContext ctx)
     {
         final WorldClient world = Minecraft.getMinecraft().world;
         final ItemStack localStack = message.stack;

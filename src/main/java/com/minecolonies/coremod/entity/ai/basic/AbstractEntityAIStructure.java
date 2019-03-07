@@ -33,10 +33,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.*;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -974,73 +971,83 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     @SuppressWarnings(MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED)
     private Boolean spawnEntity(@NotNull final StructureIterator.StructureBlock currentBlock)
     {
-        final NBTTagCompound entityInfo = currentBlock.entity;
-        if (entityInfo == null)
+        final NBTTagCompound[] entityInfos = currentBlock.entity;
+        if (entityInfos.length == 0)
         {
             return true;
         }
-
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.spawning"));
 
-        final Entity entity = ItemStackUtils.getEntityFromEntityInfoOrNull(entityInfo, world);
-        if (entity != null && !EntityUtils.isEntityAtPosition(entity, world, worker))
+        for (final NBTTagCompound entityInfo : entityInfos)
         {
-            final List<ItemStack> request = new ArrayList<>();
-
-            if (entity instanceof EntityItemFrame)
+            if (entityInfo == null)
             {
-                final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
-                if (!ItemStackUtils.isEmpty(stack))
-                {
-                    ItemStackUtils.changeSize(stack, 1);
-                    request.add(stack);
-                }
-                request.add(new ItemStack(Items.ITEM_FRAME, 1));
-            }
-            else if (entity instanceof EntityArmorStand)
-            {
-                request.add(entity.getPickedResult(new RayTraceResult(worker)));
-                entity.getArmorInventoryList().forEach(request::add);
-                entity.getHeldEquipment().forEach(request::add);
-            }
-            else
-            {
-                request.add(entity.getPickedResult(new RayTraceResult(worker)));
+                continue;
             }
 
-            if (!Configurations.gameplay.builderInfiniteResources)
-            {
-                if (checkForListInInvAndRequest(this, new ArrayList<>(request)))
-                {
-                    return false;
-                }
+            final Entity entity = ItemStackUtils.getEntityFromEntityInfoOrNull(entityInfo, world);
+            final BlockPos pos = currentStructure.getPos();
+            final Vec3d worldPos = entity.getPositionVector().add(pos.getX(), pos.getY(), pos.getZ());
 
-                //Surpress
-                for (final ItemStack stack : request)
+            if (entity != null && !EntityUtils.isEntityAtPosition(entity, world, worker))
+            {
+                final List<ItemStack> request = new ArrayList<>();
+
+                if (entity instanceof EntityItemFrame)
                 {
-                    if (ItemStackUtils.isEmpty(stack))
+                    final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
+                    if (!ItemStackUtils.isEmpty(stack))
                     {
-                        continue;
+                        ItemStackUtils.changeSize(stack, 1);
+                        request.add(stack);
                     }
-                    final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(stack.getItem(), stack.getItemDamage());
-                    if (slot != -1)
+                    request.add(new ItemStack(Items.ITEM_FRAME, 1));
+                }
+                else if (entity instanceof EntityArmorStand)
+                {
+                    request.add(entity.getPickedResult(new RayTraceResult(worker)));
+                    entity.getArmorInventoryList().forEach(request::add);
+                    entity.getHeldEquipment().forEach(request::add);
+                }
+                else
+                {
+                    request.add(entity.getPickedResult(new RayTraceResult(worker)));
+                }
+
+                if (!Configurations.gameplay.builderInfiniteResources)
+                {
+                    if (checkForListInInvAndRequest(this, new ArrayList<>(request)))
                     {
-                        new InvWrapper(getInventory()).extractItem(slot, 1, false);
-                        reduceNeededResources(stack);
+                        return false;
+                    }
+
+                    //Surpress
+                    for (final ItemStack stack : request)
+                    {
+                        if (ItemStackUtils.isEmpty(stack))
+                        {
+                            continue;
+                        }
+                        final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(stack.getItem(), stack.getItemDamage());
+                        if (slot != -1)
+                        {
+                            new InvWrapper(getInventory()).extractItem(slot, 1, false);
+                            reduceNeededResources(stack);
+                        }
                     }
                 }
-            }
 
-            entity.setUniqueId(UUID.randomUUID());
-            entity.setLocationAndAngles(
-              entity.posX,
-              entity.posY,
-              entity.posZ,
-              entity.rotationYaw,
-              entity.rotationPitch);
-            if (!world.spawnEntity(entity))
-            {
-                Log.getLogger().info("Failed to spawn entity");
+                entity.setUniqueId(UUID.randomUUID());
+                entity.setLocationAndAngles(
+                  worldPos.x,
+                  worldPos.y,
+                  worldPos.z,
+                  entity.rotationYaw,
+                  entity.rotationPitch);
+                if (!world.spawnEntity(entity))
+                {
+                    Log.getLogger().info("Failed to spawn entity");
+                }
             }
         }
 

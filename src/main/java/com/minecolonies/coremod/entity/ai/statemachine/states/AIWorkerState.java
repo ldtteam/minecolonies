@@ -449,7 +449,16 @@ public enum AIWorkerState implements IAIState
     /**
      * Let the crusher crush blocks.
      */
-    CRUSH(true),;
+    CRUSH(true),
+
+            /*
+### Sifter ###
+     */
+
+    /**
+     * Let the sifter sieve blocks.
+     */
+    SIFT(true);
 
     /**
      * Is it okay to eat.

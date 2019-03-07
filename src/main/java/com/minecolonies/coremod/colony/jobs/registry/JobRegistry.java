@@ -45,6 +45,7 @@ public class JobRegistry
     private static final String MAPPING_STONEMASON     = "Stonemason";
     private static final String MAPPING_STONE_SMELTERY = "StoneSmeltery";
     private static final String MAPPING_CRUSHER        = "Crusher";
+    private static final String MAPPING_SIFTER         = "Sifter";
 
     /**
      * Map to resolve names to class.
@@ -79,6 +80,7 @@ public class JobRegistry
         addMapping(MAPPING_STONEMASON, JobStonemason.class);
         addMapping(MAPPING_STONE_SMELTERY, JobStoneSmeltery.class);
         addMapping(MAPPING_CRUSHER, JobCrusher.class);
+        addMapping(MAPPING_SIFTER, JobSifter.class);
     }
 
     /**

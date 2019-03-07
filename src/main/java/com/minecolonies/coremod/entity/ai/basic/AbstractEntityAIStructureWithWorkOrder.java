@@ -176,18 +176,6 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         while (job.getStructure().findNextBlock())
         {
             @Nullable final BlockInfo blockInfo = job.getStructure().getBlockInfo();
-            @Nullable final NBTTagCompound entityInfo = job.getStructure().getEntityData();
-
-            if (entityInfo != null)
-            {
-                for (final ItemStorage stack : ItemStackUtils.getListOfStackForEntityInfo(entityInfo, world, worker))
-                {
-                    if (!ItemStackUtils.isEmpty(stack.getItemStack()))
-                    {
-                        buildingWorker.addNeededResource(stack.getItemStack(), 1);
-                    }
-                }
-            }
 
             if (blockInfo == null)
             {
@@ -233,6 +221,21 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 requestBlockToBuildingIfRequired(buildingWorker, blockState);
             }
         }
+
+        for (final NBTTagCompound entityInfo : job.getStructure().getEntityData())
+        {
+            if (entityInfo != null)
+            {
+                for (final ItemStorage stack : ItemStackUtils.getListOfStackForEntityInfo(entityInfo, world, worker))
+                {
+                    if (!ItemStackUtils.isEmpty(stack.getItemStack()))
+                    {
+                        buildingWorker.addNeededResource(stack.getItemStack(), 1);
+                    }
+                }
+            }
+        }
+
         job.getWorkOrder().setRequested(true);
 
         if (job.getWorkOrder().getAmountOfRes() == 0)

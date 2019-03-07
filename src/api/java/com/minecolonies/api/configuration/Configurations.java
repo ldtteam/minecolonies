@@ -295,8 +295,160 @@ public class Configurations
                                                 "minecraft:emerald_ore!1"
                                               };
 
+        @Config.Comment("What the crusher can produce at the cost of 2:1")
+        public String[] crusherProduction = new String[]
+                                              {
+                                                "minecraft:cobblestone!minecraft:gravel",
+                                                "minecraft:gravel!minecraft:sand",
+                                                "minecraft:sand!minecraft:clay"
+                                              };
+
         @Config.Comment("Automatically fix orphaned chunks which were caused by chunk loading and saving issues")
         public boolean fixOrphanedChunks = false;
+
+        @Config.Comment("The different meshes which can be bought in the building with durability")
+        public String[] sifterMeshes = new String[]
+                                   {
+                                     "minecraft:string,0",
+                                     "minecraft:flint,0.1",
+                                     "minecraft:iron_ingot,0.1",
+                                     "minecraft:diamond,0.1"
+                                   };
+
+        @Config.Comment("The blocks which can be sifted for items")
+        public String[] siftableBlocks = new String[]
+                                   {
+                                     "minecraft:dirt",
+                                     "minecraft:sand",
+                                     "minecraft:gravel",
+                                     "minecraft:soul_sand",
+                                   };
+
+        @Config.Comment("The possible drops from sifting - keyBlock, keyMesh, item, probability")
+        public String[] sifterDrops = new String[]
+                                        {
+                                          //Dirt with String mesh
+                                          "0,0,minecraft:wheat_seeds,25",
+                                          "0,0,minecraft:sapling:0,1",
+                                          "0,0,minecraft:sapling:1,1",
+                                          "0,0,minecraft:sapling:2,1",
+                                          "0,0,minecraft:sapling:3,1",
+
+                                          //Dirt with flint mesh
+                                          "0,1,minecraft:wheat_seeds,50",
+                                          "0,1,minecraft:sapling:0,5",
+                                          "0,1,minecraft:sapling:1,5",
+                                          "0,1,minecraft:sapling:2,5",
+                                          "0,1,minecraft:sapling:3,5",
+                                          "0,1,minecraft:carrot:0,1",
+                                          "0,1,minecraft:potato:0,1",
+
+                                          //Dirt with iron mesh
+                                          "0,2,minecraft:wheat_seeds,50",
+                                          "0,2,minecraft:sapling:0,10",
+                                          "0,2,minecraft:sapling:1,10",
+                                          "0,2,minecraft:sapling:2,10",
+                                          "0,2,minecraft:sapling:3,10",
+                                          "0,2,minecraft:pumpkin_seeds:0,1",
+                                          "0,2,minecraft:melon_seeds:0,1",
+                                          "0,2,minecraft:beetroot_seeds:0,1",
+                                          "0,2,minecraft:carrot:0,1",
+                                          "0,2,minecraft:potato:0,1",
+                                          "0,2,minecraft:sapling:4,1",
+                                          "0,2,minecraft:sapling:5,1",
+
+                                          //Dirt with diamond mesh
+                                          "0,3,minecraft:wheat_seeds,25",
+                                          "0,3,minecraft:sapling:0,10",
+                                          "0,3,minecraft:sapling:1,10",
+                                          "0,3,minecraft:sapling:2,10",
+                                          "0,3,minecraft:sapling:3,10",
+                                          "0,3,minecraft:pumpkin_seeds:0,5",
+                                          "0,3,minecraft:melon_seeds:0,5",
+                                          "0,3,minecraft:beetroot_seeds:0,5",
+                                          "0,3,minecraft:carrot:0,5",
+                                          "0,3,minecraft:potato:0,5",
+                                          "0,3,minecraft:sapling:4,5",
+                                          "0,3,minecraft:sapling:5,5",
+
+                                          //Sand with string mesh
+                                          "1,0,minecraft:cactus,2.5",
+                                          "1,0,minecraft:reeds,2.5",
+
+                                          //Sand with flint mesh
+                                          "1,1,minecraft:cactus,5",
+                                          "1,1,minecraft:reeds,5",
+                                          "1,1,minecraft:gold_nugget,5",
+
+                                          //Sand with iron mesh
+                                          "1,2,minecraft:cactus,10",
+                                          "1,2,minecraft:reeds,10",
+                                          "1,2,minecraft:dye:3,10",
+                                          "1,2,minecraft:gold_nugget,10",
+
+                                          //Sand with diamond mesh
+                                          "1,3,minecraft:cactus,15",
+                                          "1,3,minecraft:reeds,15",
+                                          "1,3,minecraft:dye:3,15",
+                                          "1,3,minecraft:gold_nugget,15",
+
+                                          //Gravel with string mesh
+                                          "2,0,minecraft:iron_nugget,5",
+                                          "2,0,minecraft:flint,5",
+                                          "2,0,minecraft:coal,5",
+
+                                          //Gravel with flint mesh
+                                          "2,1,minecraft:redstone,10",
+                                          "2,1,minecraft:iron_nugget,10",
+                                          "2,1,minecraft:flint,10",
+                                          "2,1,minecraft:coal,10",
+
+                                          //Gravel with iron mesh
+                                          "2,2,minecraft:redstone,15",
+                                          "2,2,minecraft:iron_nugget,15",
+                                          "2,2,minecraft:coal,15",
+                                          "2,2,minecraft:dye:4,5",
+                                          "2,2,minecraft:iron_ingot,1",
+                                          "2,2,minecraft:gold_ingot,1",
+                                          "2,2,minecraft:emerald,1",
+                                          "2,2,minecraft:diamond,1",
+
+                                          //Gravel with diamond mesh
+                                          "2,3,minecraft:redstone,20",
+                                          "2,3,minecraft:coal,20",
+                                          "2,3,minecraft:dye:4,10",
+                                          "2,3,minecraft:iron_ingot,2.5",
+                                          "2,3,minecraft:gold_ingot,2.5",
+                                          "2,3,minecraft:emerald,2.5",
+                                          "2,3,minecraft:diamond,2.5",
+
+                                          //Soulsand with string mesh
+                                          "3,0,minecraft:nether_wart,5",
+                                          "3,0,minecraft:quartz,5",
+
+                                          //Soulsand with flint mesh
+                                          "3,1,minecraft:nether_wart,10",
+                                          "3,1,minecraft:quartz,10",
+                                          "3,1,minecraft:glowstone_dust,5",
+
+                                          //Soulsand with iron mesh
+                                          "3,2,minecraft:nether_wart,10",
+                                          "3,2,minecraft:quartz,10",
+                                          "3,2,minecraft:glowstone_dust,10",
+                                          "3,2,minecraft:blaze_powder,1",
+                                          "3,2,minecraft:magma_cream,1",
+
+                                          //Soulsand with diamond mesh
+                                          "3,3,minecraft:nether_wart,15",
+                                          "3,3,minecraft:quartz,15",
+                                          "3,3,minecraft:glowstone_dust,15",
+                                          "3,3,minecraft:blaze_powder,5",
+                                          "3,3,minecraft:magma_cream,5",
+                                          "3,3,minecraft:skull:3,5",
+                                        };
+
+        @Config.Comment("Chance to get a sponge drop for the fisherman starting at level 4.")
+        public double fisherSpongeChance = 0.1;
     }
 
     public static class Compatibility
