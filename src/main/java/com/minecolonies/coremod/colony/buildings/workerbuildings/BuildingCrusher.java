@@ -231,9 +231,12 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         super.writeToNBT(compound);
         compound.setInteger(TAG_DAILY, dailyQuantity);
         compound.setInteger(TAG_CURRENT_DAILY, currentDailyQuantity);
-        final NBTTagCompound crusherModeNBT = new NBTTagCompound();
-        crusherMode.getItemStack().writeToNBT(crusherModeNBT);
-        compound.setTag(TAG_CRUSHER_MODE, crusherModeNBT);
+        if (crusherMode != null)
+        {
+            final NBTTagCompound crusherModeNBT = new NBTTagCompound();
+            crusherMode.getItemStack().writeToNBT(crusherModeNBT);
+            compound.setTag(TAG_CRUSHER_MODE, crusherModeNBT);
+        }
     }
 
     @Override
