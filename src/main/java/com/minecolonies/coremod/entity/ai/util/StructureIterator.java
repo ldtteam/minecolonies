@@ -372,7 +372,7 @@ public class StructureIterator
                                                                                          || !structureBlock.metadata.getMaterial().isSolid());
             case SPAWN:
                 return advanceBlocks(this.theStructure::decrementBlock, structureBlock ->
-                                                                       structureBlock.entity == null);
+                                                                          structureBlock.entity == null || structureBlock.entity.length <= 0);
             case DECORATE:
                 return advanceBlocks(this.theStructure::incrementBlock, structureBlock ->
                                                                        structureBlock.doesStructureBlockEqualWorldBlock()
