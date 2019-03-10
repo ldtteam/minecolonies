@@ -421,7 +421,7 @@ public class StructureIterator
         final NBTTagCompound[] entityData;
         if (stage == Stage.SPAWN)
         {
-            entityData = Arrays.stream(this.theStructure.getEntityData()).filter(data -> isAtPos(data, this.theStructure.getLocalPosition())).toArray(NBTTagCompound[]::new);
+            entityData = Arrays.stream(this.theStructure.getEntityData()).filter(data -> data != null && isAtPos(data, this.theStructure.getLocalPosition())).toArray(NBTTagCompound[]::new);
         }
         else
         {
@@ -436,17 +436,13 @@ public class StructureIterator
                                    BlockPosUtil.getBlockState(targetWorld, this.theStructure.getBlockPosition()));
     }
 
-    private boolean isAtPos(final NBTTagCompound entityData, final BlockPos pos)
+    private boolean isAtPos(@NotNull final NBTTagCompound entityData, final BlockPos pos)
     {
-        if (entityData != null)
-        {
-            final NBTTagList list = entityData.getTagList("Pos", 6);
-            final int x = (int) list.getDoubleAt(0);
-            final int y = (int) list.getDoubleAt(1);
-            final int z = (int) list.getDoubleAt(2);
-            return new BlockPos(x, y, z).equals(pos);
-        }
-        return false;
+        final NBTTagList list = entityData.getTagList("Pos", 6);
+        final int x = (int) list.getDoubleAt(0);
+        final int y = (int) list.getDoubleAt(1);
+        final int z = (int) list.getDoubleAt(2);
+        return new BlockPos(x, y, z).equals(pos);
     }
 
     /**
