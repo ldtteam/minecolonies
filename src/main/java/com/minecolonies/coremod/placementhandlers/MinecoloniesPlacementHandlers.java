@@ -288,7 +288,7 @@ public final class MinecoloniesPlacementHandlers
             {
                 itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
             }
-            itemList.addAll(getItemsFromTileEntity(tileEntityData, world));
+            itemList.addAll(ItemStackUtils.getItemStacksOfTileEntity(tileEntityData, world));
             itemList.removeIf(ItemStackUtils::isEmpty);
 
             return itemList;

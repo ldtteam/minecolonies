@@ -1,19 +1,21 @@
 package com.minecolonies.api.compatibility.candb;
 
+import com.minecolonies.api.crafting.ItemStorage;
 import mod.chiselsandbits.api.IBitAccess;
 import mod.chiselsandbits.api.IBitBrush;
 import mod.chiselsandbits.api.IBitVisitor;
 import mod.chiselsandbits.api.IChiseledBlockTileEntity;
 import mod.chiselsandbits.chiseledblock.BlockChiseled;
+import mod.chiselsandbits.chiseledblock.ItemBlockChiseled;
+import mod.chiselsandbits.core.api.ChiselAndBitsAPI;
+import mod.chiselsandbits.items.ItemChiseledBit;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class is to store a check to see if a block is a chiselsandbits block.
@@ -78,18 +80,40 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
             final IBitAccess access = ((IChiseledBlockTileEntity) tileEntity).getBitAccess();
             final List<ItemStack> stacks = new ArrayList<>();
 
-            access.visitBits(new IBitVisitor()
-            {
-                @Override
-                public IBitBrush visitBit(final int x, final int y, final int z, final IBitBrush iBitBrush)
+            access.visitBits((x, y, z, iBitBrush) -> {
+                if (iBitBrush.getStateID() != 0)
                 {
-                    if (iBitBrush.getStateID() != 0)
-                    {
-                        stacks.add(iBitBrush.getItemStack(x));
-                    }
-                    return iBitBrush;
+                    stacks.add(iBitBrush.getItemStack(x));
                 }
+                return iBitBrush;
             });
+
+            final Map<ItemStorage, Integer> list = new HashMap<>();
+            for (final ItemStack stack : stacks)
+            {
+                ItemStorage tempStorage = new ItemStorage(stack.copy());
+                tempStorage.setAmount(1);
+                if (list.containsKey(tempStorage))
+                {
+                    final int oldSize = list.get(tempStorage);
+                    tempStorage.setAmount(tempStorage.getAmount() + oldSize);
+                }
+                list.put(tempStorage, tempStorage.getAmount());
+            }
+
+            stacks.clear();
+            for (final Map.Entry<ItemStorage, Integer> storage : list.entrySet())
+            {
+                int count = storage.getValue();
+                while (count > 0)
+                {
+                    final ItemStack stack = storage.getKey().getItemStack().copy();
+                    final int size = Math.min(stack.getMaxStackSize(), count);
+                    stack.setCount(size);
+                    stacks.add(stack);
+                    count -= size;
+                }
+            }
 
             return stacks;
         }

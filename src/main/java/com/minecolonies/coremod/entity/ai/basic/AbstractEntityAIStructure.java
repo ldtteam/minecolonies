@@ -39,10 +39,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -434,10 +431,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     final List<ItemStack> itemList = new ArrayList<>();
                     for (final ItemStack stack : requiredItems)
                     {
-                        itemList.add(this.getTotalAmount(this.getTotalAmount(stack)));
+                        itemList.add(this.getTotalAmount(stack));
                     }
 
-                    if (checkForListInInvAndRequest(this, itemList))
+                    if (checkForListInInvAndRequest(this, itemList, itemList.size() > 1))
                     {
                         return false;
                     }
@@ -503,14 +500,32 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * @param itemList the list to check.
      * @return true if need to request.
      */
-    public static boolean checkForListInInvAndRequest(@NotNull final AbstractEntityAIStructure<?> placer, final List<ItemStack> itemList)
+    public static boolean checkForListInInvAndRequest(@NotNull final AbstractEntityAIStructure<?> placer, final List<ItemStack> itemList, final boolean force)
     {
         final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(new InvWrapper(placer.getWorker().getInventoryCitizen()),
-          itemStack -> itemList.stream()
-                         .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack, true, true)));
-        itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream()
-                                                                              .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack,
-                                                                                targetStack, true, true)));
+          itemStack -> itemList.stream().anyMatch(targetStack -> targetStack.isItemEqual(targetStack)));
+        if (force)
+        {
+            for (final ItemStack foundStack : new ArrayList<>(foundStacks))
+            {
+                final Optional<ItemStack> opt = itemList.stream().filter(targetStack -> targetStack.isItemEqual(foundStack)).findFirst();
+                if (opt.isPresent())
+                {
+                    final ItemStack stack = opt.get();
+                    itemList.remove(stack);
+                    if (stack.getCount() > foundStack.getCount())
+                    {
+                        stack.setCount(stack.getCount() - foundStack.getCount());
+                        itemList.add(stack);
+                    }
+                }
+            }
+        }
+        else
+        {
+            itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream().anyMatch(target -> target.isItemEqual(itemStack)));
+        }
+
         for (final ItemStack placedStack : itemList)
         {
             if (ItemStackUtils.isEmpty(placedStack))
@@ -525,7 +540,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(placedStack))
                   .isEmpty())
             {
-                final Stack stackRequest = new Stack(placer.getTotalAmount(placedStack));
+                final Stack stackRequest = new Stack(placedStack);
                 placer.getWorker().getCitizenData().createRequest(stackRequest);
                 placer.registerBlockAsNeeded(placedStack);
                 return true;
@@ -609,7 +624,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 if (slot != -1)
                 {
                     final ItemStack container = tempStack.getItem().getContainerItem(tempStack);
-                    new InvWrapper(getInventory()).extractItem(slot, 1, false);
+                    new InvWrapper(getInventory()).extractItem(slot, tempStack.getCount(), false);
                     if (!ItemStackUtils.isEmpty(container))
                     {
                         new InvWrapper(getInventory()).insertItem(slot, container, false);
@@ -1016,7 +1031,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
                 if (!Configurations.gameplay.builderInfiniteResources)
                 {
-                    if (checkForListInInvAndRequest(this, new ArrayList<>(request)))
+                    if (checkForListInInvAndRequest(this, new ArrayList<>(request), true))
                     {
                         return false;
                     }
