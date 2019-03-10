@@ -438,11 +438,14 @@ public class StructureIterator
 
     private boolean isAtPos(final NBTTagCompound entityData, final BlockPos pos)
     {
-        final NBTTagList list = entityData.getTagList("Pos", 6);
-        final int x = (int) list.getDoubleAt(0);
-        final int y = (int) list.getDoubleAt(1);
-        final int z = (int) list.getDoubleAt(2);
-        return new BlockPos(x,y,z).equals(pos);
+        if (entityData != null)
+        {
+            final NBTTagList list = entityData.getTagList("Pos", 6);
+            final int x = (int) list.getDoubleAt(0);
+            final int y = (int) list.getDoubleAt(1);
+            final int z = (int) list.getDoubleAt(2);
+            return new BlockPos(x, y, z).equals(pos);
+        }
     }
 
     /**
