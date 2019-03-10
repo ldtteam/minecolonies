@@ -446,6 +446,7 @@ public class StructureIterator
             final int z = (int) list.getDoubleAt(2);
             return new BlockPos(x, y, z).equals(pos);
         }
+        return false;
     }
 
     /**
