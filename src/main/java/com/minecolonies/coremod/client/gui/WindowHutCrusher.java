@@ -54,7 +54,7 @@ public class WindowHutCrusher extends AbstractWindowWorkerBuilding<BuildingCrush
 
         registerButton(BLOCK_BUTTON, this::switchCrushingMode);
         registerButton(BUTTON_SAVE, this::saveCrushingMode);
-        mode = building.getCrusherMode().getFirst();
+        this.mode = building.getCrusherMode().getFirst();
         crushingSettingsInput.setText(building.getCrusherMode().getSecond().toString());
         setupSettings(crushingSettingsButton);
     }
@@ -102,7 +102,10 @@ public class WindowHutCrusher extends AbstractWindowWorkerBuilding<BuildingCrush
      */
     private void setupSettings(final Button crushingSettingsButton)
     {
-        crushingSettingsButton.setLabel(this.mode.getItemStack().getDisplayName());
+        if (this.mode != null)
+        {
+            crushingSettingsButton.setLabel(this.mode.getItemStack().getDisplayName());
+        }
     }
 
     @NotNull
