@@ -1141,6 +1141,46 @@ public final class WindowConstants
     public static final String BUTTON_EDIT_NAME = "editName";
 
     /**
+     * Id of the done button in the GUI.
+     */
+    public static final String BUTTON_MODE = "mode";
+
+    /**
+     * Id of the citizen list in the GUI.
+     */
+    public static final String CITIZEN_LIST_UNEMP = "unemployed";
+
+    /**
+     * Id of the attributes label in the GUI.
+     */
+    public static final String ATTRIBUTES_LABEL = "attributes";
+
+    /**
+     * Link to the xml file of the window.
+     */
+    public static final String HIRE_WORKER_SUFFIX = ":gui/windowhireworker.xml";
+
+    /**
+     * Id of the fire button
+     */
+    public static final String BUTTON_FIRE = "fire";
+
+    /**
+     * Id of the automatic hiring warning
+     */
+    public static final String AUTO_HIRE_WARN = "autoHireWarn";
+
+    /**
+     * Id of the pause button
+     */
+    public static final String BUTTON_PAUSE = "pause";
+
+    /**
+     * Id of the pause button
+     */
+    public static final String BUTTON_RESTART = "restart";
+
+    /**
      * public constructor to hide implicit public one.
      */
     private WindowConstants()

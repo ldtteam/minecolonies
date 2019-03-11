@@ -248,6 +248,11 @@ public final class NbtTagConstants
     public static final String TAG_WORKER = "worker";
 
     /**
+     * Tag to store the buildings hiring mode.
+     */
+    public static final String TAG_HIRING_MODE = "buildingHiringMode";
+
+    /**
      * NBTTag to store the recipes list.
      */
     public static final String TAG_RECIPES = "recipes";
