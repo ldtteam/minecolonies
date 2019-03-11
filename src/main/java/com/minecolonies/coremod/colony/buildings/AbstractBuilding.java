@@ -413,6 +413,25 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
+     * Set the custom building name of the building.
+     * @param name the name to set.
+     */
+    public void setCustomBuildingName(final String name)
+    {
+        this.customName = name;
+        this.markDirty();
+    }
+
+    /**
+     * Check if the building should be gathered by the dman.
+     * @return true if so.
+     */
+    public boolean canBeGathered()
+    {
+        return true;
+    }
+
+    /**
      * Set if a building is being gathered.
      *
      * @param gathering value to set.
@@ -1196,15 +1215,5 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         return Optional.of(getColony().getCitizenManager().getCitizen(citizenID));
     }
-
-    /**
-     * Check if the building should be gathered by the dman.
-     * @return true if so.
-     */
-    public boolean canBeGathered()
-    {
-        return true;
-    }
-
     //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//
 }

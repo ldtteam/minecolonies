@@ -17,6 +17,7 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.network.messages.HutRenameMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -509,5 +510,16 @@ public abstract class AbstractBuildingView implements IRequester
     public ImmutableCollection<IToken<?>> getResolverIds()
     {
         return resolvers;
+    }
+
+    /**
+     * Setter for the custom name.
+     * Sets the name on the client side and sends it to the server.
+     * @param name the new name.
+     */
+    public void setCustomName(final String name)
+    {
+        this.customName = name;
+        MineColonies.getNetwork().sendToServer(new HutRenameMessage(colony, name, this));
     }
 }
