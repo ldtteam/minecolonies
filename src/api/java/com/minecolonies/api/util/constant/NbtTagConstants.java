@@ -79,15 +79,16 @@ public final class NbtTagConstants
     public static final String TAG_NO_TOOLS_NUMBER_DAYS   = "numberOfDaysNoTools";
     public static final String TAG_NO_TOOLS_TOOL_TYPE     = "toolType";
     public static final String TAG_IS_BUILT               = "isBuilt";
-    public static final String TAG_OTHER_LEVEL     = "otherLevel";
-    public static final String TAG_PASTEABLE       = "isPasteable";
-    public static final String TAG_STRING_NAME     = "Name";
-    public static final String TAG_DISPLAY         = "display";
-    public static final String TAG_NEED_TO_MOURN   = "needToMourn";
-    public static final String TAG_MOURNING        = "mourning";
-    public static final String TAG_PAUSED          = "paused";
-    public static final String TAG_CHILD           = "child";
-    public static final String TAG_BOUGHT_CITIZENS = "bought_citizen";
+    public static final String TAG_CUSTOM_NAME            = "customName";
+    public static final String TAG_OTHER_LEVEL            = "otherLevel";
+    public static final String TAG_PASTEABLE              = "isPasteable";
+    public static final String TAG_STRING_NAME            = "Name";
+    public static final String TAG_DISPLAY                = "display";
+    public static final String TAG_NEED_TO_MOURN          = "needToMourn";
+    public static final String TAG_MOURNING               = "mourning";
+    public static final String TAG_PAUSED                 = "paused";
+    public static final String TAG_CHILD                  = "child";
+    public static final String TAG_BOUGHT_CITIZENS        = "bought_citizen";
 
     /**
      * Tag used to store the containers to NBT.
@@ -358,7 +359,6 @@ public final class NbtTagConstants
     public static final String TAG_RAID_MANAGER   = "raidManager";
     public static final String TAG_SCHEMATIC_LIST = "ships";
 
-
     /**
      * String to store the existing time to NBT.
      */
@@ -397,10 +397,10 @@ public final class NbtTagConstants
     /**
      * Archery building constants.
      */
-    public static final String TAG_COMBAT_TARGET = "combatTarget";
+    public static final String TAG_COMBAT_TARGET  = "combatTarget";
     public static final String TAG_COMBAT_PARTNER = "combatPartner";
-    public static final String TAG_PARTNER1 = "combatPartner1";
-    public static final String TAG_PARTNER2 = "combatPartner2";
+    public static final String TAG_PARTNER1       = "combatPartner1";
+    public static final String TAG_PARTNER2       = "combatPartner2";
 
     /**
      * Crusher building constants.

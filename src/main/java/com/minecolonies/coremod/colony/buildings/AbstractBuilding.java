@@ -100,6 +100,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     private boolean isBuilt = false;
 
     /**
+     * The custom name of the building, empty by default.
+     */
+    private String customName = "";
+
+    /**
      * Constructor for a AbstractBuilding.
      *
      * @param colony Colony the building belongs to.
@@ -113,19 +118,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         setupRsDataStore();
     }
 
-    @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    /**
+     * Getter for the custom name of a building.
+     * @return the custom name.
+     */
+    @NotNull
+    public String getCustomBuildingName()
     {
-        super.readFromNBT(compound);
-        loadRequestSystemFromNBT(compound);
-        if (compound.hasKey(TAG_IS_BUILT))
-        {
-            isBuilt = compound.getBoolean(TAG_IS_BUILT);
-        }
-        else if (getBuildingLevel() > 0)
-        {
-            isBuilt = true;
-        }
+        return this.customName;
     }
 
     /**
@@ -179,11 +179,31 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        loadRequestSystemFromNBT(compound);
+        if (compound.hasKey(TAG_IS_BUILT))
+        {
+            isBuilt = compound.getBoolean(TAG_IS_BUILT);
+        }
+        else if (getBuildingLevel() > 0)
+        {
+            isBuilt = true;
+        }
+        if (compound.hasKey(TAG_CUSTOM_NAME))
+        {
+            this.customName = compound.getString(TAG_CUSTOM_NAME);
+        }
+    }
+
+    @Override
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
         writeRequestSystemToNBT(compound);
         compound.setBoolean(TAG_IS_BUILT, isBuilt);
+        compound.setString(TAG_CUSTOM_NAME, customName);
     }
 
     /**
@@ -365,6 +385,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         buf.writeInt(getCurrentWorkOrderLevel());
         ByteBufUtils.writeUTF8String(buf, getStyle());
         ByteBufUtils.writeUTF8String(buf, this.getSchematicName());
+        ByteBufUtils.writeUTF8String(buf, this.getCustomBuildingName());
+
         buf.writeInt(getRotation());
         buf.writeBoolean(isMirrored());
         final NBTTagCompound requestSystemCompound = new NBTTagCompound();

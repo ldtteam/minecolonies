@@ -114,6 +114,11 @@ public abstract class AbstractBuildingView implements IRequester
     private String style;
 
     /**
+     * The custom name of the building.
+     */
+    private String customName = "";
+
+    /**
      * Creates a building view.
      *
      * @param c ColonyView the building is in.
@@ -196,6 +201,15 @@ public abstract class AbstractBuildingView implements IRequester
     public String getSchematicName()
     {
         return schematicName;
+    }
+
+    /**
+     * Getter for the custom building name.
+     * @return the name.
+     */
+    public String getCustomName()
+    {
+        return this.customName;
     }
 
     /**
@@ -295,6 +309,8 @@ public abstract class AbstractBuildingView implements IRequester
         workOrderLevel = buf.readInt();
         style = ByteBufUtils.readUTF8String(buf);
         schematicName = ByteBufUtils.readUTF8String(buf);
+        customName = ByteBufUtils.readUTF8String(buf);
+
         rotation = buf.readInt();
         isBuildingMirrored = buf.readBoolean();
 

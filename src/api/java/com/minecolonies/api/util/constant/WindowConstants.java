@@ -796,7 +796,7 @@ public final class WindowConstants
     public static final int XP_BAR_EMPTY_ROW = 64;
 
     /**
-     * The row where the emtpy Happiness bar starts. 
+     * The row where the emtpy Happiness bar starts.
      */
 
     public static final int HAPPINESS_BAR_EMPTY_ROW = 74;
@@ -807,7 +807,7 @@ public final class WindowConstants
     public static final int XP_BAR_FULL_ROW = 69;
 
     /**
-     * The row where the full happiness bar starts. 
+     * The row where the full happiness bar starts.
      */
     public static final int HAPPINESS_BAR_FULL_ROW = 79;
 
@@ -962,7 +962,7 @@ public final class WindowConstants
     public static final String WINDOW_ID_XP = "xpLabel";
 
     /**
-     * The label to find the happiness label in the gui. 
+     * The label to find the happiness label in the gui.
      */
     public static final String WINDOW_ID_HAPPINESS = "happinessLabel";
 
@@ -1002,7 +1002,7 @@ public final class WindowConstants
     public static final String WINDOW_ID_SATURATION_BAR = "saturationBar";
 
     /**
-     * The saturation bar of the citizen. 
+     * The saturation bar of the citizen.
      */
     public static final String WINDOW_ID_HAPPINESS_BAR = "happinessBar";
 
@@ -1134,6 +1134,11 @@ public final class WindowConstants
      * Id of the job label in the GUI.
      */
     public static final String CITIZEN_LIVING = "living";
+
+    /**
+     * Edit button for the hut name.
+     */
+    public static final String BUTTON_EDIT_NAME = "editName";
 
     /**
      * public constructor to hide implicit public one.

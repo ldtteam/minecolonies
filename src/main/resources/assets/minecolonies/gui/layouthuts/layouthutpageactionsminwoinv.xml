@@ -6,6 +6,7 @@
     <image source="minecolonies:textures/gui/builderhut/builder_sketch_center.png" size="90 15" pos="50 12"/>
     <image source="minecolonies:textures/gui/builderhut/builder_sketch_right.png" size="6 15" pos="140 12"/>
     <label id="name" size="90 11" pos="50 14" textalign="MIDDLE" color="red"/>
+    <buttonimage id="editName" size="15 15" pos="27 12" source="minecolonies:textures/gui/builderhut/edit.png"/>
 
     <buttonimage id="build" size="129 17" pos="30 110" textcolor="black"
                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"

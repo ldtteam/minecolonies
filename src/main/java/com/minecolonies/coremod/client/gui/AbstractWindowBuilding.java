@@ -41,8 +41,18 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
         this.building = building;
         registerButton(BUTTON_BUILD, this::buildClicked);
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
+        registerButton(BUTTON_EDIT_NAME, this::editName);
+
         title = findPaneOfTypeByID(LABEL_BUILDING_NAME, Label.class);
         buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
+    }
+
+    /**
+     * Edit custom name action.
+     */
+    private void editName()
+    {
+
     }
 
     /**
@@ -87,15 +97,16 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
 
             if (title != null)
             {
+                final String name = building.getCustomName().isEmpty() ? LanguageHandler.format(getBuildingName()) : building.getCustomName();
                 if (switchView.getID().equals(GUI_LIST_BUTTON_SWITCH + PAGE_ACTIONS))
                 {
                     // Townhall does not need level in colony name
-                    title.setLabelText(getBuildingName());
+                    title.setLabelText(name);
                     findPaneOfTypeByID(LEVEL_LABEL, Label.class).setLabelText(LanguageHandler.format(CMC_GUI_TOWNHALL_BUILDING_LEVEL) + ": " + buildingView.getBuildingLevel());
                 }
                 else
                 {
-                    title.setLabelText(LanguageHandler.format(getBuildingName()) + " " + buildingView.getBuildingLevel());
+                    title.setLabelText(name + " " + buildingView.getBuildingLevel());
                 }
             }
 
