@@ -1,6 +1,8 @@
 package com.minecolonies.api.compatibility.candb;
 
 import mod.chiselsandbits.api.*;
+import mod.chiselsandbits.api.APIExceptions.InvalidBitItem;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -74,18 +76,38 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
             final IBitAccess access = ((IChiseledBlockTileEntity) tileEntity).getBitAccess();
             final List<ItemStack> stacks = new ArrayList<>();
 
-            access.visitBits(new IBitVisitor()
+            access.getStateCounts().forEach(stateCount ->
             {
-                @Override
-                public IBitBrush visitBit(final int x, final int y, final int z, final IBitBrush iBitBrush)
-                {
-                    if (iBitBrush.getStateID() != 0)
-                    {
-                        stacks.add(iBitBrush.getItemStack(x));
-                    }
-                    return iBitBrush;
-                }
-            });
+            	if (stateCount.stateId == 0)
+            		return;
+
+            	final ItemStack bitStack;
+    			try
+    			{
+    				bitStack = ChiselsAndBitsAPI.instance().getBitItem(Block.getStateById(stateCount.stateId));
+    			}
+    			catch (InvalidBitItem e)
+    			{
+    				return;
+    			}
+    			if (bitStack.isEmpty())
+    				return;
+
+    			int count = stateCount.quantity;
+    			int max = bitStack.getMaxStackSize();
+    			while (count > max)
+    			{
+    				final ItemStack copy = bitStack.copy();
+    				copy.setCount(max);
+    				stacks.add(copy);
+    				count -= max;
+    			}
+    			if (count > 0)
+    			{
+    				bitStack.setCount(count);
+    				stacks.add(bitStack);
+    			}
+    		});
 
             return stacks;
         }
