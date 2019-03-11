@@ -1,10 +1,6 @@
 package com.minecolonies.api.compatibility.candb;
 
-import mod.chiselsandbits.api.IBitAccess;
-import mod.chiselsandbits.api.IBitBrush;
-import mod.chiselsandbits.api.IBitVisitor;
-import mod.chiselsandbits.api.IChiseledBlockTileEntity;
-import mod.chiselsandbits.chiseledblock.BlockChiseled;
+import mod.chiselsandbits.api.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -59,7 +55,7 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
     @Optional.Method(modid = CANDB)
     public boolean checkForChiselAndBitsBlock(@NotNull final IBlockState blockState)
     {
-        return blockState.getBlock() instanceof BlockChiseled;
+        return blockState.getBlock() instanceof IMultiStateBlock;
     }
 
     @Override
