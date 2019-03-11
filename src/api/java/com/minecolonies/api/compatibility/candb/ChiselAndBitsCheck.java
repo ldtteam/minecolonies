@@ -78,36 +78,36 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
 
             access.getStateCounts().forEach(stateCount ->
             {
-            	if (stateCount.stateId == 0)
-            		return;
+                if (stateCount.stateId == 0)
+                    return;
 
-            	final ItemStack bitStack;
-    			try
-    			{
-    				bitStack = ChiselsAndBitsAPI.instance().getBitItem(Block.getStateById(stateCount.stateId));
-    			}
-    			catch (InvalidBitItem e)
-    			{
-    				return;
-    			}
-    			if (bitStack.isEmpty())
-    				return;
+                final ItemStack bitStack;
+                try
+                {
+                    bitStack = ChiselsAndBitsAPI.instance().getBitItem(Block.getStateById(stateCount.stateId));
+                }
+                catch (InvalidBitItem e)
+                {
+                    return;
+                }
+                if (bitStack.isEmpty())
+                    return;
 
-    			int count = stateCount.quantity;
-    			int max = bitStack.getMaxStackSize();
-    			while (count > max)
-    			{
-    				final ItemStack copy = bitStack.copy();
-    				copy.setCount(max);
-    				stacks.add(copy);
-    				count -= max;
-    			}
-    			if (count > 0)
-    			{
-    				bitStack.setCount(count);
-    				stacks.add(bitStack);
-    			}
-    		});
+                int count = stateCount.quantity;
+                int max = bitStack.getMaxStackSize();
+                while (count > max)
+                {
+                    final ItemStack copy = bitStack.copy();
+                    copy.setCount(max);
+                    stacks.add(copy);
+                    count -= max;
+                }
+                if (count > 0)
+                {
+                    bitStack.setCount(count);
+                    stacks.add(bitStack);
+                }
+            });
 
             return stacks;
         }
