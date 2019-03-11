@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "XTX",
-    "CBC",
+    "BBB",
     "XXX"
   ],
   "key": {
@@ -11,10 +11,7 @@
       "ore": "plankWood"
     },
     "B": {
-      "item": "minecraft:wool"
-    },
-    "C": {
-      "item": "minecraft:cobblestone"
+      "item": "minecraft:string"
     },
     "T": {
       "item": "structurize:sceptergold"
