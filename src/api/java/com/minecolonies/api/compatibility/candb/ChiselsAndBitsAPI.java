@@ -18,9 +18,9 @@ public class ChiselsAndBitsAPI implements IChiselsAndBitsAddon
 
     public static ItemStack getBitStack(int stateId)
     {
-    	try
+        try
         {
-    		return api.getBitItem(Block.getStateById(stateId));
+            return api.getBitItem(Block.getStateById(stateId));
         }
         catch (APIExceptions.InvalidBitItem e)
         {
