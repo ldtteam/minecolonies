@@ -77,7 +77,9 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
             access.getStateCounts().forEach(stateCount ->
             {
                 if (stateCount.stateId == 0)
+                {
                     return;
+                }
 
                 final ItemStack bitStack;
                 try
@@ -89,7 +91,9 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
                     return;
                 }
                 if (bitStack.isEmpty())
+                {
                     return;
+                }
 
                 int count = stateCount.quantity;
                 final int max = bitStack.getMaxStackSize();
@@ -106,34 +110,6 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
                     stacks.add(bitStack);
                 }
             });
-
-            final Map<ItemStorage, Integer> list = new HashMap<>();
-            for (final ItemStack stack : stacks)
-            {
-                ItemStorage tempStorage = new ItemStorage(stack.copy());
-                tempStorage.setAmount(1);
-                if (list.containsKey(tempStorage))
-                {
-                    final int oldSize = list.get(tempStorage);
-                    tempStorage.setAmount(tempStorage.getAmount() + oldSize);
-                }
-                list.put(tempStorage, tempStorage.getAmount());
-            }
-
-            stacks.clear();
-            for (final Map.Entry<ItemStorage, Integer> storage : list.entrySet())
-            {
-                int count = storage.getValue();
-                while (count > 0)
-                {
-                    final ItemStack stack = storage.getKey().getItemStack().copy();
-                    final int size = Math.min(stack.getMaxStackSize(), count);
-                    stack.setCount(size);
-                    stacks.add(stack);
-                    count -= size;
-                }
-            }
-
             return stacks;
         }
         return Collections.emptyList();
