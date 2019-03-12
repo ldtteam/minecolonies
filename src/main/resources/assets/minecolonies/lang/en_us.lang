@@ -921,3 +921,4 @@ com.minecolonies.coremod.sifter.toomuch=Set to the current daily max of %d.
 com.minecolonies.coremod.gui.building.rename.title=Rename Your Building
 com.minecolonies.coremod.job.crusher=Crusher
 com.minecolonies.coremod.job.sifter=Sifter
+com.minecolonies.coremod.gui.name.tooLong=We reduced the string to "%s" since it exceeded the limit of 15 letters.

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.ButtonHandler;
@@ -7,18 +8,29 @@ import com.minecolonies.blockout.controls.TextField;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Window for a hut name entry.
  */
 public class WindowHutNameEntry extends Window implements ButtonHandler
 {
-    private static final String BUTTON_DONE                   = "done";
-    private static final String BUTTON_CANCEL                 = "cancel";
-    private static final String INPUT_NAME                    = "name";
+    /**
+     * The max length of the name.
+     */
+    private static final int MAX_NAME_LENGTH = 15;
+
+    /**
+     * Resource suffix of GUI xml file.
+     */
     private static final String HUT_NAME_RESOURCE_SUFFIX = ":gui/windowhutnameentry.xml";
 
+    /**
+     * The building associated to the GUI.
+     */
     private final AbstractBuildingView building;
 
     /**
@@ -43,11 +55,15 @@ public class WindowHutNameEntry extends Window implements ButtonHandler
     {
         if (button.getID().equals(BUTTON_DONE))
         {
-            final String name = findPaneOfTypeByID(INPUT_NAME, TextField.class).getText();
-            if (!name.isEmpty())
+            String name = findPaneOfTypeByID(INPUT_NAME, TextField.class).getText();
+
+            if (name.length() > MAX_NAME_LENGTH)
             {
-                building.setCustomName(name);
+                name = name.substring(0, MAX_NAME_LENGTH);
+                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.gui.name.tooLong", name);
             }
+
+            building.setCustomName(name);
         }
         else if (!button.getID().equals(BUTTON_CANCEL))
         {
