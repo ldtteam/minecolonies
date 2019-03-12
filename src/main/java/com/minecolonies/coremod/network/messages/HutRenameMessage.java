@@ -92,7 +92,6 @@ public class HutRenameMessage extends AbstractMessage<HutRenameMessage, IMessage
             if (b != null)
             {
                 b.setCustomBuildingName(message.name);
-                MineColonies.getNetwork().sendToAll(message);
             }
         }
     }
