@@ -94,7 +94,7 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
                     return;
 
                 int count = stateCount.quantity;
-                int max = bitStack.getMaxStackSize();
+                final int max = bitStack.getMaxStackSize();
                 while (count > max)
                 {
                     final ItemStack copy = bitStack.copy();
