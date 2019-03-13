@@ -925,3 +925,4 @@ com.minecolonies.coremod.gui.buildinghiremode=Building Hiring Mode:
 com.minecolonies.coremod.gui.hiringmode.default=Default (Colony override)
 com.minecolonies.coremod.gui.hiringmode.auto=Automatic
 com.minecolonies.coremod.gui.hiringmode.manual=Manual
+com.minecolonies.coremod.gui.name.tooLong=We reduced the string to "%s" since it exceeded the limit of 15 letters.

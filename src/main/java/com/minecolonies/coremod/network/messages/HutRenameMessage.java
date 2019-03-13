@@ -21,16 +21,6 @@ import org.jetbrains.annotations.NotNull;
 public class HutRenameMessage extends AbstractMessage<HutRenameMessage, IMessage>
 {
     /**
-     * The max length of the name.
-     */
-    private static final int MAX_NAME_LENGTH = 25;
-
-    /**
-     * Max substring length.
-     */
-    private static final int SUBSTRING_LENGTH = MAX_NAME_LENGTH - 1;
-
-    /**
      * The colony id.
      */
     private int colonyId;
@@ -68,7 +58,7 @@ public class HutRenameMessage extends AbstractMessage<HutRenameMessage, IMessage
     {
         super();
         this.colonyId = colony.getID();
-        this.name = (name.length() <= MAX_NAME_LENGTH) ? name : name.substring(0, SUBSTRING_LENGTH);
+        this.name = name;
         this.dimension = colony.getDimension();
         this.buildingId = b.getID();
     }
@@ -101,9 +91,7 @@ public class HutRenameMessage extends AbstractMessage<HutRenameMessage, IMessage
 
             if (b != null)
             {
-                message.name = (message.name.length() <= MAX_NAME_LENGTH) ? message.name : message.name.substring(0, SUBSTRING_LENGTH);
                 b.setCustomBuildingName(message.name);
-                MineColonies.getNetwork().sendToAll(message);
             }
         }
     }

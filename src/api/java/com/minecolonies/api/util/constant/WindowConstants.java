@@ -1181,6 +1181,11 @@ public final class WindowConstants
     public static final String BUTTON_RESTART = "restart";
 
     /**
+     * Edit button for the hut name.
+     */
+    public static final String BUTTON_EDIT_NAME = "editName";
+
+    /**
      * public constructor to hide implicit public one.
      */
     private WindowConstants()
