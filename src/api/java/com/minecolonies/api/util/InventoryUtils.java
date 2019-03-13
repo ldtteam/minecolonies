@@ -521,11 +521,18 @@ public class InventoryUtils
     @NotNull
     public static Set<IItemHandler> getItemHandlersFromProvider(@NotNull final ICapabilityProvider provider)
     {
-        final Set<IItemHandler> handlerList = Arrays.stream(EnumFacing.VALUES)
-                                                .filter(facing -> provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
-                                                .map(facing -> provider.getCapability(ITEM_HANDLER_CAPABILITY, facing))
-                                                .filter(Objects::nonNull)
-                                                .collect(Collectors.toSet());
+        final Set<IItemHandler> handlerList = new HashSet<>();
+        Arrays.stream(EnumFacing.VALUES)
+          .filter(facing -> provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
+          .map(facing -> provider.getCapability(ITEM_HANDLER_CAPABILITY, facing))
+          .filter(Objects::nonNull)
+          .forEach(handler -> {
+              if (!handlerList.contains(handler))
+              {
+                  handlerList.add(handler);
+              }
+          });
+
 
         if (provider.hasCapability(ITEM_HANDLER_CAPABILITY, null))
         {
@@ -2544,9 +2551,11 @@ public class InventoryUtils
                 if (removeStackFromItemHandler(sourceInventory, itemStack))
                 {
                     ItemStack forcingResult = forceItemStackToItemHandler(targetInventory, itemStack, wantToKeep);
-                    addItemStackToItemHandler(sourceInventory, forcingResult);
 
-                    break;
+                    if (forcingResult != null && !forcingResult.isEmpty())
+                    {
+                        addItemStackToItemHandler(sourceInventory, forcingResult);
+                    }
                 }
             }
 

@@ -554,13 +554,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 {
                     final List<ItemStack> niceToHave = itemsNiceToHave();
                     final List<ItemStack> contained = InventoryUtils.getContainedFromItemHandler(firstDeliverableRequest.getDeliveries(), worker.getItemHandlerCitizen());
-                    final List<ItemStack> missing = InventoryUtils.getMissingFromItemHandler(firstDeliverableRequest.getDeliveries(), worker.getItemHandlerCitizen());
-                    missing.addAll(firstDeliverableRequest.getDeliveries());
 
                     InventoryUtils.moveItemStacksWithPossibleSwap(
                       worker.getItemHandlerCitizen(),
                       InventoryUtils.getItemHandlersFromProvider(getOwnBuilding()),
-                      missing,
+                      firstDeliverableRequest.getDeliveries(),
                       itemStack ->
                         contained.stream().anyMatch(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack)) ||
                         niceToHave.stream().anyMatch(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack))

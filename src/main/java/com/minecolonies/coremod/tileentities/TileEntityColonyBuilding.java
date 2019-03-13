@@ -399,7 +399,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     @Override
     public boolean hasCapability(@NotNull final Capability<?> capability, final EnumFacing facing)
     {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null)
         {
             return true;
         }
@@ -409,35 +409,40 @@ public class TileEntityColonyBuilding extends TileEntityChest
     @Override
     public <T> T getCapability(@NotNull final Capability<T> capability, final EnumFacing facing)
     {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getBuilding() != null)
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null)
         {
-            //Add additional containers
-            final Set<ICapabilityProvider> providers = new HashSet<>();
-            final World world = colony.getWorld();
-            if (world != null)
+            if (getBuilding() != null)
             {
                 //Add additional containers
-                providers.addAll(building.getAdditionalCountainers().stream()
-                                   .map(world::getTileEntity)
-                                   .collect(Collectors.toSet()));
-                providers.removeIf(Objects::isNull);
-            }
+                final Set<ICapabilityProvider> providers = new HashSet<>();
+                final World world = colony.getWorld();
+                if (world != null)
+                {
+                    //Add additional containers
+                    providers.addAll(building.getAdditionalCountainers().stream()
+                                       .map(world::getTileEntity)
+                                       .collect(Collectors.toSet()));
+                    providers.removeIf(Objects::isNull);
+                }
 
-            final List<IItemHandler> handlers  = providers.stream()
-                             .flatMap(provider -> InventoryUtils.getItemHandlersFromProvider(provider).stream())
-                             .collect(Collectors.toList());
-            final T cap = super.getCapability(capability, facing);
-            if (cap instanceof IItemHandler)
-            {
-                handlers.add((IItemHandler) cap);
-            }
+                final List<IItemHandler> handlers = providers.stream()
+                                                      .flatMap(provider -> InventoryUtils.getItemHandlersFromProvider(provider).stream())
+                                                      .collect(Collectors.toList());
+                final T cap = super.getCapability(capability, facing);
+                if (cap instanceof IItemHandler)
+                {
+                    handlers.add((IItemHandler) cap);
+                }
 
-            return (T) new CombinedItemHandler(building.getSchematicName(), handlers.stream()
-                                                                     .map(handler -> (IItemHandlerModifiable) handler)
-                                                                              .distinct()
-                                                                              .filter(handler -> handler instanceof IItemHandlerModifiable && handler.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
-                                                                              .toArray(IItemHandlerModifiable[]::new));
+                return (T) new CombinedItemHandler(building.getSchematicName(), handlers.stream()
+                                                                                  .map(handler -> (IItemHandlerModifiable) handler)
+                                                                                  .distinct()
+                                                                                  .filter(handler -> handler instanceof IItemHandlerModifiable
+                                                                                                       && handler.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
+                                                                                  .toArray(IItemHandlerModifiable[]::new));
+            }
+            return super.getCapability(capability, facing);
         }
-        return super.getCapability(capability, facing);
+        return null;
     }
 }

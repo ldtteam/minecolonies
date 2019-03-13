@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
@@ -526,9 +527,21 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream().anyMatch(target -> target.isItemEqual(itemStack)));
         }
 
-        for (final ItemStack placedStack : itemList)
+        final Map<ItemStorage, Integer> list = new HashMap<>();
+        for (final ItemStack stack : itemList)
         {
-            if (ItemStackUtils.isEmpty(placedStack))
+            ItemStorage tempStorage = new ItemStorage(stack.copy());
+            if (list.containsKey(tempStorage))
+            {
+                final int oldSize = list.get(tempStorage);
+                tempStorage.setAmount(tempStorage.getAmount() + oldSize);
+            }
+            list.put(tempStorage, tempStorage.getAmount());
+        }
+
+        for (final Map.Entry<ItemStorage, Integer> placedStack : list.entrySet())
+        {
+            if (ItemStackUtils.isEmpty(placedStack.getKey().getItemStack()))
             {
                 return true;
             }
@@ -537,12 +550,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                   .getOpenRequestsOfTypeFiltered(
                     placer.getWorker().getCitizenData(),
                     TypeConstants.DELIVERABLE,
-                    (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(placedStack))
+                    (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(placedStack.getKey().getItemStack()))
                   .isEmpty())
             {
-                final Stack stackRequest = new Stack(placedStack);
+                final Stack stackRequest = new Stack(placedStack.getKey().getItemStack());
+                stackRequest.setCount(placedStack.getValue());
                 placer.getWorker().getCitizenData().createRequest(stackRequest);
-                placer.registerBlockAsNeeded(placedStack);
+                placer.registerBlockAsNeeded(placedStack.getKey().getItemStack());
                 return true;
             }
         }
