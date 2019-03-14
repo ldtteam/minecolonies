@@ -1,7 +1,6 @@
 package com.minecolonies.api.compatibility.candb;
 
 import mod.chiselsandbits.api.*;
-import mod.chiselsandbits.api.APIExceptions.InvalidBitItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -81,15 +80,7 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
                     return;
                 }
 
-                final ItemStack bitStack;
-                try
-                {
-                    bitStack = ChiselsAndBitsAPI.instance().getBitItem(Block.getStateById(stateCount.stateId));
-                }
-                catch (InvalidBitItem e)
-                {
-                    return;
-                }
+                final ItemStack bitStack = ChiselsAndBitsAPI.getBitStack(stateCount.stateId);
                 if (bitStack.isEmpty())
                 {
                     return;
