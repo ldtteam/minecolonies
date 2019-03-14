@@ -421,7 +421,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
                 //noinspection ConstantConditions
                 animal.setInLove(null);
                 worker.swingArm(EnumHand.MAIN_HAND);
-                InventoryUtils.removeStackFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), getBreedingItem());
+                InventoryUtils.reduceStackInItemHandler(new InvWrapper(worker.getInventoryCitizen()), getBreedingItem());
                 worker.decreaseSaturationForAction();
             }
         }

@@ -218,7 +218,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 }
                 else
                 {
-                    if (!building.getPriorityState())
+                    if (!building.isPriorityStatic())
                     {
                         building.alterPickUpPriority(-10);
                     }
@@ -385,7 +385,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
             else
             {
-                if (!building.getPriorityState() && worker.getRandom().nextInt(100) <= 1)
+                if (!building.isPriorityStatic() && worker.getRandom().nextInt(100) <= 1)
                 {
                     building.alterPickUpPriority(1);
                 }

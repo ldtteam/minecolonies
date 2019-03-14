@@ -985,7 +985,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (InventoryUtils.isProviderFull(getOwnBuilding()))
         {
-            if (!getOwnBuilding().getPriorityState())
+            if (!getOwnBuilding().isPriorityStatic())
             {
                 getOwnBuilding().alterPickUpPriority(MAX_PRIO);
             }
@@ -1003,7 +1003,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         this.itemsNiceToHave().forEach(this::isInHut);
         // we dumped the inventory, reset actions done
         this.clearActionsDone();
-        if (!getOwnBuilding().getPriorityState())
+        if (!getOwnBuilding().isPriorityStatic())
         {
             getOwnBuilding().alterPickUpPriority(1);
         }
