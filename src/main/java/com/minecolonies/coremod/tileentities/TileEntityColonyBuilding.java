@@ -422,29 +422,29 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getBuilding() != null)
         {
-            //Add additional containers
-            final Set<ICapabilityProvider> providers = new HashSet<>();
-            final World world = colony.getWorld();
-            if (world != null)
-            {
-                //Add additional containers
-                providers.addAll(building.getAdditionalCountainers().stream()
-                                   .map(world::getTileEntity)
-                                   .collect(Collectors.toSet()));
-                providers.removeIf(Objects::isNull);
-            }
-
-            final List<IItemHandler> handlers = providers.stream()
-                                                  .flatMap(provider -> InventoryUtils.getItemHandlersFromProvider(provider).stream())
-                                                  .collect(Collectors.toList());
-            final T cap = super.getCapability(capability, facing);
-            if (cap instanceof IItemHandler)
-            {
-                handlers.add((IItemHandler) cap);
-            }
-
             if (this.combinedInv == null)
             {
+                //Add additional containers
+                final Set<ICapabilityProvider> providers = new HashSet<>();
+                final World world = colony.getWorld();
+                if (world != null)
+                {
+                    //Add additional containers
+                    providers.addAll(building.getAdditionalCountainers().stream()
+                                       .map(world::getTileEntity)
+                                       .collect(Collectors.toSet()));
+                    providers.removeIf(Objects::isNull);
+                }
+
+                final List<IItemHandler> handlers = providers.stream()
+                                                      .flatMap(provider -> InventoryUtils.getItemHandlersFromProvider(provider).stream())
+                                                      .collect(Collectors.toList());
+                final T cap = super.getCapability(capability, facing);
+                if (cap instanceof IItemHandler)
+                {
+                    handlers.add((IItemHandler) cap);
+                }
+                
                 this.combinedInv = new CombinedItemHandler(building.getSchematicName(), handlers.stream()
                                                                                           .map(handler -> (IItemHandlerModifiable) handler)
                                                                                           .distinct()
