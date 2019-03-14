@@ -138,11 +138,11 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     }
 
     /**
-     * Get the priority state of the building.
+     * Check if the priority is static and it shouldn't change.
      *
      * @return the priority state, a boolean.
      */
-    public boolean getPriorityState()
+    public boolean isPriorityStatic()
     {
         return this.priorityStatic;
     }
