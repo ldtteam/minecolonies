@@ -75,6 +75,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
     private String style = "";
 
     /**
+     * Create the combined inv wrapper for the building.
+     */
+    private CombinedItemHandler combinedInv;
+
+    /**
      * Empty standard constructor.
      */
     public TileEntityColonyBuilding()
@@ -336,6 +341,12 @@ public class TileEntityColonyBuilding extends TileEntityChest
                 colonyId = tempColony.getID();
             }
         }
+
+        /*
+         * We want a new inventory every tick.
+         * The accessed inventory in the same tick must be the same.
+         */
+        combinedInv = null;
     }
 
     @Override
@@ -432,12 +443,17 @@ public class TileEntityColonyBuilding extends TileEntityChest
                 handlers.add((IItemHandler) cap);
             }
 
-            return (T) new CombinedItemHandler(building.getSchematicName(), handlers.stream()
-                                                                              .map(handler -> (IItemHandlerModifiable) handler)
-                                                                              .distinct()
-                                                                              .filter(handler -> handler instanceof IItemHandlerModifiable
-                                                                                                   && handler.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
-                                                                              .toArray(IItemHandlerModifiable[]::new));
+            if (this.combinedInv == null)
+            {
+                this.combinedInv = new CombinedItemHandler(building.getSchematicName(), handlers.stream()
+                                                                                          .map(handler -> (IItemHandlerModifiable) handler)
+                                                                                          .distinct()
+                                                                                          .filter(handler -> handler instanceof IItemHandlerModifiable
+                                                                                                               && handler.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
+                                                                                          .toArray(IItemHandlerModifiable[]::new));
+            }
+
+            return (T) this.combinedInv;
         }
         return super.getCapability(capability, facing);
     }
