@@ -189,6 +189,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     private boolean isChild = false;
 
     /**
+     * Citizen inv Wrapper.
+     */
+    private IItemHandler invWrapper;
+
+    /**
      * Citizen constructor.
      *
      * @param world the world the citizen lives in.
@@ -370,7 +375,13 @@ public class EntityCitizen extends AbstractEntityCitizen
                 return super.getCapability(capability, facing);
             }
             final InventoryCitizen inv = data.getInventory();
-            return (T) new InvWrapper(inv);
+
+            if (invWrapper == null)
+            {
+                invWrapper = new InvWrapper(inv);
+            }
+
+            return (T) invWrapper;
         }
 
         return super.getCapability(capability, facing);

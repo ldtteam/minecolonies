@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
@@ -39,10 +40,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -434,10 +432,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     final List<ItemStack> itemList = new ArrayList<>();
                     for (final ItemStack stack : requiredItems)
                     {
-                        itemList.add(this.getTotalAmount(this.getTotalAmount(stack)));
+                        itemList.add(this.getTotalAmount(stack));
                     }
 
-                    if (checkForListInInvAndRequest(this, itemList))
+                    if (checkForListInInvAndRequest(this, itemList, itemList.size() > 1))
                     {
                         return false;
                     }
@@ -503,17 +501,47 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * @param itemList the list to check.
      * @return true if need to request.
      */
-    public static boolean checkForListInInvAndRequest(@NotNull final AbstractEntityAIStructure<?> placer, final List<ItemStack> itemList)
+    public static boolean checkForListInInvAndRequest(@NotNull final AbstractEntityAIStructure<?> placer, final List<ItemStack> itemList, final boolean force)
     {
         final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(new InvWrapper(placer.getWorker().getInventoryCitizen()),
-          itemStack -> itemList.stream()
-                         .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, targetStack, true, true)));
-        itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream()
-                                                                              .anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack,
-                                                                                targetStack, true, true)));
-        for (final ItemStack placedStack : itemList)
+          itemStack -> itemList.stream().anyMatch(targetStack -> targetStack.isItemEqual(targetStack)));
+        if (force)
         {
-            if (ItemStackUtils.isEmpty(placedStack))
+            for (final ItemStack foundStack : new ArrayList<>(foundStacks))
+            {
+                final Optional<ItemStack> opt = itemList.stream().filter(targetStack -> targetStack.isItemEqual(foundStack)).findFirst();
+                if (opt.isPresent())
+                {
+                    final ItemStack stack = opt.get();
+                    itemList.remove(stack);
+                    if (stack.getCount() > foundStack.getCount())
+                    {
+                        stack.setCount(stack.getCount() - foundStack.getCount());
+                        itemList.add(stack);
+                    }
+                }
+            }
+        }
+        else
+        {
+            itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream().anyMatch(target -> target.isItemEqual(itemStack)));
+        }
+
+        final Map<ItemStorage, Integer> list = new HashMap<>();
+        for (final ItemStack stack : itemList)
+        {
+            ItemStorage tempStorage = new ItemStorage(stack.copy());
+            if (list.containsKey(tempStorage))
+            {
+                final int oldSize = list.get(tempStorage);
+                tempStorage.setAmount(tempStorage.getAmount() + oldSize);
+            }
+            list.put(tempStorage, tempStorage.getAmount());
+        }
+
+        for (final Map.Entry<ItemStorage, Integer> placedStack : list.entrySet())
+        {
+            if (ItemStackUtils.isEmpty(placedStack.getKey().getItemStack()))
             {
                 return true;
             }
@@ -522,12 +550,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                   .getOpenRequestsOfTypeFiltered(
                     placer.getWorker().getCitizenData(),
                     TypeConstants.DELIVERABLE,
-                    (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(placedStack))
+                    (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(placedStack.getKey().getItemStack()))
                   .isEmpty())
             {
-                final Stack stackRequest = new Stack(placer.getTotalAmount(placedStack));
+                final Stack stackRequest = new Stack(placedStack.getKey().getItemStack());
+                stackRequest.setCount(placedStack.getValue());
                 placer.getWorker().getCitizenData().createRequest(stackRequest);
-                placer.registerBlockAsNeeded(placedStack);
+                placer.registerBlockAsNeeded(placedStack.getKey().getItemStack());
                 return true;
             }
         }
@@ -609,7 +638,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 if (slot != -1)
                 {
                     final ItemStack container = tempStack.getItem().getContainerItem(tempStack);
-                    new InvWrapper(getInventory()).extractItem(slot, 1, false);
+                    new InvWrapper(getInventory()).extractItem(slot, tempStack.getCount(), false);
                     if (!ItemStackUtils.isEmpty(container))
                     {
                         new InvWrapper(getInventory()).insertItem(slot, container, false);
@@ -1016,7 +1045,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
                 if (!Configurations.gameplay.builderInfiniteResources)
                 {
-                    if (checkForListInInvAndRequest(this, new ArrayList<>(request)))
+                    if (checkForListInInvAndRequest(this, new ArrayList<>(request), true))
                     {
                         return false;
                     }

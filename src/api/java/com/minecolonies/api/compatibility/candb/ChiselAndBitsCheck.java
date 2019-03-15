@@ -8,9 +8,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class is to store a check to see if a block is a chiselsandbits block.
@@ -78,11 +76,15 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
             access.getStateCounts().forEach(stateCount ->
             {
                 if (stateCount.stateId == 0)
+                {
                     return;
+                }
 
                 final ItemStack bitStack = ChiselsAndBitsAPI.getBitStack(stateCount.stateId);
                 if (bitStack.isEmpty())
+                {
                     return;
+                }
 
                 int count = stateCount.quantity;
                 final int max = bitStack.getMaxStackSize();
@@ -99,7 +101,6 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
                     stacks.add(bitStack);
                 }
             });
-
             return stacks;
         }
         return Collections.emptyList();
