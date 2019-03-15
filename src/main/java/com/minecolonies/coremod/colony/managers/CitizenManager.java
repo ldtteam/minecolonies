@@ -320,7 +320,7 @@ public class CitizenManager implements ICitizenManager
     @Override
     public int getMaxCitizens()
     {
-        return maxCitizens;
+        return Math.min(maxCitizens, Configurations.gameplay.maxCitizenPerColony);
     }
 
     /**
