@@ -1198,19 +1198,18 @@ public class Colony implements IColony
      */
     public double getOverallHappiness()
     {
-        double happinessTotal = 0;
+        if (citizenManager.getCitizens().size() <= 0)
+        {
+            return (HappinessData.MAX_HAPPINESS + HappinessData.MIN_HAPPINESS) / 2.0;
+        }
+
+        double happinesSum = 0;
         for (final CitizenData citizen : citizenManager.getCitizens())
         {
-            happinessTotal += citizen.getCitizenHappinessHandler().getHappiness();
+            happinesSum += citizen.getCitizenHappinessHandler().getHappiness();
         }
-        final double happinessAverage = happinessTotal / citizenManager.getCitizens().size();
-
-        happinessTotal = happinessAverage + happinessData.getTotalHappinessModifier();
-        if (happinessTotal > HappinessData.MAX_HAPPINESS)
-        {
-            happinessTotal = HappinessData.MAX_HAPPINESS;
-        }
-        return happinessTotal;
+        final double happinessAverage = happinesSum / citizenManager.getCitizens().size();
+        return Math.min(happinessAverage + happinessData.getTotalHappinessModifier(), HappinessData.MAX_HAPPINESS);
     }
 
     /**
