@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -357,7 +358,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         final int initialDelay = super.getBlockMiningDelay(block, pos);
 
-        if (pos.getY() > DEPTH_LEVEL_0)
+        if (pos.getY() > DEPTH_LEVEL_0 || !Configurations.gameplay.restrictBuilderUnderground)
         {
             return (int) (initialDelay * SPEED_BUFF_0);
         }
