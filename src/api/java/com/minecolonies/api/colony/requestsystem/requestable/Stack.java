@@ -39,6 +39,11 @@ public class Stack implements IDeliverable
      */
     private boolean matchOreDic = false;
 
+    /**
+     * The required count.
+     */
+    private int count = 0;
+
     @NotNull
     private ItemStack result = ItemStackUtils.EMPTY;
 
@@ -56,7 +61,7 @@ public class Stack implements IDeliverable
         }
 
         setMatchMeta(true).setMatchNBT(true);
-        this.theStack.setCount(Math.min(this.theStack.getCount(), this.theStack.getMaxStackSize()));
+        this.count = (Math.min(this.theStack.getCount(), this.theStack.getMaxStackSize()));
     }
 
     /**
@@ -125,7 +130,7 @@ public class Stack implements IDeliverable
         compound.setBoolean(NBT_MATCHMETA, input.matchMeta);
         compound.setBoolean(NBT_MATCHNBT, input.matchNBT);
         compound.setBoolean(NBT_MATCHOREDIC, input.matchOreDic);
-
+        compound.setInteger("size", input.count);
         if (!ItemStackUtils.isEmpty(input.result))
         {
             compound.setTag(NBT_RESULT, input.result.serializeNBT());
@@ -147,8 +152,10 @@ public class Stack implements IDeliverable
         final boolean matchNBT = compound.getBoolean(NBT_MATCHNBT);
         final boolean matchOreDic = compound.getBoolean(NBT_MATCHOREDIC);
         final ItemStack result = compound.hasKey(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_RESULT)) : ItemStackUtils.EMPTY;
-
-        return new Stack(stack, matchMeta, matchNBT, matchOreDic, result);
+        final int size = compound.getInteger("size");
+        final Stack theStack = new Stack(stack, matchMeta, matchNBT, matchOreDic, result);
+        theStack.setCount(size);
+        return theStack;
     }
 
     @Override
@@ -165,13 +172,22 @@ public class Stack implements IDeliverable
     @Override
     public int getCount()
     {
-        return theStack.getCount();
+        return this.count;
     }
 
     @NotNull
     public ItemStack getStack()
     {
         return theStack;
+    }
+
+    /**
+     * Set the count of the stack.
+     * @param count the count to set.
+     */
+    public void setCount(final int count)
+    {
+        this.count = count;
     }
 
     @Override

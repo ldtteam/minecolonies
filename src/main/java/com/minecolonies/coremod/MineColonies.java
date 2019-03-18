@@ -272,6 +272,8 @@ public class MineColonies
         getNetwork().registerMessage(BuyCitizenMessage.class, BuyCitizenMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(ShepherdSetDyeSheepsMessage.class, ShepherdSetDyeSheepsMessage.class, ++id, Side.SERVER);
         getNetwork().registerMessage(SifterSettingsMessage.class, SifterSettingsMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(HutRenameMessage.class, HutRenameMessage.class, ++id, Side.SERVER);
+        getNetwork().registerMessage(BuildingHiringModeMessage.class, BuildingHiringModeMessage.class, ++id, Side.SERVER);
 
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage.class, ++id, Side.CLIENT);

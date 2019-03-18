@@ -554,11 +554,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 {
                     final List<ItemStack> niceToHave = itemsNiceToHave();
                     final List<ItemStack> contained = InventoryUtils.getContainedFromItemHandler(firstDeliverableRequest.getDeliveries(), worker.getItemHandlerCitizen());
-                    final List<ItemStack> missing = InventoryUtils.getMissingFromItemHandler(firstDeliverableRequest.getDeliveries(), worker.getItemHandlerCitizen());
+
                     InventoryUtils.moveItemStacksWithPossibleSwap(
                       worker.getItemHandlerCitizen(),
                       InventoryUtils.getItemHandlersFromProvider(getOwnBuilding()),
-                      missing,
+                      firstDeliverableRequest.getDeliveries(),
                       itemStack ->
                         contained.stream().anyMatch(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack)) ||
                         niceToHave.stream().anyMatch(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack))
@@ -985,7 +985,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (InventoryUtils.isProviderFull(getOwnBuilding()))
         {
-            if (!getOwnBuilding().getPriorityState())
+            if (!getOwnBuilding().isPriorityStatic())
             {
                 getOwnBuilding().alterPickUpPriority(MAX_PRIO);
             }
@@ -1003,7 +1003,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         this.itemsNiceToHave().forEach(this::isInHut);
         // we dumped the inventory, reset actions done
         this.clearActionsDone();
-        if (!getOwnBuilding().getPriorityState())
+        if (!getOwnBuilding().isPriorityStatic())
         {
             getOwnBuilding().alterPickUpPriority(1);
         }
