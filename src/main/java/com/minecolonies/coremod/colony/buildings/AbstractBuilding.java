@@ -595,7 +595,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
         final IRequestManager manager = colony.getRequestManager();
         toKeep.put(stack -> this.getOpenRequestsByCitizen().values().stream()
-                              .anyMatch(list -> list.stream()
+                              .anyMatch(list -> list.stream().filter(token -> manager.getRequestForToken(token) != null)
                                                   .anyMatch(token -> manager.getRequestForToken(token).getRequest() instanceof IDeliverable
                                                                        && ((IDeliverable) manager.getRequestForToken(token).getRequest()).matches(stack))),
           new Tuple<>(Integer.MAX_VALUE, true));
