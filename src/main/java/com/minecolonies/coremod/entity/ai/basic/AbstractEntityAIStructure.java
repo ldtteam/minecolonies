@@ -1027,7 +1027,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
                     if (!ItemStackUtils.isEmpty(stack))
                     {
-                        ItemStackUtils.changeSize(stack, 1);
+                        ItemStackUtils.setSize(stack, 1);
                         request.add(stack);
                     }
                     request.add(new ItemStack(Items.ITEM_FRAME, 1));
