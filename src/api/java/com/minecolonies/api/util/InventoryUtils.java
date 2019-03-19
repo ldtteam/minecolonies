@@ -522,22 +522,19 @@ public class InventoryUtils
     public static Set<IItemHandler> getItemHandlersFromProvider(@NotNull final ICapabilityProvider provider)
     {
         final Set<IItemHandler> handlerList = Arrays.stream(EnumFacing.VALUES)
-                                                .filter(facing -> provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
-                                                .map(facing -> provider.getCapability(ITEM_HANDLER_CAPABILITY, facing))
-                                                .filter(Objects::nonNull)
-                                                .collect(Collectors.toSet());
+          .filter(facing -> provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
+          .map(facing -> provider.getCapability(ITEM_HANDLER_CAPABILITY, facing))
+          .filter(Objects::nonNull)
+          .collect(Collectors.toSet());
+
 
         if (provider.hasCapability(ITEM_HANDLER_CAPABILITY, null))
         {
             final IItemHandler nullHandler = provider.getCapability(ITEM_HANDLER_CAPABILITY, null);
-            if (!handlerList.contains(nullHandler))
-            {
-                handlerList.add(nullHandler);
-            }
+            handlerList.add(nullHandler);
         }
 
         handlerList.removeIf(Objects::isNull);
-
         return handlerList;
     }
 
@@ -2544,9 +2541,11 @@ public class InventoryUtils
                 if (removeStackFromItemHandler(sourceInventory, itemStack))
                 {
                     ItemStack forcingResult = forceItemStackToItemHandler(targetInventory, itemStack, wantToKeep);
-                    addItemStackToItemHandler(sourceInventory, forcingResult);
 
-                    break;
+                    if (forcingResult != null && !forcingResult.isEmpty())
+                    {
+                        addItemStackToItemHandler(sourceInventory, forcingResult);
+                    }
                 }
             }
 
@@ -2557,17 +2556,28 @@ public class InventoryUtils
     }
 
     /**
-     * Search for a certain itemStack in the inventory and decrease it.
+     * Search for a certain itemStack in the inventory and decrease it by 1.
      * @param invWrapper the inventory item handler.
      * @param itemStack the itemStack to decrease.
      */
     public static void reduceStackInItemHandler(final InvWrapper invWrapper, final ItemStack itemStack)
     {
+        reduceStackInItemHandler(invWrapper, itemStack, 1);
+    }
+
+    /**
+     * Search for a certain itemStack in the inventory and decrease it by a certain quantity.
+     * @param invWrapper the inventory item handler.
+     * @param itemStack the itemStack to decrease.
+     * @param quantity the quantity.
+     */
+    public static void reduceStackInItemHandler(final InvWrapper invWrapper, final ItemStack itemStack, final int quantity)
+    {
         for (int i = 0; i < invWrapper.getSlots(); i++)
         {
             if(invWrapper.getStackInSlot(i).isItemEqual(itemStack))
             {
-                invWrapper.getStackInSlot(i).shrink(1);
+                invWrapper.getStackInSlot(i).shrink(quantity);
             }
         }
 

@@ -98,7 +98,8 @@ public class EntityAISleep extends EntityAIBase
                         state = state.getBlock().getExtendedState(state, world, pos);
                         if (state.getBlock() == Blocks.BED
                               && !state.getValue(BlockBed.OCCUPIED)
-                              && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
+                              && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD)
+                              && world.isAirBlock(pos.up()))
                         {
                             usedBed = pos;
                             citizen.world.setBlockState(pos, state.withProperty(BlockBed.OCCUPIED, true), 0x03);

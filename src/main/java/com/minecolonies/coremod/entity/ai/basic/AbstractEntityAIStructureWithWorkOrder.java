@@ -255,12 +255,11 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     {
         if (job.getStructure().getBlockInfo().getTileEntityData() != null)
         {
-            final List<ItemStack> itemList = new ArrayList<>();
-            itemList.addAll(getItemsFromTileEntity());
+            final List<ItemStack> itemList = new ArrayList<>(getItemsFromTileEntity());
 
             for (final ItemStack stack : itemList)
             {
-                building.addNeededResource(stack, 1);
+                building.addNeededResource(stack, stack.getCount());
             }
         }
 

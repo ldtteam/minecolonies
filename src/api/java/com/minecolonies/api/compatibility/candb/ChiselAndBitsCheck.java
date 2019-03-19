@@ -1,19 +1,14 @@
 package com.minecolonies.api.compatibility.candb;
 
-import mod.chiselsandbits.api.IBitAccess;
-import mod.chiselsandbits.api.IBitBrush;
-import mod.chiselsandbits.api.IBitVisitor;
-import mod.chiselsandbits.api.IChiseledBlockTileEntity;
-import mod.chiselsandbits.chiseledblock.BlockChiseled;
+import mod.chiselsandbits.api.*;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class is to store a check to see if a block is a chiselsandbits block.
@@ -59,7 +54,7 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
     @Optional.Method(modid = CANDB)
     public boolean checkForChiselAndBitsBlock(@NotNull final IBlockState blockState)
     {
-        return blockState.getBlock() instanceof BlockChiseled;
+        return blockState.getBlock() instanceof IMultiStateBlock;
     }
 
     @Override
@@ -78,19 +73,34 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
             final IBitAccess access = ((IChiseledBlockTileEntity) tileEntity).getBitAccess();
             final List<ItemStack> stacks = new ArrayList<>();
 
-            access.visitBits(new IBitVisitor()
+            access.getStateCounts().forEach(stateCount ->
             {
-                @Override
-                public IBitBrush visitBit(final int x, final int y, final int z, final IBitBrush iBitBrush)
+                if (stateCount.stateId == 0)
                 {
-                    if (iBitBrush.getStateID() != 0)
-                    {
-                        stacks.add(iBitBrush.getItemStack(x));
-                    }
-                    return iBitBrush;
+                    return;
+                }
+
+                final ItemStack bitStack = ChiselsAndBitsAPI.getBitStack(stateCount.stateId);
+                if (bitStack.isEmpty())
+                {
+                    return;
+                }
+
+                int count = stateCount.quantity;
+                final int max = bitStack.getMaxStackSize();
+                while (count > max)
+                {
+                    final ItemStack copy = bitStack.copy();
+                    copy.setCount(max);
+                    stacks.add(copy);
+                    count -= max;
+                }
+                if (count > 0)
+                {
+                    bitStack.setCount(count);
+                    stacks.add(bitStack);
                 }
             });
-
             return stacks;
         }
         return Collections.emptyList();

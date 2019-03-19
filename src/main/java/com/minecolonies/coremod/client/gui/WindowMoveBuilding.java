@@ -248,6 +248,10 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
+        if (Settings.instance.getStructureName() == null)
+        {
+            return;
+        }
         final StructureName structureName = new StructureName(Settings.instance.getStructureName());
         if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {

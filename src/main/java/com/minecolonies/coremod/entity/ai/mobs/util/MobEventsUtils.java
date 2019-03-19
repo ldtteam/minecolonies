@@ -57,7 +57,7 @@ public final class MobEventsUtils
 
         BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);
         Log.getLogger().info("[BarbarianEvent]: Spawning: " + targetSpawnPoint.getX() + " " + targetSpawnPoint.getZ());
-        if (targetSpawnPoint.equals(colony.getCenter()))
+        if (targetSpawnPoint.equals(colony.getCenter()) || targetSpawnPoint.getY() > Configurations.gameplay.maxYForBarbarians)
         {
             return;
         }

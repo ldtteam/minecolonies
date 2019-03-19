@@ -81,7 +81,14 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     public BuildingCrusher(final Colony c, final BlockPos l)
     {
         super(c, l);
+        loadCrusherMode();
+    }
 
+    /**
+     * Load the crusher settings.
+     */
+    private void loadCrusherMode()
+    {
         for (final Map.Entry<ItemStorage, ItemStorage> mode : ColonyManager.getCompatibilityManager().getCrusherModes().entrySet())
         {
             if (this.crusherMode == null)
@@ -243,6 +250,10 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
+        if (crusherRecipes.isEmpty())
+        {
+            loadCrusherMode();
+        }
 
         if (crusherMode == null)
         {

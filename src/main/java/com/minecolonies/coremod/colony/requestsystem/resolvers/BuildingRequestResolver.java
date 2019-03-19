@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.RSConstants.CONST_BUILDING_RESOLVER_PRIORITY;
@@ -82,12 +83,21 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
         tileEntities.add(building.getTileEntity());
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).filter(Objects::nonNull).collect(Collectors.toSet()));
 
+        final int total = request.getRequest().getCount();
+        final AtomicInteger current = new AtomicInteger(0);
+
         tileEntities.stream()
           .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
           .filter(itemStacks -> !itemStacks.isEmpty())
           .flatMap(List::stream)
-          .findFirst()
-          .ifPresent(request::addDelivery);
+          .forEach(stack ->
+          {
+              if (current.get() < total)
+              {
+                  request.addDelivery(stack);
+                  current.getAndAdd(stack.getCount());
+              }
+          });
 
         manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
     }

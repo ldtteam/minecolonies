@@ -306,6 +306,12 @@ public class Configurations
         @Config.Comment("Automatically fix orphaned chunks which were caused by chunk loading and saving issues")
         public boolean fixOrphanedChunks = false;
 
+        @Config.Comment("Max Y level for Barbarians to spawn")
+        public int maxYForBarbarians = 200;
+
+        @Config.Comment("If the builder should be slower underground or as fast as anywhere else")
+        public boolean restrictBuilderUnderground = true;
+
         @Config.Comment("The different meshes which can be bought in the building with durability")
         public String[] sifterMeshes = new String[]
                                    {
