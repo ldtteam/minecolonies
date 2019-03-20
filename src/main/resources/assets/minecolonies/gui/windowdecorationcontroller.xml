@@ -1,0 +1,23 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
+        lightbox="true"
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+    <label size="100% 11" pos="0 40" textalign="TOP_MIDDLE" color="white"
+           label="$(com.minecolonies.coremod.gui.deco.name)"/>
+    <label id="level" size="100% 11" pos="0 10" textalign="TOP_MIDDLE" color="white"
+           label="$(com.minecolonies.coremod.gui.deco.level)"/>
+    <input id="name" size="150 18" pos="135 50" maxlength="25"/>
+
+    <buttonimage id="done" align="TOP_MIDDLE" size="129 17" pos="-70 80"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(gui.done)" textcolor="black"/>
+    <buttonimage id="cancel" align="TOP_MIDDLE" size="129 17" pos="60 80"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(gui.cancel)" textcolor="black"/>
+
+    <buttonimage id="repair" align="TOP_MIDDLE" size="129 17" pos="-70 160"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.workerHuts.repair)" textcolor="black"/>
+    <buttonimage id="build" align="TOP_MIDDLE" size="129 17" pos="60 160"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.workerHuts.upgrade)" textcolor="black"/>
+</window>

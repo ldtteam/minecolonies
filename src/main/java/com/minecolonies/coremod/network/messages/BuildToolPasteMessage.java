@@ -178,7 +178,6 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
                 handleHut(CompatibilityUtils.getWorld(player), player, sn, message.rotation, message.pos, message.mirror);
             }
 
-
             InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, message.structureName,
               message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
 

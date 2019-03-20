@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:block/barrel_block/0perc_crate",
+  "parent": "minecolonies:block/decorationcontroller",
   "display": {
     "gui": {
       "rotation": [
