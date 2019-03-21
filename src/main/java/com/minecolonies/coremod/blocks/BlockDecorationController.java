@@ -132,10 +132,9 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
             if (tileEntity instanceof TileEntityDecorationController)
             {
                 MineColonies.proxy.openDecorationControllerWindow(pos);
-                return true;
             }
         }
-        return false;
+        return true;
     }
 
     @Override

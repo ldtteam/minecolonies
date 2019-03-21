@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.tileentities;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -38,7 +39,7 @@ public class TileEntityDecorationController extends TileEntity
     public void setSchematicName(final String schematicName)
     {
         this.schematicName = schematicName;
-        this.markDirty();
+        this.update();
     }
 
     /**
@@ -57,7 +58,17 @@ public class TileEntityDecorationController extends TileEntity
     public void setLevel(final int level)
     {
         this.level = level;
+        this.update();
+    }
+
+    /**
+     * Trigger update action.
+     */
+    private void update()
+    {
         this.markDirty();
+        final IBlockState state = world.getBlockState(pos);
+        world.notifyBlockUpdate(pos, state, state, 0x03);
     }
 
     @Override

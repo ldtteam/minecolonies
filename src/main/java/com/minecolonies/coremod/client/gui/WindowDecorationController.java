@@ -9,6 +9,7 @@ import com.minecolonies.blockout.controls.TextField;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.network.messages.DecorationBuildRequestMessage;
+import com.minecolonies.coremod.network.messages.DecorationControllUpdateMessage;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
@@ -79,6 +80,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
             LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.gui.name.tooLong", name);
         }
 
+        MineColonies.getNetwork().sendToServer(new DecorationControllUpdateMessage(controller.getPos(), name));
         controller.setSchematicName(name);
         close();
     }

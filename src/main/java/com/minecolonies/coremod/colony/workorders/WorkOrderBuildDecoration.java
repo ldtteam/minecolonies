@@ -8,7 +8,9 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
+import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -222,6 +224,17 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         if (!readingFromNbt && colony != null && colony.getWorld() != null)
         {
             ConstructionTapeHelper.placeConstructionTape(this, colony.getWorld());
+        }
+    }
+
+    @Override
+    public void onCompleted(final Colony colony)
+    {
+        super.onCompleted(colony);
+        final TileEntity tileEntity = colony.getWorld().getTileEntity(buildingLocation);
+        if (tileEntity instanceof TileEntityDecorationController)
+        {
+            ((TileEntityDecorationController) tileEntity).setLevel(((TileEntityDecorationController) tileEntity).getLevel() + 1);
         }
     }
 
