@@ -105,7 +105,17 @@ public class DecorationBuildRequestMessage extends AbstractMessage<DecorationBui
             final IBlockState state = player.getServerWorld().getBlockState(message.pos);
             final EnumFacing facing = state.getValue(BlockDecorationController.FACING);
 
-            colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(message.name + message.level, message.name + message.level, BlockUtils.getRotationFromFacing(facing), message.pos, state.getValue(BlockDecorationController.MIRROR)), false);
+            final WorkOrderBuildDecoration order = new WorkOrderBuildDecoration(message.name + message.level,
+              message.name + message.level,
+              BlockUtils.getRotationFromFacing(facing),
+              message.pos,
+              state.getValue(BlockDecorationController.MIRROR));
+
+            if (message.level != ((TileEntityDecorationController) entity).getLevel())
+            {
+                order.setLevelUp();
+            }
+            colony.getWorkManager().addWorkOrder(order, false);
         }
     }
 }

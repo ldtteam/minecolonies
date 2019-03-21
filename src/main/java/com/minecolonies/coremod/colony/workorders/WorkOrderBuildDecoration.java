@@ -15,6 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LEVEL;
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
 
 /**
@@ -44,7 +45,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     protected boolean  cleared;
     protected String   workOrderName;
     protected int      amountOfRes;
-
+    protected boolean levelUp = false;
     protected boolean hasSentMessageForThisWorkOrder = false;
     private   boolean requested;
 
@@ -77,6 +78,14 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         this.cleared = false;
         this.isBuildingMirrored = mirror;
         this.requested = false;
+    }
+
+    /**
+     * Make a decoration level up with this.
+     */
+    public void setLevelUp()
+    {
+        this.levelUp = true;
     }
 
     /**
@@ -123,6 +132,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         requested = compound.getBoolean(TAG_IS_REQUESTED);
         isBuildingMirrored = compound.getBoolean(TAG_IS_MIRRORED);
         amountOfRes = compound.getInteger(TAG_AMOUNT_OF_RES);
+        levelUp = compound.getBoolean(TAG_LEVEL);
     }
 
     /**
@@ -156,6 +166,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         compound.setBoolean(TAG_IS_REQUESTED, requested);
         compound.setBoolean(TAG_IS_MIRRORED, isBuildingMirrored);
         compound.setInteger(TAG_AMOUNT_OF_RES, amountOfRes);
+        compound.setBoolean(TAG_LEVEL, levelUp);
     }
 
     @Override
@@ -231,10 +242,14 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     public void onCompleted(final Colony colony)
     {
         super.onCompleted(colony);
-        final TileEntity tileEntity = colony.getWorld().getTileEntity(buildingLocation);
-        if (tileEntity instanceof TileEntityDecorationController)
+
+        if (this.levelUp)
         {
-            ((TileEntityDecorationController) tileEntity).setLevel(((TileEntityDecorationController) tileEntity).getLevel() + 1);
+            final TileEntity tileEntity = colony.getWorld().getTileEntity(buildingLocation);
+            if (tileEntity instanceof TileEntityDecorationController)
+            {
+                ((TileEntityDecorationController) tileEntity).setLevel(((TileEntityDecorationController) tileEntity).getLevel() + 1);
+            }
         }
     }
 
