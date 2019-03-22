@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.workorders;
 
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -26,7 +25,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     /**
      * NBT Tags for storage.
      */
-    private static final String TAG_BUILDING       = "building";
     private static final String TAG_WORKORDER_NAME = "workOrderName";
     private static final String TAG_IS_CLEARED     = "cleared";
     private static final String TAG_IS_REQUESTED   = "requested";
@@ -38,7 +36,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     private static final String TAG_AMOUNT_OF_RES     = "resQuantity";
 
     protected boolean  isBuildingMirrored;
-    protected BlockPos buildingLocation;
     protected int      buildingRotation;
     protected String   structureName;
     protected String   md5;
@@ -107,7 +104,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     public void readFromNBT(@NotNull final NBTTagCompound compound, final WorkManager manager)
     {
         super.readFromNBT(compound, manager);
-        buildingLocation = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
         final StructureName sn = new StructureName(compound.getString(TAG_SCHEMATIC_NAME));
         structureName = sn.toString();
         workOrderName = compound.getString(TAG_WORKORDER_NAME);
@@ -144,7 +140,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        BlockPosUtil.writeToNBT(compound, TAG_BUILDING, buildingLocation);
         if (workOrderName != null)
         {
             compound.setString(TAG_WORKORDER_NAME, workOrderName);

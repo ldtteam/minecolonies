@@ -5,6 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -14,14 +15,24 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 public class TileEntityDecorationController extends TileEntity
 {
     /**
+     * Tag to store the basic facing to NBT
+     */
+    private static final String TAG_FACING = "facing";
+
+    /**
      * The schematic name of the placerholder block.
      */
-    private String schematicName = "";
+    private String schematicName        = "";
 
     /**
      * The current level.
      */
     private int level = 0;
+
+    /**
+     * The basic direction this block is facing.
+     */
+    private EnumFacing basicFacing = EnumFacing.NORTH;
 
     /**
      * Geter for the name stored in this.
@@ -62,6 +73,24 @@ public class TileEntityDecorationController extends TileEntity
     }
 
     /**
+     * Set the basic facing of this block.
+     * @param basicFacing the basic facing.
+     */
+    public void setBasicFacing(final EnumFacing basicFacing)
+    {
+        this.basicFacing = basicFacing;
+    }
+
+    /**
+     * Get the basic facing of the block.
+     * @return the basic facing.
+     */
+    public EnumFacing getBasicFacing()
+    {
+        return basicFacing;
+    }
+
+    /**
      * Trigger update action.
      */
     private void update()
@@ -77,6 +106,7 @@ public class TileEntityDecorationController extends TileEntity
         super.readFromNBT(compound);
         this.schematicName = compound.getString(TAG_NAME);
         this.level = compound.getInteger(TAG_LEVEL);
+        this.basicFacing = EnumFacing.byHorizontalIndex(compound.getInteger(TAG_FACING));
     }
 
     @NotNull
@@ -86,6 +116,7 @@ public class TileEntityDecorationController extends TileEntity
         super.writeToNBT(compound);
         compound.setString(TAG_NAME, schematicName);
         compound.setInteger(TAG_LEVEL, level);
+        compound.setInteger(TAG_FACING, basicFacing.getHorizontalIndex());
         return compound;
     }
 

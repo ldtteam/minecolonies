@@ -928,5 +928,5 @@ com.minecolonies.coremod.gui.hiringmode.manual=Manual
 com.minecolonies.coremod.gui.name.tooLong=We reduced the string to "%s" since it exceeded the limit of 15 letters.
 
 tile.minecolonies.decorationcontroller.name=Decoration Controller
-com.minecolonies.coremod.gui.deco.name=Select a name of the decoration
-com.minecolonies.coremod.gui.deco.level=Current Level:
+com.minecolonies.coremod.gui.deco.name=The name of the decoration:
+com.minecolonies.coremod.gui.deco.level=The level of the decoration:

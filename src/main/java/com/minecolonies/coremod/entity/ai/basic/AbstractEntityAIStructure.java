@@ -10,6 +10,8 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.blocks.BlockDecorationController;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -682,7 +684,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                  || BlockUtils.isWater(block.getDefaultState())
                  || block.equals(Blocks.LEAVES)
                  || block.equals(Blocks.LEAVES2)
-                 || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08));
+                 || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08))
+                 || block == ModBlocks.blockDecorationPlacerholder;
     }
 
     /*
