@@ -230,7 +230,22 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         @Nullable final Colony colony = ColonyManager.getColonyByPosFromWorld(world, buildPos);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
         {
-            colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(sn.toString(), workOrderName, rotation, buildPos, mirror), false);
+            String schem = sn.toString();
+            String woName = workOrderName;
+
+            if (schem.matches("^.+?\\d$"))
+            {
+                schem = schem.replaceAll("\\d*$", "");
+                schem+='1';
+            }
+
+            if (woName.matches("^.+?\\d$"))
+            {
+                woName = woName.replaceAll("\\d*$", "");
+                woName+='1';
+            }
+
+            colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(schem, woName, rotation, buildPos, mirror), false);
         }
         else
         {
