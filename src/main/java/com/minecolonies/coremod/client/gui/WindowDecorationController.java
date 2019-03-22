@@ -5,6 +5,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.ButtonHandler;
+import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.controls.TextField;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -118,6 +119,10 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
             textFieldName.disable();
             textFieldLevel.disable();
             findPaneByID(BUTTON_DONE).hide();
+        }
+        else
+        {
+            findPaneOfTypeByID("nameLabel", Label.class).setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.deco.namescan"));
         }
     }
 
