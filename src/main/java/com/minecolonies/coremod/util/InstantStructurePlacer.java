@@ -62,6 +62,7 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
             @NotNull final InstantStructurePlacer structureWrapper = new InstantStructurePlacer(worldObj, name);
             structureWrapper.structure.setPosition(pos);
             structureWrapper.rotate(rotations, worldObj, pos, mirror);
+            structureWrapper.structure.setPlacementSettings(new PlacementSettings(mirror, BlockPosUtil.getRotationFromRotations(rotations)));
             structureWrapper.placeStructure(pos.subtract(structureWrapper.structure.getOffset()), complete);
         }
         catch (final IllegalStateException e)
@@ -169,7 +170,7 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
         {
             if (handlers.canHandle(world, pos, localState))
             {
-                final Object result = handlers.handle(world, pos, localState, tileEntityData, complete, structure.getLocalPosition());
+                final Object result = handlers.handle(world, pos, localState, tileEntityData, complete, structure.getLocalPosition(), structure.getSettings());
                 if (result instanceof IBlockState)
                 {
                     final IBlockState blockState = (IBlockState) result;

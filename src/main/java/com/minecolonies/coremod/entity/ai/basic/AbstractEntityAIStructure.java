@@ -452,7 +452,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     world.setBlockToAir(coords);
                 }
 
-                final Object result = handlers.handle(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false, job.getStructure().getPosition());
+                final Object result = handlers.handle(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false, job.getStructure().getPosition(), job.getStructure().getSettings());
                 if (result instanceof IPlacementHandler.ActionProcessingResult)
                 {
                     if (result == IPlacementHandler.ActionProcessingResult.ACCEPT)
@@ -817,6 +817,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             job.getStructure().rotate(BlockPosUtil.getRotationFromRotations(rotateTimes), world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
             job.getStructure().setPosition(position);
+            job.getStructure().setPlacementSettings(new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)));
+
         }
         catch (final NullPointerException ex)
         {
