@@ -45,6 +45,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Suppression.MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED;
 import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
@@ -1047,6 +1048,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 {
                     request.add(entity.getPickedResult(new RayTraceResult(worker)));
                 }
+
+                request.removeIf(ItemStackUtils::isEmpty);
 
                 if (!Configurations.gameplay.builderInfiniteResources)
                 {
