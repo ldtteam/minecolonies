@@ -5,6 +5,7 @@ import com.google.common.collect.HashBiMap;
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockPostBox;
@@ -239,6 +240,7 @@ public class BuildingRegistry
 
         if (building != null && parent.getWorld() != null && !(building instanceof PostBox))
         {
+            building.setRotation(BlockUtils.getRotationFromFacing(parent.getWorld().getBlockState(parent.getPosition()).getValue(AbstractBlockHut.FACING)));
             final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
             final Structure wrapper = new Structure(parent.getWorld(), workOrder.getStructureName(), new PlacementSettings());
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
@@ -247,8 +249,10 @@ public class BuildingRegistry
                     wrapper,
                     workOrder.getRotation(parent.getWorld()),
                     workOrder.isMirrored());
+
             building.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
             building.setHeight(wrapper.getHeight());
+
             ConstructionTapeHelper.placeConstructionTape(building.getLocation(), corners, parent.getWorld());
         }
         return building;
