@@ -274,7 +274,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {
             world.destroyBlock(buildPos, true);
-            world.setBlockState(buildPos, state);
+            world.setBlockState(buildPos, state.withRotation(BlockPosUtil.getRotationFromRotations(rotation)));
             ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
             setupBuilding(world, player, sn, rotation, buildPos, mirror);
         }

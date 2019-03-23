@@ -199,7 +199,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
             if (EventHandler.onBlockHutPlaced(world, player, block, buildPos))
             {
                 world.destroyBlock(buildPos, true);
-                world.setBlockState(buildPos, state);
+                world.setBlockState(buildPos, state.withRotation(BlockPosUtil.getRotationFromRotations(rotation)));
                 ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
 
                 boolean complete = false;

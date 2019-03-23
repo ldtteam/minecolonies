@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.structures.lib.BlueprintUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
@@ -15,6 +16,7 @@ import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
 import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structures.helpers.Structure;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.Rotation;
@@ -260,12 +262,16 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
         }
         else
         {
+            final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint());;
+            final IBlockState state  = Settings.instance.getActiveStructure().getBlockState(offset);
             MineColonies.getNetwork().sendToServer(new BuildingMoveMessage(
                     structureName.toString(),
                     structureName.toString(),
                     Settings.instance.getPosition(),
                     Settings.instance.getRotation(),
-                    Settings.instance.getMirror(), building));
+                    Settings.instance.getMirror(),
+              building,
+              state));
         }
 
         if (!GuiScreen.isShiftKeyDown())
