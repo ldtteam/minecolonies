@@ -15,11 +15,13 @@ import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -45,6 +47,12 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * Language key for missing hut message.
      */
     private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.coremod.gui.buildtool.nohutininventory";
+
+    /**
+     * The state at the offset position.
+     */
+    private IBlockState state;
+
     private String   structureName;
     private String   workOrderName;
     private int      rotation;
@@ -63,15 +71,22 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
     /**
      * Create the building that was made with the build tool.
      * Item in inventory required
-     *
-     * @param structureName String representation of a structure
+     *  @param structureName String representation of a structure
      * @param workOrderName String name of the work order
      * @param pos           BlockPos
      * @param rotation      int representation of the rotation
      * @param isHut         true if hut, false if decoration
      * @param mirror        the mirror of the building or decoration.
+     * @param state the state.
      */
-    public BuildToolPlaceMessage(final String structureName, final String workOrderName, final BlockPos pos, final int rotation, final boolean isHut, final Mirror mirror)
+    public BuildToolPlaceMessage(
+      final String structureName,
+      final String workOrderName,
+      final BlockPos pos,
+      final int rotation,
+      final boolean isHut,
+      final Mirror mirror,
+      final IBlockState state)
     {
         super();
         this.structureName = structureName;
@@ -80,6 +95,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         this.rotation = rotation;
         this.isHut = isHut;
         this.mirror = mirror == Mirror.FRONT_BACK;
+        this.state = state;
     }
 
     /**
@@ -100,6 +116,9 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         isHut = buf.readBoolean();
 
         mirror = buf.readBoolean();
+
+        state = NBTUtil.readBlockState(ByteBufUtils.readTag(buf));
+
     }
 
     /**
@@ -122,6 +141,8 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         buf.writeBoolean(isHut);
 
         buf.writeBoolean(mirror);
+
+        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new NBTTagCompound(), state));
     }
 
     @Override
@@ -135,7 +156,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         }
         if (message.isHut)
         {
-            handleHut(CompatibilityUtils.getWorld(player), player, sn, message.rotation, message.pos, message.mirror);
+            handleHut(CompatibilityUtils.getWorld(player), player, sn, message.rotation, message.pos, message.mirror, message.state);
         }
         else
         {
@@ -146,17 +167,21 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
     /**
      * Handles the placement of huts.
      *
-     * @param world         World the hut is being placed into.
-     * @param player        Who placed the hut.
-     * @param sn            The name of the structure.
-     * @param rotation      The number of times the structure should be rotated.
-     * @param buildPos      The location the hut is being placed.
-     * @param mirror        Whether or not the strcture is mirrored.
+     * @param world    World the hut is being placed into.
+     * @param player   Who placed the hut.
+     * @param sn       The name of the structure.
+     * @param rotation The number of times the structure should be rotated.
+     * @param buildPos The location the hut is being placed.
+     * @param mirror   Whether or not the strcture is mirrored.
      */
     private static void handleHut(
-                                   @NotNull final World world, @NotNull final EntityPlayer player,
-                                   final StructureName sn,
-                                   final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+      @NotNull final World world,
+      @NotNull final EntityPlayer player,
+      final StructureName sn,
+      final int rotation,
+      @NotNull final BlockPos buildPos,
+      final boolean mirror,
+      final IBlockState state)
     {
         final String hut = sn.getSection();
         final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
@@ -174,7 +199,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
             if (EventHandler.onBlockHutPlaced(world, player, block, buildPos))
             {
                 world.destroyBlock(buildPos, true);
-                world.setBlockState(buildPos, block.getDefaultState().withRotation(BlockUtils.getRotation(rotation)));
+                world.setBlockState(buildPos, state);
                 ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
 
                 boolean complete = false;

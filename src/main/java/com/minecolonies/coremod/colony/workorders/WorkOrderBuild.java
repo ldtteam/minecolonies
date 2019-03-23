@@ -175,14 +175,6 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     @Override
     public int getRotation(final World world)
     {
-        if (buildingRotation == 0 && world != null)
-        {
-            final IBlockState blockState = world.getBlockState(buildingLocation);
-            if (blockState.getBlock() instanceof AbstractBlockHut)
-            {
-                return BlockUtils.getRotationFromFacing(blockState.getValue(AbstractBlockHut.FACING));
-            }
-        }
         return buildingRotation;
     }
 
