@@ -9,9 +9,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.registries.IForgeRegistry;
 
-public abstract class AbstractBlockMinecoloniesDirectional<B extends AbstractBlockMinecoloniesDirectional<B>> extends BlockHorizontal implements IBlockMinecolonies<B>
+public abstract class AbstractBlockMinecoloniesHorizontal<B extends AbstractBlockMinecoloniesHorizontal<B>> extends BlockHorizontal implements IBlockMinecolonies<B>
 {
-    public AbstractBlockMinecoloniesDirectional(final Material blockMaterialIn)
+    public AbstractBlockMinecoloniesHorizontal(final Material blockMaterialIn)
     {
         super(blockMaterialIn);
     }
@@ -29,7 +29,6 @@ public abstract class AbstractBlockMinecoloniesDirectional<B extends AbstractBlo
         registry.register(this);
         return (B) this;
     }
-
 
     /**
      * Registery block at gameregistry.

@@ -405,7 +405,7 @@ public class ScarecrowTileEntity extends TileEntityChest
      * @param ownerId the name of the citizen.
      * @param tempColony the colony view.
      */
-    public void setOwner(@NotNull final int ownerId, final ColonyView tempColony)
+    public void setOwner(final int ownerId, final ColonyView tempColony)
     {
         this.ownerId = ownerId;
         if(tempColony != null)
