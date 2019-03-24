@@ -10,6 +10,8 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.blocks.BlockDecorationController;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -43,6 +45,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Suppression.MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED;
 import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
@@ -450,7 +453,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     world.setBlockToAir(coords);
                 }
 
-                final Object result = handlers.handle(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false, job.getStructure().getPosition());
+                final Object result = handlers.handle(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false, job.getStructure().getPosition(), job.getStructure().getSettings());
                 if (result instanceof IPlacementHandler.ActionProcessingResult)
                 {
                     if (result == IPlacementHandler.ActionProcessingResult.ACCEPT)
@@ -682,7 +685,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                  || BlockUtils.isWater(block.getDefaultState())
                  || block.equals(Blocks.LEAVES)
                  || block.equals(Blocks.LEAVES2)
-                 || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08));
+                 || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08))
+                 || block == ModBlocks.blockDecorationPlacerholder;
     }
 
     /*
@@ -814,6 +818,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             job.getStructure().rotate(BlockPosUtil.getRotationFromRotations(rotateTimes), world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
             job.getStructure().setPosition(position);
+            job.getStructure().setPlacementSettings(new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)));
+
         }
         catch (final NullPointerException ex)
         {
@@ -1042,6 +1048,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 {
                     request.add(entity.getPickedResult(new RayTraceResult(worker)));
                 }
+
+                request.removeIf(ItemStackUtils::isEmpty);
 
                 if (!Configurations.gameplay.builderInfiniteResources)
                 {

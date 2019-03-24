@@ -27,6 +27,7 @@ public abstract class AbstractWorkOrder
     /**
      * NBT for storage.
      */
+    private static final String TAG_BUILDING       = "building";
     private static final String TAG_TYPE        = "type";
     private static final String TAG_TH_PRIORITY = "priority";
     private static final String TAG_ID          = "id";
@@ -70,6 +71,11 @@ public abstract class AbstractWorkOrder
      * If the workOrder changed.
      */
     private   boolean  changed = false;
+
+    /**
+     * The location to built at.
+     */
+    protected BlockPos buildingLocation;
 
     /**
      * Default constructor; we also start with a new id and replace it during loading;
@@ -185,6 +191,7 @@ public abstract class AbstractWorkOrder
         {
             claimedBy = BlockPosUtil.readFromNBT(compound, TAG_CLAIMED_BY_BUILDING);
         }
+        buildingLocation = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
     }
 
     /**
@@ -350,6 +357,7 @@ public abstract class AbstractWorkOrder
         {
             BlockPosUtil.writeToNBT(compound, TAG_CLAIMED_BY_BUILDING, claimedBy);
         }
+        BlockPosUtil.writeToNBT(compound, TAG_BUILDING, buildingLocation);
     }
 
     /**
@@ -380,6 +388,8 @@ public abstract class AbstractWorkOrder
         BlockPosUtil.writeToByteBuf(buf, claimedBy == null ? BlockPos.ORIGIN : claimedBy);
         buf.writeInt(getType().ordinal());
         ByteBufUtils.writeUTF8String(buf, getValue());
+        BlockPosUtil.writeToByteBuf(buf, buildingLocation == null ? BlockPos.ORIGIN : buildingLocation);
+
         //value is upgradeName and upgradeLevel for workOrderBuild
     }
 
