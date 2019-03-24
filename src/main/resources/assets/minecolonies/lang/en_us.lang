@@ -926,3 +926,8 @@ com.minecolonies.coremod.gui.hiringmode.default=Default (Colony override)
 com.minecolonies.coremod.gui.hiringmode.auto=Automatic
 com.minecolonies.coremod.gui.hiringmode.manual=Manual
 com.minecolonies.coremod.gui.name.tooLong=We reduced the string to "%s" since it exceeded the limit of 15 letters.
+
+tile.minecolonies.decorationcontroller.name=Decoration Controller
+com.minecolonies.coremod.gui.deco.namescan=Final file path and filename, no level:
+com.minecolonies.coremod.gui.deco.name=The name of the decoration:
+com.minecolonies.coremod.gui.deco.level=The level of the decoration:

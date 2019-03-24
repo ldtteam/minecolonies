@@ -29,7 +29,7 @@ import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
-public class BlockBarrel extends AbstractBlockMinecoloniesDirectional<BlockBarrel> implements ITileEntityProvider
+public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel> implements ITileEntityProvider
 {
 
     public static final PropertyEnum<BarrelType> VARIANT        = PropertyEnum.create("variant", BarrelType.class);

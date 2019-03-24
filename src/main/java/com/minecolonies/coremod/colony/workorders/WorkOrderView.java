@@ -17,17 +17,17 @@ public class WorkOrderView
     /**
      * The work orders id.
      */
-    private int                             id;
+    private int id;
 
     /**
      * The priority.
      */
-    private int                             priority;
+    private int priority;
 
     /**
      * Its description.
      */
-    private String                          value;
+    private String value;
 
     /**
      * The type (defined by an enum).
@@ -37,7 +37,12 @@ public class WorkOrderView
     /**
      * Claimed by building id pos.
      */
-    private BlockPos                        claimedBy;
+    private BlockPos claimedBy;
+
+    /**
+     * Position where its being built at.
+     */
+    private BlockPos pos;
 
     /**
      * Public constructor of the WorkOrderView.
@@ -132,5 +137,15 @@ public class WorkOrderView
         claimedBy = BlockPosUtil.readFromByteBuf(buf);
         type = AbstractWorkOrder.WorkOrderType.values()[buf.readInt()];
         value = ByteBufUtils.readUTF8String(buf);
+        pos = BlockPosUtil.readFromByteBuf(buf);
+    }
+
+    /**
+     * Get the position of the workorder.
+     * @return the position
+     */
+    public BlockPos getPos()
+    {
+        return this.pos;
     }
 }

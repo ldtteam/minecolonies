@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.placementhandlers;
 
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -260,7 +261,8 @@ public final class MinecoloniesPlacementHandlers
           @NotNull final IBlockState blockState,
           @Nullable final NBTTagCompound tileEntityData,
           final boolean complete,
-          final BlockPos centerPos)
+          final BlockPos centerPos,
+          final PlacementSettings settings)
         {
             if (world.getBlockState(pos).equals(blockState))
             {
@@ -274,7 +276,7 @@ public final class MinecoloniesPlacementHandlers
 
             if (tileEntityData != null)
             {
-               handleTileEntityPlacement(tileEntityData, world, pos);
+               handleTileEntityPlacement(tileEntityData, world, pos, settings);
             }
 
             return blockState;

@@ -19,10 +19,13 @@ import com.ldtteam.structurize.management.Structures;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
@@ -47,6 +50,11 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      * Height of the chest in the supplyship to be placed.
      */
     private static final int SUPPLY_SHIP_CHEST_HEIGHT = 6;
+
+    /**
+     * The state at the offset position.
+     */
+    private IBlockState state;
 
     private boolean                  complete;
     private String                   structureName;
@@ -74,20 +82,21 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
     /**
      * Create the building that was made with the build tool.
      * Item in inventory required
-     *
-     * @param structureName String representation of a structure
+     *  @param structureName String representation of a structure
      * @param workOrderName String name of the work order
      * @param pos           BlockPos
      * @param rotation      int representation of the rotation
      * @param isHut         true if hut, false if decoration
      * @param mirror        the mirror of the building or decoration.
      * @param complete      paste it complete (with structure blocks) or without.
+     * @param state
      */
-    public BuildToolPasteMessage(final String structureName,
-            final String workOrderName, final BlockPos pos,
-            final int rotation, final boolean isHut,
-            final Mirror mirror, final boolean complete,
-    final WindowBuildTool.FreeMode freeMode)
+    public BuildToolPasteMessage(
+      final String structureName,
+      final String workOrderName, final BlockPos pos,
+      final int rotation, final boolean isHut,
+      final Mirror mirror, final boolean complete,
+      final WindowBuildTool.FreeMode freeMode, final IBlockState state)
     {
         super();
         this.structureName = structureName;
@@ -98,6 +107,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         this.mirror = mirror == Mirror.FRONT_BACK;
         this.complete = complete;
         this.freeMode = freeMode;
+        this.state = state;
     }
 
     /**
@@ -126,6 +136,8 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         {
             freeMode = WindowBuildTool.FreeMode.values()[modeId];
         }
+
+        state = NBTUtil.readBlockState(ByteBufUtils.readTag(buf));
     }
 
     /**
@@ -159,6 +171,8 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         {
             buf.writeInt(freeMode.ordinal());
         }
+
+        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new NBTTagCompound(), state));
     }
 
     @Override
@@ -175,9 +189,8 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         {
             if (message.isHut)
             {
-                handleHut(CompatibilityUtils.getWorld(player), player, sn, message.rotation, message.pos, message.mirror);
+                handleHut(CompatibilityUtils.getWorld(player), player, sn, message.rotation, message.pos, message.mirror, message.state);
             }
-
 
             InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, message.structureName,
               message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
@@ -241,11 +254,12 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      * @param rotation      The number of times the structure should be rotated.
      * @param buildPos      The location the hut is being placed.
      * @param mirror        Whether or not the strcture is mirrored.
+     * @param state         The state of the hut.
      */
     private static void handleHut(
                                    @NotNull final World world, @NotNull final EntityPlayer player,
                                    final StructureName sn,
-                                   final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
+                                   final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final IBlockState state)
     {
         final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
         if (tempColony != null
@@ -260,7 +274,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {
             world.destroyBlock(buildPos, true);
-            world.setBlockState(buildPos, block.getDefaultState().withRotation(BlockUtils.getRotation(rotation)));
+            world.setBlockState(buildPos, state.withRotation(BlockPosUtil.getRotationFromRotations(rotation)));
             ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
             setupBuilding(world, player, sn, rotation, buildPos, mirror);
         }
