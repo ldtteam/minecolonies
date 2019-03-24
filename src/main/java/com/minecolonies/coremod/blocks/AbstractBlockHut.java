@@ -10,7 +10,6 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
-import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.ITileEntityProvider;
