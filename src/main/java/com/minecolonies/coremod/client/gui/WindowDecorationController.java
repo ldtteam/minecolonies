@@ -55,9 +55,9 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
     private final World world = Minecraft.getMinecraft().world;
 
     /**
-     * If the player opening the GUI is an admin.
+     * If the player opening the GUI is an isCreative.
      */
-    private boolean admin = Minecraft.getMinecraft().player.isCreative();
+    private boolean isCreative = Minecraft.getMinecraft().player.isCreative();
 
     /**
      * Constructor for a hut rename entry window.
@@ -114,7 +114,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
             findPaneByID(BUTTON_REPAIR).hide();
         }
 
-        if (!admin)
+        if (!isCreative)
         {
             textFieldName.disable();
             textFieldLevel.disable();
@@ -139,7 +139,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
      */
     private void doneClicked()
     {
-        if (admin)
+        if (isCreative)
         {
             String name = findPaneOfTypeByID(INPUT_NAME, TextField.class).getText();
 
