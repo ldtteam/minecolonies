@@ -12,9 +12,12 @@ import com.ldtteam.structurize.Structurize;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.network.messages.LSStructureDisplayerMessage;
 import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
 import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structures.helpers.Structure;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.Rotation;
@@ -281,6 +284,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
     {
         building.openGui(false);
         Settings.instance.reset();
+        Structurize.getNetwork().sendToServer(new LSStructureDisplayerMessage(Unpooled.buffer(), false));
         close();
     }
 
@@ -311,6 +315,21 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
         if (Settings.instance.getActiveStructure() != null)
         {
             Settings.instance.getActiveStructure().setPlacementSettings(settings);
+        }
+    }
+
+    /**
+     * Called when the window is closed.
+     * Updates state via {@link LSStructureDisplayerMessage}
+     */
+    @Override
+    public void onClosed()
+    {
+        if (Settings.instance.getActiveStructure() != null)
+        {
+            final ByteBuf buffer = Unpooled.buffer();
+            Settings.instance.toBytes(buffer);
+            Structurize.getNetwork().sendToServer(new LSStructureDisplayerMessage(buffer, true));
         }
     }
 }
