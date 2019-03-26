@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.registry;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockPostBox;
