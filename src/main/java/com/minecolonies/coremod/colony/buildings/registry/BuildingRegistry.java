@@ -2,10 +2,7 @@ package com.minecolonies.coremod.colony.buildings.registry;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.ldtteam.structures.helpers.Structure;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockPostBox;
@@ -15,13 +12,9 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
-import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -236,24 +229,6 @@ public class BuildingRegistry
         catch (@NotNull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception)
         {
             Log.getLogger().error(String.format("Unknown Building type '%s' or missing constructor of proper format.", parent.getClass().getName()), exception);
-        }
-
-        if (building != null && parent.getWorld() != null && !(building instanceof PostBox))
-        {
-            building.setRotation(BlockUtils.getRotationFromFacing(parent.getWorld().getBlockState(parent.getPosition()).getValue(AbstractBlockHut.FACING)));
-            final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
-            final Structure wrapper = new Structure(parent.getWorld(), workOrder.getStructureName(), new PlacementSettings());
-            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-                    = ColonyUtils.calculateCorners(building.getLocation(),
-                    parent.getWorld(),
-                    wrapper,
-                    workOrder.getRotation(parent.getWorld()),
-                    workOrder.isMirrored());
-
-            building.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
-            building.setHeight(wrapper.getHeight());
-
-            ConstructionTapeHelper.placeConstructionTape(building.getLocation(), corners, parent.getWorld());
         }
         return building;
     }
