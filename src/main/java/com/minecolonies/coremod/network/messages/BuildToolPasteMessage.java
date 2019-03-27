@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
@@ -8,10 +10,12 @@ import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.items.ModItems;
+import com.minecolonies.coremod.util.ColonyUtils;
 import com.minecolonies.coremod.util.InstantStructurePlacer;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.StructureName;
@@ -28,6 +32,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
@@ -330,6 +335,23 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
 
             building.setStyle(sn.getStyle());
             building.setRotation(rotation);
+
+            if (!(building instanceof PostBox))
+            {
+                ConstructionTapeHelper.removeConstructionTape(building.getCorners(), world);
+                final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
+                final Structure wrapper = new Structure(world, workOrder.getStructureName(), new PlacementSettings());
+                final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
+                  = ColonyUtils.calculateCorners(building.getLocation(),
+                  world,
+                  wrapper,
+                  workOrder.getRotation(world),
+                  workOrder.isMirrored());
+
+                building.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
+                building.setHeight(wrapper.getHeight());
+            }
+
             if (mirror)
             {
                 building.invertMirror();
