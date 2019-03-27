@@ -139,6 +139,7 @@ public class CommonProxy implements IProxy
         GameRegistry.registerTileEntity(TileEntityRack.class, new ResourceLocation(Constants.MOD_ID, "rack"));
         GameRegistry.registerTileEntity(TileEntityInfoPoster.class, new ResourceLocation(Constants.MOD_ID, "infoposter"));
         GameRegistry.registerTileEntity(TileEntityBarrel.class, new ResourceLocation(Constants.MOD_ID, "barrel"));
+        GameRegistry.registerTileEntity(TileEntityDecorationController.class, new ResourceLocation(Constants.MOD_ID, "decorationcontroller"));
 
         NetworkRegistry.INSTANCE.registerGuiHandler(MineColonies.instance, new GuiHandler());
     }
@@ -349,5 +350,13 @@ public class CommonProxy implements IProxy
     public RecipeBook getRecipeBookFromPlayer(@NotNull final EntityPlayer player)
     {
         return ((EntityPlayerMP) player).getRecipeBook();
+    }
+
+    @Override
+    public void openDecorationControllerWindow(@NotNull final BlockPos pos)
+    {
+        /*
+         * Intentionally left empty.
+         */
     }
 }

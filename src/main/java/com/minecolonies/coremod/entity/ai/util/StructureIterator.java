@@ -273,6 +273,7 @@ public class StructureIterator
         //put the building into place
         tempSchematic.rotate(BlockPosUtil.getRotationFromRotations(rotation), targetWorld, buildingLocation, mirror);
         tempSchematic.setPosition(buildingLocation);
+        tempSchematic.setPlacementSettings(new PlacementSettings(mirror, BlockPosUtil.getRotationFromRotations(rotation)));
         if (blockProgress != null)
         {
             tempSchematic.setLocalPosition(blockProgress);

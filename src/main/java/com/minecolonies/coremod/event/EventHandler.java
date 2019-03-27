@@ -620,13 +620,14 @@ public class EventHandler
             return false;
         }
 
-        if (Configurations.gameplay.protectVillages
-              && world.getVillageCollection().getNearestVillage(pos, Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK) != null)
-        {
-            Log.getLogger().warn("Village close by!");
-            return false;
-        }
 
+        if (!world.isRemote
+              && Configurations.gameplay.protectVillages
+                  && world.getVillageCollection().getNearestVillage(pos, Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK) != null)
+        {
+                Log.getLogger().warn("Village close by!");
+                return false;
+        }
         return true;
     }
 
