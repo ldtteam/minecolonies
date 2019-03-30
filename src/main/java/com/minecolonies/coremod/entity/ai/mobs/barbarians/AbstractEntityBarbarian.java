@@ -16,11 +16,6 @@ import static com.minecolonies.api.util.constant.RaiderConstants.*;
 public abstract class AbstractEntityBarbarian extends AbstractEntityMinecoloniesMob
 {
     /**
-     * Sets the barbarians target colony on spawn Thus it never changes.
-     */
-    private Colony colony;
-
-    /**
      * Constructor method for Abstract Barbarians.
      *
      * @param world the world.
