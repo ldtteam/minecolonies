@@ -56,11 +56,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     public static final int BLACK = Color.getByName("black", 0);
 
     /**
-     * Min TH level to teleport to another colony.
-     */
-    private static final int MIN_TH_LEVEL_TO_TELEPORT = 3;
-
-    /**
      * List of workOrders.
      */
     private final List<WorkOrderView> workOrders = new ArrayList<>();
@@ -736,7 +731,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 final long distance = BlockPosUtil.getDistance2D(colonyView.getCenter(), building.getLocation());
                 rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText((int) distance + "b");
                 final Button button = rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class);
-                if (townHall.getBuildingLevel() < MIN_TH_LEVEL_TO_TELEPORT || !Configurations.gameplay.canPlayerUseColonyTPCommand)
+                if (townHall.getBuildingLevel() < Configurations.gameplay.minThLevelToTeleport || !Configurations.gameplay.canPlayerUseColonyTPCommand)
                 {
                     button.setLabel(LanguageHandler.format(TH_TOO_LOW));
                     button.disable();
