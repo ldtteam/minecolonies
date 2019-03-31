@@ -94,9 +94,8 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
         // Check if we are on the default page
         if (switchView.getCurrentView().getID().equals(PAGE_ACTIONS))
         {
-            final AbstractBuildingView buildingView = building.getColony().getBuilding(building.getID());
-
-            if (title != null)
+            final AbstractBuildingView buildingView = building;
+            if (title != null && buildingView != null)
             {
                 final String name = building.getCustomName().isEmpty() ? LanguageHandler.format(getBuildingName()) : building.getCustomName();
                 if (switchView.getID().equals(GUI_LIST_BUTTON_SWITCH + PAGE_ACTIONS))
