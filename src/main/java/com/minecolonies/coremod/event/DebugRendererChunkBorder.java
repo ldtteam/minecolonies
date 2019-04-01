@@ -75,8 +75,10 @@ public class DebugRendererChunkBorder
         final double relPlayerX = entityplayer.lastTickPosX + (entityplayer.posX - entityplayer.lastTickPosX) * partialTicks;
         final double relPlayerY = entityplayer.lastTickPosY + (entityplayer.posY - entityplayer.lastTickPosY) * partialTicks;
         final double relPlayerZ = entityplayer.lastTickPosZ + (entityplayer.posZ - entityplayer.lastTickPosZ) * partialTicks;
-        final double lowerYLimit = 0 - relPlayerY;
+        final double lowerYLimit = 5 - relPlayerY;
         final double upperYLimit = 255 - relPlayerY;
+
+        final double lowerYLimitSmaller = Math.max(lowerYLimit, entityplayer.posY - 30 - relPlayerY);
 
         GlStateManager.disableTexture2D();
         GlStateManager.disableBlend();
@@ -118,7 +120,8 @@ public class DebugRendererChunkBorder
                     west = true;
                 }
 
-                for (double levels = lowerYLimit; levels <= upperYLimit; levels += 5)
+                double levels = lowerYLimit;
+                while (levels <= upperYLimit)
                 {
                     if (north)
                     {
@@ -139,6 +142,15 @@ public class DebugRendererChunkBorder
                     {
                         bufferbuilder.pos(chunkCoordX + incX, levels, chunkCoordZ + incZ).color(1.0F, 1.0F, 1.0F, 0.0F).endVertex();
                         bufferbuilder.pos(chunkCoordX + incX, levels, chunkCoordZ + 16.0D + incZ).color(1.0F, 1.0F, 1.0F, 1.0F).endVertex();
+                    }
+
+                    if (levels > lowerYLimitSmaller)
+                    {
+                        levels+=upperYLimit/relPlayerY/(upperYLimit/relPlayerY - levels/relPlayerY)*10;
+                    }
+                    else
+                    {
+                        levels += 5;
                     }
                 }
                 if (north)
