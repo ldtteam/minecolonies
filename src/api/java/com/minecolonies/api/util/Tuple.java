@@ -1,5 +1,10 @@
 package com.minecolonies.api.util;
 
+/**
+ * Our own tuple implementation with hashcode and equals.
+ * @param <A> The first obj.
+ * @param <B> The second obj.
+ */
 public class Tuple<A, B> extends net.minecraft.util.Tuple<A, B>
 {
     public Tuple(final A aIn, final B bIn)
