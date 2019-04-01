@@ -4,10 +4,8 @@ import com.minecolonies.api.colony.IColonyTagCapability;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +15,7 @@ import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 /**
  * Update the ChunkCapability with a colony.
  */
-public class UpdateChunkCapabilityMessage implements IMessage, IMessageHandler<UpdateChunkCapabilityMessage, IMessage>
+public class UpdateChunkCapabilityMessage extends AbstractMessage<UpdateChunkCapabilityMessage, IMessage>
 {
     /**
      * The colony.
@@ -88,9 +86,8 @@ public class UpdateChunkCapabilityMessage implements IMessage, IMessageHandler<U
         }
     }
 
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull final UpdateChunkCapabilityMessage message, final MessageContext ctx)
+    protected void messageOnClientThread(final UpdateChunkCapabilityMessage message, final MessageContext ctx)
     {
         if(ctx.getClientHandler().world != null)
         {
@@ -103,6 +100,5 @@ public class UpdateChunkCapabilityMessage implements IMessage, IMessageHandler<U
                 cap.addColony(id);
             }
         }
-        return null;
     }
 }
