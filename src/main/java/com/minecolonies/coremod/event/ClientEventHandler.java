@@ -46,19 +46,9 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 public class ClientEventHandler
 {
     /**
-     * List of all BlockPos in the colony border.
-     */
-    private static final List<BlockPos> colonyBorder = new ArrayList<>();
-
-    /**
      * Seconds to show the citizen info sign.
      */
-    private static final int SECONDS_TO_SHOW       = 5;
-
-    /**
-     * Intervals between border blocks to show.
-     */
-    private static final int BORDER_BLOCK_INTERVAL = 3;
+    private static final int SECONDS_TO_SHOW = 5;
 
     /**
      * The currently displayed citizen.
@@ -74,11 +64,6 @@ public class ClientEventHandler
      * Cached wayPointBlueprint.
      */
     private Blueprint wayPointTemplate;
-
-    /**
-     * Cached wayPointBlueprint.
-     */
-    private Blueprint colonyBorderTemplate;
 
     /**
      * Cached wayPointBlueprint.
@@ -113,33 +98,11 @@ public class ClientEventHandler
                 {
                     if (wayPointTemplate == null)
                     {
-                        wayPointTemplate = new Structure(null, "schematics/infrastructure/Waypoint", settings).getBluePrint();
+                        wayPointTemplate = new Structure(world, "schematics/infrastructure/Waypoint", settings).getBluePrint();
                     }
                     BlueprintRenderHandler.getInstance().drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints()), event.getPartialTicks(), wayPointTemplate);
                 }
             }
-            else
-            {
-                final ColonyView tempView = ColonyManager.getClosestColonyView(world, player.getPosition());
-                if (tempView != null)
-                {
-                    if (colonyBorder.isEmpty() || this.view == null || !tempView.getCenter().equals(this.view.getCenter()))
-                    {
-                        calculateColonyBorder(world, tempView);
-                    }
-                    this.view = tempView;
-
-                    if (colonyBorderTemplate == null)
-                    {
-                        colonyBorderTemplate = new Structure(null, "schematics/infrastructure/BorderBlock", settings).getBluePrint();
-                    }
-                }
-                if (!colonyBorder.isEmpty() && colonyBorderTemplate != null)
-                {
-                    BlueprintRenderHandler.getInstance().drawBlueprintAtListOfPositions(colonyBorder, event.getPartialTicks(), colonyBorderTemplate);
-                }
-            }
-            return;
         }
         else if (player.getHeldItemMainhand().getItem() == ModItems.scepterGuard)
         {
@@ -162,7 +125,7 @@ public class ClientEventHandler
 
             if (partolPointTemplate == null)
             {
-                partolPointTemplate = new Structure(null, "schematics/infrastructure/PatrolPoint", settings).getBluePrint();
+                partolPointTemplate = new Structure(world, "schematics/infrastructure/PatrolPoint", settings).getBluePrint();
             }
 
             if (hut instanceof AbstractBuildingGuards.View)
@@ -171,64 +134,6 @@ public class ClientEventHandler
                   .drawBlueprintAtListOfPositions(((AbstractBuildingGuards.View) hut).getPatrolTargets().stream().map(BlockPos::up).collect(Collectors.toList()),
                     event.getPartialTicks(),
                     partolPointTemplate);
-            }
-        }
-        else
-        {
-            if (citizen != null)
-            {
-                final Entity entityCitizen = world.getEntityByID(citizen.getEntityId());
-                if (entityCitizen instanceof EntityCitizen)
-                {
-                    //TODO: Reimplement status rendering.
-                    ticksPassed += event.getPartialTicks();
-                    if (ticksPassed > Constants.TICKS_SECOND * SECONDS_TO_SHOW)
-                    {
-                        ticksPassed = 0;
-                        citizen = null;
-                    }
-                }
-                else
-                {
-                    citizen = null;
-                    ticksPassed = 0;
-                }
-
-                return;
-            }
-
-            final ColonyView colony = ColonyManager.getClosestColonyView(world, player.getPosition());
-            if (colony != null && player != null && colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
-            {
-                for (final CitizenDataView citizenDataView : new ArrayList<CitizenDataView>(colony.getCitizens().values()))
-                {
-                    final Entity entityCitizen = world.getEntityByID(citizenDataView.getEntityId());
-                    if (entityCitizen instanceof EntityCitizen && entityCitizen.getPosition().distanceSq(player.getPosition()) <= 2)
-                    {
-                        //TODO: Reimplement sign rendering.
-                        citizen = citizenDataView;
-                        return;
-                    }
-                }
-            }
-        }
-        colonyBorder.clear();
-    }
-
-    private void calculateColonyBorder(final WorldClient world, final ColonyView view)
-    {
-        final Chunk chunk = world.getChunk(view.getCenter());
-        final BlockPos center = new BlockPos(chunk.x * BLOCKS_PER_CHUNK + BLOCKS_PER_CHUNK / 2, view.getCenter().getY(), chunk.z * BLOCKS_PER_CHUNK + BLOCKS_PER_CHUNK / 2);
-
-        final int range = (Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK) + (BLOCKS_PER_CHUNK / 2);
-        for (int i = 0; i < (Configurations.gameplay.workingRangeTownHallChunks * 2 + 1) * BLOCKS_PER_CHUNK;i++)
-        {
-            if (i % BORDER_BLOCK_INTERVAL == 0)
-            {
-                colonyBorder.add(BlockPosUtil.findLand(new BlockPos(center.getX() - range + i, center.getY(), center.getZ() + range - 1), world).up());
-                colonyBorder.add(BlockPosUtil.findLand(new BlockPos(center.getX() - range + i, center.getY(), center.getZ() - range), world).up());
-                colonyBorder.add(BlockPosUtil.findLand(new BlockPos(center.getX() + range - 1, center.getY(), center.getZ() - range + i), world).up());
-                colonyBorder.add(BlockPosUtil.findLand(new BlockPos(center.getX() - range, center.getY(), center.getZ() - range + i), world).up());
             }
         }
     }
