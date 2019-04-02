@@ -21,6 +21,7 @@ import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.event.ClientEventHandler;
+import com.minecolonies.coremod.event.DebugRendererChunkBorder;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -75,6 +76,8 @@ public class ClientProxy extends CommonProxy
         super.registerEvents();
 
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
+        MinecraftForge.EVENT_BUS.register(new DebugRendererChunkBorder());
+
     }
 
     @Override
