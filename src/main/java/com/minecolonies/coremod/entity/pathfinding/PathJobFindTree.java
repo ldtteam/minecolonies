@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
@@ -132,6 +133,6 @@ public class PathJobFindTree extends AbstractPathJob
     @Override
     protected boolean isPassable(@NotNull final IBlockState block)
     {
-        return super.isPassable(block) || block.getMaterial() == Material.LEAVES;
+        return super.isPassable(block) || block.getMaterial() == Material.LEAVES || Compatibility.isDynamicTrunkShell(block.getBlock());
     }
 }

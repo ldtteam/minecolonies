@@ -102,17 +102,19 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      * Constructor for the window when the player wants to hire a worker for a certain job.
      *
      * @param c          the colony view.
-     * @param buildingId the building position.
+     * @param building the building.
      */
-    public WindowBuildBuilding(final ColonyView c, final BlockPos buildingId)
+    public WindowBuildBuilding(final ColonyView c, final AbstractBuildingView building)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
-        building = c.getBuilding(buildingId);
+        this.building = building;
+
         initStyleNavigation();
         registerButton(BUTTON_BUILD, this::confirmClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
         registerButton(BUTTON_REPAIR, this::repairClicked);
         registerButton(BUTTON_MOVE_BUILDING, this::moveBuildingClicked);
+
         final Button buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
         if (building.getBuildingLevel() == 0)
         {

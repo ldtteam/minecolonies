@@ -73,7 +73,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
         }
         else
         {
-            @NotNull final WindowBuildBuilding window = new WindowBuildBuilding(building.getColony(), building.getLocation());
+            @NotNull final WindowBuildBuilding window = new WindowBuildBuilding(building.getColony(), building);
             window.open();
         }
     }
@@ -90,13 +90,11 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
     public void onUpdate()
     {
         super.onUpdate();
-
         // Check if we are on the default page
         if (switchView.getCurrentView().getID().equals(PAGE_ACTIONS))
         {
-            final AbstractBuildingView buildingView = building.getColony().getBuilding(building.getID());
-
-            if (title != null)
+            final AbstractBuildingView buildingView = building;
+            if (title != null && buildingView != null)
             {
                 final String name = building.getCustomName().isEmpty() ? LanguageHandler.format(getBuildingName()) : building.getCustomName();
                 if (switchView.getID().equals(GUI_LIST_BUTTON_SWITCH + PAGE_ACTIONS))

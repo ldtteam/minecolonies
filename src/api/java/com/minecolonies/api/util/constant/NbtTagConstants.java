@@ -26,6 +26,7 @@ public final class NbtTagConstants
     public static final String TAG_ABANDONED              = "abandoned";
     public static final String TAG_BUILDING_PRIO          = "buildingPrio";
     public static final String TAG_PRIO                   = "prio";
+    public static final String TAG_PRIO_MODE              = "prioMode";
     public static final String TAG_PRIO_ID                = "prioId";
     public static final String TAG_COLONIES               = "colonies";
     public static final String TAG_UUID                   = "uuid";

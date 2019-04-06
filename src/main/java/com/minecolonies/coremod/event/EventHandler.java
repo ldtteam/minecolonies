@@ -23,6 +23,7 @@ import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesChunkCapab
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldColonyManagerCapabilityProvider;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
+import com.minecolonies.coremod.network.messages.UpdateChunkRangeCapabilityMessage;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.ldtteam.structurize.items.ModItems;
 import net.minecraft.block.Block;
@@ -95,8 +96,6 @@ public class EventHandler
                 final WorldClient world = mc.world;
                 final EntityPlayerSP player = mc.player;
                 IColony colony = ColonyManager.getIColony(world, player.getPosition());
-
-
                 if (colony == null)
                 {
                     if (!ColonyManager.isTooCloseToColony(world, player.getPosition()))
@@ -172,6 +171,8 @@ public class EventHandler
         if (entity instanceof EntityPlayerMP)
         {
             final World world = entity.getEntityWorld();
+            MineColonies.getNetwork().sendTo(new UpdateChunkRangeCapabilityMessage(world, event.getNewChunkX(), event.getNewChunkZ(), Configurations.gameplay.workingRangeTownHallChunks), (EntityPlayerMP) event.getEntity());
+
             final Chunk newChunk = world.getChunk(event.getNewChunkX(), event.getNewChunkZ());
             ChunkDataHelper.loadChunk(newChunk, entity.world);
 

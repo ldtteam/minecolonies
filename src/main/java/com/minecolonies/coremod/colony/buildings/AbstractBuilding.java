@@ -506,9 +506,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      *
      * @param newLevel The new level.
      */
-    @SuppressWarnings("squid:S1172")
     public void onUpgradeComplete(final int newLevel)
     {
+        ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
         colony.getProgressManager().progressBuildBuilding(this,
           colony.getBuildingManager().getBuildings().values().stream()
             .filter(building -> building instanceof AbstractBuildingWorker).mapToInt(AbstractSchematicProvider::getBuildingLevel).sum(),

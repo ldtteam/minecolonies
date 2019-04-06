@@ -33,8 +33,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CONTAINERS;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PRIO;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Class containing the container action of the buildings.
@@ -91,6 +90,10 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         {
             this.pickUpPriority = compound.getInteger(TAG_PRIO);
         }
+        if (compound.hasKey(TAG_PRIO_MODE))
+        {
+            this.priorityStatic = compound.getBoolean(TAG_PRIO_MODE);
+        }
     }
 
     @Override
@@ -104,6 +107,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         }
         compound.setTag(TAG_CONTAINERS, containerTagList);
         compound.setInteger(TAG_PRIO, this.pickUpPriority);
+        compound.setBoolean(TAG_PRIO_MODE, this.priorityStatic);
     }
 
     /**
