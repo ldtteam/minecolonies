@@ -455,6 +455,9 @@ public class Configurations
 
         @Config.Comment("Chance to get a sponge drop for the fisherman starting at level 4.")
         public double fisherSpongeChance = 0.1;
+
+        @Config.Comment("The minimum level a townhall has to have to allow teleportation to other colonies.")
+        public int minThLevelToTeleport = 3;
     }
 
     public static class Compatibility

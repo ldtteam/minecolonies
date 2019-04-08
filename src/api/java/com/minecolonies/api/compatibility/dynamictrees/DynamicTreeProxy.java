@@ -45,6 +45,17 @@ public class DynamicTreeProxy
     }
 
     /**
+     * Default method for when dynamic Tree's mod is not present, returns false.
+     *
+     * @param block Block to check
+     * @return false
+     */
+    protected boolean checkForDynamicTrunkShellBlock(final Block block)
+    {
+        return false;
+    }
+
+    /**
      * Get the list of Drops from a Dynamic leaf
      *
      * @param leaf The leaf to check

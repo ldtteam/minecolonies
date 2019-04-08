@@ -29,7 +29,7 @@ public final class PirateEventUtils
     /**
      * Folder name for the pirate ship schematics
      */
-    public static final String PIRATESHIP_FOLDER = "/Decorations/Ships/";
+    public static final String PIRATESHIP_FOLDER = "/Ships/";
 
     /**
      * Colony range divider in which distance to load the pirate spawners.
