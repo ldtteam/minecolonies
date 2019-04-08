@@ -47,9 +47,9 @@ public final class BarbarianEventUtils
           colony.getMessageEntityPlayers(),
           RAID_EVENT_MESSAGE + raidNumber, colony.getName());
 
-        MobSpawnUtils.spawn(BARBARIAN, horde.numberOfRaiders, targetSpawnPoint, world);
-        MobSpawnUtils.spawn(ARCHER, horde.numberOfArchers, targetSpawnPoint, world);
-        MobSpawnUtils.spawn(CHIEF, horde.numberOfBosses, targetSpawnPoint, world);
+        MobSpawnUtils.spawn(BARBARIAN, horde.numberOfRaiders, targetSpawnPoint, world, colony);
+        MobSpawnUtils.spawn(ARCHER, horde.numberOfArchers, targetSpawnPoint, world, colony);
+        MobSpawnUtils.spawn(CHIEF, horde.numberOfBosses, targetSpawnPoint, world, colony);
     }
 
     /**

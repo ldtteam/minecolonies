@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.entity.ai.mobs.aitasks;
 
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
@@ -48,11 +46,6 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
      * The set speed.
      */
     protected final double speed;
-
-    /**
-     * The colony.
-     */
-    protected Colony colony;
 
     /**
      * Random obj.
@@ -299,12 +292,12 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
      */
     private BlockPos getRandomBuilding()
     {
-        if (getColony() == null)
+        if (entity.getColony() == null)
         {
             return null;
         }
 
-        final Collection<AbstractBuilding> buildingList = getColony().getBuildingManager().getBuildings().values();
+        final Collection<AbstractBuilding> buildingList = entity.getColony().getBuildingManager().getBuildings().values();
         final Object[] buildingArray = buildingList.toArray();
         if (buildingArray.length != 0)
         {
@@ -317,15 +310,5 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         {
             return null;
         }
-    }
-
-    public Colony getColony()
-    {
-        if (colony == null)
-        {
-            colony = ColonyManager.getClosestColony(world, entity.getPosition());
-        }
-
-        return colony;
     }
 }
