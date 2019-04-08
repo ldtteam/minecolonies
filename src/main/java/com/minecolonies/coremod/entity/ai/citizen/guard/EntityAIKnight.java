@@ -26,8 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PHYSICAL;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PROTECT;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
@@ -44,7 +43,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
         super(job);
         super.registerTargets(
           new AITarget(GUARD_ATTACK_PROTECT, this::attackProtect),
-          new AITarget(GUARD_ATTACK_PHYSICAL, this::attackPhysical)
+          new AITarget(GUARD_ATTACK_PHYSICAL, this::attackPhysical, 4)
         );
         toolsNeeded.add(ToolType.SWORD);
 
@@ -146,6 +145,11 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
             return state;
         }
 
+        if (worker.getDistanceSq(target.posX, target.getEntityBoundingBox().minY, target.posZ) > getAttackRange() * getAttackRange())
+        {
+            return DECIDE;
+        }
+
         if (currentAttackDelay > 0)
         {
             reduceAttackDelay(4);
@@ -214,7 +218,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
             }
 
             addDmg += getLevelDamage();
-            return (int) ((BASE_PHYSICAL_DAMAGE + addDmg) * Configurations.gameplay.rangerDamageMult);
+            return (int) ((BASE_PHYSICAL_DAMAGE + addDmg) * Configurations.gameplay.knightDamageMult);
         }
         return (int) (BASE_PHYSICAL_DAMAGE * Configurations.gameplay.knightDamageMult);
     }
