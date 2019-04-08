@@ -1022,68 +1022,70 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
             final Entity entity = ItemStackUtils.getEntityFromEntityInfoOrNull(entityInfo, world);
             final BlockPos pos = currentStructure.getPos();
-            final Vec3d worldPos = entity.getPositionVector().add(pos.getX(), pos.getY(), pos.getZ());
-
-            if (entity != null && !EntityUtils.isEntityAtPosition(entity, world, worker))
+            if (entity != null)
             {
-                final List<ItemStack> request = new ArrayList<>();
-
-                if (entity instanceof EntityItemFrame)
-                {
-                    final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
-                    if (!ItemStackUtils.isEmpty(stack))
-                    {
-                        ItemStackUtils.setSize(stack, 1);
-                        request.add(stack);
-                    }
-                    request.add(new ItemStack(Items.ITEM_FRAME, 1));
-                }
-                else if (entity instanceof EntityArmorStand)
-                {
-                    request.add(entity.getPickedResult(new RayTraceResult(worker)));
-                    entity.getArmorInventoryList().forEach(request::add);
-                    entity.getHeldEquipment().forEach(request::add);
-                }
-                else
-                {
-                    request.add(entity.getPickedResult(new RayTraceResult(worker)));
-                }
-
-                request.removeIf(ItemStackUtils::isEmpty);
-
-                if (!Configurations.gameplay.builderInfiniteResources)
-                {
-                    if (checkForListInInvAndRequest(this, new ArrayList<>(request), true))
-                    {
-                        return false;
-                    }
-
-                    //Surpress
-                    for (final ItemStack stack : request)
-                    {
-                        if (ItemStackUtils.isEmpty(stack))
-                        {
-                            continue;
-                        }
-                        final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(stack.getItem(), stack.getItemDamage());
-                        if (slot != -1)
-                        {
-                            new InvWrapper(getInventory()).extractItem(slot, 1, false);
-                            reduceNeededResources(stack);
-                        }
-                    }
-                }
-
-                entity.setUniqueId(UUID.randomUUID());
+                final Vec3d worldPos = entity.getPositionVector().add(pos.getX(), pos.getY(), pos.getZ());
                 entity.setLocationAndAngles(
                   worldPos.x,
                   worldPos.y,
                   worldPos.z,
                   entity.rotationYaw,
                   entity.rotationPitch);
-                if (!world.spawnEntity(entity))
+
+                if (!EntityUtils.isEntityAtPosition(entity, world, worker))
                 {
-                    Log.getLogger().info("Failed to spawn entity");
+                    final List<ItemStack> request = new ArrayList<>();
+                    if (entity instanceof EntityItemFrame)
+                    {
+                        final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
+                        if (!ItemStackUtils.isEmpty(stack))
+                        {
+                            ItemStackUtils.setSize(stack, 1);
+                            request.add(stack);
+                        }
+                        request.add(new ItemStack(Items.ITEM_FRAME, 1));
+                    }
+                    else if (entity instanceof EntityArmorStand)
+                    {
+                        request.add(entity.getPickedResult(new RayTraceResult(worker)));
+                        entity.getArmorInventoryList().forEach(request::add);
+                        entity.getHeldEquipment().forEach(request::add);
+                    }
+                    else
+                    {
+                        request.add(entity.getPickedResult(new RayTraceResult(worker)));
+                    }
+
+                    request.removeIf(ItemStackUtils::isEmpty);
+
+                    if (!Configurations.gameplay.builderInfiniteResources)
+                    {
+                        if (checkForListInInvAndRequest(this, new ArrayList<>(request), true))
+                        {
+                            return false;
+                        }
+
+                        //Surpress
+                        for (final ItemStack stack : request)
+                        {
+                            if (ItemStackUtils.isEmpty(stack))
+                            {
+                                continue;
+                            }
+                            final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(stack.getItem(), stack.getItemDamage());
+                            if (slot != -1)
+                            {
+                                new InvWrapper(getInventory()).extractItem(slot, 1, false);
+                                reduceNeededResources(stack);
+                            }
+                        }
+                    }
+
+                    entity.setUniqueId(UUID.randomUUID());
+                    if (!world.spawnEntity(entity))
+                    {
+                        Log.getLogger().info("Failed to spawn entity");
+                    }
                 }
             }
         }
