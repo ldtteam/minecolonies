@@ -510,7 +510,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         if (!(tileEntity instanceof TileEntityColonyBuilding))
         {
-            return DELIVERY;
+            job.finishRequest(true);
+            return START_WORKING;
         }
 
         final TileEntityColonyBuilding tileEntityColonyBuilding = (TileEntityColonyBuilding) tileEntity;

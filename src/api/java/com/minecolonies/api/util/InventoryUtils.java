@@ -2578,6 +2578,7 @@ public class InventoryUtils
             if(invWrapper.getStackInSlot(i).isItemEqual(itemStack))
             {
                 invWrapper.getStackInSlot(i).shrink(quantity);
+                return;
             }
         }
 
