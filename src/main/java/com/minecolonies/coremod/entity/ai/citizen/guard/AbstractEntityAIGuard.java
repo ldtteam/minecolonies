@@ -334,7 +334,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         final Colony colony = worker.getCitizenColonyHandler().getColony();
         if (worker.getLastAttackedEntity() != null && !worker.getLastAttackedEntity().isDead)
         {
-            if (isInAttackDistance(worker.getLastAttackedEntity().getPosition()))
+            if (!isWithinPersecutionDistance(worker.getLastAttackedEntity().getPosition()))
             {
                 worker.setLastAttackedEntity(null);
             }
