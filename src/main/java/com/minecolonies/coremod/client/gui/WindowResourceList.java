@@ -56,7 +56,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         if (colonyView != null)
         {
             final AbstractBuildingView buildingView = colonyView.getBuilding(buildingPos);
-            if (buildingView instanceof AbstractBuildingBuilderView)
+            if (buildingView instanceof BuildingBuilder.View)
             {
                 this.builder = (BuildingBuilder.View) buildingView;
                 return;
