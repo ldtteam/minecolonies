@@ -1,9 +1,21 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.BlockUtils;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.managers.interfaces.IStatisticAchievementManager;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
@@ -12,14 +24,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is the base class of all worker AIs.
@@ -247,18 +252,6 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         {
             //We are missing a tool to harvest this block...
             return true;
-        }
-
-        final ItemStack tool = worker.getHeldItemMainhand();
-
-        if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.BEDROCK
-              && curBlock.getHarvestTool(world.getBlockState(blockToMine)) != null)
-        {
-            Log.getLogger().info(String.format(
-              "ForgeHook not in sync with EfficientTool for %s and %s\n"
-                + "Please report to MineColonies with this text to add support!",
-              curBlock, tool
-            ));
         }
 
         if (walkToBlock(safeStand) && MathUtils.twoDimDistance(worker.getPosition(), safeStand) > MIN_WORKING_RANGE)
