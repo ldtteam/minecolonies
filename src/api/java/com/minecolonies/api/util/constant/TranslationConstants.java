@@ -38,6 +38,10 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE               = "entity.builder.messageBuildComplete";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_TOOHIGH                     = "entity.builder.messageBuildTooHigh";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_TOOLOW                      = "entity.builder.messageBuildTooLow";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST           = "entity.worker.inventoryFullChestFull";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_WORKER_PICKAXEREQUEST               = "entity.worker.pickaxeRequest";

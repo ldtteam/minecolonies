@@ -41,7 +41,8 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.Suppression.LOOPS_SHOULD_NOT_CONTAIN_MORE_THAN_A_SINGLE_BREAK_OR_CONTINUE_STATEMENT;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART;
-
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_TOOHIGH;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_TOOLOW;
 /**
  * AI class for the builder.
  * Manages building and repairing buildings.
@@ -107,7 +108,17 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 }
 
                 worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, job.getStructure().getBluePrint().getName());
-
+                int height = job.getStructure().getBluePrint().getSizeY();
+                if(wo.getBuildingLocation().getY() + height >= 256)
+                {
+                    worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_TOOHIGH, job.getStructure().getBluePrint().getName());	
+                    worker.getCitizenColonyHandler().getColony().getWorkManager().removeWorkOrder(wo);
+                }
+                else if(wo.getBuildingLocation().getY() <= 1)
+                {
+                    worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_TOOLOW, job.getStructure().getBluePrint().getName());
+                    worker.getCitizenColonyHandler().getColony().getWorkManager().removeWorkOrder(wo);
+                }
                 //Don't go through the CLEAR stage for repairs and upgrades
                 if (building.getBuildingLevel() > 0)
                 {
