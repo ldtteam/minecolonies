@@ -36,6 +36,7 @@ import com.minecolonies.coremod.colony.requestsystem.management.handlers.Resolve
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -268,6 +269,19 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         {
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
               "entity.builder.messageBuildersTooFar");
+            return;
+        }
+        
+        if(getLocation().getY() + getHeight() >= 256)
+        {
+        	LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+        	  "entity.builder.messageBuildTooHigh");
+            return;
+        }
+        else if(getLocation().getY() <= 1)
+        {
+        	LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+        	  "entity.builder.messageBuildTooLow");
             return;
         }
 
