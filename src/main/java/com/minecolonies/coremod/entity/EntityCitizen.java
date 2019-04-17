@@ -925,6 +925,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (!getCitizenColonyHandler().getColony().getRaiderManager().getHorde((WorldServer) world).isEmpty()))
         {
+            isDay = false;
             return DesiredActivity.SLEEP;
         }
 
