@@ -296,11 +296,11 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
     {
         if (primary == current)
         {
-            return ColorConstants.GREEN;
+            return ColorConstants.GREEN + "§l";
         }
         if (secondary == current)
         {
-            return ColorConstants.YELLOW;
+            return ColorConstants.YELLOW + "§o";
         }
         return "";
     }
