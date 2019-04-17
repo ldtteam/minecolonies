@@ -171,8 +171,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         {
             return getState();
         }
+        else if (InventoryUtils.hasItemInProvider(building.getTileEntity(), needsCurrently))
+        {
+            return GATHERING_REQUIRED_MATERIALS;
+        }
 
-        return GATHERING_REQUIRED_MATERIALS;
+        return pickUpMaterial();
     }
 
     @Override
