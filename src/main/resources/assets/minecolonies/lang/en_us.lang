@@ -22,6 +22,7 @@ tile.blockHutTownHall.messageMaxSize=%d has reached max size
 tile.blockHutTownHall.messageColonistDead=The colonist %s has died at %d %d %d of %s!
 tile.blockHutTownHall.messageInvalidWorld=You can't place a town hall in this world type
 tile.blockHutTownHall.messageTooClose=Too close to existing town hall
+tile.blockHutTownHall.messageTooCloseToVillage=Too close to existing village
 tile.blockHutTownHall.messageTooFar=Too far away from your Colony
 tile.blockHut.messageTooFarFromTownHall=You need to be closer to your town hall!
 tile.blockHut.messageNoTownHall=You need to place a town hall first!
