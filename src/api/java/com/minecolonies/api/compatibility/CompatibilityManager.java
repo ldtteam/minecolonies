@@ -101,6 +101,11 @@ public class CompatibilityManager implements ICompatibilityManager
     private static final Random random = new Random();
 
     /**
+     * List of all blocks.
+     */
+    private static ImmutableList<ItemStack> allBlocks = ImmutableList.<ItemStack>builder().build();
+
+    /**
      * Instantiates the compatibilityManager.
      */
     public CompatibilityManager()
@@ -150,8 +155,39 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverLuckyOres();
         discoverCrusherModes();
         discoverSifting();
+        discoverBlockList();
 
         discoveredAlready = true;
+    }
+
+    /**
+     * Create complete list of blocks, client side only.
+     */
+    private void discoverBlockList()
+    {
+        allBlocks =  ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
+            final NonNullList<ItemStack> stacks = NonNullList.create();
+            try
+            {
+                item.getSubItems(CreativeTabs.SEARCH, stacks);
+            }
+            catch (final Exception ex)
+            {
+                Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName(), ex);
+            }
+
+            return stacks.stream();
+        }).collect(Collectors.toList()));
+    }
+
+    /**
+     * Getter for the list.
+     * @return the list of itemStacks.
+     */
+    @Override
+    public List<ItemStack> getBlockList()
+    {
+        return allBlocks;
     }
 
     @Override
