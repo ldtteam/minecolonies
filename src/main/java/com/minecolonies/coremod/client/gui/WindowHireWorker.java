@@ -18,6 +18,7 @@ import com.minecolonies.coremod.network.messages.HireFireMessage;
 import com.minecolonies.coremod.network.messages.PauseCitizenMessage;
 import com.minecolonies.coremod.network.messages.RestartCitizenMessage;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -289,18 +290,18 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
 
     private static String createAttributeText(final String color, final String text)
     {
-        return color + text + ColorConstants.WHITE;
+        return color + text + TextFormatting.RESET.toString();
     }
 
     private static String createColor(final AbstractBuildingWorker.Skill primary, final AbstractBuildingWorker.Skill secondary, final AbstractBuildingWorker.Skill current)
     {
         if (primary == current)
         {
-            return ColorConstants.GREEN + "§l";
+            return TextFormatting.GREEN.toString() + TextFormatting.BOLD.toString();
         }
         if (secondary == current)
         {
-            return ColorConstants.YELLOW + "§o";
+            return TextFormatting.YELLOW.toString() + TextFormatting.ITALIC.toString();
         }
         return "";
     }
