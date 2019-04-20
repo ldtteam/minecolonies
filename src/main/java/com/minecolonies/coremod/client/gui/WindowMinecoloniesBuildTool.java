@@ -47,11 +47,6 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     {
         super(pos, structureName, rotation, mode);
         this.pos = pos;
-        final ColonyView view = ColonyManager.getClosestColonyView(Minecraft.getMinecraft().world, pos);
-        if (view != null && Settings.instance.getStyle().isEmpty())
-        {
-            Settings.instance.setStyle(view.getStyle());
-        }
     }
 
     /**
@@ -66,11 +61,6 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     {
         super(pos);
         this.pos = pos;
-        final ColonyView view = ColonyManager.getClosestColonyView(Minecraft.getMinecraft().world, pos);
-        if (view != null && Settings.instance.getStyle().isEmpty())
-        {
-            Settings.instance.setStyle(view.getStyle());
-        }
     }
 
     @Override

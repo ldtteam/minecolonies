@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.event;
 
+import com.ldtteam.structures.helpers.Settings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.permissions.Action;
@@ -16,6 +17,7 @@ import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -365,6 +367,11 @@ public class EventHandler
             {
                 if (event.getUseBlock() == Event.Result.DEFAULT && event.getFace() != null)
                 {
+                    final ColonyView view = ColonyManager.getClosestColonyView(Minecraft.getMinecraft().world, event.getPos().offset(event.getFace()));
+                    if (view != null && Settings.instance.getStyle().isEmpty())
+                    {
+                        Settings.instance.setStyle(view.getStyle());
+                    }
                     MineColonies.proxy.openBuildToolWindow(event.getPos().offset(event.getFace()));
                 }
             }
@@ -379,6 +386,11 @@ public class EventHandler
               && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote
               && event.getFace() != null)
         {
+            final ColonyView view = ColonyManager.getClosestColonyView(Minecraft.getMinecraft().world, event.getPos());
+            if (view != null && Settings.instance.getStyle().isEmpty())
+            {
+                Settings.instance.setStyle(view.getStyle());
+            }
             MineColonies.proxy.openBuildToolWindow(null);
             event.setCanceled(true);
         }
