@@ -7,6 +7,8 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import net.minecraft.nbt.NBTTagCompound;
@@ -205,7 +207,6 @@ public final class ChunkDataHelper
         final int chunkX = centralChunk.x;
         final int chunkZ = centralChunk.z;
 
-        //todo respect max distance of config
         claimChunksInRange(id, dimension, add, chunkX, chunkZ, range, world, center);
     }
 
@@ -287,16 +288,28 @@ public final class ChunkDataHelper
             return;
         }
 
+        final Colony colony = ColonyManager.getColonyByWorld(colonyId, world);
+        if (colony == null)
+        {
+            return;
+        }
+
         int additionalChunksToLoad = 0;
         for (int i = chunkX - range; i <= chunkX + range; i++)
         {
             for (int j = chunkZ - range; j <= chunkZ + range; j++)
             {
+                final BlockPos pos = new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK);
+                if (Configurations.gameplay.workingRangeTownHall != 0 && pos.distanceSq(colony.getCenter()) > Math.pow(Configurations.gameplay.workingRangeTownHall, 2))
+                {
+                    continue;
+                }
+
                 if (i == chunkX && j == chunkZ)
                 {
                     continue;
                 }
-                if (loadChunkAndAddData(world, new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK), add, colonyId, center))
+                if (loadChunkAndAddData(world, pos, add, colonyId, center))
                 {
                     continue;
                 }

@@ -551,7 +551,7 @@ public class EventHandler
             return false;
         }
 
-        if (!colony.isCoordInColony(world, pos))
+        if (!colony.isCoordInColony(world, pos) && colony.hasTownHall())
         {
             if (!world.isRemote)
             {

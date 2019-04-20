@@ -31,11 +31,6 @@ import java.util.Map;
 public class WindowMinecoloniesBuildTool extends WindowBuildTool
 {
     /**
-     * The clicked pos.
-     */
-    private final BlockPos pos;
-
-    /**
      * Creates a window build tool for a specific structure.
      *
      * @param pos           the position.
@@ -46,7 +41,6 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     public WindowMinecoloniesBuildTool(@Nullable final BlockPos pos, final String structureName, final int rotation, final WindowBuildTool.FreeMode mode)
     {
         super(pos, structureName, rotation, mode);
-        this.pos = pos;
     }
 
     /**
@@ -60,7 +54,6 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     public WindowMinecoloniesBuildTool(@Nullable final BlockPos pos)
     {
         super(pos);
-        this.pos = pos;
     }
 
     @Override
