@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.coremod.colony.CitizenDataView;
-import com.structurize.coremod.client.gui.WindowBuildTool;
+import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.math.BlockPos;
@@ -121,4 +121,10 @@ public interface IProxy
      */
     @NotNull
     RecipeBook getRecipeBookFromPlayer(@NotNull final EntityPlayer player);
+
+    /**
+     * Open the Window of the decoration controller.
+     * @param pos the position of the block.
+     */
+    void openDecorationControllerWindow(@NotNull final BlockPos pos);
 }

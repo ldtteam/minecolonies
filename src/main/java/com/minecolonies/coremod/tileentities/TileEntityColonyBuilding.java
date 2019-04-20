@@ -75,6 +75,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
     private String style = "";
 
     /**
+     * Create the combined inv wrapper for the building.
+     */
+    private CombinedItemHandler combinedInv;
+
+    /**
      * Empty standard constructor.
      */
     public TileEntityColonyBuilding()
@@ -127,7 +132,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
             {
                 //log on the server
                 Log.getLogger().warn(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] had colony.",
-                                getWorld().getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
+                  getWorld().getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
             }
         }
 
@@ -174,9 +179,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
             {
                 final TileEntity entity = getWorld().getTileEntity(pos);
                 if ((entity instanceof TileEntityRack
-                        && ((TileEntityRack) entity).hasItemStack(notEmptyPredicate))
-                        || (entity instanceof TileEntityChest
-                        && isInTileEntity((TileEntityChest) entity, notEmptyPredicate)))
+                       && ((TileEntityRack) entity).hasItemStack(notEmptyPredicate))
+                      || (entity instanceof TileEntityChest
+                            && isInTileEntity((TileEntityChest) entity, notEmptyPredicate)))
                 {
                     return pos;
                 }
@@ -294,7 +299,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      */
     public AbstractBuildingView getBuildingView()
     {
-        final ColonyView c = ColonyManager.getColonyView(colonyId);
+        final ColonyView c = ColonyManager.getColonyView(colonyId, world.provider.getDimension());
         return c == null ? null : c.getBuilding(getPosition());
     }
 
@@ -336,6 +341,12 @@ public class TileEntityColonyBuilding extends TileEntityChest
                 colonyId = tempColony.getID();
             }
         }
+
+        /*
+         * We want a new inventory every tick.
+         * The accessed inventory in the same tick must be the same.
+         */
+        combinedInv = null;
     }
 
     @Override
@@ -411,32 +422,38 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getBuilding() != null)
         {
-            //Add additional containers
-            final Set<ICapabilityProvider> providers = new HashSet<>();
-            final World world = colony.getWorld();
-            if (world != null)
+            if (this.combinedInv == null)
             {
                 //Add additional containers
-                providers.addAll(building.getAdditionalCountainers().stream()
-                                   .map(world::getTileEntity)
-                                   .collect(Collectors.toSet()));
-                providers.removeIf(Objects::isNull);
+                final Set<ICapabilityProvider> providers = new HashSet<>();
+                final World world = colony.getWorld();
+                if (world != null)
+                {
+                    //Add additional containers
+                    providers.addAll(building.getAdditionalCountainers().stream()
+                                       .map(world::getTileEntity)
+                                       .collect(Collectors.toSet()));
+                    providers.removeIf(Objects::isNull);
+                }
+
+                final List<IItemHandler> handlers = providers.stream()
+                                                      .flatMap(provider -> InventoryUtils.getItemHandlersFromProvider(provider).stream())
+                                                      .collect(Collectors.toList());
+                final T cap = super.getCapability(capability, facing);
+                if (cap instanceof IItemHandler)
+                {
+                    handlers.add((IItemHandler) cap);
+                }
+                
+                this.combinedInv = new CombinedItemHandler(building.getSchematicName(), handlers.stream()
+                                                                                          .map(handler -> (IItemHandlerModifiable) handler)
+                                                                                          .distinct()
+                                                                                          .filter(handler -> handler instanceof IItemHandlerModifiable
+                                                                                                               && handler.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
+                                                                                          .toArray(IItemHandlerModifiable[]::new));
             }
 
-            final List<IItemHandler> handlers  = providers.stream()
-                             .flatMap(provider -> InventoryUtils.getItemHandlersFromProvider(provider).stream())
-                             .collect(Collectors.toList());
-            final T cap = super.getCapability(capability, facing);
-            if (cap instanceof IItemHandler)
-            {
-                handlers.add((IItemHandler) cap);
-            }
-
-            return (T) new CombinedItemHandler(building.getSchematicName(), handlers.stream()
-                                                                     .map(handler -> (IItemHandlerModifiable) handler)
-                                                                              .distinct()
-                                                                              .filter(handler -> handler instanceof IItemHandlerModifiable && handler.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
-                                                                              .toArray(IItemHandlerModifiable[]::new));
+            return (T) this.combinedInv;
         }
         return super.getCapability(capability, facing);
     }

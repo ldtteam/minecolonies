@@ -51,6 +51,11 @@ public final class WindowConstants
     public static final String BUTTON_RECALL = "recall";
 
     /**
+     * Id of the hire Citizen button in the GUI.
+     */
+    public static final String BUTTON_HIRE = "hire";
+
+    /**
      * Id of the change specialization button in the GUI.
      */
     public static final String BUTTON_CHANGE_SPEC = "changeSpec";
@@ -74,6 +79,11 @@ public final class WindowConstants
      * Id of the toggle job button in the GUI.
      */
     public static final String BUTTON_TOGGLE_HOUSING = "toggleHousing";
+
+    /**
+     * Id of the toggle move in button in the GUI.
+     */
+    public static final String BUTTON_TOGGLE_MOVE_IN = "toggleMoveIn";
 
     /**
      * Id of the toggle print progress button in the GUI.
@@ -786,7 +796,7 @@ public final class WindowConstants
     public static final int XP_BAR_EMPTY_ROW = 64;
 
     /**
-     * The row where the emtpy Happiness bar starts. 
+     * The row where the emtpy Happiness bar starts.
      */
 
     public static final int HAPPINESS_BAR_EMPTY_ROW = 74;
@@ -797,7 +807,7 @@ public final class WindowConstants
     public static final int XP_BAR_FULL_ROW = 69;
 
     /**
-     * The row where the full happiness bar starts. 
+     * The row where the full happiness bar starts.
      */
     public static final int HAPPINESS_BAR_FULL_ROW = 79;
 
@@ -952,7 +962,7 @@ public final class WindowConstants
     public static final String WINDOW_ID_XP = "xpLabel";
 
     /**
-     * The label to find the happiness label in the gui. 
+     * The label to find the happiness label in the gui.
      */
     public static final String WINDOW_ID_HAPPINESS = "happinessLabel";
 
@@ -992,7 +1002,7 @@ public final class WindowConstants
     public static final String WINDOW_ID_SATURATION_BAR = "saturationBar";
 
     /**
-     * The saturation bar of the citizen. 
+     * The saturation bar of the citizen.
      */
     public static final String WINDOW_ID_HAPPINESS_BAR = "happinessBar";
 
@@ -1124,6 +1134,51 @@ public final class WindowConstants
      * Id of the job label in the GUI.
      */
     public static final String CITIZEN_LIVING = "living";
+
+    /**
+     * Edit button for the hut name.
+     */
+    public static final String BUTTON_EDIT_NAME = "editName";
+
+    /**
+     * Id of the done button in the GUI.
+     */
+    public static final String BUTTON_MODE = "mode";
+
+    /**
+     * Id of the citizen list in the GUI.
+     */
+    public static final String CITIZEN_LIST_UNEMP = "unemployed";
+
+    /**
+     * Id of the attributes label in the GUI.
+     */
+    public static final String ATTRIBUTES_LABEL = "attributes";
+
+    /**
+     * Link to the xml file of the window.
+     */
+    public static final String HIRE_WORKER_SUFFIX = ":gui/windowhireworker.xml";
+
+    /**
+     * Id of the fire button
+     */
+    public static final String BUTTON_FIRE = "fire";
+
+    /**
+     * Id of the automatic hiring warning
+     */
+    public static final String AUTO_HIRE_WARN = "autoHireWarn";
+
+    /**
+     * Id of the pause button
+     */
+    public static final String BUTTON_PAUSE = "pause";
+
+    /**
+     * Id of the pause button
+     */
+    public static final String BUTTON_RESTART = "restart";
 
     /**
      * public constructor to hide implicit public one.

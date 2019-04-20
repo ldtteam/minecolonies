@@ -3,10 +3,7 @@ package com.minecolonies.coremod.proxy;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.client.gui.WindowCitizen;
-import com.minecolonies.coremod.client.gui.WindowClipBoard;
-import com.minecolonies.coremod.client.gui.WindowMinecoloniesBuildTool;
-import com.minecolonies.coremod.client.gui.WindowResourceList;
+import com.minecolonies.coremod.client.gui.*;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
@@ -24,13 +21,14 @@ import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.event.ClientEventHandler;
+import com.minecolonies.coremod.event.DebugRendererChunkBorder;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
-import com.structurize.coremod.client.gui.WindowBuildTool;
-import com.structurize.coremod.management.Structures;
-import com.structurize.structures.helpers.Settings;
+import com.ldtteam.structurize.client.gui.WindowBuildTool;
+import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structures.helpers.Settings;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -78,6 +76,8 @@ public class ClientProxy extends CommonProxy
         super.registerEvents();
 
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
+        MinecraftForge.EVENT_BUS.register(new DebugRendererChunkBorder());
+
     }
 
     @Override
@@ -117,6 +117,18 @@ public class ClientProxy extends CommonProxy
         }
 
         @Nullable final WindowMinecoloniesBuildTool window = new WindowMinecoloniesBuildTool(pos);
+        window.open();
+    }
+
+    @Override
+    public void openDecorationControllerWindow(@Nullable final BlockPos pos)
+    {
+        if (pos == null)
+        {
+            return;
+        }
+
+        @Nullable final WindowDecorationController window = new WindowDecorationController(pos);
         window.open();
     }
 
@@ -195,11 +207,13 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutSawmill);
         createCustomModel(ModBlocks.blockHutStoneSmeltery);
         createCustomModel(ModBlocks.blockHutCrusher);
+        createCustomModel(ModBlocks.blockHutSifter);
 
         createCustomModel(ModBlocks.blockConstructionTape);
         createCustomModel(ModBlocks.blockRack);
         createCustomModel(ModBlocks.blockWayPoint);
         createCustomModel(ModBlocks.blockPostBox);
+        createCustomModel(ModBlocks.blockDecorationPlacerholder);
 
         createCustomModel(ModItems.clipboard);
         createCustomModel(ModItems.caliper);

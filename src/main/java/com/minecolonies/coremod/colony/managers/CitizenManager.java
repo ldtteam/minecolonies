@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony.managers;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenData;
@@ -42,7 +41,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MAX_CITIZEN
 public class CitizenManager implements ICitizenManager
 {
     /**
-     * List of citizens.
+     * Map of citizens with ID,CitizenData
      */
     @NotNull
     private final Map<Integer, CitizenData> citizens = new HashMap<>();
@@ -60,17 +59,12 @@ public class CitizenManager implements ICitizenManager
     /**
      * Max citizens without housing.
      */
-    private int maxCitizens = Configurations.gameplay.maxCitizens;
+    private int maxCitizens = 0;
 
     /**
      * The colony of the manager.
      */
     private final Colony colony;
-
-    /**
-     * Datas about the happiness of a colony
-     */
-    //private final HappinessData happinessData = new HappinessData();
 
     /**
      * Creates the Citizenmanager for a colony.
@@ -89,8 +83,8 @@ public class CitizenManager implements ICitizenManager
 
         //  Citizens before Buildings, because Buildings track the Citizens
         citizens.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_CITIZENS, Constants.NBT.TAG_COMPOUND))
-                .map(this::deserializeCitizen)
-                .collect(Collectors.toMap(CitizenData::getId, Function.identity())));
+                          .map(this::deserializeCitizen)
+                          .collect(Collectors.toMap(CitizenData::getId, Function.identity())));
     }
 
     private CitizenData deserializeCitizen(@NotNull final NBTTagCompound compound)
@@ -121,21 +115,6 @@ public class CitizenManager implements ICitizenManager
             {
                 if (citizen.getCitizenEntity().isPresent())
                 {
-                    final List<EntityCitizen> list = colony.getWorld()
-                            .getEntities(EntityCitizen.class,
-                                    entityCitizen -> entityCitizen.getCitizenColonyHandler().getColony().getID() == colony.getID() && entityCitizen.getCitizenData().getId() == citizen.getId());
-
-                    if (!list.isEmpty() && citizen.getCitizenEntity().get().getEntityId() != list.get(0).getEntityId())
-                    {
-                        citizen.setCitizenEntity(list.get(0));
-                    }
-
-                    for (int i = 1; i < list.size(); i++)
-                    {
-                        Log.getLogger().warn("Removing duplicate entity now!");
-                        colony.getWorld().removeEntity(list.get(i));
-                    }
-
                     if (citizen.isDirty() || hasNewSubscribers)
                     {
                         subscribers.stream()
@@ -152,44 +131,29 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void spawnCitizen(@Nullable final CitizenData data, @Nullable final World world, final boolean force)
+    public CitizenData spawnOrCreateCitizen(@Nullable final CitizenData data, @Nullable final World world, final BlockPos spawnPos, final boolean force)
     {
-        if (!colony.getBuildingManager().hasTownHall())
+        if (!colony.getBuildingManager().hasTownHall() || (!colony.canMoveIn() && !force))
         {
-            return;
+            return data;
         }
 
-        final BlockPos townHallLocation = colony.getBuildingManager().getTownHall().getLocation();
-        if (!world.isBlockLoaded(townHallLocation))
+        final BlockPos spawnLocation = spawnPos != null ? spawnPos : colony.getBuildingManager().getTownHall().getLocation();
+        if (!world.isBlockLoaded(spawnLocation))
         {
             //  Chunk with TownHall Block is not loaded
-            return;
+            return data;
         }
 
-        final BlockPos spawnPoint = EntityUtils.getSpawnPoint(world, townHallLocation);
+        final BlockPos spawnPoint = EntityUtils.getSpawnPoint(world, spawnLocation);
 
         if (spawnPoint != null)
         {
-            final EntityCitizen entity = new EntityCitizen(world);
 
             CitizenData citizenData = data;
             if (citizenData == null)
             {
-                //This ensures that citizen IDs are getting reused.
-                //That's needed to prevent bugs when calling IDs that are not used.
-                for (int i = 1; i <= this.getCurrentCitizenCount() + 1; i++)
-                {
-                    if (this.getCitizen(i) == null)
-                    {
-                        topCitizenId = i;
-                        break;
-                    }
-                }
-
-                citizenData = new CitizenData(topCitizenId, colony);
-                citizenData.initializeFromEntity(entity);
-
-                citizens.put(citizenData.getId(), citizenData);
+                citizenData = createAndRegisterNewCitizenData();
 
                 if (getMaxCitizens() == getCitizens().size() && !force)
                 {
@@ -199,12 +163,10 @@ public class CitizenManager implements ICitizenManager
                       colony.getName());
                 }
             }
-            else
-            {
-                citizenData.setCitizenEntity(entity);
-            }
+            final EntityCitizen entity = new EntityCitizen(world);
+            citizenData.setCitizenEntity(entity);
 
-            entity.getCitizenColonyHandler().setColony(colony, citizenData);
+            entity.getCitizenColonyHandler().initEntityCitizenValues(colony, citizenData);
 
             entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
             world.spawnEntity(entity);
@@ -212,11 +174,34 @@ public class CitizenManager implements ICitizenManager
             colony.getProgressManager().progressCitizenSpawn(citizens.size(), citizens.values().stream().filter(tempDate -> tempDate.getJob() != null).collect(Collectors.toList()).size());
             colony.getStatsManager().checkAchievements();
             markCitizensDirty();
+            return citizenData;
         }
         else
         {
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.citizens.nospace");
         }
+        return data;
+    }
+
+    @Override
+    public CitizenData createAndRegisterNewCitizenData()
+    {
+        //This ensures that citizen IDs are getting reused.
+        //That's needed to prevent bugs when calling IDs that are not used.
+        for (int i = 1; i <= this.getCurrentCitizenCount() + 1; i++)
+        {
+            if (this.getCitizen(i) == null)
+            {
+                topCitizenId = i;
+                break;
+            }
+        }
+
+        final CitizenData citizenData = new CitizenData(topCitizenId, colony);
+        citizenData.initForNewCitizen();
+        citizens.put(citizenData.getId(), citizenData);
+
+        return citizenData;
     }
 
     @Override
@@ -256,7 +241,7 @@ public class CitizenManager implements ICitizenManager
     {
         for (@NotNull final CitizenData citizen : citizens.values())
         {
-            if (citizen.getWorkBuilding() == null)
+            if (citizen.getWorkBuilding() == null && !citizen.isChild())
             {
                 return citizen;
             }
@@ -280,25 +265,23 @@ public class CitizenManager implements ICitizenManager
                 }
                 else if (b instanceof BuildingBarracksTower)
                 {
-                    newMaxCitizens += b.getBuildingLevel();
+                    newMaxCitizens += b.getAssignedCitizen().size();
                 }
             }
         }
-        // Have at least the minimum amount of citizens
-        newMaxCitizens = Math.max(Configurations.gameplay.maxCitizens, newMaxCitizens);
         if (getMaxCitizens() != newMaxCitizens)
         {
-            setMaxCitizens(Math.min(newMaxCitizens,Configurations.gameplay.maxCitizenPerColony));
+            setMaxCitizens(newMaxCitizens);
+            colony.markDirty();
         }
-        colony.markDirty();
     }
 
     /**
      * Spawn a brand new Citizen.
      */
-    public void spawnCitizen()
+    public void spawnOrCreateCitizen()
     {
-        spawnCitizen(null, colony.getWorld());
+        spawnOrCreateCitizen(null, colony.getWorld(), null);
     }
 
     @NotNull
@@ -337,7 +320,7 @@ public class CitizenManager implements ICitizenManager
     @Override
     public int getMaxCitizens()
     {
-        return maxCitizens;
+        return Math.min(maxCitizens, Configurations.gameplay.maxCitizenPerColony);
     }
 
     /**
@@ -391,10 +374,10 @@ public class CitizenManager implements ICitizenManager
                 housing += home.getBuildingLevel();
             }
 
-            if (citizen.getCitizenEntity().isPresent()) 
-            { 
-              citizen.getCitizenHappinessHandler().processDailyHappiness(hasHouse, hasJob); 
-            } 
+            if (citizen.getCitizenEntity().isPresent())
+            {
+                citizen.getCitizenHappinessHandler().processDailyHappiness(hasHouse, hasJob);
+            }
             saturation += citizen.getSaturation();
         }
 
@@ -457,19 +440,31 @@ public class CitizenManager implements ICitizenManager
             getCitizens().stream().filter(Objects::nonNull).forEach(CitizenData::updateCitizenEntityIfNecessary);
         }
 
-        //  Spawn Citizens
-        if (colony.hasTownHall() && getCitizens().size() < getMaxCitizens())
+        //  Spawn initial Citizens
+        if (colony.hasTownHall() && getCitizens().size() < Configurations.gameplay.initialCitizenAmount)
         {
             int respawnInterval = Configurations.gameplay.citizenRespawnInterval * TICKS_SECOND;
             respawnInterval -= (SECONDS_A_MINUTE * colony.getBuildingManager().getTownHall().getBuildingLevel());
 
             if ((event.world.getTotalWorldTime() + 1) % (respawnInterval + 1) == 0)
             {
-                spawnCitizen();
+                // Make sure the initial citizen contain both genders
+                final CitizenData newCitizen = createAndRegisterNewCitizenData();
+
+                // 50 - 50 Female male ratio for initial citizens
+                if (citizens.size() % 2 == 0)
+                {
+                    newCitizen.setIsFemale(true);
+                }
+                else
+                {
+                    newCitizen.setIsFemale(false);
+                }
+
+                spawnOrCreateCitizen(newCitizen, event.world, null, true);
             }
         }
     }
-    
 
     @Override
     public void updateCitizenMourn(final boolean mourn)
@@ -481,6 +476,5 @@ public class CitizenManager implements ICitizenManager
                 citizen.getCitizenEntity().get().setMourning(mourn);
             }
         }
-        
     }
 }

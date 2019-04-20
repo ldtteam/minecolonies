@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutCitizen;
@@ -23,8 +24,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.ColonyConstants.ONWORLD_TICK_AVERAGE;
 import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT_FIRST;
+import static com.minecolonies.api.util.constant.ColonyConstants.ONWORLD_TICK_AVERAGE;
 import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BEDS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RESIDENTS;
@@ -46,6 +47,37 @@ public class BuildingHome extends AbstractBuilding
     private final List<BlockPos> bedList = new ArrayList<>();
 
     /**
+     * Is a female citizen living here?
+     */
+    private boolean femalePresent = false;
+
+    /**
+     * Is a male citizen living here?
+     */
+    private boolean malePresent = false;
+
+    /**
+     * The time in seconds before the initial try to spawn
+     */
+    private static final int MIN_TIME_BEFORE_SPAWNTRY = 300;
+
+    /**
+     * Interval at which the childen are created, in ticks.
+     * Every 20 min it tries to spawn a child, 20min*60s*20ticks
+     */
+    private int childCreationInterval = 600;
+
+    /**
+     * The timer counting ticks to the next time creating a child
+     */
+    private int childCreationTimer;
+
+    /**
+     * Defines how much child stats very from parents average(+ or -).
+     */
+    private static final int CHILD_STATS_VARIANCE = 3;
+
+    /**
      * Instantiates a new citizen hut.
      *
      * @param c the colony.
@@ -54,6 +86,8 @@ public class BuildingHome extends AbstractBuilding
     public BuildingHome(final Colony c, final BlockPos l)
     {
         super(c, l);
+        final Random rand = new Random();
+        childCreationTimer = rand.nextInt(childCreationInterval) + MIN_TIME_BEFORE_SPAWNTRY;
     }
 
     @Override
@@ -80,7 +114,7 @@ public class BuildingHome extends AbstractBuilding
         {
             final NBTTagCompound bedCompound = bedTagList.getCompoundTagAt(i);
             final BlockPos bedPos = NBTUtil.getPosFromTag(bedCompound);
-            if(!bedList.contains(bedPos))
+            if (!bedList.contains(bedPos))
             {
                 bedList.add(bedPos);
             }
@@ -101,8 +135,8 @@ public class BuildingHome extends AbstractBuilding
             IBlockState state = world.getBlockState(pos);
             state = state.getBlock().getExtendedState(state, world, pos);
             if (state.getBlock() instanceof BlockBed
-                    && state.getValue(BlockBed.OCCUPIED)
-                    && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
+                  && state.getValue(BlockBed.OCCUPIED)
+                  && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
             {
                 world.setBlockState(pos, state.withProperty(BlockBed.OCCUPIED, false), 0x03);
             }
@@ -177,7 +211,38 @@ public class BuildingHome extends AbstractBuilding
         {
             super.removeCitizen(citizen);
             citizen.setHomeBuilding(null);
+
+            femalePresent = false;
+            malePresent = false;
+
+            for (final CitizenData citizenData : getAssignedCitizen())
+            {
+                if (citizenData.isFemale())
+                {
+                    femalePresent = true;
+                }
+                else
+                {
+                    malePresent = true;
+                }
+
+                if (femalePresent && malePresent)
+                {
+                    return;
+                }
+            }
         }
+    }
+
+    @Override
+    public void secondsWorldTick(@NotNull final TickEvent.WorldTickEvent event)
+    {
+        if (childCreationTimer > childCreationInterval)
+        {
+            childCreationTimer = 0;
+            trySpawnChild();
+        }
+        childCreationTimer++;
     }
 
     @Override
@@ -198,6 +263,130 @@ public class BuildingHome extends AbstractBuilding
         }
     }
 
+    /**
+     * Try to spawn a new citizen as child.
+     * Mom / dad entities are required and chosen randomly in this hut.
+     * Childs inherit stats from their parents, avergaged +-2
+     * Childs get assigned to a free housing slot in the colony to be raised there,
+     * if the house has an adult living there the child takes its name and gets raised by it.
+     */
+    public void trySpawnChild()
+    {
+        // Spawn a child when adults are present
+        if (colony.canMoveIn() && femalePresent && malePresent && colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getMaxCitizens())
+        {
+            CitizenData mom = null;
+            CitizenData dad = null;
+
+            for (final CitizenData data : getAssignedCitizen())
+            {
+                if (data.isFemale() && !data.isChild())
+                {
+                    mom = data;
+                }
+                else if (!data.isChild())
+                {
+                    dad = data;
+                }
+
+                if (mom != null && dad != null)
+                {
+                    break;
+                }
+            }
+
+            if (mom == null || dad == null)
+            {
+                return;
+            }
+
+            final CitizenData newCitizen = colony.getCitizenManager().createAndRegisterNewCitizenData();
+
+            final Random rand = new Random();
+
+            // Inheriting stats from parents + some randomness. Capped by happiness in CitizenData setters.
+            final int str = (mom.getStrength() + dad.getStrength()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
+            final int cha = (mom.getCharisma() + dad.getCharisma()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
+            final int dex = (mom.getDexterity() + dad.getDexterity()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
+            final int end = (mom.getEndurance() + dad.getEndurance()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
+            final int intelligence = (mom.getIntelligence() + dad.getIntelligence()) / 2 + rand.nextInt(CHILD_STATS_VARIANCE) - rand.nextInt(CHILD_STATS_VARIANCE);
+
+            newCitizen.setIsChild(true);
+            newCitizen.setStrength(str);
+            newCitizen.setCharisma(cha);
+            newCitizen.setDexterity(dex);
+            newCitizen.setEndurance(end);
+            newCitizen.setIntelligence(intelligence);
+
+            // Assign citizen to a house
+            if (assignCitizen(newCitizen))
+            {
+                if (rand.nextInt(2) == 1)
+                {
+                    inheritLastName(newCitizen, mom.getName());
+                }
+                else
+                {
+                    inheritLastName(newCitizen, dad.getName());
+                }
+            }
+            else
+            {
+                // Assign to a different citizen hut and adopt
+                for (final AbstractBuilding build : colony.getBuildingManager().getBuildings().values())
+                {
+                    if (!(build instanceof BuildingHome))
+                    {
+                        continue;
+                    }
+
+                    // Try assigning
+                    if (build.assignCitizen(newCitizen))
+                    {
+                        // Get Parent Name
+                        for (final CitizenData data : build.getAssignedCitizen())
+                        {
+                            // Exclude child itself
+                            if (data.getId() != newCitizen.getId())
+                            {
+                                inheritLastName(newCitizen, data.getName());
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.progress.newChild");
+            colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), this.getLocation());
+        }
+    }
+
+    /**
+     * Inherit the last name of a parent
+     *
+     * @param child      The child who inherits the name
+     * @param parentName the parents name to inherit
+     */
+    private void inheritLastName(@NotNull final CitizenData child, final String parentName)
+    {
+        if (parentName == null || parentName.split(" ").length < 2 || child.getName().split(" ").length < 2)
+        {
+            return;
+        }
+
+        String[] newName = child.getName().split(" ");
+        final String[] lastName = parentName.split(" ");
+        newName[newName.length - 1] = lastName[lastName.length - 1];
+
+        String combinedName = "";
+        for (final String namePart : newName)
+        {
+            combinedName = combinedName + namePart + " ";
+        }
+        child.setName(combinedName.trim());
+    }
+
     @Override
     public int getMaxInhabitants()
     {
@@ -210,22 +399,47 @@ public class BuildingHome extends AbstractBuilding
      */
     private void addHomelessCitizens()
     {
+        // Priotize missing genders for assigning
         for (@NotNull final CitizenData citizen : getColony().getCitizenManager().getCitizens())
         {
-            // Move the citizen to a better hut
-            if (citizen.getHomeBuilding() instanceof BuildingHome && citizen.getHomeBuilding().getBuildingLevel() < this.getBuildingLevel())
+            if (isFull())
             {
-                citizen.getHomeBuilding().removeCitizen(citizen);
+                break;
             }
-            if (citizen.getHomeBuilding() == null)
+            if (femalePresent && citizen.isFemale())
             {
-                assignCitizen(citizen);
+                continue;
+            }
+            if (malePresent && !citizen.isFemale())
+            {
+                continue;
+            }
+            moveCitizenToHut(citizen);
+        }
 
-                if (isFull())
-                {
-                    break;
-                }
+        for (@NotNull final CitizenData citizen : getColony().getCitizenManager().getCitizens())
+        {
+            if (isFull())
+            {
+                break;
             }
+            moveCitizenToHut(citizen);
+        }
+    }
+
+    /**
+     * Moves the citizen into his new hut
+     */
+    private void moveCitizenToHut(final CitizenData citizen)
+    {
+        // Move the citizen to a better hut
+        if (citizen.getHomeBuilding() instanceof BuildingHome && citizen.getHomeBuilding().getBuildingLevel() < this.getBuildingLevel())
+        {
+            citizen.getHomeBuilding().removeCitizen(citizen);
+        }
+        if (citizen.getHomeBuilding() == null)
+        {
+            assignCitizen(citizen);
         }
     }
 
@@ -235,6 +449,16 @@ public class BuildingHome extends AbstractBuilding
         if (!super.assignCitizen(citizen))
         {
             return false;
+        }
+
+        // Set for childen creation
+        if (citizen.isFemale())
+        {
+            femalePresent = true;
+        }
+        else
+        {
+            malePresent = true;
         }
 
         citizen.setHomeBuilding(this);
@@ -261,7 +485,7 @@ public class BuildingHome extends AbstractBuilding
             this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeColonistMax);
         }
 
-        for (final Optional<EntityCitizen> entityCitizen: getAssignedEntities())
+        for (final Optional<EntityCitizen> entityCitizen : getAssignedEntities())
         {
             if (entityCitizen.isPresent() && entityCitizen.get().getCitizenJobHandler().getColonyJob() == null)
             {
@@ -293,6 +517,22 @@ public class BuildingHome extends AbstractBuilding
     public List<BlockPos> getBedList()
     {
         return new ArrayList<>(bedList);
+    }
+
+    /**
+     * Return the child creation interval
+     */
+    public int getCitizenCreationInterval()
+    {
+        return childCreationInterval;
+    }
+
+    /**
+     * Sets the child creation interval in seconds
+     */
+    public void setCitizenCreationInterval(final int childCreationInterval)
+    {
+        this.childCreationTimer = childCreationInterval;
     }
 
     /**

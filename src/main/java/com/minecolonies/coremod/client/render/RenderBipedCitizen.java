@@ -68,7 +68,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToFemaleModelMap.put(Model.SMELTER, new ModelEntitySmelterFemale());
         idToFemaleModelMap.put(Model.STUDENT, new ModelEntityStudentFemale());
         idToFemaleModelMap.put(Model.CRAFTER, new ModelEntityCrafterFemale());
-        idToFemaleModelMap.put(Model.BLACKSMITH, new ModelEntityCrafterFemale());
+        idToFemaleModelMap.put(Model.BLACKSMITH, new ModelEntityBlacksmithFemale());
 
     }
 

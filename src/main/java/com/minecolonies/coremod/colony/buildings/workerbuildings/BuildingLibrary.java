@@ -153,9 +153,9 @@ public class BuildingLibrary extends AbstractBuildingWorker
     }
 
     @Override
-    public boolean hasAssignedCitizen()
+    public int getMaxInhabitants()
     {
-        return getAssignedCitizen().size() >= getBuildingLevel() * 2;
+        return getBuildingLevel() * 2;
     }
 
     @Override

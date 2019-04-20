@@ -17,7 +17,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
@@ -182,7 +181,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
                 currentCount = COUNTDOWN_SECOND_MULTIPLIER * TIME_TO_COUNTDOWN;
                 MobSpawnUtils.setMobAttributes(this, getColony());
 
-                if (this.getHeldItemMainhand() != null && SPEED_EFFECT != null && this.getHeldItemMainhand().getItem() instanceof ItemChiefSword
+                if (!this.getHeldItemMainhand().isEmpty() && SPEED_EFFECT != null && this.getHeldItemMainhand().getItem() instanceof ItemChiefSword
                         && Configurations.gameplay.barbarianHordeDifficulty >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
                 {
                     BarbarianUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE)
@@ -248,12 +247,14 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
         return BarbarianSounds.barbarianDeath;
     }
 
+    @NotNull
     @Override
     public NBTTagCompound writeToNBT(final NBTTagCompound compound)
     {
         compound.setLong(TAG_TIME, worldTimeAtSpawn);
         compound.setInteger(TAG_STUCK_COUNTER, stuckCounter);
         compound.setInteger(TAG_LADDER_COUNTER, ladderCounter);
+        compound.setInteger(TAG_COLONY_ID, this.colony == null ? 0 : colony.getID());
         return super.writeToNBT(compound);
     }
 
@@ -263,7 +264,14 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
         worldTimeAtSpawn = compound.getLong(TAG_TIME);
         stuckCounter = compound.getInteger(TAG_STUCK_COUNTER);
         ladderCounter = compound.getInteger(TAG_LADDER_COUNTER);
-
+        if (compound.hasKey(TAG_COLONY_ID))
+        {
+            final int colonyId = compound.getInteger(TAG_COLONY_ID);
+            if (colonyId != 0)
+            {
+                setColony(ColonyManager.getColonyByWorld(colonyId, world));
+            }
+        }
         super.readFromNBT(compound);
     }
 
@@ -300,27 +308,41 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
         super.onDeathUpdate();
     }
 
+    /**
+     * Getter for the colony.
+     * Gets a value from the ColonyManager if null.
+     * @return the colony the barbarian is assigned to attack.e
+     */
     public Colony getColony()
     {
         if (!world.isRemote && colony == null)
         {
-            colony = ColonyManager.getClosestColony(CompatibilityUtils.getWorld(this), this.getPosition());
-            if (colony != null)
-            {
-                colony.getRaiderManager().registerRaider(this);
-            }
+            this.setColony(ColonyManager.getClosestColony(CompatibilityUtils.getWorld(this), this.getPosition()));
         }
 
         return colony;
     }
 
     @Override
-    public void onDeath(final DamageSource cause)
+    public void onDeath(@NotNull final DamageSource cause)
     {
         super.onDeath(cause);
         if (!world.isRemote && getColony() != null)
         {
             getColony().getRaiderManager().unregisterRaider(this, (WorldServer) world);
+        }
+    }
+
+    /**
+     * Set the colony to raid.
+     * @param colony the colony to set.
+     */
+    public void setColony(final Colony colony)
+    {
+        if (colony != null)
+        {
+            this.colony = colony;
+            this.colony.getRaiderManager().registerRaider(this);
         }
     }
 }

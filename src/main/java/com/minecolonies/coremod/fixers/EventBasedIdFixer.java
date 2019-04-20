@@ -11,8 +11,6 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistryEntry;
-import org.jetbrains.annotations.Nullable;
 
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID)
 public class EventBasedIdFixer

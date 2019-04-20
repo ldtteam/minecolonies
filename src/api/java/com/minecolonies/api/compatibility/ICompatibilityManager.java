@@ -4,9 +4,12 @@ import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interface for all compatabilityManagers.
@@ -14,6 +17,26 @@ import java.util.List;
  */
 public interface ICompatibilityManager
 {
+    /**
+     * Getter for the different meshes the sifter is allowed to use.
+     * @return a copy of the list of tuples containing the itemStorage and the chance of it breaking.
+     */
+    List<Tuple<ItemStorage, Double>> getMeshes();
+
+    /**
+     * Getter for the blocks which can be sieved.
+     * @return a copy of the list of itemStorages.
+     */
+    ArrayList<ItemStorage> getSievableBlock();
+
+    /**
+     * Get a random item return for a certain mesh and certain block which is in the sieve.
+     * @param mesh the used mesh.
+     * @param block the used block.
+     * @return the ItemStack.
+     */
+    ItemStack getRandomSieveResultForMeshAndBlock(ItemStorage mesh, ItemStorage block);
+
     /**
      * Method called to instantiate the requirements.
      */
@@ -65,6 +88,12 @@ public interface ICompatibilityManager
      * @return true if so
      */
     boolean isCompost(ItemStack stack);
+
+    /**
+     * Get a map of all the crusher modes.
+     * @return the modes.
+     */
+    Map<ItemStorage, ItemStorage> getCrusherModes();
 
     /**
      * Write colonies to NBT data for saving.

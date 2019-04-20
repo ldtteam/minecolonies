@@ -40,6 +40,11 @@ import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
  */
 public final class ColonyView implements IColony
 {
+    /**
+     * Max allowed NBTTagCompound in bytes 
+     */
+    private static final int MAX_BYTES_NBTCOMPOUND = (int) 1e6;
+
     //  General Attributes
     private final int id;
     private final Map<Integer, WorkOrderView>         workOrders  = new HashMap<>();
@@ -74,6 +79,11 @@ public final class ColonyView implements IColony
      * Defines if workers are housed manually or automatically.
      */
     private boolean manualHousing = false;
+
+    /**
+     * Defines if citizens can move in or not.
+     */
+    private boolean moveIn = true;
 
     //  Buildings
     @Nullable
@@ -131,6 +141,11 @@ public final class ColonyView implements IColony
     private boolean printProgress;
 
     /**
+     * The cost of citizens bought
+     */
+    private int boughtCitizenCost;
+
+    /**
      * Base constructor for a colony.
      *
      * @param id The current id for the colony.
@@ -157,9 +172,9 @@ public final class ColonyView implements IColony
      *
      * @param colony            Colony to write data about.
      * @param buf               {@link ByteBuf} to write data in.
-     * @param isNewSubScription true if this is a new subscription.
+     * @param hasNewSubscribers true if there is a new subscription.
      */
-    public static void serializeNetworkData(@NotNull final Colony colony, @NotNull final ByteBuf buf, final boolean isNewSubScription)
+    public static void serializeNetworkData(@NotNull final Colony colony, @NotNull final ByteBuf buf, final boolean hasNewSubscribers)
     {
         //  General Attributes
         ByteBufUtils.writeUTF8String(buf, colony.getName());
@@ -167,7 +182,7 @@ public final class ColonyView implements IColony
         BlockPosUtil.writeToByteBuf(buf, colony.getCenter());
         buf.writeBoolean(colony.isManualHiring());
         //  Citizenry
-        buf.writeInt(colony.getCitizenManager().getCurrentCitizenCount());
+        buf.writeInt(colony.getCitizenManager().getMaxCitizens());
 
         final Set<Block> freeBlocks = colony.getFreeBlocks();
         final Set<BlockPos> freePos = colony.getFreePositions();
@@ -195,12 +210,23 @@ public final class ColonyView implements IColony
 
         buf.writeInt(colony.getLastContactInHours());
         buf.writeBoolean(colony.isManualHousing());
+        buf.writeBoolean(colony.canMoveIn());
         //  Citizens are sent as a separate packet
 
-        if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || isNewSubScription))
+        if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || hasNewSubscribers))
         {
+            final int preSize = buf.writerIndex();
+            final int preState = buf.readerIndex();
             buf.writeBoolean(true);
             ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
+            final int postSize = buf.writerIndex();
+            if ((postSize - preSize) >= MAX_BYTES_NBTCOMPOUND)
+            {
+                colony.getRequestManager().reset();
+                buf.setIndex(preState, preSize);
+                buf.writeBoolean(true);
+                ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
+            }
         }
         else
         {
@@ -216,6 +242,8 @@ public final class ColonyView implements IColony
         buf.writeInt(colony.getTeamColonyColor().ordinal());
 
         buf.writeBoolean(colony.getProgressManager().isPrintingProgress());
+
+        buf.writeInt(colony.getBoughtCitizenCost());
     }
 
     /**
@@ -327,6 +355,23 @@ public final class ColonyView implements IColony
     {
         this.manualHousing = manualHousing;
     }
+
+    /**
+     * Getter for letting citizens move in or not.
+     *
+     * @return the boolean true or false.
+     */
+    public boolean canMoveIn()
+    {
+        return moveIn;
+    }
+
+    /**
+     * Sets if citizens can move in.
+     *
+     * @param moveIn true if citizens can move in.
+     */
+    public void setMoveIn(final boolean moveIn) { this.moveIn = moveIn; }
 
     /**
      * Get the town hall View for this ColonyView.
@@ -514,6 +559,7 @@ public final class ColonyView implements IColony
         }
         this.lastContactInHours = buf.readInt();
         this.manualHousing = buf.readBoolean();
+        this.moveIn = buf.readBoolean();
 
         if (buf.readBoolean())
         {
@@ -532,6 +578,8 @@ public final class ColonyView implements IColony
         this.teamColonyColor = TextFormatting.values()[buf.readInt()];
 
         this.printProgress = buf.readBoolean();
+
+        this.boughtCitizenCost = buf.readInt();
         return null;
     }
 
@@ -904,5 +952,10 @@ public final class ColonyView implements IColony
     public List<AbstractBuildingView> getBuildings()
     {
         return new ArrayList<>(buildings.values());
+    }
+
+    public int getBoughtCitizenCost()
+    {
+        return boughtCitizenCost;
     }
 }

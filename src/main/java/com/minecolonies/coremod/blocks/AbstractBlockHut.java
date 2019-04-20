@@ -9,7 +9,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.structurize.coremod.blocks.interfaces.IAnchorBlock;
+import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.ITileEntityProvider;
@@ -221,7 +221,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
          */
         if (worldIn.isRemote)
         {
-            @Nullable final AbstractBuildingView building = ColonyManager.getBuildingView(pos);
+            @Nullable final AbstractBuildingView building = ColonyManager.getBuildingView(worldIn.provider.getDimension(), pos);
 
             if (building != null
                   && building.getColony() != null

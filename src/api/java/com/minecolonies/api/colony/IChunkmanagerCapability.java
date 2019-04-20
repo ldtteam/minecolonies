@@ -105,7 +105,7 @@ public interface IChunkmanagerCapability
         public void readNBT(@NotNull final Capability<IChunkmanagerCapability> capability, @NotNull final IChunkmanagerCapability instance,
           @Nullable final EnumFacing side, @NotNull final NBTBase nbt)
         {
-            if(nbt instanceof NBTTagCompound && ((NBTTagCompound) nbt).hasKey(TAG_ID))
+            if(nbt instanceof NBTTagCompound && ((NBTTagCompound) nbt).hasKey(TAG_ALL_CHUNK_STORAGES))
             {
                 NBTUtils.streamCompound(((NBTTagCompound) nbt).getTagList(TAG_ALL_CHUNK_STORAGES, Constants.NBT.TAG_COMPOUND))
                   .map(Storage::read).forEach(key -> instance.addChunkStorage(key.getFirst().x, key.getFirst().z, key.getSecond()));

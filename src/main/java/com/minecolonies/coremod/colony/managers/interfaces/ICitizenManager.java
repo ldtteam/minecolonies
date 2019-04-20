@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.managers.interfaces;
 import com.minecolonies.coremod.colony.CitizenData;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +41,7 @@ public interface ICitizenManager
     /**
      * Spawn a brand new Citizen.
      */
-    void spawnCitizen();
+    void spawnOrCreateCitizen();
 
     /**
      * Returns a map of citizens in the colony.
@@ -66,9 +67,21 @@ public interface ICitizenManager
      * @param data Data to use to spawn citizen.
      * @param world the world to spawn it in.
      */
-    default void spawnCitizen(final CitizenData data, @NotNull final World world)
+    default CitizenData spawnOrCreateCitizen(final CitizenData data, @NotNull final World world)
     {
-        this.spawnCitizen(data, world, false);
+        return this.spawnOrCreateCitizen(data, world, null, false);
+    }
+
+    /**
+     * Spawn a citizen with specific citizen data.
+     *
+     * @param data     Data to use to spawn citizen.
+     * @param world    the world to spawn it in.
+     * @param spawnPos the Blockposition to spawn at
+     */
+    default CitizenData spawnOrCreateCitizen(final CitizenData data, @NotNull final World world, final BlockPos spawnPos)
+    {
+        return this.spawnOrCreateCitizen(data, world, spawnPos, false);
     }
 
     /**
@@ -77,7 +90,14 @@ public interface ICitizenManager
      * @param world THe world.
      * @param force True to skip max citizen test, false when not.
      */
-    void spawnCitizen(final CitizenData data, @NotNull final World world, final boolean force);
+    CitizenData spawnOrCreateCitizen(final CitizenData data, @NotNull final World world, final BlockPos spawnPos, final boolean force);
+
+    /**
+     * Creates Citizen Data for a new citizen
+     *
+     * @return new CitizenData
+     */
+    CitizenData createAndRegisterNewCitizenData();
 
     /**
      * Removes a citizen from the colony.

@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
@@ -10,6 +9,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -73,7 +73,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
         this.citizenId = citizenDataView.getId();
         this.itemStack = itemStack;
         this.quantity = quantity;
-        this.dimension = ColonyManager.getColonyView(colonyId).getDimension();
+        this.dimension = Minecraft.getMinecraft().world.provider.getDimension();
     }
 
     @Override

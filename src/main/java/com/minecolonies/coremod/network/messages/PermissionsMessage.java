@@ -11,6 +11,7 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.network.PacketUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -87,7 +88,7 @@ public class PermissionsMessage
         @Override
         protected void messageOnClientThread(final View message, final MessageContext ctx)
         {
-            ColonyManager.handlePermissionsViewMessage(message.colonyID, message.data);
+            ColonyManager.handlePermissionsViewMessage(message.colonyID, message.data, Minecraft.getMinecraft().world.provider.getDimension());
         }
 
         @Override

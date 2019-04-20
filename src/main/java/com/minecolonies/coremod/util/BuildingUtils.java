@@ -1,8 +1,11 @@
 package com.minecolonies.coremod.util;
 
+import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractSchematicProvider;
-import com.structurize.coremod.management.StructureName;
-import com.structurize.coremod.management.Structures;
+import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.management.Structures;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -46,8 +49,8 @@ public final class BuildingUtils
 
             final String structureName = sn.toString();
 
-            final StructureWrapper wrapper = new StructureWrapper(world, structureName);
-            wrapper.rotate(building.getRotation(), world, location, building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
+            final Structure wrapper = new Structure(world, structureName, new PlacementSettings());
+            wrapper.rotate(BlockPosUtil.getRotationFromRotations(building.getRotation()), world, location, building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
 
             final BlockPos pos = location;
             wrapper.setPosition(pos);

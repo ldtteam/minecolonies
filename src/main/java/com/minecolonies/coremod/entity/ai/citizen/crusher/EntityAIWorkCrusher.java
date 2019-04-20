@@ -9,7 +9,7 @@ import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.network.messages.CrusherParticleEffectMessage;
+import com.minecolonies.coremod.network.messages.LocalizedParticleEffectMessage;
 import com.minecolonies.coremod.util.SoundUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.init.SoundEvents;
@@ -26,14 +26,14 @@ import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerSta
 public class EntityAIWorkCrusher<J extends AbstractJobCrafter> extends AbstractEntityAICrafting<JobCrusher>
 {
     /**
-     * How often should charisma factor into the cook's skill modifier.
+     * How often should strength factor into the crusher's skill modifier.
      */
     private static final int STRENGTH_MULTIPLIER = 2;
 
     /**
-     * How often should intelligence factor into the cook's skill modifier.
+     * How often should endurance factor into the crusher's skill modifier.
      */
-    private static final int STRENGTH_MULTIPLIER_2 = 1;
+    private static final int ENDURANCE_MULTIPLIER = 1;
 
     /**
      * Delay for each of the craftings.
@@ -54,7 +54,7 @@ public class EntityAIWorkCrusher<J extends AbstractJobCrafter> extends AbstractE
           new AITarget(CRUSH, this::crush)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
-                                                                + STRENGTH_MULTIPLIER_2 * worker.getCitizenData().getStrength());
+                                                                + ENDURANCE_MULTIPLIER * worker.getCitizenData().getEndurance());
         worker.setCanPickUpLoot(true);
     }
 
@@ -143,7 +143,9 @@ public class EntityAIWorkCrusher<J extends AbstractJobCrafter> extends AbstractE
         }
         if (check == CRAFT)
         {
-            MineColonies.getNetwork().sendToAllTracking(new CrusherParticleEffectMessage(currentRecipeStorage.getInput().get(0).copy(), crusherBuilding.getID()), worker);
+            MineColonies.getNetwork().sendToAllTracking(new LocalizedParticleEffectMessage(currentRecipeStorage.getInput().get(0).copy(), crusherBuilding.getID()), worker);
+            MineColonies.getNetwork().sendToAllTracking(new LocalizedParticleEffectMessage(currentRecipeStorage.getPrimaryOutput().copy(), crusherBuilding.getID().down()), worker);
+
             SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.BLOCK_STONE_BREAK);
         }
         return getState();

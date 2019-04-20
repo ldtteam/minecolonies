@@ -39,7 +39,7 @@ public enum AIWorkerState implements IAIState
      */
     NEEDS_ITEM(true),
     /**
-     * Start building a Structure.
+     * Start building a StructureIterator.
      */
     START_BUILDING(false),
     /**
@@ -449,7 +449,16 @@ public enum AIWorkerState implements IAIState
     /**
      * Let the crusher crush blocks.
      */
-    CRUSH(true),;
+    CRUSH(true),
+
+            /*
+### Sifter ###
+     */
+
+    /**
+     * Let the sifter sieve blocks.
+     */
+    SIFT(true);
 
     /**
      * Is it okay to eat.

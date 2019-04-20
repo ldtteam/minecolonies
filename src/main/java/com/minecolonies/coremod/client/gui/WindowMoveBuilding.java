@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.structures.lib.BlueprintUtils;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
@@ -7,17 +9,21 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.BuildingMoveMessage;
-import com.structurize.coremod.Structurize;
-import com.structurize.coremod.client.gui.WindowBuildTool;
-import com.structurize.coremod.management.StructureName;
-import com.structurize.coremod.management.Structures;
-import com.structurize.coremod.network.messages.SchematicRequestMessage;
-import com.structurize.structures.helpers.Settings;
-import com.structurize.structures.helpers.Structure;
+import com.ldtteam.structurize.Structurize;
+import com.ldtteam.structurize.client.gui.WindowBuildTool;
+import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.network.messages.LSStructureDisplayerMessage;
+import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
+import com.ldtteam.structures.helpers.Settings;
+import com.ldtteam.structures.helpers.Structure;
+import net.minecraft.block.state.IBlockState;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -124,16 +130,16 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
                 Settings.instance.mirror();
             }
             Settings.instance.setPosition(pos);
+
+            final PlacementSettings settings = new PlacementSettings( Settings.instance.getMirror(), BlockUtils.getRotation(Settings.instance.getRotation()));
             final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, schematicName ,
                     building.getSchematicName() + building.getBuildingLevel());
-            final Structure structure = new Structure(null,
-                    structureName.toString(),
-                    new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror()));
+            final Structure structure = new Structure(Minecraft.getMinecraft().world, structureName.toString(), settings);
 
             final String md5 = Structures.getMD5(structureName.toString());
-            if (structure.isTemplateMissing() || !structure.isCorrectMD5(md5))
+            if (structure.isBluePrintMissing() || !structure.isCorrectMD5(md5))
             {
-                if (structure.isTemplateMissing())
+                if (structure.isBluePrintMissing())
                 {
                     Log.getLogger().info("Template structure " + structureName + " missing");
                 }
@@ -247,6 +253,10 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
+        if (Settings.instance.getStructureName() == null)
+        {
+            return;
+        }
         final StructureName structureName = new StructureName(Settings.instance.getStructureName());
         if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
@@ -255,12 +265,16 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
         }
         else
         {
+            final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint());;
+            final IBlockState state  = Settings.instance.getActiveStructure().getBlockState(offset);
             MineColonies.getNetwork().sendToServer(new BuildingMoveMessage(
                     structureName.toString(),
                     structureName.toString(),
                     Settings.instance.getPosition(),
                     Settings.instance.getRotation(),
-                    Settings.instance.getMirror(), building));
+                    Settings.instance.getMirror(),
+              building,
+              state));
         }
 
         if (!GuiScreen.isShiftKeyDown())
@@ -276,6 +290,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
     {
         building.openGui(false);
         Settings.instance.reset();
+        Structurize.getNetwork().sendToServer(new LSStructureDisplayerMessage(Unpooled.buffer(), false));
         close();
     }
 
@@ -302,10 +317,25 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
                 settings.setRotation(Rotation.NONE);
         }
         Settings.instance.setRotation(rotation);
-
+        settings.setMirror(Settings.instance.getMirror());
         if (Settings.instance.getActiveStructure() != null)
         {
-            Settings.instance.getActiveStructure().setPlacementSettings(settings.setMirror(Settings.instance.getMirror()));
+            Settings.instance.getActiveStructure().setPlacementSettings(settings);
+        }
+    }
+
+    /**
+     * Called when the window is closed.
+     * Updates state via {@link LSStructureDisplayerMessage}
+     */
+    @Override
+    public void onClosed()
+    {
+        if (Settings.instance.getActiveStructure() != null)
+        {
+            final ByteBuf buffer = Unpooled.buffer();
+            Settings.instance.toBytes(buffer);
+            Structurize.getNetwork().sendToServer(new LSStructureDisplayerMessage(buffer, true));
         }
     }
 }
