@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.util;
 
+import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.util.BlockInfo;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.LanguageHandler;
@@ -214,7 +216,7 @@ public final class WorkerUtil
      * @return the position of the sign.
      */
     @Nullable
-    public static BlockPos findFirstLevelSign(final StructureWrapper structure)
+    public static BlockPos findFirstLevelSign(final Structure structure)
     {
         for (int j = 0; j < structure.getHeight(); j++)
         {
@@ -223,10 +225,10 @@ public final class WorkerUtil
                 for (int i = 0; i < structure.getWidth(); i++)
                 {
                     @NotNull final BlockPos localPos = new BlockPos(i, j, k);
-                    final Template.BlockInfo te = structure.getStructure().getBlockInfo(localPos);
+                    final BlockInfo te = structure.getBlockInfo(localPos);
                     if (te != null)
                     {
-                        final NBTTagCompound teData = te.tileentityData;
+                        final NBTTagCompound teData = te.getTileEntityData();
                         if (teData != null && teData.getString(LEVEL_SIGN_FIRST_ROW).equals(LEVEL_SIGN_TEXT))
                         {
                             // try to make an anchor in 0,0,0 instead of the middle of the structure

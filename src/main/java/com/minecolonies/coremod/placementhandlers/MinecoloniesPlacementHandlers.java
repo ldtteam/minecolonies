@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.placementhandlers;
 
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -9,9 +10,8 @@ import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
-import com.structurize.coremod.blocks.schematic.BlockSolidSubstitution;
-import com.structurize.coremod.placementhandlers.IPlacementHandler;
-import com.structurize.coremod.placementhandlers.PlacementHandlers;
+import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
+import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -29,8 +29,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.UPDATE_FLAG;
-import static com.structurize.coremod.placementhandlers.PlacementHandlers.getItemsFromTileEntity;
-import static com.structurize.coremod.placementhandlers.PlacementHandlers.handleTileEntityPlacement;
+import static com.ldtteam.structurize.placementhandlers.PlacementHandlers.getItemsFromTileEntity;
+import static com.ldtteam.structurize.placementhandlers.PlacementHandlers.handleTileEntityPlacement;
 
 /**
  * Contains all Minecolonies specific placement handlers.
@@ -261,7 +261,8 @@ public final class MinecoloniesPlacementHandlers
           @NotNull final IBlockState blockState,
           @Nullable final NBTTagCompound tileEntityData,
           final boolean complete,
-          final BlockPos centerPos)
+          final BlockPos centerPos,
+          final PlacementSettings settings)
         {
             if (world.getBlockState(pos).equals(blockState))
             {
@@ -275,7 +276,7 @@ public final class MinecoloniesPlacementHandlers
 
             if (tileEntityData != null)
             {
-               handleTileEntityPlacement(tileEntityData, world, pos);
+               handleTileEntityPlacement(tileEntityData, world, pos, settings);
             }
 
             return blockState;
@@ -289,7 +290,7 @@ public final class MinecoloniesPlacementHandlers
             {
                 itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
             }
-            itemList.addAll(getItemsFromTileEntity(tileEntityData, world));
+            itemList.addAll(ItemStackUtils.getItemStacksOfTileEntity(tileEntityData, world));
             itemList.removeIf(ItemStackUtils::isEmpty);
 
             return itemList;

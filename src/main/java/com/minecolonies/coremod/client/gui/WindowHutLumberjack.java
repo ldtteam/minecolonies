@@ -5,7 +5,6 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.ButtonImage;
-import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;

@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.entity.player.EntityPlayer;
@@ -95,7 +96,7 @@ public class GuiHandler implements IGuiHandler
             }
             else
             {
-                @Nullable final AbstractBuildingView building = ColonyManager.getBuildingView(new BlockPos(x,y,z));
+                @Nullable final AbstractBuildingView building = ColonyManager.getBuildingView(player.world.provider.getDimension(), new BlockPos(x,y,z));
                 if (building instanceof AbstractBuildingSmelterCrafter.View)
                 {
                     return new WindowGuiFurnaceCrafting(player.inventory, world, (AbstractBuildingWorker.View) building);
@@ -117,7 +118,7 @@ public class GuiHandler implements IGuiHandler
         }
         else if (id == ID.CITIZEN_INVENTORY.ordinal())
         {
-            final ColonyView view = ColonyManager.getColonyView(x);
+            final ColonyView view = ColonyManager.getColonyView(x, player.world.provider.getDimension());
             final CitizenDataView citizenDataView = view.getCitizen(y);
 
             return new GuiChest(player.inventory, citizenDataView.getInventory());

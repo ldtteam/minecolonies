@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -160,6 +161,11 @@ public class Colony implements IColony
     private boolean manualHousing = false;
 
     /**
+     * Whether citizens can move in or not.
+     */
+    private boolean moveIn = true;
+
+    /**
      * The name of the colony.
      */
     private String name = "ERROR(Wasn't placed by player)";
@@ -209,7 +215,7 @@ public class Colony implements IColony
      * Mournign parameters.
      */
     private boolean needToMourn = false;
-    private boolean mourning = false;
+    private boolean mourning    = false;
 
     /**
      * If the colony is dirty.
@@ -220,6 +226,11 @@ public class Colony implements IColony
      * The colony team color.
      */
     private TextFormatting colonyTeamColor = TextFormatting.WHITE;
+
+    /**
+     * The cost of citizens bought
+     */
+    private int boughtCitizenCost = 0;
 
     /**
      * Constructor for a newly created Colony.
@@ -291,6 +302,7 @@ public class Colony implements IColony
 
     /**
      * Set up the colony color for team handling for pvp.
+     *
      * @param colonyColor the colony color.
      */
     public void setColonyColor(final TextFormatting colonyColor)
@@ -311,21 +323,30 @@ public class Colony implements IColony
      * @param compound The NBT compound containing the colony's data.
      * @return loaded colony.
      */
-    @NotNull
+    @Nullable
     public static Colony loadColony(@NotNull final NBTTagCompound compound, @Nullable final World world)
     {
-        final int id = compound.getInteger(TAG_ID);
-        @NotNull final Colony c = new Colony(id, world);
-        c.name = compound.getString(TAG_NAME);
-        c.center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
-        c.setRequestManager();
-        c.readFromNBT(compound);
-
-        if (c.getProgressManager().isPrintingProgress() && (c.getBuildingManager().getBuildings().size() > BUILDING_LIMIT_FOR_HELP || c.getCitizenManager().getCitizens().size() > CITIZEN_LIMIT_FOR_HELP))
+        try
         {
-            c.getProgressManager().togglePrintProgress();
+            final int id = compound.getInteger(TAG_ID);
+            @NotNull final Colony c = new Colony(id, world);
+            c.name = compound.getString(TAG_NAME);
+            c.center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
+            c.setRequestManager();
+            c.readFromNBT(compound);
+
+            if (c.getProgressManager().isPrintingProgress() && (c.getBuildingManager().getBuildings().size() > BUILDING_LIMIT_FOR_HELP
+                                                                  || c.getCitizenManager().getCitizens().size() > CITIZEN_LIMIT_FOR_HELP))
+            {
+                c.getProgressManager().togglePrintProgress();
+            }
+            return c;
         }
-        return c;
+        catch (final Exception e)
+        {
+            Log.getLogger().warn("Something went wrong loading a colony, please report this to the administrators", e);
+        }
+        return null;
     }
 
     /**
@@ -346,7 +367,7 @@ public class Colony implements IColony
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
         dimensionId = compound.getInteger(TAG_DIMENSION);
 
-        if(compound.hasKey(TAG_NEED_TO_MOURN))
+        if (compound.hasKey(TAG_NEED_TO_MOURN))
         {
             needToMourn = compound.getBoolean(TAG_NEED_TO_MOURN);
             mourning = compound.getBoolean(TAG_MOURNING);
@@ -356,10 +377,13 @@ public class Colony implements IColony
             needToMourn = false;
             mourning = false;
         }
+
+        boughtCitizenCost = compound.getInteger(TAG_BOUGHT_CITIZENS);
+
         // Permissions
         permissions.loadPermissions(compound);
 
-        if(compound.hasKey(TAG_CITIZEN_MANAGER))
+        if (compound.hasKey(TAG_CITIZEN_MANAGER))
         {
             citizenManager.readFromNBT(compound.getCompoundTag(TAG_CITIZEN_MANAGER));
         }
@@ -369,7 +393,7 @@ public class Colony implements IColony
             citizenManager.readFromNBT(compound);
         }
 
-        if(compound.hasKey(TAG_BUILDING_MANAGER))
+        if (compound.hasKey(TAG_BUILDING_MANAGER))
         {
             buildingManager.readFromNBT(compound.getCompoundTag(TAG_BUILDING_MANAGER));
         }
@@ -379,7 +403,7 @@ public class Colony implements IColony
             buildingManager.readFromNBT(compound);
         }
 
-        if(compound.hasKey(TAG_STATS_MANAGER))
+        if (compound.hasKey(TAG_STATS_MANAGER))
         {
             statsManager.readFromNBT(compound.getCompoundTag(TAG_STATS_MANAGER));
         }
@@ -389,7 +413,7 @@ public class Colony implements IColony
             statsManager.readFromNBT(compound);
         }
 
-        if(compound.hasKey(TAG_PROGRESS_MANAGER))
+        if (compound.hasKey(TAG_PROGRESS_MANAGER))
         {
             progressManager.readFromNBT(compound);
         }
@@ -434,16 +458,21 @@ public class Colony implements IColony
             freePositions.add(block);
         }
 
-        happinessData.readFromNBT(compound); 
+        happinessData.readFromNBT(compound);
         packageManager.setLastContactInHours(compound.getInteger(TAG_ABANDONED));
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
 
-        if(compound.hasKey(TAG_STYLE))
+        if (compound.hasKey(TAG_MOVE_IN))
+        {
+            moveIn = compound.getBoolean(TAG_MOVE_IN);
+        }
+
+        if (compound.hasKey(TAG_STYLE))
         {
             this.style = compound.getString(TAG_STYLE);
         }
 
-        if(compound.hasKey(TAG_RAIDABLE))
+        if (compound.hasKey(TAG_RAIDABLE))
         {
             this.raidManager.setCanHaveRaiderEvents(compound.getBoolean(TAG_RAIDABLE));
         }
@@ -452,7 +481,7 @@ public class Colony implements IColony
             this.raidManager.setCanHaveRaiderEvents(true);
         }
 
-        if(compound.hasKey(TAG_AUTO_DELETE))
+        if (compound.hasKey(TAG_AUTO_DELETE))
         {
             this.canColonyBeAutoDeleted = compound.getBoolean(TAG_AUTO_DELETE);
         }
@@ -503,6 +532,9 @@ public class Colony implements IColony
         compound.setBoolean(TAG_MANUAL_HIRING, manualHiring);
         compound.setBoolean(TAG_NEED_TO_MOURN, needToMourn);
         compound.setBoolean(TAG_MOURNING, mourning);
+
+        // Bought citizen count
+        compound.setInteger(TAG_BOUGHT_CITIZENS, boughtCitizenCost);
 
         // Permissions
         permissions.savePermissions(compound);
@@ -559,9 +591,10 @@ public class Colony implements IColony
         }
         compound.setTag(TAG_FREE_POSITIONS, freePositionsTagList);
 
-        happinessData.writeToNBT(compound); 
+        happinessData.writeToNBT(compound);
         compound.setInteger(TAG_ABANDONED, packageManager.getLastContactInHours());
         compound.setBoolean(TAG_MANUAL_HOUSING, manualHousing);
+        compound.setBoolean(TAG_MOVE_IN, moveIn);
         compound.setTag(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
         compound.setString(TAG_STYLE, style);
         compound.setBoolean(TAG_RAIDABLE, raidManager.canHaveRaiderEvents());
@@ -640,9 +673,9 @@ public class Colony implements IColony
         final List<EntityPlayer> visitors = new ArrayList<>(visitingPlayers);
 
         //Clean up visiting player.
-        for(final EntityPlayer player: visitors)
+        for (final EntityPlayer player : visitors)
         {
-            if(!packageManager.getSubscribers().contains(player))
+            if (!packageManager.getSubscribers().contains(player))
             {
                 visitingPlayers.remove(player);
                 attackingPlayers.remove(new AttackingPlayer(player));
@@ -765,12 +798,12 @@ public class Colony implements IColony
         citizenManager.onWorldTick(event);
 
         if (shallUpdate(world, TICKS_SECOND)
-                && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
-                && Configurations.gameplay.doBarbariansSpawn
-                && raidManager.canHaveRaiderEvents()
-                && !world.getMinecraftServer().getPlayerList().getPlayers()
-                .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
-                && MobEventsUtils.isItTimeToRaid(event.world, this))
+              && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
+              && Configurations.gameplay.doBarbariansSpawn
+              && raidManager.canHaveRaiderEvents()
+              && !world.getMinecraftServer().getPlayerList().getPlayers()
+                    .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
+              && MobEventsUtils.isItTimeToRaid(event.world, this))
         {
             MobEventsUtils.raiderEvent(event.world, this);
         }
@@ -801,7 +834,7 @@ public class Colony implements IColony
             {
                 citizenManager.checkCitizensForHappiness();
             }
-            happinessData.processDeathModifiers(); 
+            happinessData.processDeathModifiers();
             if (mourning)
             {
                 mourning = false;
@@ -917,6 +950,11 @@ public class Colony implements IColony
     @Override
     public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
+        if (w.provider.getDimension() != this.dimensionId)
+        {
+            return false;
+        }
+
         final Chunk chunk = w.getChunk(pos);
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
         return cap.getOwningColony() == this.getID();
@@ -1065,6 +1103,27 @@ public class Colony implements IColony
     }
 
     /**
+     * Getter which checks if houses should be manually allocated.
+     *
+     * @return true of false.
+     */
+    public boolean canMoveIn()
+    {
+        return moveIn;
+    }
+
+    /**
+     * Setter to set the citizen moving in.
+     *
+     * @param moveIn true if can move in, false if can't move in.
+     */
+    public void setMoveIn(final boolean moveIn)
+    {
+        this.moveIn = moveIn;
+        markDirty();
+    }
+
+    /**
      * Send the message of a removed workOrder to the client.
      *
      * @param orderId the workOrder to remove.
@@ -1140,7 +1199,6 @@ public class Colony implements IColony
         return tempWayPoints;
     }
 
-
     /**
      * Getter for overall happiness.
      *
@@ -1148,19 +1206,18 @@ public class Colony implements IColony
      */
     public double getOverallHappiness()
     {
-        double happinessTotal = 0; 
-        for (final CitizenData citizen : citizenManager.getCitizens()) 
-        { 
-            happinessTotal += citizen.getCitizenHappinessHandler().getHappiness(); 
-        } 
-        final double happinessAverage = happinessTotal /  citizenManager.getCitizens().size(); 
-         
-        happinessTotal = happinessAverage + happinessData.getTotalHappinessModifier();  
-        if (happinessTotal > HappinessData.MAX_HAPPINESS) 
+        if (citizenManager.getCitizens().size() <= 0)
         {
-            happinessTotal = HappinessData.MAX_HAPPINESS;
-        } 
-        return happinessTotal; 
+            return (HappinessData.MAX_HAPPINESS + HappinessData.MIN_HAPPINESS) / 2.0;
+        }
+
+        double happinesSum = 0;
+        for (final CitizenData citizen : citizenManager.getCitizens())
+        {
+            happinesSum += citizen.getCitizenHappinessHandler().getHappiness();
+        }
+        final double happinessAverage = happinesSum / citizenManager.getCitizens().size();
+        return Math.min(happinessAverage + happinessData.getTotalHappinessModifier(), HappinessData.MAX_HAPPINESS);
     }
 
     /**
@@ -1186,6 +1243,7 @@ public class Colony implements IColony
 
     /**
      * Getter for the default style of the colony.
+     *
      * @return the style string.
      */
     public String getStyle()
@@ -1195,6 +1253,7 @@ public class Colony implements IColony
 
     /**
      * Setter for the default style of the colony.
+     *
      * @param style the default string.
      */
     public void setStyle(final String style)
@@ -1204,6 +1263,7 @@ public class Colony implements IColony
 
     /**
      * Get the buildingmanager of the colony.
+     *
      * @return the buildingManager.
      */
     public IBuildingManager getBuildingManager()
@@ -1213,6 +1273,7 @@ public class Colony implements IColony
 
     /**
      * Get the citizenManager of the colony.
+     *
      * @return the citizenManager.
      */
     public ICitizenManager getCitizenManager()
@@ -1232,6 +1293,7 @@ public class Colony implements IColony
 
     /**
      * Get the statsManager of the colony.
+     *
      * @return the statsManager.
      */
     public IStatisticAchievementManager getStatsManager()
@@ -1241,6 +1303,7 @@ public class Colony implements IColony
 
     /**
      * Get the barbManager of the colony.
+     *
      * @return the barbManager.
      */
     public IRaiderManager getRaiderManager()
@@ -1250,6 +1313,7 @@ public class Colony implements IColony
 
     /**
      * Get the packagemanager of the colony.
+     *
      * @return the manager.
      */
     public IColonyPackageManager getPackageManager()
@@ -1259,6 +1323,7 @@ public class Colony implements IColony
 
     /**
      * Get the progress manager of the colony.
+     *
      * @return the manager.
      */
     public IProgressManager getProgressManager()
@@ -1268,6 +1333,7 @@ public class Colony implements IColony
 
     /**
      * Get all visiting players.
+     *
      * @return the list.
      */
     public ImmutableList<EntityPlayer> getVisitingPlayers()
@@ -1279,7 +1345,7 @@ public class Colony implements IColony
     public void addVisitingPlayer(final EntityPlayer player)
     {
         final Rank rank = getPermissions().getRank(player);
-        if(rank != Rank.OWNER && rank != Rank.OFFICER && !visitingPlayers.contains(player) && Configurations.gameplay.sendEnteringLeavingMessages)
+        if (rank != Rank.OWNER && rank != Rank.OFFICER && !visitingPlayers.contains(player) && Configurations.gameplay.sendEnteringLeavingMessages)
         {
             visitingPlayers.add(player);
             LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
@@ -1290,7 +1356,7 @@ public class Colony implements IColony
     @Override
     public void removeVisitingPlayer(final EntityPlayer player)
     {
-        if(!getMessageEntityPlayers().contains(player) && Configurations.gameplay.sendEnteringLeavingMessages)
+        if (!getMessageEntityPlayers().contains(player) && Configurations.gameplay.sendEnteringLeavingMessages)
         {
             visitingPlayers.remove(player);
             LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
@@ -1300,19 +1366,28 @@ public class Colony implements IColony
 
     /**
      * Get the NBT tag of the colony.
+     *
      * @return the tag of it.
      */
     public NBTTagCompound getColonyTag()
     {
-        if(this.colonyTag == null || this.isActive)
+        try
         {
-            this.writeToNBT(new NBTTagCompound());
+            if (this.colonyTag == null || this.isActive)
+            {
+                this.writeToNBT(new NBTTagCompound());
+            }
+        }
+        catch (final Exception e)
+        {
+            Log.getLogger().warn("Something went wrong persisting colony: " + id, e);
         }
         return this.colonyTag;
     }
 
     /**
      * Getter for the nights since the last raid.
+     *
      * @return the number of nights.
      */
     public int getNightsSinceLastRaid()
@@ -1322,6 +1397,7 @@ public class Colony implements IColony
 
     /**
      * Setter for the nights since the last raid.
+     *
      * @param nights the number of nights.
      */
     public void setNightsSinceLastRaid(final int nights)
@@ -1331,7 +1407,7 @@ public class Colony implements IColony
 
     /**
      * call to figure out if the colony needs to mourn.
-     * 
+     *
      * @return a boolean indicating the colony needs to mourn
      */
     public boolean isNeedToMourn()
@@ -1341,22 +1417,22 @@ public class Colony implements IColony
 
     /**
      * Call to set if the colony needs to mourn or not.
-     * 
+     *
      * @param needToMourn indicate if the colony needs to mourn
-     * @param name  Name of citizen that died
+     * @param name        Name of citizen that died
      */
     public void setNeedToMourn(final boolean needToMourn, final String name)
     {
         this.needToMourn = needToMourn;
         if (needToMourn)
         {
-            LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN,name);
+            LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN, name);
         }
     }
 
     /**
      * Call to check if the colony is mourning.
-     * 
+     *
      * @return indicates if the colony is mourning
      */
     public boolean isMourning()
@@ -1366,6 +1442,7 @@ public class Colony implements IColony
 
     /**
      * Add a guard to the list of attacking guards.
+     *
      * @param entityCitizen the citizen to add.
      */
     public void addGuardToAttackers(final EntityCitizen entityCitizen, final EntityPlayer player)
@@ -1402,6 +1479,7 @@ public class Colony implements IColony
 
     /**
      * Is player part of a wave trying to invade the colony?
+     *
      * @param player the player to check..
      * @return true if so.
      */
@@ -1424,6 +1502,7 @@ public class Colony implements IColony
 
     /**
      * Check if attack of guard is valid.
+     *
      * @param entity the guard entity.
      * @return true if so.
      */
@@ -1439,6 +1518,7 @@ public class Colony implements IColony
 
     /**
      * Check if the colony is currently under attack by another player.
+     *
      * @return true if so.
      */
     public boolean isColonyUnderAttack()
@@ -1448,6 +1528,7 @@ public class Colony implements IColony
 
     /**
      * Getter for the colony team color.
+     *
      * @return the TextFormatting enum color.
      */
     public TextFormatting getTeamColonyColor()
@@ -1457,10 +1538,30 @@ public class Colony implements IColony
 
     /**
      * Set the colony to be active.
+     *
      * @param isActive if active.
      */
     public void setActive(final boolean isActive)
     {
         this.isActive = isActive;
+    }
+
+    /**
+     * Get the amount of citizens bought
+     *
+     * @return amount
+     */
+    public int getBoughtCitizenCost()
+    {
+        return boughtCitizenCost;
+    }
+
+    /**
+     * Increases the amount of citizens that have been bought
+     */
+    public void increaseBoughtCitizenCost()
+    {
+        boughtCitizenCost = 1 + (int) Math.ceil(boughtCitizenCost * 1.5);
+        markDirty();
     }
 }

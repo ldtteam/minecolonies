@@ -76,7 +76,9 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
     @Override
     public ItemStack getBreedingItem()
     {
-        return new ItemStack(Items.WHEAT);
+        final ItemStack stack = new ItemStack(Items.WHEAT);
+        stack.setCount(stack.getMaxStackSize());
+        return stack;
     }
 
     @Override
@@ -167,7 +169,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
      */
     private void dyeSheepChance(final EntitySheep sheep)
     {
-        if (worker.getCitizenColonyHandler().getWorkBuilding() != null)
+        if (worker.getCitizenColonyHandler().getWorkBuilding() != null && ((BuildingShepherd) worker.getCitizenColonyHandler().getWorkBuilding()).isDyeSheeps())
         {
             final int chanceToDye = worker.getCitizenColonyHandler().getWorkBuilding().getBuildingLevel();
 

@@ -1,0 +1,19 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "minecolonies:decorationcontroller"
+  },
+  "variants":
+  {
+    "facing": {
+      "east":  {"uvlock": true, "x": 90, "y": 90},
+      "south": {"uvlock": true, "x": 90, "y": 180},
+      "west":  {"uvlock": true, "x": 90, "y": 270 },
+      "north": {"uvlock": true, "x": 90 }
+    },
+    "mirror": {
+      "true": {},
+      "false": {}
+    }
+  }
+}

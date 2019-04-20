@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSmeltery;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingStoneSmeltery;
 import net.minecraft.tileentity.TileEntityFurnace;
 

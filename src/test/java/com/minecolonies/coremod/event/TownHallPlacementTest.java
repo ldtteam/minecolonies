@@ -156,7 +156,7 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
     public void testAlreadyPlacedInNonOwnedColony()
     {
         when(ColonyManager.getIColonyByOwner(world, player)).thenReturn(colony);
-        when(colony.isCoordInColony(world, PLACE_POS)).thenReturn(true);
+        when(colony.isCoordInColony(world, PLACE_POS)).thenReturn(false);
         when(colony.hasTownHall()).thenReturn(false);
         //Just need to return any other colony instance.
         when(ColonyManager.getIColony(world, PLACE_POS)).thenReturn(null);

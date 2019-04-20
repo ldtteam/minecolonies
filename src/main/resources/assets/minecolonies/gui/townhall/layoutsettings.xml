@@ -3,14 +3,17 @@
 
     <switch id="switchpageSettings" size="100% 100%">
         <view>
-            <label id="assignCitizens" label="$(com.minecolonies.coremod.gui.townHall.jobHiring)" pos="25 82" size="148 11" textalign="MIDDLE" color="black"/>
-            <button id="toggleJob" size="57 20" pos="70 95" label="$(com.minecolonies.coremod.gui.hiring.off)"/>
+            <label id="assignCitizens" label="$(com.minecolonies.coremod.gui.townHall.jobHiring)" pos="25 62" size="148 11" textalign="MIDDLE" color="black"/>
+            <button id="toggleJob" size="57 20" pos="70 75" label="$(com.minecolonies.coremod.gui.hiring.off)"/>
 
-            <label id="assignHouses" label="$(com.minecolonies.coremod.gui.townHall.housing)" pos="25 122" size="148 11" textalign="MIDDLE" color="black"/>
-            <button id="toggleHousing" size="57 20" pos="70 135" label="$(com.minecolonies.coremod.gui.hiring.off)"/>
+            <label id="assignHouses" label="$(com.minecolonies.coremod.gui.townHall.housing)" pos="25 102" size="148 11" textalign="MIDDLE" color="black"/>
+            <button id="toggleHousing" size="57 20" pos="70 115" label="$(com.minecolonies.coremod.gui.hiring.off)"/>
 
-            <label id="printProgress" label="$(com.minecolonies.coremod.gui.townHall.printProgress)" pos="25 162" size="148 11" textalign="MIDDLE" color="black"/>
-            <button id="togglePrintProgress" size="57 20" pos="70 175" label="$(com.minecolonies.coremod.gui.townHall.on)"/>
+            <label id="movingIn" label="$(com.minecolonies.coremod.gui.townHall.movein)" pos="25 182" size="148 11" textalign="MIDDLE" color="black"/>
+            <button id="toggleMoveIn" size="57 20" pos="70 195" label="$(com.minecolonies.coremod.gui.townHall.off)"/>
+
+            <label id="printProgress" label="$(com.minecolonies.coremod.gui.townHall.printProgress)" pos="25 142" size="148 11" textalign="MIDDLE" color="black"/>
+            <button id="togglePrintProgress" size="57 20" pos="70 155" label="$(com.minecolonies.coremod.gui.townHall.on)"/>
 
             <label id="pickColor" label="$(com.minecolonies.coremod.gui.townHall.pickTeamColor)" pos="201 28" size="148 11" textalign="MIDDLE" color="black"/>
             <buttonimage id="previousColor" size="14 15"  pos="217 42" label="&lt;" source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>

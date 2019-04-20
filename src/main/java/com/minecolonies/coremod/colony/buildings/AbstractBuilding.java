@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
+import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -34,11 +36,11 @@ import com.minecolonies.coremod.colony.requestsystem.management.handlers.Resolve
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.ColonyUtils;
-import com.minecolonies.coremod.util.StructureWrapper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -55,6 +57,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -98,6 +101,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     private boolean isBuilt = false;
 
     /**
+     * The custom name of the building, empty by default.
+     */
+    private String customName = "";
+
+    /**
      * Constructor for a AbstractBuilding.
      *
      * @param colony Colony the building belongs to.
@@ -111,19 +119,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         setupRsDataStore();
     }
 
-    @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    /**
+     * Getter for the custom name of a building.
+     * @return the custom name.
+     */
+    @NotNull
+    public String getCustomBuildingName()
     {
-        super.readFromNBT(compound);
-        loadRequestSystemFromNBT(compound);
-        if (compound.hasKey(TAG_IS_BUILT))
-        {
-            isBuilt = compound.getBoolean(TAG_IS_BUILT);
-        }
-        else if (getBuildingLevel() > 0)
-        {
-            isBuilt = true;
-        }
+        return this.customName;
     }
 
     /**
@@ -177,11 +180,31 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        loadRequestSystemFromNBT(compound);
+        if (compound.hasKey(TAG_IS_BUILT))
+        {
+            isBuilt = compound.getBoolean(TAG_IS_BUILT);
+        }
+        else if (getBuildingLevel() > 0)
+        {
+            isBuilt = true;
+        }
+        if (compound.hasKey(TAG_CUSTOM_NAME))
+        {
+            this.customName = compound.getString(TAG_CUSTOM_NAME);
+        }
+    }
+
+    @Override
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
         writeRequestSystemToNBT(compound);
         compound.setBoolean(TAG_IS_BUILT, isBuilt);
+        compound.setString(TAG_CUSTOM_NAME, customName);
     }
 
     /**
@@ -208,6 +231,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
 
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
+    }
+
+    /**
+     * Ticks once a second(once per 20 ticks) for calculations which do not need to be checked each tick.
+     */
+    public void secondsWorldTick(@NotNull final TickEvent.WorldTickEvent event)
+    {
+        // Empty, override to use
     }
 
     /**
@@ -238,6 +269,19 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         {
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
               "entity.builder.messageBuildersTooFar");
+            return;
+        }
+        
+        if(getLocation().getY() + getHeight() >= 256)
+        {
+        	LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+        	  "entity.builder.messageBuildTooHigh");
+            return;
+        }
+        else if(getLocation().getY() <= 1)
+        {
+        	LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+        	  "entity.builder.messageBuildTooLow");
             return;
         }
 
@@ -351,10 +395,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         buf.writeInt(getBuildingLevel());
         buf.writeInt(getMaxBuildingLevel());
         buf.writeInt(getPickUpPriority());
-        buf.writeBoolean(getPriorityState());
+        buf.writeBoolean(isPriorityStatic());
         buf.writeInt(getCurrentWorkOrderLevel());
         ByteBufUtils.writeUTF8String(buf, getStyle());
         ByteBufUtils.writeUTF8String(buf, this.getSchematicName());
+        ByteBufUtils.writeUTF8String(buf, this.getCustomBuildingName());
+
         buf.writeInt(getRotation());
         buf.writeBoolean(isMirrored());
         final NBTTagCompound requestSystemCompound = new NBTTagCompound();
@@ -378,6 +424,25 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public boolean isBeingGathered()
     {
         return this.beingGathered;
+    }
+
+    /**
+     * Set the custom building name of the building.
+     * @param name the name to set.
+     */
+    public void setCustomBuildingName(final String name)
+    {
+        this.customName = name;
+        this.markDirty();
+    }
+
+    /**
+     * Check if the building should be gathered by the dman.
+     * @return true if so.
+     */
+    public boolean canBeGathered()
+    {
+        return true;
     }
 
     /**
@@ -455,9 +520,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      *
      * @param newLevel The new level.
      */
-    @SuppressWarnings("squid:S1172")
     public void onUpgradeComplete(final int newLevel)
     {
+        ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
         colony.getProgressManager().progressBuildBuilding(this,
           colony.getBuildingManager().getBuildings().values().stream()
             .filter(building -> building instanceof AbstractBuildingWorker).mapToInt(AbstractSchematicProvider::getBuildingLevel).sum(),
@@ -465,7 +530,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             .filter(building -> building instanceof BuildingHome).mapToInt(AbstractSchematicProvider::getBuildingLevel).sum()
         );
         final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, newLevel);
-        final StructureWrapper wrapper = new StructureWrapper(colony.getWorld(), workOrder.getStructureName());
+        final Structure wrapper = new Structure(colony.getWorld(), workOrder.getStructureName(), new PlacementSettings());
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
           = ColonyUtils.calculateCorners(this.getLocation(),
           colony.getWorld(),
@@ -544,7 +609,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
         final IRequestManager manager = colony.getRequestManager();
         toKeep.put(stack -> this.getOpenRequestsByCitizen().values().stream()
-                              .anyMatch(list -> list.stream()
+                              .anyMatch(list -> list.stream().filter(token -> manager.getRequestForToken(token) != null)
                                                   .anyMatch(token -> manager.getRequestForToken(token).getRequest() instanceof IDeliverable
                                                                        && ((IDeliverable) manager.getRequestForToken(token).getRequest()).matches(stack))),
           new Tuple<>(Integer.MAX_VALUE, true));
@@ -1164,15 +1229,5 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         return Optional.of(getColony().getCitizenManager().getCitizen(citizenID));
     }
-
-    /**
-     * Check if the building should be gathered by the dman.
-     * @return true if so.
-     */
-    public boolean canBeGathered()
-    {
-        return true;
-    }
-
     //------------------------- !END! RequestSystem handling for minecolonies buildings -------------------------//
 }

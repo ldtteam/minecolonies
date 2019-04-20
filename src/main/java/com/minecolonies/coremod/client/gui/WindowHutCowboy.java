@@ -5,7 +5,6 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCowboy;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFisherman;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,7 +25,7 @@ public class WindowHutCowboy extends AbstractWindowWorkerBuilding<BuildingCowboy
     /**
      * Constructor for the window of the fisherman.
      *
-     * @param building {@link BuildingFisherman.View}.
+     * @param building {@link BuildingCowboy.View}.
      */
     public WindowHutCowboy(final BuildingCowboy.View building)
     {

@@ -215,16 +215,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 {
                     job.setReturning(true);
                     this.hasGathered = false;
-                    if (!building.getPriorityState())
-                    {
-                        building.alterPickUpPriority(1);
-                    }
                 }
                 else
                 {
-                    if (!building.getPriorityState())
+                    if (!building.isPriorityStatic())
                     {
-                        building.alterPickUpPriority(-1);
+                        building.alterPickUpPriority(-10);
                     }
                     if (job.getCurrentTask() == null)
                     {
@@ -317,10 +313,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         final ItemStack stack = handler.getStackInSlot(currentSlot);
 
+        if (stack.isEmpty())
+        {
+            return false;
+        }
+
         final int amount = workerRequiresItem(building, stack, alreadyKept);
         if (amount <= 0
               || (building instanceof BuildingCook
-                    && !ItemStackUtils.isEmpty(stack)
                     && stack.getItem() instanceof ItemFood))
         {
             return false;
@@ -385,7 +385,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
             else
             {
-                if (!building.getPriorityState())
+                if (!building.isPriorityStatic() && worker.getRandom().nextInt(100) <= 1)
                 {
                     building.alterPickUpPriority(1);
                 }
@@ -510,7 +510,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         if (!(tileEntity instanceof TileEntityColonyBuilding))
         {
-            return DELIVERY;
+            job.finishRequest(true);
+            return START_WORKING;
         }
 
         final TileEntityColonyBuilding tileEntityColonyBuilding = (TileEntityColonyBuilding) tileEntity;
@@ -530,10 +531,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
             if (tileEntityColonyBuilding.getBuilding() instanceof AbstractBuildingWorker)
             {
-                if (!building.getPriorityState())
-                {
-                    building.alterPickUpPriority(1);
-                }
                 insertionResultStack = InventoryUtils.forceItemStackToItemHandler(
                   tileEntityColonyBuilding.getBuilding().getCapability(ITEM_HANDLER_CAPABILITY, null), stack, ((AbstractBuildingWorker) building)::isItemStackInRequest);
             }
@@ -622,6 +619,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             ((BuildingDeliveryman) getOwnBuilding()).setBuildingToDeliver(null);
             job.finishRequest(false);
             return START_WORKING;
+        }
+
+        if (walkToBlock(location.getInDimensionLocation()))
+        {
+            return getState();
         }
 
         final TileEntity tileEntity = world.getTileEntity(location.getInDimensionLocation());

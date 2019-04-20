@@ -37,10 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
@@ -57,7 +54,7 @@ public final class ColonyManager
      * The list of colony views.
      */
     @NotNull
-    private static final ColonyList<ColonyView> colonyViews = new ColonyList<>();
+    private static final Map<Integer, ColonyList<ColonyView>> colonyViews = new HashMap<>();
 
     /**
      * Recipemanager of this server.
@@ -408,15 +405,18 @@ public final class ColonyManager
      * @param pos Block position.
      * @return Returns the view belonging to the building at (x, y, z).
      */
-    public static AbstractBuildingView getBuildingView(final BlockPos pos)
+    public static AbstractBuildingView getBuildingView(final int dimension, final BlockPos pos)
     {
-        //  On client we will just check all known views
-        for (@NotNull final ColonyView colony : colonyViews)
+        if (colonyViews.containsKey(dimension))
         {
-            final AbstractBuildingView building = colony.getBuilding(pos);
-            if (building != null)
+            //  On client we will just check all known views
+            for (@NotNull final ColonyView colony : colonyViews.get(dimension))
             {
-                return building;
+                final AbstractBuildingView building = colony.getBuilding(pos);
+                if (building != null)
+                {
+                    return building;
+                }
             }
         }
 
@@ -453,7 +453,7 @@ public final class ColonyManager
         {
             return null;
         }
-        return getColonyView(id);
+        return getColonyView(id, w.provider.getDimension());
     }
 
     /**
@@ -492,7 +492,7 @@ public final class ColonyManager
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
         if (cap.getOwningColony() != 0)
         {
-            return getColonyView(cap.getOwningColony());
+            return getColonyView(cap.getOwningColony(), w.provider.getDimension());
         }
         else if (!cap.getAllCloseColonies().isEmpty())
         {
@@ -501,7 +501,7 @@ public final class ColonyManager
 
             for (final int cId : cap.getAllCloseColonies())
             {
-                final ColonyView c = getColonyView(cId);
+                final ColonyView c = getColonyView(cId, w.provider.getDimension());
                 if (c != null && c.getDimension() == w.provider.getDimension())
                 {
                     final long dist = c.getDistanceSquared(pos);
@@ -518,15 +518,18 @@ public final class ColonyManager
         @Nullable ColonyView closestColony = null;
         long closestDist = Long.MAX_VALUE;
 
-        for (@NotNull final ColonyView c : colonyViews)
+        if (colonyViews.containsKey(w.provider.getDimension()))
         {
-            if (c.getDimension() == w.provider.getDimension() && c.getCenter() != null)
+            for (@NotNull final ColonyView c : colonyViews.get(w.provider.getDimension()))
             {
-                final long dist = c.getDistanceSquared(pos);
-                if (dist < closestDist)
+                if (c.getDimension() == w.provider.getDimension() && c.getCenter() != null)
                 {
-                    closestColony = c;
-                    closestDist = dist;
+                    final long dist = c.getDistanceSquared(pos);
+                    if (dist < closestDist)
+                    {
+                        closestColony = c;
+                        closestDist = dist;
+                    }
                 }
             }
         }
@@ -620,23 +623,27 @@ public final class ColonyManager
     @Nullable
     public static IColony getIColonyByOwner(@NotNull final World w, final UUID owner)
     {
-        return w.isRemote ? getColonyViewByOwner(owner) : getColonyByOwner(owner);
+        return w.isRemote ? getColonyViewByOwner(owner, w.provider.getDimension()) : getColonyByOwner(owner);
     }
 
     /**
      * Returns a ColonyView with specific owner.
      *
      * @param owner UUID of the owner.
+     * @param dimension the dimension id.
      * @return ColonyView.
      */
-    private static IColony getColonyViewByOwner(final UUID owner)
+    private static IColony getColonyViewByOwner(final UUID owner, final int dimension)
     {
-        for (@NotNull final ColonyView c : colonyViews)
+        if (colonyViews.containsKey(dimension))
         {
-            final Player p = c.getPlayers().get(owner);
-            if (p != null && p.getRank().equals(Rank.OWNER))
+            for (@NotNull final ColonyView c : colonyViews.get(dimension))
             {
-                return c;
+                final Player p = c.getPlayers().get(owner);
+                if (p != null && p.getRank().equals(Rank.OWNER))
+                {
+                    return c;
+                }
             }
         }
 
@@ -834,7 +841,7 @@ public final class ColonyManager
      */
     public static void onWorldLoad(@NotNull final World world)
     {
-        if (!world.isRemote && !(world instanceof WorldServerMulti))
+        if (!world.isRemote)
         {
             if (!loaded)
             {
@@ -914,14 +921,24 @@ public final class ColonyManager
      * @param colonyId          ID of the colony.
      * @param colonyData        {@link ByteBuf} with colony data.
      * @param isNewSubscription whether this is a new subscription or not.
+     * @param dim the dimension.
      */
-    public static void handleColonyViewMessage(final int colonyId, @NotNull final ByteBuf colonyData, @NotNull final World world, final boolean isNewSubscription)
+    public static void handleColonyViewMessage(final int colonyId, @NotNull final ByteBuf colonyData, @NotNull final World world, final boolean isNewSubscription, final int dim)
     {
-        ColonyView view = getColonyView(colonyId);
+        ColonyView view = getColonyView(colonyId, dim);
         if (view == null)
         {
             view = ColonyView.createFromNetwork(colonyId);
-            colonyViews.add(view);
+            if (colonyViews.containsKey(dim))
+            {
+                colonyViews.get(dim).add(view);
+            }
+            else
+            {
+                final ColonyList<ColonyView> list = new ColonyList<>();
+                list.add(view);
+                colonyViews.put(dim, list);
+            }
         }
         view.handleColonyViewMessage(colonyData, world, isNewSubscription);
     }
@@ -930,24 +947,30 @@ public final class ColonyManager
      * Get ColonyView by ID.
      *
      * @param id ID of colony.
+     * @param dimension the dimension id.
      * @return The ColonyView belonging to the colony.
      */
-    public static ColonyView getColonyView(final int id)
+    public static ColonyView getColonyView(final int id, final int dimension)
     {
-        return colonyViews.get(id);
+        if (colonyViews.containsKey(dimension))
+        {
+            return colonyViews.get(dimension).get(id);
+        }
+        return null;
     }
 
     /**
      * Returns result of {@link ColonyView#handlePermissionsViewMessage(ByteBuf)}
-     * if {@link #getColonyView(int)}. gives a not-null result. If {@link
-     * #getColonyView(int)} is null, returns null.
+     * if {@link #getColonyView(int, int)}. gives a not-null result. If {@link
+     * #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyID ID of the colony.
      * @param data     {@link ByteBuf} with colony data.
+     * @param dim the dimension.
      */
-    public static void handlePermissionsViewMessage(final int colonyID, @NotNull final ByteBuf data)
+    public static void handlePermissionsViewMessage(final int colonyID, @NotNull final ByteBuf data, final int dim)
     {
-        final ColonyView view = getColonyView(colonyID);
+        final ColonyView view = getColonyView(colonyID, dim);
         if (view == null)
         {
             Log.getLogger().error(String.format("Colony view does not exist for ID #%d", colonyID));
@@ -960,16 +983,17 @@ public final class ColonyManager
 
     /**
      * Returns result of {@link ColonyView#handleColonyViewCitizensMessage(int,
-     * ByteBuf)} if {@link #getColonyView(int)} gives a not-null result. If
-     * {@link #getColonyView(int)} is null, returns null.
+     * ByteBuf)} if {@link #getColonyView(int, int)} gives a not-null result. If
+     * {@link #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyId  ID of the colony.
      * @param citizenId ID of the citizen.
      * @param buf       {@link ByteBuf} with colony data.
+     * @param dim the dimension.
      */
-    public static void handleColonyViewCitizensMessage(final int colonyId, final int citizenId, final ByteBuf buf)
+    public static void handleColonyViewCitizensMessage(final int colonyId, final int citizenId, final ByteBuf buf, final int dim)
     {
-        final ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId, dim);
         if (view == null)
         {
             return;
@@ -979,15 +1003,16 @@ public final class ColonyManager
 
     /**
      * Returns result of {@link ColonyView#handleColonyViewWorkOrderMessage(ByteBuf)}
-     * (int, ByteBuf)} if {@link #getColonyView(int)} gives a not-null result.
-     * If {@link #getColonyView(int)} is null, returns null.
+     * (int, ByteBuf)} if {@link #getColonyView(int, int)} gives a not-null result.
+     * If {@link #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyId ID of the colony.
      * @param buf      {@link ByteBuf} with colony data.
+     * @param dim the dimension.
      */
-    public static void handleColonyViewWorkOrderMessage(final int colonyId, final ByteBuf buf)
+    public static void handleColonyViewWorkOrderMessage(final int colonyId, final ByteBuf buf, final int dim)
     {
-        final ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId, dim);
         if (view == null)
         {
             return;
@@ -997,15 +1022,16 @@ public final class ColonyManager
 
     /**
      * Returns result of {@link ColonyView#handleColonyViewRemoveCitizenMessage(int)}
-     * if {@link #getColonyView(int)} gives a not-null result. If {@link
-     * #getColonyView(int)} is null, returns null.
+     * if {@link #getColonyView(int, int)} gives a not-null result. If {@link
+     * #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyId  ID of the colony.
      * @param citizenId ID of the citizen.
+     * @param dim the dimension.
      */
-    public static void handleColonyViewRemoveCitizenMessage(final int colonyId, final int citizenId)
+    public static void handleColonyViewRemoveCitizenMessage(final int colonyId, final int citizenId, final int dim)
     {
-        final ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId, dim);
         if (view != null)
         {
             //  Can legitimately be NULL, because (to keep the code simple and fast), it is
@@ -1016,16 +1042,17 @@ public final class ColonyManager
 
     /**
      * Returns result of {@link ColonyView#handleColonyBuildingViewMessage(BlockPos,
-     * ByteBuf)} if {@link #getColonyView(int)} gives a not-null result. If
-     * {@link #getColonyView(int)} is null, returns null.
+     * ByteBuf)} if {@link #getColonyView(int, int)} gives a not-null result. If
+     * {@link #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyId   ID of the colony.
      * @param buildingId ID of the building.
      * @param buf        {@link ByteBuf} with colony data.
+     * @param dim the dimension.
      */
-    public static void handleColonyBuildingViewMessage(final int colonyId, final BlockPos buildingId, @NotNull final ByteBuf buf)
+    public static void handleColonyBuildingViewMessage(final int colonyId, final BlockPos buildingId, @NotNull final ByteBuf buf, final int dim)
     {
-        final ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId, dim);
         if (view != null)
         {
             view.handleColonyBuildingViewMessage(buildingId, buf);
@@ -1038,15 +1065,16 @@ public final class ColonyManager
 
     /**
      * Returns result of {@link ColonyView#handleColonyViewRemoveBuildingMessage(BlockPos)}
-     * if {@link #getColonyView(int)} gives a not-null result. If {@link
-     * #getColonyView(int)} is null, returns null.
+     * if {@link #getColonyView(int, int)} gives a not-null result. If {@link
+     * #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyId   ID of the colony.
      * @param buildingId ID of the building.
+     * @param dim the dimension.
      */
-    public static void handleColonyViewRemoveBuildingMessage(final int colonyId, final BlockPos buildingId)
+    public static void handleColonyViewRemoveBuildingMessage(final int colonyId, final BlockPos buildingId, final int dim)
     {
-        final ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId, dim);
         if (view != null)
         {
             //  Can legitimately be NULL, because (to keep the code simple and fast), it is
@@ -1057,15 +1085,16 @@ public final class ColonyManager
 
     /**
      * Returns result of {@link ColonyView#handleColonyViewRemoveWorkOrderMessage(int)}
-     * if {@link #getColonyView(int)} gives a not-null result. If {@link
-     * #getColonyView(int)} is null, returns null.
+     * if {@link #getColonyView(int, int)} gives a not-null result. If {@link
+     * #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyId    ID of the colony.
      * @param workOrderId ID of the workOrder.
+     * @param dim the dimension.
      */
-    public static void handleColonyViewRemoveWorkOrderMessage(final int colonyId, final int workOrderId)
+    public static void handleColonyViewRemoveWorkOrderMessage(final int colonyId, final int workOrderId, final int dim)
     {
-        final ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId, dim);
         if (view != null)
         {
             //  Can legitimately be NULL, because (to keep the code simple and fast), it is
@@ -1076,15 +1105,16 @@ public final class ColonyManager
 
     /**
      * Handle a message about the hapiness.
-     * if {@link #getColonyView(int)} gives a not-null result. If {@link
-     * #getColonyView(int)} is null, returns null.
+     * if {@link #getColonyView(int, int)} gives a not-null result. If {@link
+     * #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyId Id of the colony.
      * @param data     Datas about the hapiness
+     * @param dim the dimension.
      */
-    public static void handleHappinessDataMessage(final int colonyId, final HappinessData data)
+    public static void handleHappinessDataMessage(final int colonyId, final HappinessData data, final int dim)
     {
-        final ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId, dim);
         if (view != null)
         {
             view.handleHappinessDataMessage(data);

@@ -56,7 +56,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
     @Override
     public boolean careAboutY()
     {
-        return citizen.getCitizenJobHandler().getColonyJob() instanceof JobBuilder;
+        return true;
     }
 
     @Override

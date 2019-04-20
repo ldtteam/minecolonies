@@ -1,17 +1,14 @@
 package com.minecolonies.coremod.colony.workorders;
 
-import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
-import com.structurize.coremod.management.StructureName;
-import com.structurize.coremod.management.Structures;
-import net.minecraft.block.state.IBlockState;
+import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.management.Structures;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -175,14 +172,6 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     @Override
     public int getRotation(final World world)
     {
-        if (buildingRotation == 0 && world != null)
-        {
-            final IBlockState blockState = world.getBlockState(buildingLocation);
-            if (blockState.getBlock() instanceof AbstractBlockHut)
-            {
-                return BlockUtils.getRotationFromFacing(blockState.getValue(AbstractBlockHut.FACING));
-            }
-        }
         return buildingRotation;
     }
 

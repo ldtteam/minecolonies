@@ -43,7 +43,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     /**
      * Base rate experience for every shot.
      */
-    private static final double XP_BASE_RATE = 0.1;
+    private static final double XP_BASE_RATE = 0.2;
 
     /**
      * Chance for a guard to do partner training.

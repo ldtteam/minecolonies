@@ -1,27 +1,31 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.*;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.managers.interfaces.IBuildingManager;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.network.messages.ColonyViewBuildingViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveBuildingMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -66,6 +70,11 @@ public class BuildingManager implements IBuildingManager
      * Variable to check if the fields needs to be synched.
      */
     private boolean isFieldsDirty    = false;
+
+    /**
+     * Counter for world ticks.
+     */
+    private int tickCounter = 0;
 
     /**
      * The colony of the manager.
@@ -164,9 +173,20 @@ public class BuildingManager implements IBuildingManager
         {
             if (event.world.isBlockLoaded(building.getLocation()))
             {
+                if (tickCounter == 20)
+                {
+                    building.secondsWorldTick(event);
+                }
+
                 building.onWorldTick(event);
             }
         }
+
+        if (tickCounter == 20)
+        {
+            tickCounter = 0;
+        }
+        tickCounter++;
     }
 
     @Override
@@ -320,6 +340,25 @@ public class BuildingManager implements IBuildingManager
                 {
                     building.setStyle(colony.getStyle());
                 }
+
+                if (world != null && !(building instanceof PostBox))
+                {
+                    building.setRotation(BlockUtils.getRotationFromFacing(world.getBlockState(building.getLocation()).getValue(AbstractBlockHut.FACING)));
+                    final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
+                    final Structure wrapper = new Structure(world, workOrder.getStructureName(), new PlacementSettings());
+                    final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
+                      = ColonyUtils.calculateCorners(building.getLocation(),
+                      world,
+                      wrapper,
+                      workOrder.getRotation(world),
+                      workOrder.isMirrored());
+
+                    building.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
+                    building.setHeight(wrapper.getHeight());
+
+                    ConstructionTapeHelper.placeConstructionTape(building.getLocation(), corners, world);
+                }
+
                 ConstructionTapeHelper.placeConstructionTape(building.getLocation(), building.getCorners(), world);
                 colony.getRequestManager().onProviderAddedToColony(building);
             }

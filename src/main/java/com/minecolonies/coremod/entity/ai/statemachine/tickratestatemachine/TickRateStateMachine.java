@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 
 import static com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
-import static com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE_VARIANT;
 
 /**
  * Statemachine with an added tickrate limiting of transitions, allowing transitions to be checked at a lower rate.
@@ -42,20 +41,24 @@ public class TickRateStateMachine extends BasicStateMachine<TickingTransition>
     public void tick()
     {
         tickCounter++;
-        if (tickCounter >= MAX_TICKRATE + MAX_TICKRATE_VARIANT)
+        if (tickCounter > MAX_TICKRATE)
         {
             tickCounter = 1;
         }
 
-        if (!transitionMap.containsKey(getState()))
-        {
-            return;
-        }
+
 
         if (!eventTransitionMap.get(AIBlockingEventType.AI_BLOCKING).stream().anyMatch(this::checkTransition)
               && !eventTransitionMap.get(AIBlockingEventType.EVENT).stream().anyMatch(this::checkTransition)
               && !eventTransitionMap.get(AIBlockingEventType.STATE_BLOCKING).stream().anyMatch(this::checkTransition))
         {
+            if (!transitionMap.containsKey(getState()))
+            {
+                // Reached Trap/Sink state we cannot leave.
+                onException(new RuntimeException("Missing AI transition for state: " + getState()));
+                reset();
+                return;
+            }
             transitionMap.get(getState()).stream().anyMatch(this::checkTransition);
         }
     }
@@ -70,7 +73,7 @@ public class TickRateStateMachine extends BasicStateMachine<TickingTransition>
     public boolean checkTransition(@NotNull final TickingTransition transition)
     {
         // Check if the target should be run this Tick
-        if (((tickCounter + transition.getTickOffset()) % transition.getTickRate()) != 0)
+        if ((tickCounter % transition.getTickRate()) != transition.getTickOffset())
         {
             return false;
         }

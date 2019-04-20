@@ -129,6 +129,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private final List<ItemStorage> alreadyKept = new ArrayList<>();
 
     /**
+     * Paused state handler
+     */
+    private EntityAIStatePausedHandler pausedHandler;
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class
@@ -154,30 +159,25 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             (returning null would not stop execution)
            */
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::waitingForSomething, this::getState, 1),
-          /*
-            Check if any items are needed.
-            If yes, transition to NEEDS_ITEM.
-            and wait for new items.
-           */
-          new AITarget(NEEDS_ITEM, this::waitForRequests),
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () ->
-                                                                  (getState() != NEEDS_ITEM
-                                                                     && (this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData())
-                                                                           || this.getOwnBuilding()
-                                                                                .hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
-                                                                                  r -> !worker.getCitizenData().isRequestAsync(r.getToken())))
-                                                                  ), () -> NEEDS_ITEM),
 
           /*
             Dumps inventory as long as needs be.
             If inventory is dumped, execution continues
             to resolve state.
            */
-          new AITarget(INVENTORY_FULL, this::dumpInventory),
+          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, () -> (getState() == INVENTORY_FULL || this.inventoryNeedsDump()), this::dumpInventory),
           /*
-            Check if inventory has to be dumped.
+            Check if any items are needed.
+            If yes, transition to NEEDS_ITEM.
+            and wait for new items.
            */
-          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::inventoryNeedsDump, INVENTORY_FULL),
+          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () ->
+                                                                  (getState() == NEEDS_ITEM
+                                                                     || (this.getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData())
+                                                                           || this.getOwnBuilding()
+                                                                                .hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
+                                                                                  r -> !worker.getCitizenData().isRequestAsync(r.getToken())))
+                                                                  ), this::waitForRequests),
           /*
            * Gather a needed item.
            */
@@ -554,11 +554,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 {
                     final List<ItemStack> niceToHave = itemsNiceToHave();
                     final List<ItemStack> contained = InventoryUtils.getContainedFromItemHandler(firstDeliverableRequest.getDeliveries(), worker.getItemHandlerCitizen());
-                    final List<ItemStack> missing = InventoryUtils.getMissingFromItemHandler(firstDeliverableRequest.getDeliveries(), worker.getItemHandlerCitizen());
+
                     InventoryUtils.moveItemStacksWithPossibleSwap(
                       worker.getItemHandlerCitizen(),
                       InventoryUtils.getItemHandlersFromProvider(getOwnBuilding()),
-                      missing,
+                      firstDeliverableRequest.getDeliveries(),
                       itemStack ->
                         contained.stream().anyMatch(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack)) ||
                         niceToHave.stream().anyMatch(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack))
@@ -985,7 +985,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (InventoryUtils.isProviderFull(getOwnBuilding()))
         {
-            if (!getOwnBuilding().getPriorityState())
+            if (!getOwnBuilding().isPriorityStatic())
             {
                 getOwnBuilding().alterPickUpPriority(MAX_PRIO);
             }
@@ -1003,6 +1003,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         this.itemsNiceToHave().forEach(this::isInHut);
         // we dumped the inventory, reset actions done
         this.clearActionsDone();
+        if (!getOwnBuilding().isPriorityStatic())
+        {
+            getOwnBuilding().alterPickUpPriority(1);
+        }
         return afterDump();
     }
 
@@ -1036,8 +1040,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
-        final ItemStack stackToDump = worker.getInventoryCitizen().getStackInSlot(slotAt);
+        ItemStack stackToDump = worker.getInventoryCitizen().getStackInSlot(slotAt);
         final int totalSize = worker.getInventoryCitizen().getSizeInventory();
+
+        while (stackToDump.isEmpty())
+        {
+            if (slotAt >= totalSize)
+            {
+                return false;
+            }
+            slotAt++;
+            stackToDump = worker.getInventoryCitizen().getStackInSlot(slotAt);
+        }
 
         boolean dumpAnyway = false;
         if (slotAt + MIN_OPEN_SLOTS * 2 >= totalSize)
@@ -1460,7 +1474,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private IAIState bePaused()
     {
-        EntityAIStatePausedHandler.doPause(worker, getOwnBuilding());
+        if (pausedHandler == null)
+        {
+            pausedHandler = new EntityAIStatePausedHandler(worker, getOwnBuilding());
+        }
+
+        pausedHandler.doPause();
         setDelay(WALK_DELAY);
         return PAUSED;
     }

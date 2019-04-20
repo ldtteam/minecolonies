@@ -15,11 +15,13 @@ import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.inventory.GuiHandler;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.*;
-import com.structurize.coremod.client.gui.WindowBuildTool;
+import com.minecolonies.coremod.util.TownHallRecipe;
+import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.ResourceLocation;
@@ -100,6 +102,16 @@ public class CommonProxy implements IProxy
     }
 
     /**
+     * Called when registering recipes.
+     * @param event the registery event for recipes.
+     */
+    @SubscribeEvent
+    public static void registerRecipes(@NotNull final RegistryEvent.Register<IRecipe> event)
+    {
+        event.getRegistry().register(new TownHallRecipe());
+    }
+
+    /**
      * Called when registering items,
      * we have to register all our mod items here.
      *
@@ -121,12 +133,13 @@ public class CommonProxy implements IProxy
     @Override
     public void registerTileEntities()
     {
-        GameRegistry.registerTileEntity(TileEntityColonyBuilding.class, Constants.MOD_ID + ":colonybuilding");
-        GameRegistry.registerTileEntity(ScarecrowTileEntity.class, Constants.MOD_ID + ":scarecrow");
-        GameRegistry.registerTileEntity(TileEntityWareHouse.class, Constants.MOD_ID + ":warehouse");
-        GameRegistry.registerTileEntity(TileEntityRack.class, Constants.MOD_ID + ":rack");
-        GameRegistry.registerTileEntity(TileEntityInfoPoster.class, Constants.MOD_ID + ":infoposter");
-        GameRegistry.registerTileEntity(TileEntityBarrel.class, Constants.MOD_ID + ":barrel");
+        GameRegistry.registerTileEntity(TileEntityColonyBuilding.class, new ResourceLocation(Constants.MOD_ID, "colonybuilding"));
+        GameRegistry.registerTileEntity(ScarecrowTileEntity.class, new ResourceLocation(Constants.MOD_ID, "scarecrow"));
+        GameRegistry.registerTileEntity(TileEntityWareHouse.class, new ResourceLocation(Constants.MOD_ID, "warehouse"));
+        GameRegistry.registerTileEntity(TileEntityRack.class, new ResourceLocation(Constants.MOD_ID, "rack"));
+        GameRegistry.registerTileEntity(TileEntityInfoPoster.class, new ResourceLocation(Constants.MOD_ID, "infoposter"));
+        GameRegistry.registerTileEntity(TileEntityBarrel.class, new ResourceLocation(Constants.MOD_ID, "barrel"));
+        GameRegistry.registerTileEntity(TileEntityDecorationController.class, new ResourceLocation(Constants.MOD_ID, "decorationcontroller"));
 
         NetworkRegistry.INSTANCE.registerGuiHandler(MineColonies.instance, new GuiHandler());
     }
@@ -337,5 +350,13 @@ public class CommonProxy implements IProxy
     public RecipeBook getRecipeBookFromPlayer(@NotNull final EntityPlayer player)
     {
         return ((EntityPlayerMP) player).getRecipeBook();
+    }
+
+    @Override
+    public void openDecorationControllerWindow(@NotNull final BlockPos pos)
+    {
+        /*
+         * Intentionally left empty.
+         */
     }
 }

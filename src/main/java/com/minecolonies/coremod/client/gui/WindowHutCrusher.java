@@ -1,13 +1,15 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.TextField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
-import net.minecraft.init.Blocks;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Window for the crusher hut.
@@ -37,7 +39,7 @@ public class WindowHutCrusher extends AbstractWindowWorkerBuilding<BuildingCrush
     /**
      * The current crusher mode.
      */
-    private BuildingCrusher.CrusherMode mode;
+    private ItemStorage mode;
 
     /**
      * Constructor for the window of the miner hut.
@@ -52,7 +54,7 @@ public class WindowHutCrusher extends AbstractWindowWorkerBuilding<BuildingCrush
 
         registerButton(BLOCK_BUTTON, this::switchCrushingMode);
         registerButton(BUTTON_SAVE, this::saveCrushingMode);
-        mode = building.getCrusherMode().getFirst();
+        this.mode = building.getCrusherMode().getFirst();
         crushingSettingsInput.setText(building.getCrusherMode().getSecond().toString());
         setupSettings(crushingSettingsButton);
     }
@@ -81,18 +83,15 @@ public class WindowHutCrusher extends AbstractWindowWorkerBuilding<BuildingCrush
      */
     private void switchCrushingMode(final Button crushingSettingsButton)
     {
-        if (crushingSettingsButton.getLabel().equals(Blocks.GRAVEL.getLocalizedName()))
+        final List<ItemStorage> modes = building.getCrusherModes();
+        int index = building.getCrusherModes().indexOf(this.mode) + 1;
+
+        if (index >= modes.size())
         {
-            this.mode = BuildingCrusher.CrusherMode.GRAVEL;
+            index = 0;
         }
-        else if (crushingSettingsButton.getLabel().equals(Blocks.SAND.getLocalizedName()))
-        {
-            this.mode = BuildingCrusher.CrusherMode.SAND;
-        }
-        else
-        {
-            this.mode = BuildingCrusher.CrusherMode.CLAY;
-        }
+
+        this.mode = modes.get(index);
         setupSettings(crushingSettingsButton);
     }
 
@@ -103,17 +102,9 @@ public class WindowHutCrusher extends AbstractWindowWorkerBuilding<BuildingCrush
      */
     private void setupSettings(final Button crushingSettingsButton)
     {
-        if (this.mode == BuildingCrusher.CrusherMode.GRAVEL)
+        if (this.mode != null)
         {
-            crushingSettingsButton.setLabel(Blocks.GRAVEL.getLocalizedName());
-        }
-        else if (this.mode == BuildingCrusher.CrusherMode.SAND)
-        {
-            crushingSettingsButton.setLabel(Blocks.SAND.getLocalizedName());
-        }
-        else
-        {
-            crushingSettingsButton.setLabel(Blocks.CLAY.getLocalizedName());
+            crushingSettingsButton.setLabel(this.mode.getItemStack().getDisplayName());
         }
     }
 

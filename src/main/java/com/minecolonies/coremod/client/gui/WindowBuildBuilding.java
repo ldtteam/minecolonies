@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.structurize.util.BlockInfo;
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.util.StructurePlacementUtils;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.Pane;
@@ -21,13 +21,12 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.BuildingSetStyleMessage;
-import com.minecolonies.coremod.util.StructureWrapper;
-import com.structurize.coremod.Structurize;
-import com.structurize.coremod.management.StructureName;
-import com.structurize.coremod.management.Structures;
-import com.structurize.coremod.network.messages.SchematicRequestMessage;
-import com.structurize.structures.helpers.Settings;
-import com.structurize.structures.helpers.Structure;
+import com.ldtteam.structurize.Structurize;
+import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
+import com.ldtteam.structures.helpers.Settings;
+import com.ldtteam.structures.helpers.Structure;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
@@ -35,11 +34,11 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -103,17 +102,19 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      * Constructor for the window when the player wants to hire a worker for a certain job.
      *
      * @param c          the colony view.
-     * @param buildingId the building position.
+     * @param building the building.
      */
-    public WindowBuildBuilding(final ColonyView c, final BlockPos buildingId)
+    public WindowBuildBuilding(final ColonyView c, final AbstractBuildingView building)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
-        building = c.getBuilding(buildingId);
+        this.building = building;
+
         initStyleNavigation();
         registerButton(BUTTON_BUILD, this::confirmClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
         registerButton(BUTTON_REPAIR, this::repairClicked);
         registerButton(BUTTON_MOVE_BUILDING, this::moveBuildingClicked);
+
         final Button buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
         if (building.getBuildingLevel() == 0)
         {
@@ -229,12 +230,11 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
                                 building.getBuildingMaxLevel() : (building.getBuildingLevel() + 1);
         final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, styles.get(stylesDropDownList.getSelectedIndex()),
           building.getSchematicName() + nextLevel);
-        final StructureWrapper wrapper = new StructureWrapper(world, sn.toString());
-        final Structure structure = wrapper.getStructure().getStructure();
+        final Structure structure = new Structure(world, sn.toString(), new PlacementSettings());
         final String md5 = Structures.getMD5(sn.toString());
-        if (structure.isTemplateMissing() || !structure.isCorrectMD5(md5))
+        if (structure.isBluePrintMissing() || !structure.isCorrectMD5(md5))
         {
-            if (structure.isTemplateMissing())
+            if (structure.isBluePrintMissing())
             {
                 Log.getLogger().info("Template structure " + sn + " missing");
             }
@@ -255,51 +255,38 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             }
         }
 
-        wrapper.setPosition(building.getLocation());
-        wrapper.rotate(building.getRotation(), world, building.getLocation(), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
-        while (wrapper.findNextBlock())
+        structure.setPosition(building.getLocation());
+        structure.rotate(BlockPosUtil.getRotationFromRotations(building.getRotation()), world, building.getLocation(), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
+        while (structure.findNextBlock())
         {
-            @Nullable final Template.BlockInfo blockInfo = wrapper.getBlockInfo();
-            @Nullable final Template.EntityInfo entityInfo = wrapper.getEntityinfo();
+            @Nullable final BlockInfo blockInfo = structure.getBlockInfo();
+            @Nullable final IBlockState blockState = blockInfo.getState();
 
-            if (entityInfo != null)
-            {
-                for (final ItemStorage stack : ItemStackUtils.getListOfStackForEntityInfo(entityInfo, world, Minecraft.getMinecraft().player))
-                {
-                    if (!ItemStackUtils.isEmpty(stack.getItemStack()))
-                    {
-                        addNeededResource(stack.getItemStack(), 1);
-                    }
-                }
-            }
-
-            if (blockInfo == null)
+            if (blockState == null)
             {
                 continue;
             }
 
-            @Nullable final IBlockState blockState = blockInfo.blockState;
             @Nullable final Block block = blockState.getBlock();
 
-            if (wrapper.isStructureBlockEqualWorldBlock()
+            if (StructurePlacementUtils.isStructureBlockEqualWorldBlock(world, structure.getBlockPosition(), blockState)
                   || (blockState.getBlock() instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
                   || (blockState.getBlock() instanceof BlockDoor && blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
             {
                 continue;
             }
 
-            if (block != null
-                  && block != Blocks.AIR
+            if (block != Blocks.AIR
                   && !AbstractEntityAIStructure.isBlockFree(block, 0)
-                  && block != com.structurize.coremod.blocks.ModBlocks.blockSolidSubstitution
-                  && block != com.structurize.coremod.blocks.ModBlocks.blockSubstitution)
+                  && block != com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution
+                  && block != com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution)
             {
-                if (wrapper.getBlockInfo().tileentityData != null)
+                if (structure.getBlockInfo().getTileEntityData() != null)
                 {
                     final List<ItemStack> itemList = new ArrayList<>();
-                    if (wrapper.getBlockInfo() != null && wrapper.getBlockInfo().tileentityData != null)
+                    if (structure.getBlockInfo().getState() != null && structure.getBlockInfo().getTileEntityData() != null)
                     {
-                        itemList.addAll(ItemStackUtils.getItemStacksOfTileEntity(wrapper.getBlockInfo().tileentityData, world));
+                        itemList.addAll(ItemStackUtils.getItemStacksOfTileEntity(structure.getBlockInfo().getTileEntityData(), world));
                     }
 
                     for (final ItemStack stack : itemList)
@@ -311,6 +298,21 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
                 addNeededResource(BlockUtils.getItemStackFromBlockState(blockState), 1);
             }
         }
+
+        for (final NBTTagCompound entityInfo : structure.getEntityData())
+        {
+            if (entityInfo != null)
+            {
+                for (final ItemStorage stack : ItemStackUtils.getListOfStackForEntityInfo(entityInfo, world, Minecraft.getMinecraft().player))
+                {
+                    if (!ItemStackUtils.isEmpty(stack.getItemStack()))
+                    {
+                        addNeededResource(stack.getItemStack(), 1);
+                    }
+                }
+            }
+        }
+
         window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).refreshElementPanes();
         updateResourceList();
     }
