@@ -29,6 +29,7 @@ import com.ldtteam.structurize.items.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockSilverfish;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -366,10 +367,6 @@ public class EventHandler
                 {
                     MineColonies.proxy.openBuildToolWindow(event.getPos().offset(event.getFace()));
                 }
-                else
-                {
-                    MineColonies.proxy.openBuildToolWindow(null);
-                }
             }
             event.setCanceled(true);
         }
@@ -378,7 +375,9 @@ public class EventHandler
     @SubscribeEvent
     public void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickItem event)
     {
-        if (event.getHand() == EnumHand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote)
+        if (event.getHand() == EnumHand.MAIN_HAND
+              && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote
+              && event.getFace() != null)
         {
             MineColonies.proxy.openBuildToolWindow(null);
             event.setCanceled(true);

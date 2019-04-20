@@ -146,6 +146,11 @@ public final class ColonyView implements IColony
     private int boughtCitizenCost;
 
     /**
+     * The default style.
+     */
+    private String style = "";
+
+    /**
      * Base constructor for a colony.
      *
      * @param id The current id for the colony.
@@ -244,6 +249,8 @@ public final class ColonyView implements IColony
         buf.writeBoolean(colony.getProgressManager().isPrintingProgress());
 
         buf.writeInt(colony.getBoughtCitizenCost());
+
+        ByteBufUtils.writeUTF8String(buf, colony.getStyle());
     }
 
     /**
@@ -580,6 +587,8 @@ public final class ColonyView implements IColony
         this.printProgress = buf.readBoolean();
 
         this.boughtCitizenCost = buf.readInt();
+
+        this.style = ByteBufUtils.readUTF8String(buf);
         return null;
     }
 
@@ -854,7 +863,7 @@ public final class ColonyView implements IColony
     @Override
     public void markDirty()
     {
-        /**
+        /*
          * Nothing to do here.
          */
     }
@@ -887,7 +896,7 @@ public final class ColonyView implements IColony
     @Override
     public void removeVisitingPlayer(final EntityPlayer player)
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }
@@ -895,7 +904,7 @@ public final class ColonyView implements IColony
     @Override
     public void addVisitingPlayer(final EntityPlayer player)
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }
@@ -954,8 +963,21 @@ public final class ColonyView implements IColony
         return new ArrayList<>(buildings.values());
     }
 
+    /**
+     * Get the cost multiplier of buying a citizen.
+     * @return the current cost.
+     */
     public int getBoughtCitizenCost()
     {
         return boughtCitizenCost;
+    }
+
+    /**
+     * Get the style of the colony.
+     * @return the current default style.
+     */
+    public String getStyle()
+    {
+        return style;
     }
 }

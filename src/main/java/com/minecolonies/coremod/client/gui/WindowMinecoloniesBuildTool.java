@@ -4,6 +4,8 @@ import com.ldtteam.structures.lib.BlueprintUtils;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
 import com.minecolonies.coremod.network.messages.BuildToolPasteMessage;
@@ -29,6 +31,11 @@ import java.util.Map;
 public class WindowMinecoloniesBuildTool extends WindowBuildTool
 {
     /**
+     * The clicked pos.
+     */
+    private final BlockPos pos;
+
+    /**
      * Creates a window build tool for a specific structure.
      *
      * @param pos           the position.
@@ -39,6 +46,12 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     public WindowMinecoloniesBuildTool(@Nullable final BlockPos pos, final String structureName, final int rotation, final WindowBuildTool.FreeMode mode)
     {
         super(pos, structureName, rotation, mode);
+        this.pos = pos;
+        final ColonyView view = ColonyManager.getClosestColonyView(Minecraft.getMinecraft().world, pos);
+        if (view != null && Settings.instance.getStyle().isEmpty())
+        {
+            Settings.instance.setStyle(view.getStyle());
+        }
     }
 
     /**
@@ -52,6 +65,12 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     public WindowMinecoloniesBuildTool(@Nullable final BlockPos pos)
     {
         super(pos);
+        this.pos = pos;
+        final ColonyView view = ColonyManager.getClosestColonyView(Minecraft.getMinecraft().world, pos);
+        if (view != null && Settings.instance.getStyle().isEmpty())
+        {
+            Settings.instance.setStyle(view.getStyle());
+        }
     }
 
     @Override
