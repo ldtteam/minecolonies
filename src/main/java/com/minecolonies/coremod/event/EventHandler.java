@@ -382,9 +382,7 @@ public class EventHandler
     @SubscribeEvent
     public void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickItem event)
     {
-        if (event.getHand() == EnumHand.MAIN_HAND
-              && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote
-              && event.getFace() != null)
+        if (event.getHand() == EnumHand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote)
         {
             final ColonyView view = ColonyManager.getClosestColonyView(Minecraft.getMinecraft().world, event.getPos());
             if (view != null && Settings.instance.getStyle().isEmpty())
