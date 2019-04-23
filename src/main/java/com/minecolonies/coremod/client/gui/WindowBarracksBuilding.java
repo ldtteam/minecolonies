@@ -94,7 +94,8 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
         if (building.getBuildingLevel() >= BUILDING_LEVEL_FOR_LIST)
         {
             List<BlockPos> spawnPoints = colonyView.getLastSpawnPoints();
-            if(colonyView.isRaiding()) {
+            if(colonyView.isRaiding())
+            {
                 findPaneOfTypeByID(LABEL_CURRENNT, Label.class).setLabelText(mountDistanceString(spawnPoints.get(spawnPoints.size()-1)));
             }
             positionsList.setDataProvider(new ScrollingList.DataProvider()
@@ -102,16 +103,15 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
                 @Override
                 public int getElementCount()
                 {
-                    if(colonyView.isRaiding())
-                        return spawnPoints.size() -1;
-                    return spawnPoints.size();
+                    return spawnPoints.size() - (colonyView.isRaiding() ? 1 : 0);
                 }
 
                 @Override
                 public void updateElement(final int index, @NotNull final Pane rowPane)
                 {
                     final BlockPos pos = spawnPoints.get(index);
-                    if(!(colonyView.isRaiding() && index == spawnPoints.size()-1)) {
+                    if(!(colonyView.isRaiding() && index == spawnPoints.size()-1))
+                    {
                         rowPane.findPaneOfTypeByID(LABEL_POS, Label.class).setLabelText((index + 1) + ": " + mountDistanceString(pos));
                     }
                 }
