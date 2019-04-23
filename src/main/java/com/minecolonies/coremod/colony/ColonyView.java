@@ -968,7 +968,8 @@ public final class ColonyView implements IColony
         return boughtCitizenCost;
     }
 
-    public boolean isRaiding() {
+    public boolean isRaiding()
+    {
         return this.horde > 0;
     }
 }
