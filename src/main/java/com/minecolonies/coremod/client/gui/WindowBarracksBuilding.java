@@ -10,6 +10,7 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracks;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+import java.util.List;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -27,6 +28,10 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
      * Id of the position label.
      */
     private static final String LABEL_POS = "pos";
+    /**
+     * Id of the position label.
+     */
+    private static final String LABEL_CURRENNT = "current";
 
     /**
      * Suffix for the window.
@@ -88,20 +93,27 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
         super.onOpened();
         if (building.getBuildingLevel() >= BUILDING_LEVEL_FOR_LIST)
         {
+            List<BlockPos> spawnPoints = colonyView.getLastSpawnPoints();
+            if(colonyView.isRaiding())
+            {
+                findPaneOfTypeByID(LABEL_CURRENNT, Label.class).setLabelText(mountDistanceString(spawnPoints.get(spawnPoints.size()-1)));
+            }
             positionsList.setDataProvider(new ScrollingList.DataProvider()
             {
                 @Override
                 public int getElementCount()
                 {
-                    return colonyView.getLastSpawnPoints().size();
+                    return spawnPoints.size() - (colonyView.isRaiding() ? 1 : 0);
                 }
 
                 @Override
                 public void updateElement(final int index, @NotNull final Pane rowPane)
                 {
-
-                    final BlockPos pos = colonyView.getLastSpawnPoints().get(index);
-                    rowPane.findPaneOfTypeByID(LABEL_POS, Label.class).setLabelText((index + 1) + ": " + mountDistanceString(pos));
+                    final BlockPos pos = spawnPoints.get(index);
+                    if(!(colonyView.isRaiding() && index == spawnPoints.size()-1))
+                    {
+                        rowPane.findPaneOfTypeByID(LABEL_POS, Label.class).setLabelText((index + 1) + ": " + mountDistanceString(pos));
+                    }
                 }
             });
         }
