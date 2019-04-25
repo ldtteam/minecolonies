@@ -636,6 +636,8 @@ public class EventHandler
                   && world.getVillageCollection().getNearestVillage(pos, Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK) != null)
         {
                 Log.getLogger().warn("Village close by!");
+                LanguageHandler.sendPlayerMessage(player,
+                        "tile.blockHutTownHall.messageTooCloseToVillage");
                 return false;
         }
         return true;

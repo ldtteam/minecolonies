@@ -131,6 +131,11 @@ public final class ColonyView implements IColony
     private IRequestManager requestManager;
 
     /**
+     * The number of raiders in the horde.
+     */
+    private int horde;
+
+    /**
      * The world.
      */
     private World world;
@@ -251,6 +256,7 @@ public final class ColonyView implements IColony
         buf.writeInt(colony.getBoughtCitizenCost());
 
         ByteBufUtils.writeUTF8String(buf, colony.getStyle());
+        buf.writeInt(colony.getRaiderManager().getHorde(colony.getWorld().getMinecraftServer().getWorld(colony.getDimension())).size());
     }
 
     /**
@@ -589,6 +595,7 @@ public final class ColonyView implements IColony
         this.boughtCitizenCost = buf.readInt();
 
         this.style = ByteBufUtils.readUTF8String(buf);
+        this.horde = buf.readInt();
         return null;
     }
 
@@ -979,5 +986,9 @@ public final class ColonyView implements IColony
     public String getStyle()
     {
         return style;
+
+    public boolean isRaiding()
+    {
+        return this.horde > 0;
     }
 }
