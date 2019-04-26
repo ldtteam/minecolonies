@@ -986,6 +986,7 @@ public final class ColonyView implements IColony
     public String getStyle()
     {
         return style;
+    }
 
     public boolean isRaiding()
     {
