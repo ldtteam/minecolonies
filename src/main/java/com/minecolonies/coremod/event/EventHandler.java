@@ -549,7 +549,7 @@ public class EventHandler
             return false;
         }
 
-        if (!colony.isCoordInColony(world, pos) && colony.hasTownHall())
+        if (!colony.isCoordInColony(world, pos) && (!Configurations.gameplay.enableDynamicColonySizes || colony.hasTownHall()))
         {
             if (!world.isRemote)
             {
