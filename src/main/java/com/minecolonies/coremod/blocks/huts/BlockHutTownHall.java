@@ -71,6 +71,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
             else
             {
                 colony.setStyle(style);
+                colony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, worldIn);
             }
         }
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
