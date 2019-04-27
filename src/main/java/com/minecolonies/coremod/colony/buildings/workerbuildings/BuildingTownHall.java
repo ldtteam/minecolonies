@@ -108,6 +108,16 @@ public class BuildingTownHall extends AbstractBuilding
     }
 
     @Override
+    public int getClaimRadius()
+    {
+        if (getBuildingLevel() < 3)
+        {
+            return 2;
+        }
+        return getBuildingLevel();
+    }
+
+    @Override
     public boolean canBeGathered()
     {
         return false;

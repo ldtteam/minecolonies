@@ -131,6 +131,11 @@ public final class ColonyView implements IColony
     private IRequestManager requestManager;
 
     /**
+     * The number of raiders in the horde.
+     */
+    private int horde;
+
+    /**
      * The world.
      */
     private World world;
@@ -144,6 +149,11 @@ public final class ColonyView implements IColony
      * The cost of citizens bought
      */
     private int boughtCitizenCost;
+
+    /**
+     * The default style.
+     */
+    private String style = "";
 
     /**
      * Base constructor for a colony.
@@ -244,6 +254,9 @@ public final class ColonyView implements IColony
         buf.writeBoolean(colony.getProgressManager().isPrintingProgress());
 
         buf.writeInt(colony.getBoughtCitizenCost());
+
+        ByteBufUtils.writeUTF8String(buf, colony.getStyle());
+        buf.writeInt(colony.getRaiderManager().getHorde(colony.getWorld().getMinecraftServer().getWorld(colony.getDimension())).size());
     }
 
     /**
@@ -580,6 +593,9 @@ public final class ColonyView implements IColony
         this.printProgress = buf.readBoolean();
 
         this.boughtCitizenCost = buf.readInt();
+
+        this.style = ByteBufUtils.readUTF8String(buf);
+        this.horde = buf.readInt();
         return null;
     }
 
@@ -854,7 +870,7 @@ public final class ColonyView implements IColony
     @Override
     public void markDirty()
     {
-        /**
+        /*
          * Nothing to do here.
          */
     }
@@ -887,7 +903,7 @@ public final class ColonyView implements IColony
     @Override
     public void removeVisitingPlayer(final EntityPlayer player)
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }
@@ -895,7 +911,7 @@ public final class ColonyView implements IColony
     @Override
     public void addVisitingPlayer(final EntityPlayer player)
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }
@@ -954,8 +970,26 @@ public final class ColonyView implements IColony
         return new ArrayList<>(buildings.values());
     }
 
+    /**
+     * Get the cost multiplier of buying a citizen.
+     * @return the current cost.
+     */
     public int getBoughtCitizenCost()
     {
         return boughtCitizenCost;
+    }
+
+    /**
+     * Get the style of the colony.
+     * @return the current default style.
+     */
+    public String getStyle()
+    {
+        return style;
+    }
+
+    public boolean isRaiding()
+    {
+        return this.horde > 0;
     }
 }
