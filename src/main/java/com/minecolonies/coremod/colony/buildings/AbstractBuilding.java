@@ -36,10 +36,10 @@ import com.minecolonies.coremod.colony.requestsystem.management.handlers.Resolve
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
@@ -167,6 +167,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
          */
     }
 
+    public void onPlacement()
+    {
+        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension(), getClaimRadius());
+    }
+
     /**
      * Checks if a block matches the current object.
      *
@@ -230,6 +235,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             world.updateComparatorOutputLevel(this.getLocation(), block);
         }
 
+        ChunkDataHelper.claimColonyChunks(world, false, colony.getID(), this.getID(), colony.getDimension(), getClaimRadius());
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
     }
 
@@ -381,6 +387,23 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
+     * Method to calculate the radius to be claimed by this building depending on the level.
+     * @return the radius.
+     */
+    public int getClaimRadius()
+    {
+        switch(getBuildingLevel())
+        {
+            case 3:
+                return 1;
+            case 5:
+                return 2;
+            default:
+                return 0;
+        }
+    }
+
+    /**
      * Serializes to view.
      * Sends 3 integers.
      * 1) hashcode of the name of the class.
@@ -403,6 +426,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         buf.writeInt(getRotation());
         buf.writeBoolean(isMirrored());
+        buf.writeInt(getClaimRadius());
+
         final NBTTagCompound requestSystemCompound = new NBTTagCompound();
         writeRequestSystemToNBT(requestSystemCompound);
 
@@ -414,6 +439,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
         ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(getRequesterId()));
         ByteBufUtils.writeTag(buf, requestSystemCompound);
+
     }
 
     /**
@@ -522,6 +548,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      */
     public void onUpgradeComplete(final int newLevel)
     {
+        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), this.getID(), colony.getDimension(), getClaimRadius());
+
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
         colony.getProgressManager().progressBuildBuilding(this,
           colony.getBuildingManager().getBuildings().values().stream()
