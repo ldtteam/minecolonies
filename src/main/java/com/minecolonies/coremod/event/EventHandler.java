@@ -367,7 +367,7 @@ public class EventHandler
             {
                 if (event.getUseBlock() == Event.Result.DEFAULT && event.getFace() != null)
                 {
-                    final ColonyView view = ColonyManager.getClosestColonyView(Minecraft.getMinecraft().world, event.getPos().offset(event.getFace()));
+                    final ColonyView view = ColonyManager.getClosestColonyView(event.getWorld(), event.getPos().offset(event.getFace()));
                     if (view != null && Settings.instance.getStyle().isEmpty())
                     {
                         Settings.instance.setStyle(view.getStyle());
@@ -384,7 +384,7 @@ public class EventHandler
     {
         if (event.getHand() == EnumHand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote)
         {
-            final ColonyView view = ColonyManager.getClosestColonyView(Minecraft.getMinecraft().world, event.getPos());
+            final ColonyView view = ColonyManager.getClosestColonyView(event.getWorld(), event.getPos());
             if (view != null && Settings.instance.getStyle().isEmpty())
             {
                 Settings.instance.setStyle(view.getStyle());
