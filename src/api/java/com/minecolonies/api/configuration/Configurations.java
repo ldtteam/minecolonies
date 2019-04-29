@@ -464,6 +464,9 @@ public class Configurations
 
         @Config.Comment("The minimum level a townhall has to have to allow teleportation to other colonies.")
         public int minThLevelToTeleport = 3;
+
+        @Config.Comment("Seconds between permission messages.")
+        public int secondsBetweenPermissionMessages = 30;
     }
 
     public static class Compatibility
