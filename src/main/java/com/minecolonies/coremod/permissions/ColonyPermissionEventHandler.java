@@ -5,6 +5,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.Colony;
@@ -38,7 +39,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -49,7 +53,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.TOWNHALL_B
  */
 public class ColonyPermissionEventHandler
 {
-
     /**
      * The colony involved in this permission-check event
      */
@@ -69,6 +72,11 @@ public class ColonyPermissionEventHandler
      * Detect if the town-hall break was valid.
      */
     private boolean validTownHallBreak = false;
+
+    /**
+     * The last time the player was notified about not having permission.
+     */
+    private Map<UUID, Long> lastPlayerNotificationTick = new HashMap<>();
 
     /**
      * Create this EventHandler.
@@ -142,7 +150,7 @@ public class ColonyPermissionEventHandler
      * @param action the action which was denied
      * @param pos the location of the action which was denied
      */
-    private static void cancelEvent(final Event event, @Nullable final EntityPlayer player, final Colony colony, final Action action, final BlockPos pos)
+    private void cancelEvent(final Event event, @Nullable final EntityPlayer player, final Colony colony, final Action action, final BlockPos pos)
     {
         event.setResult(Event.Result.DENY);
         if (event.isCancelable())
@@ -167,7 +175,12 @@ public class ColonyPermissionEventHandler
                 return;
             }
 
-            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.permission.no");
+            final long worldTime = player.world.getWorldTime();
+            if (!lastPlayerNotificationTick.containsKey(player.getUniqueID()) || lastPlayerNotificationTick.get(player.getUniqueID()) + (Constants.TICKS_SECOND * Configurations.gameplay.secondsBetweenPermissionMessages ) < worldTime)
+            {
+                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.permission.no");
+                lastPlayerNotificationTick.put(player.getUniqueID(), worldTime);
+            }
         }
     }
 
