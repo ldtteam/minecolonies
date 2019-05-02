@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowTownHall;
@@ -110,11 +111,11 @@ public class BuildingTownHall extends AbstractBuilding
     @Override
     public int getClaimRadius()
     {
-        if (getBuildingLevel() < 3)
+        if (getBuildingLevel() + 1 < Configurations.gameplay.minTownHallPadding)
         {
-            return 2;
+            return Configurations.gameplay.minTownHallPadding;
         }
-        return getBuildingLevel();
+        return getBuildingLevel() + 1;
     }
 
     @Override
