@@ -343,6 +343,8 @@ public class BuildingManager implements IBuildingManager
 
                 if (world != null && !(building instanceof PostBox))
                 {
+                    building.onPlacement();
+
                     building.setRotation(BlockUtils.getRotationFromFacing(world.getBlockState(building.getLocation()).getValue(AbstractBlockHut.FACING)));
                     final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
                     final Structure wrapper = new Structure(world, workOrder.getStructureName(), new PlacementSettings());

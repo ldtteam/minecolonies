@@ -228,7 +228,7 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerHuts.Crusher";
+        return "com.minecolonies.coremod.gui.workerHuts.Sifter";
     }
 }
 

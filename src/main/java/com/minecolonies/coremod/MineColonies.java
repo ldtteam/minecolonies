@@ -42,7 +42,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 @Mod.EventBusSubscriber
-@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION, dependencies="after:gbook;required-after:structurize@[0.10.73-ALPHA,);",
+@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION, dependencies="after:gbook;required-after:structurize@[0.10.79-ALPHA,);",
   /*dependencies = Constants.FORGE_VERSION,*/ acceptedMinecraftVersions = Constants.MC_VERSION)
 public class MineColonies
 {

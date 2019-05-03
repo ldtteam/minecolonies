@@ -121,7 +121,14 @@ public final class ColonyManager
             return;
         }
 
-        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
+        if (Configurations.gameplay.enableDynamicColonySizes)
+        {
+            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension(), 2);
+        }
+        else
+        {
+            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
+        }
     }
 
     /**
@@ -313,7 +320,7 @@ public final class ColonyManager
     }
 
     /**
-     * check if a position is too close to another colony.
+     * Check if a position is too close to another colony to found a new colony.
      *
      * @param w   World.
      * @param pos coordinates.
@@ -321,6 +328,10 @@ public final class ColonyManager
      */
     public static boolean isTooCloseToColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
+        if (Configurations.gameplay.enableDynamicColonySizes)
+        {
+            return ChunkDataHelper.canClaimChunksInRange(w, pos, Configurations.gameplay.minTownHallPadding);
+        }
         final IChunkmanagerCapability worldCapability = w.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
         if (worldCapability == null)
         {
