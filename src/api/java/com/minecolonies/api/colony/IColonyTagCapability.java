@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONIES;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  *
@@ -72,6 +72,13 @@ public interface IColonyTagCapability
      * @param pos the position of the building.
      */
     void removeBuildingClaim(final int colonyId, final BlockPos pos);
+
+    /**
+     * Get the claiming buildings map.
+     * @return the entire map.
+     */
+    @NotNull
+    Map<Integer, List<BlockPos>> getAllClaimingBuildings();
 
     /**
      * The implementation of the colonyTagCapability.
@@ -141,7 +148,11 @@ public interface IColonyTagCapability
 
             if (claimingBuildings.containsKey(colonyId))
             {
-                claimingBuildings.get(colonyId).add(pos);
+                final List<BlockPos> list = claimingBuildings.get(colonyId);
+                if (!list.contains(pos))
+                {
+                    list.add(pos);
+                }
             }
             else
             {
@@ -204,6 +215,13 @@ public interface IColonyTagCapability
         {
             return new ArrayList<>(colonies);
         }
+
+        @NotNull
+        @Override
+        public Map<Integer, List<BlockPos>> getAllClaimingBuildings()
+        {
+            return claimingBuildings;
+        }
     }
 
     /**
@@ -217,6 +235,9 @@ public interface IColonyTagCapability
             final NBTTagCompound compound = new NBTTagCompound();
             compound.setInteger(TAG_ID, instance.getOwningColony());
             compound.setTag(TAG_COLONIES, instance.getAllCloseColonies().stream().map(Storage::write).collect(NBTUtils.toNBTTagList()));
+            compound.setTag(TAG_BUILDINGS_CLAIM, instance.getAllClaimingBuildings().entrySet().stream().map(Storage::writeClaims).collect(NBTUtils.toNBTTagList()));
+
+
             return compound;
         }
 
@@ -229,6 +250,7 @@ public interface IColonyTagCapability
                 instance.setOwningColony(((NBTTagCompound) nbt).getInteger(TAG_ID));
                 NBTUtils.streamCompound(((NBTTagCompound) nbt).getTagList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
                         .map(compound -> compound.getInteger(TAG_ID)).forEach(instance::addColony);
+                NBTUtils.streamCompound(((NBTTagCompound) nbt).getTagList(TAG_BUILDINGS_CLAIM, Constants.NBT.TAG_COMPOUND)).forEach(tagCompound -> Storage.readClaims(tagCompound, instance));
             }
         }
 
@@ -242,6 +264,30 @@ public interface IColonyTagCapability
             final NBTTagCompound compound = new NBTTagCompound();
             compound.setInteger(TAG_ID, id);
             return compound;
+        }
+
+        /**
+         * Write the claims map entry to NBT.
+         * @param entry the entry.
+         * @return the resulting compound.
+         */
+        private static NBTTagCompound writeClaims(@NotNull final Map.Entry<Integer, List<BlockPos>> entry)
+        {
+            final NBTTagCompound compound = new NBTTagCompound();
+            compound.setInteger(TAG_ID, entry.getKey());
+            compound.setTag(TAG_BUILDINGS, entry.getValue().stream().map(pos -> BlockPosUtil.writeToNBT(new NBTTagCompound(), TAG_BUILDING, pos)).collect(NBTUtils.toNBTTagList()));
+            return compound;
+        }
+
+        /**
+         * Read the position list and add it to the instance.
+         * @param compound the compound to read it from.
+         * @param instance the instance to add it to.
+         */
+        private static void readClaims(@NotNull final NBTTagCompound compound, @NotNull final IColonyTagCapability instance)
+        {
+            final int id = compound.getInteger(TAG_ID);
+            NBTUtils.streamCompound(compound.getTagList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND)).forEach(tagCompound -> instance.addBuildingClaim(id, BlockPosUtil.readFromNBT(((NBTTagCompound) tagCompound), TAG_BUILDING)));
         }
     }
 }
