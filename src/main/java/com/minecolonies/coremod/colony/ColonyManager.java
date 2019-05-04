@@ -330,7 +330,7 @@ public final class ColonyManager
     {
         if (Configurations.gameplay.enableDynamicColonySizes)
         {
-            return ChunkDataHelper.canClaimChunksInRange(w, pos, Configurations.gameplay.minTownHallPadding);
+            return !ChunkDataHelper.canClaimChunksInRange(w, pos, Configurations.gameplay.minTownHallPadding);
         }
         final IChunkmanagerCapability worldCapability = w.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
         if (worldCapability == null)
