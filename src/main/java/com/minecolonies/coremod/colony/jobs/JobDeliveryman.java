@@ -199,7 +199,7 @@ public class JobDeliveryman extends AbstractJob
         getColony().getRequestManager().updateRequestState(current, successful ? RequestState.COMPLETED : RequestState.CANCELLED);
 
         //Just to be sure lets delete them!
-        if (current == getTaskQueueFromDataStore().getFirst())
+        if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst())
             getTaskQueueFromDataStore().removeFirst();
     }
 
