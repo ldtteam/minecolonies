@@ -87,7 +87,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
             if (holdingCrafter == null)
             {
-                MineColonies.getLogger().error("Parent cancellation failed! Unknown request: " + request.getToken());
+                MineColonies.getLogger().error("Parent cancellation of crafting production failed! Unknown request: " + request.getToken());
             }
             else
             {
