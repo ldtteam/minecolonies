@@ -169,7 +169,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     public void onPlacement()
     {
-        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension(), getClaimRadius());
+        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), getLocation(), colony.getDimension(), getClaimRadius());
     }
 
     /**
