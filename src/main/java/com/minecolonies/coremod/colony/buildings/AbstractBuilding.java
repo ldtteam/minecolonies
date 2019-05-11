@@ -18,6 +18,7 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -169,7 +170,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     public void onPlacement()
     {
-        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), getLocation(), colony.getDimension(), getClaimRadius());
+        if (Configurations.gameplay.enableDynamicColonySizes)
+        {
+            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), getLocation(), colony.getDimension(), getClaimRadius());
+        }
     }
 
     /**
@@ -235,7 +239,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             world.updateComparatorOutputLevel(this.getLocation(), block);
         }
 
-        ChunkDataHelper.claimColonyChunks(world, false, colony.getID(), this.getID(), colony.getDimension(), getClaimRadius());
+        if (Configurations.gameplay.enableDynamicColonySizes)
+        {
+            ChunkDataHelper.claimColonyChunks(world, false, colony.getID(), this.getID(), colony.getDimension(), getClaimRadius());
+        }
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
     }
 

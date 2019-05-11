@@ -120,7 +120,6 @@ public interface IColonyTagCapability
                 if(colonies.get(i) == id)
                 {
                     colonies.remove(i);
-                    i--;
                 }
             }
 
