@@ -78,7 +78,7 @@ public interface IColonyTagCapability
      * @return the entire map.
      */
     @NotNull
-    Map<Integer, List<BlockPos>> getAllClaimingBuildings();
+    Map<Integer, Set<BlockPos>> getAllClaimingBuildings();
 
     /**
      * The implementation of the colonyTagCapability.
@@ -86,10 +86,10 @@ public interface IColonyTagCapability
     class Impl implements IColonyTagCapability
     {
         /**
-         * The list of all close colonies.
+         * The set of all close colonies.
          * Only relevant in non dynamic claiming.
          */
-        private final List<Integer> colonies = new ArrayList<>();
+        private final Set<Integer> colonies = new HashSet<>();
 
         /**
          * The colony owning the chunk.
@@ -100,29 +100,18 @@ public interface IColonyTagCapability
         /**
          * List of buildings claiming this chunk for a certain colony.
          */
-        private final Map<Integer, List<BlockPos>> claimingBuildings = new HashMap<>();
+        private final Map<Integer, Set<BlockPos>> claimingBuildings = new HashMap<>();
 
         @Override
         public void addColony(final int id)
         {
-            if(!colonies.contains(id))
-            {
-                colonies.add(id);
-            }
+            colonies.add(id);
         }
 
         @Override
         public void removeColony(final int id)
         {
-            final int size = colonies.size();
-            for(int i = 0; i < size; i++)
-            {
-                if(colonies.get(i) == id)
-                {
-                    colonies.remove(i);
-                }
-            }
-
+            colonies.remove(id);
             if(owningColony == id)
             {
                 this.owningColony = 0;
@@ -147,15 +136,12 @@ public interface IColonyTagCapability
 
             if (claimingBuildings.containsKey(colonyId))
             {
-                final List<BlockPos> list = claimingBuildings.get(colonyId);
-                if (!list.contains(pos))
-                {
-                    list.add(pos);
-                }
+                final Set<BlockPos> list = claimingBuildings.get(colonyId);
+                list.add(pos);
             }
             else
             {
-                final List<BlockPos> newList = new ArrayList<>();
+                final Set<BlockPos> newList = new HashSet<>();
                 newList.add(pos);
                 claimingBuildings.put(colonyId, newList);
             }
@@ -166,11 +152,8 @@ public interface IColonyTagCapability
         {
             if (claimingBuildings.containsKey(colonyId))
             {
-                final List<BlockPos> buildings = claimingBuildings.get(colonyId);
-                while(buildings.remove(pos))
-                {
-                    //remove the building
-                }
+                final Set<BlockPos> buildings = claimingBuildings.get(colonyId);
+                buildings.remove(pos);
 
                 if (buildings.isEmpty())
                 {
@@ -217,7 +200,7 @@ public interface IColonyTagCapability
 
         @NotNull
         @Override
-        public Map<Integer, List<BlockPos>> getAllClaimingBuildings()
+        public Map<Integer, Set<BlockPos>> getAllClaimingBuildings()
         {
             return claimingBuildings;
         }
@@ -226,7 +209,7 @@ public interface IColonyTagCapability
     /**
      * The storage class of the capability.
      */
-    public class Storage implements Capability.IStorage<IColonyTagCapability>
+    class Storage implements Capability.IStorage<IColonyTagCapability>
     {
         @Override
         public NBTBase writeNBT(@NotNull final Capability<IColonyTagCapability> capability, @NotNull final IColonyTagCapability instance, @Nullable final EnumFacing side)
@@ -270,7 +253,7 @@ public interface IColonyTagCapability
          * @param entry the entry.
          * @return the resulting compound.
          */
-        private static NBTTagCompound writeClaims(@NotNull final Map.Entry<Integer, List<BlockPos>> entry)
+        private static NBTTagCompound writeClaims(@NotNull final Map.Entry<Integer, Set<BlockPos>> entry)
         {
             final NBTTagCompound compound = new NBTTagCompound();
             compound.setInteger(TAG_ID, entry.getKey());
