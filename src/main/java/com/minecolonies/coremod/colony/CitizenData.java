@@ -56,7 +56,7 @@ public class CitizenData
     private static final float MAX_HEALTH = 20.0F;
 
     /**
-     * Max levels of an attribute a citizen may initially have.
+     * Constant used to generate single letters.
      */
     private static final int LETTERS_IN_THE_ALPHABET = 26;
 

@@ -5,6 +5,8 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.types.RackType;
+import com.minecolonies.coremod.colony.buildings.inventory.ItemStackHandlerWithIndex;
+import com.minecolonies.coremod.colony.buildings.inventory.ItemStorageIndex;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -18,12 +20,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -34,11 +34,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
  */
 public class TileEntityRack extends TileEntity
 {
-    /**
-     * The content of the chest.
-     */
-    private final Map<ItemStorage, Integer> content = new HashMap<>();
-
     /**
      * Variable which determines if it is a single or doublechest.
      */
@@ -64,22 +59,12 @@ public class TileEntityRack extends TileEntity
     /**
      * The inventory of the tileEntity.
      */
-    private IItemHandlerModifiable inventory = new ItemStackHandler(DEFAULT_SIZE)
+    private ItemStackHandlerWithIndex<TileEntityRack> inventory = new ItemStackHandlerWithIndex<TileEntityRack>(DEFAULT_SIZE)
     {
         @Override
-        protected void onContentsChanged(final int slot)
+        public void onContentsChanged(final int slot)
         {
             updateItemStorage();
-            super.onContentsChanged(slot);
-        }
-
-        @NotNull
-        @Override
-        public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
-        {
-            final ItemStack result = super.extractItem(slot, amount, simulate);
-            updateItemStorage();
-            return result;
         }
     };
 
@@ -89,43 +74,52 @@ public class TileEntityRack extends TileEntity
     private CombinedInvWrapper combinedHandler;
 
     /**
-     * Check if a certain itemstack is present in the inventory.
-     * This method checks the content list, it is therefore extremely fast.
-     *
-     * @param stack the stack to check.
-     * @return true if so.
+     * The building Itemstorageindex reference for this rack.
      */
-    public boolean hasItemStack(final ItemStack stack)
+    @Nullable
+    private ItemStorageIndex<TileEntityRack> buildingIndex;
+
+    /**
+     * Set the reference to the buildingIndex this rack belongs to.
+     *
+     * @param index Index structure
+     */
+    public void setBuildingIndex(final ItemStorageIndex<TileEntityRack> index)
     {
-        return content.containsKey(new ItemStorage(stack));
+        if (index != null && this.buildingIndex != index)
+        {
+            // Set the building buildingIndex reference
+            this.buildingIndex = index;
+            // Set the meta index for the IndexedItemHandler of this rack
+            inventory.setMetaIndex(index, this);
+        }
     }
 
     /**
-     * Checks if the chest is empty.
-     * This method checks the content list, it is therefore extremely fast.
-     *
-     * @return true if so.
+     * Removes the Building index and contents
      */
-    public boolean freeStacks()
+    public void clearBuildingIndex()
     {
-        return content.isEmpty();
+        if (buildingIndex == null)
+        {
+            return;
+        }
+
+        // Clears the inventories building index
+        inventory.clearMetaIndex();
+
+        // Set the building buildingIndex reference
+        this.buildingIndex = null;
     }
 
     /**
      * Get the amount of free slots in the inventory.
-     * This method checks the content list, it is therefore extremely fast.
      *
      * @return the amount of free slots (an integer).
      */
     public int getFreeSlots()
     {
-        int freeSlots = inventory.getSlots();
-        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
-        {
-            final double slotsNeeded = (double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize();
-            freeSlots -= (int) Math.ceil(slotsNeeded);
-        }
-        return freeSlots;
+        return inventory.getSlots() - inventory.getUsedSlots();
     }
 
     /**
@@ -139,14 +133,8 @@ public class TileEntityRack extends TileEntity
     public boolean hasItemStack(final ItemStack stack, final boolean ignoreDamageValue)
     {
         final ItemStorage compareStorage = new ItemStorage(stack, ignoreDamageValue);
-        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
-        {
-            if (compareStorage.equals(entry.getKey()))
-            {
-                return true;
-            }
-        }
-        return false;
+
+        return inventory.getSlotsForItem(compareStorage) != null;
     }
 
     /**
@@ -158,14 +146,7 @@ public class TileEntityRack extends TileEntity
      */
     public boolean hasItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
-        {
-            if (itemStackSelectionPredicate.test(entry.getKey().getItemStack()))
-            {
-                return true;
-            }
-        }
-        return false;
+        return inventory.getSlotsForItemStackPredicate(itemStackSelectionPredicate).isEmpty();
     }
 
     /**
@@ -174,71 +155,16 @@ public class TileEntityRack extends TileEntity
     public void upgradeItemStorage()
     {
         ++size;
-        final IItemHandlerModifiable tempInventory = new ItemStackHandler(DEFAULT_SIZE + size * SLOT_PER_LINE)
-        {
-            @Override
-            protected void onContentsChanged(final int slot)
-            {
-                updateItemStorage();
-                super.onContentsChanged(slot);
-            }
-        };
-
-        for (int slot = 0; slot < inventory.getSlots(); slot++)
-        {
-            tempInventory.setStackInSlot(slot, inventory.getStackInSlot(slot));
-        }
-
-        inventory = tempInventory;
+        inventory.increaseSizeTo(DEFAULT_SIZE + size * SLOT_PER_LINE);
         final IBlockState state = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, state, state, 0x03);
-
-        if (main && combinedHandler == null && getOtherChest() != null)
-        {
-            combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().inventory);
-        }
-    }
-
-    /* Get the amount of items matching a predicate in the inventory.
-     * @param predicate the predicate.
-     * @return the total count.
-     */
-    public int getItemCount(final Predicate<ItemStack> predicate)
-    {
-        for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
-        {
-            if (predicate.test(entry.getKey().getItemStack()))
-            {
-                return entry.getValue();
-            }
-        }
-        return 0;
     }
 
     /**
-     * Scans through the whole storage and updates it.
+     * Updates the visual block state and marks the rack as dirty as its inventory content changed.
      */
     public void updateItemStorage()
     {
-        content.clear();
-        for (int slot = 0; slot < inventory.getSlots(); slot++)
-        {
-            final ItemStack stack = inventory.getStackInSlot(slot);
-
-            if (ItemStackUtils.isEmpty(stack))
-            {
-                continue;
-            }
-
-            final ItemStorage storage = new ItemStorage(stack.copy());
-            int amount = ItemStackUtils.getSize(stack);
-            if (content.containsKey(storage))
-            {
-                amount += content.remove(storage);
-            }
-            content.put(storage, amount);
-        }
-
         updateBlockState();
         markDirty();
     }
@@ -253,7 +179,7 @@ public class TileEntityRack extends TileEntity
         {
             final IBlockState typeHere;
             final IBlockState typeNeighbor;
-            if (content.isEmpty() && (getOtherChest() == null || getOtherChest().isEmpty()))
+            if (isEmpty() && (getOtherChest() == null || getOtherChest().isEmpty()))
             {
                 if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof BlockMinecoloniesRack)
                 {
@@ -318,7 +244,7 @@ public class TileEntityRack extends TileEntity
      */
     public boolean isEmpty()
     {
-        return content.isEmpty();
+        return inventory.isEmpty();
     }
 
     /**
@@ -381,7 +307,7 @@ public class TileEntityRack extends TileEntity
         return this.main;
     }
 
-    public IItemHandlerModifiable getInventory()
+    public ItemStackHandlerWithIndex<TileEntityRack> getInventory()
     {
         return inventory;
     }
@@ -395,13 +321,12 @@ public class TileEntityRack extends TileEntity
             size = compound.getInteger(TAG_SIZE);
             if (size > 0)
             {
-                inventory = new ItemStackHandler(DEFAULT_SIZE + size * SLOT_PER_LINE)
+                inventory = new ItemStackHandlerWithIndex<TileEntityRack>(DEFAULT_SIZE + size * SLOT_PER_LINE)
                 {
                     @Override
-                    protected void onContentsChanged(final int slot)
+                    public void onContentsChanged(final int slot)
                     {
                         updateItemStorage();
-                        super.onContentsChanged(slot);
                     }
                 };
             }

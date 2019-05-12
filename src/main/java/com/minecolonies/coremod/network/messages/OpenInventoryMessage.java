@@ -9,9 +9,9 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.GuiHandler;
+import com.minecolonies.coremod.tileentities.TileEntityRack;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -170,11 +170,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     {
         if (checkPermissions(ColonyManager.getClosestColony(player.getEntityWorld(), message.tePos), player))
         {
-            @NotNull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(CompatibilityUtils.getWorld(player), message.tePos);
-            if (!StringUtils.isNullOrEmpty(message.name))
-            {
-                chest.setCustomName(message.name);
-            }
+            @NotNull final TileEntityRack chest = (TileEntityRack) BlockPosUtil.getTileEntity(CompatibilityUtils.getWorld(player), message.tePos);
 
             player.openGui(MineColonies.instance, GuiHandler.ID.BUILDING_INVENTORY.ordinal(), player.world, chest.getPos().getX(), chest.getPos().getY(), chest.getPos().getZ());
         }

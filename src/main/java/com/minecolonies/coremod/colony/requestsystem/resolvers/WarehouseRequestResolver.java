@@ -11,15 +11,15 @@ import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.inventory.ItemSearchResult;
+import com.minecolonies.coremod.colony.buildings.utils.BuildingInventoryUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
-import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
@@ -56,16 +56,12 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         if (!manager.getColony().getWorld().isRemote)
         {
             final Colony colony = (Colony) manager.getColony();
-            final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
+            final Set<BuildingWareHouse> wareHouses = getWareHousesInColony(colony);
             wareHouses.removeIf(Objects::isNull);
 
-            try
+            if (!wareHouses.isEmpty())
             {
-                return wareHouses.stream().anyMatch(wareHouse -> wareHouse.hasMatchingItemStackInWarehouse(itemStack -> requestToCheck.getRequest().matches(itemStack), requestToCheck.getRequest().getCount()));
-            }
-            catch (Exception e)
-            {
-                Log.getLogger().error(e);
+                return true;
             }
         }
 
@@ -87,42 +83,49 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         }
 
         final Colony colony = (Colony) manager.getColony();
-        final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
+        final Set<BuildingWareHouse> wareHouses = getWareHousesInColony(colony);
 
         List<IToken<?>> deliveries = Lists.newArrayList();
         int remainingCount = request.getRequest().getCount();
 
-        tileentities:
-        for (final TileEntityWareHouse wareHouse : wareHouses)
+        for (final BuildingWareHouse wareHouse : wareHouses)
         {
-            final List<ItemStack> targetStacks = wareHouse.getMatchingItemStacksInWarehouse(itemStack -> request.getRequest().matches(itemStack));
-            for (final ItemStack stack :
-              targetStacks)
+            final Tuple<Boolean, List<ItemSearchResult>> targetStacks =
+              BuildingInventoryUtils.getMatchingItemStacksWithCount(wareHouse, itemStack -> request.getRequest().matches(itemStack), remainingCount);
+
+            // Replaces canresolve query
+            if (!targetStacks.getFirst())
             {
-                if (ItemStackUtils.isEmpty(stack))	
-		{
-                    continue;
-		}
+                continue;
+            }
 
-                final ItemStack matchingStack = stack.copy();
-                matchingStack.setCount(Math.min(remainingCount, matchingStack.getCount()));
-
-                final ItemStack deliveryStack = matchingStack.copy();
-                request.addDelivery(deliveryStack.copy());
-
-                final BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> ItemStack.areItemsEqual(itemStack, deliveryStack));
-                final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().provider.getDimension());
-
-                final Delivery delivery = new Delivery(itemStackLocation, request.getRequester().getRequesterLocation(), deliveryStack.copy());
-
-                final IToken<?> requestToken = manager.createRequest(new WarehouseRequestResolver(request.getRequester().getRequesterLocation(), request.getToken()), delivery);
-
-                deliveries.add(requestToken);
-                remainingCount -= ItemStackUtils.getSize(matchingStack);
-
-                if (remainingCount <= 0)
+            for (final ItemSearchResult result : targetStacks.getSecond())
+            {
+                for (Integer slot : result.getSlots())
                 {
-                    break tileentities;
+                    final ItemStack stack = result.getRack().getInventory().getStackInSlot(slot);
+                    if (ItemStackUtils.isEmpty(stack))
+                    {
+                        continue;
+                    }
+
+                    final ItemStack matchingStack = stack.copy();
+                    matchingStack.setCount(Math.min(remainingCount, matchingStack.getCount()));
+
+                    final ItemStack deliveryStack = matchingStack.copy();
+                    request.addDelivery(deliveryStack.copy());
+
+                    final ILocation itemStackLocation =
+                      manager.getFactoryController()
+                        .getNewInstance(TypeConstants.ILOCATION, result.getRack().getPos(), wareHouse.getTileEntity().getWorld().provider.getDimension());
+
+                    final Delivery delivery = new Delivery(itemStackLocation, request.getRequester().getRequesterLocation(), deliveryStack.copy());
+
+                    final IToken<?> requestToken = manager.createRequest(new WarehouseRequestResolver(request.getRequester().getRequesterLocation(), request.getToken()), delivery);
+
+                    deliveries.add(requestToken);
+                    remainingCount -= ItemStackUtils.getSize(matchingStack);
+
                 }
             }
         }
@@ -160,11 +163,11 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     }
 
-    private static Set<TileEntityWareHouse> getWareHousesInColony(final Colony colony)
+    private static Set<BuildingWareHouse> getWareHousesInColony(final Colony colony)
     {
         return colony.getBuildingManager().getBuildings().values().stream()
                  .filter(building -> building instanceof BuildingWareHouse)
-                 .map(building -> (TileEntityWareHouse) building.getTileEntity())
+                 .map(building -> (BuildingWareHouse) building)
                  .collect(Collectors.toSet());
     }
 

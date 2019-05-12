@@ -103,8 +103,7 @@ public class CitizenDataView
     /**
      * Set View id.
      *
-     * @param id
-     *            the id to set.
+     * @param id the id to set.
      */
     protected CitizenDataView(final int id)
     {

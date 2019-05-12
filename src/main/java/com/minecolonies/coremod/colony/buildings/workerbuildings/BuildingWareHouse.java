@@ -7,9 +7,9 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.blocks.huts.BlockHutDeliveryman;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.blocks.huts.BlockHutDeliveryman;
 import com.minecolonies.coremod.client.gui.WindowHutWareHouse;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -35,7 +35,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Class of the warehouse building.
@@ -71,11 +73,6 @@ public class BuildingWareHouse extends AbstractBuilding
      * Max storage upgrades.
      */
     private static final int MAX_STORAGE_UPGRADE = 3;
-
-    /**
-     * The tileEntity of the building.
-     */
-    private TileEntityWareHouse tileEntity;
 
     /**
      * Storage upgrade level.

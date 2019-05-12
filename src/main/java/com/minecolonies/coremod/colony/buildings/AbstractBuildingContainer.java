@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.inventory.ItemStorageIndex;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
@@ -16,7 +16,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -24,12 +23,16 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
@@ -57,6 +60,11 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     private TileEntityColonyBuilding tileEntity;
 
     /**
+     * The Inventory index of the building.
+     */
+    private ItemStorageIndex<TileEntityRack> inventoryIndex;
+
+    /**
      * Priority of the building in the pickUpList.
      */
     private int pickUpPriority = 1;
@@ -68,6 +76,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
 
     /**
      * The constructor for the building container.
+     *
      * @param pos the position of it.
      */
     public AbstractBuildingContainer(final BlockPos pos, final Colony colony)
@@ -79,12 +88,13 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-
+        containerList.clear();
+        inventoryIndex = null;
         final NBTTagList containerTagList = compound.getTagList(TAG_CONTAINERS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < containerTagList.tagCount(); ++i)
         {
             final NBTTagCompound containerCompound = containerTagList.getCompoundTagAt(i);
-            containerList.add(NBTUtil.getPosFromTag(containerCompound));
+            addContainerPosition(NBTUtil.getPosFromTag(containerCompound));
         }
         if (compound.hasKey(TAG_PRIO))
         {
@@ -173,6 +183,14 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     }
 
     /**
+     * Get the inventory index for this building.
+     */
+    public ItemStorageIndex<TileEntityRack> getInventoryIndex()
+    {
+        return inventoryIndex;
+    }
+
+    /**
      * Remove a container from the building.
      *
      * @param pos position to remove.
@@ -197,7 +215,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
      * We suppress this warning since this parameter will be used in child classes which override this method.
      *
      * @param blockState to be registered
-     * @param pos   of the blockState
+     * @param pos        of the blockState
      */
     public void registerBlockPosition(@NotNull final IBlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
     {
@@ -221,34 +239,33 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     }
 
     /**
-     * Try to transfer a stack to one of the inventories of the building.
-     *
-     * @param stack the stack to transfer.
-     * @param world the world to do it in.
-     * @return The {@link ItemStack} as that is left over, might be {@link ItemStackUtils#EMPTY} if the stack was completely accepted
+     * Initializes and registers the building index
      */
-    public ItemStack transferStack(@NotNull final ItemStack stack, @NotNull final World world)
+    private void createBuildingIndex()
     {
-        if (tileEntity == null || InventoryUtils.isProviderFull(tileEntity))
+        if (inventoryIndex == null && getTileEntity() != null)
         {
-            final Iterator<BlockPos> posIterator = containerList.iterator();
-            @NotNull ItemStack resultStack = stack.copy();
+            inventoryIndex = new ItemStorageIndex<>();
+            getTileEntity().setBuildingIndex(inventoryIndex);
 
-            while (posIterator.hasNext() && !ItemStackUtils.isEmpty(resultStack))
+            for (BlockPos rackPos : containerList)
             {
-                final BlockPos pos = posIterator.next();
-                final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity))
+                TileEntity te = colony.getWorld().getTileEntity(rackPos);
+                if (te instanceof TileEntityRack)
                 {
-                    resultStack = InventoryUtils.addItemStackToProviderWithResult(tempTileEntity, stack);
+                    ((TileEntityRack) te).setBuildingIndex(inventoryIndex);
                 }
             }
-
-            return resultStack;
         }
-        else
+    }
+
+    @Override
+    public void onWorldTick(TickEvent.WorldTickEvent event)
+    {
+        super.onWorldTick(event);
+        if (inventoryIndex == null)
         {
-            return InventoryUtils.addItemStackToProviderWithResult(tileEntity, stack);
+            createBuildingIndex();
         }
     }
 
@@ -270,11 +287,11 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     public TileEntityColonyBuilding getTileEntity()
     {
         if ((tileEntity == null || tileEntity.isInvalid())
-                && colony != null
-                && colony.getWorld() != null
-                && getLocation() != null
-                && colony.getWorld().getBlockState(getLocation())
-                != Blocks.AIR && colony.getWorld().getBlockState(this.getLocation()).getBlock() instanceof AbstractBlockHut)
+              && colony != null
+              && colony.getWorld() != null
+              && getLocation() != null
+              && colony.getWorld().getBlockState(getLocation())
+                   != Blocks.AIR && colony.getWorld().getBlockState(this.getLocation()).getBlock() instanceof AbstractBlockHut)
         {
             final TileEntity te = getColony().getWorld().getTileEntity(getLocation());
             if (te instanceof TileEntityColonyBuilding)
@@ -301,7 +318,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
 
     @Override
     public boolean hasCapability(
-            @Nonnull final Capability<?> capability, @Nullable final EnumFacing facing)
+      @Nonnull final Capability<?> capability, @Nullable final EnumFacing facing)
     {
         return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null;
     }
@@ -312,7 +329,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null && getTileEntity() != null)
         {
-           return tileEntity.getCapability(capability, facing);
+            return tileEntity.getCapability(capability, facing);
         }
         return null;
     }

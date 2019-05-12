@@ -324,7 +324,7 @@ public class CitizenManager implements ICitizenManager
     }
 
     /**
-     * Get the current amount of citizens, might be bigger then {@link #getMaxCitizens()}
+     * Get the current amount of citizens, might be bigger than {@link #getMaxCitizens()}
      *
      * @return The current amount of citizens in the colony.
      */
@@ -346,13 +346,13 @@ public class CitizenManager implements ICitizenManager
         int guards = 1;
         int housing = 0;
         int workers = 1;
-        boolean hasJob = false; 
+        boolean hasJob = false;
         boolean hasHouse = false;
         double saturation = 0;
         for (final CitizenData citizen : getCitizens())
         {
-            hasJob = false; 
-            hasHouse = false; 
+            hasJob = false;
+            hasHouse = false;
             final AbstractBuildingWorker buildingWorker = citizen.getWorkBuilding();
             if (buildingWorker != null)
             {

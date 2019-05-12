@@ -788,7 +788,14 @@ public class InventoryUtils
      */
     public static boolean hasItemInProvider(@NotNull final ICapabilityProvider Provider, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return getItemCountInProvider(Provider, itemStackSelectionPredicate) > 0;
+        for (IItemHandler handler : getItemHandlersFromProvider(Provider))
+        {
+            if (findFirstSlotInItemHandlerWith(handler, itemStackSelectionPredicate) != -1)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

@@ -265,6 +265,11 @@ public class RecipeStorage implements IRecipeStorage
 
                     amountNeeded -= count;
                 }
+
+                if (amountNeeded <= 0)
+                {
+                    break;
+                }
             }
         }
 

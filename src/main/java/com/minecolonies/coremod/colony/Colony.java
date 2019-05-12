@@ -60,7 +60,7 @@ import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 public class Colony implements IColony
 {
     /**
-     * The default style for the building.
+     * The default style for buildings in the colony.
      */
     private String style = DEFAULT_STYLE;
 
@@ -207,12 +207,12 @@ public class Colony implements IColony
     private final List<AttackingPlayer> attackingPlayers = new ArrayList<>();
 
     /**
-     * Datas about the happiness of a colony
+     * Data about the happiness of a colony
      */
     private final HappinessData happinessData = new HappinessData();
 
     /**
-     * Mournign parameters.
+     * Mourning parameters.
      */
     private boolean needToMourn = false;
     private boolean mourning    = false;

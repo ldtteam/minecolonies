@@ -9,7 +9,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.entity.player.EntityPlayer;
@@ -61,7 +60,11 @@ public class GuiHandler implements IGuiHandler
                 final TileEntityColonyBuilding tileEntityColonyBuilding = (TileEntityColonyBuilding) entity;
                 final Colony colony = ColonyManager.getClosestColony(world, tileEntityColonyBuilding.getPos());
 
-                return new ContainerMinecoloniesBuildingInventory(player.inventory, tileEntityColonyBuilding, colony.getID(), tileEntityColonyBuilding.getPos(), world);
+                return new ContainerMinecoloniesBuildingInventory(player.inventory,
+                  tileEntityColonyBuilding.getInventory(),
+                  colony.getID(),
+                  tileEntityColonyBuilding.getPos(),
+                  world);
             }
         }
         else if (id == ID.CITIZEN_INVENTORY.ordinal())
@@ -113,7 +116,7 @@ public class GuiHandler implements IGuiHandler
             if (entity instanceof TileEntityColonyBuilding)
             {
                 final TileEntityColonyBuilding tileEntityColonyBuilding = (TileEntityColonyBuilding) entity;
-                return new GuiChest(player.inventory, tileEntityColonyBuilding);
+                return new GuiRack(player.inventory, tileEntityColonyBuilding, tileEntityColonyBuilding.getOtherChest(), world, tileEntityColonyBuilding.getPosition());
             }
         }
         else if (id == ID.CITIZEN_INVENTORY.ordinal())

@@ -45,8 +45,6 @@ import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -235,7 +233,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         if (tileEntityNew != null)
         {
-            InventoryHelper.dropInventoryItems(world, this.getLocation(), (IInventory) tileEntityNew);
+            InventoryUtils.dropItemHandler(tileEntityNew.getInventory(), world, getLocation().getX(), getLocation().getY(), getLocation().getY());
             world.updateComparatorOutputLevel(this.getLocation(), block);
         }
 

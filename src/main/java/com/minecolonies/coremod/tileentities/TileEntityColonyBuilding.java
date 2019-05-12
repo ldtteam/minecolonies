@@ -16,6 +16,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -40,7 +41,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.MIN_SLOTS_FOR
 /**
  * Class which handles the tileEntity of our colonyBuildings.
  */
-public class TileEntityColonyBuilding extends TileEntityChest
+public class TileEntityColonyBuilding extends TileEntityRack implements ITickable
 {
     /**
      * NBTTag to store the colony id.
@@ -170,7 +171,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
         if (theBuilding != null)
         {
-            if (isInTileEntity(theBuilding.getTileEntity(), notEmptyPredicate))
+            if (hasItemStack(notEmptyPredicate))
             {
                 return theBuilding.getLocation();
             }
@@ -331,8 +332,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
     @Override
     public void update()
     {
-        super.update();
-
         if (!getWorld().isRemote && colonyId == 0)
         {
             final Colony tempColony = ColonyManager.getColonyByPosFromWorld(getWorld(), this.getPosition());
@@ -347,12 +346,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
          * The accessed inventory in the same tick must be the same.
          */
         combinedInv = null;
-    }
-
-    @Override
-    public boolean isUsableByPlayer(final EntityPlayer player)
-    {
-        return super.isUsableByPlayer(player) && this.hasAccessPermission(player);
     }
 
     /**
