@@ -182,7 +182,8 @@ public final class MinecoloniesPlacementHandlers
           @NotNull final IBlockState blockState,
           @Nullable final NBTTagCompound tileEntityData,
           final boolean complete,
-          final BlockPos centerPos)
+          final BlockPos centerPos,
+          final PlacementSettings settings)
         {
             final TileEntity entity = world.getTileEntity(pos);
             final Colony colony = ColonyManager.getClosestColony(world, pos);
@@ -199,7 +200,7 @@ public final class MinecoloniesPlacementHandlers
 
                 if (tileEntityData != null)
                 {
-                    handleTileEntityPlacement(tileEntityData, world, pos);
+                    handleTileEntityPlacement(tileEntityData, world, pos, settings);
                 }
             }
 
