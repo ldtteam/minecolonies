@@ -172,8 +172,10 @@ public final class ColonyManager
         final World world = colony.getWorld();
         try
         {
-            ChunkDataHelper.claimColonyChunks(world, false, id, colony.getCenter(), colony.getDimension());
-
+            if (!Configurations.gameplay.enableDynamicColonySizes)
+            {
+                ChunkDataHelper.claimColonyChunks(world, false, id, colony.getCenter(), colony.getDimension());
+            }
             Log.getLogger().info("Removing citizens for " + id);
             for (final CitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
             {
@@ -183,20 +185,21 @@ public final class ColonyManager
                 });
             }
 
-            if (canDestroy)
+
+            Log.getLogger().info("Removing buildings for " + id);
+            for (final AbstractBuilding building : new ArrayList<>(colony.getBuildingManager().getBuildings().values()))
             {
-                Log.getLogger().info("Removing buildings for " + id);
-                for (final AbstractBuilding building : new ArrayList<>(colony.getBuildingManager().getBuildings().values()))
+                final BlockPos location = building.getLocation();
+                Log.getLogger().info("Delete Building at " + location);
+                if (canDestroy)
                 {
-                    final BlockPos location = building.getLocation();
-                    Log.getLogger().info("Delete Building at " + location);
                     building.deconstruct();
-                    building.destroy();
-                    if (world.getBlockState(location).getBlock() instanceof AbstractBlockHut)
-                    {
-                        Log.getLogger().info("Found Block, deleting " + world.getBlockState(location).getBlock());
-                        world.setBlockToAir(location);
-                    }
+                }
+                building.destroy();
+                if (world.getBlockState(location).getBlock() instanceof AbstractBlockHut)
+                {
+                    Log.getLogger().info("Found Block, deleting " + world.getBlockState(location).getBlock());
+                    world.setBlockToAir(location);
                 }
             }
 
@@ -330,7 +333,7 @@ public final class ColonyManager
     {
         if (Configurations.gameplay.enableDynamicColonySizes)
         {
-            return ChunkDataHelper.canClaimChunksInRange(w, pos, Configurations.gameplay.minTownHallPadding);
+            return !ChunkDataHelper.canClaimChunksInRange(w, pos, Configurations.gameplay.minTownHallPadding);
         }
         final IChunkmanagerCapability worldCapability = w.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
         if (worldCapability == null)
@@ -640,7 +643,7 @@ public final class ColonyManager
     /**
      * Returns a ColonyView with specific owner.
      *
-     * @param owner UUID of the owner.
+     * @param owner     UUID of the owner.
      * @param dimension the dimension id.
      * @return ColonyView.
      */
@@ -759,7 +762,8 @@ public final class ColonyManager
                     final NBTTagCompound colonyCompound = colonyTags.getCompoundTagAt(i);
                     final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyCompound.getInteger(TAG_DIMENSION));
                     final IColonyManagerCapability cap = colonyWorld.getCapability(COLONY_MANAGER_CAP, null);
-                    @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i), FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyCompound.getInteger(TAG_DIMENSION)));
+                    @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i),
+                      FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyCompound.getInteger(TAG_DIMENSION)));
                     cap.addColony(colony);
                 }
 
@@ -784,7 +788,6 @@ public final class ColonyManager
                     }
                 }
             }
-
         }
 
         if (compound.hasUniqueId(TAG_UUID))
@@ -932,7 +935,7 @@ public final class ColonyManager
      * @param colonyId          ID of the colony.
      * @param colonyData        {@link ByteBuf} with colony data.
      * @param isNewSubscription whether this is a new subscription or not.
-     * @param dim the dimension.
+     * @param dim               the dimension.
      */
     public static void handleColonyViewMessage(final int colonyId, @NotNull final ByteBuf colonyData, @NotNull final World world, final boolean isNewSubscription, final int dim)
     {
@@ -957,7 +960,7 @@ public final class ColonyManager
     /**
      * Get ColonyView by ID.
      *
-     * @param id ID of colony.
+     * @param id        ID of colony.
      * @param dimension the dimension id.
      * @return The ColonyView belonging to the colony.
      */
@@ -977,7 +980,7 @@ public final class ColonyManager
      *
      * @param colonyID ID of the colony.
      * @param data     {@link ByteBuf} with colony data.
-     * @param dim the dimension.
+     * @param dim      the dimension.
      */
     public static void handlePermissionsViewMessage(final int colonyID, @NotNull final ByteBuf data, final int dim)
     {
@@ -1000,7 +1003,7 @@ public final class ColonyManager
      * @param colonyId  ID of the colony.
      * @param citizenId ID of the citizen.
      * @param buf       {@link ByteBuf} with colony data.
-     * @param dim the dimension.
+     * @param dim       the dimension.
      */
     public static void handleColonyViewCitizensMessage(final int colonyId, final int citizenId, final ByteBuf buf, final int dim)
     {
@@ -1019,7 +1022,7 @@ public final class ColonyManager
      *
      * @param colonyId ID of the colony.
      * @param buf      {@link ByteBuf} with colony data.
-     * @param dim the dimension.
+     * @param dim      the dimension.
      */
     public static void handleColonyViewWorkOrderMessage(final int colonyId, final ByteBuf buf, final int dim)
     {
@@ -1038,7 +1041,7 @@ public final class ColonyManager
      *
      * @param colonyId  ID of the colony.
      * @param citizenId ID of the citizen.
-     * @param dim the dimension.
+     * @param dim       the dimension.
      */
     public static void handleColonyViewRemoveCitizenMessage(final int colonyId, final int citizenId, final int dim)
     {
@@ -1059,7 +1062,7 @@ public final class ColonyManager
      * @param colonyId   ID of the colony.
      * @param buildingId ID of the building.
      * @param buf        {@link ByteBuf} with colony data.
-     * @param dim the dimension.
+     * @param dim        the dimension.
      */
     public static void handleColonyBuildingViewMessage(final int colonyId, final BlockPos buildingId, @NotNull final ByteBuf buf, final int dim)
     {
@@ -1081,7 +1084,7 @@ public final class ColonyManager
      *
      * @param colonyId   ID of the colony.
      * @param buildingId ID of the building.
-     * @param dim the dimension.
+     * @param dim        the dimension.
      */
     public static void handleColonyViewRemoveBuildingMessage(final int colonyId, final BlockPos buildingId, final int dim)
     {
@@ -1101,7 +1104,7 @@ public final class ColonyManager
      *
      * @param colonyId    ID of the colony.
      * @param workOrderId ID of the workOrder.
-     * @param dim the dimension.
+     * @param dim         the dimension.
      */
     public static void handleColonyViewRemoveWorkOrderMessage(final int colonyId, final int workOrderId, final int dim)
     {
@@ -1121,7 +1124,7 @@ public final class ColonyManager
      *
      * @param colonyId Id of the colony.
      * @param data     Datas about the hapiness
-     * @param dim the dimension.
+     * @param dim      the dimension.
      */
     public static void handleHappinessDataMessage(final int colonyId, final HappinessData data, final int dim)
     {
