@@ -175,16 +175,10 @@ public final class ChunkDataHelper
      */
     public static void claimColonyChunks(final World world, final boolean add, final int id, final BlockPos center, final int dimension)
     {
-        final Chunk centralChunk = world.getChunk(center);
-        loadChunkAndAddData(world, center, add, id);
-
-        final int chunkX = centralChunk.x;
-        final int chunkZ = centralChunk.z;
-
         final int range = Configurations.gameplay.workingRangeTownHallChunks;
         final int buffer = Configurations.gameplay.townHallPaddingChunk;
 
-        claimChunksInRange(id, dimension, add, chunkX, chunkZ, range, buffer, world);
+        claimChunksInRange(id, dimension, add, center, range, buffer, world);
     }
 
     /**
@@ -201,13 +195,7 @@ public final class ChunkDataHelper
      */
     public static void claimColonyChunks(final World world, final boolean add, final int id, final BlockPos center, final int dimension, final int range)
     {
-        final Chunk centralChunk = world.getChunk(center);
-        loadChunkAndAddData(world, center, add, id, center);
-
-        final int chunkX = centralChunk.x;
-        final int chunkZ = centralChunk.z;
-
-        claimChunksInRange(id, dimension, add, chunkX, chunkZ, range, world, center);
+        claimChunksInRange(id, dimension, add, range, world, center);
     }
 
     /**
@@ -265,8 +253,6 @@ public final class ChunkDataHelper
      * @param colonyId  the colony id.
      * @param dimension the dimension.
      * @param add       if claim or unclaim.
-     * @param chunkX    the chunkX starter position.
-     * @param chunkZ    the chunkZ starter position.
      * @param range     the range.
      * @param world     the world.
      * @param center    the center position to be claimed.
@@ -275,12 +261,16 @@ public final class ChunkDataHelper
       final int colonyId,
       final int dimension,
       final boolean add,
-      final int chunkX,
-      final int chunkZ,
       final int range,
       final World world,
       final BlockPos center)
     {
+        final Chunk centralChunk = world.getChunk(center);
+        loadChunkAndAddData(world, center, add, colonyId, center);
+
+        final int chunkX = centralChunk.x;
+        final int chunkZ = centralChunk.z;
+
         final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
         if (chunkManager == null)
         {
@@ -331,8 +321,7 @@ public final class ChunkDataHelper
      * @param colonyId  the colony id.
      * @param dimension the dimension.
      * @param add       if claim or unclaim.
-     * @param chunkX    the chunkX starter position.
-     * @param chunkZ    the chunkZ starter position.
+     * @param center    the center position to be claimed.
      * @param range     the range.
      * @param buffer    the buffer.
      * @param world     the world.
@@ -341,12 +330,17 @@ public final class ChunkDataHelper
       final int colonyId,
       final int dimension,
       final boolean add,
-      final int chunkX,
-      final int chunkZ,
+      final BlockPos center,
       final int range,
       final int buffer,
       final World world)
     {
+        final Chunk centralChunk = world.getChunk(center);
+        loadChunkAndAddData(world, center, add, colonyId);
+
+        final int chunkX = centralChunk.x;
+        final int chunkZ = centralChunk.z;
+
         final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
         if (chunkManager == null)
         {
