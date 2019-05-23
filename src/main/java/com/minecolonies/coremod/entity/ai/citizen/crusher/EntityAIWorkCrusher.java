@@ -97,7 +97,7 @@ public class EntityAIWorkCrusher<J extends AbstractJobCrafter> extends AbstractE
             currentRecipeStorage = crusherBuilding.getCurrentRecipe();
         }
 
-        if (getState() != CRAFT && crusherBuilding.getCurrentDailyQuantity() >= crusherBuilding.getCrusherMode().getSecond())
+        if ((getState() != CRAFT && crusherBuilding.getCurrentDailyQuantity() >= crusherBuilding.getCrusherMode().getSecond()) || currentRecipeStorage == null)
         {
             return START_WORKING;
         }

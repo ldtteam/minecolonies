@@ -178,7 +178,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
      * Check for all items of the required recipe.
      * @return the next state to go to.
      */
-    protected IAIState checkForItems(final IRecipeStorage storage)
+    protected IAIState checkForItems(@NotNull final IRecipeStorage storage)
     {
         final List<ItemStorage> input = storage.getCleanedInput();
         for(final ItemStorage inputStorage : input)
