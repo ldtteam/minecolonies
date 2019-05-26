@@ -49,7 +49,7 @@ public class Screen extends GuiScreen
     @Override
     public void drawScreen(final int mx, final int my, final float f)
     {
-        if (window.hasLightbox())
+        if (window.hasLightbox() && super.mc != null)
         {
             super.drawDefaultBackground();
         }

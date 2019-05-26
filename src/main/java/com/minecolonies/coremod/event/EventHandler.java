@@ -380,6 +380,30 @@ public class EventHandler
     }
 
     @SubscribeEvent
+    public void onBlockPlaced(@NotNull final BlockEvent.PlaceEvent event)
+    {
+        final EntityPlayer player = event.getPlayer();
+        final World world = event.getWorld();
+        if (playerRightClickInteract(player, world, event.getPos()) && event.getPlacedBlock().getBlock() instanceof AbstractBlockHut)
+        {
+            final IColony colony = ColonyManager.getIColony(world, event.getPos());
+            if (colony != null
+                  && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
+            {
+                event.setCanceled(true);
+                return;
+            }
+
+            final ItemStack stack = event.getPlayer().getHeldItem(event.getHand());
+            event.setCanceled(true);
+            if (Configurations.gameplay.suggestBuildToolPlacement && !event.getWorld().isRemote && !stack.isEmpty())
+            {
+                MineColonies.proxy.openSuggestionWindow(event.getPos(), event.getPlacedBlock(), stack);
+            }
+        }
+    }
+
+    @SubscribeEvent
     public void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickItem event)
     {
         if (event.getHand() == EnumHand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote)

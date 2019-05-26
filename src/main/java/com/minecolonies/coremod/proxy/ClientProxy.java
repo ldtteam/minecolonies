@@ -30,11 +30,13 @@ import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structures.helpers.Settings;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -129,6 +131,13 @@ public class ClientProxy extends CommonProxy
         }
 
         @Nullable final WindowDecorationController window = new WindowDecorationController(pos);
+        window.open();
+    }
+
+    @Override
+    public void openSuggestionWindow(@NotNull final BlockPos pos, @NotNull final IBlockState state, @NotNull final ItemStack stack)
+    {
+        @Nullable final WindowSuggestBuildTool window = new WindowSuggestBuildTool(pos, state, stack);
         window.open();
     }
 

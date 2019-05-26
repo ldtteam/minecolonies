@@ -467,6 +467,9 @@ public class Configurations
 
         @Config.Comment("Seconds between permission messages.")
         public int secondsBetweenPermissionMessages = 30;
+
+        @Config.Comment("Suggest build tool usage when trying to place a building without build tool.")
+        public boolean suggestBuildToolPlacement = true;
     }
 
     public static class Compatibility
