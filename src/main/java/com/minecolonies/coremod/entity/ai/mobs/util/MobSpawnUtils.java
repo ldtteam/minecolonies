@@ -62,7 +62,7 @@ public final class MobSpawnUtils
 
         final double attackDamage = Configurations.gameplay.barbarianHordeDifficulty >= 10 ? ATTACK_DAMAGE * 2 : ATTACK_DAMAGE;
         mob.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attackDamage);
-        if(mob instanceof EntityChiefBarbarian || mob instanceof EntityCaptainPirate)
+        if(mob instanceof EntityChiefBarbarian)
         {
             final double chiefArmor = Configurations.gameplay.barbarianHordeDifficulty > 5 ? CHIEF_ARMOR * 2 : CHIEF_ARMOR;
             mob.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(chiefArmor);
