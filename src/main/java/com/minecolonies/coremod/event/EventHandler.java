@@ -392,11 +392,14 @@ public class EventHandler
                 return;
             }
 
-            final ItemStack stack = event.getPlayer().getHeldItem(event.getHand());
-            event.setCanceled(true);
-            if (Configurations.gameplay.suggestBuildToolPlacement && !event.getWorld().isRemote && !stack.isEmpty())
+            if (Configurations.gameplay.suggestBuildToolPlacement)
             {
-                MineColonies.proxy.openSuggestionWindow(event.getPos(), event.getPlacedBlock(), stack);
+                final ItemStack stack = event.getPlayer().getHeldItem(event.getHand());
+                event.setCanceled(true);
+                if (!event.getWorld().isRemote && !stack.isEmpty())
+                {
+                    MineColonies.proxy.openSuggestionWindow(event.getPos(), event.getPlacedBlock(), stack);
+                }
             }
         }
     }
@@ -443,7 +446,7 @@ public class EventHandler
         {
             if (event.getWorld().isRemote)
             {
-                event.setCanceled(true);
+                event.setCanceled(Configurations.gameplay.suggestBuildToolPlacement);
             }
             else
             {
