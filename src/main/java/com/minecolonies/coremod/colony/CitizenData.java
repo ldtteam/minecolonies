@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.configuration.NameConfiguration;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
@@ -1088,7 +1089,7 @@ public class CitizenData
      */
     public void decreaseSaturation(final double extraSaturation)
     {
-        this.saturation = Math.max(MIN_SATURATION, this.saturation - Math.abs(extraSaturation*10));
+        this.saturation = Math.max(MIN_SATURATION, this.saturation - Math.abs(extraSaturation* Configurations.gameplay.foodModifier));
         this.justAte = false;
     }
 
