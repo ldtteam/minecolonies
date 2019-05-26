@@ -31,7 +31,6 @@ import com.ldtteam.structurize.items.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockSilverfish;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -384,7 +383,7 @@ public class EventHandler
     {
         final EntityPlayer player = event.getPlayer();
         final World world = event.getWorld();
-        if (playerRightClickInteract(player, world, event.getPos()) && event.getPlacedBlock().getBlock() instanceof AbstractBlockHut)
+        if (event.getPlacedBlock().getBlock() instanceof AbstractBlockHut)
         {
             final IColony colony = ColonyManager.getIColony(world, event.getPos());
             if (colony != null && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
@@ -393,7 +392,7 @@ public class EventHandler
                 return;
             }
 
-            final ItemStack stack = event.getPlayer().getHeldItem(event.getHand()).copy();
+            final ItemStack stack = event.getPlayer().getHeldItem(event.getHand());
             event.setCanceled(true);
             if (Configurations.gameplay.suggestBuildToolPlacement && !event.getWorld().isRemote && !stack.isEmpty())
             {
@@ -442,7 +441,14 @@ public class EventHandler
         final Block heldBlock = Block.getBlockFromItem(player.getHeldItemMainhand().getItem());
         if (heldBlock instanceof AbstractBlockHut || heldBlock instanceof BlockHutField)
         {
-            event.setCanceled(!onBlockHutPlaced(event.getWorld(), player, heldBlock, event.getPos().offset(event.getFace())));
+            if (event.getWorld().isRemote)
+            {
+                event.setCanceled(true);
+            }
+            else
+            {
+                event.setCanceled(!onBlockHutPlaced(event.getWorld(), player, heldBlock, event.getPos().offset(event.getFace())));
+            }
         }
     }
 
