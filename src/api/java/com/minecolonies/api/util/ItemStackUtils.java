@@ -94,7 +94,7 @@ public final class ItemStackUtils
      * Predicate describing food which can be eaten (is not raw).
      */
     public static final Predicate<ItemStack> CAN_EAT =
-      itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood && !(IS_SMELTABLE.test(itemStack));
+      itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood && !ISFOOD.test(FurnaceRecipes.instance().getSmeltingResult(itemStack));
 
     /**
      * Predicate describing cookables.
