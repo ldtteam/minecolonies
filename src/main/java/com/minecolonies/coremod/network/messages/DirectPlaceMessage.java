@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -11,10 +12,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Place a building directly without buildtool.
@@ -87,17 +90,13 @@ public class DirectPlaceMessage extends AbstractMessage<DirectPlaceMessage, IMes
     @Override
     public void messageOnServerThread(final DirectPlaceMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColonyByPosFromWorld(player.getServerWorld(), message.pos);
-        if (colony != null)
+        final World world = player.getServerWorld();
+        final Colony colony = ColonyManager.getColonyByPosFromWorld(world, message.pos);
+        if (colony == null || colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
         {
-            //Verify player has permission to change this huts settings
-            if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
-            {
-                return;
-            }
-
             player.getServerWorld().setBlockState(message.pos, message.state);
             InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.inventory), message.stack);
+            message.state.getBlock().onBlockPlacedBy(world, message.pos, message.state, player, message.stack);
         }
     }
 }

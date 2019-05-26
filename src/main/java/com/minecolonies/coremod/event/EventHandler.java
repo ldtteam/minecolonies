@@ -387,14 +387,13 @@ public class EventHandler
         if (playerRightClickInteract(player, world, event.getPos()) && event.getPlacedBlock().getBlock() instanceof AbstractBlockHut)
         {
             final IColony colony = ColonyManager.getIColony(world, event.getPos());
-            if (colony != null
-                  && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
+            if (colony != null && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
             {
                 event.setCanceled(true);
                 return;
             }
 
-            final ItemStack stack = event.getPlayer().getHeldItem(event.getHand());
+            final ItemStack stack = event.getPlayer().getHeldItem(event.getHand()).copy();
             event.setCanceled(true);
             if (Configurations.gameplay.suggestBuildToolPlacement && !event.getWorld().isRemote && !stack.isEmpty())
             {
