@@ -1561,7 +1561,7 @@ public class Colony implements IColony
      */
     public void increaseBoughtCitizenCost()
     {
-        boughtCitizenCost = 1 + (int) Math.ceil(boughtCitizenCost * 1.5);
+        boughtCitizenCost = Math.min(1 + (int) Math.ceil(boughtCitizenCost * 1.5), STACKSIZE);
         markDirty();
     }
 }

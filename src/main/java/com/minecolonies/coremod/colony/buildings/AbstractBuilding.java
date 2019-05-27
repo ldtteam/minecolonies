@@ -555,8 +555,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      */
     public void onUpgradeComplete(final int newLevel)
     {
-        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), this.getID(), colony.getDimension(), getClaimRadius());
-
+        if (Configurations.gameplay.enableDynamicColonySizes)
+        {
+            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), this.getID(), colony.getDimension(), getClaimRadius());
+        }
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
         colony.getProgressManager().progressBuildBuilding(this,
           colony.getBuildingManager().getBuildings().values().stream()

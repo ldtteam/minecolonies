@@ -88,7 +88,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     }
 
     @Override
-    protected IAIState checkForItems(final IRecipeStorage storage)
+    protected IAIState checkForItems(@NotNull final IRecipeStorage storage)
     {
         final List<ItemStorage> input = storage.getCleanedInput();
         for(final ItemStorage inputStorage : input)
