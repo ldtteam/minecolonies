@@ -18,9 +18,11 @@ import com.minecolonies.coremod.tileentities.*;
 import com.minecolonies.coremod.util.TownHallRecipe;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.RecipeBook;
@@ -49,7 +51,7 @@ import static com.minecolonies.api.util.constant.ColonyConstants.*;
  * CommonProxy of the minecolonies mod (Server and Client).
  */
 @Mod.EventBusSubscriber
-public class CommonProxy implements IProxy
+public abstract class CommonProxy implements IProxy
 {
     /**
      * Spawn egg colors.
@@ -279,6 +281,14 @@ public class CommonProxy implements IProxy
 
     @Override
     public void openBuildToolWindow(final BlockPos pos)
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
+    @Override
+    public void openSuggestionWindow(@NotNull BlockPos pos, @NotNull IBlockState state, @NotNull final ItemStack stack)
     {
         /*
          * Intentionally left empty.
