@@ -95,6 +95,7 @@ public final class NbtTagConstants
     public static final String TAG_PAUSED                 = "paused";
     public static final String TAG_CHILD                  = "child";
     public static final String TAG_BOUGHT_CITIZENS        = "bought_citizen";
+    public static final String TAG_JUST_ATE               = "justAte";
 
     /**
      * Tag used to store the containers to NBT.
