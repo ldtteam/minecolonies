@@ -50,7 +50,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_BUILDTOOL, this::buildToolClicked);
         registerButton(BUTTON_DIRECT, this::directClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
-        findPaneOfTypeByID("text", Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.placement.warning"));
+        //findPaneOfTypeByID("text", Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.placement.warning"));
     }
 
     @Override
