@@ -1,4 +1,5 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 133"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 133" pause="false"
+        lightbox="false"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
 
     <image source="minecolonies:textures/gui/citizen/colonist_papper_sketch.png" size="100% 100%"/>
