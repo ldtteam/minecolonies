@@ -395,11 +395,11 @@ public class EventHandler
             if (Configurations.gameplay.suggestBuildToolPlacement)
             {
                 final ItemStack stack = event.getPlayer().getHeldItem(event.getHand());
-                event.setCanceled(true);
-                if (!event.getWorld().isRemote && !stack.isEmpty())
+                if (!stack.isEmpty())
                 {
                     MineColonies.proxy.openSuggestionWindow(event.getPos(), event.getPlacedBlock(), stack);
                 }
+                event.setCanceled(true);
             }
         }
     }
