@@ -53,18 +53,6 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
         findPaneOfTypeByID("text", Text.class).setTextContent(LanguageHandler.format("com.minecolonies.coremod.gui.placement.warning"));
     }
 
-    @Override
-    public void onOpened()
-    {
-        super.onOpened();
-    }
-
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
-    }
-
     /**
      * Direct placement has been chosen.
      */
