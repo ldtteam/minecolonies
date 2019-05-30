@@ -107,7 +107,7 @@ dependencies {
     testCompile 'junit:junit:4.11'
     testCompile "org.mockito:mockito-core:1.+"
     testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.6.5'
-    testCompile group: 'org.powermock', name: 'powermock-api-mockito', version: '1.6.5'
+    testCompile group: 'org.powermock', name: 'powermock-api-mockito', version: '1.7.4'
     testCompile group: 'org.powermock', name: 'powermock-module-junit4-rule-agent', version: '1.6.5'
 
     testCompile 'org.assertj:assertj-core:3.9.0'
