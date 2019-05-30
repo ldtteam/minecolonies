@@ -137,8 +137,7 @@ public class ClientProxy extends CommonProxy
     @Override
     public void openSuggestionWindow(@NotNull final BlockPos pos, @NotNull final IBlockState state, @NotNull final ItemStack stack)
     {
-        @Nullable final WindowSuggestBuildTool window = new WindowSuggestBuildTool(pos, state, stack);
-        window.open();
+        new WindowSuggestBuildTool(pos, state, stack).open();
     }
 
     @Override
