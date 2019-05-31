@@ -1,10 +1,14 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.types.RackType;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -63,6 +67,13 @@ public class TileEntityRack extends TileEntity
     private int size = 0;
 
     /**
+     * whether this rack is in a warehouse or not.
+     * defaults to not
+     * set by the warehouse building upon being built
+     */
+    private boolean inWarehouse = false;
+
+    /**
      * The inventory of the tileEntity.
      */
     private IItemHandlerModifiable inventory = new ItemStackHandler(DEFAULT_SIZE)
@@ -71,6 +82,20 @@ public class TileEntityRack extends TileEntity
         protected void onContentsChanged(final int slot)
         {
             updateItemStorage();
+
+            if (world != null && !world.isRemote && inWarehouse && ColonyManager.isCoordinateInAnyColony(world, pos))
+            {
+                final Colony colony = ColonyManager.getClosestColony(world, pos);
+
+                if (colony != null && colony.getRequestManager() != null)
+                {
+                    final Set<IToken> finallyAssignedTokens = new HashSet<>(colony.getRequestManager().getPlayerResolver()
+                            .getAllAssignedRequests());
+
+                    finallyAssignedTokens.forEach(iToken -> colony.getRequestManager().reassignRequest(iToken, ImmutableList.of()));
+                }
+            }
+
             super.onContentsChanged(slot);
         }
 
@@ -99,6 +124,16 @@ public class TileEntityRack extends TileEntity
     public boolean hasItemStack(final ItemStack stack)
     {
         return content.containsKey(new ItemStorage(stack));
+    }
+
+    /**
+     * Set the value for inWarehouse
+     *
+     * @param isInWarehouse is this rack in a warehouse?
+     */
+    public void setInWarehouse(final Boolean isInWarehouse)
+    {
+        this.inWarehouse = isInWarehouse;
     }
 
     /**
@@ -443,6 +478,8 @@ public class TileEntityRack extends TileEntity
         }
         main = compound.getBoolean(TAG_MAIN);
         updateItemStorage();
+
+        this.inWarehouse = compound.getBoolean(TAG_IN_WAREHOUSE);
     }
 
     @NotNull
@@ -473,6 +510,7 @@ public class TileEntityRack extends TileEntity
         }
         compound.setTag(TAG_INVENTORY, inventoryTagList);
         compound.setBoolean(TAG_MAIN, main);
+        compound.setBoolean(TAG_IN_WAREHOUSE, inWarehouse);
         return compound;
     }
 
