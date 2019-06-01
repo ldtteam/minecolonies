@@ -239,7 +239,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public void onColonyUpdate(@NotNull IRequestManager manager, @NotNull Predicate<IRequest> shouldTriggerReassign)
+    public void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest> shouldTriggerReassign)
     {
         new ArrayList<>(assignedRequests).stream()
                 .map(manager::getRequestForToken)
@@ -249,7 +249,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                 {
                     final IToken newResolverToken = manager.reassignRequest(request.getToken(), ImmutableList.of(token));
 
-                    if (newResolverToken != token)
+                    if (newResolverToken != null && !newResolverToken.equals(token))
                     {
                         assignedRequests.remove(request.getToken());
                     }

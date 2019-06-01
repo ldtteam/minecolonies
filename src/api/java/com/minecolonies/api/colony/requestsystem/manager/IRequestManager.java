@@ -163,7 +163,7 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
      * Method used to indicate that a colony has updated their available items.
      * @param shouldTriggerReassign The request assigned
      */
-    void onColonyUpdate(@NotNull Predicate<IRequest> shouldTriggerReassign);
+    void onColonyUpdate(@NotNull final Predicate<IRequest> shouldTriggerReassign);
 
     /**
      * Get the player resolve.

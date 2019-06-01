@@ -94,7 +94,7 @@ public class BuildingWareHouse extends AbstractBuilding
     }
 
     @Override
-    public void requestRepair(BlockPos builder)
+    public void requestRepair(final BlockPos builder)
     {
         //To ensure that the racks are all set to in the warehouse when repaired.
         for (final BlockPos pos : containerList)

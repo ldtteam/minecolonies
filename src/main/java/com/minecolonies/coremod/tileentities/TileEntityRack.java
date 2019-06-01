@@ -87,7 +87,7 @@ public class TileEntityRack extends TileEntity
         }
 
         @Override
-        public void setStackInSlot(int slot, @Nonnull ItemStack stack)
+        public void setStackInSlot(final int slot, final @Nonnull ItemStack stack)
         {
             super.setStackInSlot(slot, stack);
 

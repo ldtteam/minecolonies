@@ -355,7 +355,7 @@ public final class ResolverHandler
      * @param manager The manager to update reassign requests on
      * @param shouldTriggerReassign the predicate to determine whether a request should be reassigned
      */
-    public static void OnColonyUpdate(final IStandardRequestManager manager, final Predicate<IRequest> shouldTriggerReassign)
+    public static void onColonyUpdate(final IStandardRequestManager manager, final Predicate<IRequest> shouldTriggerReassign)
     {
         manager.getRequestResolverIdentitiesDataStore().getIdentities().values().forEach(resolver -> resolver.onColonyUpdate(manager, shouldTriggerReassign));
     }

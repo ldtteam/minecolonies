@@ -123,7 +123,7 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      * @param manager The systems manager.
      * @param shouldTriggerReassign The request assigned
      */
-    default void onColonyUpdate(@NotNull IRequestManager manager, @NotNull Predicate<IRequest> shouldTriggerReassign)
+    default void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest> shouldTriggerReassign)
     {
         //Noop
     }
