@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.tileentities;
 
-import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -28,6 +27,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -83,20 +83,24 @@ public class TileEntityRack extends TileEntity
         {
             updateItemStorage();
 
-            if (world != null && !world.isRemote && inWarehouse && ColonyManager.isCoordinateInAnyColony(world, pos))
+            super.onContentsChanged(slot);
+        }
+
+        @Override
+        public void setStackInSlot(int slot, @Nonnull ItemStack stack)
+        {
+            super.setStackInSlot(slot, stack);
+
+            if (!ItemStackUtils.isEmpty(stack) && world != null && !world.isRemote && inWarehouse && ColonyManager.isCoordinateInAnyColony(world, pos))
             {
                 final Colony colony = ColonyManager.getClosestColony(world, pos);
 
                 if (colony != null && colony.getRequestManager() != null)
                 {
-                    final Set<IToken> finallyAssignedTokens = new HashSet<>(colony.getRequestManager().getPlayerResolver()
-                            .getAllAssignedRequests());
-
-                    finallyAssignedTokens.forEach(iToken -> colony.getRequestManager().reassignRequest(iToken, ImmutableList.of()));
+                    colony.getRequestManager()
+                            .onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(stack));
                 }
             }
-
-            super.onContentsChanged(slot);
         }
 
         @NotNull
