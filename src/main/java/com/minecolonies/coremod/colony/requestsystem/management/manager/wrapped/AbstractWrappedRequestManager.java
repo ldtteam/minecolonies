@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 /**
  * Wrapper class for a Manager.
@@ -253,5 +254,11 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     public void setDirty(final boolean isDirty)
     {
         wrappedManager.setDirty(isDirty);
+    }
+
+    @Override
+    public void onColonyUpdate(@NotNull final Predicate<IRequest> shouldTriggerReassign)
+    {
+        throw new UnsupportedOperationException("This method cannot be used by Wrapped Request Managers!");
     }
 }

@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Used to resolve a request.
@@ -116,6 +117,16 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      */
     @Nullable
     IRequest<?> onRequestCancelled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
+
+    /**
+     * Called by manager given to indicate that a colony has updated their available items.
+     * @param manager The systems manager.
+     * @param shouldTriggerReassign The request assigned
+     */
+    default void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest> shouldTriggerReassign)
+    {
+        //Noop
+    }
 
     /**
      * Method used to indicate to this resolver that a parent of a request assigned to him has been cancelled,

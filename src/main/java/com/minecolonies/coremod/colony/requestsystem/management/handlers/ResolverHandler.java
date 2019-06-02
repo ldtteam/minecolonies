@@ -14,6 +14,7 @@ import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
@@ -346,5 +347,16 @@ public final class ResolverHandler
     public static IRequestResolver<? extends IRequestable> getResolverForRequest(final IStandardRequestManager manager, final IRequest<?> request)
     {
         return getResolverForRequest(manager, (IToken<?>) request.getToken());
+    }
+
+    /**
+     * Method used to reassign requests based on a predicate
+     *
+     * @param manager The manager to update reassign requests on
+     * @param shouldTriggerReassign the predicate to determine whether a request should be reassigned
+     */
+    public static void onColonyUpdate(final IStandardRequestManager manager, final Predicate<IRequest> shouldTriggerReassign)
+    {
+        manager.getRequestResolverIdentitiesDataStore().getIdentities().values().forEach(resolver -> resolver.onColonyUpdate(manager, shouldTriggerReassign));
     }
 }

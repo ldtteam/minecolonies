@@ -90,7 +90,7 @@ public final class RequestHandler
         {
             case PRIORITY_BASED:
                 return assignRequestDefault(manager, request, resolverTokenBlackList);
-            case FASTED_FIRST:
+            case FASTEST_FIRST:
             {
                 MineColonies.getLogger().warn("Fastest First strategy not implemented yet.");
                 return assignRequestDefault(manager, request, resolverTokenBlackList);
