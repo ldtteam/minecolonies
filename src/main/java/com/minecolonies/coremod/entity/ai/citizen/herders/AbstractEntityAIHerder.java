@@ -535,6 +535,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Gets an ItemStack of breedingItem for 2 animals.
      *
+     * @param required Whether we're asking for the required amount for breeding, or the amount for requesting.
      * @return the BreedingItem stack.
      */
     public ItemStack getBreedingItems(final Boolean required)
