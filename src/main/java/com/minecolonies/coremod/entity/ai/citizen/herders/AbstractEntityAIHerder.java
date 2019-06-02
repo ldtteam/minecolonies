@@ -102,7 +102,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     protected List<ItemStack> itemsNiceToHave()
     {
         final List<ItemStack> list = super.itemsNiceToHave();
-        list.add(getBreedingItems());
+        list.add(getBreedingItems(false));
         return list;
     }
 
@@ -126,7 +126,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     public List<ItemStack> getExtraItemsNeeded()
     {
         final List<ItemStack> itemsNeeded = new ArrayList<>();
-        itemsNeeded.add(getBreedingItems());
+        itemsNeeded.add(getBreedingItems(false));
         return itemsNeeded;
     }
 
@@ -286,7 +286,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             return DECIDE;
         }
 
-        if (!equipItem(EnumHand.MAIN_HAND, getBreedingItems()))
+        if (!equipItem(EnumHand.MAIN_HAND, getBreedingItems(true)))
         {
             return START_WORKING;
         }
@@ -437,10 +437,13 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     {
         if (getOwnBuilding() != null)
         {
-            final List<T> animal = allAnimals.stream()
+            final List<T> animals = allAnimals.stream()
                     .filter(animalToButcher -> !animalToButcher.isChild()).collect(Collectors.toList());
 
-            final int numOfAnimals = animal.size();
+            if (animals.isEmpty())
+                return false;
+
+            final int numOfAnimals = allAnimals.size();
             final int maxAnimals = getOwnBuilding().getBuildingLevel() * getMaxAnimalMultiplier();
 
             return numOfAnimals > maxAnimals;
@@ -534,10 +537,18 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      *
      * @return the BreedingItem stack.
      */
-    public ItemStack getBreedingItems()
+    public ItemStack getBreedingItems(final Boolean required)
     {
         final ItemStack breedingItem = getBreedingItem().copy();
+
+        if (!required && getOwnBuilding() != null)
+        {
+            ItemStackUtils.setSize(breedingItem, 4 * getOwnBuilding().getBuildingLevel());
+            return breedingItem;
+        }
+
         ItemStackUtils.setSize(breedingItem, 2);
+
         return breedingItem;
     }
 
