@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.RSConstants.STANDARD_PLAYER_REQUEST_PRIORITY;
 
@@ -235,6 +236,24 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     public void onSystemReset()
     {
         assignedRequests.clear();
+    }
+
+    @Override
+    public void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest> shouldTriggerReassign)
+    {
+        new ArrayList<>(assignedRequests).stream()
+                .map(manager::getRequestForToken)
+                .filter(shouldTriggerReassign)
+                .filter(Objects::nonNull)
+                .forEach(request ->
+                {
+                    final IToken newResolverToken = manager.reassignRequest(request.getToken(), ImmutableList.of(token));
+
+                    if (newResolverToken != null && !newResolverToken.equals(token))
+                    {
+                        assignedRequests.remove(request.getToken());
+                    }
+                });
     }
 
     public void setAllAssignedRequests(final Set<IToken<?>> assignedRequests)
