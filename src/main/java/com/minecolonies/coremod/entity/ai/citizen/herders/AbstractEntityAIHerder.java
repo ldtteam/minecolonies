@@ -102,7 +102,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     protected List<ItemStack> itemsNiceToHave()
     {
         final List<ItemStack> list = super.itemsNiceToHave();
-        list.add(getBreedingItems(false));
+        list.add(getRequestBreedingItems());
         return list;
     }
 
@@ -126,7 +126,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     public List<ItemStack> getExtraItemsNeeded()
     {
         final List<ItemStack> itemsNeeded = new ArrayList<>();
-        itemsNeeded.add(getBreedingItems(false));
+        itemsNeeded.add(getRequestBreedingItems());
         return itemsNeeded;
     }
 
@@ -286,7 +286,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             return DECIDE;
         }
 
-        if (!equipItem(EnumHand.MAIN_HAND, getBreedingItems(true)))
+        if (!equipItem(EnumHand.MAIN_HAND, getRequiredBreedingItems()))
         {
             return START_WORKING;
         }
@@ -537,21 +537,24 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     /**
      * Gets an ItemStack of breedingItem for 2 animals.
      *
-     * @param required Whether we're asking for the required amount for breeding, or the amount for requesting.
      * @return the BreedingItem stack.
      */
-    public ItemStack getBreedingItems(final Boolean required)
+    public ItemStack getRequiredBreedingItems()
     {
         final ItemStack breedingItem = getBreedingItem().copy();
-
-        if (!required && getOwnBuilding() != null)
-        {
-            ItemStackUtils.setSize(breedingItem, 4 * getOwnBuilding().getBuildingLevel());
-            return breedingItem;
-        }
-
         ItemStackUtils.setSize(breedingItem, 2);
+        return breedingItem;
+    }
 
+    /**
+     * Gets an ItemStack of breedingItem for requesting, requests multiple items to decrease work for delivery man
+     *
+     * @return the BreedingItem stack.
+     */
+    public ItemStack getRequestBreedingItems()
+    {
+        final ItemStack breedingItem = getBreedingItem().copy();
+        ItemStackUtils.setSize(breedingItem, 32);
         return breedingItem;
     }
 
