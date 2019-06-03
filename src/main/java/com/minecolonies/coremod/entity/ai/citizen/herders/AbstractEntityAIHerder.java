@@ -286,7 +286,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             return DECIDE;
         }
 
-        if (!equipItem(EnumHand.MAIN_HAND, getRequiredBreedingItems()))
+        if (!equipItem(EnumHand.MAIN_HAND, getBreedingItem()))
         {
             return START_WORKING;
         }
@@ -535,18 +535,6 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     }
 
     /**
-     * Gets an ItemStack of breedingItem for 2 animals.
-     *
-     * @return the BreedingItem stack.
-     */
-    public ItemStack getRequiredBreedingItems()
-    {
-        final ItemStack breedingItem = getBreedingItem().copy();
-        ItemStackUtils.setSize(breedingItem, 2);
-        return breedingItem;
-    }
-
-    /**
      * Gets an ItemStack of breedingItem for requesting, requests multiple items to decrease work for delivery man
      *
      * @return the BreedingItem stack.
@@ -554,7 +542,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     public ItemStack getRequestBreedingItems()
     {
         final ItemStack breedingItem = getBreedingItem().copy();
-        ItemStackUtils.setSize(breedingItem, 32);
+        ItemStackUtils.setSize(breedingItem, breedingItem.getCount() * 8); // means that we can breed 8 animals before requesting again.
         return breedingItem;
     }
 
