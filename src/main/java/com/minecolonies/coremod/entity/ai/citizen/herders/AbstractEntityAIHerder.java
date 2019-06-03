@@ -102,7 +102,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     protected List<ItemStack> itemsNiceToHave()
     {
         final List<ItemStack> list = super.itemsNiceToHave();
-        list.add(getBreedingItems());
+        list.add(getRequestBreedingItems());
         return list;
     }
 
@@ -126,7 +126,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     public List<ItemStack> getExtraItemsNeeded()
     {
         final List<ItemStack> itemsNeeded = new ArrayList<>();
-        itemsNeeded.add(getBreedingItems());
+        itemsNeeded.add(getRequestBreedingItems());
         return itemsNeeded;
     }
 
@@ -286,7 +286,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             return DECIDE;
         }
 
-        if (!equipItem(EnumHand.MAIN_HAND, getBreedingItems()))
+        if (!equipItem(EnumHand.MAIN_HAND, getBreedingItem()))
         {
             return START_WORKING;
         }
@@ -437,10 +437,15 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     {
         if (getOwnBuilding() != null)
         {
-            final List<T> animal = allAnimals.stream()
+            final List<T> animals = allAnimals.stream()
                     .filter(animalToButcher -> !animalToButcher.isChild()).collect(Collectors.toList());
 
-            final int numOfAnimals = animal.size();
+            if (animals.isEmpty())
+            {
+                return false;
+            }
+
+            final int numOfAnimals = allAnimals.size();
             final int maxAnimals = getOwnBuilding().getBuildingLevel() * getMaxAnimalMultiplier();
 
             return numOfAnimals > maxAnimals;
@@ -530,14 +535,14 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
     }
 
     /**
-     * Gets an ItemStack of breedingItem for 2 animals.
+     * Gets an ItemStack of breedingItem for requesting, requests multiple items to decrease work for delivery man
      *
      * @return the BreedingItem stack.
      */
-    public ItemStack getBreedingItems()
+    public ItemStack getRequestBreedingItems()
     {
         final ItemStack breedingItem = getBreedingItem().copy();
-        ItemStackUtils.setSize(breedingItem, 2);
+        ItemStackUtils.setSize(breedingItem, breedingItem.getCount() * 8); // means that we can breed 8 animals before requesting again.
         return breedingItem;
     }
 
