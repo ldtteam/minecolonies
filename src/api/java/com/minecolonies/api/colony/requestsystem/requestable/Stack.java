@@ -61,7 +61,7 @@ public class Stack implements IDeliverable
         }
 
         setMatchMeta(true).setMatchNBT(true);
-        this.count = (Math.min(this.theStack.getCount(), this.theStack.getMaxStackSize()));
+        this.count = this.theStack.getCount();//(Math.min(this.theStack.getCount(), this.theStack.getMaxStackSize()));
     }
 
     /**

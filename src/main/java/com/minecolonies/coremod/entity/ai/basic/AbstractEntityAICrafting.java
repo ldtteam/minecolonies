@@ -101,6 +101,12 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
      */
     protected IAIState decide()
     {
+        if (walkToBuilding())
+        {
+            setDelay(STANDARD_DELAY);
+            return START_WORKING;
+        }
+
         if (job.getTaskQueue().isEmpty())
         {
             setDelay(TICKS_20);
@@ -110,12 +116,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         if (job.getCurrentTask() == null)
         {
             setDelay(TICKS_20);
-            return START_WORKING;
-        }
-
-        if (walkToBuilding())
-        {
-            setDelay(STANDARD_DELAY);
             return START_WORKING;
         }
 
@@ -244,11 +244,18 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             final IAIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
             {
-                while (craftCounter < maxCraftingCount && currentRequest != null)
+                while (craftCounter <= maxCraftingCount && currentRequest != null)
                 {
-                    currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen());
-                    currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
-                    craftCounter++;
+                    final boolean didFulfill = currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen());
+                    if (didFulfill)
+                    {
+                        currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
+                        craftCounter++;
+                    }
+                    else
+                    {
+                        System.out.println(worker.getName() + " FAILED TO CRAFT: " + currentRecipeStorage.getPrimaryOutput());
+                    }
                 }
 
                 incrementActionsDoneAndDecSaturation();
