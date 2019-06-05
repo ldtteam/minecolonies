@@ -475,6 +475,14 @@ public class CitizenHappinessHandler
     }
 
     /**
+     * Used to clear the currently needed tools.
+     */
+    public void clearNeededTools()
+    {
+        needsTool.clear();
+    }
+
+    /**
      * Store the level to nbt.
      *
      * @param compound  compound to use.

@@ -80,6 +80,12 @@ public class CitizenJobHandler
         //  Model
         setModelDependingOnJob(job);
 
+        // Clear needed Tools.
+        if (citizen.getCitizenData() != null)
+        {
+            citizen.getCitizenData().getCitizenHappinessHandler().clearNeededTools();
+        }
+
         //  AI Tasks
         @NotNull final Object[] currentTasks = citizen.tasks.taskEntries.toArray();
         for (@NotNull final Object task : currentTasks)
