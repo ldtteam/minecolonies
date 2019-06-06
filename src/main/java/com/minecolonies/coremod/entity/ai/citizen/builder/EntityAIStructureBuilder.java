@@ -5,6 +5,7 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
@@ -12,9 +13,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
-import com.minecolonies.coremod.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.util.StructureIterator;
 import net.minecraft.block.Block;
@@ -124,10 +123,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
-          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::checkIfExecute, this::getState),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(PICK_UP, this::pickUpMaterial)
+          new AITarget(IDLE, START_WORKING, 100),
+          new AITarget(START_WORKING, this::checkForWorkOrder, this::startWorkingAtOwnBuilding, 100),
+          new AITarget(PICK_UP, this::pickUpMaterial, 5)
         );
         worker.getCitizenExperienceHandler().setSkillModifier(INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
                                   + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
@@ -147,7 +145,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     public IAIState pickUpMaterial()
     {
         final BuildingBuilder building = getOwnBuilding();
-        final List<Predicate<ItemStack>> neededItemsList = new ArrayList<>(building.getRequiredItemsAndAmount().keySet());
+        final List<Predicate<ItemStack>> neededItemsList = new ArrayList<>();
+        for (final BuildingBuilderResource stack : building.getNeededResources().values())
+        {
+            neededItemsList.add(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true));
+        }
+
         if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(new InvWrapper(worker.getInventoryCitizen())) <= MIN_OPEN_SLOTS)
         {
             pickUpCount = 0;
@@ -185,20 +188,17 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         return BuildingBuilder.class;
     }
 
-    private boolean checkIfExecute()
+    /**
+     * Checks if we got a valid workorder.
+     *
+     * @return true if we got a workorder to work with
+     */
+    private boolean checkForWorkOrder()
     {
-        setDelay(1);
-
-        // Don't check for workorder when we're idle
-        if (getState() == IDLE)
-        {
-            return false;
-        }
-
         if (!job.hasWorkOrder())
         {
             getOwnBuilding(AbstractBuildingStructureBuilder.class).searchWorkOrder();
-            return true;
+            return false;
         }
 
         final WorkOrderBuildDecoration wo = job.getWorkOrder();
@@ -206,14 +206,14 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         if (wo == null)
         {
             job.setWorkOrder(null);
-            return true;
+            return false;
         }
 
         final AbstractBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
         if (building == null && wo instanceof WorkOrderBuild && !(wo instanceof WorkOrderBuildRemoval))
         {
             job.complete();
-            return true;
+            return false;
         }
 
         if (!job.hasStructure())
@@ -221,7 +221,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             super.initiate();
         }
 
-        return false;
+        return true;
     }
 
     @Override

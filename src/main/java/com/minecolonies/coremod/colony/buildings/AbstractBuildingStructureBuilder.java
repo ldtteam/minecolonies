@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -73,7 +74,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     /**
      * Contains all resources needed for a certain build.
      */
-    private HashMap<String, BuildingBuilderResource> neededResources = new HashMap<>();
+    private HashMap<String, BuildingBuilderResource> neededResources = new LinkedHashMap<>();
 
     /**
      * The progress counter of the builder.
