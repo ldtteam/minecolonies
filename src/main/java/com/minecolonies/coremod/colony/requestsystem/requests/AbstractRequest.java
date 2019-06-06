@@ -145,7 +145,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
             {
                 manager.getRequestForToken(getParent()).childStateUpdated(manager, getToken());
             }
-            catch (final IllegalArgumentException ex)
+            catch (final IllegalArgumentException | NullPointerException ex)
             {
                 //Something went wrong... Logging. Continuing however. Might cause parent request to get stuck however......
                 Log.getLogger().error(new IllegalStateException("Failed to update parent state.", ex));
