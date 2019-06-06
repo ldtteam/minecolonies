@@ -53,7 +53,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
     public ItemStack getBreedingItem()
     {
         final ItemStack stack = new ItemStack(Items.WHEAT);
-        stack.setCount(stack.getMaxStackSize());
+        stack.setCount(2);
         return stack;
     }
 
