@@ -24,6 +24,7 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesChunkCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldColonyManagerCapabilityProvider;
+import com.minecolonies.coremod.network.messages.OpenSuggestionWindowMessage;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import com.minecolonies.coremod.network.messages.UpdateChunkRangeCapabilityMessage;
 import com.minecolonies.coremod.util.ChunkDataHelper;
@@ -395,11 +396,12 @@ public class EventHandler
             if (Configurations.gameplay.suggestBuildToolPlacement)
             {
                 final ItemStack stack = event.getPlayer().getHeldItem(event.getHand());
-                event.setCanceled(true);
-                if (!event.getWorld().isRemote && !stack.isEmpty())
+                if (!stack.isEmpty() && !world.isRemote)
                 {
-                    MineColonies.proxy.openSuggestionWindow(event.getPos(), event.getPlacedBlock(), stack);
+                    MineColonies.getNetwork().sendTo(new OpenSuggestionWindowMessage(event.getPlacedBlock(), event.getPos(), stack), (EntityPlayerMP) event.getPlayer());
+
                 }
+                event.setCanceled(true);
             }
         }
     }

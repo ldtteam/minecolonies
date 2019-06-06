@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.BIG_CLASS;
 
@@ -326,6 +327,17 @@ public class StandardRequestManager implements IStandardRequestManager
     public void onProviderRemovedFromColony(@NotNull final IRequestResolverProvider provider) throws IllegalArgumentException
     {
         ProviderHandler.removeProvider(this, provider);
+    }
+
+    /**
+     * Method used to reassign requests based on a predicate.
+     *
+     * @param shouldTriggerReassign The predicate to determine if the request should be reassigned.
+     */
+    @Override
+    public void onColonyUpdate(@NotNull final Predicate<IRequest> shouldTriggerReassign)
+    {
+        ResolverHandler.onColonyUpdate(this, shouldTriggerReassign);
     }
 
     /**
