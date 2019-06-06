@@ -74,7 +74,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     /**
      * Contains all resources needed for a certain build.
      */
-    private HashMap<String, BuildingBuilderResource> neededResources = new LinkedHashMap<>();
+    private Map<String, BuildingBuilderResource> neededResources = new LinkedHashMap<>();
 
     /**
      * The progress counter of the builder.
