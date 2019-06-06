@@ -426,11 +426,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         gatherTarget = null;
         worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, SLOT_HAND);
 
-        final Set<IToken> finallyAssignedTokens = worker.getCitizenColonyHandler().getColony().getRequestManager().getPlayerResolver()
-                .getAllAssignedRequests().stream().collect(Collectors.toSet());
-
-        finallyAssignedTokens.forEach(iToken -> worker.getCitizenColonyHandler().getColony().getRequestManager().reassignRequest(iToken, ImmutableList.of()));
-
         if (job.isReturning())
         {
             job.setReturning(false);
