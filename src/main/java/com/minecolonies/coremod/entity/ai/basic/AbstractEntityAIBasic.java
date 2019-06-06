@@ -181,7 +181,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           /*
            * Gather a needed item.
            */
-          new AITarget(GATHERING_REQUIRED_MATERIALS, this::getNeededItem),
+          new AITarget(GATHERING_REQUIRED_MATERIALS, this::getNeededItem, 20),
           /*
            * Place any non-restart regarding AITargets before this one
            * Restart AI, building etc.
@@ -222,7 +222,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return getState();
         }
 
-        if (needsCurrently == null || !InventoryUtils.hasItemInProvider(getOwnBuilding(), needsCurrently))
+
+        if (needsCurrently == null)
         {
             return getStateAfterPickUp();
         }
