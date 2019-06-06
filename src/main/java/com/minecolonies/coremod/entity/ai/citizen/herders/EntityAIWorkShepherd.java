@@ -77,7 +77,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
     public ItemStack getBreedingItem()
     {
         final ItemStack stack = new ItemStack(Items.WHEAT);
-        stack.setCount(stack.getMaxStackSize());
+        stack.setCount(2);
         return stack;
     }
 
