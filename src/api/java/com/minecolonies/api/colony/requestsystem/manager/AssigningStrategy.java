@@ -13,5 +13,5 @@ public enum AssigningStrategy
     /**
      * Strategy that will ensure that the request depth is small.
      */
-    FASTED_FIRST
+    FASTEST_FIRST
 }

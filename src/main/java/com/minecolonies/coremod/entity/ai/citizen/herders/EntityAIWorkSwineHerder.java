@@ -39,7 +39,7 @@ public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerd
     public ItemStack getBreedingItem()
     {
         final ItemStack stack = new ItemStack(Items.CARROT);
-        stack.setCount(stack.getMaxStackSize());
+        stack.setCount(2);
         return stack;
     }
 
