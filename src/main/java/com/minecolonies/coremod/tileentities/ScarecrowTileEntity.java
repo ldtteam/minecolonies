@@ -1,11 +1,16 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.ldtteam.structurize.blocks.ModBlocks;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFence;
+import net.minecraft.block.BlockFenceGate;
+import net.minecraft.block.BlockWall;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -38,11 +43,6 @@ public class ScarecrowTileEntity extends TileEntityChest
      * The max width/length of a field.
      */
     private static final int MAX_RANGE = 5;
-
-    /**
-     * The fields location.
-     */
-    private BlockPos location;
 
     /**
      * Has the field be taken by any worker?
@@ -202,7 +202,17 @@ public class ScarecrowTileEntity extends TileEntityChest
      */
     public boolean isNoPartOfField(@NotNull final World world, @NotNull final BlockPos position)
     {
-        return world.isAirBlock(position) || world.getBlockState(position.up()).getMaterial().isSolid();
+        return world.isAirBlock(position) ||  isValidDelimiter(world.getBlockState(position.up()).getBlock());
+    }
+
+    /**
+     * Check if a block is a valid delimiter of the field.
+     * @param block the block to analyze.
+     * @return true if so.
+     */
+    private static boolean isValidDelimiter(final Block block)
+    {
+        return block instanceof BlockFence || block instanceof BlockFenceGate || block == ModBlocks.blockCactusFence || block == ModBlocks.blockCactusFenceGate || block instanceof BlockWall;
     }
 
     /**
@@ -213,7 +223,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     public BlockPos getID()
     {
         // Location doubles as ID
-        return this.location;
+        return this.getPos();
     }
 
     /**
@@ -344,16 +354,6 @@ public class ScarecrowTileEntity extends TileEntityChest
     public int getWidthMinusZ()
     {
         return widthMinusZ;
-    }
-
-    /**
-     * Location getter.
-     *
-     * @return the location of the scarecrow of the field.
-     */
-    public BlockPos getLocation()
-    {
-        return this.location;
     }
 
     /**
