@@ -597,16 +597,16 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         if (fireWorkCounter % 2 == 1) {
             AxisAlignedBB realaabb = getTargetableArea(colony.getWorld());
-            EntityFireworkRocket firework = new EntityFireworkRocket(colony.getWorld(), realaabb.maxX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack());
+            final EntityFireworkRocket firework = new EntityFireworkRocket(colony.getWorld(), realaabb.maxX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack());
 
             colony.getWorld().spawnEntity(firework);
-            EntityFireworkRocket fireworka = new EntityFireworkRocket(colony.getWorld(), realaabb.maxX, realaabb.maxY, realaabb.minZ, genFireworkItemStack());
+            final EntityFireworkRocket fireworka = new EntityFireworkRocket(colony.getWorld(), realaabb.maxX, realaabb.maxY, realaabb.minZ, genFireworkItemStack());
 
             colony.getWorld().spawnEntity(fireworka);
-            EntityFireworkRocket fireworkb = new EntityFireworkRocket(colony.getWorld(), realaabb.minX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack());
+            final EntityFireworkRocket fireworkb = new EntityFireworkRocket(colony.getWorld(), realaabb.minX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack());
 
             colony.getWorld().spawnEntity(fireworkb);
-            EntityFireworkRocket fireworkc = new EntityFireworkRocket(colony.getWorld(), realaabb.minX, realaabb.maxY, realaabb.minZ, genFireworkItemStack());
+            final EntityFireworkRocket fireworkc = new EntityFireworkRocket(colony.getWorld(), realaabb.minX, realaabb.maxY, realaabb.minZ, genFireworkItemStack());
 
             colony.getWorld().spawnEntity(fireworkc);
             System.out.println("POSITIONS: " + fireworkc.posX + ", " + fireworkc.posY + ", " + fireworkc.posZ);
@@ -625,7 +625,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     private ItemStack genFireworkItemStack() {
 
 
-        Random rand = new Random();
+        final Random rand = new Random();
 
         final ItemStack fireworkItem = new ItemStack(new ItemFirework());
         final NBTTagCompound itemStackCompound = fireworkItem.getTagCompound() != null ? fireworkItem.getTagCompound() : new NBTTagCompound();
