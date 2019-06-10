@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardGear;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
@@ -20,7 +21,9 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -132,7 +135,11 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
             }
             else
             {
-                worker.getNavigator().moveAwayFromXYZ(target.getPosition(), 3, 2);
+                if (worker.getNavigator().noPath() && BlockPosUtil.getMaxDistance2D(worker.getPosition(), target.getPosition()) < 3.0)
+                {
+                    final EnumFacing dirTo = BlockPosUtil.getXZFacing(worker.getPosition(), target.getPosition());
+                    worker.getNavigator().tryMoveToBlockPos(worker.getPosition().offset(dirTo.getOpposite(), 3), getCombatMovementSpeed());
+                }
             }
         }
 
@@ -145,6 +152,16 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
      */
     protected IAIState attackPhysical()
     {
+        if (currentAttackDelay > 0)
+        {
+            reduceAttackDelay(4);
+            return GUARD_ATTACK_PROTECT;
+        }
+        else
+        {
+            currentAttackDelay = getAttackDelay();
+        }
+
         final IAIState state = preAttackChecks();
         if (state != getState())
         {
@@ -154,17 +171,8 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
         if (!isInAttackDistance(target.getPosition()))
         {
-            return DECIDE;
-        }
-
-        if (currentAttackDelay > 0)
-        {
-            reduceAttackDelay(4);
-            return GUARD_ATTACK_PROTECT;
-        }
-        else
-        {
-            currentAttackDelay = getAttackDelay();
+            checkForTarget();
+            return getState();
         }
 
         if (getOwnBuilding() != null)

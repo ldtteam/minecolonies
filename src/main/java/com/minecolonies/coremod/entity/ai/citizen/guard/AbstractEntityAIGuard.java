@@ -279,7 +279,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     /**
      * Check if the current target is null or death and assign a new one if necessary.
      */
-    private boolean checkForTarget()
+    protected boolean checkForTarget()
     {
         if (target != null && target.isDead)
         {
@@ -307,7 +307,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Execute pre attack checks to check if worker can attack enemy.
-     * TODO: Check if enemy is in Range?
      * @return the next aiState to go to.
      */
     public IAIState preAttackChecks()
