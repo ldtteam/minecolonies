@@ -640,21 +640,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         List<Integer> list = Lists.newArrayList();
 
-        final int amountOfColors = rand.nextInt(2) + 1;
+        final int numberOfColours = rand.nextInt(5) + 1;
+        final int[] colors = new int[numberOfColours];
 
-        for (int i = 0; i<amountOfColors; i++) {
-
-            list.add(ItemDye.DYE_COLORS[rand.nextInt(15)]);
-
+        for (int i = 0; i < numberOfColours; i++)
+        {
+            colors[i] = ItemDye.DYE_COLORS[rand.nextInt(15)];
         }
 
-        int[] aint1 = new int[list.size()];
-
-        for (int b = 0; b < aint1.length; b++) {
-            aint1[b] = list.get(b);
-        }
-
-        explosionTag.setIntArray("Colors", aint1);
+        explosionTag.setIntArray("Colors", colors);
         explosionsTagList.appendTag(explosionTag);
 
         fireworksCompound.setTag("Explosions", explosionsTagList);
