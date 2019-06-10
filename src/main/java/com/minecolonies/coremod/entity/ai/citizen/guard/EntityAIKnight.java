@@ -11,6 +11,7 @@ import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
@@ -118,17 +119,23 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
           Items.SHIELD,
           -1);
 
-        if (shieldSlot != -1
-              && target != null
-              && !target.isDead)
+        if (target != null && !target.isDead)
         {
-            worker.getCitizenItemHandler().setHeldItem(EnumHand.OFF_HAND, shieldSlot);
-            worker.setActiveHand(EnumHand.OFF_HAND);
+            if (shieldSlot != -1)
+            {
+                worker.getCitizenItemHandler().setHeldItem(EnumHand.OFF_HAND, shieldSlot);
+                worker.setActiveHand(EnumHand.OFF_HAND);
 
-            worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
-            worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
-            worker.decreaseSaturationForContinuousAction();
+                worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+                worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+                worker.decreaseSaturationForContinuousAction();
+            }
+            else
+            {
+                worker.getNavigator().moveAwayFromXYZ(target.getPosition(), 3, 2);
+            }
         }
+
 
         return GUARD_ATTACK_PHYSICAL;
     }

@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
 import com.minecolonies.coremod.network.messages.ItemParticleEffectMessage;
@@ -144,6 +145,11 @@ public class EntityAIEatTask extends EntityAIBase
             waitingTicks++;
             return waitingTicks >= TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_BETWEEN_FOOD_CHECKS || citizen.getCitizenData().getSaturation() < CitizenConstants.LOW_SATURATION
                      || citizenData.getJob() == null;
+        }
+
+        if (citizenData.getJob() instanceof AbstractJobGuard && checkForFood(citizenData) == EAT && citizen.isOkayToEat())
+        {
+            return true;
         }
 
         return false;
