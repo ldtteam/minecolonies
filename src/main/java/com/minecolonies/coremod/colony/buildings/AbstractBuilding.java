@@ -44,14 +44,21 @@ import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.item.ItemDye;
+import net.minecraft.item.ItemFirework;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -553,6 +560,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      *
      * @param newLevel The new level.
      */
+
+    private int fireWorkCounter = 0;
+
     public void onUpgradeComplete(final int newLevel)
     {
         if (Configurations.gameplay.enableDynamicColonySizes)
@@ -576,10 +586,84 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
           workOrder.isMirrored());
         this.setHeight(wrapper.getHeight());
         this.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
+
+        // firework spawning possibly maybe
+
+        //ItemStack items = new ItemStack(f);
+
+
+
+        fireWorkCounter++;
+
+        if (fireWorkCounter % 2 == 1) {
+            AxisAlignedBB realaabb = getTargetableArea(colony.getWorld());
+            EntityFireworkRocket firework = new EntityFireworkRocket(colony.getWorld(), realaabb.maxX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack());
+
+            colony.getWorld().spawnEntity(firework);
+            EntityFireworkRocket fireworka = new EntityFireworkRocket(colony.getWorld(), realaabb.maxX, realaabb.maxY, realaabb.minZ, genFireworkItemStack());
+
+            colony.getWorld().spawnEntity(fireworka);
+            EntityFireworkRocket fireworkb = new EntityFireworkRocket(colony.getWorld(), realaabb.minX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack());
+
+            colony.getWorld().spawnEntity(fireworkb);
+            EntityFireworkRocket fireworkc = new EntityFireworkRocket(colony.getWorld(), realaabb.minX, realaabb.maxY, realaabb.minZ, genFireworkItemStack());
+
+            colony.getWorld().spawnEntity(fireworkc);
+            System.out.println("POSITIONS: " + fireworkc.posX + ", " + fireworkc.posY + ", " + fireworkc.posZ);
+
+        }
+
+
+
+
+        //System.out.println("HEY THIS IS THE LOCATION:" + corners.getFirst().getFirst() + " " + corners.getFirst().getSecond() + " " + corners.getSecond().getFirst() + " " + corners.getSecond().getSecond());
+        //Minecraft.getMinecraft().player.playSound(SoundEvents.ENTITY_FIREWORK_LAUNCH, 1.0F, 1.0F);
+
         this.isBuilt = true;
     }
     //------------------------- Starting Required Tools/Item handling -------------------------//
+    private ItemStack genFireworkItemStack() {
 
+
+        Random rand = new Random();
+
+        final ItemStack fireworkItem = new ItemStack(new ItemFirework());
+        final NBTTagCompound itemStackCompound = fireworkItem.getTagCompound() != null ? fireworkItem.getTagCompound() : new NBTTagCompound();
+        final NBTTagCompound fireworksCompound = new NBTTagCompound();
+        final NBTTagList explosionsTagList = new NBTTagList();
+
+        final NBTTagCompound explosionTag = new NBTTagCompound();
+
+        explosionTag.setBoolean("Flicker", rand.nextInt(1) == 0);
+        explosionTag.setBoolean("Trail", rand.nextInt(1) == 0);
+        explosionTag.setInteger("Type", rand.nextInt(3) + 1);
+
+        List<Integer> list = Lists.newArrayList();
+
+        final int amountOfColors = rand.nextInt(2) + 1;
+
+        for (int i = 0; i<amountOfColors; i++) {
+
+            list.add(ItemDye.DYE_COLORS[rand.nextInt(15)]);
+
+        }
+
+        int[] aint1 = new int[list.size()];
+
+        for (int b = 0; b < aint1.length; b++) {
+            aint1[b] = list.get(b);
+        }
+
+        explosionTag.setIntArray("Colors", aint1);
+        explosionsTagList.appendTag(explosionTag);
+
+        fireworksCompound.setTag("Explosions", explosionsTagList);
+        itemStackCompound.setTag("Fireworks", fireworksCompound);
+
+        fireworkItem.setTagCompound(itemStackCompound);
+        return fireworkItem;
+
+    }
     /**
      * Check if the worker requires a certain amount of that item and the alreadykept list contains it.
      * Always leave one stack behind if the worker requires a certain amount of it. Just to be sure.
