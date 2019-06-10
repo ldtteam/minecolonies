@@ -113,6 +113,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      */
     private String customName = "";
 
+    // what firework index we are on
+
+    private int fireWorkCounter = 0;
+
     /**
      * Constructor for a AbstractBuilding.
      *
@@ -561,7 +565,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * @param newLevel The new level.
      */
 
-    private int fireWorkCounter = 0;
+
 
     public void onUpgradeComplete(final int newLevel)
     {
@@ -596,7 +600,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         fireWorkCounter++;
 
         if (fireWorkCounter % 2 == 1) {
-            AxisAlignedBB realaabb = getTargetableArea(colony.getWorld());
+            final AxisAlignedBB realaabb = getTargetableArea(colony.getWorld());
             final EntityFireworkRocket firework = new EntityFireworkRocket(colony.getWorld(), realaabb.maxX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack());
 
             colony.getWorld().spawnEntity(firework);
