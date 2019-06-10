@@ -90,7 +90,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     {
         if (worker.getCitizenData() != null)
         {
-            final int reload = KNIGHT_ATTACK_DELAY_BASE - worker.getCitizenData().getLevel();
+            final int reload = KNIGHT_ATTACK_DELAY_BASE - (worker.getCitizenData().getLevel() / 2);
             return reload > PHYSICAL_ATTACK_DELAY_MIN ? reload : PHYSICAL_ATTACK_DELAY_MIN;
         }
         return KNIGHT_ATTACK_DELAY_BASE;
@@ -145,7 +145,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
             return state;
         }
 
-        if (worker.getDistanceSq(target.posX, target.getEntityBoundingBox().minY, target.posZ) > getAttackRange() * getAttackRange())
+        if (!isInAttackDistance(target.getPosition()))
         {
             return DECIDE;
         }

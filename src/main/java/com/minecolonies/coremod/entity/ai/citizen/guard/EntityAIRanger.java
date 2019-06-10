@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
@@ -17,6 +18,7 @@ import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +67,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     /**
      * Physical Attack delay in ticks.
      */
-    public static final int RANGED_ATTACK_DELAY_BASE = 70;
+    public static final int RANGED_ATTACK_DELAY_BASE = 30;
 
     /**
      * The path for fleeing
@@ -109,7 +111,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     @Override
     protected int getAttackRange()
     {
-        return getRealAttackRange() + 10;
+        return getRealAttackRange();
     }
 
     /**
@@ -130,6 +132,12 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
         {
             attackDist += (worker.getCitizenData().getLevel() / 50.0f) * 15;
         }
+
+        if (target != null)
+        {
+            attackDist += worker.posY - target.posY;
+        }
+
         return attackDist > MAX_DISTANCE_FOR_RANGED_ATTACK ? MAX_DISTANCE_FOR_RANGED_ATTACK : attackDist;
     }
 
@@ -185,9 +193,9 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
             return GUARD_ATTACK_RANGED;
         }
 
-        final double sqDistanceToEntity = worker.getDistanceSq(target.posX, target.getEntityBoundingBox().minY, target.posZ);
+        final double sqDistanceToEntity = BlockPosUtil.getMaxDistance2D(worker.getPosition(), target.getPosition());
         final boolean canSee = worker.getEntitySenses().canSee(target);
-        final double sqAttackRange = getRealAttackRange() * getRealAttackRange();
+        final double sqAttackRange = getRealAttackRange();
 
         if (canSee)
         {
@@ -385,7 +393,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     {
         if (worker.getCitizenData() != null)
         {
-            final int attackDelay = RANGED_ATTACK_DELAY_BASE - worker.getCitizenData().getLevel();
+            final int attackDelay = RANGED_ATTACK_DELAY_BASE - (worker.getCitizenData().getLevel() / 2);
             return attackDelay < PHYSICAL_ATTACK_DELAY_MIN * 2 ? PHYSICAL_ATTACK_DELAY_MIN * 2 : attackDelay;
         }
         return RANGED_ATTACK_DELAY_BASE;

@@ -137,8 +137,17 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private IAIState guard()
     {
+        if (checkForTarget())
+        {
+            if (hasTool())
+            {
+                return getAttackState();
+            }
+            return START_WORKING;
+        }
+
         worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), GUARD_POS_RANGE);
-        return DECIDE;
+        return GUARD_GUARD;
     }
 
     /**
@@ -147,13 +156,22 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private IAIState follow()
     {
+        if (checkForTarget())
+        {
+            if (hasTool())
+            {
+                return getAttackState();
+            }
+            return START_WORKING;
+        }
+
         worker.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER));
         this.world.getScoreboard().addPlayerToTeam(worker.getName(), TEAM_COLONY_NAME + worker.getCitizenColonyHandler().getColonyId());
 
         if (BlockPosUtil.getDistance2D(worker.getPosition(), buildingGuards.getPlayerToFollow()) > MAX_FOLLOW_DERIVATION)
         {
             TeleportHelper.teleportCitizen(worker, worker.world, buildingGuards.getPlayerToFollow());
-            return DECIDE;
+            return GUARD_FOLLOW;
         }
 
         if (buildingGuards.isTightGrouping())
@@ -172,7 +190,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 worker.isWorkerAtSiteWithMove(buildingGuards.getPlayerToFollow(), GUARD_FOLLOW_LOSE_RANGE);
             }
         }
-        return DECIDE;
+        return GUARD_FOLLOW;
     }
 
     /**
@@ -181,6 +199,15 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private IAIState patrol()
     {
+        if (checkForTarget())
+        {
+            if (hasTool())
+            {
+                return getAttackState();
+            }
+            return START_WORKING;
+        }
+
         if (currentPatrolPoint == null)
         {
             currentPatrolPoint = buildingGuards.getNextPatrolTarget(null);
@@ -190,7 +217,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         {
             currentPatrolPoint = buildingGuards.getNextPatrolTarget(currentPatrolPoint);
         }
-        return DECIDE;
+        return GUARD_PATROL;
     }
 
     @Override
@@ -198,13 +225,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     {
         return AbstractBuildingGuards.class;
     }
-
-    /**
-     * Method which calculates the possible attack range in Blocks.
-     *
-     * @return the calculated range.
-     */
-    protected abstract int getAttackRange();
 
     @Override
     protected int getActionsDoneUntilDumping()
@@ -215,11 +235,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     }
 
     /**
-     * Decide what we should do next! Ticked once every 20 Ticks
-     *
-     * @return the next IAIState.
+     * Check if the worker has the required tool to fight.
+     * @return true if so.
      */
-    protected IAIState decide()
+    public boolean hasTool()
     {
         setDelay(Constants.TICKS_SECOND);
         for (final ToolType toolType : toolsNeeded)
@@ -227,24 +246,19 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             if (!InventoryUtils.hasItemHandlerToolWithLevel(new InvWrapper(getInventory()), toolType, 0, buildingGuards.getMaxToolLevel()))
             {
                 setDelay(STANDARD_DELAY);
-                return START_WORKING;
+                return false;
             }
         }
+        return true;
+    }
 
-        checkForTarget();
-        if (target != null)
-        {
-            if (worker.getDistanceSq(target.posX, target.getEntityBoundingBox().minY, target.posZ) > getAttackRange() * getAttackRange())
-            {
-                worker.isWorkerAtSiteWithMove(target.getPosition(), getAttackRange());
-                setDelay(STANDARD_DELAY);
-                return DECIDE;
-            }
-            // No delay(1 tick) before activating Combat logic
-            setDelay(0);
-            return getAttackState();
-        }
-
+    /**
+     * Decide what we should do next! Ticked once every 20 Ticks
+     *
+     * @return the next IAIState.
+     */
+    protected IAIState decide()
+    {
         setDelay(STANDARD_DELAY);
         switch (buildingGuards.getTask())
         {
@@ -265,7 +279,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     /**
      * Check if the current target is null or death and assign a new one if necessary.
      */
-    private void checkForTarget()
+    private boolean checkForTarget()
     {
         if (target != null && target.isDead)
         {
@@ -275,6 +289,20 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         }
 
         target = getTarget();
+        if (target != null)
+        {
+            if (!isInAttackDistance(target.getPosition()))
+            {
+                worker.getNavigator().tryMoveToEntityLiving(target, getCombatMovementSpeed());
+                //no delay, to make sure he can re-orientate on the way to the target
+                setDelay(0);
+                return false;
+            }
+            // No delay(1 tick) before activating Combat logic
+            setDelay(0);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -297,7 +325,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             return GUARD_REGEN;
         }
 
-        if (worker.getRevengeTarget() != null && !worker.getRevengeTarget().isDead && isInAttackDistance(worker.getRevengeTarget().getPosition()))
+        if (worker.getRevengeTarget() != null && !worker.getRevengeTarget().isDead
+              && (isInAttackDistance(worker.getRevengeTarget().getPosition()) || isWithinPersecutionDistance(worker.getRevengeTarget().getPosition())))
         {
             target = worker.getRevengeTarget();
         }
@@ -331,7 +360,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     {
         reduceAttackDelay(1);
 
-        final Colony colony = worker.getCitizenColonyHandler().getColony();
         if (worker.getLastAttackedEntity() != null && !worker.getLastAttackedEntity().isDead)
         {
             if (!isWithinPersecutionDistance(worker.getLastAttackedEntity().getPosition()))
@@ -343,7 +371,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         if (target != null)
         {
-            if (!worker.canEntityBeSeen(target) && lastSeen < STOP_PERSECUTION_AFTER)
+            if ((!worker.canEntityBeSeen(target) && lastSeen < STOP_PERSECUTION_AFTER) || !isWithinPersecutionDistance(target.getPosition()))
             {
                 target = null;
             }
@@ -354,6 +382,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             }
         }
 
+        final Colony colony = worker.getCitizenColonyHandler().getColony();
         if (colony != null)
         {
             if (!colony.getRaiderManager().getHorde((WorldServer) worker.world).isEmpty() || colony.isColonyUnderAttack())
@@ -362,7 +391,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 {
                     if (citizen.getCitizenEntity().isPresent())
                     {
-                        final EntityLivingBase entity = citizen.getCitizenEntity().get().getRevengeTarget();
+                        final EntityLivingBase entity = citizen.getCitizenEntity().get().getLastAttackedEntity();
                         if (entity instanceof AbstractEntityMinecoloniesMob && worker.canEntityBeSeen(entity))
                         {
                             return entity;
@@ -423,13 +452,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Check if a position is within regular attack distance.
-     * TODO:Fix so it actually says if sth is within attack Dist.
      * @param position the position to check.
      * @return true if so.
      */
     public boolean isInAttackDistance(final BlockPos position)
     {
-        return BlockPosUtil.getDistance2D(worker.getPosition(), position) > getAttackRange() && isWithinPersecutionDistance(position);
+        return BlockPosUtil.getMaxDistance2D(worker.getPosition(), position) <= getAttackRange();
     }
 
     /**
@@ -452,7 +480,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private boolean isWithinPersecutionDistance(final BlockPos entityPos)
     {
-        return BlockPosUtil.getDistance2D(getTaskReferencePoint(), entityPos) <= getPersecutionDistance() + getAttackRange();
+        return BlockPosUtil.getMaxDistance2D(getTaskReferencePoint(), entityPos) <= getPersecutionDistance() + getAttackRange();
     }
 
     /**
@@ -506,17 +534,24 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      *
      * @return the {@link AxisAlignedBB}
      */
-    protected AxisAlignedBB getSearchArea()
+    private AxisAlignedBB getSearchArea()
     {
         final AbstractBuildingGuards building = getOwnBuilding();
 
         final double x1 = worker.posX + (building.getBonusVision() + DEFAULT_VISION);
         final double x2 = worker.posX - (building.getBonusVision() + DEFAULT_VISION);
-        final double y1 = worker.posY + Y_VISION;
-        final double y2 = worker.posY - Y_VISION;
+        final double y1 = worker.posY + (Y_VISION / 2);
+        final double y2 = worker.posY - (Y_VISION * 2);
         final double z1 = worker.posZ + (building.getBonusVision() + DEFAULT_VISION);
         final double z2 = worker.posZ - (building.getBonusVision() + DEFAULT_VISION);
 
         return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
     }
+
+    /**
+     * Method which calculates the possible attack range in Blocks.
+     *
+     * @return the calculated range.
+     */
+    protected abstract int getAttackRange();
 }

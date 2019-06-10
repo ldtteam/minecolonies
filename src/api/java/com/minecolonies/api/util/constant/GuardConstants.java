@@ -52,7 +52,7 @@ public final class GuardConstants
     /**
      * Physical Attack delay in ticks.
      */
-    public static final int PHYSICAL_ATTACK_DELAY_BASE = 60;
+    public static final int PHYSICAL_ATTACK_DELAY_BASE = 20;
 
     // -- Delays -- \\
 
@@ -110,7 +110,7 @@ public final class GuardConstants
     /**
      * This knight's max distance for attacking.
      */
-    public static final double MAX_DISTANCE_FOR_ATTACK = 3;
+    public static final double MAX_DISTANCE_FOR_ATTACK = 4;
 
     // -- Knight Guard Stuff -- \\
 
