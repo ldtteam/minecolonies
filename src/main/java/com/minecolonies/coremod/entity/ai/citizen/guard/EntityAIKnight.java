@@ -35,7 +35,6 @@ import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerSta
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 {
-
     /**
      * Creates the abstract part of the AI.
      * Always use this constructor!
@@ -236,5 +235,11 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
             return (int) ((BASE_PHYSICAL_DAMAGE + addDmg) * Configurations.gameplay.knightDamageMult);
         }
         return (int) (BASE_PHYSICAL_DAMAGE * Configurations.gameplay.knightDamageMult);
+    }
+
+    @Override
+    public void moveInAttackPosition()
+    {
+        worker.getNavigator().tryMoveToEntityLiving(target, getCombatMovementSpeed());
     }
 }

@@ -17,6 +17,7 @@ import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -224,7 +225,10 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
         // Move inside attackrange
         else if (sqDistanceToEntity > sqAttackRange || !canSee)
         {
-            worker.getNavigator().tryMoveToEntityLiving(target, getCombatMovementSpeed());
+            if (worker.getNavigator().noPath())
+            {
+                moveInAttackPosition();
+            }
             worker.getMoveHelper().strafe(0, 0);
             movingToTarget = true;
             strafingTime = -1;
@@ -432,5 +436,11 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     private double getAimHeight()
     {
         return 3.0D;
+    }
+
+    @Override
+    public void moveInAttackPosition()
+    {
+        worker.getNavigator().tryMoveToBlockPos(worker.getPosition().offset(BlockPosUtil.getXZFacing(target.getPosition(), worker.getPosition()).getOpposite(), 4), getCombatMovementSpeed());
     }
 }

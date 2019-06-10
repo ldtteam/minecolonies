@@ -293,7 +293,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         {
             if (!isInAttackDistance(target.getPosition()))
             {
-                worker.getNavigator().tryMoveToEntityLiving(target, getCombatMovementSpeed());
+                if (worker.getNavigator().noPath())
+                {
+                    moveInAttackPosition();
+                }
                 //no delay, to make sure he can re-orientate on the way to the target
                 setDelay(0);
                 return false;
@@ -304,6 +307,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         }
         return false;
     }
+
+    /**
+     * Move the guard into a good attacking position.
+     */
+    public abstract void moveInAttackPosition();
 
     /**
      * Execute pre attack checks to check if worker can attack enemy.
