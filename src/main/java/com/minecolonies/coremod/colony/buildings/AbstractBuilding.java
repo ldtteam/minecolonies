@@ -638,8 +638,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         explosionTag.setBoolean("Trail", rand.nextInt(1) == 0);
         explosionTag.setInteger("Type", rand.nextInt(3) + 1);
 
-        List<Integer> list = Lists.newArrayList();
-
         final int numberOfColours = rand.nextInt(5) + 1;
         final int[] colors = new int[numberOfColours];
 
