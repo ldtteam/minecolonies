@@ -110,7 +110,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     /**
      * Custom variable for tracking how many fireworks waves have been sent, to avoid any conflicts/glitches with getBuildingLevel()
-     *
      */
     private int fireworkBuildingLevel = 0;
 
@@ -135,6 +134,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     /**
      * Getter for the custom name of a building.
+     *
      * @return the custom name.
      */
     @NotNull
@@ -270,7 +270,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     /**
      * Adds work orders to the {@link Colony#getWorkManager()}.
      *
-     * @param level Desired level.
+     * @param level   Desired level.
      * @param builder the assigned builder.
      */
     protected void requestWorkOrder(final int level, final BlockPos builder)
@@ -297,33 +297,33 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
               "entity.builder.messageBuildersTooFar");
             return;
         }
-        
-        if(getLocation().getY() + getHeight() >= 256)
+
+        if (getLocation().getY() + getHeight() >= 256)
         {
-        	LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
-        	  "entity.builder.messageBuildTooHigh");
+            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+              "entity.builder.messageBuildTooHigh");
             return;
         }
-        else if(getLocation().getY() <= 1)
+        else if (getLocation().getY() <= 1)
         {
-        	LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
-        	  "entity.builder.messageBuildTooLow");
+            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+              "entity.builder.messageBuildTooLow");
             return;
         }
 
         if (!builder.equals(BlockPos.ORIGIN))
         {
-             final AbstractBuilding building =  colony.getBuildingManager().getBuilding(builder);
-             if (building instanceof AbstractBuildingStructureBuilder && (building.getBuildingLevel() >= level || canBeBuiltByBuilder(level)))
-             {
-                 workOrderBuildBuilding.setClaimedBy(builder);
-             }
-             else
-             {
-                 LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
-                   "entity.builder.messageBuilderNecessary", Integer.toString(level));
-                 return;
-             }
+            final AbstractBuilding building = colony.getBuildingManager().getBuilding(builder);
+            if (building instanceof AbstractBuildingStructureBuilder && (building.getBuildingLevel() >= level || canBeBuiltByBuilder(level)))
+            {
+                workOrderBuildBuilding.setClaimedBy(builder);
+            }
+            else
+            {
+                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+                  "entity.builder.messageBuilderNecessary", Integer.toString(level));
+                return;
+            }
         }
 
         colony.getWorkManager().addWorkOrder(workOrderBuildBuilding, false);
@@ -408,11 +408,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     /**
      * Method to calculate the radius to be claimed by this building depending on the level.
+     *
      * @return the radius.
      */
     public int getClaimRadius()
     {
-        switch(getBuildingLevel())
+        switch (getBuildingLevel())
         {
             case 3:
                 return 1;
@@ -459,7 +460,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
         ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(getRequesterId()));
         ByteBufUtils.writeTag(buf, requestSystemCompound);
-
     }
 
     /**
@@ -474,6 +474,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     /**
      * Set the custom building name of the building.
+     *
      * @param name the name to set.
      */
     public void setCustomBuildingName(final String name)
@@ -484,6 +485,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     /**
      * Check if the building should be gathered by the delivery man.
+     *
      * @return true if so.
      */
     public boolean canBeGathered()
@@ -504,7 +506,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     /**
      * Requests an upgrade for the current building.
      *
-     * @param player the requesting player.
+     * @param player  the requesting player.
      * @param builder the assigned builder.
      */
     public void requestUpgrade(final EntityPlayer player, final BlockPos builder)
@@ -521,7 +523,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     /**
      * Requests a repair for the current building.
-     * @param builder
+     *
      * @param builder the assigned builder.
      */
     public void requestRepair(final BlockPos builder)
@@ -579,7 +581,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         colony.getProgressManager().progressBuildBuilding(this,
           colony.getBuildingManager().getBuildings().values().stream()
             .filter(building -> building instanceof AbstractBuildingWorker).mapToInt(AbstractSchematicProvider::getBuildingLevel).sum(),
-            colony.getBuildingManager().getBuildings().values().stream()
+          colony.getBuildingManager().getBuildings().values().stream()
             .filter(building -> building instanceof BuildingHome).mapToInt(AbstractSchematicProvider::getBuildingLevel).sum()
         );
         final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, newLevel);
@@ -594,7 +596,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         this.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
         this.isBuilt = true;
 
-        if (newLevel != fireworkBuildingLevel) {
+        if (newLevel != fireworkBuildingLevel)
+        {
             final AxisAlignedBB realaabb = getTargetableArea(colony.getWorld());
             final EntityFireworkRocket firework = new EntityFireworkRocket(colony.getWorld(), realaabb.maxX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(newLevel));
 
@@ -611,8 +614,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
             fireworkBuildingLevel++;
         }
-
-
     }
 
     /**
@@ -621,7 +622,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * @return ItemStack of random firework
      */
 
-    private ItemStack genFireworkItemStack(final int explosionAmount) {
+    private ItemStack genFireworkItemStack(final int explosionAmount)
+    {
 
 
         final Random rand = new Random();
@@ -630,7 +632,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         final NBTTagCompound itemStackCompound = fireworkItem.getTagCompound() != null ? fireworkItem.getTagCompound() : new NBTTagCompound();
         final NBTTagCompound fireworksCompound = new NBTTagCompound();
         NBTTagList explosionsTagList = new NBTTagList();
-       for (int i = 0; i < explosionAmount; i++) {
+        for (int i = 0; i < explosionAmount; i++)
+        {
             NBTTagCompound explosionTag = new NBTTagCompound();
 
             explosionTag.setBoolean("Flicker", rand.nextInt(2) == 0);
@@ -647,7 +650,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
             explosionTag.setIntArray("Colors", colors);
             explosionsTagList.appendTag(explosionTag);
-
         }
 
         fireworksCompound.setTag("Explosions", explosionsTagList);
@@ -655,9 +657,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         fireworkItem.setTagCompound(itemStackCompound);
         return fireworkItem;
-
     }
     //------------------------- Starting Required Tools/Item handling -------------------------//
+
     /**
      * Check if the worker requires a certain amount of that item and the alreadykept list contains it.
      * Always leave one stack behind if the worker requires a certain amount of it. Just to be sure.
@@ -863,9 +865,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     /**
      * Create a request for the building.
      *
-     * @param requested   the request to create.
-     * @param async       if async or not.
-     * @param <R>         the type of the request.
+     * @param requested the request to create.
+     * @param async     if async or not.
+     * @param <R>       the type of the request.
      * @return the Token of the request.
      */
     public <R extends IRequestable> IToken<?> createRequest(@NotNull final R requested, final boolean async)
