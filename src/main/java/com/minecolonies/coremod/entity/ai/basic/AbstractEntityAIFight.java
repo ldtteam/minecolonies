@@ -67,7 +67,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
     /**
      * The value of the speed which the guard will move.
      */
-    private static final double COMBAT_SPEED = 1;
+    private static final double COMBAT_SPEED = 1.5;
 
     /**
      * Creates the abstract part of the AI.
