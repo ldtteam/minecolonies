@@ -628,13 +628,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         final Random rand = new Random();
 
-        ItemStack fireworkItem = new ItemStack(new ItemFirework());
+        final ItemStack fireworkItem = new ItemStack(new ItemFirework());
         final NBTTagCompound itemStackCompound = fireworkItem.getTagCompound() != null ? fireworkItem.getTagCompound() : new NBTTagCompound();
         final NBTTagCompound fireworksCompound = new NBTTagCompound();
-        NBTTagList explosionsTagList = new NBTTagList();
+        final NBTTagList explosionsTagList = new NBTTagList();
         for (int i = 0; i < explosionAmount; i++)
         {
-            NBTTagCompound explosionTag = new NBTTagCompound();
+            final NBTTagCompound explosionTag = new NBTTagCompound();
 
             explosionTag.setBoolean("Flicker", rand.nextInt(2) == 0);
             explosionTag.setBoolean("Trail", rand.nextInt(2) == 0);
