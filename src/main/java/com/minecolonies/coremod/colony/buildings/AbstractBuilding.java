@@ -109,13 +109,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     private boolean isBuilt = false;
 
     /**
+     * Custom variable for tracking how many fireworks waves have been sent, to avoid any conflicts/glitches with getBuildingLevel()
+     *
+     */
+    private int fireworkBuildingLevel = 0;
+
+    /**
      * The custom name of the building, empty by default.
      */
     private String customName = "";
-
-    // what firework index we are on
-
-    private int fireWorkCounter = 0;
 
     /**
      * Constructor for a AbstractBuilding.
@@ -481,7 +483,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     /**
-     * Check if the building should be gathered by the dman.
+     * Check if the building should be gathered by the delivery man.
      * @return true if so.
      */
     public boolean canBeGathered()
@@ -566,7 +568,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      */
 
 
-
+    //THIS METHOD IS ALSO CALLED WHEN CLICKING THE UPGRADE BUTTON FOR SOME REASON, INSTEAD OF WHEN THE BUILDING IS COMPLETED
     public void onUpgradeComplete(final int newLevel)
     {
         if (Configurations.gameplay.enableDynamicColonySizes)
@@ -577,7 +579,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         colony.getProgressManager().progressBuildBuilding(this,
           colony.getBuildingManager().getBuildings().values().stream()
             .filter(building -> building instanceof AbstractBuildingWorker).mapToInt(AbstractSchematicProvider::getBuildingLevel).sum(),
-          colony.getBuildingManager().getBuildings().values().stream()
+            colony.getBuildingManager().getBuildings().values().stream()
             .filter(building -> building instanceof BuildingHome).mapToInt(AbstractSchematicProvider::getBuildingLevel).sum()
         );
         final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, newLevel);
@@ -590,68 +592,63 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
           workOrder.isMirrored());
         this.setHeight(wrapper.getHeight());
         this.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
+        this.isBuilt = true;
 
-        // firework spawning possibly maybe
-
-        //ItemStack items = new ItemStack(f);
-
-
-
-        fireWorkCounter++;
-
-        if (fireWorkCounter % 2 == 1) {
+        if (newLevel != fireworkBuildingLevel) {
             final AxisAlignedBB realaabb = getTargetableArea(colony.getWorld());
-            final EntityFireworkRocket firework = new EntityFireworkRocket(colony.getWorld(), realaabb.maxX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack());
+            final EntityFireworkRocket firework = new EntityFireworkRocket(colony.getWorld(), realaabb.maxX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(newLevel));
 
             colony.getWorld().spawnEntity(firework);
-            final EntityFireworkRocket fireworka = new EntityFireworkRocket(colony.getWorld(), realaabb.maxX, realaabb.maxY, realaabb.minZ, genFireworkItemStack());
+            final EntityFireworkRocket fireworka = new EntityFireworkRocket(colony.getWorld(), realaabb.maxX, realaabb.maxY, realaabb.minZ, genFireworkItemStack(newLevel));
 
             colony.getWorld().spawnEntity(fireworka);
-            final EntityFireworkRocket fireworkb = new EntityFireworkRocket(colony.getWorld(), realaabb.minX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack());
+            final EntityFireworkRocket fireworkb = new EntityFireworkRocket(colony.getWorld(), realaabb.minX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(newLevel));
 
             colony.getWorld().spawnEntity(fireworkb);
-            final EntityFireworkRocket fireworkc = new EntityFireworkRocket(colony.getWorld(), realaabb.minX, realaabb.maxY, realaabb.minZ, genFireworkItemStack());
+            final EntityFireworkRocket fireworkc = new EntityFireworkRocket(colony.getWorld(), realaabb.minX, realaabb.maxY, realaabb.minZ, genFireworkItemStack(newLevel));
 
             colony.getWorld().spawnEntity(fireworkc);
-            System.out.println("POSITIONS: " + fireworkc.posX + ", " + fireworkc.posY + ", " + fireworkc.posZ);
 
+            fireworkBuildingLevel++;
         }
 
 
-
-
-        //System.out.println("HEY THIS IS THE LOCATION:" + corners.getFirst().getFirst() + " " + corners.getFirst().getSecond() + " " + corners.getSecond().getFirst() + " " + corners.getSecond().getSecond());
-        //Minecraft.getMinecraft().player.playSound(SoundEvents.ENTITY_FIREWORK_LAUNCH, 1.0F, 1.0F);
-
-        this.isBuilt = true;
     }
-    //------------------------- Starting Required Tools/Item handling -------------------------//
-    private ItemStack genFireworkItemStack() {
+
+    /**
+     * Generates random firework with various properties.
+     *
+     * @return ItemStack of random firework
+     */
+
+    private ItemStack genFireworkItemStack(final int explosionAmount) {
 
 
         final Random rand = new Random();
 
-        final ItemStack fireworkItem = new ItemStack(new ItemFirework());
+        ItemStack fireworkItem = new ItemStack(new ItemFirework());
         final NBTTagCompound itemStackCompound = fireworkItem.getTagCompound() != null ? fireworkItem.getTagCompound() : new NBTTagCompound();
         final NBTTagCompound fireworksCompound = new NBTTagCompound();
-        final NBTTagList explosionsTagList = new NBTTagList();
+        NBTTagList explosionsTagList = new NBTTagList();
+       for (int i = 0; i < explosionAmount; i++) {
+            NBTTagCompound explosionTag = new NBTTagCompound();
 
-        final NBTTagCompound explosionTag = new NBTTagCompound();
+            explosionTag.setBoolean("Flicker", rand.nextInt(2) == 0);
+            explosionTag.setBoolean("Trail", rand.nextInt(2) == 0);
+            explosionTag.setInteger("Type", rand.nextInt(5));
 
-        explosionTag.setBoolean("Flicker", rand.nextInt(1) == 0);
-        explosionTag.setBoolean("Trail", rand.nextInt(1) == 0);
-        explosionTag.setInteger("Type", rand.nextInt(3) + 1);
+            final int numberOfColours = rand.nextInt(3) + 1;
+            final int[] colors = new int[numberOfColours];
 
-        final int numberOfColours = rand.nextInt(5) + 1;
-        final int[] colors = new int[numberOfColours];
+            for (int ia = 0; ia < numberOfColours; ia++)
+            {
+                colors[ia] = ItemDye.DYE_COLORS[rand.nextInt(15)];
+            }
 
-        for (int i = 0; i < numberOfColours; i++)
-        {
-            colors[i] = ItemDye.DYE_COLORS[rand.nextInt(15)];
+            explosionTag.setIntArray("Colors", colors);
+            explosionsTagList.appendTag(explosionTag);
+
         }
-
-        explosionTag.setIntArray("Colors", colors);
-        explosionsTagList.appendTag(explosionTag);
 
         fireworksCompound.setTag("Explosions", explosionsTagList);
         itemStackCompound.setTag("Fireworks", fireworksCompound);
@@ -660,6 +657,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         return fireworkItem;
 
     }
+    //------------------------- Starting Required Tools/Item handling -------------------------//
     /**
      * Check if the worker requires a certain amount of that item and the alreadykept list contains it.
      * Always leave one stack behind if the worker requires a certain amount of it. Just to be sure.
