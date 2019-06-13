@@ -107,7 +107,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * If the building has been built already.
      */
     private boolean isBuilt = false;
-    
+
     /**
      * The custom name of the building, empty by default.
      */
@@ -563,9 +563,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      *
      * @param newLevel The new level.
      */
-
-
-    //THIS METHOD IS ALSO CALLED WHEN CLICKING THE UPGRADE BUTTON FOR SOME REASON, INSTEAD OF WHEN THE BUILDING IS COMPLETED
     public void onUpgradeComplete(final int newLevel)
     {
         if (Configurations.gameplay.enableDynamicColonySizes)
@@ -617,10 +614,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     private ItemStack genFireworkItemStack(final int explosionAmount)
     {
-
-
         final Random rand = new Random();
-
         final ItemStack fireworkItem = new ItemStack(new ItemFirework());
         final NBTTagCompound itemStackCompound = fireworkItem.getTagCompound() != null ? fireworkItem.getTagCompound() : new NBTTagCompound();
         final NBTTagCompound fireworksCompound = new NBTTagCompound();
@@ -644,10 +638,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             explosionTag.setIntArray("Colors", colors);
             explosionsTagList.appendTag(explosionTag);
         }
-
         fireworksCompound.setTag("Explosions", explosionsTagList);
         itemStackCompound.setTag("Fireworks", fireworksCompound);
-
         fireworkItem.setTagCompound(itemStackCompound);
         return fireworkItem;
     }
