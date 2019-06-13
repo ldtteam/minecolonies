@@ -107,12 +107,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * If the building has been built already.
      */
     private boolean isBuilt = false;
-
-    /**
-     * Custom variable for tracking how many fireworks waves have been sent, to avoid any conflicts/glitches with getBuildingLevel()
-     */
-    private int fireworkBuildingLevel = 0;
-
+    
     /**
      * The custom name of the building, empty by default.
      */
@@ -596,7 +591,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         this.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
         this.isBuilt = true;
 
-        if (newLevel != fireworkBuildingLevel)
+        if (newLevel > getBuildingLevel())
         {
             final AxisAlignedBB realaabb = getTargetableArea(colony.getWorld());
             final EntityFireworkRocket firework = new EntityFireworkRocket(colony.getWorld(), realaabb.maxX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(newLevel));
@@ -611,8 +606,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             final EntityFireworkRocket fireworkc = new EntityFireworkRocket(colony.getWorld(), realaabb.minX, realaabb.maxY, realaabb.minZ, genFireworkItemStack(newLevel));
 
             colony.getWorld().spawnEntity(fireworkc);
-
-            fireworkBuildingLevel++;
         }
     }
 
