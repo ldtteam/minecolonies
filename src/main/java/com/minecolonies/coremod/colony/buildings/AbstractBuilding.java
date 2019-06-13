@@ -611,7 +611,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      *
      * @return ItemStack of random firework
      */
-
     private ItemStack genFireworkItemStack(final int explosionAmount)
     {
         final Random rand = new Random();
@@ -644,7 +643,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         return fireworkItem;
     }
     //------------------------- Starting Required Tools/Item handling -------------------------//
-
     /**
      * Check if the worker requires a certain amount of that item and the alreadykept list contains it.
      * Always leave one stack behind if the worker requires a certain amount of it. Just to be sure.
@@ -662,7 +660,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             {
                 continue;
             }
-
             if (entry.getKey().test(stack))
             {
                 final ItemStorage kept = ItemStorage.getItemStackOfListMatchingPredicate(localAlreadyKept, entry.getKey());
@@ -674,7 +671,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                     {
                         return stack.getCount();
                     }
-
                     rest = kept.getAmount() + stack.getCount() - toKeep;
 
                     localAlreadyKept.remove(kept);
