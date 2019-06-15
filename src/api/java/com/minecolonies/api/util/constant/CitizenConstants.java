@@ -119,47 +119,51 @@ public final class CitizenConstants
     /**
      * This times the citizen id is the personal offset of the citizen.
      */
-    public static final int    OFFSET_TICK_MULTIPLIER     = 7;
+    public static final int    OFFSET_TICK_MULTIPLIER   = 7;
     /**
      * Range required for the citizen to be home.
      */
-    public static final double RANGE_TO_BE_HOME           = 16;
+    public static final double RANGE_TO_BE_HOME         = 16;
     /**
      * If the entitiy is stuck for 2 minutes do something.
      */
-    public static final int    MAX_STUCK_TIME             = 120;
+    public static final int    MAX_STUCK_TIME           = 120;
     /**
      * The max amount of lines the latest log allows.
      */
-    public static final int    MAX_LINES_OF_LATEST_LOG    = 4;
+    public static final int    MAX_LINES_OF_LATEST_LOG  = 4;
     /**
      * Distance from mobs the entity should hold.
      */
-    public static final double DISTANCE_OF_ENTITY_AVOID   = 8.0D;
+    public static final double DISTANCE_OF_ENTITY_AVOID = 5.0D;
     /**
      * Initital speed while running away from entities.
      */
-    public static final double INITIAL_RUN_SPEED_AVOID    = 1.6D;
+    public static final double INITIAL_RUN_SPEED_AVOID  = 1.1D;
     /**
      * Later run speed while running away from entities.
      */
-    public static final double LATER_RUN_SPEED_AVOID      = 0.6D;
+    public static final double LATER_RUN_SPEED_AVOID    = 0.8D;
+    /**
+     * The max range a citizen can call a guard to help-
+     */
+    public static final int    MAX_GUARD_CALL_RANGE     = 5000;
     /**
      * Happiness penalty for citizen death.
      */
-    public static final double CITIZEN_DEATH_PENALTY      = 0.2;
+    public static final double CITIZEN_DEATH_PENALTY    = 0.2;
     /**
      * Happiness penalty for citizen kill.
      */
-    public static final double CITIZEN_KILL_PENALTY       = 9;
+    public static final double CITIZEN_KILL_PENALTY     = 9;
     /**
      * Big multiplier in extreme saturation situations.
      */
-    public static final double BIG_SATURATION_FACTOR      = 0.05;
+    public static final double BIG_SATURATION_FACTOR    = 0.05;
     /**
      * Small multiplier in average saturation situation.s
      */
-    public static final double LOW_SATURATION_FACTOR      = 0.01;
+    public static final double LOW_SATURATION_FACTOR    = 0.01;
     /**
      * Decrease by this * buildingLevel each new night.
      */

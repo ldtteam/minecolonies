@@ -28,6 +28,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
+import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
@@ -136,7 +137,7 @@ public class EntityAIEatTask extends EntityAIBase
         }
 
         final CitizenData citizenData = citizen.getCitizenData();
-        if (citizenData == null || citizen.getCitizenData().getSaturation() >= CitizenConstants.HIGH_SATURATION || (!citizen.isOkayToEat()
+        if (citizenData == null || citizen.getCitizenData().getSaturation() >= HIGH_SATURATION || (!citizen.isOkayToEat()
                                                                                                                       && citizen.getCitizenData().getSaturation() > 0))
         {
             return false;
@@ -149,7 +150,7 @@ public class EntityAIEatTask extends EntityAIBase
                      || citizenData.getJob() == null;
         }
 
-        if (citizenData.getJob() instanceof AbstractJobGuard && checkForFood(citizenData) == EAT && citizen.isOkayToEat())
+        if (citizenData.getSaturation() <= HIGH_SATURATION && citizenData.getJob() instanceof AbstractJobGuard && checkForFood(citizenData) == EAT && citizen.isOkayToEat())
         {
             return true;
         }
@@ -461,7 +462,7 @@ public class EntityAIEatTask extends EntityAIBase
         if (slot == -1)
         {
             citizenData.getCitizenHappinessHandler().setFoodModifier(false);
-            if ((citizenData.getSaturation() < CitizenConstants.LOW_SATURATION || citizen.isIdlingAtJob()) && citizenData.getSaturation() < CitizenConstants.HIGH_SATURATION)
+            if ((citizenData.getSaturation() < CitizenConstants.LOW_SATURATION || citizen.isIdlingAtJob()) && citizenData.getSaturation() < HIGH_SATURATION)
             {
                 return GO_TO_HUT;
             }

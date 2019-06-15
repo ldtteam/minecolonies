@@ -14,6 +14,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.coremod.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.util.TeleportHelper;
@@ -26,6 +27,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
@@ -86,6 +88,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     private BlockPos currentPatrolPoint = null;
 
     /**
+     * The citizen this guard is helping out.
+     */
+    private WeakReference<EntityCitizen> helpCitizen = new WeakReference<>(null);
+
+    /**
      * The guard building assigned to this job.
      */
     protected final AbstractBuildingGuards buildingGuards;
@@ -104,7 +111,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
           new AITarget(GUARD_PATROL, this::patrol),
           new AITarget(GUARD_FOLLOW, this::follow),
           new AITarget(GUARD_GUARD, this::guard),
-          new AITarget(GUARD_REGEN, this::regen)
+          new AITarget(GUARD_REGEN, this::regen),
+          new AITarget(HELP_CITIZEN, this::helping, 20)
 
         );
         buildingGuards = getOwnBuilding();
@@ -250,6 +258,56 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             }
         }
         return true;
+    }
+
+    /**
+     * Assigning the guard to help a citizen.
+     *
+     * @param citizen  the citizen to help.
+     * @param attacker the citizens attacker.
+     */
+    public void helpCitizen(final EntityCitizen citizen, final EntityLivingBase attacker)
+    {
+        if (canHelp())
+        {
+            registerTarget(new AIOneTimeEventTarget(HELP_CITIZEN));
+            target = attacker;
+            helpCitizen = new WeakReference<>(citizen);
+        }
+    }
+
+    /**
+     * Check if we can help a citizen
+     *
+     * @return true if not fighting/helping already
+     */
+    public boolean canHelp()
+    {
+        return (target == null || target.isDead) && getState() != HELP_CITIZEN;
+    }
+
+    /**
+     * Helping out a citizen, moving into range and setting attack target.
+     */
+    private IAIState helping()
+    {
+        if (helpCitizen.get() == null || target == null || target.isDead || !helpCitizen.get().isFleeing())
+        {
+            return DECIDE;
+        }
+
+        currentPatrolPoint = null;
+        // Check if we're ready to attack the target
+        if (worker.getEntitySenses().canSee(target) && isWithinPersecutionDistance(target.getPosition()))
+        {
+            target.setRevengeTarget(worker);
+            return getAttackState();
+        }
+
+        // Move towards the target
+        worker.getNavigator().moveToEntityLiving(target, getCombatMovementSpeed());
+
+        return HELP_CITIZEN;
     }
 
     /**

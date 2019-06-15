@@ -10,10 +10,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
-import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.MathUtils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
@@ -24,6 +21,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.entity.citizenhandlers.*;
@@ -38,6 +36,7 @@ import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIOpenDoor;
 import net.minecraft.entity.ai.EntityAISwimming;
@@ -190,6 +189,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     private boolean isChild = false;
 
     /**
+     * Whether the citizen is currently running away
+     */
+    private boolean isFleeing = false;
+
+    /**
      * Citizen inv Wrapper.
      */
     private IItemHandler invWrapper;
@@ -237,12 +241,12 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         int priority = 0;
         this.tasks.addTask(priority, new EntityAISwimming(this));
-        this.tasks.addTask(++priority, new EntityAIEatTask(this));
-        this.tasks.addTask(++priority, new EntityAISleep(this));
         if (citizenJobHandler.getColonyJob() == null || !"com.minecolonies.coremod.job.Guard".equals(citizenJobHandler.getColonyJob().getName()))
         {
             this.tasks.addTask(++priority, new EntityAICitizenAvoidEntity(this, EntityMob.class, (float) DISTANCE_OF_ENTITY_AVOID, LATER_RUN_SPEED_AVOID, INITIAL_RUN_SPEED_AVOID));
         }
+        this.tasks.addTask(++priority, new EntityAIEatTask(this));
+        this.tasks.addTask(++priority, new EntityAISleep(this));
         this.tasks.addTask(++priority, new EntityAIGoHome(this));
         this.tasks.addTask(++priority, new EntityAIOpenDoor(this, true));
         this.tasks.addTask(priority, new EntityAIOpenFenceGate(this, true));
@@ -347,21 +351,95 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
         }
 
+        // Maxdmg cap so citizens need a certain amount of hits to die, so we get more gameplay value and less scaling issues.
+        float damageInc = damage > (getMaxHealth() * 0.2f) ? (getMaxHealth() * 0.2f) : damage;
+
+        if (!world.isRemote)
+        {
+            performMoveAway(sourceEntity);
+        }
         setLastAttackedEntity(damageSource.getTrueSource());
-        final boolean result = super.attackEntityFrom(damageSource, damage);
+        final boolean result = super.attackEntityFrom(damageSource, damageInc);
 
         if (damageSource.isMagicDamage() || damageSource.isFireDamage())
         {
             return result;
         }
 
-        citizenItemHandler.updateArmorDamage(damage);
+        citizenItemHandler.updateArmorDamage(damageInc);
         if (citizenData != null)
         {
             getCitizenData().getCitizenHappinessHandler().setDamageModifier();
         }
 
         return result;
+    }
+
+    /**
+     * Run away from an attacker
+     *
+     * @param attacker the attacking Entity
+     */
+    private void performMoveAway(@Nullable final Entity attacker)
+    {
+        this.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.avoiding"));
+
+        // Environmental damage
+        if (!(attacker instanceof EntityLivingBase))
+        {
+            moveAwayPath = this.getNavigator().moveAwayFromEntityLiving(this, 5, INITIAL_RUN_SPEED_AVOID);
+            return;
+        }
+
+        if ((getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard))
+        {
+            return;
+        }
+
+        // Makes the avoidance AI take over.
+        isFleeing = true;
+
+        moveAwayPath = this.getNavigator().moveAwayFromEntityLiving(attacker, 15, INITIAL_RUN_SPEED_AVOID);
+
+        if (Configurations.gameplay.citizenCallForHelp)
+        {
+            callForHelp(attacker);
+        }
+    }
+
+    /**
+     * Calls a guard for help against an attacker.
+     */
+    public void callForHelp(final Entity attacker)
+    {
+        if (!(attacker instanceof EntityLivingBase))
+        {
+            return;
+        }
+
+        long distance = MAX_GUARD_CALL_RANGE;
+        EntityCitizen guard = null;
+
+        for (final CitizenData entry : getCitizenColonyHandler().getColony().getCitizenManager().getCitizens())
+        {
+            if (entry.getJob() instanceof AbstractJobGuard)
+            {
+                if (entry.getCitizenEntity().isPresent())
+                {
+                    final long tdist = BlockPosUtil.getDistanceSquared(entry.getCitizenEntity().get().getPosition(), getPosition());
+                    if (tdist < distance && ((AbstractEntityAIGuard) entry.getJob().getWorkerAI()).canHelp())
+                    {
+                        distance = tdist;
+                        guard = entry.getCitizenEntity().get();
+                    }
+                }
+            }
+        }
+
+        if (guard != null)
+        {
+            ((AbstractEntityAIGuard) guard.getCitizenData().getJob().getWorkerAI()).helpCitizen(this, (EntityLivingBase) attacker);
+        }
     }
 
     @SuppressWarnings(UNCHECKED)
@@ -422,6 +500,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public void onDeath(@NotNull final DamageSource damageSource)
     {
+        isFleeing = false;
         double penalty = CITIZEN_DEATH_PENALTY;
         if (citizenColonyHandler.getColony() != null && getCitizenData() != null)
         {
@@ -1256,6 +1335,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     /**
      * Check if the citizen can be fed.
+     *
      * @return true if so.
      */
     public boolean shouldBeFed()
@@ -1291,6 +1371,24 @@ public class EntityCitizen extends AbstractEntityCitizen
     public boolean isMourning()
     {
         return mourning;
+    }
+
+    /**
+     * Get if the citizen is fleeing from an attacker.
+     */
+    public boolean isFleeing()
+    {
+        return isFleeing;
+    }
+
+    /**
+     * Sets the fleeing state
+     *
+     * @param fleeing true if fleeing.
+     */
+    public void setFleeingState(final boolean fleeing)
+    {
+        isFleeing = fleeing;
     }
 
     /**

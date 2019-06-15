@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.event;
 
 import com.ldtteam.structures.helpers.Settings;
+import com.ldtteam.structurize.items.ModItems;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.permissions.Action;
@@ -29,7 +30,6 @@ import com.minecolonies.coremod.network.messages.OpenSuggestionWindowMessage;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import com.minecolonies.coremod.network.messages.UpdateChunkRangeCapabilityMessage;
 import com.minecolonies.coremod.util.ChunkDataHelper;
-import com.ldtteam.structurize.items.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockSilverfish;
@@ -37,6 +37,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -44,7 +46,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -52,6 +57,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -228,6 +234,20 @@ public class EventHandler
                     colony.addVisitingPlayer(player);
                 }
             }
+        }
+    }
+
+    /**
+     * Add an AI task to attack Citizens to mobs
+     *
+     * @param event Spawnevent
+     */
+    @SubscribeEvent
+    public void onEvent(EntityJoinWorldEvent event)
+    {
+        if (Configurations.gameplay.mobAttackCitizens && (event.getEntity() instanceof EntityMob))
+        {
+            ((EntityMob) event.getEntity()).targetTasks.addTask(6, new EntityAINearestAttackableTarget((EntityMob) event.getEntity(), EntityCitizen.class, true));
         }
     }
 
