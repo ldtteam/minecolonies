@@ -266,7 +266,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      * @param citizen  the citizen to help.
      * @param attacker the citizens attacker.
      */
-    public void helpCitizen(final EntityCitizen citizen, final EntityLivingBase attacker)
+    public void startHelpCitizen(final EntityCitizen citizen, final EntityLivingBase attacker)
     {
         if (canHelp())
         {
@@ -291,7 +291,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private IAIState helping()
     {
-        if (helpCitizen.get() == null || target == null || target.isDead || !helpCitizen.get().isFleeing())
+        if (helpCitizen.get() == null || target == null || target.isDead || !helpCitizen.get().isCurrentlyFleeing())
         {
             return DECIDE;
         }

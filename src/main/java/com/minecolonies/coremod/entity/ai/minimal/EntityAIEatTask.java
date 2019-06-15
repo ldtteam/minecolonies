@@ -150,12 +150,7 @@ public class EntityAIEatTask extends EntityAIBase
                      || citizenData.getJob() == null;
         }
 
-        if (citizenData.getSaturation() <= HIGH_SATURATION && citizenData.getJob() instanceof AbstractJobGuard && checkForFood(citizenData) == EAT && citizen.isOkayToEat())
-        {
-            return true;
-        }
-
-        return false;
+        return (citizenData.getSaturation() <= HIGH_SATURATION && citizenData.getJob() instanceof AbstractJobGuard && checkForFood(citizenData) == EAT && citizen.isOkayToEat());
     }
 
     @Override

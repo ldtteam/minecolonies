@@ -30,6 +30,12 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
      * Defines how close the entity has to be to the mob to run away.
      */
     private static final double                  TOO_CLOSE_TO_MOB = 4D;
+
+    /**
+     * The amount of area checks before the citizen assumes it is safe. 40 are done in 10seconds.
+     */
+    private static final int CHECKS_BEFORE_SAFE = 40;
+
     /**
      * The entity we are attached to.
      */
@@ -54,14 +60,17 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     /**
      * This AI's state changer.
      */
-    private TickRateStateMachine stateMachine;
+    private final TickRateStateMachine stateMachine;
 
     /**
      * The blockpos from where the citizen started fleeing.
      */
     private BlockPos startingPos;
 
-    private Random rand = new Random();
+    /**
+     * Random which is used for running into a random direction.
+     */
+    private final Random rand = new Random();
 
     /**
      * Constructor.
@@ -87,8 +96,8 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
 
         stateMachine = new TickRateStateMachine(SAFE, this::onException);
 
-        stateMachine.addTransition(new AITarget(SAFE, this::isEntityClose, () -> RUNNING, 3));
-        stateMachine.addTransition(new AITarget(RUNNING, this::updateMoving, () -> SAFE, 3));
+        stateMachine.addTransition(new AITarget(SAFE, this::isEntityClose, () -> RUNNING, 5));
+        stateMachine.addTransition(new AITarget(RUNNING, this::updateMoving, () -> SAFE, 5));
     }
 
     /**
@@ -108,7 +117,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
      */
     public boolean isEntityClose()
     {
-        if (!citizen.isFleeing())
+        if (!citizen.isCurrentlyFleeing())
         {
             return false;
         }
@@ -116,7 +125,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
         fleeingCounter++;
 
         // reset after 10s no target
-        if (fleeingCounter == 70)
+        if (fleeingCounter == CHECKS_BEFORE_SAFE)
         {
             fleeingCounter = 0;
             citizen.setFleeingState(false);
@@ -215,7 +224,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        if (citizen.isFleeing())
+        if (citizen.isCurrentlyFleeing())
         {
             startingPos = citizen.getPosition();
             fleeingCounter = 0;
@@ -231,7 +240,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     public boolean shouldContinueExecuting()
     {
         stateMachine.tick();
-        return citizen.isFleeing();
+        return citizen.isCurrentlyFleeing();
     }
 
     /**

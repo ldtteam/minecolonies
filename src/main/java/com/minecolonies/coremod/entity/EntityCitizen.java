@@ -191,7 +191,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * Whether the citizen is currently running away
      */
-    private boolean isFleeing = false;
+    private boolean currentlyFleeing = false;
 
     /**
      * Citizen inv Wrapper.
@@ -352,7 +352,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
         // Maxdmg cap so citizens need a certain amount of hits to die, so we get more gameplay value and less scaling issues.
-        float damageInc = damage > (getMaxHealth() * 0.2f) ? (getMaxHealth() * 0.2f) : damage;
+        final float damageInc = damage > (getMaxHealth() * 0.2f) ? (getMaxHealth() * 0.2f) : damage;
 
         if (!world.isRemote)
         {
@@ -397,7 +397,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
 
         // Makes the avoidance AI take over.
-        isFleeing = true;
+        currentlyFleeing = true;
 
         moveAwayPath = this.getNavigator().moveAwayFromEntityLiving(attacker, 15, INITIAL_RUN_SPEED_AVOID);
 
@@ -422,23 +422,20 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         for (final CitizenData entry : getCitizenColonyHandler().getColony().getCitizenManager().getCitizens())
         {
-            if (entry.getJob() instanceof AbstractJobGuard)
+            if (entry.getJob() instanceof AbstractJobGuard && entry.getCitizenEntity().isPresent())
             {
-                if (entry.getCitizenEntity().isPresent())
+                final long tdist = BlockPosUtil.getDistanceSquared(entry.getCitizenEntity().get().getPosition(), getPosition());
+                if (tdist < distance && ((AbstractEntityAIGuard) entry.getJob().getWorkerAI()).canHelp())
                 {
-                    final long tdist = BlockPosUtil.getDistanceSquared(entry.getCitizenEntity().get().getPosition(), getPosition());
-                    if (tdist < distance && ((AbstractEntityAIGuard) entry.getJob().getWorkerAI()).canHelp())
-                    {
-                        distance = tdist;
-                        guard = entry.getCitizenEntity().get();
-                    }
+                    distance = tdist;
+                    guard = entry.getCitizenEntity().get();
                 }
             }
         }
 
         if (guard != null)
         {
-            ((AbstractEntityAIGuard) guard.getCitizenData().getJob().getWorkerAI()).helpCitizen(this, (EntityLivingBase) attacker);
+            ((AbstractEntityAIGuard) guard.getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (EntityLivingBase) attacker);
         }
     }
 
@@ -500,7 +497,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public void onDeath(@NotNull final DamageSource damageSource)
     {
-        isFleeing = false;
+        currentlyFleeing = false;
         double penalty = CITIZEN_DEATH_PENALTY;
         if (citizenColonyHandler.getColony() != null && getCitizenData() != null)
         {
@@ -1376,9 +1373,9 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * Get if the citizen is fleeing from an attacker.
      */
-    public boolean isFleeing()
+    public boolean isCurrentlyFleeing()
     {
-        return isFleeing;
+        return currentlyFleeing;
     }
 
     /**
@@ -1388,7 +1385,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     public void setFleeingState(final boolean fleeing)
     {
-        isFleeing = fleeing;
+        currentlyFleeing = fleeing;
     }
 
     /**

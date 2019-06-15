@@ -243,7 +243,7 @@ public class EventHandler
      * @param event Spawnevent
      */
     @SubscribeEvent
-    public void onEvent(EntityJoinWorldEvent event)
+    public void onEvent(final EntityJoinWorldEvent event)
     {
         if (Configurations.gameplay.mobAttackCitizens && (event.getEntity() instanceof EntityMob))
         {
