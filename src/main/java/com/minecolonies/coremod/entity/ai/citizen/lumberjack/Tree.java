@@ -437,12 +437,16 @@ public class Tree
      */
     private static boolean supposedToCut(final IBlockAccess world, final List<ItemStorage> treesToNotCut, final BlockPos leafPos)
     {
+        final ItemStack sap = ColonyManager.getCompatibilityManager().getSaplingForLeaf(world.getBlockState(leafPos));
+
+        if (sap == null)
+        {
+            return true;
+        }
+
         for (final ItemStorage stack : treesToNotCut)
         {
-            IBlockState bState = world.getBlockState(leafPos);
-
-            final ItemStack sap = ColonyManager.getCompatibilityManager().getSaplingForLeaf(bState);
-            if (sap != null && ItemStackUtils.compareItemStacksIgnoreStackSize(sap, stack.getItemStack()))
+            if (ItemStackUtils.compareItemStacksIgnoreStackSize(sap, stack.getItemStack()))
             {
                 return false;
             }
