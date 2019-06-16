@@ -122,7 +122,7 @@ public class BlockStateStorage
 
         if (exclude)
         {
-            for (IProperty prop : state.getPropertyKeys())
+            for (final IProperty prop : state.getPropertyKeys())
             {
                 // skip excluded properties upon comparing
                 if (getCompareProperties().contains(prop))
