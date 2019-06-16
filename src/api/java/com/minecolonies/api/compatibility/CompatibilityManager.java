@@ -267,7 +267,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public ItemStack getSaplingForLeaf(final IBlockState block)
     {
-        BlockStateStorage tempLeaf = new BlockStateStorage(block, leafCompareWithoutProperties, true);
+        final BlockStateStorage tempLeaf = new BlockStateStorage(block, leafCompareWithoutProperties, true);
 
         if (leavesToSaplingMap.containsKey(tempLeaf))
         {
@@ -348,7 +348,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public void connectLeafToSapling(final IBlockState leaf, final ItemStack stack)
     {
-        BlockStateStorage store = new BlockStateStorage(leaf, leafCompareWithoutProperties, true);
+        final BlockStateStorage store = new BlockStateStorage(leaf, leafCompareWithoutProperties, true);
         if (!leavesToSaplingMap.containsKey(store))
         {
             leavesToSaplingMap.put(store, new ItemStorage(stack, false, true));

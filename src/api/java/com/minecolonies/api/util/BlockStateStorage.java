@@ -52,7 +52,7 @@ public class BlockStateStorage
         if (!exclude)
         {
             // hashcode only for included properties
-            for (IProperty prop : compareProperties)
+            for (final IProperty prop : compareProperties)
             {
                 if (state.getPropertyKeys().contains(prop))
                 {
@@ -64,7 +64,7 @@ public class BlockStateStorage
         else
         {
             // hashcode for all except the excluded properties
-            for (IProperty prop : state.getPropertyKeys())
+            for (final IProperty prop : state.getPropertyKeys())
             {
                 if (!compareProperties.contains(prop))
                 {
