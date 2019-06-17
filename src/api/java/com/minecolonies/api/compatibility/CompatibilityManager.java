@@ -6,13 +6,16 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.BlockStateStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockOre;
 import net.minecraft.block.BlockRedstoneOre;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
@@ -33,9 +36,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
-import static com.minecolonies.api.util.constant.Constants.ORE_STRING;
-import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAP_LEAF;
 
 /**
@@ -46,13 +47,25 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * BiMap of saplings and leaves.
      */
-    private final BiMap<IBlockState, ItemStorage> leavesToSaplingMap = HashBiMap.create();
+    private final BiMap<BlockStateStorage, ItemStorage> leavesToSaplingMap = HashBiMap.create();
 
     /**
      * List of saplings.
      * Works on client and server-side.
      */
     private final List<ItemStorage> saplings = new ArrayList<>();
+
+    /**
+     * List of properties we're ignoring when comparing leaves.
+     */
+    private final List<IProperty> leafCompareWithoutProperties = ImmutableList.of(checkDecay, decayable, DYN_PROP_HYDRO);
+
+    /**
+     * Properties for leaves we're ignoring upon comparing.
+     */
+    public static final PropertyBool    checkDecay     = PropertyBool.create("check_decay");
+    public static final PropertyBool    decayable      = PropertyBool.create("decayable");
+    public static final PropertyInteger DYN_PROP_HYDRO = PropertyInteger.create("hydro", 1, 4);
 
     /**
      * List of all ore-like blocks.
@@ -165,7 +178,7 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private void discoverBlockList()
     {
-        allBlocks =  ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
+        allBlocks = ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
             final NonNullList<ItemStack> stacks = NonNullList.create();
             try
             {
@@ -182,6 +195,7 @@ public class CompatibilityManager implements ICompatibilityManager
 
     /**
      * Getter for the list.
+     *
      * @return the list of itemStacks.
      */
     @Override
@@ -245,7 +259,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (leavesToSaplingMap.inverse().containsKey(new ItemStorage(stack, false, true)))
         {
-            return leavesToSaplingMap.inverse().get(new ItemStorage(stack, false, true));
+            return leavesToSaplingMap.inverse().get(new ItemStorage(stack, false, true)).getState();
         }
         return null;
     }
@@ -253,8 +267,8 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public ItemStack getSaplingForLeaf(final IBlockState block)
     {
-        final ItemStack stack = new ItemStack(block.getBlock(), 1, block.getBlock().getMetaFromState(block));
-        final IBlockState tempLeaf = BlockLeaves.getBlockFromItem(stack.getItem()).getStateFromMeta(stack.getMetadata());
+        final BlockStateStorage tempLeaf = new BlockStateStorage(block, leafCompareWithoutProperties, true);
+
         if (leavesToSaplingMap.containsKey(tempLeaf))
         {
             return leavesToSaplingMap.get(tempLeaf).getItemStack();
@@ -305,6 +319,7 @@ public class CompatibilityManager implements ICompatibilityManager
 
     /**
      * Getter for all the crusher modes.
+     *
      * @return an immutable copy of the map.
      */
     @Override
@@ -317,7 +332,7 @@ public class CompatibilityManager implements ICompatibilityManager
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         @NotNull final NBTTagList saplingsLeavesTagList =
-          leavesToSaplingMap.entrySet().stream().map(entry -> writeLeafSaplingEntryToNBT(entry.getKey(), entry.getValue())).collect(NBTUtils.toNBTTagList());
+          leavesToSaplingMap.entrySet().stream().map(entry -> writeLeafSaplingEntryToNBT(entry.getKey().getState(), entry.getValue())).collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_SAP_LEAF, saplingsLeavesTagList);
     }
 
@@ -327,17 +342,16 @@ public class CompatibilityManager implements ICompatibilityManager
         NBTUtils.streamCompound(compound.getTagList(TAG_SAP_LEAF, Constants.NBT.TAG_COMPOUND))
           .map(CompatibilityManager::readLeafSaplingEntryFromNBT)
           .filter(key -> !leavesToSaplingMap.containsKey(key.getFirst()) && !leavesToSaplingMap.containsValue(key.getSecond()))
-          .forEach(key -> leavesToSaplingMap.put(key.getFirst(), key.getSecond()));
+          .forEach(key -> leavesToSaplingMap.put(new BlockStateStorage(key.getFirst(), leafCompareWithoutProperties, true), key.getSecond()));
     }
 
     @Override
     public void connectLeafToSapling(final IBlockState leaf, final ItemStack stack)
     {
-        final ItemStack tempStack = new ItemStack(leaf.getBlock(), 1, leaf.getBlock().getMetaFromState(leaf));
-        final IBlockState tempLeaf = BlockLeaves.getBlockFromItem(tempStack.getItem()).getStateFromMeta(tempStack.getMetadata());
-        if (!leavesToSaplingMap.containsKey(tempLeaf) && !leavesToSaplingMap.containsValue(new ItemStorage(stack, false, true)))
+        final BlockStateStorage store = new BlockStateStorage(leaf, leafCompareWithoutProperties, true);
+        if (!leavesToSaplingMap.containsKey(store))
         {
-            leavesToSaplingMap.put(tempLeaf, new ItemStorage(stack, false, true));
+            leavesToSaplingMap.put(store, new ItemStorage(stack, false, true));
         }
     }
 
@@ -462,7 +476,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 final String[] split = ore.split("!");
                 if (split.length < 2)
                 {
-                    Log.getLogger().warn("Wrong configured ore: " +  ore);
+                    Log.getLogger().warn("Wrong configured ore: " + ore);
                     continue;
                 }
 
@@ -515,7 +529,7 @@ public class CompatibilityManager implements ICompatibilityManager
 
             if (mesh.length != 2)
             {
-                Log.getLogger().warn("Couldn't parse the mesh: " +  string);
+                Log.getLogger().warn("Couldn't parse the mesh: " + string);
                 continue;
             }
 
@@ -651,7 +665,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 {
                     final ItemStorage storage = drops.getKey();
                     final double probability = drops.getValue();
-                    probabilitySum+=probability;
+                    probabilitySum += probability;
                     for (int i = 0; i < probability; i++)
                     {
                         theDrops.add(storage);
