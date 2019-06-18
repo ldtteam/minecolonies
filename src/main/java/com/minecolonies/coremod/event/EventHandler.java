@@ -11,6 +11,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.blocks.huts.BlockHutField;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
@@ -384,7 +385,7 @@ public class EventHandler
     {
         final EntityPlayer player = event.getPlayer();
         final World world = event.getWorld();
-        if (event.getPlacedBlock().getBlock() instanceof AbstractBlockHut)
+        if (event.getPlacedBlock().getBlock() instanceof AbstractBlockHut && event.getPlacedBlock().getBlock() != ModBlocks.blockPostBox)
         {
             final IColony colony = ColonyManager.getIColony(world, event.getPos());
             if (colony != null && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))

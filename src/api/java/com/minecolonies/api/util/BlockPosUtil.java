@@ -333,11 +333,11 @@ public final class BlockPosUtil
     }
 
     /**
-     * X+Y Distance between two BlockPos.
+     * X+Z Distance between two BlockPos.
      *
      * @param block1 position one.
      * @param block2 position two.
-     * @return X+Y distance
+     * @return X+Z distance
      */
     public static long getDistance2D(@NotNull final BlockPos block1, @NotNull final BlockPos block2)
     {
@@ -345,6 +345,21 @@ public final class BlockPosUtil
         final long zDiff = Math.abs((long) block1.getZ() - block2.getZ());
 
         return Math.abs(xDiff + zDiff);
+    }
+
+    /**
+     * Maximum of x/z distance between two blocks.
+     *
+     * @param block1 position one.
+     * @param block2 position two.
+     * @return X or Z distance
+     */
+    public static int getMaxDistance2D(@NotNull final BlockPos block1, @NotNull final BlockPos block2)
+    {
+        final int xDif = (int) Math.abs(block1.getX() - block2.getX());
+        final int zDif = (int) Math.abs(block1.getZ() - block2.getZ());
+
+        return Math.max(xDif, zDif);
     }
 
     /**

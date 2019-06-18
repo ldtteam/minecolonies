@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardGear;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
@@ -11,6 +12,7 @@ import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
@@ -19,7 +21,9 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +35,6 @@ import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerSta
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 {
-
     /**
      * Creates the abstract part of the AI.
      * Always use this constructor!
@@ -90,7 +93,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     {
         if (worker.getCitizenData() != null)
         {
-            final int reload = KNIGHT_ATTACK_DELAY_BASE - worker.getCitizenData().getLevel();
+            final int reload = KNIGHT_ATTACK_DELAY_BASE - (worker.getCitizenData().getLevel() / 2);
             return reload > PHYSICAL_ATTACK_DELAY_MIN ? reload : PHYSICAL_ATTACK_DELAY_MIN;
         }
         return KNIGHT_ATTACK_DELAY_BASE;
@@ -118,17 +121,27 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
           Items.SHIELD,
           -1);
 
-        if (shieldSlot != -1
-              && target != null
-              && !target.isDead)
+        if (target != null && !target.isDead)
         {
-            worker.getCitizenItemHandler().setHeldItem(EnumHand.OFF_HAND, shieldSlot);
-            worker.setActiveHand(EnumHand.OFF_HAND);
+            if (shieldSlot != -1)
+            {
+                worker.getCitizenItemHandler().setHeldItem(EnumHand.OFF_HAND, shieldSlot);
+                worker.setActiveHand(EnumHand.OFF_HAND);
 
-            worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
-            worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
-            worker.decreaseSaturationForContinuousAction();
+                worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+                worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+                worker.decreaseSaturationForContinuousAction();
+            }
+            else
+            {
+                if (worker.getNavigator().noPath() && BlockPosUtil.getMaxDistance2D(worker.getPosition(), target.getPosition()) < 3.0)
+                {
+                    final EnumFacing dirTo = BlockPosUtil.getXZFacing(worker.getPosition(), target.getPosition());
+                    worker.getNavigator().tryMoveToBlockPos(worker.getPosition().offset(dirTo.getOpposite(), 3), getCombatMovementSpeed());
+                }
+            }
         }
+
 
         return GUARD_ATTACK_PHYSICAL;
     }
@@ -138,18 +151,6 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
      */
     protected IAIState attackPhysical()
     {
-        final IAIState state = preAttackChecks();
-        if (state != getState())
-        {
-            setDelay(STANDARD_DELAY);
-            return state;
-        }
-
-        if (worker.getDistanceSq(target.posX, target.getEntityBoundingBox().minY, target.posZ) > getAttackRange() * getAttackRange())
-        {
-            return DECIDE;
-        }
-
         if (currentAttackDelay > 0)
         {
             reduceAttackDelay(4);
@@ -158,6 +159,19 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
         else
         {
             currentAttackDelay = getAttackDelay();
+        }
+
+        final IAIState state = preAttackChecks();
+        if (state != getState())
+        {
+            setDelay(STANDARD_DELAY);
+            return state;
+        }
+
+        if (!isInAttackDistance(target.getPosition()))
+        {
+            checkForTarget();
+            return getState();
         }
 
         if (getOwnBuilding() != null)
@@ -221,5 +235,11 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
             return (int) ((BASE_PHYSICAL_DAMAGE + addDmg) * Configurations.gameplay.knightDamageMult);
         }
         return (int) (BASE_PHYSICAL_DAMAGE * Configurations.gameplay.knightDamageMult);
+    }
+
+    @Override
+    public void moveInAttackPosition()
+    {
+        worker.getNavigator().tryMoveToEntityLiving(target, getCombatMovementSpeed());
     }
 }
