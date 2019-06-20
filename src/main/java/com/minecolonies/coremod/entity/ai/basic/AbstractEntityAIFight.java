@@ -67,7 +67,12 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
     /**
      * The value of the speed which the guard will move.
      */
-    private static final double COMBAT_SPEED = 1.5;
+    private static final double COMBAT_SPEED = 1.0;
+
+    /**
+     * The bonus speed per worker level.
+     */
+    private static final double SPEED_LEVEL_BONUS = 0.01;
 
     /**
      * Creates the abstract part of the AI.
@@ -283,9 +288,14 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
         {
             return COMBAT_SPEED;
         }
-        double levelAdjustment = worker.getCitizenData().getLevel() * 0.01;
+        double levelAdjustment = worker.getCitizenData().getLevel() * SPEED_LEVEL_BONUS;
 
-        levelAdjustment = levelAdjustment > 1.0 ? 1.0 : levelAdjustment;
+        if (getOwnBuilding() != null)
+        {
+            levelAdjustment += (getOwnBuilding().getBuildingLevel() - 1) * 5 * SPEED_LEVEL_BONUS;
+        }
+
+        levelAdjustment = levelAdjustment > 0.5 ? 0.5 : levelAdjustment;
         return COMBAT_SPEED + levelAdjustment;
     }
 
