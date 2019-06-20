@@ -12,11 +12,14 @@ import net.minecraft.util.math.AxisAlignedBB;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_FIREWORKS;
 
-public final class FireworkUtils
+/**
+ * Utility class for summoning in fireworks.
+ */
+
+public abstract class FireworkUtils
 {
-    public static void spawnFireworksAtBuildingCorners(AxisAlignedBB realaabb, IColony colony, int newLevel)
+    public static void spawnFireworksAtBuildingCorners(final AxisAlignedBB realaabb, final IColony colony, final int newLevel)
     {
         final EntityFireworkRocket firework = new EntityFireworkRocket(colony.getWorld(), realaabb.maxX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(newLevel));
 

@@ -73,6 +73,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.FireworkUtils.spawnFireworksAtBuildingCorners;
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.*;
@@ -593,7 +594,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         if (newLevel > getBuildingLevel())
         {
             final AxisAlignedBB realaabb = getTargetableArea(colony.getWorld());
-            com.minecolonies.api.util.FireworkUtils.spawnFireworksAtBuildingCorners(realaabb, colony, newLevel);
+            spawnFireworksAtBuildingCorners(realaabb, colony, newLevel);
         }
     }
 
