@@ -45,7 +45,7 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * BiMap of saplings and leaves.
      */
-    private final HashMap<BlockStateStorage, ItemStorage> leavesToSaplingMap = new HashMap<>();
+    private final Map<BlockStateStorage, ItemStorage> leavesToSaplingMap = new HashMap<>();
 
     /**
      * List of saplings.
