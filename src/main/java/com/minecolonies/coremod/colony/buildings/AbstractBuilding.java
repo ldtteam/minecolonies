@@ -47,7 +47,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemDye;
@@ -78,6 +77,8 @@ import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.*;
 
+import com.minecolonies.api.util.FireworkUtils.*;
+
 /**
  * Base building class, has all the foundation for what a building stores and does.
  * <p>
@@ -87,6 +88,7 @@ import static com.minecolonies.api.util.constant.Suppression.*;
 @SuppressWarnings("squid:S2390")
 public abstract class AbstractBuilding extends AbstractBuildingContainer implements IRequestResolverProvider, IRequester
 {
+
     /**
      * The data store id for request system related data.
      */
@@ -591,58 +593,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         if (newLevel > getBuildingLevel())
         {
             final AxisAlignedBB realaabb = getTargetableArea(colony.getWorld());
-            final EntityFireworkRocket firework = new EntityFireworkRocket(colony.getWorld(), realaabb.maxX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(newLevel));
-
-            colony.getWorld().spawnEntity(firework);
-            final EntityFireworkRocket fireworka = new EntityFireworkRocket(colony.getWorld(), realaabb.maxX, realaabb.maxY, realaabb.minZ, genFireworkItemStack(newLevel));
-
-            colony.getWorld().spawnEntity(fireworka);
-            final EntityFireworkRocket fireworkb = new EntityFireworkRocket(colony.getWorld(), realaabb.minX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(newLevel));
-
-            colony.getWorld().spawnEntity(fireworkb);
-            final EntityFireworkRocket fireworkc = new EntityFireworkRocket(colony.getWorld(), realaabb.minX, realaabb.maxY, realaabb.minZ, genFireworkItemStack(newLevel));
-
-            colony.getWorld().spawnEntity(fireworkc);
+            com.minecolonies.api.util.FireworkUtils.spawnFireworksAtBuildingCorners(realaabb, colony, newLevel);
         }
     }
 
-    /**
-     * Generates random firework with various properties.
-     *
-     * @return ItemStack of random firework
-     */
-    private ItemStack genFireworkItemStack(final int explosionAmount)
-    {
-        final Random rand = new Random();
-        final ItemStack fireworkItem = new ItemStack(new ItemFirework());
-        final NBTTagCompound itemStackCompound = fireworkItem.getTagCompound() != null ? fireworkItem.getTagCompound() : new NBTTagCompound();
-        final NBTTagCompound fireworksCompound = new NBTTagCompound();
-        final NBTTagList explosionsTagList = new NBTTagList();
-        for (int i = 0; i < explosionAmount; i++)
-        {
-            final NBTTagCompound explosionTag = new NBTTagCompound();
 
-            explosionTag.setBoolean("Flicker", rand.nextInt(2) == 0);
-            explosionTag.setBoolean("Trail", rand.nextInt(2) == 0);
-            explosionTag.setInteger("Type", rand.nextInt(5));
-
-            final int numberOfColours = rand.nextInt(3) + 1;
-            final int[] colors = new int[numberOfColours];
-
-            for (int ia = 0; ia < numberOfColours; ia++)
-            {
-                colors[ia] = ItemDye.DYE_COLORS[rand.nextInt(15)];
-            }
-
-            explosionTag.setIntArray("Colors", colors);
-            explosionsTagList.appendTag(explosionTag);
-        }
-        fireworksCompound.setTag("Explosions", explosionsTagList);
-        itemStackCompound.setTag("Fireworks", fireworksCompound);
-        fireworkItem.setTagCompound(itemStackCompound);
-        return fireworkItem;
-    }
     //------------------------- Starting Required Tools/Item handling -------------------------//
+
     /**
      * Check if the worker requires a certain amount of that item and the alreadykept list contains it.
      * Always leave one stack behind if the worker requires a certain amount of it. Just to be sure.
