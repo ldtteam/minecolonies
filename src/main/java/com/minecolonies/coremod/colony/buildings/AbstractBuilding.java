@@ -44,16 +44,11 @@ import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemDye;
-import net.minecraft.item.ItemFirework;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Tuple;
@@ -78,7 +73,6 @@ import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.*;
 
-import com.minecolonies.api.util.FireworkUtils.*;
 
 /**
  * Base building class, has all the foundation for what a building stores and does.
@@ -593,8 +587,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         if (newLevel > getBuildingLevel())
         {
-            final AxisAlignedBB realaabb = getTargetableArea(colony.getWorld());
-            spawnFireworksAtBuildingCorners(realaabb, colony, newLevel);
+            spawnFireworksAtBuildingCorners(getTargetableArea(colony.getWorld()), colony, newLevel);
         }
     }
 

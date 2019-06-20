@@ -17,8 +17,22 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
  * Utility class for summoning in fireworks.
  */
 
-public abstract class FireworkUtils
+public final class FireworkUtils
 {
+    /**
+     * Private constructor to hide the public one
+     */
+    private FireworkUtils() {
+
+    }
+
+    /**
+     *
+     *
+     * @param realaabb AABB of the building
+     * @param colony which colony to .getWorld() from
+     * @param newLevel how many fireworks to spawn in each corner
+     */
     public static void spawnFireworksAtBuildingCorners(final AxisAlignedBB realaabb, final IColony colony, final int newLevel)
     {
         final EntityFireworkRocket firework = new EntityFireworkRocket(colony.getWorld(), realaabb.maxX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(newLevel));
