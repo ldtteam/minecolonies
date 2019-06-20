@@ -1,7 +1,5 @@
 package com.minecolonies.api.compatibility;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.configuration.Configurations;
@@ -47,7 +45,7 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * BiMap of saplings and leaves.
      */
-    private final BiMap<BlockStateStorage, ItemStorage> leavesToSaplingMap = HashBiMap.create();
+    private final HashMap<BlockStateStorage, ItemStorage> leavesToSaplingMap = new HashMap<>();
 
     /**
      * List of saplings.
@@ -252,16 +250,6 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         }
         return false;
-    }
-
-    @Override
-    public IBlockState getLeafForSapling(final ItemStack stack)
-    {
-        if (leavesToSaplingMap.inverse().containsKey(new ItemStorage(stack, false, true)))
-        {
-            return leavesToSaplingMap.inverse().get(new ItemStorage(stack, false, true)).getState();
-        }
-        return null;
     }
 
     @Override
