@@ -339,6 +339,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
         else
         {
+            job.complete();
             final WorkOrderBuildBuilding woh = (wo instanceof WorkOrderBuildBuilding) ? (WorkOrderBuildBuilding) wo : null;
             if (woh != null)
             {
@@ -355,7 +356,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                     building.setBuildingLevel(woh.getUpgradeLevel());
                 }
             }
-            job.complete();
+
         }
         getOwnBuilding(AbstractBuildingStructureBuilder.class).resetNeededResources();
         resetTask();
