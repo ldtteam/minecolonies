@@ -1,6 +1,5 @@
 package com.minecolonies.api.util;
 
-import com.minecolonies.api.colony.IColony;
 import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemFirework;
@@ -8,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.World;
 
 import java.util.Random;
 
@@ -27,26 +27,26 @@ public final class FireworkUtils
     }
 
     /**
-     *
+     *  Spawns in a given number of fireworks at the corners of a given AABB in a given world
      *
      * @param realaabb AABB of the building
-     * @param colony which colony to .getWorld() from
-     * @param newLevel how many fireworks to spawn in each corner
+     * @param world which world to spawn it in from
+     * @param explosionLevel how many fireworks to spawn in each corner
      */
-    public static void spawnFireworksAtBuildingCorners(final AxisAlignedBB realaabb, final IColony colony, final int newLevel)
+    public static void spawnFireworksAtAABBCorners(final AxisAlignedBB realaabb, final World world, final int explosionLevel)
     {
-        final EntityFireworkRocket firework = new EntityFireworkRocket(colony.getWorld(), realaabb.maxX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(newLevel));
+        final EntityFireworkRocket firework = new EntityFireworkRocket(world, realaabb.maxX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(explosionLevel));
 
-        colony.getWorld().spawnEntity(firework);
-        final EntityFireworkRocket fireworka = new EntityFireworkRocket(colony.getWorld(), realaabb.maxX, realaabb.maxY, realaabb.minZ, genFireworkItemStack(newLevel));
+        world.spawnEntity(firework);
+        final EntityFireworkRocket fireworka = new EntityFireworkRocket(world, realaabb.maxX, realaabb.maxY, realaabb.minZ, genFireworkItemStack(explosionLevel));
 
-        colony.getWorld().spawnEntity(fireworka);
-        final EntityFireworkRocket fireworkb = new EntityFireworkRocket(colony.getWorld(), realaabb.minX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(newLevel));
+        world.spawnEntity(fireworka);
+        final EntityFireworkRocket fireworkb = new EntityFireworkRocket(world, realaabb.minX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(explosionLevel));
 
-        colony.getWorld().spawnEntity(fireworkb);
-        final EntityFireworkRocket fireworkc = new EntityFireworkRocket(colony.getWorld(), realaabb.minX, realaabb.maxY, realaabb.minZ, genFireworkItemStack(newLevel));
+        world.spawnEntity(fireworkb);
+        final EntityFireworkRocket fireworkc = new EntityFireworkRocket(world, realaabb.minX, realaabb.maxY, realaabb.minZ, genFireworkItemStack(explosionLevel));
 
-        colony.getWorld().spawnEntity(fireworkc);
+        world.spawnEntity(fireworkc);
     }
 
     /**
