@@ -105,4 +105,14 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableList
     {
         return getCopyOfAllowedItems().stream().map(ItemStorage::getItemStack).peek(stack -> stack.setCount(stack.getMaxStackSize())).collect(Collectors.toList());
     }
+
+    /**
+     * Check if an ItemStack is one of the accepted fuel items.
+     * @param stack the itemStack to check.
+     * @return true if so.
+     */
+    public boolean isAllowedFuel(final ItemStack stack)
+    {
+        return getCopyOfAllowedItems().stream().anyMatch(itemStack -> stack.isItemEqual(itemStack.getItemStack()));
+    }
 }

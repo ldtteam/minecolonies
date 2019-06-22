@@ -99,7 +99,7 @@ public final class ItemStackUtils
     /**
      * Predicate describing cookables.
      */
-    public static final Predicate<ItemStack> ISCOOKABLE = ISFOOD.and(IS_SMELTABLE);
+    public static final Predicate<ItemStack> ISCOOKABLE = ISFOOD.and(itemStack -> ISFOOD.test(FurnaceRecipes.instance().getSmeltingResult(itemStack)));
 
     /**
      * Private constructor to hide the implicit one.
