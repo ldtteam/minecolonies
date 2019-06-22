@@ -1,9 +1,11 @@
 package com.minecolonies.coremod.util;
 
 import com.google.common.io.Files;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -212,7 +214,18 @@ public final class BackUpHelper
             final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension);
             colony = Colony.loadColony(compound, colonyWorld);
             colonyWorld.getCapability(COLONY_MANAGER_CAP, null).addColony(colony);
-            ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), colony.getCenter(), colony.getDimension());
+
+            if (Configurations.gameplay.enableDynamicColonySizes)
+            {
+                for (final AbstractBuilding building : colony.getBuildingManager().getBuildings().values())
+                {
+                    ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), building.getLocation(), colony.getDimension(), building.getClaimRadius());
+                }
+            }
+            else
+            {
+                ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), colony.getCenter(), colony.getDimension());
+            }
         }
 
         Log.getLogger().warn("Successfully restored colony!");
