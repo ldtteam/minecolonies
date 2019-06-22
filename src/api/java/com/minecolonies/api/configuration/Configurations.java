@@ -259,6 +259,7 @@ public class Configurations
                                                      "minecraft:brown_mushroom",
                                                      "minecraft:red_mushroom",
                                                      "minecraft:double_plant",
+                                                     "minecraft:feather",
                                                      "food",
                                                      "seed",
                                                      "treeSapling"
