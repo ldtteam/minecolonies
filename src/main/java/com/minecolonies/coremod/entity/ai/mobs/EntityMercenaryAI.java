@@ -68,7 +68,7 @@ public class EntityMercenaryAI extends EntityAIBase
     /**
      * The path for attacking.
      */
-    PathResult attackPath;
+    private PathResult attackPath;
 
     /**
      * The timer for attacks

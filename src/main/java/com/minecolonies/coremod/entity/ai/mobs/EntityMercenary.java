@@ -254,7 +254,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
     /**
      * Sets this mercenary as leader
      */
-    public void setLeader(List<EntityMercenary> soldiers)
+    public void setLeader(final List<EntityMercenary> soldiers)
     {
         this.soldiers = soldiers;
         isLeader = true;
@@ -344,7 +344,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
     }
 
     @Override
-    protected void collideWithEntity(Entity entityIn)
+    protected void collideWithEntity(final Entity entityIn)
     {
         if (slapTimer == 0 && entityIn instanceof EntityPlayer)
         {
@@ -449,7 +449,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
         final List<EntityMercenary> soldiers = new ArrayList<>();
         for (int i = 0; i < amountOfMercenaries; i++)
         {
-            EntityMercenary merc = new EntityMercenary(world, colony);
+            final EntityMercenary merc = new EntityMercenary(world, colony);
             merc.setPosition(spawn.getX() + i, spawn.getY(), spawn.getZ());
             merc.setDoSpawnEvent();
             soldiers.add(merc);

@@ -31,6 +31,7 @@ public class HireMercenaryMessage extends AbstractMessage<HireMercenaryMessage, 
 
     public HireMercenaryMessage(final ColonyView colony)
     {
+        super();
         this.colonyID = colony.getID();
         this.dimension = colony.getDimension();
     }

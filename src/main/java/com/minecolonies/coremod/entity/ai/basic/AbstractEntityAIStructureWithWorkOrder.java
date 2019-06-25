@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.ldtteam.structurize.blocks.schematic.BlockSolidSubstitution;
 import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.StructurePlacementUtils;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
@@ -19,7 +20,6 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.util.StructureIterator;
-import com.ldtteam.structurize.blocks.schematic.BlockSolidSubstitution;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
@@ -356,7 +356,6 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                     building.setBuildingLevel(woh.getUpgradeLevel());
                 }
             }
-
         }
         getOwnBuilding(AbstractBuildingStructureBuilder.class).resetNeededResources();
         resetTask();
