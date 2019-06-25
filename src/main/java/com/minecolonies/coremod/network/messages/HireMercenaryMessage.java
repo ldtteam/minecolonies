@@ -17,19 +17,19 @@ public class HireMercenaryMessage extends AbstractMessage<HireMercenaryMessage, 
     /**
      * Colony id for the mercenary event
      */
-    int colonyID = 0;
+    private int colonyID = 0;
 
     /**
      * Dimension id, needed to get the colony
      */
-    int dimension = 0;
+    private int dimension = 0;
 
     /**
      * Default constructor for forge
      */
     public HireMercenaryMessage() {super();}
 
-    public HireMercenaryMessage(ColonyView colony)
+    public HireMercenaryMessage(final ColonyView colony)
     {
         this.colonyID = colony.getID();
         this.dimension = colony.getDimension();

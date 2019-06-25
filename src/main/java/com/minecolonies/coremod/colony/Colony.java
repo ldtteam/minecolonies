@@ -1596,7 +1596,7 @@ public class Colony implements IColony
      */
     public void registerEntityWithColony(IColonyRelatedEntity entity)
     {
-
+        // Add entity registry logic here
     }
 
 

@@ -38,12 +38,22 @@ public class EntityMercenaryAI extends EntityAIBase
     /**
      * The points the mercenaries are checking out.
      */
-    private final LinkedList<BlockPos> patrolPoints;
+    private final List<BlockPos> patrolPoints;
 
     /**
      * The current patrolling position.
      */
     private BlockPos currentPatrolPos;
+
+    /**
+     * Whether we're currently moving to a building
+     */
+    private boolean movingToBuilding = false;
+
+    /**
+     * The position the entity was on last tick
+     */
+    private BlockPos lastWorkerPos;
 
     /**
      * The path for attacking.
@@ -126,11 +136,6 @@ public class EntityMercenaryAI extends EntityAIBase
         return false;
     }
 
-    boolean  movingToBuilding = false;
-    BlockPos lastWorkerPos;
-
-    PathResult path;
-
     /**
      * Patrols the buildings and random points. Attempts to steal from buildings.
      */
@@ -141,13 +146,13 @@ public class EntityMercenaryAI extends EntityAIBase
             if (currentPatrolPos != null && movingToBuilding)
             {
                 // Attempt to steal!
-                AbstractBuilding building = entity.getColony().getBuildingManager().getBuilding(currentPatrolPos);
+                final AbstractBuilding building = entity.getColony().getBuildingManager().getBuilding(currentPatrolPos);
 
                 if (building != null)
                 {
-                    List<IItemHandler> handlers = new ArrayList<>(InventoryUtils.getItemHandlersFromProvider(building.getTileEntity()));
-                    IItemHandler handler = handlers.get(rand.nextInt(handlers.size()));
-                    ItemStack stack = handler.extractItem(rand.nextInt(handler.getSlots()), 5, false);
+                    final List<IItemHandler> handlers = new ArrayList<>(InventoryUtils.getItemHandlersFromProvider(building.getTileEntity()));
+                    final IItemHandler handler = handlers.get(rand.nextInt(handlers.size()));
+                    final ItemStack stack = handler.extractItem(rand.nextInt(handler.getSlots()), 5, false);
 
                     if (!ItemStackUtils.isEmpty(stack))
                     {
@@ -215,7 +220,7 @@ public class EntityMercenaryAI extends EntityAIBase
             entity.getLookHelper().setLookPositionWithEntity(entity.getAttackTarget(), 180f, 180f);
         }
 
-        int distance = BlockPosUtil.getMaxDistance2D(entity.getPosition(), entity.getAttackTarget().getPosition());
+        final int distance = BlockPosUtil.getMaxDistance2D(entity.getPosition(), entity.getAttackTarget().getPosition());
 
         // Check if we can attack
         if (distance < MELEE_ATTACK_DIST && attacktimer == 0)

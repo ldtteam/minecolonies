@@ -226,8 +226,8 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
             return false;
         }
 
-        BlockPos first = soldiers.get(0).getPosition().add(0, 0, 1);
-        BlockPos last = soldiers.get(soldiers.size() - 1).getPosition().add(0, 0, 1);
+        final BlockPos first = soldiers.get(0).getPosition().add(0, 0, 1);
+        final BlockPos last = soldiers.get(soldiers.size() - 1).getPosition().add(0, 0, 1);
 
         playSound(SoundEvents.ENTITY_EVOCATION_ILLAGER_AMBIENT, 0.95f, 1.0f);
         if (getPosition().equals(first))
@@ -279,7 +279,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound)
+    public NBTTagCompound writeToNBT(final NBTTagCompound compound)
     {
         compound.setLong(TAG_TIME, worldTimeAtSpawn);
         compound.setInteger(TAG_COLONY_ID, this.colony == null ? 0 : colony.getID());
@@ -287,7 +287,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound)
+    public void readFromNBT(final NBTTagCompound compound)
     {
         worldTimeAtSpawn = compound.getLong(TAG_TIME);
         if (compound.hasKey(TAG_COLONY_ID))
@@ -334,7 +334,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
     }
 
     @Override
-    public boolean attackEntityFrom(DamageSource source, float damage)
+    public boolean attackEntityFrom(final DamageSource source, final float damage)
     {
         if (source.getTrueSource() instanceof EntityLivingBase)
         {
@@ -356,8 +356,8 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
         if (slapTimer == 0 && entityIn instanceof EntityCitizen && colony != null)
         {
             slapTimer = SLAP_INTERVAL;
-            IItemHandler handler = ((EntityCitizen) entityIn).getItemHandlerCitizen();
-            ItemStack stack = handler.extractItem(rand.nextInt(handler.getSlots()), 5, false);
+            final IItemHandler handler = ((EntityCitizen) entityIn).getItemHandlerCitizen();
+            final ItemStack stack = handler.extractItem(rand.nextInt(handler.getSlots()), 5, false);
             if (!ItemStackUtils.isEmpty(stack))
             {
                 this.swingArm(EnumHand.OFF_HAND);
@@ -431,7 +431,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
      */
     public static void spawnMercenariesInColony(@NotNull final Colony colony)
     {
-        World world = colony.getWorld();
+        final World world = colony.getWorld();
 
         if (world.getTotalWorldTime() - colony.getMercenaryUseTime() < TICKS_FOURTY_MIN)
         {
@@ -444,9 +444,9 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
         amountOfMercenaries = amountOfMercenaries / 10;
         amountOfMercenaries += 3;
 
-        BlockPos spawn = EntityMercenary.findMercenarySpawnPos(colony, amountOfMercenaries);
+        final BlockPos spawn = EntityMercenary.findMercenarySpawnPos(colony, amountOfMercenaries);
 
-        List<EntityMercenary> soldiers = new ArrayList<>();
+        final List<EntityMercenary> soldiers = new ArrayList<>();
         for (int i = 0; i < amountOfMercenaries; i++)
         {
             EntityMercenary merc = new EntityMercenary(world, colony);
@@ -470,7 +470,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
      * @param amountOfMercenaries amount of spawns
      * @return spawn position
      */
-    private static BlockPos findMercenarySpawnPos(final Colony colony, int amountOfMercenaries)
+    private static BlockPos findMercenarySpawnPos(final Colony colony, final int amountOfMercenaries)
     {
         AxisAlignedBB buildingArea = colony.getBuildingManager().getTownHall().getTargetableArea(colony.getWorld());
         BlockPos spawn = new BlockPos((buildingArea.maxX + buildingArea.minX) / 2, 0, buildingArea.minZ);

@@ -27,7 +27,7 @@ public class RenderMercenary extends RenderBiped<EntityMercenary>
     private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/settlermale1.png");
 
     @Override
-    public ResourceLocation getEntityTexture(EntityMercenary entity)
+    public ResourceLocation getEntityTexture(final EntityMercenary entity)
     {
         return TEXTURE;
     }
