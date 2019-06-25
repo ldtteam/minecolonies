@@ -26,6 +26,16 @@ import java.util.Random;
 public class EntityMercenaryAI extends EntityAIBase
 {
     /**
+     * The max distance a mercenary chases his target.
+     */
+    private static final int MAX_BLOCK_CHASE_DISTANCE = 50;
+
+    /**
+     * The max amount of AI - invocations during pathing till the mercenary is considered stuck.
+     */
+    private static final int MAX_STUCK_TIME = 10;
+
+    /**
      * State machine for this AI
      */
     private final TickRateStateMachine stateMachine;
@@ -100,6 +110,7 @@ public class EntityMercenaryAI extends EntityAIBase
 
     public EntityMercenaryAI(final EntityMercenary entityMercenary)
     {
+        super();
         entity = entityMercenary;
         patrolPoints = new LinkedList<>();
         stateMachine = new TickRateStateMachine(State.INIT, this::handleAIException);
@@ -185,7 +196,7 @@ public class EntityMercenaryAI extends EntityAIBase
             stuckTimer = 0;
         }
 
-        if (stuckTimer > 10)
+        if (stuckTimer > MAX_STUCK_TIME)
         {
             stuckTimer = 0;
             currentPatrolPos = null;
@@ -231,7 +242,7 @@ public class EntityMercenaryAI extends EntityAIBase
             entity.getAttackTarget().setFire(3);
             attacktimer = ATTACK_DELAY;
         }
-        else if (distance > 50)
+        else if (distance > MAX_BLOCK_CHASE_DISTANCE)
         {
             entity.setAttackTarget(null);
             entity.getNavigator().clearPath();

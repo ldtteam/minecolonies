@@ -163,7 +163,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
      *
      * @param e exception to log.
      */
-    private void handleStateException(RuntimeException e)
+    private void handleStateException(final RuntimeException e)
     {
         Log.getLogger().warn("Mercenary entity threw an exception:", e);
     }
@@ -457,7 +457,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
         }
 
         // spawn leader for the event.
-        EntityMercenary merc = new EntityMercenary(world, colony);
+        final EntityMercenary merc = new EntityMercenary(world, colony);
         merc.setPosition(spawn.getX(), spawn.getY(), spawn.getZ() + 1);
         merc.setLeader(soldiers);
         world.spawnEntity(merc);
@@ -472,7 +472,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
      */
     private static BlockPos findMercenarySpawnPos(final Colony colony, final int amountOfMercenaries)
     {
-        AxisAlignedBB buildingArea = colony.getBuildingManager().getTownHall().getTargetableArea(colony.getWorld());
+        final AxisAlignedBB buildingArea = colony.getBuildingManager().getTownHall().getTargetableArea(colony.getWorld());
         BlockPos spawn = new BlockPos((buildingArea.maxX + buildingArea.minX) / 2, 0, buildingArea.minZ);
         double height = colony.getWorld().getHeight(spawn.getX(), spawn.getZ());
         if (height > buildingArea.maxY)
