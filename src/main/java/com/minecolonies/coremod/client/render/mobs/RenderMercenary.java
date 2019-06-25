@@ -13,6 +13,12 @@ import net.minecraft.util.ResourceLocation;
  */
 public class RenderMercenary extends RenderBiped<EntityMercenary>
 {
+    /**
+     * Texture of the entity.
+     */
+    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/settlermale1.png");
+
+
     public RenderMercenary(final RenderManager renderManagerIn)
     {
         super(renderManagerIn, new ModelBiped(), 0.5f);
@@ -20,11 +26,6 @@ public class RenderMercenary extends RenderBiped<EntityMercenary>
         this.addLayer(new LayerHeldItem(this));
         this.addLayer(new LayerBipedArmor(this));
     }
-
-    /**
-     * Texture of the entity.
-     */
-    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/settlermale1.png");
 
     @Override
     public ResourceLocation getEntityTexture(final EntityMercenary entity)
