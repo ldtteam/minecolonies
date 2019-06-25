@@ -322,6 +322,13 @@ public class TileEntityRack extends TileEntity
                     typeNeighbor = null;
                 }
             }
+
+            // This here avoids that two racks can be main at the same time.
+            if (this.isMain() && getOtherChest() != null && getOtherChest().isMain())
+            {
+                getOtherChest().setMain(false);
+            }
+
             world.setBlockState(pos, typeHere);
             if (typeNeighbor != null)
             {
@@ -347,6 +354,7 @@ public class TileEntityRack extends TileEntity
             ((TileEntityRack) tileEntity).setNeighbor(this.getPos());
             return (TileEntityRack) tileEntity;
         }
+
         single = true;
         relativeNeighbor = null;
         return null;
@@ -592,6 +600,7 @@ public class TileEntityRack extends TileEntity
                     else
                     {
                         this.main = true;
+
                         if (combinedHandler == null)
                         {
                             combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().inventory);

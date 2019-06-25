@@ -86,15 +86,21 @@ public final class NbtTagConstants
     public static final String TAG_CUSTOM_NAME            = "customName";
     public static final String TAG_OTHER_LEVEL            = "otherLevel";
     public static final String TAG_PASTEABLE              = "isPasteable";
-    public static final String TAG_STRING_NAME     = "Name";
-    public static final String TAG_DISPLAY         = "display";
-    public static final String TAG_NEED_TO_MOURN   = "needToMourn";
-    public static final String TAG_MOURNING        = "mourning";
-    public static final String TAG_PAUSED          = "paused";
-    public static final String TAG_CHILD           = "child";
-    public static final String TAG_BOUGHT_CITIZENS = "bought_citizen";
+    public static final String TAG_STRING_NAME            = "Name";
+    public static final String TAG_DISPLAY                = "display";
+    public static final String TAG_NEED_TO_MOURN          = "needToMourn";
+    public static final String TAG_MOURNING               = "mourning";
+    public static final String TAG_PAUSED                 = "paused";
+    public static final String TAG_CHILD                  = "child";
+    public static final String TAG_BOUGHT_CITIZENS        = "bought_citizen";
+    public static final String TAG_JUST_ATE               = "justAte";
+    public static final String TAG_EXPLOSIONS = "Explosions";
+    public static final String TAG_FIREWORKS = "Fireworks";
+    public static final String TAG_COLORS = "Colors";
+    public static final String TAG_FLICKER = "Flicker";
+    public static final String TAG_TRAIL = "Trail";
+    public static final String TAG_TYPE = "Type";
     public static final String TAG_MERCENARY_TIME  = "mercenaryUseTime";
-    public static final String TAG_JUST_ATE        = "justAte";
 
     /**
      * Tag used to store the containers to NBT.
