@@ -151,6 +151,11 @@ public final class ColonyView implements IColony
     private int boughtCitizenCost;
 
     /**
+     * The last use time of the mercenaries.
+     */
+    private long mercenaryLastUseTime = 0;
+
+    /**
      * The default style.
      */
     private String style = "";
@@ -254,6 +259,7 @@ public final class ColonyView implements IColony
         buf.writeBoolean(colony.getProgressManager().isPrintingProgress());
 
         buf.writeInt(colony.getBoughtCitizenCost());
+        buf.writeLong(colony.getMercenaryUseTime());
 
         ByteBufUtils.writeUTF8String(buf, colony.getStyle());
         buf.writeInt(colony.getRaiderManager().getHorde(colony.getWorld().getMinecraftServer().getWorld(colony.getDimension())).size());
@@ -593,6 +599,8 @@ public final class ColonyView implements IColony
         this.printProgress = buf.readBoolean();
 
         this.boughtCitizenCost = buf.readInt();
+
+        this.mercenaryLastUseTime = buf.readLong();
 
         this.style = ByteBufUtils.readUTF8String(buf);
         this.horde = buf.readInt();
@@ -991,5 +999,15 @@ public final class ColonyView implements IColony
     public boolean isRaiding()
     {
         return this.horde > 0;
+    }
+
+    public long getMercenaryLastUseTime()
+    {
+        return mercenaryLastUseTime;
+    }
+
+    public void setMercenaryLastUseTime(final long mercenaryLastUseTime)
+    {
+        this.mercenaryLastUseTime = mercenaryLastUseTime;
     }
 }

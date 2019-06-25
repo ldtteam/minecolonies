@@ -23,6 +23,7 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.ai.mobs.EntityMercenary;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesChunkCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldColonyManagerCapabilityProvider;
@@ -248,6 +249,7 @@ public class EventHandler
         if (Configurations.gameplay.mobAttackCitizens && (event.getEntity() instanceof EntityMob))
         {
             ((EntityMob) event.getEntity()).targetTasks.addTask(6, new EntityAINearestAttackableTarget((EntityMob) event.getEntity(), EntityCitizen.class, true));
+            ((EntityMob) event.getEntity()).targetTasks.addTask(7, new EntityAINearestAttackableTarget((EntityMob) event.getEntity(), EntityMercenary.class, true));
         }
     }
 

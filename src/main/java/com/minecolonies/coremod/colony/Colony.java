@@ -20,6 +20,7 @@ import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.WorkManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.IColonyRelatedEntity;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
@@ -233,6 +234,11 @@ public class Colony implements IColony
     private int boughtCitizenCost = 0;
 
     /**
+     * The last time the mercenaries were used.
+     */
+    private long mercenaryLastUse = 0;
+
+    /**
      * Constructor for a newly created Colony.
      *
      * @param id The id of the colony to create.
@@ -379,6 +385,7 @@ public class Colony implements IColony
         }
 
         boughtCitizenCost = compound.getInteger(TAG_BOUGHT_CITIZENS);
+        mercenaryLastUse = compound.getLong(TAG_MERCENARY_TIME);
 
         // Permissions
         permissions.loadPermissions(compound);
@@ -535,6 +542,8 @@ public class Colony implements IColony
 
         // Bought citizen count
         compound.setInteger(TAG_BOUGHT_CITIZENS, boughtCitizenCost);
+
+        compound.setLong(TAG_MERCENARY_TIME, mercenaryLastUse);
 
         // Permissions
         permissions.savePermissions(compound);
@@ -1564,4 +1573,31 @@ public class Colony implements IColony
         boughtCitizenCost = Math.min(1 + (int) Math.ceil(boughtCitizenCost * 1.5), STACKSIZE);
         markDirty();
     }
+
+    /**
+     * Save the time when mercenaries are used, to set a cooldown.
+     */
+    public void usedMercenaries()
+    {
+        mercenaryLastUse = world.getTotalWorldTime();
+        markDirty();
+    }
+
+    /**
+     * Get the last time mercenaries were used.
+     */
+    public long getMercenaryUseTime()
+    {
+        return mercenaryLastUse;
+    }
+
+    /**
+     * Registers an entity related to this colony.
+     */
+    public void registerEntityWithColony(IColonyRelatedEntity entity)
+    {
+
+    }
+
+
 }

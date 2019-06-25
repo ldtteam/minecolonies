@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.Random;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.MAX_GUARD_CALL_RANGE;
 import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.RUNNING;
 import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.SAFE;
 
@@ -193,7 +194,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
             if (newClosest.getEntityId() != closestLivingEntity.getEntityId())
             {
                 // Calling for help for the new enemy
-                citizen.callForHelp(newClosest);
+                citizen.callForHelp(newClosest, MAX_GUARD_CALL_RANGE);
                 closestLivingEntity = newClosest;
             }
             performMoveAway();

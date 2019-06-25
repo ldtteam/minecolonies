@@ -194,6 +194,16 @@ public class EntityCitizen extends AbstractEntityCitizen
     private boolean currentlyFleeing = false;
 
     /**
+     * Timer for the call for help cd.
+     */
+    private int callForHelpCooldown = 0;
+
+    /**
+     * Cooldown for calling help, in ticks.
+     */
+    private static final int CALL_HELP_CD = 100;
+
+    /**
      * Citizen inv Wrapper.
      */
     private IItemHandler invWrapper;
@@ -322,7 +332,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
     {
         if (damageSource.getDamageType().equals(DamageSource.IN_WALL.getDamageType()) && citizenSleepHandler.isAsleep()
-              || Compatibility.isDynTreePresent() && damageSource.damageType.equals(Compatibility.getDynamicTreeDamage()))
+              || Compatibility.isDynTreePresent() && damageSource.damageType.equals(Compatibility.getDynamicTreeDamage()) || this.getIsInvulnerable())
         {
             return false;
         }
@@ -391,44 +401,55 @@ public class EntityCitizen extends AbstractEntityCitizen
             return;
         }
 
-        if ((getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard))
-        {
-            return;
-        }
-
         // Makes the avoidance AI take over.
         currentlyFleeing = true;
 
-        moveAwayPath = this.getNavigator().moveAwayFromEntityLiving(attacker, 15, INITIAL_RUN_SPEED_AVOID);
-
-        if (Configurations.gameplay.citizenCallForHelp)
+        if ((getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard))
         {
-            callForHelp(attacker);
+            // 30 Blocks range
+            callForHelp(attacker, 900);
+            return;
         }
+        else
+        {
+            callForHelp(attacker, MAX_GUARD_CALL_RANGE);
+        }
+
+        moveAwayPath = this.getNavigator().moveAwayFromEntityLiving(attacker, 15, INITIAL_RUN_SPEED_AVOID);
     }
 
     /**
      * Calls a guard for help against an attacker.
+     *
+     * @param attacker         the attacking entity
+     * @param guardHelpRange   the squaredistance in which we search for nearby guards
      */
-    public void callForHelp(final Entity attacker)
+    public void callForHelp(final Entity attacker, final int guardHelpRange)
     {
-        if (!(attacker instanceof EntityLivingBase))
+        if (!(attacker instanceof EntityLivingBase) || !Configurations.gameplay.citizenCallForHelp || callForHelpCooldown != 0)
         {
             return;
         }
 
-        long distance = MAX_GUARD_CALL_RANGE;
+        callForHelpCooldown = CALL_HELP_CD;
+
+        long guardDistance = guardHelpRange;
         EntityCitizen guard = null;
 
         for (final CitizenData entry : getCitizenColonyHandler().getColony().getCitizenManager().getCitizens())
         {
-            if (entry.getJob() instanceof AbstractJobGuard && entry.getCitizenEntity().isPresent())
+            if (entry.getCitizenEntity().isPresent())
             {
                 final long tdist = BlockPosUtil.getDistanceSquared(entry.getCitizenEntity().get().getPosition(), getPosition());
-                if (tdist < distance && ((AbstractEntityAIGuard) entry.getJob().getWorkerAI()).canHelp())
+
+                // Checking for guard nearby
+                if (entry.getJob() instanceof AbstractJobGuard)
                 {
-                    distance = tdist;
-                    guard = entry.getCitizenEntity().get();
+                    if (tdist < guardDistance && ((AbstractEntityAIGuard) entry.getJob().getWorkerAI()).canHelp())
+                    {
+                        guardDistance = tdist;
+                        guard = entry.getCitizenEntity().get();
+                    }
                 }
             }
         }
@@ -671,6 +692,11 @@ public class EntityCitizen extends AbstractEntityCitizen
     public void onLivingUpdate()
     {
         super.onLivingUpdate();
+
+        if (callForHelpCooldown > 0)
+        {
+            callForHelpCooldown--;
+        }
 
         if (recentlyHit > 0)
         {

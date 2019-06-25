@@ -4,6 +4,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.entity.IColonyRelatedEntity;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobSpawnUtils;
 import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
@@ -26,13 +27,13 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-import static com.minecolonies.api.util.constant.RaiderConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
 /**
  * Abstract for all Barbarian entities.
  */
-public abstract class AbstractEntityMinecoloniesMob extends EntityMob
+public abstract class AbstractEntityMinecoloniesMob extends EntityMob implements IColonyRelatedEntity
 {
     /**
      * The New PathNavigate navigator.
@@ -313,6 +314,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
      * Gets a value from the ColonyManager if null.
      * @return the colony the barbarian is assigned to attack.e
      */
+    @Override
     public Colony getColony()
     {
         if (!world.isRemote && colony == null)
@@ -321,6 +323,17 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
         }
 
         return colony;
+    }
+
+    /**
+     * Registers the entity with the colony.
+     */
+    public void registerWithColony()
+    {
+        if (colony != null)
+        {
+            colony.registerEntityWithColony(this);
+        }
     }
 
     @Override

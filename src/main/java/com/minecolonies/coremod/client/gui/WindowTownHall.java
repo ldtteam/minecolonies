@@ -41,6 +41,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.commands.colonycommands.ListColoniesCommand.TELEPORT_COMMAND;
@@ -166,6 +167,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         tabsToPages.keySet().forEach(key -> registerButton(key, this::onTabClicked));
         registerButton(BUTTON_ADD_PLAYER, this::addPlayerCLicked);
         registerButton(BUTTON_RENAME, this::renameClicked);
+        registerButton(BUTTON_MERCENARY, this::mercenaryClicked);
         registerButton(BUTTON_REMOVE_PLAYER, this::removePlayerClicked);
         registerButton(BUTTON_PROMOTE, this::promoteDemoteClicked);
         registerButton(BUTTON_DEMOTE, this::promoteDemoteClicked);
@@ -378,6 +380,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         if (townHall.getColony().canMoveIn())
         {
             findPaneOfTypeByID(BUTTON_TOGGLE_MOVE_IN, Button.class).setLabel(LanguageHandler.format(ON_STRING));
+        }
+
+        if (townHall.getColony().getWorld().getTotalWorldTime() - townHall.getColony().getMercenaryLastUseTime() < TICKS_FOURTY_MIN)
+        {
+            findPaneOfTypeByID(BUTTON_MERCENARY, Button.class).disable();
         }
     }
 
@@ -1152,6 +1159,15 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private void renameClicked()
     {
         @NotNull final WindowTownHallNameEntry window = new WindowTownHallNameEntry(townHall.getColony());
+        window.open();
+    }
+
+    /**
+     * Action performed when mercenary button is clicked.
+     */
+    private void mercenaryClicked()
+    {
+        @NotNull final WindowTownHallMercenary window = new WindowTownHallMercenary(townHall.getColony());
         window.open();
     }
 

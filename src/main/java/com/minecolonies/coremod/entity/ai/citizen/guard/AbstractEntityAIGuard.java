@@ -305,7 +305,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         }
 
         // Move towards the target
-        worker.getNavigator().moveToEntityLiving(target, getCombatMovementSpeed());
+        moveInAttackPosition();
 
         return HELP_CITIZEN;
     }

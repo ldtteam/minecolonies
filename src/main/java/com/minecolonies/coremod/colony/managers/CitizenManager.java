@@ -11,7 +11,6 @@ import com.minecolonies.coremod.colony.HappinessData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.managers.interfaces.ICitizenManager;
@@ -263,7 +262,7 @@ public class CitizenManager implements ICitizenManager
                 {
                     newMaxCitizens += b.getMaxInhabitants();
                 }
-                else if (b instanceof BuildingBarracksTower)
+                else if (b instanceof AbstractBuildingGuards)
                 {
                     newMaxCitizens += b.getAssignedCitizen().size();
                 }

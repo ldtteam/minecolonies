@@ -462,6 +462,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
                   .getEntityAttribute(SharedMonsterAttributes.ARMOR)
                   .setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue() + getDefenceBonus());
             }
+            colony.getCitizenManager().calculateMaxCitizens();
             return true;
         }
         return false;
