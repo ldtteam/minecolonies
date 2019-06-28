@@ -390,7 +390,35 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             getOwnBuilding(AbstractBuildingStructureBuilder.class).setProgressPos(null, StructureIterator.Stage.CLEAR);
             return true;
         }
-        else return job.getWorkOrder() != null && !world.getChunk(job.getWorkOrder().getBuildingLocation()).isLoaded();
+        else return job.getWorkOrder() != null
+                      && ( !world.getChunk(job.getWorkOrder().getBuildingLocation()).isLoaded()
+                             || (currentStructure != null && !world.getChunk(incrementBlock(currentStructure.getCurrentBlockPosition(), new BlockPos(currentStructure.getWidth(), currentStructure.getLength(), currentStructure.getHeight()))).isLoaded()));
+    }
+
+    /**
+     * Increment the block position from an existing position and the size.
+     * @param pos the initital position.
+     * @param size the max size.
+     * @return the next position.
+     */
+    private static BlockPos incrementBlock(final BlockPos pos, final BlockPos size)
+    {
+        final BlockPos.MutableBlockPos progressPos = new BlockPos.MutableBlockPos(pos);
+        progressPos.setPos(progressPos.getX() + 1, progressPos.getY(), progressPos.getZ());
+        if (progressPos.getX() == size.getX())
+        {
+            progressPos.setPos(0, progressPos.getY(), progressPos.getZ() + 1);
+            if (progressPos.getZ() == size.getZ())
+            {
+                progressPos.setPos(progressPos.getX(), progressPos.getY() + 1, 0);
+                if (progressPos.getY() == size.getY())
+                {
+                    return pos;
+                }
+            }
+        }
+
+        return progressPos;
     }
 
     @Override
