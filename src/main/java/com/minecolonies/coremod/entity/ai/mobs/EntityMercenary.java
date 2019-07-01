@@ -125,6 +125,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
         super(world);
         this.colony = colony;
         this.forceSpawn = true;
+        this.setSize(1.0f, 2.0f);
         setAlwaysRenderNameTag(true);
         this.enablePersistence();
 
