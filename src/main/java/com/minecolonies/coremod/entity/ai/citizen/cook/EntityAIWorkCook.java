@@ -46,7 +46,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     private static final int INTELLIGENCE_MULTIPLIER = 1;
 
     /**
-     * The amount of food which should be served to the woker.
+     * The amount of food which should be served to the worker.
      */
     public static final int AMOUNT_OF_FOOD_TO_SERVE = 2;
 

@@ -93,6 +93,25 @@ public class BuildingWareHouse extends AbstractBuilding
         super(c, l);
     }
 
+    @Override
+    public void requestRepair(final BlockPos builder)
+    {
+        //To ensure that the racks are all set to in the warehouse when repaired.
+        for (final BlockPos pos : containerList)
+        {
+            if (getColony().getWorld() != null)
+            {
+                final TileEntity entity = getColony().getWorld().getTileEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    ((TileEntityRack) entity).setInWarehouse(true);
+                }
+            }
+        }
+
+        super.requestRepair(builder);
+    }
+
     /**
      * Register deliveryman with the warehouse.
      *
@@ -230,6 +249,10 @@ public class BuildingWareHouse extends AbstractBuilding
             {
                 handleBuildingOverChest(pos, (TileEntityChest) entity, world);
             }
+            if (entity instanceof TileEntityRack)
+            {
+                ((TileEntityRack) entity).setInWarehouse(true);
+            }
             addContainerPosition(pos);
         }
     }
@@ -259,6 +282,7 @@ public class BuildingWareHouse extends AbstractBuilding
         final TileEntity entity = world.getTileEntity(pos);
         if (entity instanceof TileEntityRack)
         {
+            ((TileEntityRack) entity).setInWarehouse(true);
             for (final ItemStack stack : inventory)
             {
                 if (!ItemStackUtils.isEmpty(stack))

@@ -1292,4 +1292,15 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         return mourning;
     }
+
+    /**
+     * Overrides the default despawning which is true.
+     *
+     * @return false
+     */
+    @Override
+    protected boolean canDespawn()
+    {
+        return false;
+    }
 }

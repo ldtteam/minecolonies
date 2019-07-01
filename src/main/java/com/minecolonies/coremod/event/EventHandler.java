@@ -11,6 +11,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.blocks.huts.BlockHutField;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
@@ -24,6 +25,7 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesChunkCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldColonyManagerCapabilityProvider;
+import com.minecolonies.coremod.network.messages.OpenSuggestionWindowMessage;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import com.minecolonies.coremod.network.messages.UpdateChunkRangeCapabilityMessage;
 import com.minecolonies.coremod.util.ChunkDataHelper;
@@ -383,7 +385,7 @@ public class EventHandler
     {
         final EntityPlayer player = event.getPlayer();
         final World world = event.getWorld();
-        if (event.getPlacedBlock().getBlock() instanceof AbstractBlockHut)
+        if (event.getPlacedBlock().getBlock() instanceof AbstractBlockHut && event.getPlacedBlock().getBlock() != ModBlocks.blockPostBox)
         {
             final IColony colony = ColonyManager.getIColony(world, event.getPos());
             if (colony != null && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
@@ -395,11 +397,12 @@ public class EventHandler
             if (Configurations.gameplay.suggestBuildToolPlacement)
             {
                 final ItemStack stack = event.getPlayer().getHeldItem(event.getHand());
-                event.setCanceled(true);
-                if (!event.getWorld().isRemote && !stack.isEmpty())
+                if (!stack.isEmpty() && !world.isRemote)
                 {
-                    MineColonies.proxy.openSuggestionWindow(event.getPos(), event.getPlacedBlock(), stack);
+                    MineColonies.getNetwork().sendTo(new OpenSuggestionWindowMessage(event.getPlacedBlock(), event.getPos(), stack), (EntityPlayerMP) event.getPlayer());
+
                 }
+                event.setCanceled(true);
             }
         }
     }
