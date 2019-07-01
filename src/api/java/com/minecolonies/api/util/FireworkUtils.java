@@ -1,8 +1,8 @@
 package com.minecolonies.api.util;
 
 import net.minecraft.entity.item.EntityFireworkRocket;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemDye;
-import net.minecraft.item.ItemFirework;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -37,16 +37,15 @@ public final class FireworkUtils
     public static void spawnFireworksAtAABBCorners(final AxisAlignedBB realaabb, final World world, final int explosionLevel)
     {
         final EntityFireworkRocket firework = new EntityFireworkRocket(world, realaabb.maxX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(explosionLevel));
-
         world.spawnEntity(firework);
+
         final EntityFireworkRocket fireworka = new EntityFireworkRocket(world, realaabb.maxX, realaabb.maxY, realaabb.minZ, genFireworkItemStack(explosionLevel));
-
         world.spawnEntity(fireworka);
+
         final EntityFireworkRocket fireworkb = new EntityFireworkRocket(world, realaabb.minX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(explosionLevel));
-
         world.spawnEntity(fireworkb);
-        final EntityFireworkRocket fireworkc = new EntityFireworkRocket(world, realaabb.minX, realaabb.maxY, realaabb.minZ, genFireworkItemStack(explosionLevel));
 
+        final EntityFireworkRocket fireworkc = new EntityFireworkRocket(world, realaabb.minX, realaabb.maxY, realaabb.minZ, genFireworkItemStack(explosionLevel));
         world.spawnEntity(fireworkc);
     }
 
@@ -58,7 +57,7 @@ public final class FireworkUtils
     private static ItemStack genFireworkItemStack(final int explosionAmount)
     {
         final Random rand = new Random();
-        final ItemStack fireworkItem = new ItemStack(new ItemFirework());
+        final ItemStack fireworkItem = new ItemStack(Items.FIREWORKS);
         final NBTTagCompound itemStackCompound = fireworkItem.getTagCompound() != null ? fireworkItem.getTagCompound() : new NBTTagCompound();
         final NBTTagCompound fireworksCompound = new NBTTagCompound();
         final NBTTagList explosionsTagList = new NBTTagList();
