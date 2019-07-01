@@ -51,7 +51,7 @@ public class WindowTownHallMercenary extends Window implements ButtonHandler
 
         for (int i = 0; i < amountOfMercenaries; i++)
         {
-            Image newImage = new Image();
+            final Image newImage = new Image();
             newImage.setImage("minecolonies:textures/entity_icon/citizenmale3.png");
             newImage.setSize(10, 10);
             newImage.setPosition(startX, startY);
