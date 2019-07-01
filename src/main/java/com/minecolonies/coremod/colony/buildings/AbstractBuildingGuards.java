@@ -435,6 +435,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
                 optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.OFFHAND, ItemStackUtils.EMPTY);
             }
         }
+        colony.getCitizenManager().calculateMaxCitizens();
         super.removeCitizen(citizen);
     }
 
