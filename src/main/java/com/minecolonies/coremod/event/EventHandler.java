@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.event;
 
+import com.ldtteam.structures.helpers.Settings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.permissions.Action;
@@ -16,6 +17,7 @@ import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -364,14 +366,41 @@ public class EventHandler
             {
                 if (event.getUseBlock() == Event.Result.DEFAULT && event.getFace() != null)
                 {
+                    final ColonyView view = ColonyManager.getClosestColonyView(event.getWorld(), event.getPos().offset(event.getFace()));
+                    if (view != null && Settings.instance.getStyle().isEmpty())
+                    {
+                        Settings.instance.setStyle(view.getStyle());
+                    }
                     MineColonies.proxy.openBuildToolWindow(event.getPos().offset(event.getFace()));
-                }
-                else
-                {
-                    MineColonies.proxy.openBuildToolWindow(null);
                 }
             }
             event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onBlockPlaced(@NotNull final BlockEvent.PlaceEvent event)
+    {
+        final EntityPlayer player = event.getPlayer();
+        final World world = event.getWorld();
+        if (event.getPlacedBlock().getBlock() instanceof AbstractBlockHut)
+        {
+            final IColony colony = ColonyManager.getIColony(world, event.getPos());
+            if (colony != null && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
+            {
+                event.setCanceled(true);
+                return;
+            }
+
+            if (Configurations.gameplay.suggestBuildToolPlacement)
+            {
+                final ItemStack stack = event.getPlayer().getHeldItem(event.getHand());
+                event.setCanceled(true);
+                if (!event.getWorld().isRemote && !stack.isEmpty())
+                {
+                    MineColonies.proxy.openSuggestionWindow(event.getPos(), event.getPlacedBlock(), stack);
+                }
+            }
         }
     }
 
@@ -380,6 +409,11 @@ public class EventHandler
     {
         if (event.getHand() == EnumHand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote)
         {
+            final ColonyView view = ColonyManager.getClosestColonyView(event.getWorld(), event.getPos());
+            if (view != null && Settings.instance.getStyle().isEmpty())
+            {
+                Settings.instance.setStyle(view.getStyle());
+            }
             MineColonies.proxy.openBuildToolWindow(null);
             event.setCanceled(true);
         }
@@ -410,7 +444,14 @@ public class EventHandler
         final Block heldBlock = Block.getBlockFromItem(player.getHeldItemMainhand().getItem());
         if (heldBlock instanceof AbstractBlockHut || heldBlock instanceof BlockHutField)
         {
-            event.setCanceled(!onBlockHutPlaced(event.getWorld(), player, heldBlock, event.getPos().offset(event.getFace())));
+            if (event.getWorld().isRemote)
+            {
+                event.setCanceled(Configurations.gameplay.suggestBuildToolPlacement);
+            }
+            else
+            {
+                event.setCanceled(!onBlockHutPlaced(event.getWorld(), player, heldBlock, event.getPos().offset(event.getFace())));
+            }
         }
     }
 
@@ -540,7 +581,7 @@ public class EventHandler
             return false;
         }
 
-        if (!colony.isCoordInColony(world, pos))
+        if (!colony.isCoordInColony(world, pos) && (!Configurations.gameplay.enableDynamicColonySizes || colony.hasTownHall()))
         {
             if (!world.isRemote)
             {
@@ -627,6 +668,8 @@ public class EventHandler
                   && world.getVillageCollection().getNearestVillage(pos, Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK) != null)
         {
                 Log.getLogger().warn("Village close by!");
+                LanguageHandler.sendPlayerMessage(player,
+                        "tile.blockHutTownHall.messageTooCloseToVillage");
                 return false;
         }
         return true;

@@ -2,7 +2,9 @@ package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -62,6 +64,14 @@ public interface IProxy
      * @param pos coordinates.
      */
     void openBuildToolWindow(final BlockPos pos);
+
+    /**
+     * Open the suggestion window.
+     * @param pos the position to open it at.
+     * @param state the state trying to place.
+     * @param stack the itemStack.
+     */
+    void openSuggestionWindow(@NotNull BlockPos pos, @NotNull IBlockState state, @NotNull final ItemStack stack);
 
     /**
      * Opens a build tool window for a specific structure.

@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.JobCook;
@@ -188,6 +187,11 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
                 getOwnBuilding().getBuildingLevel() * AMOUNT_OF_FOOD_TO_SERVE, handler
                 );
 
+        if (!citizenToServe.isEmpty() && citizenToServe.get(0).getCitizenData() != null)
+        {
+            citizenToServe.get(0).getCitizenData().setJustAte(true);
+        }
+
         if (citizenToServe.isEmpty() && living instanceof EntityPlayer)
         {
             LanguageHandler.sendPlayerMessage((EntityPlayer) living, "com.minecolonies.coremod.cook.serve.player", worker.getName());
@@ -234,7 +238,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
 
         citizenToServe.clear();
         final List<EntityCitizen> citizenList = world.getEntitiesWithinAABB(EntityCitizen.class,
-          range, cit -> !(cit.getCitizenJobHandler().getColonyJob() instanceof JobCook) && cit.getCitizenData() != null && cit.getCitizenData().getSaturation() <= CitizenConstants.AVERAGE_SATURATION);
+          range, cit -> !(cit.getCitizenJobHandler().getColonyJob() instanceof JobCook) && cit.shouldBeFed());
         final List<EntityPlayer> playerList = world.getEntitiesWithinAABB(EntityPlayer.class,
           range, player -> player != null && player.getFoodStats().getFoodLevel() < LEVEL_TO_FEED_PLAYER);
 

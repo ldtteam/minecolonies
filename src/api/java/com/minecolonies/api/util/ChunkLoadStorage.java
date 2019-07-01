@@ -2,6 +2,7 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
@@ -52,6 +53,16 @@ public class ChunkLoadStorage
     private final int dimension;
 
     /**
+     * The building claiming this.
+     */
+    private final List<Tuple<Integer, BlockPos>> claimingBuilding = new ArrayList<>();
+
+    /**
+     * The building unclaiming this.
+     */
+    private final List<Tuple<Integer, BlockPos>> unClaimingBuilding = new ArrayList<>();
+
+    /**
      * Intitialize a ChunLoadStorage from nbt.
      * @param compound the compound to use.
      */
@@ -61,11 +72,14 @@ public class ChunkLoadStorage
         this.xz = compound.getLong(TAG_POS);
         this.dimension = compound.getInteger(TAG_DIMENSION);
 
-        coloniesToAdd.clear();
         coloniesToAdd.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_COLONIES_TO_ADD, Constants.NBT.TAG_COMPOUND))
-                .map(tempComound -> tempComound.getInteger(TAG_COLONY_ID)).collect(Collectors.toList()));
+                .map(tempCompound -> tempCompound.getInteger(TAG_COLONY_ID)).collect(Collectors.toList()));
         coloniesToRemove.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_COLONIES_TO_REMOVE, Constants.NBT.TAG_COMPOUND))
-                .map(tempComound -> tempComound.getInteger(TAG_COLONY_ID)).collect(Collectors.toList()));
+                .map(tempCompound -> tempCompound.getInteger(TAG_COLONY_ID)).collect(Collectors.toList()));
+        claimingBuilding.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_BUILDINGS_CLAIM, Constants.NBT.TAG_COMPOUND))
+                                  .map(ChunkLoadStorage::readTupleFromNbt).collect(Collectors.toList()));
+        unClaimingBuilding.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_BUILDINGS_UNCLAIM, Constants.NBT.TAG_COMPOUND))
+                                  .map(ChunkLoadStorage::readTupleFromNbt).collect(Collectors.toList()));
     }
 
     /**
@@ -92,6 +106,20 @@ public class ChunkLoadStorage
     }
 
     /**
+     * Create a new chunkload storage.
+     * @param colonyId the id of the colony.
+     * @param xz the chunk xz.
+     * @param dimension the dimension.
+     * @param building the building claiming this chunk.
+     */
+    public ChunkLoadStorage(final int colonyId, final long xz, final int dimension, final BlockPos building)
+    {
+        this.xz = xz;
+        this.dimension = dimension;
+        this.claimingBuilding.add(new Tuple<>(colonyId, building));
+    }
+
+    /**
      * Write the ChunkLoadStorage to NBT.
      * @return the compound.
      */
@@ -104,6 +132,9 @@ public class ChunkLoadStorage
 
         compound.setTag(TAG_COLONIES_TO_ADD, coloniesToAdd.stream().map(ChunkLoadStorage::getCompoundOfColonyId).collect(NBTUtils.toNBTTagList()));
         compound.setTag(TAG_COLONIES_TO_REMOVE, coloniesToRemove.stream().map(ChunkLoadStorage::getCompoundOfColonyId).collect(NBTUtils.toNBTTagList()));
+        compound.setTag(TAG_BUILDINGS, claimingBuilding.stream().map(ChunkLoadStorage::writeTupleToNBT).collect(NBTUtils.toNBTTagList()));
+        compound.setTag(TAG_BUILDINGS, unClaimingBuilding.stream().map(ChunkLoadStorage::writeTupleToNBT).collect(NBTUtils.toNBTTagList()));
+
         return compound;
     }
 
@@ -157,13 +188,15 @@ public class ChunkLoadStorage
                 xz == storage.xz &&
                 dimension == storage.dimension &&
                 Objects.equals(coloniesToRemove, storage.coloniesToRemove) &&
-                Objects.equals(coloniesToAdd, storage.coloniesToAdd);
+                Objects.equals(coloniesToAdd, storage.coloniesToAdd) &&
+                Objects.equals(claimingBuilding, storage.claimingBuilding) &&
+                Objects.equals(unClaimingBuilding, storage.unClaimingBuilding);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(colonyId, coloniesToRemove, coloniesToAdd, xz, dimension);
+        return Objects.hash(colonyId, coloniesToRemove, coloniesToAdd, xz, dimension, claimingBuilding, unClaimingBuilding);
     }
 
     /**
@@ -172,19 +205,34 @@ public class ChunkLoadStorage
      */
     public void applyToCap(final IColonyTagCapability cap)
     {
-        if(this.getColonyId() > 0)
+        if (this.claimingBuilding.isEmpty() && unClaimingBuilding.isEmpty())
         {
-            cap.setOwningColony(this.colonyId);
-        }
-        
-        for(final int tempColonyId: coloniesToAdd)
-        {
-            cap.addColony(tempColonyId);
-        }
+            if (this.getColonyId() > 0)
+            {
+                cap.setOwningColony(this.colonyId);
+            }
 
-        for(final int tempColonyId: coloniesToRemove)
+            for (final int tempColonyId : coloniesToAdd)
+            {
+                cap.addColony(tempColonyId);
+            }
+
+            for (final int tempColonyId : coloniesToRemove)
+            {
+                cap.removeColony(tempColonyId);
+            }
+        }
+        else
         {
-            cap.removeColony(tempColonyId);
+            for (final Tuple<Integer, BlockPos> tuple : unClaimingBuilding)
+            {
+                cap.removeBuildingClaim(tuple.getFirst(), tuple.getSecond());
+            }
+
+            for (final Tuple<Integer, BlockPos> tuple : claimingBuilding)
+            {
+                cap.addBuildingClaim(tuple.getFirst(), tuple.getSecond());
+            }
         }
     }
 
@@ -204,38 +252,85 @@ public class ChunkLoadStorage
      */
     public void merge(final ChunkLoadStorage newStorage)
     {
-        for(final int tempColonyId: newStorage.coloniesToAdd)
+        if (this.claimingBuilding.isEmpty() && unClaimingBuilding.isEmpty())
         {
-            if(this.coloniesToRemove.contains(tempColonyId))
+            for (final int tempColonyId : newStorage.coloniesToAdd)
             {
-                this.coloniesToRemove.remove(new Integer(tempColonyId));
-            }
-            else if(!this.coloniesToAdd.contains(tempColonyId))
-            {
-                this.coloniesToAdd.add(tempColonyId);
-            }
-        }
-
-        for(final int tempColonyId: newStorage.coloniesToRemove)
-        {
-            if(this.colonyId == tempColonyId)
-            {
-                this.colonyId = 0;
+                if (this.coloniesToRemove.contains(tempColonyId))
+                {
+                    this.coloniesToRemove.remove(new Integer(tempColonyId));
+                }
+                else if (!this.coloniesToAdd.contains(tempColonyId))
+                {
+                    this.coloniesToAdd.add(tempColonyId);
+                }
             }
 
-            if(this.coloniesToAdd.contains(tempColonyId))
+            for (final int tempColonyId : newStorage.coloniesToRemove)
             {
-                this.coloniesToAdd.remove(new Integer(tempColonyId));
-            }
-            else if(!this.coloniesToRemove.contains(tempColonyId))
-            {
-                this.coloniesToRemove.add(tempColonyId);
-            }
-        }
+                if (this.colonyId == tempColonyId)
+                {
+                    this.colonyId = 0;
+                }
 
-        if(newStorage.getColonyId() > 0 || !newStorage.coloniesToRemove.isEmpty())
-        {
-            this.colonyId = newStorage.getColonyId();
+                if (this.coloniesToAdd.contains(tempColonyId))
+                {
+                    this.coloniesToAdd.remove(new Integer(tempColonyId));
+                }
+                else if (!this.coloniesToRemove.contains(tempColonyId))
+                {
+                    this.coloniesToRemove.add(tempColonyId);
+                }
+            }
+
+            if (newStorage.getColonyId() > 0 || !newStorage.coloniesToRemove.isEmpty())
+            {
+                this.colonyId = newStorage.getColonyId();
+            }
         }
+        else
+        {
+            this.claimingBuilding.removeIf(newStorage.unClaimingBuilding::contains);
+            this.unClaimingBuilding.removeIf(newStorage.claimingBuilding::contains);
+
+            for (final Tuple<Integer, BlockPos> tuple : newStorage.unClaimingBuilding)
+            {
+                if (!this.unClaimingBuilding.contains(tuple))
+                {
+                    this.unClaimingBuilding.add(tuple);
+                }
+            }
+
+            for (final Tuple<Integer, BlockPos> tuple : newStorage.claimingBuilding)
+            {
+                if (!this.claimingBuilding.contains(tuple))
+                {
+                    this.claimingBuilding.add(tuple);
+                }
+            }
+        }
+    }
+
+    /**
+     * Write the tuple to NBT.
+     * @param tuple the tuple to write.
+     * @return the resulting compound.
+     */
+    private static NBTTagCompound writeTupleToNBT(final Tuple<Integer, BlockPos> tuple)
+    {
+        final NBTTagCompound compound = new NBTTagCompound();
+        compound.setInteger(TAG_COLONY_ID, tuple.getFirst());
+        BlockPosUtil.writeToNBT(compound, TAG_BUILDING, tuple.getSecond());
+        return compound;
+    }
+
+    /**
+     * Read the tuple from NBT.
+     * @param compound the compound to extract it from.
+     * @return the tuple.
+     */
+    private static Tuple<Integer, BlockPos> readTupleFromNbt(final NBTTagCompound compound)
+    {
+        return new Tuple<>(compound.getInteger(TAG_COLONY_ID), BlockPosUtil.readFromNBT(compound, TAG_BUILDING));
     }
 }

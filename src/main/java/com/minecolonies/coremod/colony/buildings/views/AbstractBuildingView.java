@@ -120,6 +120,11 @@ public abstract class AbstractBuildingView implements IRequester
     private String customName = "";
 
     /**
+     * The claim radius.
+     */
+    private int claimRadius = 0;
+
+    /**
      * Creates a building view.
      *
      * @param c ColonyView the building is in.
@@ -253,14 +258,31 @@ public abstract class AbstractBuildingView implements IRequester
         return workOrderLevel != NO_WORK_ORDER;
     }
 
+    /**
+     * Check if the building is current being built.
+     * @return true if so.
+     */
     public boolean isBuilding()
     {
         return workOrderLevel != NO_WORK_ORDER && workOrderLevel > buildingLevel;
     }
 
+    /**
+     * Check if the building is currently being repaired.
+     * @return true if so.
+     */
     public boolean isRepairing()
     {
         return workOrderLevel != NO_WORK_ORDER && workOrderLevel == buildingLevel;
+    }
+
+    /**
+     * Get the claim radius for the building.
+     * @return the radius.
+     */
+    public int getClaimRadius()
+    {
+        return this.claimRadius;
     }
 
     /**
@@ -314,6 +336,7 @@ public abstract class AbstractBuildingView implements IRequester
 
         rotation = buf.readInt();
         isBuildingMirrored = buf.readBoolean();
+        claimRadius = buf.readInt();
 
         final List<IToken<?>> list = new ArrayList<>();
         final int resolverSize = buf.readInt();

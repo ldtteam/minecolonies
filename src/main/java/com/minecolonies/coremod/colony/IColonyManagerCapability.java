@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -148,7 +149,7 @@ public interface IColonyManagerCapability
         public NBTBase writeNBT(@NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance, @Nullable final EnumFacing side)
         {
             final NBTTagCompound compound = new NBTTagCompound();
-            compound.setTag(TAG_COLONIES, instance.getColonies().stream().map(Colony::getColonyTag).collect(NBTUtils.toNBTTagList()));
+            compound.setTag(TAG_COLONIES, instance.getColonies().stream().map(Colony::getColonyTag).filter(Objects::nonNull).collect(NBTUtils.toNBTTagList()));
             compound.setInteger(TAG_MISSING_CHUNKS, instance.getMissingChunksToLoad());
             return compound;
         }
@@ -161,7 +162,7 @@ public interface IColonyManagerCapability
             {
                 final NBTTagCompound compound = (NBTTagCompound) nbt;
                 NBTUtils.streamCompound(((NBTTagCompound) nbt).getTagList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
-                  .map(colonyCompound -> Colony.loadColony(colonyCompound, null)).forEach(instance::addColony);
+                  .map(colonyCompound -> Colony.loadColony(colonyCompound, null)).filter(Objects::nonNull).forEach(instance::addColony);
                 instance.setMissingChunksToLoad(compound.getInteger(TAG_MISSING_CHUNKS));
             }
         }

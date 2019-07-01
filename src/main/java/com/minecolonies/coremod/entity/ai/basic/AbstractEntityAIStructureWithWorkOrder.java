@@ -389,7 +389,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             getOwnBuilding(AbstractBuildingStructureBuilder.class).setProgressPos(null, StructureIterator.Stage.CLEAR);
             return true;
         }
-        return false;
+        else return job.getWorkOrder() != null && !world.getChunk(job.getWorkOrder().getBuildingLocation()).isLoaded();
     }
 
     @Override

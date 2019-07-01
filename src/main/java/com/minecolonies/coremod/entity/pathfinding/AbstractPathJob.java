@@ -988,7 +988,12 @@ public abstract class AbstractPathJob implements Callable<Path>
 
     protected boolean isPassable(final BlockPos pos)
     {
-        return isPassable(world.getBlockState(pos));
+        final IBlockState state = world.getBlockState(pos);
+        if (state.getBlock().isPassable(world, pos))
+        {
+            return true;
+        }
+        return isPassable(state);
     }
 
     /**

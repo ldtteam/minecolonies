@@ -14,6 +14,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -307,6 +308,8 @@ public class TileEntityRack extends TileEntity
             ((TileEntityRack) tileEntity).setNeighbor(this.getPos());
             return (TileEntityRack) tileEntity;
         }
+        single = true;
+        relativeNeighbor = null;
         return null;
     }
 
@@ -507,6 +510,16 @@ public class TileEntityRack extends TileEntity
             return true;
         }
         return super.hasCapability(capability, facing);
+    }
+
+    @Override
+    public void rotate(final Rotation rotationIn)
+    {
+        super.rotate(rotationIn);
+        if (relativeNeighbor != null)
+        {
+            relativeNeighbor = relativeNeighbor.rotate(rotationIn);
+        }
     }
 
     @Override

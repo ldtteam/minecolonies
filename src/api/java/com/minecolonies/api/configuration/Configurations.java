@@ -24,11 +24,14 @@ public class Configurations
         @Config.Comment("Should builder place construction tape?")
         public boolean builderPlaceConstructionTape = true;
 
-        @Config.Comment("Colony size (radius) - deprecated, don't use")
-        public int workingRangeTownHall = 200;
+        @Config.Comment("Max distance a colony can claim a chunk from the center, 0 if disable maximum")
+        public int workingRangeTownHall = 0;
 
-        @Config.Comment("Colony size (radius in chunks around central colony chunk). Changing this affects only newly placed colonies, for old ones use the /mc colony claim command")
+        @Config.Comment("Colony size (radius in chunks around central colony chunk). Only for the static mode.")
         public int workingRangeTownHallChunks = 8;
+
+        @Config.Comment("The minimum distances between town halls for dynamic colony sizes (used as default initial claim too).")
+        public int minTownHallPadding = 3;
 
         @Config.Comment("Padding between colonies  - deprecated, don't use")
         public int townHallPadding = 20;
@@ -180,6 +183,9 @@ public class Configurations
         @Config.Comment("Should the min/max distance from spawn also affect colony placement?")
         public boolean restrictColonyPlacement = false;
 
+        @Config.Comment("Should the colony have a fixed radius or should it be dynamic")
+        public boolean enableDynamicColonySizes = false;
+
         @Config.Comment("Max distance from world spawn")
         public int maxDistanceFromWorldSpawn = 8000;
 
@@ -236,7 +242,7 @@ public class Configurations
 
         @Config.Comment("List of items the Students in the library can use. \n"
                           + "Format: itemname;SkillIncreasePCT[100-1000];BreakPCT[0-100] \n"
-                          + "Example: minecraft:paper;300;100 \n"
+                          + "Example: minecraft:paper;400;100 \n"
                           + "Which adds minecraft Paper with a 400%(4x) increased chance to skillup and a 100% chance to be used up during the try to skillup")
         public final String[] configListStudyItems = new String[]
                                                        {
@@ -458,6 +464,15 @@ public class Configurations
 
         @Config.Comment("The minimum level a townhall has to have to allow teleportation to other colonies.")
         public int minThLevelToTeleport = 3;
+
+        @Config.Comment("Seconds between permission messages.")
+        public int secondsBetweenPermissionMessages = 30;
+
+        @Config.Comment("Suggest build tool usage when trying to place a building without build tool. (Default: true)")
+        public boolean suggestBuildToolPlacement = true;
+
+        @Config.Comment("Food consumption modifier. (Default: 1, Min: 1)")
+        public double foodModifier = 1;
     }
 
     public static class Compatibility

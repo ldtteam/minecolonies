@@ -156,9 +156,13 @@ public abstract class AbstractJobCrafter extends AbstractJob
             return;
         }
 
-        final IToken<?> current = getTaskQueueFromDataStore().removeFirst();
+        final IToken<?> current = getTaskQueueFromDataStore().getFirst();
 
         getColony().getRequestManager().updateRequestState(current, successful ? RequestState.COMPLETED : RequestState.CANCELLED);
+
+        //Just to be sure lets delete them!
+        if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst())
+            getTaskQueueFromDataStore().removeFirst();
     }
 
     /**

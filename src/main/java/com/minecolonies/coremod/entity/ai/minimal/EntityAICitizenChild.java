@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.minimal;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.statemachine.AIEventTarget;
@@ -68,9 +69,9 @@ public class EntityAICitizenChild extends EntityAIBase
     private int AIActiveTime = 0;
 
     /**
-     * Minimum time the AI is active before it is allowed to grow
+     * Minimum ticks the AI is active before it is allowed to grow
      */
-    private static final int MIN_ACTIVE_TIME = 6000;
+    private static final int MIN_ACTIVE_TIME = 4000;
 
     /**
      * The entity we're following around
@@ -272,6 +273,10 @@ public class EntityAICitizenChild extends EntityAIBase
             // 1/144 Chance to grow up, every 25 seconds = avg 1h. Set to half since this AI isnt always active, e.g. sleeping.  At 2h they directly grow
             if (rand.nextInt((int) (70 / Configurations.gameplay.growthModifier)) == 0 || AIActiveTime > 70000 / Configurations.gameplay.growthModifier)
             {
+
+                LanguageHandler.sendPlayersMessage(child.getCitizenColonyHandler().getColony().getMessageEntityPlayers(),
+                  "com.minecolonies.coremod.progress.childGrow",
+                  child.getName());
                 // Grow up
                 child.setIsChild(false);
                 child.getCitizenData().setIsChild(false);

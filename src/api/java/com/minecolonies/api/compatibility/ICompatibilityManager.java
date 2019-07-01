@@ -83,6 +83,12 @@ public interface ICompatibilityManager
     boolean isOre(ItemStack stack);
 
     /**
+     * Get a list of all blocks.
+     * @return the immutable list.
+     */
+    List<ItemStack> getBlockList();
+
+    /**
      * Test if an itemStack is compostable
      * @param stack the stack to test
      * @return true if so

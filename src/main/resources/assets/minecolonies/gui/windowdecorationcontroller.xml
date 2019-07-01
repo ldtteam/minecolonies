@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
     <label id="nameLabel" size="50% 11" pos="50 40" color="white"
            label="$(com.minecolonies.coremod.gui.deco.name)" />
-    <input id="name" size="150 18" pos="50 50" maxlength="25"/>
+    <input id="name" size="150 18" pos="50 50" maxlength="100"/>
 
     <label id="levelLabel" size="50% 11" pos="250 40" color="white"
            label="$(com.minecolonies.coremod.gui.deco.level)"/>

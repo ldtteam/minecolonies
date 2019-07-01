@@ -20,6 +20,11 @@ public class ColonyViewCitizenViewMessage extends AbstractMessage<ColonyViewCiti
     private ByteBuf citizenBuffer;
 
     /**
+     * The dimension the citizen is in.
+     */
+    private int dimension;
+
+    /**
      * Empty constructor used when registering the message.
      */
     public ColonyViewCitizenViewMessage()
@@ -38,6 +43,7 @@ public class ColonyViewCitizenViewMessage extends AbstractMessage<ColonyViewCiti
         this.colonyId = colony.getID();
         this.citizenId = citizen.getId();
         this.citizenBuffer = Unpooled.buffer();
+        this.dimension = citizen.getColony().getDimension();
         citizen.serializeViewNetworkData(citizenBuffer);
     }
 
@@ -46,6 +52,7 @@ public class ColonyViewCitizenViewMessage extends AbstractMessage<ColonyViewCiti
     {
         colonyId = buf.readInt();
         citizenId = buf.readInt();
+        dimension = buf.readInt();
         this.citizenBuffer = buf.retain();
     }
 
@@ -54,12 +61,13 @@ public class ColonyViewCitizenViewMessage extends AbstractMessage<ColonyViewCiti
     {
         buf.writeInt(colonyId);
         buf.writeInt(citizenId);
+        buf.writeInt(dimension);
         buf.writeBytes(citizenBuffer);
     }
 
     @Override
     protected void messageOnClientThread(final ColonyViewCitizenViewMessage message, final MessageContext ctx)
     {
-        ColonyManager.handleColonyViewCitizensMessage(message.colonyId, message.citizenId, message.citizenBuffer, Minecraft.getMinecraft().world.provider.getDimension());
+        ColonyManager.handleColonyViewCitizensMessage(message.colonyId, message.citizenId, message.citizenBuffer, message.dimension);
     }
 }

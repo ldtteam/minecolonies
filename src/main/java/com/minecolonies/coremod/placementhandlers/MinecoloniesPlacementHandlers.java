@@ -172,7 +172,7 @@ public final class MinecoloniesPlacementHandlers
         @Override
         public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final IBlockState blockState)
         {
-            return blockState.getBlock() instanceof BlockChest;
+            return blockState.getBlock() instanceof BlockMinecoloniesRack;
         }
 
         @Override
@@ -182,11 +182,12 @@ public final class MinecoloniesPlacementHandlers
           @NotNull final IBlockState blockState,
           @Nullable final NBTTagCompound tileEntityData,
           final boolean complete,
-          final BlockPos centerPos)
+          final BlockPos centerPos,
+          final PlacementSettings settings)
         {
             final TileEntity entity = world.getTileEntity(pos);
             final Colony colony = ColonyManager.getClosestColony(world, pos);
-            if (colony != null && entity instanceof TileEntityChest && colony.getBuildingManager().getBuilding(centerPos) instanceof BuildingWareHouse)
+            if (colony != null && entity instanceof TileEntityChest)
             {
                 BuildingWareHouse.handleBuildingOverChest(pos, (TileEntityChest) entity, world);
             }
@@ -199,7 +200,7 @@ public final class MinecoloniesPlacementHandlers
 
                 if (tileEntityData != null)
                 {
-                    handleTileEntityPlacement(tileEntityData, world, pos);
+                    handleTileEntityPlacement(tileEntityData, world, pos, settings);
                 }
             }
 

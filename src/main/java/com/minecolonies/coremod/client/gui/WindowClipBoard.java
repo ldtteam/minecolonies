@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
@@ -165,14 +166,21 @@ public class WindowClipBoard extends AbstractWindowSkeleton
             return ImmutableList.of();
         }
 
-        final IPlayerRequestResolver resolver = view.getRequestManager().getPlayerResolver();
-        final IRetryingRequestResolver retryingRequestResolver = view.getRequestManager().getRetryingRequestResolver();
+        final IRequestManager requestManager = view.getRequestManager();
+
+        if (requestManager == null)
+        {
+            return ImmutableList.of();
+        }
+
+        final IPlayerRequestResolver resolver = requestManager.getPlayerResolver();
+        final IRetryingRequestResolver retryingRequestResolver = requestManager.getRetryingRequestResolver();
 
         final Set<IToken> requestTokens = new HashSet<>();
         requestTokens.addAll(resolver.getAllAssignedRequests());
         requestTokens.addAll(retryingRequestResolver.getAllAssignedRequests());
 
-        requests.addAll(requestTokens.stream().map(view.getRequestManager()::getRequestForToken).filter(Objects::nonNull).collect(Collectors.toSet()));
+        requests.addAll(requestTokens.stream().map(requestManager::getRequestForToken).filter(Objects::nonNull).collect(Collectors.toSet()));
 
         final BlockPos playerPos = Minecraft.getMinecraft().player.getPosition();
         requests.sort(Comparator.comparing((IRequest request) -> request.getRequester().getDeliveryLocation().getInDimensionLocation()

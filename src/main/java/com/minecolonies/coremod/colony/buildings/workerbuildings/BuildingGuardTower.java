@@ -58,6 +58,12 @@ public class BuildingGuardTower extends AbstractBuildingGuards
         return MAX_LEVEL;
     }
 
+    @Override
+    public int getClaimRadius()
+    {
+        return Math.max(0, getBuildingLevel() - 1);
+    }
+
     /**
      * The client view for the baker building.
      */

@@ -88,7 +88,7 @@ public class PermissionsMessage
         @Override
         protected void messageOnClientThread(final View message, final MessageContext ctx)
         {
-            ColonyManager.handlePermissionsViewMessage(message.colonyID, message.data, Minecraft.getMinecraft().world.provider.getDimension());
+            ColonyManager.handlePermissionsViewMessage(message.colonyID, message.data, message.dimension);
         }
 
         @Override

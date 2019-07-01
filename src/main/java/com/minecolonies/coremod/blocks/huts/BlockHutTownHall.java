@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.blocks.huts;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
@@ -53,7 +54,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
             return;
         }
 
-        if (placer.getActiveHand().equals(EnumHand.MAIN_HAND))
+        if (placer.getActiveHand().equals(EnumHand.MAIN_HAND) && placer instanceof EntityPlayer)
         {
             final Colony colony = ColonyManager.getClosestColony(worldIn, pos);
             String style = Constants.DEFAULT_STYLE;
@@ -66,11 +67,28 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
 
             if (colony == null || !ColonyManager.isTooCloseToColony(worldIn, pos))
             {
-                ColonyManager.createColony(worldIn, pos, (EntityPlayer) placer, style);
+                if (Configurations.gameplay.enableDynamicColonySizes)
+                {
+                    IColony ownedColony = ColonyManager.getIColonyByOwner(worldIn, (EntityPlayer) placer);
+
+                    if (ownedColony == null)
+                    {
+                        ColonyManager.createColony(worldIn, pos, (EntityPlayer) placer, style);
+                    }
+                    else
+                    {
+                        colony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, worldIn);
+                    }
+                }
+                else
+                {
+                    ColonyManager.createColony(worldIn, pos, (EntityPlayer) placer, style);
+                }
             }
             else
             {
                 colony.setStyle(style);
+                colony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, worldIn);
             }
         }
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);

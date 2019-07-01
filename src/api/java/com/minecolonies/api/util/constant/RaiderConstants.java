@@ -33,7 +33,7 @@ public final class RaiderConstants
     public static final int    TIME_TO_COUNTDOWN           = 240;
     public static final int    COUNTDOWN_SECOND_MULTIPLIER = 4;
     public static final int    SPEED_EFFECT_DISTANCE       = 7;
-    public static final int    SPEED_EFFECT_DURATION       = 240;
+    public static final int    SPEED_EFFECT_DURATION       = 60;
     public static final int    SPEED_EFFECT_MULTIPLIER     = 2;
 
     /**

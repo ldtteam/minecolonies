@@ -427,8 +427,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             if (optCitizen.isPresent())
             {
                 optCitizen.get().removeAllHealthModifiers();
-
-                optCitizen.get().getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue());
+                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.OFFHAND, ItemStackUtils.EMPTY);
             }
         }
         super.removeCitizen(citizen);

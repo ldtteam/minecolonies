@@ -1040,8 +1040,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
-        final ItemStack stackToDump = worker.getInventoryCitizen().getStackInSlot(slotAt);
+        ItemStack stackToDump = worker.getInventoryCitizen().getStackInSlot(slotAt);
         final int totalSize = worker.getInventoryCitizen().getSizeInventory();
+
+        while (stackToDump.isEmpty())
+        {
+            if (slotAt >= totalSize)
+            {
+                return false;
+            }
+            slotAt++;
+            stackToDump = worker.getInventoryCitizen().getStackInSlot(slotAt);
+        }
 
         boolean dumpAnyway = false;
         if (slotAt + MIN_OPEN_SLOTS * 2 >= totalSize)

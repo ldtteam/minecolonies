@@ -1,25 +1,20 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.*;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.PostBoxRequestMessage;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -120,19 +115,11 @@ public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHa
      */
     private Collection<? extends ItemStack> getBlockList(final Predicate<ItemStack> filterPredicate)
     {
-        return ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
-            final NonNullList<ItemStack> stacks = NonNullList.create();
-            try
-            {
-                item.getSubItems(CreativeTabs.SEARCH, stacks);
-            }
-            catch (final Exception ex)
-            {
-                Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName(), ex);
-            }
-
-            return stacks.stream().filter(filterPredicate);
-        }).collect(Collectors.toList()));
+        if (filter.isEmpty())
+        {
+            return ColonyManager.getCompatibilityManager().getBlockList();
+        }
+        return ColonyManager.getCompatibilityManager().getBlockList().stream().filter(filterPredicate).collect(Collectors.toList());
     }
 
     /**

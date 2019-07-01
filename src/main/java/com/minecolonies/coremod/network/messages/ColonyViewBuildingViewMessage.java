@@ -21,6 +21,11 @@ public class ColonyViewBuildingViewMessage extends AbstractMessage<ColonyViewBui
     private ByteBuf  buildingData;
 
     /**
+     * Dimension of the colony.
+     */
+    private int dimension;
+
+    /**
      * Empty constructor used when registering the message.
      */
     public ColonyViewBuildingViewMessage()
@@ -39,6 +44,7 @@ public class ColonyViewBuildingViewMessage extends AbstractMessage<ColonyViewBui
         this.buildingId = building.getID();
         this.buildingData = Unpooled.buffer();
         building.serializeToView(this.buildingData);
+        this.dimension = building.getColony().getDimension();
     }
 
     @Override
@@ -47,6 +53,7 @@ public class ColonyViewBuildingViewMessage extends AbstractMessage<ColonyViewBui
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
         buildingData = Unpooled.buffer(buf.readableBytes());
+        dimension = buf.readInt();
         buf.readBytes(buildingData, buf.readableBytes());
     }
 
@@ -55,12 +62,13 @@ public class ColonyViewBuildingViewMessage extends AbstractMessage<ColonyViewBui
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeInt(dimension);
         buf.writeBytes(buildingData);
     }
 
     @Override
     protected void messageOnClientThread(final ColonyViewBuildingViewMessage message, final MessageContext ctx)
     {
-        ColonyManager.handleColonyBuildingViewMessage(message.colonyId, message.buildingId, message.buildingData, Minecraft.getMinecraft().world.provider.getDimension());
+        ColonyManager.handleColonyBuildingViewMessage(message.colonyId, message.buildingId, message.buildingData, message.dimension);
     }
 }

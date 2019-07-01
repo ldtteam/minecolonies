@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -110,7 +111,11 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 LanguageHandler.sendPlayersMessage(getColony().getMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL);
                 return;
             }
-            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(new InvWrapper(inventoryCitizen), i, chest.getCapability(ITEM_HANDLER_CAPABILITY, null));
+            final IItemHandler handler = chest.getCapability(ITEM_HANDLER_CAPABILITY, null);
+            if (handler != null)
+            {
+                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(new InvWrapper(inventoryCitizen), i, handler);
+            }
         }
     }
 

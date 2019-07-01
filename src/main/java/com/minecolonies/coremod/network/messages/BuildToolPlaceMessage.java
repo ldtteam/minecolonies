@@ -265,15 +265,16 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
             String schem = sn.toString();
             String woName = workOrderName;
 
-            if (schem.matches("^.+?\\d$"))
+            if (schem.matches("^.*[a-zA-Z_-]\\d$"))
             {
-                schem = schem.replaceAll("\\d*$", "");
+
+                schem = schem.replaceAll("\\d$", "");
                 schem+='1';
             }
 
-            if (woName.matches("^.+?\\d$"))
+            if (woName.matches("^.*[a-zA-Z_-]\\d$"))
             {
-                woName = woName.replaceAll("\\d*$", "");
+                woName = woName.replaceAll("\\d$", "");
                 woName+='1';
             }
 

@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Log;
@@ -112,6 +114,12 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
         if (controller.getLevel() == 0)
         {
             findPaneByID(BUTTON_REPAIR).hide();
+        }
+
+        final com.ldtteam.structures.helpers.Structure structure = new com.ldtteam.structures.helpers.Structure(world, controller.getSchematicName() + (controller.getLevel() + 1), new PlacementSettings());
+        if (structure.isBluePrintMissing())
+        {
+            findPaneByID(BUTTON_BUILD).hide();
         }
 
         if (!isCreative)

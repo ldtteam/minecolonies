@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -35,7 +36,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -323,22 +323,30 @@ public class Colony implements IColony
      * @param compound The NBT compound containing the colony's data.
      * @return loaded colony.
      */
-    @NotNull
+    @Nullable
     public static Colony loadColony(@NotNull final NBTTagCompound compound, @Nullable final World world)
     {
-        final int id = compound.getInteger(TAG_ID);
-        @NotNull final Colony c = new Colony(id, world);
-        c.name = compound.getString(TAG_NAME);
-        c.center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
-        c.setRequestManager();
-        c.readFromNBT(compound);
-
-        if (c.getProgressManager().isPrintingProgress() && (c.getBuildingManager().getBuildings().size() > BUILDING_LIMIT_FOR_HELP
-                                                              || c.getCitizenManager().getCitizens().size() > CITIZEN_LIMIT_FOR_HELP))
+        try
         {
-            c.getProgressManager().togglePrintProgress();
+            final int id = compound.getInteger(TAG_ID);
+            @NotNull final Colony c = new Colony(id, world);
+            c.name = compound.getString(TAG_NAME);
+            c.center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
+            c.setRequestManager();
+            c.readFromNBT(compound);
+
+            if (c.getProgressManager().isPrintingProgress() && (c.getBuildingManager().getBuildings().size() > BUILDING_LIMIT_FOR_HELP
+                                                                  || c.getCitizenManager().getCitizens().size() > CITIZEN_LIMIT_FOR_HELP))
+            {
+                c.getProgressManager().togglePrintProgress();
+            }
+            return c;
         }
-        return c;
+        catch (final Exception e)
+        {
+            Log.getLogger().warn("Something went wrong loading a colony, please report this to the administrators", e);
+        }
+        return null;
     }
 
     /**
@@ -1363,9 +1371,16 @@ public class Colony implements IColony
      */
     public NBTTagCompound getColonyTag()
     {
-        if (this.colonyTag == null || this.isActive)
+        try
         {
-            this.writeToNBT(new NBTTagCompound());
+            if (this.colonyTag == null || this.isActive)
+            {
+                this.writeToNBT(new NBTTagCompound());
+            }
+        }
+        catch (final Exception e)
+        {
+            Log.getLogger().warn("Something went wrong persisting colony: " + id, e);
         }
         return this.colonyTag;
     }
@@ -1546,7 +1561,7 @@ public class Colony implements IColony
      */
     public void increaseBoughtCitizenCost()
     {
-        boughtCitizenCost = 1 + (int) Math.ceil(boughtCitizenCost * 1.5);
+        boughtCitizenCost = Math.min(1 + (int) Math.ceil(boughtCitizenCost * 1.5), STACKSIZE);
         markDirty();
     }
 }

@@ -115,6 +115,21 @@ public class BuildingBarracks extends AbstractBuilding
     }
 
     @Override
+    public int getClaimRadius()
+    {
+        int sum = getBuildingLevel();
+        for (final BlockPos pos : towers)
+        {
+            final AbstractBuilding building = colony.getBuildingManager().getBuilding(pos);
+            if (building != null)
+            {
+                sum += building.getBuildingLevel();
+            }
+        }
+        return Math.max(1, sum / getMaxBuildingLevel());
+    }
+
+    @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);

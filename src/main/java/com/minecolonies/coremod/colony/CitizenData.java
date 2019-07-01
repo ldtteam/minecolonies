@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.configuration.NameConfiguration;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
@@ -186,6 +187,11 @@ public class CitizenData
     private double saturation;
 
     /**
+     * Variable indicating if a citizen just ate.
+     */
+    private boolean justAte;
+
+    /**
      * The current experiences levels the citizen is on depending on his job.
      * The total amount of experiences the citizen has depending on his job.
      * This also includes the amount of experiences within their Experience Bar.
@@ -285,7 +291,6 @@ public class CitizenData
             this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInteger(TAG_HELD_ITEM_SLOT));
             this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
         }
-        citizenHappinessHandler.readFromNBT(compound);
 
         if (name.isEmpty())
         {
@@ -297,6 +302,13 @@ public class CitizenData
             bedPos = BlockPosUtil.readFromNBT(compound, TAG_POS);
             isAsleep = compound.getBoolean(TAG_ASLEEP);
         }
+
+        if (compound.hasKey(TAG_JUST_ATE))
+        {
+            justAte = compound.getBoolean(TAG_JUST_ATE);
+        }
+
+        citizenHappinessHandler.readFromNBT(compound);
     }
 
     /**
@@ -899,8 +911,10 @@ public class CitizenData
 
         BlockPosUtil.writeToNBT(compound, TAG_POS, bedPos);
         compound.setBoolean(TAG_ASLEEP, isAsleep);
+        compound.setBoolean(TAG_JUST_ATE, justAte);
 
         citizenHappinessHandler.writeToNBT(compound);
+
         return compound;
     }
 
@@ -1075,7 +1089,8 @@ public class CitizenData
      */
     public void decreaseSaturation(final double extraSaturation)
     {
-        this.saturation = Math.max(MIN_SATURATION, this.saturation - Math.abs(extraSaturation));
+        this.saturation = Math.max(MIN_SATURATION, this.saturation - Math.abs(extraSaturation* Configurations.gameplay.foodModifier));
+        this.justAte = false;
     }
 
     /**
@@ -1497,5 +1512,23 @@ public class CitizenData
     public double getHealth()
     {
         return health;
+    }
+
+    /**
+     * Check if the citizen just ate.
+     * @return true if so.
+     */
+    public boolean justAte()
+    {
+        return this.justAte;
+    }
+
+    /**
+     * Set or reset if the citizen just ate.
+     * @param justAte true if justAte, false to reset.
+     */
+    public void setJustAte(final boolean justAte)
+    {
+        this.justAte = justAte;
     }
 }

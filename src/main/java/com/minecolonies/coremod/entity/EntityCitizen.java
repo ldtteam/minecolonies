@@ -14,6 +14,7 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.MathUtils;
+import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.*;
@@ -925,6 +926,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (getCitizenColonyHandler().getColony() != null && !world.isRemote && (!getCitizenColonyHandler().getColony().getRaiderManager().getHorde((WorldServer) world).isEmpty()))
         {
+            isDay = false;
             return DesiredActivity.SLEEP;
         }
 
@@ -1250,6 +1252,15 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         return !getCitizenSleepHandler().isAsleep() && getDesiredActivity() != DesiredActivity.SLEEP && (citizenJobHandler.getColonyJob() == null
                                                                                                            || citizenJobHandler.getColonyJob().isOkayToEat());
+    }
+
+    /**
+     * Check if the citizen can be fed.
+     * @return true if so.
+     */
+    public boolean shouldBeFed()
+    {
+        return this.getCitizenData() != null && this.getCitizenData().getSaturation() <= CitizenConstants.AVERAGE_SATURATION && !this.getCitizenData().justAte();
     }
 
     /**
