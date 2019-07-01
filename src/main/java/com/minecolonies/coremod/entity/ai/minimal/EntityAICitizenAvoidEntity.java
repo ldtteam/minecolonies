@@ -108,7 +108,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
      */
     private void onException(final RuntimeException e)
     {
-        Log.getLogger().warn("WorkerAI of:" + citizen.getName() + " threw an Exception:", e);
+        Log.getLogger().warn("AvoidAI of:" + citizen.getName() + " threw an Exception:", e);
     }
 
     /**
