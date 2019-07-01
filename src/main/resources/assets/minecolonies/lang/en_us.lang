@@ -333,8 +333,8 @@ com.minecolonies.coremod.gui.structure.delete.title=Delete Structure
 com.minecolonies.coremod.gui.structure.delete.body=Do you want to delete %s?
 com.minecolonies.coremod.gui.workerHuts.deliveryPrio.static=Static
 com.minecolonies.coremod.gui.workerHuts.deliveryPrio.automatic=Automatic
-com.minecolonies.coremod.mercenary.stealCitizen = %s is unhappy, a mercenary took her %s away!
-com.minecolonies.coremod.mercenary.stealBuilding = A mercenary just stole %s from a building!
+com.minecolonies.coremod.mercenary.mercenaryStealCitizen=%s is unhappy, a mercenary took the %s away!
+com.minecolonies.coremod.mercenary.stealBuilding=A mercenary just stole %s from a building!
 
 com.minecolonies.coremod.gui.happiness.happinessModifier=Happiness Modifiers
 com.minecolonies.coremod.gui.happiness.food=Food Modifier

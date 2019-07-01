@@ -320,7 +320,11 @@ public class CompatibilityManager implements ICompatibilityManager
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         @NotNull final NBTTagList saplingsLeavesTagList =
-          leavesToSaplingMap.entrySet().stream().map(entry -> writeLeafSaplingEntryToNBT(entry.getKey().getState(), entry.getValue())).collect(NBTUtils.toNBTTagList());
+          leavesToSaplingMap.entrySet()
+            .stream()
+            .filter(entry -> entry.getKey() != null)
+            .map(entry -> writeLeafSaplingEntryToNBT(entry.getKey().getState(), entry.getValue()))
+            .collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_SAP_LEAF, saplingsLeavesTagList);
     }
 

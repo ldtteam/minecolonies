@@ -13,7 +13,7 @@ import com.minecolonies.coremod.entity.pathfinding.PathResult;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
@@ -169,7 +169,7 @@ public class EntityMercenaryAI extends EntityAIBase
                     {
                         entity.swingArm(EnumHand.OFF_HAND);
                         LanguageHandler.sendPlayersMessage(entity.getColony().getMessageEntityPlayers(),
-                          LanguageHandler.format("com.minecolonies.coremod.mercenary.stealBuilding"),
+                          "com.minecolonies.coremod.mercenary.stealBuilding",
                           stack.getDisplayName());
                     }
                 }
@@ -238,7 +238,7 @@ public class EntityMercenaryAI extends EntityAIBase
         {
             entity.swingArm(EnumHand.MAIN_HAND);
             entity.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, 0.55f, 1.0f);
-            entity.getAttackTarget().attackEntityFrom(DamageSource.GENERIC, 15);
+            entity.getAttackTarget().attackEntityFrom(new EntityDamageSource(entity.getName(), entity), 15);
             entity.getAttackTarget().setFire(3);
             attacktimer = ATTACK_DELAY;
         }

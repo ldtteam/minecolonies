@@ -26,6 +26,7 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -229,7 +230,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
         final BlockPos first = soldiers.get(0).getPosition().add(0, 0, 1);
         final BlockPos last = soldiers.get(soldiers.size() - 1).getPosition().add(0, 0, 1);
 
-        playSound(SoundEvents.ENTITY_EVOCATION_ILLAGER_AMBIENT, 0.95f, 1.0f);
+        playSound(SoundEvents.ENTITY_EVOCATION_ILLAGER_AMBIENT, 2.0f, 1.0f);
         if (getPosition().equals(first))
         {
             getNavigator().tryMoveToBlockPos(last, 0.5);
@@ -349,7 +350,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
         if (slapTimer == 0 && entityIn instanceof EntityPlayer)
         {
             slapTimer = SLAP_INTERVAL;
-            entityIn.attackEntityFrom(new DamageSource("slap"), 1.0f);
+            entityIn.attackEntityFrom(new EntityDamageSource("Slap", this), 1.0f);
             this.swingArm(EnumHand.OFF_HAND);
         }
 
@@ -362,7 +363,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
             {
                 this.swingArm(EnumHand.OFF_HAND);
                 LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
-                  LanguageHandler.format("com.minecolonies.coremod.gui.townHall.mercenaryStealCitizen"),
+                  "com.minecolonies.coremod.mercenary.mercenaryStealCitizen",
                   entityIn.getName(),
                   stack.getDisplayName());
             }
@@ -433,14 +434,14 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
     {
         final World world = colony.getWorld();
 
-        if (world.getTotalWorldTime() - colony.getMercenaryUseTime() < TICKS_FOURTY_MIN)
+        if (colony.getMercenaryUseTime() != 0 && world.getTotalWorldTime() - colony.getMercenaryUseTime() < TICKS_FOURTY_MIN)
         {
             return;
         }
 
         colony.usedMercenaries();
 
-        int amountOfMercenaries = colony.getCitizenManager().getMaxCitizens();
+        int amountOfMercenaries = colony.getCitizenManager().getCurrentCitizenCount();
         amountOfMercenaries = amountOfMercenaries / 10;
         amountOfMercenaries += 3;
 

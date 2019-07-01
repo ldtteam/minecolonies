@@ -5,11 +5,6 @@
     <image source="minecolonies:textures/gui/citizen/colonist_papper_sketch.png" pos="150 0" size="152 145"/>
     <image size="82 16" source="minecolonies:textures/gui/citizen/colonist_text_decor_down.png" pos="190 9"/>
     <image source="minecolonies:textures/gui/citizen/colonist_wax_male.png" pos="160 110" size="30 30"/>
-    <image source="minecolonies:textures/entity_icon/citizenmale3.png" pos="160 40" size="10 10"/>
-    <image source="minecolonies:textures/entity_icon/citizenmale3.png" pos="175 40" size="10 10"/>
-    <image source="minecolonies:textures/entity_icon/citizenmale3.png" pos="190 40" size="10 10"/>
-    <image source="minecolonies:textures/entity_icon/citizenmale3.png" pos="205 40" size="10 10"/>
-    <image source="minecolonies:textures/entity_icon/citizenmale3.png" pos="205 40" size="10 10"/>
     <image source="minecolonies:textures/items/moneygold.png" pos="170 60" size="20 20"/>
     <image source="minecolonies:textures/items/moneygold.png" pos="170 90" size="20 20"/>
     <image source="minecraft:textures/items/diamond_sword.png" pos="200 60" size="40 40"/>

@@ -18,8 +18,8 @@ public class ChildrenSounds extends AbstractWorkerSounds
     /**
      * Soundevents for occasional giggling
      */
-    private static SoundEvent laugh1 = ModSoundEvents.getSoundID("mob.citizen.child.laugh1");
-    private static SoundEvent laugh2 = ModSoundEvents.getSoundID("mob.citizen.child.laugh2");
+    public static SoundEvent laugh1 = ModSoundEvents.getSoundID("mob.citizen.child.laugh1");
+    public static SoundEvent laugh2 = ModSoundEvents.getSoundID("mob.citizen.child.laugh2");
 
     /**
      * Plays citizen sounds.
