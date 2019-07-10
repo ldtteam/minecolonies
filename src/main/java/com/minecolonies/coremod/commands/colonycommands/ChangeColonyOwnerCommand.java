@@ -116,7 +116,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
             playerName = args[1];
         }
 
-        final Colony colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(0));
+        final Colony colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
         if (colony == null)
         {
             sender.sendMessage(new TextComponentString(String.format(COLONY_X_NULL, colonyId)));

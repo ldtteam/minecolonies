@@ -433,7 +433,7 @@ public enum ActionArgumentType
         {
             if (ABANDONED_FAKE_PLAYER_NAME.equals(potentialArgumentValue))
             {
-                return new FakePlayer(server.getWorld(0), new GameProfile(UUID.randomUUID(), ABANDONED_FAKE_PLAYER_NAME));
+                return new FakePlayer(server.getWorld(server.getEntityWorld().provider.getDimension()), new GameProfile(UUID.randomUUID(), ABANDONED_FAKE_PLAYER_NAME));
             }
             return null;
         }
