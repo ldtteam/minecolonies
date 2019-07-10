@@ -10,7 +10,6 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
@@ -46,7 +45,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Suppression.MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED;
 import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
@@ -448,7 +446,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 final IBlockState worldState = world.getBlockState(coords);
 
                 if (worldState.getMaterial() != Material.AIR
-                      && (worldState.getBlock() instanceof BlockDoublePlant && worldState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.UPPER)))
+                      && !(worldState.getBlock() instanceof BlockDoublePlant && worldState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.UPPER)))
                 {
                     handleBuildingOverBlock(coords);
                     world.setBlockToAir(coords);

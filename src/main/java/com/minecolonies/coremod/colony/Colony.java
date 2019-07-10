@@ -133,7 +133,7 @@ public class Colony implements IColony
     /**
      * Colony permission event handler.
      */
-    private final ColonyPermissionEventHandler eventHandler;
+    private ColonyPermissionEventHandler eventHandler;
 
     /**
      * Whether or not this colony may be auto-deleted.
@@ -271,10 +271,6 @@ public class Colony implements IColony
             checkOrCreateTeam();
         }
         this.permissions = new Permissions(this);
-
-        // Register a new event handler
-        eventHandler = new ColonyPermissionEventHandler(this);
-        MinecraftForge.EVENT_BUS.register(eventHandler);
 
         for (final String s : Configurations.gameplay.freeToInteractBlocks)
         {
@@ -639,6 +635,9 @@ public class Colony implements IColony
     public void onWorldLoad(@NotNull final World w)
     {
         this.world = w;
+        // Register a new event handler
+        eventHandler = new ColonyPermissionEventHandler(this);
+        MinecraftForge.EVENT_BUS.register(eventHandler);
     }
 
     /**
