@@ -97,7 +97,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
 
                 if (null != iColony)
                 {
-                    colony = ColonyManager.getColonyByWorld(iColony.getID(), server.getWorld(0));
+                    colony = ColonyManager.getColonyByWorld(iColony.getID(), server.getWorld(sender.getEntityWorld().provider.getDimension()));
                 }
             }
         }
@@ -122,7 +122,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
             try
             {
                 final int colonyId = Integer.parseInt(args[0]);
-                colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(0));
+                colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
             }
             catch (final NumberFormatException e)
             {
@@ -144,7 +144,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
         //see if player is allowed to use in the configs
         if ((sender instanceof EntityPlayer) && canPlayerUseCommand((EntityPlayer) sender, COLONYTP, colony.getID()))
         {
-            final Colony colonyIn = ColonyManager.getColonyByPosFromWorld(server.getWorld(0), sender.getPosition());
+            final Colony colonyIn = ColonyManager.getColonyByPosFromWorld(server.getWorld(sender.getEntityWorld().provider.getDimension()), sender.getPosition());
             if (isPlayerOpped(sender)
                     || (colonyIn != null
                     && colonyIn.hasTownHall()

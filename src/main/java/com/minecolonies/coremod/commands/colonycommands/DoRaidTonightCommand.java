@@ -72,7 +72,7 @@ public class DoRaidTonightCommand extends AbstractSingleCommand implements IActi
         Colony colony = null;
         if (args.length != 0)
         {
-            colony = ColonyManager.getColonyByWorld(Integer.parseInt(args[0]), server.getWorld(0));
+            colony = ColonyManager.getColonyByWorld(Integer.parseInt(args[0]), server.getWorld(sender.getEntityWorld().provider.getDimension()));
             if (colony == null)
             {
                 sender.sendMessage(NO_COLONY_FOUND_MESSAGE);
