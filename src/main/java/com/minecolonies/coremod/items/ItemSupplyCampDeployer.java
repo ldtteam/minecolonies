@@ -157,7 +157,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         {
             for(int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
             {
-                if(!world.isAirBlock(new BlockPos(x, pos.getY()+1, z)))
+                if(world.getBlockState(new BlockPos(x, pos.getY()+1, z)).getMaterial().isSolid())
                 {
                     final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, pos);
                     placementErrorList.add(placementError);

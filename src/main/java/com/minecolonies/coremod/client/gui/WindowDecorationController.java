@@ -116,8 +116,17 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
             findPaneByID(BUTTON_REPAIR).hide();
         }
 
-        final com.ldtteam.structures.helpers.Structure structure = new com.ldtteam.structures.helpers.Structure(world, controller.getSchematicName() + (controller.getLevel() + 1), new PlacementSettings());
-        if (structure.isBluePrintMissing())
+        com.ldtteam.structures.helpers.Structure structure = null;
+        try
+        {
+            structure = new com.ldtteam.structures.helpers.Structure(world, controller.getSchematicName() + (controller.getLevel() + 1), new PlacementSettings());
+        }
+        catch (final Exception e)
+        {
+            Log.getLogger().info("Unable to load structure: " + controller.getSchematicName() + " for decoration controller!");
+        }
+
+        if (structure == null || structure.isBluePrintMissing())
         {
             findPaneByID(BUTTON_BUILD).hide();
         }

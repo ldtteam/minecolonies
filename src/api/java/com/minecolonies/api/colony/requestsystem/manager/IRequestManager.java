@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 /**
  * Interface used to describe classes that function as managers for requests inside a colony.
@@ -157,6 +158,12 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
      * @throws IllegalArgumentException is thrown when no provider with the same token is registered.
      */
     void onProviderRemovedFromColony(@NotNull IRequestResolverProvider provider) throws IllegalArgumentException;
+
+    /**
+     * Method used to indicate that a colony has updated their available items.
+     * @param shouldTriggerReassign The request assigned
+     */
+    void onColonyUpdate(@NotNull final Predicate<IRequest> shouldTriggerReassign);
 
     /**
      * Get the player resolve.

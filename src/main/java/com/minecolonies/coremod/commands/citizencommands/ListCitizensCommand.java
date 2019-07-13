@@ -97,7 +97,7 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
                 }
             }
         }
-        colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(0));
+        colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
 
         executeShared(server, sender, colony, page);
     }

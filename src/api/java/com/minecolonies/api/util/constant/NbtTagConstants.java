@@ -96,7 +96,12 @@ public final class NbtTagConstants
     public static final String TAG_CHILD                  = "child";
     public static final String TAG_BOUGHT_CITIZENS        = "bought_citizen";
     public static final String TAG_JUST_ATE               = "justAte";
-
+    public static final String TAG_EXPLOSIONS = "Explosions";
+    public static final String TAG_FIREWORKS = "Fireworks";
+    public static final String TAG_COLORS = "Colors";
+    public static final String TAG_FLICKER = "Flicker";
+    public static final String TAG_TRAIL = "Trail";
+    public static final String TAG_TYPE = "Type";
     /**
      * Tag used to store the containers to NBT.
      */
@@ -328,6 +333,11 @@ public final class NbtTagConstants
      * Tag used to store if the entity is the main.
      */
     public static final String TAG_MAIN = "main";
+
+    /**
+     * Tag used to store if the entity is in a Warehouse.
+     */
+    public static final String TAG_IN_WAREHOUSE = "inWarehouse";
 
     /**
      * Tag used to store the team color of the colony.

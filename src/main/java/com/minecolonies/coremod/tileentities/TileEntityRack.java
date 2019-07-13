@@ -1,10 +1,13 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.types.RackType;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -24,6 +27,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -63,6 +67,13 @@ public class TileEntityRack extends TileEntity
     private int size = 0;
 
     /**
+     * whether this rack is in a warehouse or not.
+     * defaults to not
+     * set by the warehouse building upon being built
+     */
+    private boolean inWarehouse = false;
+
+    /**
      * The inventory of the tileEntity.
      */
     private IItemHandlerModifiable inventory = new ItemStackHandler(DEFAULT_SIZE)
@@ -71,7 +82,25 @@ public class TileEntityRack extends TileEntity
         protected void onContentsChanged(final int slot)
         {
             updateItemStorage();
+
             super.onContentsChanged(slot);
+        }
+
+        @Override
+        public void setStackInSlot(final int slot, final @Nonnull ItemStack stack)
+        {
+            super.setStackInSlot(slot, stack);
+
+            if (!ItemStackUtils.isEmpty(stack) && world != null && !world.isRemote && inWarehouse && ColonyManager.isCoordinateInAnyColony(world, pos))
+            {
+                final Colony colony = ColonyManager.getClosestColony(world, pos);
+
+                if (colony != null && colony.getRequestManager() != null)
+                {
+                    colony.getRequestManager()
+                            .onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(stack));
+                }
+            }
         }
 
         @NotNull
@@ -99,6 +128,16 @@ public class TileEntityRack extends TileEntity
     public boolean hasItemStack(final ItemStack stack)
     {
         return content.containsKey(new ItemStorage(stack));
+    }
+
+    /**
+     * Set the value for inWarehouse
+     *
+     * @param isInWarehouse is this rack in a warehouse?
+     */
+    public void setInWarehouse(final Boolean isInWarehouse)
+    {
+        this.inWarehouse = isInWarehouse;
     }
 
     /**
@@ -283,6 +322,13 @@ public class TileEntityRack extends TileEntity
                     typeNeighbor = null;
                 }
             }
+
+            // This here avoids that two racks can be main at the same time.
+            if (this.isMain() && getOtherChest() != null && getOtherChest().isMain())
+            {
+                getOtherChest().setMain(false);
+            }
+
             world.setBlockState(pos, typeHere);
             if (typeNeighbor != null)
             {
@@ -308,6 +354,7 @@ public class TileEntityRack extends TileEntity
             ((TileEntityRack) tileEntity).setNeighbor(this.getPos());
             return (TileEntityRack) tileEntity;
         }
+
         single = true;
         relativeNeighbor = null;
         return null;
@@ -443,6 +490,8 @@ public class TileEntityRack extends TileEntity
         }
         main = compound.getBoolean(TAG_MAIN);
         updateItemStorage();
+
+        this.inWarehouse = compound.getBoolean(TAG_IN_WAREHOUSE);
     }
 
     @NotNull
@@ -473,6 +522,7 @@ public class TileEntityRack extends TileEntity
         }
         compound.setTag(TAG_INVENTORY, inventoryTagList);
         compound.setBoolean(TAG_MAIN, main);
+        compound.setBoolean(TAG_IN_WAREHOUSE, inWarehouse);
         return compound;
     }
 
@@ -550,6 +600,7 @@ public class TileEntityRack extends TileEntity
                     else
                     {
                         this.main = true;
+
                         if (combinedHandler == null)
                         {
                             combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().inventory);
