@@ -115,9 +115,9 @@ public class BuildingBarracks extends AbstractBuilding
     }
 
     @Override
-    public int getClaimRadius()
+    public int getClaimRadius(final int newLevel)
     {
-        int sum = getBuildingLevel();
+        int sum = newLevel;
         for (final BlockPos pos : towers)
         {
             final AbstractBuilding building = colony.getBuildingManager().getBuilding(pos);

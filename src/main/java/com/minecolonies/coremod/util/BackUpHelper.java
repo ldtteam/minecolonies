@@ -219,7 +219,7 @@ public final class BackUpHelper
             {
                 for (final AbstractBuilding building : colony.getBuildingManager().getBuildings().values())
                 {
-                    ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), building.getLocation(), colony.getDimension(), building.getClaimRadius());
+                    ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), building.getLocation(), colony.getDimension(), building.getClaimRadius(building.getBuildingLevel()));
                 }
             }
             else
