@@ -441,10 +441,10 @@ public class WindowCitizen extends AbstractWindowRequestTree
             }
             else
             {
-                List<Integer> slots = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(inventory), requestPredicate);
-                int invSize = inventory.getSizeInventory() - 5; // 4 armour slots + 1 shield slot
+                final List<Integer> slots = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(inventory), requestPredicate);
+                final int invSize = inventory.getSizeInventory() - 5; // 4 armour slots + 1 shield slot
                 int slot = -1;
-                for (Integer possibleSlot : slots)
+                for (final Integer possibleSlot : slots)
                 {
                     if (possibleSlot < invSize)
                     {
