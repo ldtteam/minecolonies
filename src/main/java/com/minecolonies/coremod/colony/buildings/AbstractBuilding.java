@@ -168,11 +168,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
          */
     }
 
+    /**
+     * On setting down the building.
+     */
     public void onPlacement()
     {
         if (Configurations.gameplay.enableDynamicColonySizes)
         {
-            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), getLocation(), colony.getDimension(), getClaimRadius());
+            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), getLocation(), colony.getDimension(), getClaimRadius(getBuildingLevel()));
         }
     }
 
@@ -241,7 +244,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         if (Configurations.gameplay.enableDynamicColonySizes)
         {
-            ChunkDataHelper.claimColonyChunks(world, false, colony.getID(), this.getID(), colony.getDimension(), getClaimRadius());
+            ChunkDataHelper.claimColonyChunks(world, false, colony.getID(), this.getID(), colony.getDimension(), getClaimRadius(getBuildingLevel()));
         }
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
     }
@@ -396,11 +399,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     /**
      * Method to calculate the radius to be claimed by this building depending on the level.
      *
+     * @param newLevel the new level of the building.
      * @return the radius.
      */
-    public int getClaimRadius()
+    public int getClaimRadius(final int newLevel)
     {
-        switch (getBuildingLevel())
+        switch (newLevel)
         {
             case 3:
                 return 1;
@@ -434,7 +438,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         buf.writeInt(getRotation());
         buf.writeBoolean(isMirrored());
-        buf.writeInt(getClaimRadius());
+        buf.writeInt(getClaimRadius(getBuildingLevel()));
 
         final NBTTagCompound requestSystemCompound = new NBTTagCompound();
         writeRequestSystemToNBT(requestSystemCompound);
@@ -559,7 +563,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         if (Configurations.gameplay.enableDynamicColonySizes)
         {
-            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), this.getID(), colony.getDimension(), getClaimRadius());
+            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), this.getID(), colony.getDimension(), this.getClaimRadius(newLevel));
         }
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
         colony.getProgressManager().progressBuildBuilding(this,
