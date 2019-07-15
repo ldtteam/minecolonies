@@ -121,7 +121,6 @@ achievement.upgrade.townhall.first.desc=Build a townhall!
 tile.minecolonies.blockHutGuardTower.name=GuardTower
 tile.blockHutTownHall.messageWorkerDead=The %s %s has died at %d %d %d of %s!
 item.minecolonies.scepterGuard.name=Guard-scepter
-item.minecolonies.scepterLumberjack.name=Lumberjack-scepter
 
 com.minecolonies.configgui.title=MineColonies Config
 
