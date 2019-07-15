@@ -1001,13 +1001,15 @@ public final class ColonyView implements IColony
         return this.horde > 0;
     }
 
-    public long getMercenaryLastUseTime()
+    @Override
+    public long getMercenaryUseTime()
     {
         return mercenaryLastUseTime;
     }
 
-    public void setMercenaryLastUseTime(final long mercenaryLastUseTime)
+    @Override
+    public void usedMercenaries()
     {
-        this.mercenaryLastUseTime = mercenaryLastUseTime;
+        mercenaryLastUseTime = world.getTotalWorldTime();
     }
 }

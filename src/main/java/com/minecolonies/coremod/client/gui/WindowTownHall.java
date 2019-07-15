@@ -382,8 +382,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             findPaneOfTypeByID(BUTTON_TOGGLE_MOVE_IN, Button.class).setLabel(LanguageHandler.format(ON_STRING));
         }
 
-        if (townHall.getColony().getMercenaryLastUseTime() != 0
-              && townHall.getColony().getWorld().getTotalWorldTime() - townHall.getColony().getMercenaryLastUseTime() < TICKS_FOURTY_MIN)
+        if (townHall.getColony().getMercenaryUseTime() != 0
+              && townHall.getColony().getWorld().getTotalWorldTime() - townHall.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
         {
             findPaneOfTypeByID(BUTTON_MERCENARY, Button.class).disable();
         }

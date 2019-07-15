@@ -66,7 +66,7 @@ public class WindowTownHallMercenary extends Window implements ButtonHandler
     {
         if (button.getID().equals(BUTTON_DONE))
         {
-            colony.setMercenaryLastUseTime(colony.getWorld().getTotalWorldTime());
+            colony.usedMercenaries();
             MineColonies.getNetwork().sendToServer(new HireMercenaryMessage(colony));
             Minecraft.getMinecraft().player.playSound(SoundEvents.ENTITY_LIGHTNING_THUNDER, 1.0f, 1.0f);
         }

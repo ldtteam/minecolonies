@@ -164,4 +164,15 @@ public interface IColony
      * @return true if so.
      */
     boolean isRemote();
+
+    /**
+     * Save the time when mercenaries are used, to set a cooldown.
+     */
+    void usedMercenaries();
+
+    /**
+     * Get the last time mercenaries were used.
+     */
+    long getMercenaryUseTime();
+
 }

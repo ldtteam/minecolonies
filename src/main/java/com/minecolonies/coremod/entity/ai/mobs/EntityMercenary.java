@@ -312,7 +312,6 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
     @Override
     public void registerWithColony()
     {
-        colony.registerEntityWithColony(this);
     }
 
     @Override

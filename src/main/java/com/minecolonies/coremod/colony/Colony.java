@@ -20,7 +20,6 @@ import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.WorkManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.IColonyRelatedEntity;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
@@ -1577,6 +1576,7 @@ public class Colony implements IColony
     /**
      * Save the time when mercenaries are used, to set a cooldown.
      */
+    @Override
     public void usedMercenaries()
     {
         mercenaryLastUse = world.getTotalWorldTime();
@@ -1586,18 +1586,10 @@ public class Colony implements IColony
     /**
      * Get the last time mercenaries were used.
      */
+    @Override
     public long getMercenaryUseTime()
     {
         return mercenaryLastUse;
     }
-
-    /**
-     * Registers an entity related to this colony.
-     */
-    public void registerEntityWithColony(final IColonyRelatedEntity entity)
-    {
-        // Add entity registry logic here
-    }
-
 
 }

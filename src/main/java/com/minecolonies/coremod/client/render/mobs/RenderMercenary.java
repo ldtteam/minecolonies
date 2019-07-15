@@ -18,7 +18,11 @@ public class RenderMercenary extends RenderBiped<EntityMercenary>
      */
     private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/settlermale1.png");
 
-
+    /**
+     * Renders the mercenary mobs, with an held item and armorset.
+     *
+     * @param renderManagerIn RenderManager
+     */
     public RenderMercenary(final RenderManager renderManagerIn)
     {
         super(renderManagerIn, new ModelBiped(), 0.5f);

@@ -120,6 +120,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Regen at the building and continue when more than half health.
+     *
      * @return next state to go to.
      */
     private IAIState regen()
@@ -135,12 +136,14 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Get the Attack state to go to.
+     *
      * @return the next attack state.
      */
     public abstract IAIState getAttackState();
 
     /**
      * Guard at a specific position.
+     *
      * @return the next state to run into.
      */
     private IAIState guard()
@@ -160,6 +163,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Follow a player.
+     *
      * @return the next state to run into.
      */
     private IAIState follow()
@@ -203,6 +207,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Patrol between a list of patrol points.
+     *
      * @return the next patrol point to go to.
      */
     private IAIState patrol()
@@ -244,6 +249,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Check if the worker has the required tool to fight.
+     *
      * @return true if so.
      */
     public boolean hasTool()
@@ -291,9 +297,18 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private IAIState helping()
     {
-        if (helpCitizen.get() == null || target == null || target.isDead || !helpCitizen.get().isCurrentlyFleeing())
+        if (helpCitizen.get() == null || !helpCitizen.get().isCurrentlyFleeing())
         {
             return DECIDE;
+        }
+
+        if (target == null || target.isDead)
+        {
+            target = helpCitizen.get().getAttackTarget();
+            if (target == null || target.isDead)
+            {
+                return DECIDE;
+            }
         }
 
         currentPatrolPoint = null;
@@ -373,6 +388,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Execute pre attack checks to check if worker can attack enemy.
+     *
      * @return the next aiState to go to.
      */
     public IAIState preAttackChecks()
@@ -396,7 +412,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             target = worker.getRevengeTarget();
         }
 
-        if(target == null || target.isDead || !isWithinPersecutionDistance(target.getPosition()))
+        if (target == null || target.isDead || !isWithinPersecutionDistance(target.getPosition()))
         {
             // Clear pathing when target changes
             worker.getNavigator().clearPath();
@@ -411,6 +427,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Check if the worker has his main weapon.
+     *
      * @return true if so.
      */
     public abstract boolean hasMainWeapon();
@@ -487,7 +504,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             {
                 if (worker.canEntityBeSeen(entity) && isWithinPersecutionDistance(entity.getPosition()))
                 {
-                    if (entity instanceof EntityPlayer && (colony.getPermissions().hasPermission((EntityPlayer) entity, Action.GUARDS_ATTACK) || colony.isValidAttackingPlayer((EntityPlayer) entity)))
+                    if (entity instanceof EntityPlayer && (colony.getPermissions().hasPermission((EntityPlayer) entity, Action.GUARDS_ATTACK)
+                                                             || colony.isValidAttackingPlayer((EntityPlayer) entity)))
                     {
                         return entity;
                     }
@@ -517,6 +535,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Check if a position is within regular attack distance.
+     *
      * @param position the position to check.
      * @return true if so.
      */
@@ -540,6 +559,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Check if a position is within the allowed persecution distance.
+     *
      * @param entityPos the position to check.
      * @return true if so.
      */
@@ -563,6 +583,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
     /**
      * Get the reference point from which the guard comes.
+     *
      * @return the position depending ont he task.
      */
     private BlockPos getTaskReferencePoint()

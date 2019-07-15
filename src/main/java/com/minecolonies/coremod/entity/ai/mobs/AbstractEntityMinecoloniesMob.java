@@ -330,10 +330,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob implements
      */
     public void registerWithColony()
     {
-        if (colony != null)
-        {
-            colony.registerEntityWithColony(this);
-        }
+        getColony();
     }
 
     @Override

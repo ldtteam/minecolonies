@@ -65,6 +65,7 @@ public class Configurations
         public boolean limitToOneWareHousePerColony = true;
 
         @Config.Comment("Delay after each block placement (Increasing it, increases the delay)")
+        @Config.RangeInt(min = 1, max = 500)
         public int builderBuildBlockDelay = 15;
 
         @Config.Comment("Delay modifier to mine a block (Decreasing it, decreases the delay)")
@@ -114,7 +115,7 @@ public class Configurations
         public int minimumNumberOfNightsBetweenRaids = 1;
 
         @Config.Comment("Should Mobs attack citizens? default:false")
-        public boolean mobAttackCitizens = true;
+        public boolean mobAttackCitizens = false;
 
         @Config.Comment("Should Citizens call guards for help when attacked? default:true")
         public boolean citizenCallForHelp = true;
