@@ -17,6 +17,7 @@ public final class ModItems
     public static Item permTool;
     public static Item caliper;
     public static Item scepterGuard;
+    public static Item scepterLumberjack;
     public static Item supplyCamp;
     public static Item ancientTome;
     public static Item chiefSword;
@@ -62,6 +63,7 @@ public final class ModItems
         permTool = new ItemScepterPermission();
         caliper = new ItemCaliper();
         scepterGuard = new ItemScepterGuard();
+        scepterLumberjack = new ItemScepterLumberjack();
         supplyCamp = new ItemSupplyCampDeployer();
         ancientTome = new ItemAncientTome();
         chiefSword = new ItemChiefSword();
@@ -91,6 +93,7 @@ public final class ModItems
         registry.register(permTool);
         registry.register(caliper);
         registry.register(scepterGuard);
+        registry.register(scepterLumberjack);
         registry.register(supplyCamp);
         registry.register(ancientTome);
         registry.register(chiefSword);
