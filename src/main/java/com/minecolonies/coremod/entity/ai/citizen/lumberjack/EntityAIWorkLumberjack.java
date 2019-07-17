@@ -293,11 +293,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                 final BlockPos startPos = buildingLumberjack.getStartRestriction();
                 final BlockPos endPos = buildingLumberjack.getEndRestriction();
 
-                final int minX = Math.min(startPos.getX(), endPos.getX());
-                final int minZ = Math.min(startPos.getZ(), endPos.getZ());
-                final int maxX = Math.max(startPos.getX(), endPos.getX());
-                final int maxZ = Math.max(startPos.getZ(), endPos.getZ());
-
                 pathResult = worker.getNavigator().moveToTree(
                         startPos, endPos,
                         1.0D,
