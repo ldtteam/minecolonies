@@ -319,6 +319,8 @@ public final class TranslationConstants
     public static final String COM_MINECOLONIES_COREMOD_GENERAL_ONBIG                              = "com.minecolonies.coremod.general.onBig";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GENERAL_OFFBIG                             = "com.minecolonies.coremod.general.offBig";
+    @NonNls
+    public static final String COM_MINECOLONIES_CANT_TAKE_EQUIPPED                                 = "com.minecolonies.coremod.general.cantTakeEquipped";
 
     private TranslationConstants()
     {
