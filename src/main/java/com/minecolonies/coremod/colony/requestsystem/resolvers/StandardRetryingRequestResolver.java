@@ -18,10 +18,8 @@ import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.RSConstants.CONST_RETRYING_RESOLVER_PRIORITY;
@@ -265,5 +263,23 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     public Map<IToken<?>, Integer> getAssignedRequests()
     {
         return assignedRequests;
+    }
+
+    @Override
+    public void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest> shouldTriggerReassign)
+    {
+        new ArrayList<>(assignedRequests.keySet()).stream()
+                .map(manager::getRequestForToken)
+                .filter(shouldTriggerReassign)
+                .filter(Objects::nonNull)
+                .forEach(request ->
+                {
+                    final IToken newResolverToken = manager.reassignRequest(request.getToken(), ImmutableList.of(getRequesterId()));
+
+                    if (newResolverToken != getRequesterId())
+                    {
+                        assignedRequests.remove(request.getToken());
+                    }
+                });
     }
 }

@@ -79,7 +79,7 @@ public class ItemClipBoard extends AbstractItemMinecolonies
         }
         else if (compound.hasKey(TAG_COLONY))
         {
-            if (!worldIn.isRemote)
+            if (worldIn.isRemote)
             {
                 final int colonyId = compound.getInteger(TAG_COLONY);
                 MineColonies.proxy.openClipBoardWindow(colonyId);

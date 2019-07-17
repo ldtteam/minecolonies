@@ -259,6 +259,7 @@ public class Configurations
                                                      "minecraft:brown_mushroom",
                                                      "minecraft:red_mushroom",
                                                      "minecraft:double_plant",
+                                                     "minecraft:feather",
                                                      "food",
                                                      "seed",
                                                      "treeSapling"
@@ -467,6 +468,12 @@ public class Configurations
 
         @Config.Comment("Seconds between permission messages.")
         public int secondsBetweenPermissionMessages = 30;
+
+        @Config.Comment("Suggest build tool usage when trying to place a building without build tool. (Default: true)")
+        public boolean suggestBuildToolPlacement = true;
+
+        @Config.Comment("Food consumption modifier. (Default: 1, Min: 1)")
+        public double foodModifier = 1;
     }
 
     public static class Compatibility

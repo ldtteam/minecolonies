@@ -204,7 +204,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 return canGoPlanting((ScarecrowTileEntity) entity, building);
             }
-            else if (((ScarecrowTileEntity) entity).getFieldStage() == ScarecrowTileEntity.FieldStage.EMPTY && checkIfShouldExecute((ScarecrowTileEntity) entity, this::shouldHoe))
+            else if (((ScarecrowTileEntity) entity).getFieldStage() == ScarecrowTileEntity.FieldStage.EMPTY && checkIfShouldExecute((ScarecrowTileEntity) entity, pos -> this.shouldHoe(pos, (ScarecrowTileEntity) entity)))
             {
                 return FARMER_HOE;
             }
@@ -410,9 +410,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         final TileEntity entity = world.getTileEntity(field);
         if(entity instanceof ScarecrowTileEntity)
         {
+            final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) entity;
             if (workingOffset != null)
             {
-                if (((ScarecrowTileEntity) entity).getOwnerId() != worker.getCitizenId())
+                if (scarecrow.getOwnerId() != worker.getCitizenId())
                 {
                     buildingFarmer.freeField(buildingFarmer.getCurrentField());
                     buildingFarmer.setCurrentField(null);
@@ -420,50 +421,61 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 }
 
                 final BlockPos position = field.down().south(workingOffset.getZ()).east(workingOffset.getX());
-                // Still moving to the block
-                if (walkToBlock(position.up()))
-                {
-                    return getState();
-                }
 
-                switch ((AIWorkerState) getState())
+                if (workingOffset.getX() <= scarecrow.getLengthPlusX()
+                      && workingOffset.getZ() <= scarecrow.getWidthPlusZ()
+                      && workingOffset.getX() >= -scarecrow.getLengthMinusX()
+                      && workingOffset.getZ() >= -scarecrow.getWidthMinusZ())
                 {
-                    case FARMER_HOE:
-                        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.hoeing"));
+                    // Still moving to the block
+                    if (walkToBlock(position.up()))
+                    {
+                        return getState();
+                    }
 
-                        if (!hoeIfAble(position))
-                        {
-                            return getState();
-                        }
-                        break;
-                    case FARMER_PLANT:
-                        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.planting"));
-                        if (!tryToPlant((ScarecrowTileEntity) entity, position))
-                        {
+                    switch ((AIWorkerState) getState())
+                    {
+                        case FARMER_HOE:
+                            worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.hoeing"));
+
+                            if (!hoeIfAble(position, scarecrow))
+                            {
+                                return getState();
+                            }
+                            break;
+                        case FARMER_PLANT:
+                            worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.planting"));
+                            if (!tryToPlant(scarecrow, position))
+                            {
+                                return PREPARING;
+                            }
+                            break;
+                        case FARMER_HARVEST:
+                            worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.harvesting"));
+                            if (!harvestIfAble(position))
+                            {
+                                return getState();
+                            }
+                            break;
+                        default:
                             return PREPARING;
-                        }
-                        break;
-                    case FARMER_HARVEST:
-                        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.harvesting"));
-                        if (!harvestIfAble(position))
-                        {
-                            return getState();
-                        }
-                        break;
-                    default:
-                        return PREPARING;
+                    }
+                    prevPos = position;
                 }
-                prevPos = position;
+                setDelay(getLevelDelay());
             }
-            setDelay(getLevelDelay());
 
-            if (!handleOffset((ScarecrowTileEntity) entity))
+            if (!handleOffset(scarecrow))
             {
                 shouldDumpInventory = true;
-                ((ScarecrowTileEntity) entity).nextState();
+                scarecrow.nextState();
                 prevPos = null;
                 return IDLE;
             }
+        }
+        else
+        {
+            return IDLE;
         }
         return getState();
     }
@@ -472,11 +484,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * Checks if we can hoe, and does so if we can.
      *
      * @param position the position to check.
+     * @param field    the field close to this position.
      * @return true if the farmer should move on.
      */
-    private boolean hoeIfAble(final BlockPos position)
+    private boolean hoeIfAble(final BlockPos position, final ScarecrowTileEntity field)
     {
-        if (shouldHoe(position) && !checkForToolOrWeapon(ToolType.HOE))
+        if (shouldHoe(position, field) && !checkForToolOrWeapon(ToolType.HOE))
         {
             if (mineBlock(position.up()))
             {
@@ -534,11 +547,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * Checks if the ground should be hoed and the block above removed.
      *
      * @param position the position to check.
+     * @param field    the field close to this position.
      * @return true if should be hoed.
      */
-    private boolean shouldHoe(@NotNull final BlockPos position)
+    private boolean shouldHoe(@NotNull final BlockPos position, @NotNull final ScarecrowTileEntity field)
     {
-        return !BlockUtils.isBlockSeed(world, position.up())
+        return !field.isNoPartOfField(world, position) && !BlockUtils.isBlockSeed(world, position.up())
                  && !(world.getBlockState(position.up()).getBlock() instanceof BlockHutField)
                  && (world.getBlockState(position).getBlock() instanceof BlockDirt || world.getBlockState(position).getBlock() instanceof BlockGrass);
     }

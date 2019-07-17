@@ -43,13 +43,6 @@ public interface ICompatibilityManager
     void discover();
 
     /**
-     * Gets the leave matching a sapling.
-     * @param stack the sapling.
-     * @return the leave block.
-     */
-    IBlockState getLeafForSapling(final ItemStack stack);
-
-    /**
      * Gets the sapling matching a leave.
      * @param block the leave.
      * @return the sapling stack.

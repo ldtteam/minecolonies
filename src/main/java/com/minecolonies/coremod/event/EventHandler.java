@@ -11,6 +11,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.blocks.huts.BlockHutField;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
@@ -24,6 +25,7 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesChunkCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldColonyManagerCapabilityProvider;
+import com.minecolonies.coremod.network.messages.OpenSuggestionWindowMessage;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import com.minecolonies.coremod.network.messages.UpdateChunkRangeCapabilityMessage;
 import com.minecolonies.coremod.util.ChunkDataHelper;
@@ -31,7 +33,6 @@ import com.ldtteam.structurize.items.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockSilverfish;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -380,6 +381,33 @@ public class EventHandler
     }
 
     @SubscribeEvent
+    public void onBlockPlaced(@NotNull final BlockEvent.PlaceEvent event)
+    {
+        final EntityPlayer player = event.getPlayer();
+        final World world = event.getWorld();
+        if (event.getPlacedBlock().getBlock() instanceof AbstractBlockHut && event.getPlacedBlock().getBlock() != ModBlocks.blockPostBox)
+        {
+            final IColony colony = ColonyManager.getIColony(world, event.getPos());
+            if (colony != null && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
+            {
+                event.setCanceled(true);
+                return;
+            }
+
+            if (Configurations.gameplay.suggestBuildToolPlacement)
+            {
+                final ItemStack stack = event.getPlayer().getHeldItem(event.getHand());
+                if (!stack.isEmpty() && !world.isRemote)
+                {
+                    MineColonies.getNetwork().sendTo(new OpenSuggestionWindowMessage(event.getPlacedBlock(), event.getPos(), stack), (EntityPlayerMP) event.getPlayer());
+
+                }
+                event.setCanceled(true);
+            }
+        }
+    }
+
+    @SubscribeEvent
     public void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickItem event)
     {
         if (event.getHand() == EnumHand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote)
@@ -419,7 +447,14 @@ public class EventHandler
         final Block heldBlock = Block.getBlockFromItem(player.getHeldItemMainhand().getItem());
         if (heldBlock instanceof AbstractBlockHut || heldBlock instanceof BlockHutField)
         {
-            event.setCanceled(!onBlockHutPlaced(event.getWorld(), player, heldBlock, event.getPos().offset(event.getFace())));
+            if (event.getWorld().isRemote)
+            {
+                event.setCanceled(Configurations.gameplay.suggestBuildToolPlacement);
+            }
+            else
+            {
+                event.setCanceled(!onBlockHutPlaced(event.getWorld(), player, heldBlock, event.getPos().offset(event.getFace())));
+            }
         }
     }
 

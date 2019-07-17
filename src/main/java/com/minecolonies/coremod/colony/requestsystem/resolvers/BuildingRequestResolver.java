@@ -81,7 +81,6 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     {
         final List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
-        tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).filter(Objects::nonNull).collect(Collectors.toSet()));
 
         final int total = request.getRequest().getCount();
         final AtomicInteger current = new AtomicInteger(0);

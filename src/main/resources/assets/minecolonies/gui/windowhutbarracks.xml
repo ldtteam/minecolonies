@@ -9,7 +9,7 @@
             <label id="current" size="164 11" pos="13 43" color="black" textalign="MIDDLE"/>
             <label size="164 11" pos="13 54" color="black" textalign="MIDDLE"
                 label="$(com.minecolonies.coremod.gui.workerHuts.barbpoints):"/>
-            <list id="positions" size="164 55" pos="13 65">
+            <list id="positions" size="164 45" pos="13 65">
                 <box size="100% 11" linewidth="1">
                     <label id="pos" size="100% 11" color="black"/>
                 </box>

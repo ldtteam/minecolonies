@@ -14,6 +14,7 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.MathUtils;
+import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.*;
@@ -1254,6 +1255,15 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     /**
+     * Check if the citizen can be fed.
+     * @return true if so.
+     */
+    public boolean shouldBeFed()
+    {
+        return this.getCitizenData() != null && this.getCitizenData().getSaturation() <= CitizenConstants.AVERAGE_SATURATION && !this.getCitizenData().justAte();
+    }
+
+    /**
      * Check if the citizen is just idling at their job and can eat now.
      *
      * @return true if so.
@@ -1281,5 +1291,16 @@ public class EntityCitizen extends AbstractEntityCitizen
     public boolean isMourning()
     {
         return mourning;
+    }
+
+    /**
+     * Overrides the default despawning which is true.
+     *
+     * @return false
+     */
+    @Override
+    protected boolean canDespawn()
+    {
+        return false;
     }
 }

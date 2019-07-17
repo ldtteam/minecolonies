@@ -616,9 +616,17 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         final Map<String, Integer> jobCountMap = new HashMap<>();
         for (@NotNull final CitizenDataView citizen : citizens)
         {
-            final int length = citizen.getJob().split("\\.").length;
-            final String job = citizen.getJob().split("\\.")[length - 1].toLowerCase(Locale.ENGLISH);
-            jobCountMap.put(job, jobCountMap.get(job) == null ? 1 : (jobCountMap.get(job) + 1));
+            if (citizen.isChild())
+            {
+                jobCountMap.put("child", jobCountMap.get("child") == null ? 1 : (jobCountMap.get("child") + 1));
+            }
+            else
+            {
+                final String[] splitString = citizen.getJob().split("\\.");
+                final int length = splitString.length;
+                final String job = splitString[length - 1].toLowerCase(Locale.ENGLISH);
+                jobCountMap.put(job, jobCountMap.get(job) == null ? 1 : (jobCountMap.get(job) + 1));
+            }
         }
 
         final DecimalFormat df = new DecimalFormat("#.#");

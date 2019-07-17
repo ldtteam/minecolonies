@@ -136,8 +136,7 @@ public interface IColonyTagCapability
 
             if (claimingBuildings.containsKey(colonyId))
             {
-                final Set<BlockPos> list = claimingBuildings.get(colonyId);
-                list.add(pos);
+                claimingBuildings.get(colonyId).add(pos);
             }
             else
             {
