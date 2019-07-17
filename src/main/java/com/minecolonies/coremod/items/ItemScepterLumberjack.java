@@ -33,11 +33,6 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
     private boolean hasSetFirstPosition = false;
 
     /**
-     * The compound tag for the last pos the tool has been clicked.
-     */
-    private static final String TAG_LAST_POS = "lastPos";
-
-    /**
      * LumberjackScepter constructor. Sets max stack to 1, like other tools.
      */
     public ItemScepterLumberjack()
@@ -76,18 +71,20 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
 
         if (!hasSetFirstPosition)
         {
-            SetPosition(playerIn, compound, NBT_START_POS, pos);
+            LanguageHandler.sendPlayerMessage(playerIn, "item.minecolonies.scepterLumberjack.usedStart");
+            setPosition(compound, NBT_START_POS, pos);
         }
         else
         {
-            SetPosition(playerIn, compound, NBT_END_POS, pos);
-            StoreRestrictedArea(playerIn, hand, worldIn);
+            LanguageHandler.sendPlayerMessage(playerIn, "item.minecolonies.scepterLumberjack.usedEnd");
+            setPosition(compound, NBT_END_POS, pos);
+            storeRestrictedArea(playerIn, hand, worldIn);
         }
 
         return EnumActionResult.SUCCESS;
     }
 
-    private void StoreRestrictedArea(EntityPlayer player, EnumHand hand, final World worldIn)
+    private void storeRestrictedArea(final EntityPlayer player, final EnumHand hand, final World worldIn)
     {
         final ItemStack scepter = player.getHeldItem(hand);
         if (!scepter.hasTagCompound())
@@ -116,11 +113,11 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
 
         if (area > maxArea)
         {
-            LanguageHandler.sendPlayerMessage(player, "Area " + area + " is too large. Max area is " + maxArea);
+            LanguageHandler.sendPlayerMessage(player, "item.minecolonies.scepterLumberjack.restrictionTooBig", area, maxArea);
             return;
         }
 
-        LanguageHandler.sendPlayerMessage(player, "Restricted area size is " + area + " Max area is " + maxArea);
+        LanguageHandler.sendPlayerMessage(player, "item.minecolonies.scepterLumberjack.restrictionSet", area, maxArea);
 
         final Colony colony = ColonyManager.getColonyByWorld(compound.getInteger(TAG_ID), worldIn);
         final BlockPos hutPos = BlockPosUtil.readFromNBT(compound, TAG_POS);
@@ -135,7 +132,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
         player.inventory.removeStackFromSlot(player.inventory.currentItem);
     }
 
-    private void SetPosition(EntityPlayer player, NBTTagCompound compound, String NBT, BlockPos pos)
+    private void setPosition(final NBTTagCompound compound, final String NBT, final BlockPos pos)
     {
         hasSetFirstPosition = !hasSetFirstPosition;
         BlockPosUtil.writeToNBT(compound, NBT, pos);

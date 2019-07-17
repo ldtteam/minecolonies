@@ -155,25 +155,36 @@ public class PathJobFindTree extends AbstractPathJob
     {
         if (Tree.checkTree(world, pos, treesToNotCut) && Tree.checkIfInColonyAndNotInBuilding(pos, colony))
         {
-            if (startRestriction != null && endRestriction != null)
-            {
+            if (startRestriction != null && endRestriction != null) {
                 // check block pos is inside restricted area
-                final int minX = Math.min(startRestriction.getX(), endRestriction.getX());
-                final int maxX = Math.max(startRestriction.getX(), endRestriction.getX());
 
-                int posX = pos.getX();
+                final int posX = pos.getX();
+
+                final int maxX = Math.max(startRestriction.getX(), endRestriction.getX());
                 if (posX > maxX)
+                {
                     return false;
+                }
+
+                final int minX = Math.min(startRestriction.getX(), endRestriction.getX());
                 if (posX < minX)
+                {
                     return false;
+                }
+
+                final int posZ = pos.getZ();
+
+                final int maxZ = Math.max(startRestriction.getZ(), endRestriction.getZ());
+                if (posZ > maxZ)
+                {
+                    return false;
+                }
 
                 final int minZ = Math.min(startRestriction.getZ(), endRestriction.getZ());
-                final int maxZ = Math.max(startRestriction.getZ(), endRestriction.getZ());
-                int posZ = pos.getZ();
-                if (posZ > maxZ)
-                    return false;
                 if (posZ < minZ)
+                {
                     return false;
+                }
 
                 LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "Found tree with restrictions!");
             }

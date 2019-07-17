@@ -278,7 +278,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     private IAIState findTree()
     {
         final AbstractBuilding building = getOwnBuilding();
-        final BuildingLumberjack buildingLumberjack = (BuildingLumberjack) building;
 
         // Waiting for current path to finish
         if (pathResult != null && pathResult.isInProgress())
@@ -288,6 +287,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
         if (pathResult == null || pathResult.treeLocation == null)
         {
+            final BuildingLumberjack buildingLumberjack = (BuildingLumberjack) building;
             if (buildingLumberjack.shouldRestrict())
             {
                 final BlockPos startPos = buildingLumberjack.getStartRestriction();
@@ -297,8 +297,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                 final int minZ = Math.min(startPos.getZ(), endPos.getZ());
                 final int maxX = Math.max(startPos.getX(), endPos.getX());
                 final int maxZ = Math.max(startPos.getZ(), endPos.getZ());
-
-                final int range = ((int)Math.sqrt(Math.pow(maxX - minX, 2) + Math.pow(maxZ - minZ, 2))) / 2;
 
                 pathResult = worker.getNavigator().moveToTree(
                         startPos, endPos,

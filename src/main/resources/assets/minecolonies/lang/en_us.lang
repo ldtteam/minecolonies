@@ -122,6 +122,10 @@ tile.minecolonies.blockHutGuardTower.name=GuardTower
 tile.blockHutTownHall.messageWorkerDead=The %s %s has died at %d %d %d of %s!
 item.minecolonies.scepterGuard.name=Guard-scepter
 item.minecolonies.scepterLumberjack.name=Lumberjack-scepter
+item.minecolonies.scepterLumberjack.usedStart=First position set.
+item.minecolonies.scepterLumberjack.usedEnd=Second position set.
+item.minecolonies.scepterLumberjack.restrictionTooBig=Area %s is too large. Maximum restricted area for the lumberjack is %s blocks.
+item.minecolonies.scepterLumberjack.restrictionSet=Lumberjack restricted area set. Size is %s blocks. Max size is %s blocks.
 
 com.minecolonies.configgui.title=MineColonies Config
 

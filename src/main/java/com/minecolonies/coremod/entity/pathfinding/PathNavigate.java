@@ -453,10 +453,10 @@ public class PathNavigate extends PathNavigateGround
      */
     public PathJobFindTree.TreePathResult moveToTree(final BlockPos startRestriction, final BlockPos endRestriction, final double speed, final List<ItemStorage> treesToCut, final Colony colony)
     {
-        @NotNull BlockPos start = AbstractPathJob.prepareStart(ourEntity);
+        @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         final BlockPos buildingPos = ((EntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getLocation();
 
-        PathJobFindTree job = new PathJobFindTree(CompatibilityUtils.getWorld(entity), start, buildingPos, startRestriction, endRestriction, treesToCut, colony, ourEntity);
+        final PathJobFindTree job = new PathJobFindTree(CompatibilityUtils.getWorld(entity), start, buildingPos, startRestriction, endRestriction, treesToCut, colony, ourEntity);
         job.setAreaRestriction(startRestriction, endRestriction);
 
         return (PathJobFindTree.TreePathResult) setPathJob(job, null, speed);

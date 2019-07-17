@@ -287,7 +287,7 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
         markDirty();
     }
 
-    public void setRestrictedArea(BlockPos startPosition, BlockPos endPosition)
+    public void setRestrictedArea(final BlockPos startPosition, final BlockPos endPosition)
     {
         this.startRestriction = startPosition;
         this.endRestriction = endPosition;
