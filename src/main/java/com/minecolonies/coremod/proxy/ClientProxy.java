@@ -226,6 +226,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModItems.clipboard);
         createCustomModel(ModItems.caliper);
         createCustomModel(ModItems.scepterGuard);
+        createCustomModel(ModItems.scepterLumberjack);
         createCustomModel(ModItems.supplyChest);
         createCustomModel(ModItems.supplyCamp);
         createCustomModel(ModItems.permTool);

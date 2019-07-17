@@ -14,6 +14,7 @@ import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.block.SoundType;
+import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -43,7 +44,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     /**
      * The range in which the lumberjack searches for trees.
      */
-    private static final int SEARCH_RANGE = 50;
+    public static final int SEARCH_RANGE = 50;
 
     /**
      * If no trees are found, increment the range.
@@ -277,6 +278,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     private IAIState findTree()
     {
         final AbstractBuilding building = getOwnBuilding();
+        final BuildingLumberjack buildingLumberjack = (BuildingLumberjack) building;
 
         // Waiting for current path to finish
         if (pathResult != null && pathResult.isInProgress())
@@ -286,7 +288,31 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
         if (pathResult == null || pathResult.treeLocation == null)
         {
+            if (buildingLumberjack.shouldRestrict())
+            {
+                final BlockPos startPos = buildingLumberjack.getStartRestriction();
+                final BlockPos endPos = buildingLumberjack.getEndRestriction();
+
+                final int minX = Math.min(startPos.getX(), endPos.getX());
+                final int minZ = Math.min(startPos.getZ(), endPos.getZ());
+                final int maxX = Math.max(startPos.getX(), endPos.getX());
+                final int maxZ = Math.max(startPos.getZ(), endPos.getZ());
+
+                final int range = ((int)Math.sqrt(Math.pow(maxX - minX, 2) + Math.pow(maxZ - minZ, 2))) / 2;
+
+                pathResult = worker.getNavigator().moveToTree(
+                        startPos, endPos,
+                        1.0D,
+                        ((BuildingLumberjack) building).getCopyOfAllowedItems(),
+                        worker.getCitizenColonyHandler().getColony()
+                );
+
+            }
+            else
+            {
             pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D, ((BuildingLumberjack) building).getCopyOfAllowedItems(), worker.getCitizenColonyHandler().getColony());
+            }
+
             // Delay between area searches
             setDelay(100);
             return getState();

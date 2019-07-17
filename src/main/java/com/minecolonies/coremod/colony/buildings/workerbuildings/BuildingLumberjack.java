@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.blockout.views.Window;
@@ -16,6 +17,7 @@ import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -37,9 +39,35 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
     private static final String TAG_REPLANT = "shouldReplant";
 
     /**
+     * NBT tag for lj restriction start
+     */
+    private static final String TAG_RESTRICT_START = "startRestrictionPosition";
+
+    /**
+     * NBT tag for lj restriction end
+     */
+    private static final String TAG_RESTRICT_END = "endRestrictionPosition";
+
+    /**
      * Whether or not the LJ should replant saplings
      */
     private boolean replant = true;
+
+    /**
+     * Whether or not the LJ should be restricted
+     */
+    private boolean restrict = false;
+
+    /**
+     * The start position of the restricted area.
+     */
+    private BlockPos startRestriction = null;
+
+    /**
+     * The end position of the restricted area.
+     */
+    private BlockPos endRestriction = null;
+
 
     /**
      * The maximum upgrade of the building.
@@ -172,6 +200,24 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
         {
             replant = true;
         }
+
+        if (compound.hasKey(TAG_RESTRICT_START))
+        {
+            startRestriction = NBTUtil.getPosFromTag(compound.getCompoundTag(TAG_RESTRICT_START));
+        }
+        else
+        {
+            startRestriction = null;
+        }
+
+        if (compound.hasKey(TAG_RESTRICT_END))
+        {
+            endRestriction = NBTUtil.getPosFromTag(compound.getCompoundTag(TAG_RESTRICT_END));
+        }
+        else
+        {
+            endRestriction = null;
+        }
     }
 
     @Override
@@ -179,6 +225,8 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
     {
         super.writeToNBT(compound);
         compound.setBoolean(TAG_REPLANT, replant);
+        compound.setTag(TAG_RESTRICT_START, NBTUtil.createPosTag(startRestriction));
+        compound.setTag(TAG_RESTRICT_END, NBTUtil.createPosTag(endRestriction));
     }
 
     /**
@@ -198,6 +246,9 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
     {
         super.serializeToView(buf);
         buf.writeBoolean(replant);
+        buf.writeBoolean(restrict);
+        BlockPosUtil.writeToByteBuf(buf, startRestriction);
+        BlockPosUtil.writeToByteBuf(buf, endRestriction);
     }
 
     /**
@@ -219,6 +270,40 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
     }
 
     /**
+     * Whether or not the LJ should be restricted.
+     */
+    public boolean shouldRestrict()
+    {
+        return restrict;
+    }
+
+    /**
+     * Set whether or not LJ should replant saplings
+     * @param shouldRestrict whether or not the LJ should be restricted
+     */
+    public void setShouldRestrict(final boolean shouldRestrict)
+    {
+        this.restrict = shouldRestrict;
+        markDirty();
+    }
+
+    public void setRestrictedArea(BlockPos startPosition, BlockPos endPosition)
+    {
+        this.startRestriction = startPosition;
+        this.endRestriction = endPosition;
+    }
+
+    public BlockPos getStartRestriction()
+    {
+        return this.startRestriction;
+    }
+
+    public BlockPos getEndRestriction()
+    {
+        return this.endRestriction;
+    }
+
+    /**
      * Provides a view of the lumberjack building class.
      */
     public static class View extends FilterableListView
@@ -227,6 +312,11 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
          * Whether or not the LJ should replant saplings
          */
         public boolean shouldReplant = true;
+
+        /**
+         * Whether or not the LJ should be restricted
+         */
+        public boolean shouldRestrict = false;
 
         /**
          * Public constructor of the view, creates an instance of it.
@@ -244,6 +334,7 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
         {
             super.deserialize(buf);
             shouldReplant = buf.readBoolean();
+            shouldRestrict = buf.readBoolean();
         }
 
         @NotNull

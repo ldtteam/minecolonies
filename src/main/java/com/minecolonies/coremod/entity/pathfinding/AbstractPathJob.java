@@ -178,6 +178,46 @@ public abstract class AbstractPathJob implements Callable<Path>
         this.entity = entity;
     }
 
+
+
+    /**
+     * AbstractPathJob constructor.
+     *
+     * @param world  the world within which to path.
+     * @param startRestriction  start of restricted area.
+     * @param endRestriction  end of restricted area.
+     * @param result path result.
+     * @param entity the entity.
+     * @see AbstractPathJob#AbstractPathJob(World, BlockPos, BlockPos, int, EntityLivingBase)
+     */
+    public AbstractPathJob(final World world, final BlockPos startRestriction, final BlockPos endRestriction, final PathResult result, final EntityLivingBase entity)
+    {
+        final int minX = Math.min(startRestriction.getX(), endRestriction.getX());
+        final int minZ = Math.min(startRestriction.getZ(), endRestriction.getZ());
+        final int maxX = Math.max(startRestriction.getX(), endRestriction.getX());
+        final int maxZ = Math.max(startRestriction.getZ(), endRestriction.getZ());
+
+        final int range = (int)Math.sqrt(Math.pow(maxX - minX, 2) + Math.pow(maxZ - minZ, 2)) * 2;
+
+        this.world = new ChunkCache(world, new BlockPos(minX, MIN_Y, minZ), new BlockPos(maxX, MAX_Y, maxZ), range);
+
+        this.start = new BlockPos((minX + maxX) / 2, (startRestriction.getY() + endRestriction.getY()) / 2, (minZ + maxZ) / 2);
+        this.maxRange = range;
+
+        this.result = result;
+
+        allowJumpPointSearchTypeWalk = false;
+
+        if (Configurations.pathfinding.pathfindingDebugDraw)
+        {
+            debugDrawEnabled = true;
+            debugNodesVisited = new HashSet<>();
+            debugNodesNotVisited = new HashSet<>();
+            debugNodesPath = new HashSet<>();
+        }
+        this.entity = entity;
+    }
+
     private static boolean onLadderGoingUp(@NotNull final Node currentNode, @NotNull final BlockPos dPos)
     {
         return currentNode.isLadder() && (dPos.getY() >= 0 || dPos.getX() != 0 || dPos.getZ() != 0);

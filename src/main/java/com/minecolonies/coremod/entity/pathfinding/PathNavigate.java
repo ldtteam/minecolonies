@@ -443,6 +443,26 @@ public class PathNavigate extends PathNavigateGround
     }
 
     /**
+     * Used to find a tree.
+     *
+     * @param startRestriction the start of the restricted area.
+     * @param endRestriction the end of the restricted area.
+     * @param speed      walking speed.
+     * @param treesToCut the trees which should be cut.
+     * @return the result of the search.
+     */
+    public PathJobFindTree.TreePathResult moveToTree(final BlockPos startRestriction, final BlockPos endRestriction, final double speed, final List<ItemStorage> treesToCut, final Colony colony)
+    {
+        @NotNull BlockPos start = AbstractPathJob.prepareStart(ourEntity);
+        final BlockPos buildingPos = ((EntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getLocation();
+
+        PathJobFindTree job = new PathJobFindTree(CompatibilityUtils.getWorld(entity), start, buildingPos, startRestriction, endRestriction, treesToCut, colony, ourEntity);
+        job.setAreaRestriction(startRestriction, endRestriction);
+
+        return (PathJobFindTree.TreePathResult) setPathJob(job, null, speed);
+    }
+
+    /**
      * Used to find a water.
      *
      * @param range in the range.

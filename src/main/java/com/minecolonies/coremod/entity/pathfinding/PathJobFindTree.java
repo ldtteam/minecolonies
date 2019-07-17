@@ -2,10 +2,12 @@ package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -39,6 +41,15 @@ public class PathJobFindTree extends AbstractPathJob
      */
     private final Colony colony;
 
+    private BlockPos startRestriction = null;
+    private BlockPos endRestriction = null;
+
+    public void setAreaRestriction(final BlockPos start, final BlockPos end)
+    {
+        this.startRestriction = start;
+        this.endRestriction = end;
+    }
+
     /**
      * AbstractPathJob constructor.
      *
@@ -59,6 +70,33 @@ public class PathJobFindTree extends AbstractPathJob
                             final EntityLivingBase entity)
     {
         super(world, start, start, range, new TreePathResult(), entity);
+        this.treesToNotCut = treesToCut;
+        this.hutLocation = home;
+        this.colony = colony;
+    }
+
+    /**
+     * AbstractPathJob constructor.
+     *
+     * @param world      the world within which to path.
+     * @param start      the start position from which to path from.
+     * @param home       the position of the worker hut.
+     * @param startRestriction    start of the restricted area.
+     * @param endRestriction      end of the restricted area.
+     * @param treesToCut the trees the lj is supposed to cut.
+     * @param entity the entity.
+     */
+    public PathJobFindTree(
+            final World world,
+            @NotNull final BlockPos start,
+            final BlockPos home,
+            final BlockPos startRestriction,
+            final BlockPos endRestriction,
+            final List<ItemStorage> treesToCut,
+            final Colony colony,
+            final EntityLivingBase entity)
+    {
+        super(world, startRestriction, endRestriction, new TreePathResult(), entity);
         this.treesToNotCut = treesToCut;
         this.hutLocation = home;
         this.colony = colony;
@@ -117,6 +155,29 @@ public class PathJobFindTree extends AbstractPathJob
     {
         if (Tree.checkTree(world, pos, treesToNotCut) && Tree.checkIfInColonyAndNotInBuilding(pos, colony))
         {
+            if (startRestriction != null && endRestriction != null)
+            {
+                // check block pos is inside restricted area
+                final int minX = Math.min(startRestriction.getX(), endRestriction.getX());
+                final int maxX = Math.max(startRestriction.getX(), endRestriction.getX());
+
+                int posX = pos.getX();
+                if (posX > maxX)
+                    return false;
+                if (posX < minX)
+                    return false;
+
+                final int minZ = Math.min(startRestriction.getZ(), endRestriction.getZ());
+                final int maxZ = Math.max(startRestriction.getZ(), endRestriction.getZ());
+                int posZ = pos.getZ();
+                if (posZ > maxZ)
+                    return false;
+                if (posZ < minZ)
+                    return false;
+
+                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "Found tree with restrictions!");
+            }
+
             getResult().treeLocation = pos;
             return true;
         }

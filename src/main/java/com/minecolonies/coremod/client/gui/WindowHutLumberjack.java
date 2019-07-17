@@ -9,7 +9,9 @@ import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
+import com.minecolonies.coremod.network.messages.LumberjackScepterMessage;
 import com.minecolonies.coremod.network.messages.LumberjackReplantSaplingToggleMessage;
+import com.minecolonies.coremod.network.messages.LumberjackRestrictionToggleMessage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +34,16 @@ public class WindowHutLumberjack extends WindowFilterableList<BuildingLumberjack
     private static final String BUTTON_TOGGLE_REPLANT = "saplingReplant";
 
     /**
+     * Id of the button to give tool
+     */
+    private static final String BUTTON_GIVE_TOOL = "giveTool";
+
+    /**
+     * Id of the button to toggle restrict
+     */
+    private static final String BUTTON_TOGGLE_RESTRICTION = "toggleRestriction";
+
+    /**
      * View containing the list.
      */
     private static final String PAGE_ITEMS_VIEW = "pageItems";
@@ -50,6 +62,20 @@ public class WindowHutLumberjack extends WindowFilterableList<BuildingLumberjack
     {
         super(building, stack -> true, LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.saplingList"));
         this.ownBuilding = building;
+    }
+
+    private void giveTool()
+    {
+        givePlayerScepter();
+    }
+
+    /**
+     * Send message to player to add scepter to his inventory.
+     *
+     */
+    private void givePlayerScepter()
+    {
+        MineColonies.getNetwork().sendToServer(new LumberjackScepterMessage(building.getID(), building.getColony().getID()));
     }
 
     @Override
@@ -73,6 +99,28 @@ public class WindowHutLumberjack extends WindowFilterableList<BuildingLumberjack
         findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class).addChild(button);
         registerButton(BUTTON_TOGGLE_REPLANT, this::switchReplant);
 
+        final ButtonImage toggleRestrictionButton = new ButtonImage();
+        toggleRestrictionButton.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium.png"));
+        toggleRestrictionButton.setPosition(20, 210);
+        toggleRestrictionButton.setSize(46, 17);
+        toggleRestrictionButton.setID(BUTTON_TOGGLE_RESTRICTION);
+        toggleRestrictionButton.setTextColor(BLACK);
+        setupRestrictionButton(toggleRestrictionButton);
+
+        findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class).addChild(toggleRestrictionButton);
+        registerButton(BUTTON_TOGGLE_RESTRICTION, this::toggleRestriction);
+
+        final ButtonImage giveToolButton = new ButtonImage();
+        giveToolButton.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium.png"));
+        giveToolButton.setPosition(100, 210);
+        giveToolButton.setSize(46, 17);
+        giveToolButton.setID(BUTTON_GIVE_TOOL);
+        giveToolButton.setTextColor(BLACK);
+        setupGiveToolButton(giveToolButton);
+
+        findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class).addChild(giveToolButton);
+        registerButton(BUTTON_GIVE_TOOL, this::giveTool);
+
         this.isInverted = true;
     }
 
@@ -94,6 +142,28 @@ public class WindowHutLumberjack extends WindowFilterableList<BuildingLumberjack
     }
 
     /**
+     * Setup giveTool button with correct string.
+     *
+     * @param button the button to setup.
+     */
+    private void setupGiveToolButton(final Button button)
+    {
+        // TODO: Use localisation when this has proper UI
+        button.setLabel(LanguageHandler.format("Give tool"));
+    }
+
+    /**
+     * Setup toggleRestriction button with correct string.
+     *
+     * @param button the button to setup.
+     */
+    private void setupRestrictionButton(final Button button)
+    {
+        // TODO: Use localisation when this has proper UI
+        button.setLabel(LanguageHandler.format( ownBuilding.shouldRestrict ? "Unrestrict" : "Restrict" ));
+    }
+
+    /**
      * Method to send the message to switch the toggle to the server, then updates button
      */
     private void switchReplant(final Button replant)
@@ -101,6 +171,16 @@ public class WindowHutLumberjack extends WindowFilterableList<BuildingLumberjack
         ownBuilding.shouldReplant = !ownBuilding.shouldReplant;
         setupReplantButton(replant);
         MineColonies.getNetwork().sendToServer(new LumberjackReplantSaplingToggleMessage(ownBuilding, ownBuilding.shouldReplant));
+    }
+
+    /**
+     * Method to send the message to switch the toggle to the server, then updates button
+     */
+    private void toggleRestriction(final Button restriction)
+    {
+        ownBuilding.shouldRestrict = !ownBuilding.shouldRestrict;
+        setupRestrictionButton(restriction);
+        MineColonies.getNetwork().sendToServer(new LumberjackRestrictionToggleMessage(ownBuilding, ownBuilding.shouldRestrict));
     }
 
     /**
