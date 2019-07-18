@@ -22,15 +22,16 @@ public final class FireworkUtils
     /**
      * Private constructor to hide the public one
      */
-    private FireworkUtils() {
+    private FireworkUtils()
+    {
 
     }
 
     /**
-     *  Spawns in a given number of fireworks at the corners of a given AABB in a given world
+     * Spawns in a given number of fireworks at the corners of a given AABB in a given world
      *
-     * @param realaabb AABB of the building
-     * @param world which world to spawn it in from
+     * @param realaabb       AABB of the building
+     * @param world          which world to spawn it in from
      * @param explosionLevel how many fireworks to spawn in each corner
      */
     public static void spawnFireworksAtAABBCorners(final AxisAlignedBB realaabb, final World world, final int explosionLevel)

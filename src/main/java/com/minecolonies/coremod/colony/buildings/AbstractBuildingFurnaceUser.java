@@ -108,6 +108,7 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableList
 
     /**
      * Check if an ItemStack is one of the accepted fuel items.
+     *
      * @param stack the itemStack to check.
      * @return true if so.
      */

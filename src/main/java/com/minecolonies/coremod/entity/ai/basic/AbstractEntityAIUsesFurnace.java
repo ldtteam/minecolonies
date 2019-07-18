@@ -164,7 +164,8 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         final int amountOfSmeltableInInv = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), this::isSmeltable);
 
         final int amountOfFuelInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), getOwnBuilding(AbstractBuildingFurnaceUser.class)::isAllowedFuel);
-        final int amountOfFuelInInv = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), getOwnBuilding(AbstractBuildingFurnaceUser.class)::isAllowedFuel);
+        final int amountOfFuelInInv =
+          InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), getOwnBuilding(AbstractBuildingFurnaceUser.class)::isAllowedFuel);
 
         if (amountOfSmeltableInBuilding + amountOfSmeltableInInv <= 0
                 && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(getSmeltAbleClass().getClass())) && !reachedMaxToKeep())
@@ -330,7 +331,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
                     && (hasSmeltableInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
             {
                 InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                        new InvWrapper(worker.getInventoryCitizen()), getOwnBuilding(AbstractBuildingFurnaceUser.class)::isAllowedFuel, STACKSIZE,
+                  new InvWrapper(worker.getInventoryCitizen()), getOwnBuilding(AbstractBuildingFurnaceUser.class)::isAllowedFuel, STACKSIZE,
                         new InvWrapper(furnace), FUEL_SLOT);
             }
         }

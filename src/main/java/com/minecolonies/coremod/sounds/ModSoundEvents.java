@@ -141,6 +141,9 @@ public final class ModSoundEvents
         registry.register(BarbarianSounds.barbarianHurt);
         registry.register(BarbarianSounds.barbarianDeath);
         registry.register(BarbarianSounds.barbarianSay);
+
+        registry.register(ChildrenSounds.laugh1);
+        registry.register(ChildrenSounds.laugh2);
     }
 
     /**
