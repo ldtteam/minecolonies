@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.items;
 
+import com.ldtteam.structurize.client.gui.WindowBuildTool;
+import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.placementhandlers.PlacementError;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.ldtteam.structurize.client.gui.WindowBuildTool;
-import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structurize.placementhandlers.PlacementError;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -157,7 +157,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         {
             for(int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
             {
-                if(world.getBlockState(new BlockPos(x, pos.getY()+1, z)).getMaterial().isSolid())
+                if (world.getBlockState(new BlockPos(x, pos.getY() + 1, z)).getMaterial().isSolid())
                 {
                     final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, pos);
                     placementErrorList.add(placementError);
