@@ -5,8 +5,8 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
-import com.minecolonies.coremod.colony.buildings.views.FilterableListView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -46,6 +46,11 @@ public class AssignFilterableItemMessage extends AbstractMessage<AssignFilterabl
     private int dimension;
 
     /**
+     * The id of the list.
+     */
+    private String id;
+
+    /**
      * Empty standard constructor.
      */
     public AssignFilterableItemMessage()
@@ -57,10 +62,11 @@ public class AssignFilterableItemMessage extends AbstractMessage<AssignFilterabl
      * Creates the message to add an item.
      *
      * @param building the composter
+     * @param id the id of the list of filterables.
      * @param assign   compost if true, dont if false.
      * @param item    the item to assign
      */
-    public AssignFilterableItemMessage(@NotNull final FilterableListView building,final ItemStorage item, final boolean assign)
+    public AssignFilterableItemMessage(@NotNull final AbstractBuildingWorker.View building, final String id, final ItemStorage item, final boolean assign)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -68,26 +74,29 @@ public class AssignFilterableItemMessage extends AbstractMessage<AssignFilterabl
         this.assign = assign;
         this.item = item;
         this.dimension = building.getColony().getDimension();
+        this.id = id;
     }
 
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        colonyId = buf.readInt();
-        buildingId = BlockPosUtil.readFromByteBuf(buf);
-        assign = buf.readBoolean();
+        this.colonyId = buf.readInt();
+        this.buildingId = BlockPosUtil.readFromByteBuf(buf);
+        this.assign = buf.readBoolean();
         this.item = new ItemStorage(ByteBufUtils.readItemStack(buf));
-        dimension = buf.readInt();
+        this.dimension = buf.readInt();
+        this.id = ByteBufUtils.readUTF8String(buf);
     }
 
     @Override
     public void toBytes(@NotNull final ByteBuf buf)
     {
-        buf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
-        buf.writeBoolean(assign);
-        ByteBufUtils.writeItemStack(buf, item.getItemStack());
-        buf.writeInt(dimension);
+        buf.writeInt(this.colonyId);
+        BlockPosUtil.writeToByteBuf(buf, this.buildingId);
+        buf.writeBoolean(this.assign);
+        ByteBufUtils.writeItemStack(buf, this.item.getItemStack());
+        buf.writeInt(this.dimension);
+        ByteBufUtils.writeUTF8String(buf, this.id);
     }
 
     @Override
@@ -107,11 +116,11 @@ public class AssignFilterableItemMessage extends AbstractMessage<AssignFilterabl
             {
                 if(message.assign)
                 {
-                    building.addItem(message.item);
+                    building.addItem(message.id, message.item);
                 }
                 else
                 {
-                    building.removeItem(message.item);
+                    building.removeItem(message.id,message.item);
                 }
             }
         }

@@ -12,7 +12,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.views.FilterableListView;
+import com.minecolonies.coremod.colony.buildings.views.FilterableListsView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
@@ -36,6 +36,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
+import static com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser.FUEL_LIST;
 
 /**
  * Class of the crafter building.
@@ -175,7 +176,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
      */
     public List<ItemStack> getAllowedFuel()
     {
-        return getCopyOfAllowedItems().stream().map(ItemStorage::getItemStack).peek(stack -> stack.setCount(stack.getMaxStackSize())).collect(Collectors.toList());
+        return getCopyOfAllowedItems().get(FUEL_LIST).stream().map(ItemStorage::getItemStack).peek(stack -> stack.setCount(stack.getMaxStackSize())).collect(Collectors.toList());
     }
 
     @Override
@@ -193,7 +194,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
     /**
      * Crafter building View.
      */
-    public static class View extends FilterableListView
+    public static class View extends FilterableListsView
     {
         /**
          * Instantiate the crafter view.

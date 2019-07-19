@@ -36,6 +36,11 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableList
     private static final String TAG_FURNACES = "furnaces";
 
     /**
+     * The list of fuel.
+     */
+    public static final String FUEL_LIST = "fuel";
+
+    /**
      * List of registered furnaces.
      */
     private final List<BlockPos> furnaces = new ArrayList<>();
@@ -103,7 +108,7 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableList
      */
     public List<ItemStack> getAllowedFuel()
     {
-        return getCopyOfAllowedItems().stream().map(ItemStorage::getItemStack).peek(stack -> stack.setCount(stack.getMaxStackSize())).collect(Collectors.toList());
+        return getCopyOfAllowedItems().get(FUEL_LIST).stream().map(ItemStorage::getItemStack).peek(stack -> stack.setCount(stack.getMaxStackSize())).collect(Collectors.toList());
     }
 
     /**
@@ -114,6 +119,6 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableList
      */
     public boolean isAllowedFuel(final ItemStack stack)
     {
-        return getCopyOfAllowedItems().stream().anyMatch(itemStack -> stack.isItemEqual(itemStack.getItemStack()));
+        return getCopyOfAllowedItems().get(FUEL_LIST).stream().anyMatch(itemStack -> stack.isItemEqual(itemStack.getItemStack()));
     }
 }

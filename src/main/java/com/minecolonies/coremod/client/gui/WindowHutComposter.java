@@ -4,7 +4,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.controls.Button;
-import com.minecolonies.blockout.controls.ButtonImage;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -13,18 +12,16 @@ import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.network.messages.ComposterRetrievalMessage;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static com.minecolonies.coremod.client.gui.WindowTownHall.BLACK;
 
 /**
  * Composter window class. Specifies the extras the composter has for its list.
  */
-public class WindowHutComposter extends WindowFilterableList<BuildingComposter.View>
+public class WindowHutComposter extends AbstractHutFilterableLists
 {
     /**
      * Id of the button to toggle replant of saplings
@@ -34,7 +31,17 @@ public class WindowHutComposter extends WindowFilterableList<BuildingComposter.V
     /**
      * View containing the list.
      */
-    private static final String PAGE_ITEMS_VIEW = "pageItems";
+    private static final String PAGE_ITEMS_VIEW = "compostables";
+
+    /**
+     * The resource string.
+     */
+    private static final String RESOURCE_STRING = ":gui/windowhutcomposter.xml";
+
+    /**
+     * The building of the lumberjack (Client side representation).
+     */
+    private final BuildingComposter.View ownBuilding;
 
     /**
      * Constructor for the window of the worker building.
@@ -43,29 +50,25 @@ public class WindowHutComposter extends WindowFilterableList<BuildingComposter.V
      */
     public WindowHutComposter(final BuildingComposter.View building)
     {
-        super(building, stack -> true, LanguageHandler.format("com.minecolonies.gui.workerHuts.composter.compostables"));
+        super(building, Constants.MOD_ID + RESOURCE_STRING);
+
+        final ViewFilterableList window = new ViewFilterableList(findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class),
+          this,
+          building,
+          LanguageHandler.format("com.minecolonies.gui.workerHuts.composter.compostables"),
+          PAGE_ITEMS_VIEW,
+          false);
+        views.put(PAGE_ITEMS_VIEW, window);
+        this.ownBuilding = building;
+
+        setupRetrieveDirtButton(findPaneOfTypeByID(BUTTON_TOGGLE_RETRIEVE_DIRT, Button.class));
+        registerButton(BUTTON_TOGGLE_RETRIEVE_DIRT, this::switchReplant);
     }
 
     @Override
-    public Collection<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate)
+    public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
     {
         return ColonyManager.getCompatibilityManager().getCopyOfCompostableItems().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList());
-    }
-
-    @Override
-    public void onOpened()
-    {
-        super.onOpened();
-        final ButtonImage button = new ButtonImage();
-        button.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium.png"));
-        button.setPosition(50, 193);
-        button.setSize(86, 17);
-        button.setID(BUTTON_TOGGLE_RETRIEVE_DIRT);
-        button.setTextColor(BLACK);
-        setupRetrieveDirtButton(button);
-
-        findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class).addChild(button);
-        registerButton(BUTTON_TOGGLE_RETRIEVE_DIRT, this::switchReplant);
     }
 
     /**
@@ -75,7 +78,7 @@ public class WindowHutComposter extends WindowFilterableList<BuildingComposter.V
      */
     private void setupRetrieveDirtButton(final Button button)
     {
-        if (((BuildingComposter.View) building).retrieveDirtFromCompostBin)
+        if (ownBuilding.retrieveDirtFromCompostBin)
         {
             button.setLabel(LanguageHandler.format(Blocks.DIRT.getLocalizedName()));
         }
@@ -90,7 +93,7 @@ public class WindowHutComposter extends WindowFilterableList<BuildingComposter.V
      */
     private void switchReplant(final Button retrieve)
     {
-        final BuildingComposter.View composter = (BuildingComposter.View) building;
+        final BuildingComposter.View composter = ownBuilding;
         composter.retrieveDirtFromCompostBin = !composter.retrieveDirtFromCompostBin;
         setupRetrieveDirtButton(retrieve);
         MineColonies.getNetwork().sendToServer(new ComposterRetrievalMessage(composter, composter.retrieveDirtFromCompostBin));
