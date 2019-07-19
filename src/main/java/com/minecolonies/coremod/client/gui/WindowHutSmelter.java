@@ -58,7 +58,7 @@ public class WindowHutSmelter extends AbstractHutFilterableLists
           building,
           LanguageHandler.format(COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE),
           PAGE_ITEMS_VIEW2,
-          false);
+          true);
         views.put(PAGE_ITEMS_VIEW2, window2);
     }
 

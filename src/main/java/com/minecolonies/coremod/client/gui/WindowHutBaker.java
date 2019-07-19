@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
@@ -38,7 +39,7 @@ public class WindowHutBaker extends AbstractHutFilterableLists
      */
     public WindowHutBaker(final BuildingBaker.View building)
     {
-        super(building, RESOURCE_STRING);
+        super(building, Constants.MOD_ID + RESOURCE_STRING);
         final ViewFilterableList window = new ViewFilterableList(findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class),
           this,
           building,
