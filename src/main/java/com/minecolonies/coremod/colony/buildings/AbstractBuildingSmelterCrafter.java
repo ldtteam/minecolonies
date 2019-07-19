@@ -12,7 +12,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.views.FilterableListsView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
@@ -194,7 +194,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
     /**
      * Crafter building View.
      */
-    public static class View extends FilterableListsView
+    public static class View extends AbstractFilterableListsView
     {
         /**
          * Instantiate the crafter view.

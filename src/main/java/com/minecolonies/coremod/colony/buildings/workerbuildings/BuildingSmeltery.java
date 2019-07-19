@@ -8,7 +8,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
-import com.minecolonies.coremod.colony.buildings.views.FilterableListsView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
 import net.minecraft.item.ItemArmor;
@@ -111,7 +111,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
     /**
      * Smelter building View.
      */
-    public static class View extends FilterableListsView
+    public static class View extends AbstractFilterableListsView
     {
         /**
          * Instantiate the smeltery view.

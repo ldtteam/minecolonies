@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * Client side representation of the filterable list window GUI.
  */
-public abstract class FilterableListsView extends AbstractBuildingWorker.View
+public abstract class AbstractFilterableListsView extends AbstractBuildingWorker.View
 {
     /**
      * The list of items.
@@ -31,7 +31,7 @@ public abstract class FilterableListsView extends AbstractBuildingWorker.View
      * @param c the colony.
      * @param l the location.
      */
-    public FilterableListsView(final ColonyView c, @NotNull final BlockPos l)
+    public AbstractFilterableListsView(final ColonyView c, @NotNull final BlockPos l)
     {
         super(c, l);
     }

@@ -9,7 +9,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
-import com.minecolonies.coremod.colony.buildings.views.FilterableListsView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import io.netty.buffer.ByteBuf;
@@ -180,7 +180,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     /**
      * The client side representation of the building.
      */
-    public static class View extends FilterableListsView
+    public static class View extends AbstractFilterableListsView
     {
         /**
          * If the composter should retrieve dirt from his compost bin.

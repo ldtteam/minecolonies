@@ -6,7 +6,7 @@ import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.*;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.View;
-import com.minecolonies.coremod.colony.buildings.views.FilterableListsView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,7 +62,7 @@ public class ViewFilterableList
     /**
      * The building this belongs to.
      */
-    protected final FilterableListsView building;
+    protected final AbstractFilterableListsView building;
 
     /**
      * The parent window.
@@ -77,7 +77,7 @@ public class ViewFilterableList
     /**
      * Check for inversion of the list.
      */
-    private boolean isInverted = false;
+    private final boolean isInverted;
 
     /**
      * The specific view of this filterable list.
@@ -98,7 +98,7 @@ public class ViewFilterableList
      * @param id the id of this window (page order of filterable lists).
      * @param isInverted if the list is inverted.
      */
-    public ViewFilterableList(final View window, final AbstractHutFilterableLists parent, final FilterableListsView building, final String desc, final String id, final boolean isInverted)
+    public ViewFilterableList(final View window, final AbstractHutFilterableLists parent, final AbstractFilterableListsView building, final String desc, final String id, final boolean isInverted)
     {
         this.window = window;
         this.id = id;

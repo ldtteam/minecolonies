@@ -5,7 +5,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.views.FilterableListsView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
@@ -15,9 +15,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * Window for the lumberjack hut.
+ * Window for all the filterable lists.
  */
-public abstract class AbstractHutFilterableLists extends WindowWorkerMultiPages<FilterableListsView>
+public abstract class AbstractHutFilterableLists extends AbstractWindowWorkerBuilding<AbstractFilterableListsView>
 {
     /**
      * Window filterable list views.
@@ -30,14 +30,14 @@ public abstract class AbstractHutFilterableLists extends WindowWorkerMultiPages<
     protected Map<String, Predicate<ItemStack>> itemStackPredicate = new HashMap<>();
 
     /**
-     * Constructor for the window of the lumberjack.
+     * Constructor for the window of the the filterable lists.
      *
-     * @param building {@link FilterableListsView}.
+     * @param building {@link AbstractFilterableListsView}.
      * @param res the resource String.
      * @param predicates the restriction.
      */
     @SafeVarargs
-    public AbstractHutFilterableLists(final FilterableListsView building, final String res, final Tuple<String, Predicate<ItemStack>>... predicates)
+    public AbstractHutFilterableLists(final AbstractFilterableListsView building, final String res, final Tuple<String, Predicate<ItemStack>>... predicates)
     {
         super(building, res);
         for (final Tuple<String, Predicate<ItemStack>> tuple : predicates)

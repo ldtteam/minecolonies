@@ -322,7 +322,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isOre(@NotNull final ItemStack stack)
     {
-        if (ItemStackUtils.isEmpty(stack))
+        if (isEmpty(stack))
         {
             return false;
         }
@@ -341,7 +341,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isMineableOre(@NotNull final ItemStack stack)
     {
-        if (ItemStackUtils.isEmpty(stack))
+        if (isEmpty(stack))
         {
             return false;
         }
@@ -428,7 +428,7 @@ public class CompatibilityManager implements ICompatibilityManager
         if (oreBlocks.isEmpty())
         {
             oreBlocks.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isMineableOre)
-                                               .filter(stack -> !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemBlock)
+                                               .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof ItemBlock)
                                                .map(stack -> ((ItemBlock) stack.getItem()).getBlock())
                                                .collect(Collectors.toList())));
 
@@ -441,7 +441,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 }
             }
         }
-        Log.getLogger().info("Finished discovering compostables");
+        Log.getLogger().info("Finished discovering Ores");
     }
 
     private void discoverSaplings()
@@ -500,7 +500,7 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             fuel.addAll(ImmutableList.copyOf(allBlocks.stream().filter(TileEntityFurnace::isItemFuel).map(ItemStorage::new).collect(Collectors.toList())));
         }
-        Log.getLogger().info("Finished discovering compostables");
+        Log.getLogger().info("Finished discovering fuel");
     }
 
     /**
@@ -512,7 +512,7 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             food.addAll(ImmutableList.copyOf(allBlocks.stream().filter(ISFOOD.or(ISCOOKABLE)).map(ItemStorage::new).collect(Collectors.toList())));
         }
-        Log.getLogger().info("Finished discovering compostables");
+        Log.getLogger().info("Finished discovering food");
     }
 
     /**
