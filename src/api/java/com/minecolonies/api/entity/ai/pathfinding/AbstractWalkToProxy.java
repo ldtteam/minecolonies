@@ -102,7 +102,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
                 currentProxy = target;
             }
 
-            this.resetProxyList();
+            proxyList.clear();
             return takeTheDirectPath(target, range, onMove);
         }
 

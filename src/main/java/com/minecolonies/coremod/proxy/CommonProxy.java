@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.proxy;
 
+import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
+import com.minecolonies.coremod.entity.ai.mobs.EntityMercenary;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
@@ -16,7 +18,6 @@ import com.minecolonies.coremod.inventory.GuiHandler;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.*;
 import com.minecolonies.coremod.util.TownHallRecipe;
-import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -187,6 +188,14 @@ public abstract class CommonProxy implements IProxy
         EntityRegistry.registerModEntity(BARBARIAN,
           EntityBarbarian.class,
           "Barbarian",
+          getNextEntityId(),
+          MineColonies.instance,
+          Constants.ENTITY_TRACKING_RANGE,
+          Constants.ENTITY_UPDATE_FREQUENCY,
+          true);
+        EntityRegistry.registerModEntity(MERCENARY,
+          EntityMercenary.class,
+          "Mercenary",
           getNextEntityId(),
           MineColonies.instance,
           Constants.ENTITY_TRACKING_RANGE,

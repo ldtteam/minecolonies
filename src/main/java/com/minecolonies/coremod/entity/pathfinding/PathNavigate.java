@@ -165,13 +165,13 @@ public class PathNavigate extends PathNavigateGround
         final int newY = (int) y;
         final int newZ = MathHelper.floor(z);
 
-        if ((destination != null
-               && BlockPosUtil.isEqual(destination, newX, newY, newZ))
-              || (originalDestination != null
-                    && BlockPosUtil.isEqual(originalDestination, newX, newY, newZ)
-                    && pathResult != null
-                    && pathResult.isInProgress())
-              || (pathResult != null && (pathResult.isInProgress() || pathResult.isComputing())))
+        if (pathResult != null &&
+              (
+                pathResult.isComputing()
+                  || (destination != null && BlockPosUtil.isEqual(destination, newX, newY, newZ))
+                  || (originalDestination != null && BlockPosUtil.isEqual(originalDestination, newX, newY, newZ))
+              )
+        )
         {
             return pathResult;
         }
@@ -475,7 +475,12 @@ public class PathNavigate extends PathNavigateGround
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         return (PathJobFindWater.WaterPathResult) setPathJob(
-          new PathJobFindWater(CompatibilityUtils.getWorld(ourEntity), start, ((EntityCitizen) ourEntity).getCitizenColonyHandler().getWorkBuilding().getLocation(), range, ponds, ourEntity), null, speed);
+          new PathJobFindWater(CompatibilityUtils.getWorld(ourEntity),
+            start,
+            ((EntityCitizen) ourEntity).getCitizenColonyHandler().getWorkBuilding().getLocation(),
+            range,
+            ponds,
+            ourEntity), null, speed);
     }
 
     /**

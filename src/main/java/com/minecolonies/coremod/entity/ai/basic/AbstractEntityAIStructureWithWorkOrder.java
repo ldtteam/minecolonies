@@ -364,7 +364,6 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                     building.setBuildingLevel(woh.getUpgradeLevel());
                 }
             }
-
         }
         getOwnBuilding(AbstractBuildingStructureBuilder.class).resetNeededResources();
         resetTask();
