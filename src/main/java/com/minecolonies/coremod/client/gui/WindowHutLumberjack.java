@@ -4,6 +4,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.controls.Button;
+import com.minecolonies.blockout.controls.ButtonImage;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -12,6 +13,7 @@ import com.minecolonies.coremod.network.messages.LumberjackScepterMessage;
 import com.minecolonies.coremod.network.messages.LumberjackReplantSaplingToggleMessage;
 import com.minecolonies.coremod.network.messages.LumberjackRestrictionToggleMessage;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -19,6 +21,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.coremod.client.gui.WindowHutBuilder.BLACK;
 
 /**
  * Window for the lumberjack hut.
@@ -133,8 +136,6 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
 
         findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class).addChild(giveToolButton);
         registerButton(BUTTON_GIVE_TOOL, this::giveTool);
-
-        this.isInverted = true;
     }
 
     /**
