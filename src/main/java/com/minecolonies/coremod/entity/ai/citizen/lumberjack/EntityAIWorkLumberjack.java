@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -26,6 +27,9 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
@@ -53,6 +57,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * If this limit is reached, no trees are found.
      */
     private static final int    SEARCH_LIMIT           = 150;
+
+    /**
+     * List of saplings.
+     */
+    private static final String SAPLINGS_LIST = "saplings";
 
     /**
      * Vertical range in which the worker picks up items.
@@ -286,7 +295,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
         if (pathResult == null || pathResult.treeLocation == null)
         {
-            pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D, ((BuildingLumberjack) building).getCopyOfAllowedItems(), worker.getCitizenColonyHandler().getColony());
+            final Map<String, List<ItemStorage>> copy = ((BuildingLumberjack) building).getCopyOfAllowedItems();
+            pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D, copy.containsKey(SAPLINGS_LIST) ? copy.get(SAPLINGS_LIST) : Collections.emptyList(), worker.getCitizenColonyHandler().getColony());
             // Delay between area searches
             setDelay(100);
             return getState();
@@ -561,7 +571,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     private boolean plantSapling(@NotNull final BlockPos location)
     {
         final Block worldBlock = world.getBlockState(location).getBlock();
-        if (worldBlock != Blocks.AIR && !(worldBlock instanceof BlockSapling))
+        if (worldBlock != Blocks.AIR && !(worldBlock instanceof BlockSapling) && worldBlock != Blocks.SNOW_LAYER)
         {
             return true;
         }
@@ -692,7 +702,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         while (!job.tree.getStumpLocations().isEmpty())
         {
             final BlockPos pos = job.tree.getStumpLocations().get(0);
-
             if ((BlockPosUtil.setBlock(world, pos, block.getStateFromMeta(stack.getMetadata()), 0x02) && getInventory().getStackInSlot(saplingSlot) != null)
                   || Objects.equals(world.getBlockState(pos), block.getStateFromMeta(stack.getMetadata())))
             {

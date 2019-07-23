@@ -1,0 +1,14 @@
+<window size="190 244" pause="false" lightbox="false">
+    <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+    <label id="desc" size="130 11" pos="30 14" color="black" textalign="MIDDLE"/>
+    <input id="input" size="150 18" pos="20 30" maxlength="25"/>
+
+    <list id="resources" size="164 136" pos="13 50">
+        <box size="100% 17" linewidth="2">
+            <itemicon id="resourceIcon" size="17 17" pos="0 0"/>
+            <label id="resourceName" size="100 12" pos="20 1" color="white"/>
+            <buttonimage label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOn)" id="switch" pos="120 1" size="29 15"
+                         source="minecolonies:textures/gui/builderhut/builder_button_very_small.png" textcolor="black"/>
+        </box>
+    </list>
+</window>
