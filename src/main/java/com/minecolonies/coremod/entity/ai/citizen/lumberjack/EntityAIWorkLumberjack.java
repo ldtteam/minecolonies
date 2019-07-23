@@ -308,14 +308,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                 pathResult = worker.getNavigator().moveToTree(
                         startPos, endPos,
                         1.0D,
-                        copy.containsKey(SAPLINGS_LIST) ? copy.get(SAPLINGS_LIST) : Collections.emptyList(),
+                  copy.getOrDefault(SAPLINGS_LIST, Collections.emptyList()),
                         worker.getCitizenColonyHandler().getColony()
                 );
 
             }
             else
             {
-                pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D, copy.containsKey(SAPLINGS_LIST) ? copy.get(SAPLINGS_LIST) : Collections.emptyList(), worker.getCitizenColonyHandler().getColony());
+                pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D, copy.getOrDefault(SAPLINGS_LIST, Collections.emptyList()), worker.getCitizenColonyHandler().getColony());
             }
 
             // Delay between area searches
