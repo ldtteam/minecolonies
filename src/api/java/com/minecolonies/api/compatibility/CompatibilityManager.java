@@ -24,6 +24,7 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
@@ -34,6 +35,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAP_LEAF;
 
@@ -61,23 +63,38 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Properties for leaves we're ignoring upon comparing.
      */
-    public static final PropertyBool    checkDecay     = PropertyBool.create("check_decay");
-    public static final PropertyBool    decayable      = PropertyBool.create("decayable");
+    private static final PropertyBool    checkDecay     = PropertyBool.create("check_decay");
+    private static final PropertyBool    decayable      = PropertyBool.create("decayable");
     public static final PropertyInteger DYN_PROP_HYDRO = PropertyInteger.create("hydro", 1, 4);
 
     /**
      * List of all ore-like blocks.
      * Works on client and server-side.
      */
-    private final List<Block> ores = new ArrayList<>();
+    private final Set<Block> oreBlocks = new HashSet<>();
+
+    /**
+     * List of all ore-like items.
+     */
+    private final Set<ItemStorage> smeltableOres = new HashSet<>();
 
     /**
      * List of all the items that can be composted
      */
-    private final List<ItemStorage> compostableItems = new ArrayList<>();
+    private final Set<ItemStorage> compostableItems = new HashSet<>();
 
     /**
-     * List of lucky ores which get dropped by the miner.
+     * List of all the items that can be used as fuel
+     */
+    private final Set<ItemStorage> fuel = new HashSet<>();
+
+    /**
+     * List of all the items that can be used as food
+     */
+    private final Set<ItemStorage> food = new HashSet<>();
+
+    /**
+     * List of lucky oreBlocks which get dropped by the miner.
      */
     private final List<ItemStorage> luckyOres = new ArrayList<>();
 
@@ -153,20 +170,17 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public void discover()
     {
+        discoverBlockList();
+
         discoverSaplings();
-        for (final String string : OreDictionary.getOreNames())
-        {
-            if (string.contains(ORE_STRING))
-            {
-                discoverOres(string);
-            }
-        }
-        Log.getLogger().info("Finished discovering ores");
+        discoverOres();
+        Log.getLogger().info("Finished discovering oreBlocks");
         discoverCompostableItems();
         discoverLuckyOres();
         discoverCrusherModes();
         discoverSifting();
-        discoverBlockList();
+        discoverFood();
+        discoverFuel();
 
         discoveredAlready = true;
     }
@@ -271,6 +285,24 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
+    public Set<ItemStorage> getFuel()
+    {
+        return fuel;
+    }
+
+    @Override
+    public Set<ItemStorage> getFood()
+    {
+        return food;
+    }
+
+    @Override
+    public Set<ItemStorage> getSmeltableOres()
+    {
+        return smeltableOres;
+    }
+
+    @Override
     public List<ItemStorage> getCopyOfCompostableItems()
     {
         return ImmutableList.copyOf(compostableItems);
@@ -284,13 +316,13 @@ public class CompatibilityManager implements ICompatibilityManager
             return true;
         }
 
-        return ores.contains(block.getBlock());
+        return oreBlocks.contains(block.getBlock());
     }
 
     @Override
     public boolean isOre(@NotNull final ItemStack stack)
     {
-        if (ItemStackUtils.isEmpty(stack))
+        if (isEmpty(stack))
         {
             return false;
         }
@@ -302,6 +334,26 @@ public class CompatibilityManager implements ICompatibilityManager
                 return !FurnaceRecipes.instance().getSmeltingResult(stack).isEmpty();
             }
         }
+
+        return false;
+    }
+
+    @Override
+    public boolean isMineableOre(@NotNull final ItemStack stack)
+    {
+        if (isEmpty(stack))
+        {
+            return false;
+        }
+        final int[] ids = OreDictionary.getOreIDs(stack);
+        for (final int id : ids)
+        {
+            if (OreDictionary.getOreName(id).contains(ORE_STRING))
+            {
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -366,36 +418,30 @@ public class CompatibilityManager implements ICompatibilityManager
 
     //------------------------------- Private Utility Methods -------------------------------//
 
-    private void discoverOres(final String string)
+    private void discoverOres()
     {
-        for (final ItemStack ore : OreDictionary.getOres(string))
+        if (smeltableOres.isEmpty())
         {
-            for (final CreativeTabs tabs : CreativeTabs.CREATIVE_TAB_ARRAY)
+            smeltableOres.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isOre).map(ItemStorage::new).collect(Collectors.toList())));
+        }
+
+        if (oreBlocks.isEmpty())
+        {
+            oreBlocks.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isMineableOre)
+                                               .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof ItemBlock)
+                                               .map(stack -> ((ItemBlock) stack.getItem()).getBlock())
+                                               .collect(Collectors.toList())));
+
+            for (final String oreString : Configurations.gameplay.extraOres)
             {
-                final NonNullList<ItemStack> list = NonNullList.create();
-                ore.getItem().getSubItems(tabs, list);
-                for (final ItemStack stack : list)
+                final Block block = Block.getBlockFromName(oreString);
+                if (!(block == null || oreBlocks.contains(block)))
                 {
-                    if (!ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof ItemBlock)
-                    {
-                        final Block block = ((ItemBlock) stack.getItem()).getBlock();
-                        if (!ores.contains(block))
-                        {
-                            ores.add(block);
-                        }
-                    }
+                    oreBlocks.add(block);
                 }
             }
         }
-
-        for (final String oreString : Configurations.gameplay.extraOres)
-        {
-            final Block block = Block.getBlockFromName(oreString);
-            if (!(block == null || ores.contains(block)))
-            {
-                ores.add(block);
-            }
-        }
+        Log.getLogger().info("Finished discovering Ores");
     }
 
     private void discoverSaplings()
@@ -433,31 +479,44 @@ public class CompatibilityManager implements ICompatibilityManager
         Log.getLogger().info("Finished discovering saplings");
     }
 
+    /**
+     * Create complete list of compostable items.
+     */
     private void discoverCompostableItems()
     {
         if (compostableItems.isEmpty())
         {
-            compostableItems.addAll(
-              ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
-                  final NonNullList<ItemStack> stacks = NonNullList.create();
-                  try
-                  {
-                      item.getSubItems(CreativeTabs.SEARCH, stacks);
-                  }
-                  catch (Exception ex)
-                  {
-                      Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
-                  }
-
-
-                  return stacks.stream().filter(this::isCompost);
-              }).map(ItemStorage::new).collect(Collectors.toList())));
+            compostableItems.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isCompost).map(ItemStorage::new).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering compostables");
     }
 
     /**
-     * Run through all blocks and check if they match one of our lucky ores.
+     * Create complete list of fuel items.
+     */
+    private void discoverFuel()
+    {
+        if (fuel.isEmpty())
+        {
+            fuel.addAll(ImmutableList.copyOf(allBlocks.stream().filter(TileEntityFurnace::isItemFuel).map(ItemStorage::new).collect(Collectors.toList())));
+        }
+        Log.getLogger().info("Finished discovering fuel");
+    }
+
+    /**
+     * Create complete list of food items.
+     */
+    private void discoverFood()
+    {
+        if (food.isEmpty())
+        {
+            food.addAll(ImmutableList.copyOf(allBlocks.stream().filter(ISFOOD.or(ISCOOKABLE)).map(ItemStorage::new).collect(Collectors.toList())));
+        }
+        Log.getLogger().info("Finished discovering food");
+    }
+
+    /**
+     * Run through all blocks and check if they match one of our lucky oreBlocks.
      */
     private void discoverLuckyOres()
     {
@@ -507,7 +566,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 }
             }
         }
-        Log.getLogger().info("Finished discovering lucky ores");
+        Log.getLogger().info("Finished discovering lucky oreBlocks");
     }
 
     /**
