@@ -98,7 +98,7 @@ public class ColonyTest
         final Colony test = Colony.loadColony(compound, world);
         assertNotEquals(null, test.getColonyTag());
         test.setName("blahColony");
-        test.writeToNBT(new CompoundNBT());
+        test.write(new CompoundNBT());
         assertNotEquals(compound, test.getColonyTag());
     }
 }

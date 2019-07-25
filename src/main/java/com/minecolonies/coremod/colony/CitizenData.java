@@ -863,7 +863,7 @@ public class CitizenData
      * @param compound NBT-Tag compound.
      * @return return the data in NBT format
      */
-    public CompoundNBT writeToNBT(@NotNull final CompoundNBT compound)
+    public CompoundNBT write(@NotNull final CompoundNBT compound)
     {
         compound.putInt(TAG_ID, id);
         compound.putString(TAG_NAME, name);
@@ -901,19 +901,19 @@ public class CitizenData
         if (job != null)
         {
             @NotNull final CompoundNBT jobCompound = new CompoundNBT();
-            job.writeToNBT(jobCompound);
+            job.write(jobCompound);
             compound.put("job", jobCompound);
         }
 
-        compound.put(TAG_INVENTORY, inventory.writeToNBT(new ListNBT()));
+        compound.put(TAG_INVENTORY, inventory.write(new ListNBT()));
         compound.putInt(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.MAIN_HAND));
         compound.putInt(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.OFF_HAND));
 
-        BlockPosUtil.writeToNBT(compound, TAG_POS, bedPos);
+        BlockPosUtil.write(compound, TAG_POS, bedPos);
         compound.putBoolean(TAG_ASLEEP, isAsleep);
         compound.putBoolean(TAG_JUST_ATE, justAte);
 
-        citizenHappinessHandler.writeToNBT(compound);
+        citizenHappinessHandler.write(compound);
 
         return compound;
     }
@@ -971,7 +971,7 @@ public class CitizenData
         buf.writeInt(colony.getID());
 
         final CompoundNBT compound = new CompoundNBT();
-        compound.put("inventory", inventory.writeToNBT(new ListNBT()));
+        compound.put("inventory", inventory.write(new ListNBT()));
         ByteBufUtils.writeTag(buf, compound);
 
         BlockPosUtil.writeToByteBuf(buf, lastPosition);

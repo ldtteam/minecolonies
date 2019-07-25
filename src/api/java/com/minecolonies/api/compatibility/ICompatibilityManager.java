@@ -125,7 +125,7 @@ public interface ICompatibilityManager
      *
      * @param compound NBT-Tag.
      */
-    void writeToNBT(@NotNull final CompoundNBT compound);
+    void write(@NotNull final CompoundNBT compound);
 
     /**
      * Read Colonies from saved NBT data.

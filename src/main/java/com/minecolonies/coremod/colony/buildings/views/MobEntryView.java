@@ -76,7 +76,7 @@ public class MobEntryView
      * @param name     Name of the tag.
      * @param entry      the View to write
      */
-    public static void writeToNBT(@NotNull final CompoundNBT compound, final String name, @NotNull final MobEntryView entry)
+    public static void write(@NotNull final CompoundNBT compound, final String name, @NotNull final MobEntryView entry)
     {
         @NotNull final CompoundNBT coordsCompound = new CompoundNBT();
         coordsCompound.putString("location", entry.getLocation().toString());

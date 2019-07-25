@@ -19,5 +19,5 @@ public interface IBlockMinecolonies<B extends IBlockMinecolonies<B>>
      *
      * @param registry the registry to use.
      */
-    void registerItemBlock(final IForgeRegistry<Item> registry);
+    void registerBlockItem(final IForgeRegistry<Item> registry);
 }

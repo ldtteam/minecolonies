@@ -137,9 +137,9 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      * @param compound NBT tag compound.
      */
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
         if (workOrderName != null)
         {
             compound.putString(TAG_WORKORDER_NAME, workOrderName);
@@ -151,7 +151,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         }
         if (structureName == null)
         {
-            Log.getLogger().error("WorkOrderBuild.writeToNBT: structureName should not be null!!!");
+            Log.getLogger().error("WorkOrderBuild.write: structureName should not be null!!!");
         }
         else
         {

@@ -152,18 +152,18 @@ public class BakingProduct
      *
      * @param productCompound the compound to write it to.
      */
-    public void writeToNBT(final CompoundNBT productCompound)
+    public void write(final CompoundNBT productCompound)
     {
         productCompound.putInt(TAG_STATE, state.ordinal());
         productCompound.putInt(TAG_RECIPE_ID, recipeId);
-        endProduct.writeToNBT(productCompound);
+        endProduct.write(productCompound);
     }
 
     @Override
     public int hashCode()
     {
         int result = state.hashCode();
-        result = 31 * result + endProduct.writeToNBT(new CompoundNBT()).hashCode();
+        result = 31 * result + endProduct.write(new CompoundNBT()).hashCode();
         result = 31 * result + recipeId;
         return result;
     }

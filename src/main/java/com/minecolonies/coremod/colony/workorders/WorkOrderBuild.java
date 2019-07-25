@@ -99,9 +99,9 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
      * @param compound NBT tag compound.
      */
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
         compound.putInt(TAG_UPGRADE_LEVEL, upgradeLevel);
         compound.putString(TAG_UPGRADE_NAME, upgradeName);
     }

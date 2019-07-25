@@ -255,14 +255,14 @@ public class BuildingFarmer extends AbstractBuildingWorker
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
         @NotNull final ListNBT fieldTagList = new ListNBT();
         for (@NotNull final BlockPos f : farmerFields)
         {
             @NotNull final CompoundNBT fieldCompound = new CompoundNBT();
-            BlockPosUtil.writeToNBT(fieldCompound, TAG_FIELDS_BLOCKPOS, f);
+            BlockPosUtil.write(fieldCompound, TAG_FIELDS_BLOCKPOS, f);
             fieldTagList.add(fieldCompound);
         }
         compound.put(TAG_FIELDS, fieldTagList);
@@ -270,7 +270,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
         if (lastField != null)
         {
-            BlockPosUtil.writeToNBT(compound, LAST_FIELD_TAG, lastField);
+            BlockPosUtil.write(compound, LAST_FIELD_TAG, lastField);
         }
     }
 

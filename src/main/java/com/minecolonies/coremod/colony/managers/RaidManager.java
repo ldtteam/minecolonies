@@ -311,7 +311,7 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         final CompoundNBT raiderCompound = new CompoundNBT();
         @NotNull final ListNBT raiderTagList = schematicMap.entrySet().stream()
@@ -330,7 +330,7 @@ public class RaidManager implements IRaiderManager
     private CompoundNBT writeMapEntryToNBT(final Map.Entry<BlockPos, Tuple<String, Long>> entry)
     {
         final CompoundNBT compound = new CompoundNBT();
-        BlockPosUtil.writeToNBT(compound, TAG_POS, entry.getKey());
+        BlockPosUtil.write(compound, TAG_POS, entry.getKey());
         compound.putString(TAG_NAME, entry.getValue().getA());
         compound.putLong(TAG_TIME, entry.getValue().getB());
 

@@ -753,7 +753,7 @@ public class InventoryCitizen implements IInventory
      * @param nbtTagListIn the taglist in.
      * @return the filled list.
      */
-    public ListNBT writeToNBT(final ListNBT nbtTagListIn)
+    public ListNBT write(final ListNBT nbtTagListIn)
     {
         for (int i = 0; i < this.mainInventory.size(); ++i)
         {
@@ -761,7 +761,7 @@ public class InventoryCitizen implements IInventory
             {
                 final CompoundNBT nbttagcompound = new CompoundNBT();
                 nbttagcompound.setByte("Slot", (byte) i);
-                (this.mainInventory.get(i)).writeToNBT(nbttagcompound);
+                (this.mainInventory.get(i)).write(nbttagcompound);
                 nbtTagListIn.add(nbttagcompound);
             }
         }
@@ -772,7 +772,7 @@ public class InventoryCitizen implements IInventory
             {
                 final CompoundNBT nbttagcompound1 = new CompoundNBT();
                 nbttagcompound1.setByte("Slot", (byte) (j + 100));
-                (this.armorInventory.get(j)).writeToNBT(nbttagcompound1);
+                (this.armorInventory.get(j)).write(nbttagcompound1);
                 nbtTagListIn.add(nbttagcompound1);
             }
         }
@@ -783,7 +783,7 @@ public class InventoryCitizen implements IInventory
             {
                 final CompoundNBT nbttagcompound2 = new CompoundNBT();
                 nbttagcompound2.setByte("Slot", (byte) (k + 150));
-                (this.offHandInventory.get(k)).writeToNBT(nbttagcompound2);
+                (this.offHandInventory.get(k)).write(nbttagcompound2);
                 nbtTagListIn.add(nbttagcompound2);
             }
         }

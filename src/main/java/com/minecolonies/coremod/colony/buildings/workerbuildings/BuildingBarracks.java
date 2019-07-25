@@ -140,10 +140,10 @@ public class BuildingBarracks extends AbstractBuilding
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
-        final ListNBT towerTagList = towers.stream().map(pos -> BlockPosUtil.writeToNBT(new CompoundNBT(), TAG_POS, pos)).collect(NBTUtils.toListNBT());
+        super.write(compound);
+        final ListNBT towerTagList = towers.stream().map(pos -> BlockPosUtil.write(new CompoundNBT(), TAG_POS, pos)).collect(NBTUtils.toListNBT());
         compound.put(TAG_TOWERS, towerTagList);
     }
 

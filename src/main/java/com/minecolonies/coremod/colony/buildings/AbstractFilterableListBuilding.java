@@ -46,9 +46,9 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
         @NotNull final ListNBT filterableListCompound = new ListNBT();
         for(@NotNull final Map.Entry<String, List<ItemStorage>> entry : itemsAllowed.entrySet())
         {
@@ -58,7 +58,7 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
             for(@NotNull final ItemStorage item : entry.getValue())
             {
                 @NotNull final CompoundNBT itemCompound = new CompoundNBT();
-                item.getItemStack().writeToNBT(itemCompound);
+                item.getItemStack().write(itemCompound);
                 filteredItems.add(itemCompound);
             }
             listCompound.put(TAG_ITEMLIST, filteredItems);

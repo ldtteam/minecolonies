@@ -171,9 +171,9 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     }
 
     @Override
-    public CompoundNBT writeToNBT(final CompoundNBT compound)
+    public CompoundNBT write(final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
 
         compound.putInt("items", this.items);
         compound.putInt("timer", this.timer);
@@ -195,7 +195,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     public SPacketUpdateTileEntity getUpdatePacket()
     {
         final CompoundNBT compound = new CompoundNBT();
-        this.writeToNBT(compound);
+        this.write(compound);
         return new SPacketUpdateTileEntity(this.pos, 0, compound);
     }
 
@@ -203,7 +203,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     @Override
     public CompoundNBT getUpdateTag()
     {
-        return writeToNBT(new CompoundNBT());
+        return write(new CompoundNBT());
     }
 
     @Override

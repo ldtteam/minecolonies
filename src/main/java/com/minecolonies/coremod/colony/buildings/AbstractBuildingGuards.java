@@ -245,9 +245,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
         compound.putInt(NBT_TASK, task.ordinal());
         compound.putInt(NBT_JOB, job == null ? -1 : job.ordinal());
         compound.putBoolean(NBT_ASSIGN, assignManually);
@@ -259,7 +259,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         for (@NotNull final BlockPos pos : patrolTargets)
         {
             @NotNull final CompoundNBT wayPointCompound = new CompoundNBT();
-            BlockPosUtil.writeToNBT(wayPointCompound, NBT_TARGET, pos);
+            BlockPosUtil.write(wayPointCompound, NBT_TARGET, pos);
 
             wayPointTagList.add(wayPointCompound);
         }
@@ -269,7 +269,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         for (@NotNull final MobEntryView entry : mobsToAttack)
         {
             @NotNull final CompoundNBT mobCompound = new CompoundNBT();
-            MobEntryView.writeToNBT(mobCompound, NBT_MOB_VIEW, entry);
+            MobEntryView.write(mobCompound, NBT_MOB_VIEW, entry);
             mobsTagList.add(mobCompound);
         }
         compound.put(NBT_MOBS, mobsTagList);

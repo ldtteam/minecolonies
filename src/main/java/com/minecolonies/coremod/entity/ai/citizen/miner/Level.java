@@ -300,19 +300,19 @@ public class Level
      *
      * @param compound compound to use.
      */
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         compound.putInt(TAG_DEPTH, depth);
         if (levelSign != null)
         {
-            BlockPosUtil.writeToNBT(compound, TAG_LEVEL_SIGN, levelSign);
+            BlockPosUtil.write(compound, TAG_LEVEL_SIGN, levelSign);
         }
 
         @NotNull final ListNBT nodeTagList = new ListNBT();
         for (@NotNull final Node node : nodes.values())
         {
             @NotNull final CompoundNBT nodeCompound = new CompoundNBT();
-            node.writeToNBT(nodeCompound);
+            node.write(nodeCompound);
             nodeTagList.add(nodeCompound);
         }
         compound.put(TAG_NODES, nodeTagList);
@@ -324,7 +324,7 @@ public class Level
         for (@NotNull final Node node : openNodes)
         {
             @NotNull final CompoundNBT nodeCompound = new CompoundNBT();
-            node.writeToNBT(nodeCompound);
+            node.write(nodeCompound);
             openNodeTagList.add(nodeCompound);
         }
         compound.put(TAG_OPEN_NODES, openNodeTagList);

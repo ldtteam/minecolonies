@@ -718,7 +718,7 @@ public final class ColonyManager
      *
      * @param compound NBT-Tag.
      */
-    public static void writeToNBT(@NotNull final CompoundNBT compound)
+    public static void write(@NotNull final CompoundNBT compound)
     {
         //Get the colonies NBT tags and store them in a ListNBT.
         if (serverUUID != null)
@@ -727,12 +727,12 @@ public final class ColonyManager
         }
 
         final CompoundNBT compCompound = new CompoundNBT();
-        compatibilityManager.writeToNBT(compCompound);
+        compatibilityManager.write(compCompound);
         compound.put(TAG_COMPATABILITY_MANAGER, compCompound);
 
         compound.putBoolean(TAG_DISTANCE, true);
         final CompoundNBT recipeCompound = new CompoundNBT();
-        recipeManager.writeToNBT(recipeCompound);
+        recipeManager.write(recipeCompound);
         compound.put(RECIPE_MANAGER_TAG, recipeCompound);
         compound.putBoolean(TAG_ALL_CHUNK_STORAGES, true);
         compound.putBoolean(TAG_NEW_COLONIES, true);

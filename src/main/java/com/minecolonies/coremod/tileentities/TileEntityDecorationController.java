@@ -111,9 +111,9 @@ public class TileEntityDecorationController extends TileEntity
 
     @NotNull
     @Override
-    public CompoundNBT writeToNBT(final CompoundNBT compound)
+    public CompoundNBT write(final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
         compound.putString(TAG_NAME, schematicName);
         compound.putInt(TAG_LEVEL, level);
         compound.putInt(TAG_FACING, basicFacing.getHorizontalIndex());
@@ -131,7 +131,7 @@ public class TileEntityDecorationController extends TileEntity
     @Override
     public CompoundNBT getUpdateTag()
     {
-        return this.writeToNBT(new CompoundNBT());
+        return this.write(new CompoundNBT());
     }
 
     @Override

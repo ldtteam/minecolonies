@@ -431,7 +431,7 @@ public final class ItemStackUtils
         return item == Items.ITEM_FRAME
                  || item == Items.ARMOR_STAND
                  || item == Items.BANNER
-                 || !(item instanceof ItemBlock)
+                 || !(item instanceof BlockItem)
                  || !Block.getBlockFromItem(item).getDefaultState().getMaterial().isSolid();
     }
 

@@ -135,9 +135,9 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
         @NotNull final ListNBT furnacesTagList = new ListNBT();
         for (@NotNull final BlockPos entry : furnaces)
         {

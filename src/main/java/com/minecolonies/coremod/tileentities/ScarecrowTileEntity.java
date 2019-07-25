@@ -448,7 +448,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     public SPacketUpdateTileEntity getUpdatePacket()
     {
         final CompoundNBT compound = new CompoundNBT();
-        this.writeToNBT(compound);
+        this.write(compound);
         if(colony != null)
         {
             compound.putInt(TAG_COLONY_ID, colony.getID());
@@ -460,7 +460,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     @Override
     public CompoundNBT getUpdateTag()
     {
-        return writeToNBT(new CompoundNBT());
+        return write(new CompoundNBT());
     }
 
     @Override
@@ -526,7 +526,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     }
 
     @Override
-    public CompoundNBT writeToNBT(final CompoundNBT compound)
+    public CompoundNBT write(final CompoundNBT compound)
     {
         @NotNull final ListNBT inventoryTagList = new ListNBT();
         for (int slot = 0; slot < inventory.getSlots(); slot++)
@@ -535,11 +535,11 @@ public class ScarecrowTileEntity extends TileEntityChest
             final ItemStack stack = inventory.getStackInSlot(slot);
             if (stack == ItemStackUtils.EMPTY)
             {
-                new ItemStack(Blocks.AIR, 0).writeToNBT(inventoryCompound);
+                new ItemStack(Blocks.AIR, 0).write(inventoryCompound);
             }
             else
             {
-                stack.writeToNBT(inventoryCompound);
+                stack.write(inventoryCompound);
             }
             inventoryTagList.add(inventoryCompound);
         }
@@ -554,7 +554,7 @@ public class ScarecrowTileEntity extends TileEntityChest
         compound.putInt(TAG_OWNER, ownerId);
         compound.putString(TAG_NAME, name);
 
-        return super.writeToNBT(compound);
+        return super.write(compound);
     }
 
 

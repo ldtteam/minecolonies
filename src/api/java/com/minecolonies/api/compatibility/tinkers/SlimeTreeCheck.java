@@ -1,12 +1,8 @@
 package com.minecolonies.api.compatibility.tinkers;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraftforge.fml.common.Optional;
+import net.minecraft.block.BlockState;
 import org.jetbrains.annotations.NotNull;
-import slimeknights.tconstruct.shared.TinkerCommons;
-import slimeknights.tconstruct.world.TinkerWorld;
-import slimeknights.tconstruct.world.block.BlockSlimeGrass;
 
 /**
  * This class is to store a check to see if a tree is a slime tree.
@@ -33,10 +29,9 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @return if the block is a slime block.
      */
     @Override
-    @Optional.Method(modid = TCONSTRUCT)
     public boolean checkForTinkersSlimeBlock(@NotNull final Block block)
     {
-        return block == TinkerCommons.blockSlimeCongealed;
+        return false;
     }
 
     /**
@@ -46,10 +41,9 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @return if the block is a slime leaf.
      */
     @Override
-    @Optional.Method(modid = TCONSTRUCT)
     public boolean checkForTinkersSlimeLeaves(@NotNull final Block block)
     {
-        return block == TinkerWorld.slimeLeaves;
+        return false;
     }
 
     /**
@@ -59,10 +53,9 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @return if the block is a slime sapling.
      */
     @Override
-    @Optional.Method(modid = TCONSTRUCT)
     public boolean checkForTinkersSlimeSapling(@NotNull final Block block)
     {
-        return block == TinkerWorld.slimeSapling;
+        return false;
     }
 
     /**
@@ -72,10 +65,9 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @return if the block is a slime sapling.
      */
     @Override
-    @Optional.Method(modid = TCONSTRUCT)
     public boolean checkForTinkersSlimeDirtOrGrass(@NotNull final Block block)
     {
-        return block == TinkerWorld.slimeDirt || block == TinkerWorld.slimeGrass;
+        return false;
     }
 
     /**
@@ -85,10 +77,9 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @return the variant.
      */
     @Override
-    @Optional.Method(modid = TCONSTRUCT)
-    public int getTinkersLeafVariant(@NotNull final IBlockState leaf)
+    public int getTinkersLeafVariant(@NotNull final BlockState leaf)
     {
-        return leaf.getValue(BlockSlimeGrass.FOLIAGE).getMeta();
+        return 0;
     }
 
     /**
@@ -130,7 +121,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @param leaf the leaf.
      * @return the variant.
      */
-    public static int getLeafVariant(@NotNull final IBlockState leaf)
+    public static int getLeafVariant(@NotNull final BlockState leaf)
     {
         return new SlimeTreeCheck().getTinkersLeafVariant(leaf);
     }

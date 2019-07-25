@@ -15,7 +15,7 @@ import com.minecolonies.coremod.colony.jobs.JobStonemason;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.oredict.OreDictionary;
@@ -97,9 +97,9 @@ public class BuildingStonemason extends AbstractBuildingCrafter
         int blocks = 0;
 
 
-        if (storage.getPrimaryOutput().getItem() instanceof ItemBlock)
+        if (storage.getPrimaryOutput().getItem() instanceof BlockItem)
         {
-            final Block block = ((ItemBlock) storage.getPrimaryOutput().getItem()).getBlock();
+            final Block block = ((BlockItem) storage.getPrimaryOutput().getItem()).getBlock();
             if (block == Blocks.STONEBRICK
                   || block == Blocks.STONE_BRICK_STAIRS
                   || block == Blocks.STONE_SLAB
@@ -127,9 +127,9 @@ public class BuildingStonemason extends AbstractBuildingCrafter
                 blocks++;
                 for(final int id: OreDictionary.getOreIDs(stack))
                 {
-                    if (stack.getItem() instanceof ItemBlock)
+                    if (stack.getItem() instanceof BlockItem)
                     {
-                        final Block block = ((ItemBlock) stack.getItem()).getBlock();
+                        final Block block = ((BlockItem) stack.getItem()).getBlock();
                         if (block == Blocks.STONEBRICK || block == Blocks.STONE_BRICK_STAIRS || block == Blocks.STONE_SLAB || block == Blocks.STONE_SLAB2)
                         {
                             amountOfValidBlocks++;

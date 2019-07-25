@@ -250,13 +250,13 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob implements
 
     @NotNull
     @Override
-    public CompoundNBT writeToNBT(final CompoundNBT compound)
+    public CompoundNBT write(final CompoundNBT compound)
     {
         compound.putLong(TAG_TIME, worldTimeAtSpawn);
         compound.putInt(TAG_STUCK_COUNTER, stuckCounter);
         compound.putInt(TAG_LADDER_COUNTER, ladderCounter);
         compound.putInt(TAG_COLONY_ID, this.colony == null ? 0 : colony.getID());
-        return super.writeToNBT(compound);
+        return super.write(compound);
     }
 
     @Override

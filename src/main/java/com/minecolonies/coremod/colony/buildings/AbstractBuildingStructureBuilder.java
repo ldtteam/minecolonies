@@ -150,16 +150,16 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
         @NotNull final ListNBT neededResTagList = new ListNBT();
         for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
             @NotNull final CompoundNBT neededRes = new CompoundNBT();
             final ItemStack itemStack = new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
             itemStack.putCompound(resource.getItemStack().getTagCompound());
-            itemStack.writeToNBT(neededRes);
+            itemStack.write(neededRes);
 
             neededResTagList.add(neededRes);
         }
@@ -167,7 +167,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         compound.put(TAG_RESOURCE_LIST, neededResTagList);
         if (progressPos != null)
         {
-            BlockPosUtil.writeToNBT(compound, TAG_PROGRESS_POS, progressPos);
+            BlockPosUtil.write(compound, TAG_PROGRESS_POS, progressPos);
             compound.putInt(TAG_PROGRESS_STAGE, progressStage.ordinal());
         }
     }

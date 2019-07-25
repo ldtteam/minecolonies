@@ -122,46 +122,46 @@ public final class ModBlocks
         blockBarrel = new BlockBarrel().registerBlock(registry);
     }
 
-    public static void registerItemBlock(final IForgeRegistry<Item> registry)
+    public static void registerBlockItem(final IForgeRegistry<Item> registry)
     {
-        blockHutBaker.registerItemBlock(registry);
-        blockHutBlacksmith.registerItemBlock(registry);
-        blockHutBuilder.registerItemBlock(registry);
-        blockHutCitizen.registerItemBlock(registry);
-        blockHutDeliveryman.registerItemBlock(registry);
-        blockHutFarmer.registerItemBlock(registry);
-        blockHutField.registerItemBlock(registry);
-        blockHutFisherman.registerItemBlock(registry);
-        blockHutGuardTower.registerItemBlock(registry);
-        blockHutLumberjack.registerItemBlock(registry);
-        blockHutMiner.registerItemBlock(registry);
-        blockHutStonemason.registerItemBlock(registry);
-        blockHutTownHall.registerItemBlock(registry);
-        blockHutWareHouse.registerItemBlock(registry);
-        blockHutShepherd.registerItemBlock(registry);
-        blockHutCowboy.registerItemBlock(registry);
-        blockHutSwineHerder.registerItemBlock(registry);
-        blockHutChickenHerder.registerItemBlock(registry);
-        blockHutBarracksTower.registerItemBlock(registry);
-        blockHutBarracks.registerItemBlock(registry);
-        blockHutCook.registerItemBlock(registry);
-        blockHutSmeltery.registerItemBlock(registry);
-        blockHutComposter.registerItemBlock(registry);
-        blockHutLibrary.registerItemBlock(registry);
-        blockHutArchery.registerItemBlock(registry);
-        blockHutCombatAcademy.registerItemBlock(registry);
-        blockHutSawmill.registerItemBlock(registry);
-        blockHutStoneSmeltery.registerItemBlock(registry);
-        blockHutCrusher.registerItemBlock(registry);
-        blockHutSifter.registerItemBlock(registry);
+        blockHutBaker.registerBlockItem(registry);
+        blockHutBlacksmith.registerBlockItem(registry);
+        blockHutBuilder.registerBlockItem(registry);
+        blockHutCitizen.registerBlockItem(registry);
+        blockHutDeliveryman.registerBlockItem(registry);
+        blockHutFarmer.registerBlockItem(registry);
+        blockHutField.registerBlockItem(registry);
+        blockHutFisherman.registerBlockItem(registry);
+        blockHutGuardTower.registerBlockItem(registry);
+        blockHutLumberjack.registerBlockItem(registry);
+        blockHutMiner.registerBlockItem(registry);
+        blockHutStonemason.registerBlockItem(registry);
+        blockHutTownHall.registerBlockItem(registry);
+        blockHutWareHouse.registerBlockItem(registry);
+        blockHutShepherd.registerBlockItem(registry);
+        blockHutCowboy.registerBlockItem(registry);
+        blockHutSwineHerder.registerBlockItem(registry);
+        blockHutChickenHerder.registerBlockItem(registry);
+        blockHutBarracksTower.registerBlockItem(registry);
+        blockHutBarracks.registerBlockItem(registry);
+        blockHutCook.registerBlockItem(registry);
+        blockHutSmeltery.registerBlockItem(registry);
+        blockHutComposter.registerBlockItem(registry);
+        blockHutLibrary.registerBlockItem(registry);
+        blockHutArchery.registerBlockItem(registry);
+        blockHutCombatAcademy.registerBlockItem(registry);
+        blockHutSawmill.registerBlockItem(registry);
+        blockHutStoneSmeltery.registerBlockItem(registry);
+        blockHutCrusher.registerBlockItem(registry);
+        blockHutSifter.registerBlockItem(registry);
 
-        blockConstructionTape.registerItemBlock(registry);
-        blockBarracksTowerSubstitution.registerItemBlock(registry);
-        blockRack.registerItemBlock(registry);
-        blockWayPoint.registerItemBlock(registry);
-        blockInfoPoster.registerItemBlock(registry);
-        blockBarrel.registerItemBlock(registry);
-        blockPostBox.registerItemBlock(registry);
-        blockDecorationPlacerholder.registerItemBlock(registry);
+        blockConstructionTape.registerBlockItem(registry);
+        blockBarracksTowerSubstitution.registerBlockItem(registry);
+        blockRack.registerBlockItem(registry);
+        blockWayPoint.registerBlockItem(registry);
+        blockInfoPoster.registerBlockItem(registry);
+        blockBarrel.registerBlockItem(registry);
+        blockPostBox.registerBlockItem(registry);
+        blockDecorationPlacerholder.registerBlockItem(registry);
     }
 }

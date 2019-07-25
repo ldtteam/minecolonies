@@ -239,7 +239,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     @Override
     public CompoundNBT getUpdateTag()
     {
-        return writeToNBT(new CompoundNBT());
+        return write(new CompoundNBT());
     }
 
     @Override
@@ -319,9 +319,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
     @NotNull
     @Override
-    public CompoundNBT writeToNBT(@NotNull final CompoundNBT compound)
+    public CompoundNBT write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
         compound.putInt(TAG_COLONY, colonyId);
         compound.putBoolean(TAG_MIRROR, mirror);
         compound.putString(TAG_STYLE, style);

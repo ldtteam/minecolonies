@@ -179,7 +179,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             tower.addPatrolTargets(pos);
             LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolClickPatrol", pos, name);
         }
-        BlockPosUtil.writeToNBT(compound, TAG_LAST_POS, pos);
+        BlockPosUtil.write(compound, TAG_LAST_POS, pos);
 
         return EnumActionResult.SUCCESS;
     }

@@ -247,9 +247,9 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * @param compound the compound key.
      */
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
 
         compound.putInt(TAG_STARTING_LEVEL, startingLevelShaft);
         compound.putBoolean(TAG_CLEARED, clearedShaft);
@@ -258,14 +258,14 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         if (activeNode != null)
         {
             final CompoundNBT nodeCompound = new CompoundNBT();
-            activeNode.writeToNBT(nodeCompound);
+            activeNode.write(nodeCompound);
             compound.put(TAG_ACTIVE, nodeCompound);
         }
 
         if (oldNode != null)
         {
             final CompoundNBT nodeCompound = new CompoundNBT();
-            oldNode.writeToNBT(new CompoundNBT());
+            oldNode.write(new CompoundNBT());
             compound.put(TAG_OLD, nodeCompound);
         }
         compound.putInt(TAG_CURRENT_LEVEL, currentLevel);
@@ -274,20 +274,20 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
         if (shaftStart != null && cobbleLocation != null)
         {
-            BlockPosUtil.writeToNBT(compound, TAG_SLOCATION, shaftStart);
-            BlockPosUtil.writeToNBT(compound, TAG_CLOCATION, cobbleLocation);
+            BlockPosUtil.write(compound, TAG_SLOCATION, shaftStart);
+            BlockPosUtil.write(compound, TAG_CLOCATION, cobbleLocation);
         }
 
         if (ladderLocation != null)
         {
-            BlockPosUtil.writeToNBT(compound, TAG_LLOCATION, ladderLocation);
+            BlockPosUtil.write(compound, TAG_LLOCATION, ladderLocation);
         }
 
         @NotNull final ListNBT levelTagList = new ListNBT();
         for (@NotNull final Level level : levels)
         {
             @NotNull final CompoundNBT levelCompound = new CompoundNBT();
-            level.writeToNBT(levelCompound);
+            level.write(levelCompound);
             levelTagList.add(levelCompound);
         }
         compound.put(TAG_LEVELS, levelTagList);

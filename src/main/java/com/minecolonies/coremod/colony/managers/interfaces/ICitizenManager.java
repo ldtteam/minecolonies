@@ -25,7 +25,7 @@ public interface ICitizenManager
      * Write the citizens to nbt.
      * @param citizenCompound the compound to write it to.
      */
-    void writeToNBT(@NotNull final CompoundNBT citizenCompound);
+    void write(@NotNull final CompoundNBT citizenCompound);
 
     /**
      * Sends packages to update the citizens.

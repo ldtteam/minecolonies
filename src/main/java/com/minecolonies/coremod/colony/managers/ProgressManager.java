@@ -197,7 +197,7 @@ public class ProgressManager implements IProgressManager
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         final CompoundNBT progressCompound = new CompoundNBT();
         @NotNull final ListNBT progressTagList = notifiedProgress.stream()

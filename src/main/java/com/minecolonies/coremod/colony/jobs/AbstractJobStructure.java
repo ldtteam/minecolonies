@@ -102,9 +102,9 @@ public abstract class AbstractJobStructure extends AbstractJob
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
         if (workOrderId != 0)
         {
             compound.putInt(TAG_WORK_ORDER, workOrderId);

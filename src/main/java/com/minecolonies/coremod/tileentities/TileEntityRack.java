@@ -497,14 +497,14 @@ public class TileEntityRack extends TileEntity
 
     @NotNull
     @Override
-    public CompoundNBT writeToNBT(final CompoundNBT compound)
+    public CompoundNBT write(final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
         compound.putInt(TAG_SIZE, size);
 
         if (relativeNeighbor != null)
         {
-            BlockPosUtil.writeToNBT(compound, TAG_RELATIVE_NEIGHBOR, relativeNeighbor);
+            BlockPosUtil.write(compound, TAG_RELATIVE_NEIGHBOR, relativeNeighbor);
         }
         @NotNull final ListNBT inventoryTagList = new ListNBT();
         for (int slot = 0; slot < inventory.getSlots(); slot++)
@@ -513,11 +513,11 @@ public class TileEntityRack extends TileEntity
             final ItemStack stack = inventory.getStackInSlot(slot);
             if (stack == ItemStackUtils.EMPTY)
             {
-                new ItemStack(Blocks.AIR, 0).writeToNBT(inventoryCompound);
+                new ItemStack(Blocks.AIR, 0).write(inventoryCompound);
             }
             else
             {
-                stack.writeToNBT(inventoryCompound);
+                stack.write(inventoryCompound);
             }
             inventoryTagList.add(inventoryCompound);
         }
@@ -531,14 +531,14 @@ public class TileEntityRack extends TileEntity
     public SPacketUpdateTileEntity getUpdatePacket()
     {
         final CompoundNBT compound = new CompoundNBT();
-        return new SPacketUpdateTileEntity(this.pos, 0, this.writeToNBT(compound));
+        return new SPacketUpdateTileEntity(this.pos, 0, this.write(compound));
     }
 
     @NotNull
     @Override
     public CompoundNBT getUpdateTag()
     {
-        return writeToNBT(new CompoundNBT());
+        return write(new CompoundNBT());
     }
 
     @Override

@@ -33,9 +33,9 @@ public class TileEntityInfoPoster extends TileEntity
     }
 
     @Override
-    public CompoundNBT writeToNBT(final CompoundNBT compound)
+    public CompoundNBT write(final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
 
         for (int i = 0; i < signText.length; ++i)
         {
@@ -63,7 +63,7 @@ public class TileEntityInfoPoster extends TileEntity
     @Override
     public CompoundNBT getUpdateTag()
     {
-        return this.writeToNBT(new CompoundNBT());
+        return this.write(new CompoundNBT());
     }
 
     /**

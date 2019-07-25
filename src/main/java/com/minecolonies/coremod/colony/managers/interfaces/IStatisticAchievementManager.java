@@ -19,7 +19,7 @@ public interface IStatisticAchievementManager
      * Write all stats to nbt.
      * @param statsCompound the compound.
      */
-    void writeToNBT(@NotNull final CompoundNBT statsCompound);
+    void write(@NotNull final CompoundNBT statsCompound);
 
     /**
      * Check all achievements.

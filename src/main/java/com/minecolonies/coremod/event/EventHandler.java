@@ -306,7 +306,7 @@ public class EventHandler
             }
             final CompoundNBT compound = itemstack.getTagCompound();
 
-            BlockPosUtil.writeToNBT(compound, FIRST_POS_STRING, event.getPos());
+            BlockPosUtil.write(compound, FIRST_POS_STRING, event.getPos());
             LanguageHandler.sendPlayerMessage(event.getPlayer(), "item.scepterSteel.point", event.getPos().getX(), event.getPos().getY(), event.getPos().getZ());
             itemstack.putCompound(compound);
 

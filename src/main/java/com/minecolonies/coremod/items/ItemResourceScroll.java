@@ -70,7 +70,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         if (entity instanceof TileEntityColonyBuilding)
         {
             compound.putInt(TAG_COLONY_ID, ((TileEntityColonyBuilding) entity).getColonyId());
-            BlockPosUtil.writeToNBT(compound, TAG_BUILDER, ((TileEntityColonyBuilding) entity).getPosition());
+            BlockPosUtil.write(compound, TAG_BUILDER, ((TileEntityColonyBuilding) entity).getPosition());
 
             if (!worldIn.isRemote)
             {

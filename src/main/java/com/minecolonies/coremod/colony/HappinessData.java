@@ -241,7 +241,7 @@ public class HappinessData
      *
      * @param compound compound to use.
      */
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         @NotNull final ListNBT tasksTagList = new ListNBT();
         @NotNull final CompoundNBT taskCompound = new CompoundNBT();

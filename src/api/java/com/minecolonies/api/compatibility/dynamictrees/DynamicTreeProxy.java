@@ -1,12 +1,12 @@
 package com.minecolonies.api.compatibility.dynamictrees;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 /**
@@ -62,9 +62,9 @@ public class DynamicTreeProxy
      * @return NonNullList<ItemStack> Drops
      */
     protected NonNullList<ItemStack> getDropsForLeaf(
-      final IBlockAccess world,
+      final IWorld world,
       final BlockPos pos,
-      final IBlockState blockstate,
+      final BlockState blockstate,
       final int fortune,
       final Block leaf)
     {return NonNullList.create();}
@@ -100,5 +100,5 @@ public class DynamicTreeProxy
      * @param block1 First blockpos to compare
      * @param block2 Second blockpos to compare
      */
-    protected boolean hasFittingTreeFamilyCompat(final BlockPos block1, final BlockPos block2, final IBlockAccess world) {return false;}
+    protected boolean hasFittingTreeFamilyCompat(final BlockPos block1, final BlockPos block2, final IWorld world) {return false;}
 }

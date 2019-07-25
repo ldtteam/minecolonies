@@ -110,14 +110,14 @@ public class JobFisherman extends AbstractJob
      * @param compound CompoundNBT to save the Job to.
      */
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
 
         @NotNull final CompoundNBT waterTag = new CompoundNBT();
         if (water != null)
         {
-            BlockPosUtil.writeToNBT(waterTag, TAG_WATER, water);
+            BlockPosUtil.write(waterTag, TAG_WATER, water);
         }
 
         @NotNull final ListNBT lakes = new ListNBT();

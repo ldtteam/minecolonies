@@ -94,11 +94,11 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         compound.putInt(TAG_MAX_CITIZENS, maxCitizens);
 
-        @NotNull final ListNBT citizenTagList = citizens.values().stream().map(citizen -> citizen.writeToNBT(new CompoundNBT())).collect(NBTUtils.toListNBT());
+        @NotNull final ListNBT citizenTagList = citizens.values().stream().map(citizen -> citizen.write(new CompoundNBT())).collect(NBTUtils.toListNBT());
         compound.put(TAG_CITIZENS, citizenTagList);
     }
 

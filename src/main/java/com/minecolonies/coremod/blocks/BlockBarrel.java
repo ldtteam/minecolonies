@@ -65,7 +65,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
     }
 
     @Override
-    public void registerItemBlock(final IForgeRegistry<Item> registry)
+    public void registerBlockItem(final IForgeRegistry<Item> registry)
     {
         registry.register((new ItemColored(this, true)).setRegistryName(this.getRegistryName()));
     }

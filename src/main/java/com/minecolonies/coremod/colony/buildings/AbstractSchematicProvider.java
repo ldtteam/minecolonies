@@ -135,7 +135,7 @@ public abstract class AbstractSchematicProvider
      *
      * @param compound {@link net.minecraft.nbt.CompoundNBT} to write data to.
      */
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         final String s = BuildingRegistry.getNameToClassMap().inverse().get(this.getClass());
 
@@ -146,7 +146,7 @@ public abstract class AbstractSchematicProvider
         else
         {
             compound.putString(TAG_BUILDING_TYPE, s);
-            BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
+            BlockPosUtil.write(compound, TAG_LOCATION, location);
             final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
             if (Structures.hasMD5(structureName))
             {

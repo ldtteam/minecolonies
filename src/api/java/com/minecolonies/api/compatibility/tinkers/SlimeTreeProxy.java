@@ -1,7 +1,7 @@
 package com.minecolonies.api.compatibility.tinkers;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -53,7 +53,7 @@ public class SlimeTreeProxy
         return false;
     }
 
-    public int getTinkersLeafVariant(@NotNull final IBlockState leaf)
+    public int getTinkersLeafVariant(@NotNull final BlockState leaf)
     {
         return 0;
     }

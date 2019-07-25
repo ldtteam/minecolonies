@@ -33,7 +33,7 @@ public interface IBuildingManager
      * Write the buildings to NBT.
      * @param compound the compound.
      */
-    void writeToNBT(@NotNull final CompoundNBT compound);
+    void write(@NotNull final CompoundNBT compound);
 
     /**
      * Tick the buildings on server tick.

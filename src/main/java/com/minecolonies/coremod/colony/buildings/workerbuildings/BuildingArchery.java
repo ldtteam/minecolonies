@@ -100,14 +100,14 @@ public class BuildingArchery extends AbstractBuildingWorker
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
 
-        final ListNBT targetList = shootingTargets.stream().map(target -> BlockPosUtil.writeToNBT(new CompoundNBT(), TAG_TARGET, target)).collect(NBTUtils.toListNBT());
+        final ListNBT targetList = shootingTargets.stream().map(target -> BlockPosUtil.write(new CompoundNBT(), TAG_TARGET, target)).collect(NBTUtils.toListNBT());
         compound.put(TAG_ARCHERY_TARGETS, targetList);
 
-        final ListNBT standTagList = shootingStands.stream().map(target -> BlockPosUtil.writeToNBT(new CompoundNBT(), TAG_STAND, target)).collect(NBTUtils.toListNBT());
+        final ListNBT standTagList = shootingStands.stream().map(target -> BlockPosUtil.write(new CompoundNBT(), TAG_STAND, target)).collect(NBTUtils.toListNBT());
         compound.put(TAG_ARCHERY_STANDS, standTagList);
     }
 

@@ -175,9 +175,9 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
         compound.putBoolean(TAG_REPLANT, replant);
     }
 

@@ -90,7 +90,7 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         /*//  Achievements
         @NotNull final ListNBT achievementsTagList = new ListNBT();

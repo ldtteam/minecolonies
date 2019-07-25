@@ -233,15 +233,15 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
         compound.putInt(TAG_DAILY, dailyQuantity);
         compound.putInt(TAG_CURRENT_DAILY, currentDailyQuantity);
         if (crusherMode != null)
         {
             final CompoundNBT crusherModeNBT = new CompoundNBT();
-            crusherMode.getItemStack().writeToNBT(crusherModeNBT);
+            crusherMode.getItemStack().write(crusherModeNBT);
             compound.put(TAG_CRUSHER_MODE, crusherModeNBT);
         }
     }

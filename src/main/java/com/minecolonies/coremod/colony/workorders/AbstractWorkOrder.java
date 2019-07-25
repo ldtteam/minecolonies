@@ -341,7 +341,7 @@ public abstract class AbstractWorkOrder
      *
      * @param compound NBT tag compount
      */
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         final String s = nameToClassBiMap.inverse().get(this.getClass());
 
@@ -355,9 +355,9 @@ public abstract class AbstractWorkOrder
         compound.putInt(TAG_ID, id);
         if (claimedBy != null)
         {
-            BlockPosUtil.writeToNBT(compound, TAG_CLAIMED_BY_BUILDING, claimedBy);
+            BlockPosUtil.write(compound, TAG_CLAIMED_BY_BUILDING, claimedBy);
         }
-        BlockPosUtil.writeToNBT(compound, TAG_BUILDING, buildingLocation);
+        BlockPosUtil.write(compound, TAG_BUILDING, buildingLocation);
     }
 
     /**

@@ -1,29 +1,18 @@
 package com.minecolonies.api.compatibility.dynamictrees;
 
-import com.ferreusveritas.dynamictrees.blocks.BlockBranch;
-import com.ferreusveritas.dynamictrees.blocks.BlockDynamicLeaves;
-import com.ferreusveritas.dynamictrees.blocks.BlockTrunkShell;
-import com.ferreusveritas.dynamictrees.items.Seed;
-import com.ferreusveritas.dynamictrees.trees.TreeFamily;
-import com.minecolonies.api.util.Log;
-import com.mojang.authlib.GameProfile;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public final class DynamicTreeCompat extends DynamicTreeProxy
 {
@@ -51,7 +40,6 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return true
      */
     @Override
-    @Optional.Method(modid = DYNAMIC_MODID)
     protected boolean isDynamicTreePresent()
     {
         return true;
@@ -73,7 +61,6 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param block Block to check
      */
     @Override
-    @Optional.Method(modid = DYNAMIC_MODID)
     protected boolean checkForDynamicTreeBlock(@NotNull final Block block)
     {
         return false;
@@ -95,7 +82,6 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param block Block to check
      */
     @Override
-    @Optional.Method(modid = DYNAMIC_MODID)
     protected boolean checkForDynamicLeavesBlock(final Block block)
     {
         return false;
@@ -118,7 +104,6 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return true if it is a shell block.
      */
     @Override
-    @Optional.Method(modid = DYNAMIC_MODID)
     protected boolean checkForDynamicTrunkShellBlock(final Block block)
     {
         return false;
@@ -145,24 +130,13 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param leaf       The leaf to check
      */
     @Override
-    @Optional.Method(modid = DYNAMIC_MODID)
     protected NonNullList<ItemStack> getDropsForLeaf(
-      @NotNull final IBlockAccess world,
+      @NotNull final IWorld world,
       @NotNull final BlockPos pos,
-      @NotNull final IBlockState blockState,
+      @NotNull final BlockState blockState,
       @NotNull final int fortune,
       @NotNull final Block leaf)
     {
-        if (isDynamicLeavesBlock(leaf))
-        {
-            final NonNullList<ItemStack> list = NonNullList.create();
-            // Implementation is chance based, so repeat till we get an item
-            for (int i = 0; i < 100 && list.isEmpty(); i++)
-            {
-                list.addAll(((BlockDynamicLeaves) leaf).getDrops(world, pos, blockState, fortune));
-            }
-            return list;
-        }
         return NonNullList.create();
     }
 
@@ -175,7 +149,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param fortune    amount of fortune to use
      * @param leaf       The leaf to check
      */
-    public static NonNullList<ItemStack> getDropsForLeafCompat(final IBlockAccess world, final BlockPos pos, final IBlockState blockState, final int fortune, final Block leaf)
+    public static NonNullList<ItemStack> getDropsForLeafCompat(final IWorld world, final BlockPos pos, final BlockState blockState, final int fortune, final Block leaf)
     {
         return instance.getDropsForLeaf(world, pos, blockState, fortune, leaf);
     }
@@ -186,10 +160,9 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param item Item to check
      */
     @Override
-    @Optional.Method(modid = DYNAMIC_MODID)
     protected boolean checkForDynamicSapling(@NotNull final Item item)
     {
-        return (item instanceof Seed);
+        return false;
     }
 
     /**
@@ -223,41 +196,11 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return Runnable to break the Tree
      */
     @Override
-    @Optional.Method(modid = DYNAMIC_MODID)
     protected Runnable getTreeBreakActionCompat(@NotNull final World world, @NotNull final BlockPos blockToBreak, final ItemStack toolToUse, final BlockPos workerPos)
     {
         return () ->
         {
-            final IBlockState curBlockState = world.getBlockState(blockToBreak);
-            @Nullable final Block curBlock = curBlockState.getBlock();
 
-            if (world.getMinecraftServer() == null)
-            {
-                Log.getLogger().error("Minecolonies:DynamicTreeCompat unexpected null while trying to get World");
-                return;
-            }
-
-            final int dim = world.provider.getDimension();
-            FakePlayer fake = fakePlayers.get(dim);
-
-            if (fake == null)
-            {
-                fakePlayers.put(dim, new FakePlayer(world.getMinecraftServer().getWorld(dim),
-                  new GameProfile(UUID.randomUUID(), "minecolonies_LumberjackFake")));
-                fake = fakePlayers.get(dim);
-            }
-
-            if (workerPos != null)
-            {
-                fake.setPosition(workerPos.getX(), workerPos.getY(), workerPos.getZ());
-            }
-
-            if (toolToUse != null)
-            {
-                fake.setHeldItem(EnumHand.MAIN_HAND, toolToUse);
-            }
-
-            curBlock.removedByPlayer(curBlockState, world, blockToBreak, fake, true);
         };
     }
 
@@ -284,17 +227,9 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return true if successful
      */
     @Override
-    @Optional.Method(modid = DYNAMIC_MODID)
     protected boolean plantDynamicSaplingCompat(@NotNull final World world, @NotNull final BlockPos location, @NotNull final ItemStack saplingStack)
     {
-        if (saplingStack.getItem() instanceof Seed)
-        {
-            return ((Seed) saplingStack.getItem()).getSpecies(saplingStack).plantSapling(world, location);
-        }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     /**
@@ -328,39 +263,9 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @return true when same family
      */
     @Override
-    @Optional.Method(modid = DYNAMIC_MODID)
-    protected boolean hasFittingTreeFamilyCompat(@NotNull final BlockPos block1, @NotNull final BlockPos block2, @NotNull final IBlockAccess world)
+    protected boolean hasFittingTreeFamilyCompat(@NotNull final BlockPos block1, @NotNull final BlockPos block2, @NotNull final IWorld world)
     {
-        TreeFamily fam1 = getFamilyForBlock(block1, world);
-        TreeFamily fam2 = getFamilyForBlock(block2, world);
-
-        if (fam1 != null && fam2 != null)
-        {
-            return fam1 == fam2;
-        }
         return false;
-    }
-
-    /**
-     * Returns the dynamic tree family for the give blockpos
-     *
-     * @param blockPos position
-     * @param world    blockaccess
-     * @return dynamic tree family
-     */
-    private static TreeFamily getFamilyForBlock(@NotNull final BlockPos blockPos, @NotNull final IBlockAccess world)
-    {
-        final Block block = world.getBlockState(blockPos).getBlock();
-        if (block instanceof BlockBranch)
-        {
-            return ((BlockBranch) block).getFamily();
-        }
-        if (block instanceof BlockDynamicLeaves)
-        {
-            return ((BlockDynamicLeaves) block).getFamily(world.getBlockState(blockPos), world, blockPos);
-        }
-
-        return null;
     }
 
     /**
@@ -370,7 +275,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param block2 Second blockpos to compare
      * @return true when same family
      */
-    public static boolean hasFittingTreeFamily(@NotNull final BlockPos block1, @NotNull final BlockPos block2, @NotNull final IBlockAccess world)
+    public static boolean hasFittingTreeFamily(@NotNull final BlockPos block1, @NotNull final BlockPos block2, @NotNull final IWorld world)
     {
         return instance.hasFittingTreeFamilyCompat(block1, block2, world);
     }

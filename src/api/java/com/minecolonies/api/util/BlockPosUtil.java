@@ -55,7 +55,7 @@ public final class BlockPosUtil
      * @param name     Name of the tag.
      * @param pos      Coordinates to write to NBT.
      */
-    public static CompoundNBT writeToNBT(@NotNull final CompoundNBT compound, final String name, @NotNull final BlockPos pos)
+    public static CompoundNBT write(@NotNull final CompoundNBT compound, final String name, @NotNull final BlockPos pos)
     {
         @NotNull final CompoundNBT coordsCompound = new CompoundNBT();
         coordsCompound.putInt("x", pos.getX());

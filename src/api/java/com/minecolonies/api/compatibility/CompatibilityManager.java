@@ -2,33 +2,29 @@ package com.minecolonies.api.compatibility;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockStateStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockOre;
-import net.minecraft.block.BlockRedstoneOre;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockState;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Items;
+import net.minecraft.block.*;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.IProperty;
+import net.minecraft.state.IntegerProperty;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.FurnaceTileEntity;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -63,9 +59,9 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Properties for leaves we're ignoring upon comparing.
      */
-    private static final PropertyBool    checkDecay     = PropertyBool.create("check_decay");
-    private static final PropertyBool    decayable      = PropertyBool.create("decayable");
-    public static final PropertyInteger DYN_PROP_HYDRO = PropertyInteger.create("hydro", 1, 4);
+    private static final BooleanProperty checkDecay     = BooleanProperty.create("check_decay");
+    private static final BooleanProperty decayable      = BooleanProperty.create("decayable");
+    public static final  IntegerProperty DYN_PROP_HYDRO = IntegerProperty.create("hydro", 1, 4);
 
     /**
      * List of all ore-like blocks.
@@ -190,19 +186,9 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private void discoverBlockList()
     {
-        allBlocks = ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
-            final NonNullList<ItemStack> stacks = NonNullList.create();
-            try
-            {
-                item.getSubItems(CreativeTabs.SEARCH, stacks);
-            }
-            catch (final Exception ex)
-            {
-                Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName(), ex);
-            }
-
-            return stacks.stream();
-        }).collect(Collectors.toList()));
+        allBlocks = ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), false)
+                                           .map(ItemStack::new)
+                                           .collect(Collectors.toList()));
     }
 
     /**
@@ -230,9 +216,10 @@ public class CompatibilityManager implements ICompatibilityManager
             {
                 return true;
             }
-            for (final int id : OreDictionary.getOreIDs(itemStack))
+            for (final ResourceLocation tag : itemStack.getItem().getTags())
             {
-                if (OreDictionary.getOreName(id).equals(string))
+                final Tag<Item> theTag = new Tag<>(tag);
+                if (theTag.getId().getPath().equals(string))
                 {
                     return true;
                 }
@@ -255,9 +242,10 @@ public class CompatibilityManager implements ICompatibilityManager
             {
                 return true;
             }
-            for (final int id : OreDictionary.getOreIDs(itemStack))
+            for (final ResourceLocation tag : itemStack.getItem().getTags())
             {
-                if (OreDictionary.getOreName(id).equals(string))
+                final Tag<Item> theTag = new Tag<>(tag);
+                if (theTag.getId().getPath().equals(string))
                 {
                     return true;
                 }
@@ -311,7 +299,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isOre(final BlockState block)
     {
-        if (block.getBlock() instanceof BlockOre || block.getBlock() instanceof BlockRedstoneOre)
+        if (block.getBlock() instanceof OreBlock || block.getBlock() instanceof RedstoneOreBlock)
         {
             return true;
         }
@@ -326,10 +314,11 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             return false;
         }
-        final int[] ids = OreDictionary.getOreIDs(stack);
-        for (final int id : ids)
+
+        for (final ResourceLocation tag : stack.getItem().getTags())
         {
-            if (OreDictionary.getOreName(id).contains(ORE_STRING))
+            final Tag<Item> theTag = new Tag<>(tag);
+            if (theTag.getId().getPath().contains(ORE_STRING))
             {
                 return !FurnaceRecipes.instance().getSmeltingResult(stack).isEmpty();
             }
@@ -345,10 +334,13 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             return false;
         }
-        final int[] ids = OreDictionary.getOreIDs(stack);
-        for (final int id : ids)
+        for (final ResourceLocation tag : stack.getItem().getTags())
         {
-            if (OreDictionary.getOreName(id).contains(ORE_STRING))
+            final Tag<Item> theTag = new Tag<>(tag);
+            if (theTag.getId().getPath().contains(ORE_STRING))
+            {
+                ;
+            }
             {
                 return true;
             }
@@ -369,7 +361,7 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         @NotNull final ListNBT saplingsLeavesTagList =
           leavesToSaplingMap.entrySet()
@@ -428,13 +420,14 @@ public class CompatibilityManager implements ICompatibilityManager
         if (oreBlocks.isEmpty())
         {
             oreBlocks.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isMineableOre)
-                                               .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof ItemBlock)
-                                               .map(stack -> ((ItemBlock) stack.getItem()).getBlock())
-                                               .collect(Collectors.toList())));
+                                                    .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof BlockItem)
+                                                    .map(stack -> ((BlockItem) stack.getItem()).getBlock())
+                                                    .collect(Collectors.toList())));
 
             for (final String oreString : Configurations.gameplay.extraOres)
             {
-                final Block block = Block.getBlockFromName(oreString);
+                final String[] split = oreString.split(":");
+                final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(split[0], split[1]));
                 if (!(block == null || oreBlocks.contains(block)))
                 {
                     oreBlocks.add(block);
@@ -446,34 +439,19 @@ public class CompatibilityManager implements ICompatibilityManager
 
     private void discoverSaplings()
     {
-        for (final ItemStack saps : OreDictionary.getOres(SAPLINGS))
+
+        for (final Item item : ItemTags.SAPLINGS.getAllElements())
         {
-            if (saps.getHasSubtypes())
+            final ItemStack stack = new ItemStack(item);
+            //Just put it in if not in there already, don't mind the leaf yet.
+            if (!ItemStackUtils.isEmpty(stack) && !leavesToSaplingMap.containsValue(new ItemStorage(stack, false, true)) && !saplings.contains(new ItemStorage(stack, false, true)))
             {
-                for (final CreativeTabs tabs : CreativeTabs.CREATIVE_TAB_ARRAY)
-                {
-                    final NonNullList<ItemStack> list = NonNullList.create();
-                    saps.getItem().getSubItems(tabs, list);
-                    for (final ItemStack stack : list)
-                    {
-                        //Just put it in if not in there already, don't mind the leaf yet.
-                        if (!ItemStackUtils.isEmpty(stack) && !leavesToSaplingMap.containsValue(new ItemStorage(stack, false, true)) && !saplings.contains(new ItemStorage(stack,
-                          false,
-                          true)))
-                        {
-                            saplings.add(new ItemStorage(stack, false, true));
-                        }
-                    }
-                }
+                saplings.add(new ItemStorage(stack, false, true));
             }
-            else
+            else if (Compatibility.isDynamicTreeSapling(stack) && !ItemStackUtils.isEmpty(stack) && !leavesToSaplingMap.containsValue(new ItemStorage(stack, false, true))
+                  && !saplings.contains(new ItemStorage(stack, false, true)))
             {
-                // Dynamictree's saplings dont have sub types
-                if (Compatibility.isDynamicTreeSapling(saps) && !ItemStackUtils.isEmpty(saps) && !leavesToSaplingMap.containsValue(new ItemStorage(saps, false, true))
-                      && !saplings.contains(new ItemStorage(saps, false, true)))
-                {
-                    saplings.add(new ItemStorage(saps, false, true));
-                }
+                saplings.add(new ItemStorage(stack, false, true));
             }
         }
         Log.getLogger().info("Finished discovering saplings");
@@ -531,27 +509,14 @@ public class CompatibilityManager implements ICompatibilityManager
                     continue;
                 }
 
-                int meta = 0;
-                if (split.length == 3)
-                {
-                    try
-                    {
-                        meta = Integer.parseInt(split[1]);
-                    }
-                    catch (final NumberFormatException ex)
-                    {
-                        Log.getLogger().warn("Ore has invalid metadata: " + ore);
-                    }
-                }
-
-                final Item item = Item.getByNameOrId(split[0]);
+                final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0], split[1]));
                 if (item == null || item == Items.AIR)
                 {
                     Log.getLogger().warn("Invalid lucky block: " + ore);
                     continue;
                 }
 
-                final ItemStack stack = new ItemStack(item, 1, meta);
+                final ItemStack stack = new ItemStack(item, 1);
                 try
                 {
                     final int rarity = Integer.parseInt(split[split.length - 1]);
@@ -589,8 +554,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 final double probability = Double.parseDouble(mesh[1]);
 
                 final String[] item = mesh[0].split(":");
-                final String itemName = item[0] + ":" + item[1];
-                final Item theItem = Item.getByNameOrId(itemName);
+                final Item theItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(item[0], item[1]));
 
                 if (theItem == null)
                 {
@@ -598,7 +562,7 @@ public class CompatibilityManager implements ICompatibilityManager
                     continue;
                 }
 
-                final ItemStack stack = new ItemStack(theItem, 1, item.length > 2 ? Integer.parseInt(item[2]) : 0);
+                final ItemStack stack = new ItemStack(theItem, 1);
                 sifterMeshes.add(new Tuple<>(new ItemStorage(stack), probability));
             }
             catch (final NumberFormatException ex)
@@ -612,8 +576,7 @@ public class CompatibilityManager implements ICompatibilityManager
             try
             {
                 final String[] item = string.split(":");
-                final String itemName = item[0] + ":" + item[1];
-                final Item theItem = Item.getByNameOrId(itemName);
+                final Item theItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(item[0], item[1]));
 
                 if (theItem == null)
                 {
@@ -621,7 +584,7 @@ public class CompatibilityManager implements ICompatibilityManager
                     continue;
                 }
 
-                final ItemStack stack = new ItemStack(theItem, 1, item.length > 2 ? Integer.parseInt(item[2]) : 0);
+                final ItemStack stack = new ItemStack(theItem, 1);
                 sievableBlocks.add(new ItemStorage(stack));
             }
             catch (final NumberFormatException ex)
@@ -663,8 +626,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 final ItemStorage meshStorage = sifterMeshes.get(mesh).getA();
 
                 final String[] item = drop[2].split(":");
-                final String itemName = item[0] + ":" + item[1];
-                final Item theItem = Item.getByNameOrId(itemName);
+                final Item theItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(item[0], item[1]));
 
                 if (theItem == null)
                 {
@@ -672,7 +634,7 @@ public class CompatibilityManager implements ICompatibilityManager
                     continue;
                 }
 
-                final ItemStack stack = new ItemStack(theItem, 1, item.length > 2 ? Integer.parseInt(item[2]) : 0);
+                final ItemStack stack = new ItemStack(theItem, 1);
 
                 final double probability = Double.parseDouble(drop[3]);
 
@@ -763,22 +725,19 @@ public class CompatibilityManager implements ICompatibilityManager
             final String[] firstItem = split[0].split(":");
             final String[] secondItem = split[1].split(":");
 
-            final Item item1 = Item.getByNameOrId(firstItem[0] + ":" + firstItem[1]);
-            final Item item2 = Item.getByNameOrId(secondItem[0] + ":" + secondItem[1]);
+            final Item item1 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(firstItem[0], firstItem[1]));
+            final Item item2 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(secondItem[0], secondItem[1]));
 
             try
             {
-                final int meta1 = firstItem.length > 2 ? Integer.parseInt(firstItem[2]) : 0;
-                final int meta2 = secondItem.length > 2 ? Integer.parseInt(secondItem[2]) : 0;
-
                 if (item1 == null || item2 == null)
                 {
                     Log.getLogger().warn("Invalid crusher mode setting: " + string);
                     continue;
                 }
 
-                final ItemStorage storage1 = new ItemStorage(new ItemStack(item1, 2, meta1));
-                final ItemStorage storage2 = new ItemStorage(new ItemStack(item2, 1, meta2));
+                final ItemStorage storage1 = new ItemStorage(new ItemStack(item1, 2));
+                final ItemStorage storage2 = new ItemStorage(new ItemStack(item2, 1));
                 crusherModes.put(storage1, storage2);
             }
             catch (final NumberFormatException ex)
@@ -790,14 +749,13 @@ public class CompatibilityManager implements ICompatibilityManager
 
     private static CompoundNBT writeLeafSaplingEntryToNBT(final BlockState state, final ItemStorage storage)
     {
-        final CompoundNBT compound = new CompoundNBT();
-        NBTUtil.writeBlockState(compound, state);
-        storage.getItemStack().writeToNBT(compound);
+        final CompoundNBT compound = NBTUtil.writeBlockState(state);
+        storage.getItemStack().write(compound);
         return compound;
     }
 
     private static Tuple<BlockState, ItemStorage> readLeafSaplingEntryFromNBT(final CompoundNBT compound)
     {
-        return new Tuple<>(NBTUtil.readBlockState(compound), new ItemStorage(new ItemStack(compound), false, true));
+        return new Tuple<>(NBTUtil.readBlockState(compound), new ItemStorage(ItemStack.read(compound), false, true));
     }
 }

@@ -80,15 +80,15 @@ public class JobLumberjack extends AbstractJob
      * @param compound CompoundNBT to save the Job to.
      */
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
 
         @NotNull final CompoundNBT treeTag = new CompoundNBT();
 
         if (tree != null)
         {
-            tree.writeToNBT(treeTag);
+            tree.write(treeTag);
         }
     }
 

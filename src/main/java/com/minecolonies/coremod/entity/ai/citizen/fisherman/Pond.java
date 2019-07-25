@@ -222,8 +222,8 @@ public final class Pond
      *
      * @param compound nbt tag compound to write to.
      */
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
+        BlockPosUtil.write(compound, TAG_LOCATION, location);
     }
 }

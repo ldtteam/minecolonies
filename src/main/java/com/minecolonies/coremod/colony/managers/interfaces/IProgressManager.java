@@ -68,7 +68,7 @@ public interface IProgressManager
      * Writes the progress manager to NBT.
      * @param compound the compound to write it to.
      */
-    void writeToNBT(@NotNull CompoundNBT compound);
+    void write(@NotNull CompoundNBT compound);
 
     /**
      * Check if progress should be printed.

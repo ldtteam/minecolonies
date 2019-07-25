@@ -128,7 +128,7 @@ public abstract class AbstractJob
      *
      * @param compound CompoundNBT to save the Job to.
      */
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         final String s = JobRegistry.getClassToNameMap().get(this.getClass());
 

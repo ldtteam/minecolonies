@@ -796,14 +796,14 @@ public class Tree
      *
      * @param compound the compound of the tree.
      */
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         if (!isTree)
         {
             return;
         }
 
-        BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
+        BlockPosUtil.write(compound, TAG_LOCATION, location);
 
         @NotNull final ListNBT logs = new ListNBT();
         for (@NotNull final BlockPos log : woodBlocks)
@@ -819,7 +819,7 @@ public class Tree
         }
         compound.put(TAG_STUMPS, stumps);
 
-        BlockPosUtil.writeToNBT(compound, TAG_TOP_LOG, topLog);
+        BlockPosUtil.write(compound, TAG_TOP_LOG, topLog);
 
         compound.putBoolean(TAG_IS_SLIME_TREE, slimeTree);
         compound.putBoolean(TAG_DYNAMIC_TREE, dynamicTree);

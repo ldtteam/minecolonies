@@ -479,7 +479,7 @@ public class CitizenHappinessHandler
      *
      * @param compound  compound to use.
      */
-    public void writeToNBT(final CompoundNBT compound)
+    public void write(final CompoundNBT compound)
     {
         @NotNull final CompoundNBT taskCompound = new CompoundNBT();
         taskCompound.setDouble(NbtTagConstants.TAG_BASE, baseHappiness);

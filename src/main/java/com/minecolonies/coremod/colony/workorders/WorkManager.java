@@ -166,14 +166,14 @@ public class WorkManager
      *
      * @param compound Compound to save to.
      */
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         //  Work Orders
         @NotNull final ListNBT list = new ListNBT();
         for (@NotNull final AbstractWorkOrder o : workOrders.values())
         {
             @NotNull final CompoundNBT orderCompound = new CompoundNBT();
-            o.writeToNBT(orderCompound);
+            o.write(orderCompound);
             list.add(orderCompound);
         }
         compound.put(TAG_WORK_ORDERS, list);

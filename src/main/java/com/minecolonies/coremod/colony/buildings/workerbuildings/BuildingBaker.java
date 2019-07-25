@@ -211,9 +211,9 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
         @NotNull final ListNBT tasksTagList = new ListNBT();
         for (@NotNull final Map.Entry<ProductState, List<BakingProduct>> entry : tasks.entrySet())
         {
@@ -226,7 +226,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
                 for (@NotNull final BakingProduct bakingProduct : entry.getValue())
                 {
                     @NotNull final CompoundNBT productCompound = new CompoundNBT();
-                    bakingProduct.writeToNBT(productCompound);
+                    bakingProduct.write(productCompound);
                 }
                 taskCompound.put(TAG_PRODUCTS, productsTaskList);
                 tasksTagList.add(taskCompound);
@@ -238,11 +238,11 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         for (@NotNull final Map.Entry<BlockPos, BakingProduct> entry : furnaces.entrySet())
         {
             @NotNull final CompoundNBT furnaceCompound = new CompoundNBT();
-            BlockPosUtil.writeToNBT(furnaceCompound, TAG_FURNACE_POS, entry.getKey());
+            BlockPosUtil.write(furnaceCompound, TAG_FURNACE_POS, entry.getKey());
 
             if (entry.getValue() != null)
             {
-                entry.getValue().writeToNBT(furnaceCompound);
+                entry.getValue().write(furnaceCompound);
             }
             furnacesTagList.add(furnaceCompound);
         }

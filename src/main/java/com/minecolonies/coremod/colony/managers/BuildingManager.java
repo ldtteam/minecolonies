@@ -117,14 +117,14 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         //  Buildings
         @NotNull final ListNBT buildingTagList = new ListNBT();
         for (@NotNull final AbstractBuilding b : buildings.values())
         {
             @NotNull final CompoundNBT buildingCompound = new CompoundNBT();
-            b.writeToNBT(buildingCompound);
+            b.write(buildingCompound);
             buildingTagList.add(buildingCompound);
         }
         compound.put(TAG_BUILDINGS, buildingTagList);
@@ -134,7 +134,7 @@ public class BuildingManager implements IBuildingManager
         for (@NotNull final BlockPos pos : fields)
         {
             @NotNull final CompoundNBT fieldCompound = new CompoundNBT();
-            BlockPosUtil.writeToNBT(fieldCompound, TAG_POS, pos);
+            BlockPosUtil.write(fieldCompound, TAG_POS, pos);
             fieldTagList.add(fieldCompound);
         }
         compound.put(TAG_NEW_FIELDS, fieldTagList);

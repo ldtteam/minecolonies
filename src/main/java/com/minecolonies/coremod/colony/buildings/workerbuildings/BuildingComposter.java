@@ -122,9 +122,9 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
         @NotNull final ListNBT compostBinTagList = new ListNBT();
         for (@NotNull final BlockPos entry : barrels)
         {
