@@ -144,7 +144,7 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
                     entity.setUniqueId(UUID.randomUUID());
                     final Vec3d worldPos = entity.getPositionVector().add(pos.getX(), pos.getY(), pos.getZ());
                     entity.setPosition(worldPos.x, worldPos.y, worldPos.z);
-                    structure.getWorld().spawnEntity(entity);
+                    structure.getWorld().addEntity(entity);
                 }
                 catch (final RuntimeException e)
                 {

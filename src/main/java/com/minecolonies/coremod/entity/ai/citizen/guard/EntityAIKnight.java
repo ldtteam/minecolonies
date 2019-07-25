@@ -240,6 +240,6 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     @Override
     public void moveInAttackPosition()
     {
-        worker.getNavigator().tryMoveToEntityLiving(target, getCombatMovementSpeed());
+        worker.getNavigator().tryMoveToLivingEntity(target, getCombatMovementSpeed());
     }
 }

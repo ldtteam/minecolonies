@@ -163,7 +163,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
                                                       .filter(targetEntityClass::isInstance)
                                                       .findFirst();
 
-            return entityOptional.isPresent() ? entityOptional.get() : null;
+            return entityOptional.orElse(null);
         }
     }
 

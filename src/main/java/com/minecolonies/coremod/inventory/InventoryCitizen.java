@@ -631,7 +631,7 @@ public class InventoryCitizen implements IInventory
 
                 if (itemStackIn.hasTagCompound())
                 {
-                    itemstack.putCompound(itemStackIn.getTagCompound().copy());
+                    itemstack.put(itemStackIn.getTag().copy());
                 }
 
                 this.setInventorySlotContents(j, itemstack);

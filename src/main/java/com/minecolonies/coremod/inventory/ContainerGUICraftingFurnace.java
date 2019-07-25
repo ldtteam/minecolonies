@@ -3,7 +3,7 @@ package com.minecolonies.coremod.inventory;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerEntityMP;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -39,7 +39,7 @@ public class ContainerGUICraftingFurnace extends Container
      * @param playerInventory the player inventory.
      * @param worldIn the world.
      */
-    public ContainerGUICraftingFurnace(final InventoryPlayer playerInventory, final World worldIn)
+    public ContainerGUICraftingFurnace(final PlayerInventory playerInventory, final World worldIn)
     {
         super();
         this.furnaceInventory = new FurnaceTileEntity();

@@ -11,7 +11,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -79,7 +79,7 @@ public class WindowGuiFurnaceCrafting extends GuiContainer
      * @param worldIn       the world.
      * @param building      the building.
      */
-    public WindowGuiFurnaceCrafting(final InventoryPlayer playerInv, final World worldIn, final AbstractBuildingWorker.View building)
+    public WindowGuiFurnaceCrafting(final PlayerInventory playerInv, final World worldIn, final AbstractBuildingWorker.View building)
     {
         super(new ContainerGUICraftingFurnace(playerInv, worldIn));
         this.building = building;

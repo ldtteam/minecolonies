@@ -2,22 +2,23 @@ package com.minecolonies.api.util;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.init.Blocks;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.loot.LootContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -214,7 +215,7 @@ public final class BlockPosUtil
             }
             catch (final NumberFormatException e)
             {
-                /**
+                /*
                  * Empty for a purpose.
                  */
             }
@@ -259,7 +260,7 @@ public final class BlockPosUtil
         {
             tempPos = new BlockPos(tempPos.getX(), mid, tempPos.getZ());
             final Block blocks = world.getBlockState(tempPos).getBlock();
-            if (blocks == Blocks.AIR && world.canSeeSky(tempPos))
+            if (blocks == Blocks.AIR && world.canBlockSeeSky(tempPos))
             {
                 top = mid - 1;
                 foundland = tempPos;
@@ -406,9 +407,7 @@ public final class BlockPosUtil
      */
     public static List<ItemStack> getBlockDrops(@NotNull final World world, @NotNull final BlockPos coords, final int fortune)
     {
-        NonNullList<ItemStack> drops = NonNullList.create();
-        getBlock(world, coords).getDrops(drops, world, new BlockPos(coords.getX(), coords.getY(), coords.getZ()), getBlockState(world, coords), fortune);
-        return drops;
+        return world.getBlockState(coords).getDrops(new LootContext.Builder((ServerWorld) world).withLuck(fortune));
     }
 
     /**
@@ -450,13 +449,13 @@ public final class BlockPosUtil
     }
 
     /**
-     * {@link EntityUtils#tryMoveLivingToXYZ(EntityLiving, int, int, int)}.
+     * {@link EntityUtils#tryMoveLivingToXYZ(LivingEntity, int, int, int)}.
      *
      * @param living      A living entity.
      * @param destination chunk coordinates to check moving to.
      * @return True when XYZ is found, an set moving to, otherwise false.
      */
-    public static boolean tryMoveLivingToXYZ(@NotNull final EntityLiving living, @NotNull final BlockPos destination)
+    public static boolean tryMoveLivingToXYZ(@NotNull final LivingEntity living, @NotNull final BlockPos destination)
     {
         return EntityUtils.tryMoveLivingToXYZ(living, destination.getX(), destination.getY(), destination.getZ());
     }

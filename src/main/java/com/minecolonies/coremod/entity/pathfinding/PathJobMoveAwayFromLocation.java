@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.pathfinding;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntityBase;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -57,7 +57,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
      * @param range         max range to search.
      * @param entity the entity.
      */
-    public PathJobMoveAwayFromLocation(final World world, @NotNull final BlockPos start, @NotNull final BlockPos avoid, final int avoidDistance, final int range, final EntityLivingBase entity)
+    public PathJobMoveAwayFromLocation(final World world, @NotNull final BlockPos start, @NotNull final BlockPos avoid, final int avoidDistance, final int range, final LivingEntityBase entity)
     {
         super(world, start, avoid, range, entity);
 

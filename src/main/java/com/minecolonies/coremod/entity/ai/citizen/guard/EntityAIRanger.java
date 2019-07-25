@@ -11,7 +11,7 @@ import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.pathfinding.PathResult;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntityBase;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Enchantments;
@@ -154,7 +154,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
      * @return The next IAIState to go to.
      */
     @Override
-    protected EntityLivingBase getTarget()
+    protected LivingEntityBase getTarget()
     {
         strafingTime = 0;
         tooCloseNumTicks = 0;
@@ -257,7 +257,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
             // Fleeing
             if (!fleeing && !movingToTarget && sqDistanceToEntity < RANGED_FLEE_SQDIST && tooCloseNumTicks > 5)
             {
-                fleePath = worker.getNavigator().moveAwayFromEntityLiving(target, getRealAttackRange() / 2.0, getCombatMovementSpeed());
+                fleePath = worker.getNavigator().moveAwayFromLivingEntity(target, getRealAttackRange() / 2.0, getCombatMovementSpeed());
                 fleeing = true;
                 worker.getMoveHelper().strafe(0, (float) strafingClockwise * 0.2f);
                 strafingClockwise *= -1;
@@ -345,7 +345,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
 
                 arrow.setDamage(damage);
                 worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-                worker.world.spawnEntity(arrow);
+                worker.world.addEntity(arrow);
 
                 final double xDiff = target.posX - worker.posX;
                 final double zDiff = target.posZ - worker.posZ;
@@ -368,7 +368,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                  */
                 if (target.posY > worker.posY + Y_VISION + Y_VISION)
                 {
-                    fleePath = worker.getNavigator().moveAwayFromEntityLiving(target, 10, getCombatMovementSpeed());
+                    fleePath = worker.getNavigator().moveAwayFromLivingEntity(target, 10, getCombatMovementSpeed());
                     fleeing = true;
                     worker.getMoveHelper().strafe(0, 0);
                 }

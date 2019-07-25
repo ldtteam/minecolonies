@@ -181,7 +181,7 @@ public class CitizenExperienceHandler
             {
                 final int j = EntityXPOrb.getXPSplit(experience);
                 experience -= j;
-                CompatibilityUtils.getWorld(citizen).spawnEntity(new EntityXPOrb(CompatibilityUtils.getWorld(citizen), citizen.posX, citizen.posY, citizen.posZ, j));
+                CompatibilityUtils.getWorld(citizen).addEntity(new EntityXPOrb(CompatibilityUtils.getWorld(citizen), citizen.posX, citizen.posY, citizen.posZ, j));
             }
         }
 

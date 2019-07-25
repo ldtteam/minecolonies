@@ -139,7 +139,7 @@ public class TransferItemsRequestMessage extends AbstractMessage<TransferItemsRe
         }
 
         final ItemStack itemStackToTake = new ItemStack(item, amountToTake, message.itemStack.getItemDamage());
-        itemStackToTake.putCompound(message.itemStack.getTagCompound());
+        itemStackToTake.put(message.itemStack.getTag());
 
         ItemStack remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(building.getTileEntity(), itemStackToTake);
 

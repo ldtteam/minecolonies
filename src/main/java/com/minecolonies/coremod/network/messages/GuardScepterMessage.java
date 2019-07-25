@@ -89,9 +89,9 @@ public class GuardScepterMessage extends AbstractMessage<GuardScepterMessage, IM
 
         if (!scepter.hasTagCompound())
         {
-            scepter.putCompound(new CompoundNBT());
+            scepter.put(new CompoundNBT());
         }
-        final CompoundNBT compound = scepter.getTagCompound();
+        final CompoundNBT compound = scepter.getTag();
 
         //Should never happen.
         if (compound == null)

@@ -4,7 +4,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -86,9 +86,9 @@ public class GuiRack extends GuiContainer
      */
     private final int inventoryRows;
 
-    public GuiRack(final InventoryPlayer parInventoryPlayer, final TileEntityRack tileEntity, final TileEntityRack neighborRack, final World world, final BlockPos location)
+    public GuiRack(final PlayerInventory parPlayerInventory, final TileEntityRack tileEntity, final TileEntityRack neighborRack, final World world, final BlockPos location)
     {
-        super(new ContainerRack(tileEntity, neighborRack, parInventoryPlayer));
+        super(new ContainerRack(tileEntity, neighborRack, parPlayerInventory));
 
         if (neighborRack != null)
         {

@@ -10,7 +10,7 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.BlockState;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntityBase;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.tileentity.TileEntity;
@@ -242,7 +242,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
     @Override
     public BlockState getStateForPlacement(
       @NotNull final World world, @NotNull final BlockPos pos, @NotNull final Direction facing, final float hitX, final float hitY,
-                                            final float hitZ, final int meta, @NotNull final EntityLivingBase placer, final EnumHand hand)
+                                            final float hitZ, final int meta, @NotNull final LivingEntityBase placer, final EnumHand hand)
     {
         return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(FACING, placer.getHorizontalFacing());
     }

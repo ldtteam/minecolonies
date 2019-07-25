@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.pathfinding;
 import com.minecolonies.api.entity.ai.pathfinding.AbstractWalkToProxy;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +21,7 @@ public class GeneralEntityWalkToProxy extends AbstractWalkToProxy
      *
      * @param entity the entity.
      */
-    public GeneralEntityWalkToProxy(final EntityLiving entity)
+    public GeneralEntityWalkToProxy(final LivingEntity entity)
     {
         super(entity);
     }
@@ -29,7 +29,7 @@ public class GeneralEntityWalkToProxy extends AbstractWalkToProxy
     @Override
     public Set<BlockPos> getWayPoints()
     {
-        final EntityLiving living = getEntity();
+        final LivingEntity living = getEntity();
 
         final Colony colony = ColonyManager.getClosestColony(living.getEntityWorld(), living.getPosition());
 

@@ -120,7 +120,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
         final ItemStack scepter = playerIn.getHeldItem(hand);
         if (!scepter.hasTagCompound())
         {
-            scepter.putCompound(new CompoundNBT());
+            scepter.put(new CompoundNBT());
         }
 
         final ColonyView colonyView = ColonyManager.getClosestColonyView(worldIn, pos);
@@ -128,7 +128,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
         {
             return EnumActionResult.FAIL;
         }
-        final CompoundNBT compound = scepter.getTagCompound();
+        final CompoundNBT compound = scepter.getTag();
         return handleItemAction(compound, playerIn, worldIn, pos, colonyView);
     }
 
@@ -154,9 +154,9 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
         }
         if (!scepter.hasTagCompound())
         {
-            scepter.putCompound(new CompoundNBT());
+            scepter.put(new CompoundNBT());
         }
-        final CompoundNBT compound = scepter.getTagCompound();
+        final CompoundNBT compound = scepter.getTag();
 
         toggleItemMode(playerIn, compound);
 

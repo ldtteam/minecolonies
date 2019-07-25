@@ -5,7 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockFenceGate;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockState;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNavigateGround;
@@ -37,7 +37,7 @@ public class EntityAIGateInteract extends EntityAIBase
     /**
      * Our citizen.
      */
-    protected EntityLiving   theEntity;
+    protected LivingEntity   theEntity;
     /**
      * The gate position.
      */
@@ -65,7 +65,7 @@ public class EntityAIGateInteract extends EntityAIBase
      *
      * @param entityIn the registering entity.
      */
-    public EntityAIGateInteract(@NotNull final EntityLiving entityIn)
+    public EntityAIGateInteract(@NotNull final LivingEntity entityIn)
     {
         super();
         this.gatePosition = BlockPos.ORIGIN;

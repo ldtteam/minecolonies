@@ -11,7 +11,7 @@ import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.items.ItemChiefSword;
 import com.minecolonies.coremod.sounds.BarbarianSounds;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.IEntityLivingData;
+import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.PlayerEntity;
@@ -292,7 +292,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob implements
 
     @Nullable
     @Override
-    public IEntityLivingData onInitialSpawn(final DifficultyInstance difficulty, @Nullable final IEntityLivingData livingdata)
+    public ILivingEntityData onInitialSpawn(final DifficultyInstance difficulty, @Nullable final ILivingEntityData livingdata)
     {
         MobSpawnUtils.setEquipment(this);
         return super.onInitialSpawn(difficulty, livingdata);
@@ -304,7 +304,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob implements
         if (!(this.getAttackingEntity() instanceof PlayerEntity) && (this.recentlyHit > 0 && this.canDropLoot() && world.getGameRules().getBoolean("doMobLoot")))
         {
             final int experience = EntityXPOrb.getXPSplit(BARBARIAN_EXP_DROP);
-            CompatibilityUtils.spawnEntity(world, new EntityXPOrb(world, this.posX, this.posY, this.posZ, experience));
+            CompatibilityUtils.addEntity(world, new EntityXPOrb(world, this.posX, this.posY, this.posZ, experience));
         }
         super.onDeathUpdate();
     }

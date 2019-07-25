@@ -3,7 +3,7 @@ package com.minecolonies.coremod.inventory;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerEntityMP;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -50,7 +50,7 @@ public class CraftingGUIBuilding extends Container
      * @param worldIn the world.
      * @param complete if 3x3(true) or 2x2(false).
      */
-    public CraftingGUIBuilding(final InventoryPlayer playerInventory, final World worldIn, final boolean complete)
+    public CraftingGUIBuilding(final PlayerInventory playerInventory, final World worldIn, final boolean complete)
     {
         super();
         this.worldObj = worldIn;

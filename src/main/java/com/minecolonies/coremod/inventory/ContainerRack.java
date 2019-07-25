@@ -3,7 +3,7 @@ package com.minecolonies.coremod.inventory;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
@@ -48,7 +48,7 @@ public class ContainerRack extends net.minecraft.inventory.Container
      */
     public ContainerRack(
                           @NotNull final TileEntityRack tileEntityRack, @Nullable final TileEntityRack neighborRack,
-                          final InventoryPlayer playerInventory)
+                          final PlayerInventory playerInventory)
     {
         super();
         if (neighborRack != null)

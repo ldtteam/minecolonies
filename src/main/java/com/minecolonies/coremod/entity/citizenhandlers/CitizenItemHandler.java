@@ -8,7 +8,7 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockState;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.SoundEvents;
@@ -309,9 +309,9 @@ public class CitizenItemHandler
 
             if (ItemStackUtils.getSize(stack) < 1)
             {
-                citizen.setItemStackToSlot(EntityLiving.getSlotForItemStack(stack), ItemStackUtils.EMPTY);
+                citizen.setItemStackToSlot(LivingEntity.getSlotForItemStack(stack), ItemStackUtils.EMPTY);
             }
-            citizen.setItemStackToSlot(EntityLiving.getSlotForItemStack(stack), stack);
+            citizen.setItemStackToSlot(LivingEntity.getSlotForItemStack(stack), stack);
         }
     }
 }

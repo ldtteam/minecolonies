@@ -166,7 +166,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
           /*
            * Spawn entities on the structure.
            */
-          new AITarget(SPAWN_STEP, generateStructureGenerator(this::spawnEntity, DECORATION_STEP)),
+          new AITarget(SPAWN_STEP, generateStructureGenerator(this::addEntity, DECORATION_STEP)),
           /*
            * Decorate the AbstractBuilding with torches etc.
            */
@@ -1004,7 +1004,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * But in this case the rule does not apply because that would destroy the logic.
      */
     @SuppressWarnings(MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED)
-    private Boolean spawnEntity(@NotNull final StructureIterator.StructureBlock currentBlock)
+    private Boolean addEntity(@NotNull final StructureIterator.StructureBlock currentBlock)
     {
         final CompoundNBT[] entityInfos = currentBlock.entity;
         if (entityInfos.length == 0)
@@ -1082,7 +1082,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     }
 
                     entity.setUniqueId(UUID.randomUUID());
-                    if (!world.spawnEntity(entity))
+                    if (!world.addEntity(entity))
                     {
                         Log.getLogger().info("Failed to spawn entity");
                     }

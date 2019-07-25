@@ -6,7 +6,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockState;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntityBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +56,7 @@ public class PathJobFindTree extends AbstractPathJob
                             final int range,
                             final List<ItemStorage> treesToCut,
                             final Colony colony,
-                            final EntityLivingBase entity)
+                            final LivingEntityBase entity)
     {
         super(world, start, start, range, new TreePathResult(), entity);
         this.treesToNotCut = treesToCut;

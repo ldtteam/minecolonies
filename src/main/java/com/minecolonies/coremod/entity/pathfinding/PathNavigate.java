@@ -9,7 +9,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.mobs.pirates.AbstractEntityPirate;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.pathfinding.*;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -32,7 +32,7 @@ public class PathNavigate extends PathNavigateGround
     private static final double PIRATE_SWIM_BONUS        = 20;
 
     //  Parent class private members
-    private final EntityLiving ourEntity;
+    private final LivingEntity ourEntity;
 
     private double walkSpeed = 1.0D;
 
@@ -51,7 +51,7 @@ public class PathNavigate extends PathNavigateGround
      * @param entity the ourEntity.
      * @param world  the world it is in.
      */
-    public PathNavigate(@NotNull final EntityLiving entity, final World world)
+    public PathNavigate(@NotNull final LivingEntity entity, final World world)
     {
         super(entity, world);
         this.ourEntity = entity;
@@ -144,7 +144,7 @@ public class PathNavigate extends PathNavigateGround
     }
 
     @Override
-    public boolean tryMoveToEntityLiving(@NotNull final Entity e, final double speed)
+    public boolean tryMoveToLivingEntity(@NotNull final Entity e, final double speed)
     {
         return tryMoveToBlockPos(e.getPosition(), speed);
     }
@@ -471,7 +471,7 @@ public class PathNavigate extends PathNavigateGround
      * @return the result.
      */
     @Nullable
-    public PathResult moveToEntityLiving(@NotNull final Entity e, final double speed)
+    public PathResult moveToLivingEntity(@NotNull final Entity e, final double speed)
     {
         return moveToXYZ(e.posX, e.posY, e.posZ, speed);
     }
@@ -485,7 +485,7 @@ public class PathNavigate extends PathNavigateGround
      * @return the result of the pathing.
      */
     @Nullable
-    public PathResult moveAwayFromEntityLiving(@NotNull final Entity e, final double distance, final double speed)
+    public PathResult moveAwayFromLivingEntity(@NotNull final Entity e, final double distance, final double speed)
     {
         return moveAwayFromXYZ(e.getPosition(), distance, speed);
     }

@@ -6,7 +6,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -45,7 +45,7 @@ public class ContainerField extends Container
      * @param location            the position of the field.
      */
     public ContainerField(@NotNull final ScarecrowTileEntity scarecrowTileEntity,
-            final InventoryPlayer playerInventory,
+            final PlayerInventory playerInventory,
             @NotNull final World world,
             @NotNull final BlockPos location)
     {

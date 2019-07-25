@@ -207,7 +207,7 @@ public class EntityAICitizenChild extends EntityAIBase
             return State.IDLE;
         }
 
-        child.getNavigator().moveToEntityLiving(followTarget.get(), 1.0d);
+        child.getNavigator().moveToLivingEntity(followTarget.get(), 1.0d);
         return State.FOLLOWING;
     }
 

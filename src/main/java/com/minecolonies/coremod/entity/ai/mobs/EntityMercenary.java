@@ -337,9 +337,9 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
     @Override
     public boolean attackEntityFrom(final DamageSource source, final float damage)
     {
-        if (source.getTrueSource() instanceof EntityLivingBase)
+        if (source.getTrueSource() instanceof LivingEntityBase)
         {
-            this.setAttackTarget((EntityLivingBase) source.getTrueSource());
+            this.setAttackTarget((LivingEntityBase) source.getTrueSource());
         }
         return super.attackEntityFrom(source, damage);
     }
@@ -454,14 +454,14 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
             merc.setPosition(spawn.getX() + i, spawn.getY(), spawn.getZ());
             merc.setDoSpawnEvent();
             soldiers.add(merc);
-            world.spawnEntity(merc);
+            world.addEntity(merc);
         }
 
         // spawn leader for the event.
         final EntityMercenary merc = new EntityMercenary(world, colony);
         merc.setPosition(spawn.getX(), spawn.getY(), spawn.getZ() + 1);
         merc.setLeader(soldiers);
-        world.spawnEntity(merc);
+        world.addEntity(merc);
     }
 
     /**

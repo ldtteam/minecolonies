@@ -17,7 +17,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.BlockState;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntityBase;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -244,7 +244,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
                                              final float hitY,
                                              final float hitZ,
                                              final int meta,
-                                             final EntityLivingBase placer)
+                                             final LivingEntityBase placer)
     {
         @NotNull final Direction enumFacing = (placer == null) ? Direction.NORTH : Direction.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
@@ -261,10 +261,10 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * @param placer  the player placing the block.
      * @param stack   the itemstack from where the block was placed.
      * @see Block#onBlockPlacedBy(World, BlockPos, BlockState,
-     * EntityLivingBase, ItemStack)
+     * LivingEntityBase, ItemStack)
      */
     @Override
-    public void onBlockPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final BlockState state, final EntityLivingBase placer, final ItemStack stack)
+    public void onBlockPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntityBase placer, final ItemStack stack)
     {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 
@@ -326,11 +326,11 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * @param mirror  the mirror used.
      * @param style   the style of the building
      * @see Block#onBlockPlacedBy(World, BlockPos, BlockState,
-     * EntityLivingBase, ItemStack)
+     * LivingEntityBase, ItemStack)
      */
     public void onBlockPlacedByBuildTool(
                                           @NotNull final World worldIn, @NotNull final BlockPos pos,
-                                          final BlockState state, final EntityLivingBase placer, final ItemStack stack, final boolean mirror, final String style)
+                                          final BlockState state, final LivingEntityBase placer, final ItemStack stack, final boolean mirror, final String style)
     {
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
         if (tileEntity instanceof TileEntityColonyBuilding)

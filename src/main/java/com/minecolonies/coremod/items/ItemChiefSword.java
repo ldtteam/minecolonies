@@ -6,7 +6,7 @@ import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntityBase;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
@@ -49,7 +49,7 @@ public class ItemChiefSword extends SwordItem
     }
 
     @Override
-    public boolean hitEntity(final ItemStack stack, final EntityLivingBase target, @NotNull final EntityLivingBase attacker)
+    public boolean hitEntity(final ItemStack stack, final LivingEntityBase target, @NotNull final LivingEntityBase attacker)
     {
         if (attacker instanceof PlayerEntity && target instanceof AbstractEntityBarbarian)
         {

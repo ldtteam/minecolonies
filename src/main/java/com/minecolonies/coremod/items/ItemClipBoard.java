@@ -136,8 +136,8 @@ public class ItemClipBoard extends AbstractItemMinecolonies
     {
         if (!scepter.hasTagCompound())
         {
-            scepter.putCompound(new CompoundNBT());
+            scepter.put(new CompoundNBT());
         }
-        return scepter.getTagCompound();
+        return scepter.getTag();
     }
 }

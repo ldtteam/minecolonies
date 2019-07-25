@@ -81,7 +81,7 @@ public class LootGenCommand extends AbstractSingleCommand implements IActionComm
                 if (sender instanceof PlayerEntityMP && item != null)
                 {
                     final ItemStack stack = new ItemStack(item, 1);
-                    stack.putCompound(compound);
+                    stack.put(compound);
                     ((PlayerEntityMP) sender).inventory.addItemStackToInventory(stack);
                 }
             });

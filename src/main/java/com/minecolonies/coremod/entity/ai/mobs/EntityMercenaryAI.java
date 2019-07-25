@@ -227,7 +227,7 @@ public class EntityMercenaryAI extends EntityAIBase
 
         if (attackPath == null || !attackPath.isInProgress())
         {
-            entity.getNavigator().moveToEntityLiving(entity.getAttackTarget(), 1);
+            entity.getNavigator().moveToLivingEntity(entity.getAttackTarget(), 1);
             entity.getLookHelper().setLookPositionWithEntity(entity.getAttackTarget(), 180f, 180f);
         }
 

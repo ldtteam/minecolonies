@@ -15,7 +15,7 @@ import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.items.ModItems;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
@@ -55,7 +55,7 @@ public final class MobSpawnUtils
      * @param mob The mob to set the attributes on.
      * @param colony    The colony that the mob is attacking.
      */
-    public static void setMobAttributes(final EntityLiving mob, final Colony colony)
+    public static void setMobAttributes(final LivingEntity mob, final Colony colony)
     {
         mob.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
         mob.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
@@ -144,7 +144,7 @@ public final class MobSpawnUtils
                 {
                     setEquipment(entity);
                     entity.setPositionAndRotation(x, y + 1.0, z, (float) MathHelper.wrapDegrees(world.rand.nextDouble() * WHOLE_CIRCLE), 0.0F);
-                    CompatibilityUtils.spawnEntity(world, entity);
+                    CompatibilityUtils.addEntity(world, entity);
                     entity.setColony(colony);
                 }
             });

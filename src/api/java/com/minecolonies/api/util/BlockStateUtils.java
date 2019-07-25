@@ -65,14 +65,14 @@ public class BlockStateUtils
     {
         final IProperty propertyOne = getPropertyByNameFromState(state1, propertyName);
 
-        if (propertyOne != null && state2.getPropertyKeys().contains(propertyOne))
+        if (propertyOne != null && state2.getProperties().contains(propertyOne))
         {
             return state1.getValue(propertyOne) == state2.getValue(propertyOne);
         }
 
         final IProperty propertyTwo = getPropertyByNameFromState(state2, propertyName);
 
-        if (propertyOne != null && propertyTwo != null && state1.getPropertyKeys().contains(propertyOne) && state2.getPropertyKeys().contains(propertyTwo))
+        if (propertyOne != null && propertyTwo != null && state1.getProperties().contains(propertyOne) && state2.getProperties().contains(propertyTwo))
         {
             return state1.getValue(propertyOne).toString().equals((state2.getValue(propertyTwo)).toString());
         }
@@ -90,14 +90,14 @@ public class BlockStateUtils
     {
         IProperty property = propertyBlockMap.get(state.getBlock().getRegistryName().toString() + ":" + name);
 
-        if (property != null && state.getPropertyKeys().contains(property))
+        if (property != null && state.getProperties().contains(property))
         {
             return property;
         }
         else
         {
             // Cached map entry nonexistant or wrong, calculate new
-            property = getPropertyByName(state.getPropertyKeys(), name);
+            property = getPropertyByName(state.getProperties(), name);
 
             if (property != null)
             {
@@ -136,7 +136,7 @@ public class BlockStateUtils
      */
     public static boolean stateEqualsStateWithoutProp(@NotNull final BlockState state1, @NotNull final BlockState state2, @NotNull final IProperty prop)
     {
-        if (!state1.getPropertyKeys().contains(prop) || !state2.getPropertyKeys().contains(prop))
+        if (!state1.getProperties().contains(prop) || !state2.getProperties().contains(prop))
         {
             return state1 == state2;
         }
@@ -163,14 +163,14 @@ public class BlockStateUtils
             return false;
         }
 
-        if (state1.getPropertyKeys().size() != state2.getPropertyKeys().size())
+        if (state1.getProperties().size() != state2.getProperties().size())
         {
             return false;
         }
 
-        for (final IProperty prop : state1.getPropertyKeys())
+        for (final IProperty prop : state1.getProperties())
         {
-            if (!state2.getPropertyKeys().contains(prop))
+            if (!state2.getProperties().contains(prop))
             {
                 return false;
             }

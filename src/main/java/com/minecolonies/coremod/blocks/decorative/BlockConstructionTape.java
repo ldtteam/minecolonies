@@ -12,7 +12,7 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.BlockState;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntityBase;
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
@@ -431,7 +431,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<Bloc
                                              final float hitY,
                                              final float hitZ,
                                              final int meta,
-                                             final EntityLivingBase placer)
+                                             final LivingEntityBase placer)
     {
         @NotNull final Direction enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);

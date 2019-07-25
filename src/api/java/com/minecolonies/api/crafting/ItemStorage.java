@@ -2,13 +2,14 @@ package com.minecolonies.api.crafting;
 
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Used to store an stack with various informations to compare items later on.
@@ -33,7 +34,7 @@ public class ItemStorage
     /**
      * The creative tab index of the storage.
      */
-    private final List<Integer> creativeTabIndex = new ArrayList<>();
+    private final List<Integer> creativeTabIndex;
 
     /**
      * Amount of the storage.
@@ -53,7 +54,7 @@ public class ItemStorage
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = ignoreDamageValue;
         this.amount = amount;
-        this.creativeTabIndex = stack.getItem().creat() != null ? stack.getItem().getCreativeTab().index : 0;
+        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().map(ItemGroup::getIndex).collect(Collectors.toList());
     }
 
     /**
@@ -68,7 +69,7 @@ public class ItemStorage
         this.stack = stack;
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = shouldIgnoreNBTValue;
-        this.creativeTabIndex = stack.getItem().getCreativeTab() != null ? stack.getItem().getCreativeTab().index : 0;
+        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().map(ItemGroup::getIndex).collect(Collectors.toList());
     }
 
     /**
@@ -83,7 +84,7 @@ public class ItemStorage
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = ignoreDamageValue;
         this.amount = ItemStackUtils.getSize(stack);
-        this.creativeTabIndex = stack.getItem().getCreativeTab() != null ? stack.getItem().getCreativeTab().index : 0;
+        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().map(ItemGroup::getIndex).collect(Collectors.toList());
     }
 
     /**
@@ -97,7 +98,7 @@ public class ItemStorage
         this.shouldIgnoreDamageValue = false;
         this.shouldIgnoreNBTValue = false;
         this.amount = ItemStackUtils.getSize(stack);
-        this.creativeTabIndex = stack.getItem().getCreativeTab() != null ? stack.getItem().getCreativeTab().index : 0;
+        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().map(ItemGroup::getIndex).collect(Collectors.toList());
     }
 
     /**
@@ -163,7 +164,7 @@ public class ItemStorage
      * Getter for the creativeTab index of the storage.
      * @return the index.
      */
-    public int getCreativeTabIndex()
+    public List<Integer> getCreativeTabIndex()
     {
         return creativeTabIndex;
     }
@@ -172,8 +173,8 @@ public class ItemStorage
     public int hashCode()
     {
         return Objects.hash(stack.getItem())
-                + (this.shouldIgnoreDamageValue ? 0 : (this.stack.getItemDamage() * 31))
-                + (this.shouldIgnoreNBTValue ? 0 : ((this.stack.getTagCompound() == null) ? 0 : this.stack.getTagCompound().hashCode()));
+                + (this.shouldIgnoreDamageValue ? 0 : (this.stack.getDamage() * 31))
+                + (this.shouldIgnoreNBTValue ? 0 : ((this.stack.getTag() == null) ? 0 : this.stack.getTag().hashCode()));
     }
 
     @Override
@@ -194,8 +195,8 @@ public class ItemStorage
         return stack.isItemEqual(that.getItemStack())
                 && (this.shouldIgnoreDamageValue || that.getDamageValue() == this.getDamageValue())
                 && (this.shouldIgnoreNBTValue
-                      || (that.getItemStack().getTagCompound() == null && this.getItemStack().getTagCompound() == null)
-                      || that.getItemStack().getTagCompound().equals(this.getItemStack().getTagCompound()));
+                      || (that.getItemStack().getTag() == null && this.getItemStack().getTag() == null)
+                      || that.getItemStack().getTag().equals(this.getItemStack().getTag()));
     }
 
     /**
@@ -216,6 +217,6 @@ public class ItemStorage
      */
     public int getDamageValue()
     {
-        return stack.getItemDamage();
+        return stack.getDamage();
     }
 }

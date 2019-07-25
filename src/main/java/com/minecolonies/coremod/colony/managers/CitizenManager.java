@@ -168,7 +168,7 @@ public class CitizenManager implements ICitizenManager
             entity.getCitizenColonyHandler().initEntityCitizenValues(colony, citizenData);
 
             entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
-            world.spawnEntity(entity);
+            world.addEntity(entity);
 
             colony.getProgressManager().progressCitizenSpawn(citizens.size(), citizens.values().stream().filter(tempDate -> tempDate.getJob() != null).collect(Collectors.toList()).size());
             colony.getStatsManager().checkAchievements();

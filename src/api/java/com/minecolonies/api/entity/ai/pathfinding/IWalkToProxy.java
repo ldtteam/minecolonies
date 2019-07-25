@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.ai.pathfinding;
 
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,14 +80,14 @@ public interface IWalkToProxy
      * @param range  the range.
      * @return true if so.
      */
-    boolean isLivingAtSiteWithMove(final EntityLiving entity, final int x, final int y, final int z, final int range);
+    boolean isLivingAtSiteWithMove(final LivingEntity entity, final int x, final int y, final int z, final int range);
 
     /**
      * Getter for the entity accociated with the proxy.
      *
      * @return the entity.
      */
-    EntityLiving getEntity();
+    LivingEntity getEntity();
 
     /**
      * Reset the target of the proxy.

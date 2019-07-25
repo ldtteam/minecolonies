@@ -7,7 +7,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.BlockState;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntityBase;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
@@ -131,7 +131,7 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
       final float hitY,
       final float hitZ,
       final int meta,
-      final EntityLivingBase placer)
+      final LivingEntityBase placer)
     {
         @NotNull final Direction enumFacing = (placer == null) ? Direction.NORTH : Direction.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);

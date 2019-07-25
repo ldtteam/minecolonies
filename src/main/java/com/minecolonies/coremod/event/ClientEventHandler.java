@@ -112,7 +112,7 @@ public class ClientEventHandler
             {
                 return;
             }
-            final CompoundNBT compound = stack.getTagCompound();
+            final CompoundNBT compound = stack.getTag();
 
             final ColonyView colony = ColonyManager.getColonyView(compound.getInt(TAG_ID), player.world.provider.getDimension());
             if (colony == null)

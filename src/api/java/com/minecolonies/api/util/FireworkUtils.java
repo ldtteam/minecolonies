@@ -1,15 +1,18 @@
 package com.minecolonies.api.util;
 
-import net.minecraft.entity.item.EntityFireworkRocket;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemDye;
+import net.minecraft.entity.item.FireworkRocketEntity;
+import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -36,17 +39,17 @@ public final class FireworkUtils
      */
     public static void spawnFireworksAtAABBCorners(final AxisAlignedBB realaabb, final World world, final int explosionLevel)
     {
-        final EntityFireworkRocket firework = new EntityFireworkRocket(world, realaabb.maxX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(explosionLevel));
-        world.spawnEntity(firework);
+        final FireworkRocketEntity firework = new FireworkRocketEntity(world, realaabb.maxX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(explosionLevel));
+        world.addEntity(firework);
 
-        final EntityFireworkRocket fireworka = new EntityFireworkRocket(world, realaabb.maxX, realaabb.maxY, realaabb.minZ, genFireworkItemStack(explosionLevel));
-        world.spawnEntity(fireworka);
+        final FireworkRocketEntity fireworka = new FireworkRocketEntity(world, realaabb.maxX, realaabb.maxY, realaabb.minZ, genFireworkItemStack(explosionLevel));
+        world.addEntity(fireworka);
 
-        final EntityFireworkRocket fireworkb = new EntityFireworkRocket(world, realaabb.minX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(explosionLevel));
-        world.spawnEntity(fireworkb);
+        final FireworkRocketEntity fireworkb = new FireworkRocketEntity(world, realaabb.minX, realaabb.maxY, realaabb.maxZ, genFireworkItemStack(explosionLevel));
+        world.addEntity(fireworkb);
 
-        final EntityFireworkRocket fireworkc = new EntityFireworkRocket(world, realaabb.minX, realaabb.maxY, realaabb.minZ, genFireworkItemStack(explosionLevel));
-        world.spawnEntity(fireworkc);
+        final FireworkRocketEntity fireworkc = new FireworkRocketEntity(world, realaabb.minX, realaabb.maxY, realaabb.minZ, genFireworkItemStack(explosionLevel));
+        world.addEntity(fireworkc);
     }
 
     /**
@@ -57,10 +60,12 @@ public final class FireworkUtils
     private static ItemStack genFireworkItemStack(final int explosionAmount)
     {
         final Random rand = new Random();
-        final ItemStack fireworkItem = new ItemStack(Items.FIREWORKS);
-        final CompoundNBT itemStackCompound = fireworkItem.getTagCompound() != null ? fireworkItem.getTagCompound() : new CompoundNBT();
+        final ItemStack fireworkItem = new ItemStack(Items.FIREWORK_ROCKET);
+        final CompoundNBT itemStackCompound = fireworkItem.getTag() != null ? fireworkItem.getTag() : new CompoundNBT();
         final CompoundNBT fireworksCompound = new CompoundNBT();
         final ListNBT explosionsTagList = new ListNBT();
+        final List<Integer> dyeColors = Arrays.stream(DyeColor.values()).map(DyeColor::getId).collect(Collectors.toList());
+
         for (int i = 0; i < explosionAmount; i++)
         {
             final CompoundNBT explosionTag = new CompoundNBT();
@@ -74,14 +79,14 @@ public final class FireworkUtils
 
             for (int ia = 0; ia < numberOfColours; ia++)
             {
-                colors[ia] = ItemDye.DYE_COLORS[rand.nextInt(15)];
+                colors[ia] = dyeColors.get(rand.nextInt(15));
             }
-            explosionTag.setIntArray(TAG_COLORS, colors);
+            explosionTag.putIntArray(TAG_COLORS, colors);
             explosionsTagList.add(explosionTag);
         }
         fireworksCompound.put(TAG_EXPLOSIONS, explosionsTagList);
         itemStackCompound.put(TAG_FIREWORKS, fireworksCompound);
-        fireworkItem.putCompound(itemStackCompound);
+        fireworkItem.setTag(itemStackCompound);
         return fireworkItem;
     }
 }
