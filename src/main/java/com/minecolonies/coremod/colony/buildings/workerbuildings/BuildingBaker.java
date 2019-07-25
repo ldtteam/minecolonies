@@ -17,12 +17,12 @@ import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
 import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -178,21 +178,21 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         tasks.clear();
         super.readFromNBT(compound);
-        final NBTTagList taskTagList = compound.getTagList(TAG_TASKS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < taskTagList.tagCount(); ++i)
+        final ListNBT taskTagList = compound.getList(TAG_TASKS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < taskTagList.size(); ++i)
         {
-            final NBTTagCompound taskCompound = taskTagList.getCompoundTagAt(i);
-            final ProductState state = ProductState.values()[taskCompound.getInteger(TAG_STATE)];
+            final CompoundNBT taskCompound = taskTagList.getCompound(i);
+            final ProductState state = ProductState.values()[taskCompound.getInt(TAG_STATE)];
             final List<BakingProduct> bakingProducts = new ArrayList<>();
 
-            final NBTTagList productTagList = taskCompound.getTagList(TAG_PRODUCTS, Constants.NBT.TAG_COMPOUND);
-            for (int j = 0; j < productTagList.tagCount(); ++j)
+            final ListNBT productTagList = taskCompound.getList(TAG_PRODUCTS, Constants.NBT.TAG_COMPOUND);
+            for (int j = 0; j < productTagList.size(); ++j)
             {
-                final NBTTagCompound productCompound = taskTagList.getCompoundTagAt(i);
+                final CompoundNBT productCompound = taskTagList.getCompound(i);
                 final BakingProduct bakingProduct = BakingProduct.createFromNBT(productCompound);
                 bakingProducts.add(bakingProduct);
             }
@@ -200,10 +200,10 @@ public class BuildingBaker extends AbstractFilterableListBuilding
             tasks.put(state, bakingProducts);
         }
 
-        final NBTTagList furnaceTagList = compound.getTagList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < furnaceTagList.tagCount(); ++i)
+        final ListNBT furnaceTagList = compound.getList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < furnaceTagList.size(); ++i)
         {
-            final NBTTagCompound furnaceCompound = furnaceTagList.getCompoundTagAt(i);
+            final CompoundNBT furnaceCompound = furnaceTagList.getCompound(i);
             final BlockPos pos = BlockPosUtil.readFromNBT(furnaceCompound, TAG_FURNACE_POS);
             final BakingProduct bakingProduct = BakingProduct.createFromNBT(furnaceCompound);
             furnaces.put(pos, bakingProduct);
@@ -211,44 +211,44 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         super.writeToNBT(compound);
-        @NotNull final NBTTagList tasksTagList = new NBTTagList();
+        @NotNull final ListNBT tasksTagList = new ListNBT();
         for (@NotNull final Map.Entry<ProductState, List<BakingProduct>> entry : tasks.entrySet())
         {
             if (!entry.getValue().isEmpty())
             {
-                @NotNull final NBTTagCompound taskCompound = new NBTTagCompound();
-                taskCompound.setInteger(TAG_STATE, entry.getKey().ordinal());
+                @NotNull final CompoundNBT taskCompound = new CompoundNBT();
+                taskCompound.putInt(TAG_STATE, entry.getKey().ordinal());
 
-                @NotNull final NBTTagList productsTaskList = new NBTTagList();
+                @NotNull final ListNBT productsTaskList = new ListNBT();
                 for (@NotNull final BakingProduct bakingProduct : entry.getValue())
                 {
-                    @NotNull final NBTTagCompound productCompound = new NBTTagCompound();
+                    @NotNull final CompoundNBT productCompound = new CompoundNBT();
                     bakingProduct.writeToNBT(productCompound);
                 }
-                taskCompound.setTag(TAG_PRODUCTS, productsTaskList);
-                tasksTagList.appendTag(taskCompound);
+                taskCompound.put(TAG_PRODUCTS, productsTaskList);
+                tasksTagList.add(taskCompound);
             }
         }
-        compound.setTag(TAG_TASKS, tasksTagList);
+        compound.put(TAG_TASKS, tasksTagList);
 
-        @NotNull final NBTTagList furnacesTagList = new NBTTagList();
+        @NotNull final ListNBT furnacesTagList = new ListNBT();
         for (@NotNull final Map.Entry<BlockPos, BakingProduct> entry : furnaces.entrySet())
         {
-            @NotNull final NBTTagCompound furnaceCompound = new NBTTagCompound();
+            @NotNull final CompoundNBT furnaceCompound = new CompoundNBT();
             BlockPosUtil.writeToNBT(furnaceCompound, TAG_FURNACE_POS, entry.getKey());
 
             if (entry.getValue() != null)
             {
                 entry.getValue().writeToNBT(furnaceCompound);
             }
-            furnacesTagList.appendTag(furnaceCompound);
+            furnacesTagList.add(furnaceCompound);
         }
-        compound.setTag(TAG_FURNACES, furnacesTagList);
+        compound.put(TAG_FURNACES, furnacesTagList);
 
-        @NotNull final NBTTagList recipesTagList = new NBTTagList();
+        @NotNull final ListNBT recipesTagList = new ListNBT();
     }
 
     /**
@@ -298,10 +298,10 @@ public class BuildingBaker extends AbstractFilterableListBuilding
             {
                 return;
             }
-            final IBlockState furnace = worldObj.getBlockState(entry.getKey());
+            final BlockState furnace = worldObj.getBlockState(entry.getKey());
             if (!(furnace.getBlock() instanceof BlockFurnace))
             {
-                if (worldObj.getTileEntity(entry.getKey()) instanceof TileEntityFurnace)
+                if (worldObj.getTileEntity(entry.getKey()) instanceof FurnaceTileEntity)
                 {
                     return;
                 }

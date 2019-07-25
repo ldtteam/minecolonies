@@ -3,7 +3,7 @@ package com.minecolonies.api.colony.requestsystem.requestable.crafting;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 public class PrivateCrafting extends AbstractCrafting
@@ -26,11 +26,11 @@ public class PrivateCrafting extends AbstractCrafting
      * @param input      the input.
      * @return the compound.
      */
-    public static NBTTagCompound serialize(final IFactoryController controller, final PrivateCrafting input)
+    public static CompoundNBT serialize(final IFactoryController controller, final PrivateCrafting input)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
-        compound.setTag(NBT_STACK, input.getStack().serializeNBT());
-        compound.setInteger(NBT_COUNT, input.getCount());
+        final CompoundNBT compound = new CompoundNBT();
+        compound.put(NBT_STACK, input.getStack().serializeNBT());
+        compound.putInt(NBT_COUNT, input.getCount());
 
         return compound;
     }
@@ -42,10 +42,10 @@ public class PrivateCrafting extends AbstractCrafting
      * @param compound   the compound.
      * @return the deliverable.
      */
-    public static PrivateCrafting deserialize(final IFactoryController controller, final NBTTagCompound compound)
+    public static PrivateCrafting deserialize(final IFactoryController controller, final CompoundNBT compound)
     {
-        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_STACK));
-        final int count = compound.getInteger(NBT_COUNT);
+        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK));
+        final int count = compound.getInt(NBT_COUNT);
 
         return new PrivateCrafting(stack, count);
     }

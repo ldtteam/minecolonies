@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
@@ -137,12 +137,12 @@ public class EntityLocation implements ILocation
          */
         @NotNull
         @Override
-        public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final EntityLocation request)
+        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final EntityLocation request)
         {
-            final NBTTagCompound compound = new NBTTagCompound();
+            final CompoundNBT compound = new CompoundNBT();
 
-            compound.setLong(NBT_LSB, request.uuid.getLeastSignificantBits());
-            compound.setLong(NBT_MSB, request.uuid.getMostSignificantBits());
+            compound.putLong(NBT_LSB, request.uuid.getLeastSignificantBits());
+            compound.putLong(NBT_MSB, request.uuid.getMostSignificantBits());
 
             return compound;
         }
@@ -156,7 +156,7 @@ public class EntityLocation implements ILocation
          */
         @NotNull
         @Override
-        public EntityLocation deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+        public EntityLocation deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
         {
             final UUID uuid = new UUID(nbt.getLong(NBT_MSB), nbt.getLong(NBT_LSB));
 

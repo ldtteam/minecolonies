@@ -3,9 +3,11 @@ package com.minecolonies.api.colony.requestsystem.requestable;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tags.Tag;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -123,17 +125,17 @@ public class Stack implements IDeliverable
      * @param input the input.
      * @return the compound.
      */
-    public static NBTTagCompound serialize(final IFactoryController controller, final Stack input)
+    public static CompoundNBT serialize(final IFactoryController controller, final Stack input)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
-        compound.setTag(NBT_STACK, input.theStack.serializeNBT());
-        compound.setBoolean(NBT_MATCHMETA, input.matchMeta);
-        compound.setBoolean(NBT_MATCHNBT, input.matchNBT);
-        compound.setBoolean(NBT_MATCHOREDIC, input.matchOreDic);
-        compound.setInteger("size", input.count);
+        final CompoundNBT compound = new CompoundNBT();
+        compound.put(NBT_STACK, input.theStack.serializeNBT());
+        compound.putBoolean(NBT_MATCHMETA, input.matchMeta);
+        compound.putBoolean(NBT_MATCHNBT, input.matchNBT);
+        compound.putBoolean(NBT_MATCHOREDIC, input.matchOreDic);
+        compound.putInt("size", input.count);
         if (!ItemStackUtils.isEmpty(input.result))
         {
-            compound.setTag(NBT_RESULT, input.result.serializeNBT());
+            compound.put(NBT_RESULT, input.result.serializeNBT());
         }
 
         return compound;
@@ -145,14 +147,14 @@ public class Stack implements IDeliverable
      * @param compound the compound.
      * @return the deliverable.
      */
-    public static Stack deserialize(final IFactoryController controller, final NBTTagCompound compound)
+    public static Stack deserialize(final IFactoryController controller, final CompoundNBT compound)
     {
-        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_STACK));
+        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK));
         final boolean matchMeta = compound.getBoolean(NBT_MATCHMETA);
         final boolean matchNBT = compound.getBoolean(NBT_MATCHNBT);
         final boolean matchOreDic = compound.getBoolean(NBT_MATCHOREDIC);
-        final ItemStack result = compound.hasKey(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_RESULT)) : ItemStackUtils.EMPTY;
-        final int size = compound.getInteger("size");
+        final ItemStack result = compound.keySet().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
+        final int size = compound.getInt("size");
         final Stack theStack = new Stack(stack, matchMeta, matchNBT, matchOreDic, result);
         theStack.setCount(size);
         return theStack;
@@ -163,7 +165,14 @@ public class Stack implements IDeliverable
     {
         if (matchOreDic)
         {
-            return OreDictionary.itemMatches(getStack(), stack, matchMeta);
+            for (final ResourceLocation tag: getStack().getItem().getTags())
+            {
+                final Tag<Item> theTag = new Tag<>(tag);
+                if (theTag.contains(stack.getItem()));
+                {
+                    return true;
+                }
+            }
         }
 
         return ItemStackUtils.compareItemStacksIgnoreStackSize(getStack(), stack, matchMeta, matchNBT);

@@ -22,9 +22,9 @@ import com.ldtteam.structures.helpers.Structure;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.structure.template.Template;
@@ -87,7 +87,7 @@ public class ClientEventHandler
 
         final Structure structure = Settings.instance.getActiveStructure();
         final WorldClient world = Minecraft.getMinecraft().world;
-        final EntityPlayer player = Minecraft.getMinecraft().player;
+        final PlayerEntity player = Minecraft.getMinecraft().player;
         if (structure != null)
         {
             final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
@@ -112,9 +112,9 @@ public class ClientEventHandler
             {
                 return;
             }
-            final NBTTagCompound compound = stack.getTagCompound();
+            final CompoundNBT compound = stack.getTagCompound();
 
-            final ColonyView colony = ColonyManager.getColonyView(compound.getInteger(TAG_ID), player.world.provider.getDimension());
+            final ColonyView colony = ColonyManager.getColonyView(compound.getInt(TAG_ID), player.world.provider.getDimension());
             if (colony == null)
             {
                 return;

@@ -13,8 +13,8 @@ import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
 import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -85,30 +85,30 @@ public class BuildingArchery extends AbstractBuildingWorker
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         super.readFromNBT(compound);
 
         shootingTargets.clear();
         shootingStands.clear();
 
-        final NBTTagList targetTagList = compound.getTagList(TAG_ARCHERY_TARGETS, Constants.NBT.TAG_COMPOUND);
-        shootingTargets.addAll(NBTUtils.streamCompound(targetTagList).map(targetCompound -> BlockPosUtil.readFromNBT(targetCompound, TAG_TARGET)).collect(Collectors.toList()));
+        final ListNBT targetList = compound.getList(TAG_ARCHERY_TARGETS, Constants.NBT.TAG_COMPOUND);
+        shootingTargets.addAll(NBTUtils.streamCompound(targetList).map(targetCompound -> BlockPosUtil.readFromNBT(targetCompound, TAG_TARGET)).collect(Collectors.toList()));
 
-        final NBTTagList standTagList = compound.getTagList(TAG_ARCHERY_STANDS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT standTagList = compound.getList(TAG_ARCHERY_STANDS, Constants.NBT.TAG_COMPOUND);
         shootingStands.addAll(NBTUtils.streamCompound(standTagList).map(targetCompound -> BlockPosUtil.readFromNBT(targetCompound, TAG_STAND)).collect(Collectors.toList()));
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         super.writeToNBT(compound);
 
-        final NBTTagList targetTagList = shootingTargets.stream().map(target -> BlockPosUtil.writeToNBT(new NBTTagCompound(), TAG_TARGET, target)).collect(NBTUtils.toNBTTagList());
-        compound.setTag(TAG_ARCHERY_TARGETS, targetTagList);
+        final ListNBT targetList = shootingTargets.stream().map(target -> BlockPosUtil.writeToNBT(new CompoundNBT(), TAG_TARGET, target)).collect(NBTUtils.toListNBT());
+        compound.put(TAG_ARCHERY_TARGETS, targetList);
 
-        final NBTTagList standTagList = shootingStands.stream().map(target -> BlockPosUtil.writeToNBT(new NBTTagCompound(), TAG_STAND, target)).collect(NBTUtils.toNBTTagList());
-        compound.setTag(TAG_ARCHERY_STANDS, standTagList);
+        final ListNBT standTagList = shootingStands.stream().map(target -> BlockPosUtil.writeToNBT(new CompoundNBT(), TAG_STAND, target)).collect(NBTUtils.toListNBT());
+        compound.put(TAG_ARCHERY_STANDS, standTagList);
     }
 
     @Override

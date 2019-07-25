@@ -5,7 +5,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.pathfinding.Path;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +45,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     /**
      * Direction he should run off to.
      */
-    private final EnumFacing direction;
+    private final Direction direction;
 
     /**
      * Prepares the PathJob for the path finding system.
@@ -71,33 +71,33 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
         dx *= scalar;
         dz *= scalar;
 
-        final EnumFacing avoidDir = BlockPosUtil.getXZFacing(start, avoid);
+        final Direction avoidDir = BlockPosUtil.getXZFacing(start, avoid);
 
         final int randomValue = rand.nextInt(DIRECTIONS_TO_TRY);
-        if (randomValue == 0 && avoidDir != EnumFacing.EAST)
+        if (randomValue == 0 && avoidDir != Direction.EAST)
         {
             heuristicPoint = new BlockPos(start.getX() + (int) dx, start.getY(), start.getZ());
-            direction = EnumFacing.EAST;
+            direction = Direction.EAST;
         }
-        else if (randomValue == 1 && avoidDir != EnumFacing.WEST)
+        else if (randomValue == 1 && avoidDir != Direction.WEST)
         {
             heuristicPoint = new BlockPos(start.getX() - (int) dx, start.getY(), start.getZ());
-            direction = EnumFacing.WEST;
+            direction = Direction.WEST;
         }
-        else if (randomValue == 2 && avoidDir != EnumFacing.NORTH)
+        else if (randomValue == 2 && avoidDir != Direction.NORTH)
         {
             heuristicPoint = new BlockPos(start.getX(), start.getY(), start.getZ() - (int) dz);
-            direction = EnumFacing.NORTH;
+            direction = Direction.NORTH;
         }
-        else if (avoidDir != EnumFacing.SOUTH)
+        else if (avoidDir != Direction.SOUTH)
         {
             heuristicPoint = new BlockPos(start.getX(), start.getY(), start.getZ() + (int) dz);
-            direction = EnumFacing.SOUTH;
+            direction = Direction.SOUTH;
         }
         else
         {
             heuristicPoint = new BlockPos(start.getX(), start.getY(), start.getZ() - (int) dz);
-            direction = EnumFacing.NORTH;
+            direction = Direction.NORTH;
         }
     }
 
@@ -149,7 +149,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
         final BlockPos vector = n.pos.subtract(avoid);
         final double nodeResult = getNodeResultScore(n);
         final int avoidSq = (avoidDistance * avoidDistance);
-        return nodeResult >= avoidSq && (EnumFacing.getFacingFromVector(vector.getX(), 0, vector.getZ()).equals(direction) || nodeResult > avoidSq * avoidDistance);
+        return nodeResult >= avoidSq && (Direction.getFacingFromVector(vector.getX(), 0, vector.getZ()).equals(direction) || nodeResult > avoidSq * avoidDistance);
     }
 
     /**

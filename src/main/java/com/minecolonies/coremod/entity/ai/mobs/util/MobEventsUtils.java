@@ -10,7 +10,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structures.helpers.Structure;
 import net.minecraft.block.material.Material;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -65,7 +65,7 @@ public final class MobEventsUtils
         if (Configurations.gameplay.enableInDevelopmentFeatures)
         {
             LanguageHandler.sendPlayersMessage(
-              colony.getMessageEntityPlayers(),
+              colony.getMessagePlayerEntitys(),
               "Horde Spawn Point: " + targetSpawnPoint);
         }
         colony.getRaiderManager().addRaiderSpawnPoint(targetSpawnPoint);
@@ -202,8 +202,8 @@ public final class MobEventsUtils
     {
         final Random random = new Random();
         final BlockPos pos = colony.getRaiderManager().getRandomOutsiderInDirection(
-          random.nextInt(2) < 1 ? EnumFacing.EAST : EnumFacing.WEST,
-          random.nextInt(2) < 1 ? EnumFacing.NORTH : EnumFacing.SOUTH);
+          random.nextInt(2) < 1 ? Direction.EAST : Direction.WEST,
+          random.nextInt(2) < 1 ? Direction.NORTH : Direction.SOUTH);
 
         if (pos.equals(colony.getCenter()))
         {
@@ -248,7 +248,7 @@ public final class MobEventsUtils
                 if (Configurations.gameplay.enableInDevelopmentFeatures)
                 {
                     LanguageHandler.sendPlayersMessage(
-                      colony.getMessageEntityPlayers(),
+                      colony.getMessagePlayerEntitys(),
                       "Will raid tonight: " + raid);
                 }
                 colony.getRaiderManager().setWillRaidTonight(raid);
@@ -262,7 +262,7 @@ public final class MobEventsUtils
             if (Configurations.gameplay.enableInDevelopmentFeatures)
             {
                 LanguageHandler.sendPlayersMessage(
-                  colony.getMessageEntityPlayers(),
+                  colony.getMessagePlayerEntitys(),
                   "Night reached: raiding");
             }
             return true;

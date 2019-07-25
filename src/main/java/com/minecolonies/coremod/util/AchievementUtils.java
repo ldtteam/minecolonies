@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.util;
 
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.Colony;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +18,7 @@ public final class AchievementUtils
 
     /**
      * This method will sync all acquired achievements by this colony to all
-     * members with at least rank {@link Rank#OFFICER}.
+     * members with at least rank the officer rank..
      *
      * @param colony The colony to sync
      */

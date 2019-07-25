@@ -1,6 +1,6 @@
 package com.minecolonies.api.util;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +30,7 @@ public final class LanguageHandler
      * @param key     the key of the message.
      * @param message the message to send.
      */
-    public static void sendPlayerMessage(@NotNull final EntityPlayer player, final String key, final Object... message)
+    public static void sendPlayerMessage(@NotNull final PlayerEntity player, final String key, final Object... message)
     {
         player.sendMessage(buildChatComponent(key, message));
     }
@@ -135,7 +135,7 @@ public final class LanguageHandler
      * @param key     key of the message.
      * @param message the message.
      */
-    public static void sendPlayersMessage(@Nullable final List<EntityPlayer> players, final String key, final Object... message)
+    public static void sendPlayersMessage(@Nullable final List<PlayerEntity> players, final String key, final Object... message)
     {
         final ITextComponent textComponent = buildChatComponent(key, message);
         sendPlayersMessage(players, textComponent);
@@ -147,14 +147,14 @@ public final class LanguageHandler
      * @param players the list of players.
      * @param component the text component..
      */
-    public static void sendPlayersMessage(@Nullable final List<EntityPlayer> players, final ITextComponent component)
+    public static void sendPlayersMessage(@Nullable final List<PlayerEntity> players, final ITextComponent component)
     {
         if (players == null || players.isEmpty())
         {
             return;
         }
 
-        for (@NotNull final EntityPlayer player : players)
+        for (@NotNull final PlayerEntity player : players)
         {
             player.sendMessage(component);
         }

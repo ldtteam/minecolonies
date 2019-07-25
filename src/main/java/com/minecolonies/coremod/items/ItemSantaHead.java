@@ -3,15 +3,15 @@ package com.minecolonies.coremod.items;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemArmor;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ArmorItem;
 import net.minecraftforge.common.util.EnumHelper;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Class handling the Santa hat.
  */
-public class ItemSantaHead extends ItemArmor
+public class ItemSantaHead extends ArmorItem
 {
     public static final ArmorMaterial SANTA_HAT =
       EnumHelper.addArmorMaterial("minecolonies:santa_hat", "minecolonies:santa_hat", 500, new int[] {0, 0, 0, 0}, 5, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0F);
@@ -24,7 +24,7 @@ public class ItemSantaHead extends ItemArmor
       @NotNull final CreativeTabs tab,
       @NotNull final ArmorMaterial materialIn,
       final int renderIndexIn,
-      @NotNull final EntityEquipmentSlot equipmentSlotIn)
+      @NotNull final EquipmentSlotType equipmentSlotIn)
     {
         super(materialIn, renderIndexIn, equipmentSlotIn);
         setTranslationKey(name);

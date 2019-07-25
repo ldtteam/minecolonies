@@ -31,7 +31,7 @@ import com.minecolonies.coremod.commands.generalcommands.ScanCommand;
 
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.BlockPos;
@@ -132,20 +132,20 @@ public class CommandEntryPointTest
         citizenDataList2.add(citizenRAYCOMS);
         when(citizenManager2.getCitizen(205)).thenReturn(citizenRAYCOMS);
 
-        final EntityPlayerMP playerBob = mock(EntityPlayerMP.class);
+        final PlayerEntityMP playerBob = mock(PlayerEntityMP.class);
         when(playerBob.getName()).thenReturn("Bob");
-        final EntityPlayerMP playerSally = mock(EntityPlayerMP.class);
+        final PlayerEntityMP playerSally = mock(PlayerEntityMP.class);
         when(playerSally.getName()).thenReturn("Sally");
 
         final PlayerList serverPlayerList = mock(PlayerList.class);
         when(serverPlayerList.getPlayerByUsername("Bob")).thenReturn(playerBob);
         when(serverPlayerList.getPlayerByUsername("Sally")).thenReturn(playerSally);
 
-        final List<EntityPlayerMP> allEntityPlayerMPList = new ArrayList<>();
-        allEntityPlayerMPList.add(playerBob);
-        allEntityPlayerMPList.add(playerSally);
+        final List<PlayerEntityMP> allPlayerEntityMPList = new ArrayList<>();
+        allPlayerEntityMPList.add(playerBob);
+        allPlayerEntityMPList.add(playerSally);
 
-        when(serverPlayerList.getPlayers()).thenReturn(allEntityPlayerMPList);
+        when(serverPlayerList.getPlayers()).thenReturn(allPlayerEntityMPList);
 
         server = mock(MinecraftServer.class);
         when(server.getOnlinePlayerNames()).thenReturn(new String[] {"Bob", "Sally"});
@@ -377,12 +377,12 @@ public class CommandEntryPointTest
 
                 assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.ONLINE_PLAYER, ActionArgumentType.COORDINATE_X, ActionArgumentType.COORDINATE_Y,
                         ActionArgumentType.COORDINATE_Z, ActionArgumentType.STRING);
-                assertThat(actionMenuState.getIntegerForArgument("x1")).isEqualTo(1);
-                assertThat(actionMenuState.getIntegerForArgument("x2")).isEqualTo(2);
-                assertThat(actionMenuState.getIntegerForArgument("y1")).isEqualTo(3);
-                assertThat(actionMenuState.getIntegerForArgument("y2")).isEqualTo(4);
-                assertThat(actionMenuState.getIntegerForArgument("z1")).isEqualTo(5);
-                assertThat(actionMenuState.getIntegerForArgument("z2")).isEqualTo(6);
+                assertThat(actionMenuState.getIntForArgument("x1")).isEqualTo(1);
+                assertThat(actionMenuState.getIntForArgument("x2")).isEqualTo(2);
+                assertThat(actionMenuState.getIntForArgument("y1")).isEqualTo(3);
+                assertThat(actionMenuState.getIntForArgument("y2")).isEqualTo(4);
+                assertThat(actionMenuState.getIntForArgument("z1")).isEqualTo(5);
+                assertThat(actionMenuState.getIntForArgument("z2")).isEqualTo(6);
 
             }
         };
@@ -420,7 +420,7 @@ public class CommandEntryPointTest
                 assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("colony", "dimension", "range", "add");
 
                 assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.INTEGER, ActionArgumentType.INTEGER, ActionArgumentType.INTEGER, ActionArgumentType.BOOLEAN);
-                assertThat(actionMenuState.getIntegerForArgument("range")).isEqualTo(1);
+                assertThat(actionMenuState.getIntForArgument("range")).isEqualTo(1);
                 assertThat(actionMenuState.getBooleanForArgument("add")).isEqualTo(true);
             }
         };
@@ -1186,7 +1186,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("player", "colony");
                 assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.PLAYER, ActionArgumentType.COLONY);
-                final EntityPlayerMP player = actionMenuState.getPlayerForArgument("player");
+                final PlayerEntityMP player = actionMenuState.getPlayerForArgument("player");
                 final Colony colony = actionMenuState.getColonyForArgument("colony");
                 assertThat(player.getName()).isEqualTo("Bob");
                 assertThat(colony.getID()).isEqualTo(1);
@@ -1220,7 +1220,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("player", "colony");
                 assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.PLAYER, ActionArgumentType.COLONY);
-                final EntityPlayerMP player = actionMenuState.getPlayerForArgument("player");
+                final PlayerEntityMP player = actionMenuState.getPlayerForArgument("player");
                 final Colony colony = actionMenuState.getColonyForArgument("colony");
                 assertThat(player.getName()).isEqualTo("Bob");
                 assertThat(colony.getID()).isEqualTo(1);
@@ -1462,7 +1462,7 @@ public class CommandEntryPointTest
 //
 //        // Sender is a player
 //        // TODO: make this playerSender the owner of a colony
-//        final EntityPlayerMP playerSender = mock(EntityPlayerMP.class);
+//        final PlayerEntityMP playerSender = mock(PlayerEntityMP.class);
 //
 //        // DO:
 //
@@ -1610,11 +1610,11 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("page", "abandonedSinceTimeInHours");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.INTEGER);
-                final Integer pageInteger = (Integer) actionMenuState.getIntegerForArgument("page");
+                final Integer pageInteger = (Integer) actionMenuState.getIntForArgument("page");
                 assertThat(pageInteger).as("pageInteger").isEqualTo(2);
                 final int page = actionMenuState.getIntValueForArgument("page", 1);
                 assertThat(page).as("page").isEqualTo(2);
-                final Integer abandonedSinceTimeInHoursInteger = (Integer) actionMenuState.getIntegerForArgument("abandonedSinceTimeInHours");
+                final Integer abandonedSinceTimeInHoursInteger = (Integer) actionMenuState.getIntForArgument("abandonedSinceTimeInHours");
                 assertThat(abandonedSinceTimeInHoursInteger).as("abandonedSinceTimeInHoursInteger").isEqualTo(3);
                 final int abandonedSinceTimeInHours = actionMenuState.getIntValueForArgument("abandonedSinceTimeInHours", 1);
                 assertThat(abandonedSinceTimeInHours).as("abandonedSinceTimeInHours").isEqualTo(3);
@@ -1648,11 +1648,11 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("page", "abandonedSinceTimeInHours");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.INTEGER);
-                final Integer pageInteger = (Integer) actionMenuState.getIntegerForArgument("page");
+                final Integer pageInteger = (Integer) actionMenuState.getIntForArgument("page");
                 assertThat(pageInteger).as("pageInteger").isEqualTo(2);
                 final int page = actionMenuState.getIntValueForArgument("page", 1);
                 assertThat(page).as("page").isEqualTo(2);
-                final Integer abandonedSinceTimeInHoursInteger = (Integer) actionMenuState.getIntegerForArgument("abandonedSinceTimeInHours");
+                final Integer abandonedSinceTimeInHoursInteger = (Integer) actionMenuState.getIntForArgument("abandonedSinceTimeInHours");
                 assertThat(abandonedSinceTimeInHoursInteger).as("abandonedSinceTimeInHoursInteger").isNull();
                 final int abandonedSinceTimeInHours = actionMenuState.getIntValueForArgument("abandonedSinceTimeInHours", 1);
                 assertThat(abandonedSinceTimeInHours).as("abandonedSinceTimeInHours").isEqualTo(1);

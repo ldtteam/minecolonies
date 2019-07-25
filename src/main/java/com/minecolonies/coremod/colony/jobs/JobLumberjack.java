@@ -7,7 +7,7 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,18 +35,18 @@ public class JobLumberjack extends AbstractJob
     }
 
     /**
-     * Restore the Job from an NBTTagCompound.
+     * Restore the Job from an CompoundNBT.
      *
-     * @param compound NBTTagCompound containing saved Job data.
+     * @param compound CompoundNBT containing saved Job data.
      */
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         super.readFromNBT(compound);
 
-        if (compound.hasKey(TAG_TREE))
+        if (compound.keySet().contains(TAG_TREE))
         {
-            tree = Tree.readFromNBT(compound.getCompoundTag(TAG_TREE));
+            tree = Tree.readFromNBT(compound.getCompound(TAG_TREE));
         }
     }
 
@@ -75,16 +75,16 @@ public class JobLumberjack extends AbstractJob
     }
 
     /**
-     * Save the Job to an NBTTagCompound.
+     * Save the Job to an CompoundNBT.
      *
-     * @param compound NBTTagCompound to save the Job to.
+     * @param compound CompoundNBT to save the Job to.
      */
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         super.writeToNBT(compound);
 
-        @NotNull final NBTTagCompound treeTag = new NBTTagCompound();
+        @NotNull final CompoundNBT treeTag = new CompoundNBT();
 
         if (tree != null)
         {

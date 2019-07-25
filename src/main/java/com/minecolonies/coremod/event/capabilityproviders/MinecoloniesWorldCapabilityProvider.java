@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.event.capabilityproviders;
 
 import com.minecolonies.api.colony.IChunkmanagerCapability;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
@@ -14,7 +14,7 @@ import static com.minecolonies.coremod.MineColonies.CHUNK_STORAGE_UPDATE_CAP;
 /**
  * Capability provider for the world capability of Minecolonies.
  */
-public class MinecoloniesWorldCapabilityProvider implements ICapabilitySerializable<NBTBase>
+public class MinecoloniesWorldCapabilityProvider implements ICapabilitySerializable<INBT>
 {
     /**
      * The chunk map capability.
@@ -30,26 +30,26 @@ public class MinecoloniesWorldCapabilityProvider implements ICapabilitySerializa
     }
 
     @Override
-    public NBTBase serializeNBT()
+    public INBT serializeNBT()
     {
         return CHUNK_STORAGE_UPDATE_CAP.getStorage().writeNBT(CHUNK_STORAGE_UPDATE_CAP, chunkMap, null);
     }
 
     @Override
-    public void deserializeNBT(final NBTBase nbt)
+    public void deserializeNBT(final INBT nbt)
     {
         CHUNK_STORAGE_UPDATE_CAP.getStorage().readNBT(CHUNK_STORAGE_UPDATE_CAP, chunkMap, null, nbt);
     }
 
     @Override
-    public boolean hasCapability(@Nonnull final Capability<?> capability, @Nullable final EnumFacing facing)
+    public boolean hasCapability(@Nonnull final Capability<?> capability, @Nullable final Direction facing)
     {
         return capability == CHUNK_STORAGE_UPDATE_CAP;
     }
 
     @Nullable
     @Override
-    public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final EnumFacing facing)
+    public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final Direction facing)
     {
         return capability == CHUNK_STORAGE_UPDATE_CAP ? CHUNK_STORAGE_UPDATE_CAP.cast(chunkMap) : null;
     }

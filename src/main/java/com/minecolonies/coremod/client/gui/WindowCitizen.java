@@ -29,7 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -455,7 +455,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
                 if (slot == -1)
                 {
-                    final ITextComponent chatMessage = new TextComponentString("<" + citizen.getName() + "> " +
+                    final ITextComponent chatMessage = new StringTextComponent("<" + citizen.getName() + "> " +
                             LanguageHandler.format(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
                             .setStyle(new Style().setBold(false).setColor(TextFormatting.WHITE)
                             );

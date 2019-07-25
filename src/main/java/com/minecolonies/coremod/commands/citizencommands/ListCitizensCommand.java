@@ -9,12 +9,12 @@ import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.World;
@@ -75,7 +75,7 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
         final Colony colony = actionMenuState.getColonyForArgument("colony");
-        final Integer page = actionMenuState.getIntegerForArgument("page");
+        final Integer page = actionMenuState.getIntForArgument("page");
         executeShared(server, sender, colony, page);
     }
 
@@ -86,11 +86,11 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
         final Integer page = getIthArgument(args, 1, 1);
 
         Colony colony = null;
-        if (sender instanceof EntityPlayer)
+        if (sender instanceof PlayerEntity)
         {
             if (colonyId == -1)
             {
-                final IColony icolony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
+                final IColony icolony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (PlayerEntity) sender);
                 if (icolony != null)
                 {
                     colonyId = icolony.getID();
@@ -114,12 +114,12 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
             page = 1;
         }
 
-        if (sender instanceof EntityPlayer)
+        if (sender instanceof PlayerEntity)
         {
-            final EntityPlayer player = (EntityPlayer) sender;
+            final PlayerEntity player = (PlayerEntity) sender;
             if ((null != colony) && !canPlayerUseCommand(player, LISTCITIZENS, colony.getID()))
             {
-                sender.sendMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
+                sender.sendMessage(new StringTextComponent("Not happenin bro!!, You are not permitted to do that!"));
                 return;
             }
         }
@@ -150,12 +150,12 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
             citizensPage = citizens.subList(pageStartIndex, pageStopIndex);
         }
 
-        final ITextComponent headerLine = new TextComponentString(String.format(PAGE_TOP, page, pageCount));
+        final ITextComponent headerLine = new StringTextComponent(String.format(PAGE_TOP, page, pageCount));
         sender.sendMessage(headerLine);
 
         for (final CitizenData citizen : citizensPage)
         {
-            sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
+            sender.sendMessage(new StringTextComponent(String.format(CITIZEN_DESCRIPTION,
               citizen.getId(),
               citizen.getName())).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                                                                      String.format(COMMAND_CITIZEN_INFO, citizen.getColony().getID(), citizen.getId())))));
@@ -163,7 +163,7 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
             citizen.getCitizenEntity().ifPresent(entityCitizen ->
             {
                 final BlockPos position = entityCitizen.getPosition();
-                sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+                sender.sendMessage(new StringTextComponent(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
             });
         }
         drawPageSwitcher(sender, page, citizenCount, halfPage, (null != colony ? colony.getID() : -1));
@@ -206,16 +206,16 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
         final int prevPage = Math.max(0, page - 1);
         final int nextPage = Math.min(page + 1, (count / CITIZENS_ON_PAGE) + halfPage);
 
-        final ITextComponent prevButton = new TextComponentString(PREV_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+        final ITextComponent prevButton = new StringTextComponent(PREV_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
           new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format(LIST_COMMAND_SUGGESTED, colonyId, prevPage))
         ));
-        final ITextComponent nextButton = new TextComponentString(NEXT_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+        final ITextComponent nextButton = new StringTextComponent(NEXT_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
           new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format(LIST_COMMAND_SUGGESTED, colonyId, nextPage))
         ));
 
-        final ITextComponent beginLine = new TextComponentString(PAGE_LINE);
-        final ITextComponent endLine = new TextComponentString(PAGE_LINE);
-        sender.sendMessage(beginLine.appendSibling(prevButton).appendSibling(new TextComponentString(PAGE_LINE_DIVIDER)).appendSibling(nextButton).appendSibling(endLine));
+        final ITextComponent beginLine = new StringTextComponent(PAGE_LINE);
+        final ITextComponent endLine = new StringTextComponent(PAGE_LINE);
+        sender.sendMessage(beginLine.appendSibling(prevButton).appendSibling(new StringTextComponent(PAGE_LINE_DIVIDER)).appendSibling(nextButton).appendSibling(endLine));
     }
 
     @NotNull

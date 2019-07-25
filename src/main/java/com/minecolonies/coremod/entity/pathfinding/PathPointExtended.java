@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +18,7 @@ public class PathPointExtended extends PathPoint
      * What direction does the ladder face.
      * Should be instantiated to something he doesn't recognize as climbable.
      */
-    private EnumFacing ladderFacing = EnumFacing.DOWN;
+    private Direction ladderFacing = Direction.DOWN;
 
     /**
      * Instantiates the pathPoint with a position.
@@ -55,7 +55,7 @@ public class PathPointExtended extends PathPoint
      *
      * @return enumFacing.
      */
-    public EnumFacing getLadderFacing()
+    public Direction getLadderFacing()
     {
         return ladderFacing;
     }
@@ -65,7 +65,7 @@ public class PathPointExtended extends PathPoint
      *
      * @param ladderFacing facing to set.
      */
-    public void setLadderFacing(final EnumFacing ladderFacing)
+    public void setLadderFacing(final Direction ladderFacing)
     {
         this.ladderFacing = ladderFacing;
     }

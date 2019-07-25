@@ -6,7 +6,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.test.AbstractMockStaticsTest;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.junit.Assert;
@@ -36,7 +36,7 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
     @Mock
     private World        world;
     @Mock
-    private EntityPlayer player;
+    private PlayerEntity player;
     @Mock
     private Permissions  permissions;
 

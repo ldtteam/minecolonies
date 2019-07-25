@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -85,40 +85,40 @@ public class StandardProviderRequestResolverAssignmentDataStore implements IProv
 
         @NotNull
         @Override
-        public NBTTagCompound serialize(
+        public CompoundNBT serialize(
           @NotNull final IFactoryController controller, @NotNull final StandardProviderRequestResolverAssignmentDataStore standardProviderRequestResolverAssignmentDataStore)
         {
-            NBTTagCompound compound = new NBTTagCompound();
+            CompoundNBT compound = new CompoundNBT();
 
-            compound.setTag(NbtTagConstants.TAG_TOKEN, controller.serialize(standardProviderRequestResolverAssignmentDataStore.id));
-            compound.setTag(NbtTagConstants.TAG_LIST, standardProviderRequestResolverAssignmentDataStore.assignments.keySet().stream().map(t -> {
-                NBTTagCompound entryCompound = new NBTTagCompound();
+            compound.put(NbtTagConstants.TAG_TOKEN, controller.serialize(standardProviderRequestResolverAssignmentDataStore.id));
+            compound.put(NbtTagConstants.TAG_LIST, standardProviderRequestResolverAssignmentDataStore.assignments.keySet().stream().map(t -> {
+                CompoundNBT entryCompound = new CompoundNBT();
 
-                entryCompound.setTag(NbtTagConstants.TAG_TOKEN, controller.serialize(t));
-                entryCompound.setTag(NbtTagConstants.TAG_LIST, standardProviderRequestResolverAssignmentDataStore.assignments.get(t).stream()
+                entryCompound.put(NbtTagConstants.TAG_TOKEN, controller.serialize(t));
+                entryCompound.put(NbtTagConstants.TAG_LIST, standardProviderRequestResolverAssignmentDataStore.assignments.get(t).stream()
                                                                  .map(StandardFactoryController.getInstance()::serialize)
-                                                                 .collect(NBTUtils.toNBTTagList()));
+                                                                 .collect(NBTUtils.toListNBT()));
 
                 return entryCompound;
-            }).collect(NBTUtils.toNBTTagList()));
+            }).collect(NBTUtils.toListNBT()));
 
             return compound;
         }
 
         @NotNull
         @Override
-        public StandardProviderRequestResolverAssignmentDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt) throws Throwable
+        public StandardProviderRequestResolverAssignmentDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt) throws Throwable
         {
-            IToken<?> token = controller.deserialize(nbt.getCompoundTag(NbtTagConstants.TAG_TOKEN));
-            Map<IToken<?>, Collection<IToken<?>>> map = NBTUtils.streamCompound(nbt.getTagList(NbtTagConstants.TAG_LIST, Constants.NBT.TAG_COMPOUND))
+            IToken<?> token = controller.deserialize(nbt.getCompound(NbtTagConstants.TAG_TOKEN));
+            Map<IToken<?>, Collection<IToken<?>>> map = NBTUtils.streamCompound(nbt.getList(NbtTagConstants.TAG_LIST, Constants.NBT.TAG_COMPOUND))
                                                           .map(nbtTagCompound -> {
-                                                              final IToken<?> elementToken = controller.deserialize(nbtTagCompound.getCompoundTag(NbtTagConstants.TAG_TOKEN));
-                                                              final Collection<IToken<?>> elements = NBTUtils.streamCompound(nbtTagCompound.getTagList(NbtTagConstants.TAG_LIST,
+                                                              final IToken<?> elementToken = controller.deserialize(nbtTagCompound.getCompound(NbtTagConstants.TAG_TOKEN));
+                                                              final Collection<IToken<?>> elements = NBTUtils.streamCompound(nbtTagCompound.getList(NbtTagConstants.TAG_LIST,
                                                                 Constants.NBT.TAG_COMPOUND)).map(elementCompound -> (IToken<?>) controller.deserialize(elementCompound))
                                                                                                .collect(Collectors.toList());
 
                                                               return new Tuple<>(elementToken, elements);
-                                                          }).collect(Collectors.toMap(t -> t.getFirst(), t -> t.getSecond()));
+                                                          }).collect(Collectors.toMap(t -> t.getA(), t -> t.getB()));
 
             return new StandardProviderRequestResolverAssignmentDataStore(token, map);
         }

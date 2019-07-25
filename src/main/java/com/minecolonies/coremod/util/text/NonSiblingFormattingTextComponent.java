@@ -1,16 +1,18 @@
 package com.minecolonies.coremod.util.text;
 
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import org.jetbrains.annotations.NotNull;
 
-public class NonSiblingFormattingTextComponent extends TextComponentString
+public class NonSiblingFormattingTextComponent extends StringTextComponent
 {
     public NonSiblingFormattingTextComponent()
     {
         super("");
     }
 
+    @NotNull
     @Override
     public String getFormattedText()
     {

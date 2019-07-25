@@ -11,7 +11,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobShepherd;
 import com.minecolonies.coremod.network.messages.ShepherdSetDyeSheepsMessage;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -87,18 +87,18 @@ public class BuildingShepherd extends AbstractBuildingWorker
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         super.writeToNBT(compound);
-        compound.setBoolean(NBT_DYE_SHEEPS, this.dyeSheeps);
+        compound.putBoolean(NBT_DYE_SHEEPS, this.dyeSheeps);
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         super.readFromNBT(compound);
         this.dyeSheeps = compound.getBoolean(NBT_DYE_SHEEPS);
-        if (!compound.hasKey(NBT_DYE_SHEEPS))
+        if (!compound.keySet().contains(NBT_DYE_SHEEPS))
         {
             this.dyeSheeps = true;
         }

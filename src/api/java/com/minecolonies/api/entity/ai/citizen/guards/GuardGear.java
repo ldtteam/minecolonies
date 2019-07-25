@@ -2,9 +2,9 @@ package com.minecolonies.api.entity.ai.citizen.guards;
 
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemShield;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ShieldItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 
@@ -48,7 +48,7 @@ public class GuardGear implements Predicate<ItemStack>
     /**
      * Item type that is required.
      */
-    private final EntityEquipmentSlot type;
+    private final EquipmentSlotType type;
 
     /**
      * Tool type that is needed.
@@ -66,19 +66,19 @@ public class GuardGear implements Predicate<ItemStack>
      * @param buildingLevelRange level range that the item will be required.
      */
     public GuardGear(
-      final IToolType item, final EntityEquipmentSlot type,
+      final IToolType item, final EquipmentSlotType type,
       final int minArmorLevel,
       final int maxArmorLevel, final Tuple<Integer, Integer> citizenLevelRange,
       final Tuple<Integer, Integer> buildingLevelRange)
     {
         this.type = type;
         this.itemNeeded = item;
-        this.minLevelRequired = citizenLevelRange.getFirst();
-        this.maxLevelRequired = citizenLevelRange.getSecond();
+        this.minLevelRequired = citizenLevelRange.getA();
+        this.maxLevelRequired = citizenLevelRange.getB();
         this.minArmorLevel = minArmorLevel;
         this.maxArmorLevel = maxArmorLevel;
-        this.minBuildingLevelRequired = buildingLevelRange.getFirst();
-        this.maxBuildingLevelRequired = buildingLevelRange.getSecond();
+        this.minBuildingLevelRequired = buildingLevelRange.getA();
+        this.maxBuildingLevelRequired = buildingLevelRange.getB();
     }
 
     /**
@@ -100,7 +100,7 @@ public class GuardGear implements Predicate<ItemStack>
     /**
      * @return type of the item
      */
-    public EntityEquipmentSlot getType()
+    public EquipmentSlotType getType()
     {
         return type;
     }
@@ -149,7 +149,7 @@ public class GuardGear implements Predicate<ItemStack>
     public boolean test(final ItemStack stack)
     {
         return
-          (ItemStackUtils.hasToolLevel(stack, itemNeeded, minArmorLevel, maxArmorLevel) && stack.getItem() instanceof ItemArmor && ((ItemArmor) stack.getItem()).armorType == getType())
-            || (stack.getItem() instanceof ItemShield && getType() == EntityEquipmentSlot.MAINHAND);
+          (ItemStackUtils.hasToolLevel(stack, itemNeeded, minArmorLevel, maxArmorLevel) && stack.getItem() instanceof ArmorItem && ((ArmorItem) stack.getItem()).getEquipmentSlot() == getType())
+            || (stack.getItem() instanceof ShieldItem && getType() == EquipmentSlotType.MAINHAND);
     }
 }

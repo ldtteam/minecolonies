@@ -11,7 +11,7 @@ import com.minecolonies.coremod.entity.ai.mobs.pirates.AbstractEntityPirate;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.pathfinding.*;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -375,7 +375,7 @@ public class PathNavigate extends PathNavigateGround
 
             //  If current node is bottom of a ladder, then stay on this node until
             //  the ourEntity reaches the bottom, otherwise they will try to head out early
-            if (pEx.isOnLadder() && pEx.getLadderFacing() == EnumFacing.DOWN
+            if (pEx.isOnLadder() && pEx.getLadderFacing() == Direction.DOWN
                   && !pExNext.isOnLadder())
             {
                 final Vec3d vec3 = getEntityPosition();

@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.event.capabilityproviders;
 
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
@@ -14,7 +14,7 @@ import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 /**
  * Capability provider for the world capability of Minecolonies.
  */
-public class MinecoloniesWorldColonyManagerCapabilityProvider implements ICapabilitySerializable<NBTBase>
+public class MinecoloniesWorldColonyManagerCapabilityProvider implements ICapabilitySerializable<INBT>
 {
     /**
      * The chunk map capability.
@@ -30,26 +30,26 @@ public class MinecoloniesWorldColonyManagerCapabilityProvider implements ICapabi
     }
 
     @Override
-    public NBTBase serializeNBT()
+    public INBT serializeNBT()
     {
         return COLONY_MANAGER_CAP.getStorage().writeNBT(COLONY_MANAGER_CAP, colonyManager, null);
     }
 
     @Override
-    public void deserializeNBT(final NBTBase nbt)
+    public void deserializeNBT(final INBT nbt)
     {
         COLONY_MANAGER_CAP.getStorage().readNBT(COLONY_MANAGER_CAP, colonyManager, null, nbt);
     }
 
     @Override
-    public boolean hasCapability(@Nonnull final Capability<?> capability, @Nullable final EnumFacing facing)
+    public boolean hasCapability(@Nonnull final Capability<?> capability, @Nullable final Direction facing)
     {
         return capability == COLONY_MANAGER_CAP;
     }
 
     @Nullable
     @Override
-    public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final EnumFacing facing)
+    public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final Direction facing)
     {
         return capability == COLONY_MANAGER_CAP ? COLONY_MANAGER_CAP.cast(colonyManager) : null;
     }

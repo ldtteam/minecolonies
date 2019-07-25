@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.ai.mobs.util;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.Colony;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -44,7 +44,7 @@ public final class BarbarianEventUtils
         }
 
         LanguageHandler.sendPlayersMessage(
-          colony.getMessageEntityPlayers(),
+          colony.getMessagePlayerEntitys(),
           RAID_EVENT_MESSAGE + raidNumber, colony.getName());
 
         MobSpawnUtils.spawn(BARBARIAN, horde.numberOfRaiders, targetSpawnPoint, world, colony);
@@ -59,7 +59,7 @@ public final class BarbarianEventUtils
      */
     private static void buildPlatform(final BlockPos target, final World world)
     {
-        final IBlockState platformBlock = Blocks.WOODEN_SLAB.getDefaultState();
+        final BlockState platformBlock = Blocks.WOODEN_SLAB.getDefaultState();
 
         for (int z = 0; z < 5; z++)
         {

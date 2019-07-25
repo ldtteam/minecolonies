@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class AttackingPlayer
     /**
      * The player which is attacking.
      */
-    private final EntityPlayer player;
+    private final PlayerEntity player;
 
     /**
      * The guards coming with him.
@@ -30,16 +30,16 @@ public class AttackingPlayer
      * Creates a new Attacking player.
      * @param player the attacking player.
      */
-    public AttackingPlayer(final EntityPlayer player)
+    public AttackingPlayer(final PlayerEntity player)
     {
         this.player = player;
     }
 
     /**
      * Get the attacking player.
-     * @return the EntityPlayer.
+     * @return the PlayerEntity.
      */
-    public EntityPlayer getPlayer()
+    public PlayerEntity getPlayer()
     {
         return player;
     }

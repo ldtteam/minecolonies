@@ -188,7 +188,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount() - resource.getAvailable()));
 
         final ItemStack stack = new ItemStack(resource.getItem(), 1, resource.getDamageValue());
-        stack.setTagCompound(resource.getItemStack().getTagCompound());
+        stack.putCompound(resource.getItemStack().getTagCompound());
         rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(stack);
     }
 

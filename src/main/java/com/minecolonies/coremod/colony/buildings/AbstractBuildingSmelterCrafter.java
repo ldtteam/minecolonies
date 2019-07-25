@@ -19,8 +19,8 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraft
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -111,7 +111,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
                     {
                         if (recipeOutputs.containsKey(itemStorage))
                         {
-                            itemStorage.setAmount(recipeOutputs.get(itemStorage).getFirst() + itemStorage.getAmount());
+                            itemStorage.setAmount(recipeOutputs.get(itemStorage).getA() + itemStorage.getAmount());
                         }
                         recipeOutputs.put(itemStorage, new Tuple<>(itemStorage.getAmount(), true));
                     }
@@ -135,27 +135,27 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         super.writeToNBT(compound);
-        @NotNull final NBTTagList furnacesTagList = new NBTTagList();
+        @NotNull final ListNBT furnacesTagList = new ListNBT();
         for (@NotNull final BlockPos entry : furnaces)
         {
-            @NotNull final NBTTagCompound furnaceCompound = new NBTTagCompound();
-            furnaceCompound.setTag(TAG_POS, NBTUtil.createPosTag(entry));
-            furnacesTagList.appendTag(furnaceCompound);
+            @NotNull final CompoundNBT furnaceCompound = new CompoundNBT();
+            furnaceCompound.put(TAG_POS, NBTUtil.createPosTag(entry));
+            furnacesTagList.add(furnaceCompound);
         }
-        compound.setTag(TAG_FURNACES, furnacesTagList);
+        compound.put(TAG_FURNACES, furnacesTagList);
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         super.readFromNBT(compound);
-        final NBTTagList furnaceTagList = compound.getTagList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < furnaceTagList.tagCount(); ++i)
+        final ListNBT furnaceTagList = compound.getList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < furnaceTagList.size(); ++i)
         {
-            furnaces.add(NBTUtil.getPosFromTag(furnaceTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
+            furnaces.add(NBTUtil.getPosFromTag(furnaceTagList.getCompound(i).getCompound(TAG_POS)));
         }
     }
 

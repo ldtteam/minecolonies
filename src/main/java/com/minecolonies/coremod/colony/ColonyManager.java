@@ -21,9 +21,9 @@ import com.minecolonies.coremod.util.BackUpHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServerMulti;
@@ -95,7 +95,7 @@ public final class ColonyManager
      * @param player the player that creates the colony - owner.
      * @param style  the default style of the colony.
      */
-    public static void createColony(@NotNull final World w, final BlockPos pos, @NotNull final EntityPlayer player, @NotNull final String style)
+    public static void createColony(@NotNull final World w, final BlockPos pos, @NotNull final PlayerEntity player, @NotNull final String style)
     {
         final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null);
         if (cap == null)
@@ -618,7 +618,7 @@ public final class ColonyManager
      * @return IColony belonging to specific player.
      */
     @Nullable
-    public static IColony getIColonyByOwner(@NotNull final World w, @NotNull final EntityPlayer owner)
+    public static IColony getIColonyByOwner(@NotNull final World w, @NotNull final PlayerEntity owner)
     {
         return getIColonyByOwner(w, w.isRemote ? owner.getUniqueID() : owner.getGameProfile().getId());
     }
@@ -718,25 +718,25 @@ public final class ColonyManager
      *
      * @param compound NBT-Tag.
      */
-    public static void writeToNBT(@NotNull final NBTTagCompound compound)
+    public static void writeToNBT(@NotNull final CompoundNBT compound)
     {
-        //Get the colonies NBT tags and store them in a NBTTagList.
+        //Get the colonies NBT tags and store them in a ListNBT.
         if (serverUUID != null)
         {
             compound.setUniqueId(TAG_UUID, serverUUID);
         }
 
-        final NBTTagCompound compCompound = new NBTTagCompound();
+        final CompoundNBT compCompound = new CompoundNBT();
         compatibilityManager.writeToNBT(compCompound);
-        compound.setTag(TAG_COMPATABILITY_MANAGER, compCompound);
+        compound.put(TAG_COMPATABILITY_MANAGER, compCompound);
 
-        compound.setBoolean(TAG_DISTANCE, true);
-        final NBTTagCompound recipeCompound = new NBTTagCompound();
+        compound.putBoolean(TAG_DISTANCE, true);
+        final CompoundNBT recipeCompound = new CompoundNBT();
         recipeManager.writeToNBT(recipeCompound);
-        compound.setTag(RECIPE_MANAGER_TAG, recipeCompound);
-        compound.setBoolean(TAG_ALL_CHUNK_STORAGES, true);
-        compound.setBoolean(TAG_NEW_COLONIES, true);
-        compound.setBoolean(TAG_CAP_COLONIES, true);
+        compound.put(RECIPE_MANAGER_TAG, recipeCompound);
+        compound.putBoolean(TAG_ALL_CHUNK_STORAGES, true);
+        compound.putBoolean(TAG_NEW_COLONIES, true);
+        compound.putBoolean(TAG_CAP_COLONIES, true);
     }
 
     /**
@@ -744,43 +744,43 @@ public final class ColonyManager
      *
      * @param compound NBT Tag.
      */
-    public static void readFromNBT(@NotNull final NBTTagCompound compound, @NotNull final World world)
+    public static void readFromNBT(@NotNull final CompoundNBT compound, @NotNull final World world)
     {
-        if (!compound.hasKey(TAG_DISTANCE))
+        if (!compound.keySet().contains(TAG_DISTANCE))
         {
             Configurations.gameplay.workingRangeTownHallChunks =
               (int) ((Math.cos(45.0 / HALF_A_CIRCLE * Math.PI) * Configurations.gameplay.workingRangeTownHall) / BLOCKS_PER_CHUNK);
         }
 
-        if (!compound.hasKey(TAG_CAP_COLONIES))
+        if (!compound.keySet().contains(TAG_CAP_COLONIES))
         {
-            if (!compound.hasKey(TAG_NEW_COLONIES))
+            if (!compound.keySet().contains(TAG_NEW_COLONIES))
             {
-                final NBTTagList colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
-                for (int i = 0; i < colonyTags.tagCount(); ++i)
+                final ListNBT colonyTags = compound.getList(TAG_COLONIES, NBT.TAG_COMPOUND);
+                for (int i = 0; i < colonyTags.size(); ++i)
                 {
-                    final NBTTagCompound colonyCompound = colonyTags.getCompoundTagAt(i);
-                    final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyCompound.getInteger(TAG_DIMENSION));
+                    final CompoundNBT colonyCompound = colonyTags.getCompound(i);
+                    final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyCompound.getInt(TAG_DIMENSION));
                     final IColonyManagerCapability cap = colonyWorld.getCapability(COLONY_MANAGER_CAP, null);
-                    @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i),
-                      FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyCompound.getInteger(TAG_DIMENSION)));
+                    @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompound(i),
+                      FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyCompound.getInt(TAG_DIMENSION)));
                     cap.addColony(colony);
                 }
 
                 final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
-                cap.setMissingChunksToLoad(compound.getInteger(TAG_MISSING_CHUNKS));
+                cap.setMissingChunksToLoad(compound.getInt(TAG_MISSING_CHUNKS));
                 Log.getLogger().info(String.format("Loaded %d colonies", cap.getColonies().size()));
             }
             else
             {
-                final int size = compound.getInteger(TAG_NEW_COLONIES);
-                @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+                final int size = compound.getInt(TAG_NEW_COLONIES);
+                @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getSaveHandler().getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
                 for (int colonyId = 0; colonyId <= size; colonyId++)
                 {
-                    @Nullable final NBTTagCompound colonyData = BackUpHelper.loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY_OLD, colonyId)));
+                    @Nullable final CompoundNBT colonyData = BackUpHelper.loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY_OLD, colonyId)));
                     if (colonyData != null)
                     {
-                        final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyData.getInteger(TAG_DIMENSION));
+                        final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyData.getInt(TAG_DIMENSION));
                         final IColonyManagerCapability cap = colonyWorld.getCapability(COLONY_MANAGER_CAP, null);
                         @NotNull final Colony colony = Colony.loadColony(colonyData, colonyWorld);
                         colony.getCitizenManager().checkCitizensForHappiness();
@@ -795,15 +795,15 @@ public final class ColonyManager
             serverUUID = compound.getUniqueId(TAG_UUID);
         }
 
-        if (compound.hasKey(TAG_COMPATABILITY_MANAGER))
+        if (compound.keySet().contains(TAG_COMPATABILITY_MANAGER))
         {
-            compatibilityManager.readFromNBT(compound.getCompoundTag(TAG_COMPATABILITY_MANAGER));
+            compatibilityManager.readFromNBT(compound.getCompound(TAG_COMPATABILITY_MANAGER));
         }
 
-        final NBTTagCompound recipeCompound = compound.getCompoundTag(RECIPE_MANAGER_TAG);
+        final CompoundNBT recipeCompound = compound.getCompound(RECIPE_MANAGER_TAG);
         recipeManager.readFromNBT(recipeCompound);
 
-        if (!compound.hasKey(TAG_ALL_CHUNK_STORAGES))
+        if (!compound.keySet().contains(TAG_ALL_CHUNK_STORAGES))
         {
             ChunkDataHelper.loadChunkStorageToWorldCapability(world);
         }
@@ -860,7 +860,7 @@ public final class ColonyManager
             if (!loaded)
             {
                 @NotNull final File file = BackUpHelper.getSaveLocation();
-                @Nullable final NBTTagCompound data = BackUpHelper.loadNBTFromPath(file);
+                @Nullable final CompoundNBT data = BackUpHelper.loadNBTFromPath(file);
                 if (data != null)
                 {
                     readFromNBT(data, world);

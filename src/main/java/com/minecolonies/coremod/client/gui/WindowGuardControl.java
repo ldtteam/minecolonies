@@ -15,7 +15,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.GuardJob
 import com.minecolonies.coremod.network.messages.GuardRecalculateMessage;
 import com.minecolonies.coremod.network.messages.GuardScepterMessage;
 import com.minecolonies.coremod.network.messages.GuardTaskMessage;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.entity.PlayerEntitySP;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -312,7 +312,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
      */
     private void setTarget()
     {
-        final EntityPlayerSP player = this.mc.player;
+        final PlayerEntitySP player = this.mc.player;
         final int emptySlot = player.inventory.getFirstEmptyStack();
         pullInfoFromHut();
 

@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding, BuildingBasedRequester>
@@ -45,14 +45,14 @@ public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding,
 
     @NotNull
     @Override
-    public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final BuildingBasedRequester output)
+    public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final BuildingBasedRequester output)
     {
         return output.serialize(controller);
     }
 
     @NotNull
     @Override
-    public BuildingBasedRequester deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+    public BuildingBasedRequester deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
         return BuildingBasedRequester.deserialize(controller, nbt);
     }

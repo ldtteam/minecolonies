@@ -12,16 +12,16 @@ import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
+import net.minecraft.item.SwordItem;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +52,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
         for (final List<GuardGear> list : itemsNeeded)
         {
-            list.add(new GuardGear(ToolType.SHIELD, EntityEquipmentSlot.MAINHAND, 0, 0, SHIELD_LEVEL_RANGE, SHIELD_BUILDING_LEVEL_RANGE));
+            list.add(new GuardGear(ToolType.SHIELD, EquipmentSlotType.MAINHAND, 0, 0, SHIELD_LEVEL_RANGE, SHIELD_BUILDING_LEVEL_RANGE));
         }
     }
 
@@ -136,7 +136,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
             {
                 if (worker.getNavigator().noPath() && BlockPosUtil.getMaxDistance2D(worker.getPosition(), target.getPosition()) < 3.0)
                 {
-                    final EnumFacing dirTo = BlockPosUtil.getXZFacing(worker.getPosition(), target.getPosition());
+                    final Direction dirTo = BlockPosUtil.getXZFacing(worker.getPosition(), target.getPosition());
                     worker.getNavigator().tryMoveToBlockPos(worker.getPosition().offset(dirTo.getOpposite(), 3), getCombatMovementSpeed());
                 }
             }
@@ -190,7 +190,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
             }
 
             final DamageSource source = new EntityDamageSource(worker.getName(), worker);
-            if (Configurations.gameplay.pvp_mode && target instanceof EntityPlayer)
+            if (Configurations.gameplay.pvp_mode && target instanceof PlayerEntity)
             {
                 source.setDamageBypassesArmor();
             }
@@ -220,9 +220,9 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
             if (ItemStackUtils.doesItemServeAsWeapon(heldItem))
             {
-                if (heldItem.getItem() instanceof ItemSword)
+                if (heldItem.getItem() instanceof SwordItem)
                 {
-                    addDmg += ((ItemSword) heldItem.getItem()).getAttackDamage();
+                    addDmg += ((SwordItem) heldItem.getItem()).getAttackDamage();
                 }
                 else
                 {

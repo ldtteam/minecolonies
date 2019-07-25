@@ -5,7 +5,7 @@ import com.minecolonies.coremod.entity.AbstractEntityCitizen;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.sounds.AbstractWorkerSounds;
 import com.minecolonies.coremod.sounds.ModSoundEvents;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -130,7 +130,7 @@ public final class SoundUtils
      */
     public static void playSoundAtCitizen(@NotNull final World worldIn, @NotNull final BlockPos position, @NotNull final SoundEvent event)
     {
-        worldIn.playSound((EntityPlayer) null,
+        worldIn.playSound((PlayerEntity) null,
           position,
           event,
           SoundCategory.NEUTRAL,
@@ -155,7 +155,7 @@ public final class SoundUtils
 
         if (chance > rand.nextInt(ONE_HUNDRED))
         {
-            worldIn.playSound((EntityPlayer) null,
+            worldIn.playSound((PlayerEntity) null,
               position,
               event,
               SoundCategory.NEUTRAL,

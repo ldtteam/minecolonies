@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.inventory.api;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.IntNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IWorldNameable;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -23,7 +23,7 @@ import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
  * Abstract class wrapping around multiple IItemHandler.
  */
 public class CombinedItemHandler
-  implements IItemHandlerModifiable, INBTSerializable<NBTTagCompound>, IWorldNameableModifiable
+  implements IItemHandlerModifiable, INBTSerializable<CompoundNBT>, IWorldNameableModifiable
 {
 
     ///NBT Constants
@@ -67,30 +67,30 @@ public class CombinedItemHandler
 
     @SuppressWarnings(RAWTYPES)
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = new NBTTagCompound();
+        final CompoundNBT compound = new CompoundNBT();
 
         int index = 0;
-        final NBTTagList handlerList = new NBTTagList();
-        final NBTTagList indexList = new NBTTagList();
+        final ListNBT handlerList = new ListNBT();
+        final ListNBT indexList = new ListNBT();
         for (final IItemHandlerModifiable handlerModifiable : handlers)
         {
             if (handlerModifiable instanceof INBTSerializable)
             {
                 final INBTSerializable serializable = (INBTSerializable) handlerModifiable;
-                handlerList.appendTag(serializable.serializeNBT());
-                indexList.appendTag(new NBTTagInt(index));
+                handlerList.add(serializable.serializeNBT());
+                indexList.add(new IntNBT(index));
             }
 
             index++;
         }
 
-        compound.setTag(NBT_KEY_HANDLERS, handlerList);
+        compound.put(NBT_KEY_HANDLERS, handlerList);
 
         if (hasCustomName())
         {
-            compound.setString(NBT_KEY_NAME, customName);
+            compound.putString(NBT_KEY_NAME, customName);
         }
 
         return compound;
@@ -98,16 +98,16 @@ public class CombinedItemHandler
 
     @SuppressWarnings({RAWTYPES, UNCHECKED})
     @Override
-    public void deserializeNBT(final NBTTagCompound nbt)
+    public void deserializeNBT(final CompoundNBT nbt)
     {
-        final NBTTagList handlerList = nbt.getTagList(NBT_KEY_NAME, Constants.NBT.TAG_COMPOUND);
-        final NBTTagList indexList = nbt.getTagList(NBT_KEY_HANDLERS_INDEXLIST, Constants.NBT.TAG_INT);
+        final ListNBT handlerList = nbt.getList(NBT_KEY_NAME, Constants.NBT.TAG_COMPOUND);
+        final ListNBT indexList = nbt.getList(NBT_KEY_HANDLERS_INDEXLIST, Constants.NBT.TAG_INT);
 
-        if (handlerList.tagCount() == handlers.length)
+        if (handlerList.size() == handlers.length)
         {
-            for (int i = 0; i < handlerList.tagCount(); i++)
+            for (int i = 0; i < handlerList.size(); i++)
             {
-                final NBTTagCompound handlerCompound = handlerList.getCompoundTagAt(i);
+                final CompoundNBT handlerCompound = handlerList.getCompound(i);
                 final IItemHandlerModifiable modifiable = handlers[indexList.getIntAt(i)];
                 if (modifiable instanceof INBTSerializable)
                 {
@@ -117,7 +117,7 @@ public class CombinedItemHandler
             }
         }
 
-        setName(nbt.hasKey(NBT_KEY_NAME) ? nbt.getString(NBT_KEY_NAME) : null);
+        setName(nbt.keySet().contains(NBT_KEY_NAME) ? nbt.getString(NBT_KEY_NAME) : null);
     }
 
     /**
@@ -342,6 +342,6 @@ public class CombinedItemHandler
     @Override
     public ITextComponent getDisplayName()
     {
-        return new TextComponentString(getName());
+        return new StringTextComponent(getName());
     }
 }

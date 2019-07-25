@@ -3,8 +3,8 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -400,12 +400,12 @@ public class CitizenDataView
 
         colonyId = buf.readInt();
 
-        final NBTTagCompound compound = ByteBufUtils.readTag(buf);
+        final CompoundNBT compound = ByteBufUtils.readTag(buf);
         inventory = new InventoryCitizen(this.name, true);
-        final NBTTagList nbttaglist = compound.getTagList("inventory", 10);
+        final ListNBT nbttaglist = compound.getList("inventory", 10);
         this.inventory.readFromNBT(nbttaglist);
-        this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInteger(TAG_HELD_ITEM_SLOT));
-        this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
+        this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInt(TAG_HELD_ITEM_SLOT));
+        this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));
 
         position = BlockPosUtil.readFromByteBuf(buf);
     }

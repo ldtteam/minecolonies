@@ -10,13 +10,13 @@ import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
 import com.minecolonies.coremod.blocks.huts.BlockHutField;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -197,7 +197,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         @NotNull final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(MathHelper.floor(entity.posX),
                                                                                     (int) entity.posY,
                                                                                     MathHelper.floor(entity.posZ));
-        IBlockState bs = CompatibilityUtils.getWorld(entity).getBlockState(pos);
+        BlockState bs = CompatibilityUtils.getWorld(entity).getBlockState(pos);
         final Block b = bs.getBlock();
 
         if (entity.isInWater())
@@ -251,19 +251,19 @@ public abstract class AbstractPathJob implements Callable<Path>
 
             if (((meta >>> SHIFT_SOUTH) & 1) != 0)
             {
-                p.setLadderFacing(EnumFacing.SOUTH);
+                p.setLadderFacing(Direction.SOUTH);
             }
             else if (((meta >>> SHIFT_WEST) & 1) != 0)
             {
-                p.setLadderFacing(EnumFacing.WEST);
+                p.setLadderFacing(Direction.WEST);
             }
             else if (((meta >>> SHIFT_NORTH) & 1) != 0)
             {
-                p.setLadderFacing(EnumFacing.NORTH);
+                p.setLadderFacing(Direction.NORTH);
             }
             else if (((meta >>> SHIFT_EAST) & 1) != 0)
             {
-                p.setLadderFacing(EnumFacing.EAST);
+                p.setLadderFacing(Direction.EAST);
             }
         }
         else
@@ -606,7 +606,7 @@ public abstract class AbstractPathJob implements Callable<Path>
                 if (nextInPath.pos.getY() > pos.getY())
                 {
                     //  We only care about facing if going up
-                    //In the case of BlockVines (Which does not have EnumFacing) we have to check the metadata of the vines... bitwise...
+                    //In the case of BlockVines (Which does not have Direction) we have to check the metadata of the vines... bitwise...
                     setLadderFacing(world, pos, p);
                 }
             }
@@ -828,14 +828,14 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
 
         //  Now check the block we want to move to
-        final IBlockState target = world.getBlockState(pos);
+        final BlockState target = world.getBlockState(pos);
         if (!isPassable(target))
         {
             return handleTargeNotPassable(parent, pos, target);
         }
 
         //  Do we have something to stand on in the target space?
-        final IBlockState below = world.getBlockState(pos.down());
+        final BlockState below = world.getBlockState(pos.down());
         final SurfaceType walkability = isWalkableSurface(below, pos);
         if (walkability == SurfaceType.WALKABLE)
         {
@@ -850,7 +850,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return handleNotStanding(parent, pos, below);
     }
 
-    private int handleNotStanding(@Nullable final Node parent, @NotNull final BlockPos pos, @NotNull final IBlockState below)
+    private int handleNotStanding(@Nullable final Node parent, @NotNull final BlockPos pos, @NotNull final BlockState below)
     {
         final boolean isSwimming = parent != null && parent.isSwimming();
 
@@ -878,7 +878,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         for (int i = 2; i <= 4; i++)
         {
-            final IBlockState below = world.getBlockState(pos.down(i));
+            final BlockState below = world.getBlockState(pos.down(i));
             if (isWalkableSurface(below, pos) == SurfaceType.WALKABLE)
             {
                 //  Level path
@@ -893,7 +893,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return -1;
     }
 
-    private int handleInLiquid(@NotNull final BlockPos pos, @NotNull final IBlockState below, final boolean isSwimming)
+    private int handleInLiquid(@NotNull final BlockPos pos, @NotNull final BlockState below, final boolean isSwimming)
     {
         if (isSwimming)
         {
@@ -911,7 +911,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return -1;
     }
 
-    private int handleTargeNotPassable(@Nullable final Node parent, @NotNull final BlockPos pos, @NotNull final IBlockState target)
+    private int handleTargeNotPassable(@Nullable final Node parent, @NotNull final BlockPos pos, @NotNull final BlockState target)
     {
         final boolean canJump = parent != null && !parent.isLadder() && !parent.isSwimming();
         //  Need to try jumping up one, if we can
@@ -932,7 +932,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             return -1;
         }
 
-        final IBlockState below = world.getBlockState(parent.pos.down());
+        final BlockState below = world.getBlockState(parent.pos.down());
         final AxisAlignedBB bb = below.getCollisionBoundingBox(world, pos.down());
         if (bb != null && bb.maxY < 1)
         {
@@ -952,7 +952,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         if (parent != null)
         {
-            final IBlockState hereState = world.getBlockState(parent.pos.down());
+            final BlockState hereState = world.getBlockState(parent.pos.down());
             if (hereState.getMaterial().isLiquid() && !isPassable(pos))
             {
                 return true;
@@ -967,7 +967,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param block the block we are checking.
      * @return true if the block does not block movement.
      */
-    protected boolean isPassable(@NotNull final IBlockState block)
+    protected boolean isPassable(@NotNull final BlockState block)
     {
         if (block.getMaterial() != Material.AIR)
         {
@@ -989,7 +989,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
     protected boolean isPassable(final BlockPos pos)
     {
-        final IBlockState state = world.getBlockState(pos);
+        final BlockState state = world.getBlockState(pos);
         if (state.getBlock().isPassable(world, pos))
         {
             return true;
@@ -1005,7 +1005,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @return true if the block at that location can be walked on.
      */
     @NotNull
-    protected SurfaceType isWalkableSurface(@NotNull final IBlockState blockState, final BlockPos pos)
+    protected SurfaceType isWalkableSurface(@NotNull final BlockState blockState, final BlockPos pos)
     {
         final Block block = blockState.getBlock();
         if (block instanceof BlockFence

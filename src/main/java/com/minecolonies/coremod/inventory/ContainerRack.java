@@ -2,7 +2,7 @@ package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -126,7 +126,7 @@ public class ContainerRack extends net.minecraft.inventory.Container
     }
 
     @Override
-    public ItemStack transferStackInSlot(final EntityPlayer playerIn, final int index)
+    public ItemStack transferStackInSlot(final PlayerEntity playerIn, final int index)
     {
         final Slot slot = this.inventorySlots.get(index);
 
@@ -170,7 +170,7 @@ public class ContainerRack extends net.minecraft.inventory.Container
     }
 
     @Override
-    public boolean canInteractWith(final EntityPlayer playerIn)
+    public boolean canInteractWith(final PlayerEntity playerIn)
     {
         return true;
     }

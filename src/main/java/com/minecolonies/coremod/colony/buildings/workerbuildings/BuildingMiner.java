@@ -20,8 +20,8 @@ import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
@@ -204,26 +204,26 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * @param compound the compound key.
      */
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         super.readFromNBT(compound);
 
-        startingLevelShaft = compound.getInteger(TAG_STARTING_LEVEL);
+        startingLevelShaft = compound.getInt(TAG_STARTING_LEVEL);
         clearedShaft = compound.getBoolean(TAG_CLEARED);
 
-        vectorX = compound.getInteger(TAG_VECTORX);
-        vectorZ = compound.getInteger(TAG_VECTORZ);
+        vectorX = compound.getInt(TAG_VECTORX);
+        vectorZ = compound.getInt(TAG_VECTORZ);
 
-        if (compound.hasKey(TAG_ACTIVE))
+        if (compound.keySet().contains(TAG_ACTIVE))
         {
-            activeNode = Node.createFromNBT(compound.getCompoundTag(TAG_ACTIVE));
+            activeNode = Node.createFromNBT(compound.getCompound(TAG_ACTIVE));
         }
-        else if(compound.hasKey(TAG_OLD))
+        else if(compound.keySet().contains(TAG_OLD))
         {
-            oldNode = Node.createFromNBT(compound.getCompoundTag(TAG_OLD));
+            oldNode = Node.createFromNBT(compound.getCompound(TAG_OLD));
         }
 
-        currentLevel = compound.getInteger(TAG_CURRENT_LEVEL);
+        currentLevel = compound.getInt(TAG_CURRENT_LEVEL);
 
         ladderLocation = BlockPosUtil.readFromNBT(compound, TAG_LLOCATION);
 
@@ -232,12 +232,12 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         shaftStart = BlockPosUtil.readFromNBT(compound, TAG_SLOCATION);
         cobbleLocation = BlockPosUtil.readFromNBT(compound, TAG_CLOCATION);
 
-        startingLevelNode = compound.getInteger(TAG_SN);
+        startingLevelNode = compound.getInt(TAG_SN);
 
-        final NBTTagList levelTagList = compound.getTagList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < levelTagList.tagCount(); i++)
+        final ListNBT levelTagList = compound.getList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < levelTagList.size(); i++)
         {
-            this.levels.add(new Level(levelTagList.getCompoundTagAt(i)));
+            this.levels.add(new Level(levelTagList.getCompound(i)));
         }
     }
 
@@ -247,30 +247,30 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * @param compound the compound key.
      */
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         super.writeToNBT(compound);
 
-        compound.setInteger(TAG_STARTING_LEVEL, startingLevelShaft);
-        compound.setBoolean(TAG_CLEARED, clearedShaft);
-        compound.setInteger(TAG_VECTORX, vectorX);
-        compound.setInteger(TAG_VECTORZ, vectorZ);
+        compound.putInt(TAG_STARTING_LEVEL, startingLevelShaft);
+        compound.putBoolean(TAG_CLEARED, clearedShaft);
+        compound.putInt(TAG_VECTORX, vectorX);
+        compound.putInt(TAG_VECTORZ, vectorZ);
         if (activeNode != null)
         {
-            final NBTTagCompound nodeCompound = new NBTTagCompound();
+            final CompoundNBT nodeCompound = new CompoundNBT();
             activeNode.writeToNBT(nodeCompound);
-            compound.setTag(TAG_ACTIVE, nodeCompound);
+            compound.put(TAG_ACTIVE, nodeCompound);
         }
 
         if (oldNode != null)
         {
-            final NBTTagCompound nodeCompound = new NBTTagCompound();
-            oldNode.writeToNBT(new NBTTagCompound());
-            compound.setTag(TAG_OLD, nodeCompound);
+            final CompoundNBT nodeCompound = new CompoundNBT();
+            oldNode.writeToNBT(new CompoundNBT());
+            compound.put(TAG_OLD, nodeCompound);
         }
-        compound.setInteger(TAG_CURRENT_LEVEL, currentLevel);
-        compound.setBoolean(TAG_LADDER, foundLadder);
-        compound.setInteger(TAG_SN, startingLevelNode);
+        compound.putInt(TAG_CURRENT_LEVEL, currentLevel);
+        compound.putBoolean(TAG_LADDER, foundLadder);
+        compound.putInt(TAG_SN, startingLevelNode);
 
         if (shaftStart != null && cobbleLocation != null)
         {
@@ -283,14 +283,14 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             BlockPosUtil.writeToNBT(compound, TAG_LLOCATION, ladderLocation);
         }
 
-        @NotNull final NBTTagList levelTagList = new NBTTagList();
+        @NotNull final ListNBT levelTagList = new ListNBT();
         for (@NotNull final Level level : levels)
         {
-            @NotNull final NBTTagCompound levelCompound = new NBTTagCompound();
+            @NotNull final CompoundNBT levelCompound = new CompoundNBT();
             level.writeToNBT(levelCompound);
-            levelTagList.appendTag(levelCompound);
+            levelTagList.add(levelCompound);
         }
-        compound.setTag(TAG_LEVELS, levelTagList);
+        compound.put(TAG_LEVELS, levelTagList);
     }
 
     /**

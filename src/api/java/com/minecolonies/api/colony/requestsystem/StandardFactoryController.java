@@ -13,7 +13,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.Suppression;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
@@ -234,20 +234,20 @@ public final class StandardFactoryController implements IFactoryController
 
     @Override
     @SuppressWarnings(Suppression.UNCHECKED)
-    public <OUTPUT> NBTTagCompound serialize(@NotNull final OUTPUT object) throws IllegalArgumentException
+    public <OUTPUT> CompoundNBT serialize(@NotNull final OUTPUT object) throws IllegalArgumentException
     {
-        final NBTTagCompound compound = new NBTTagCompound();
+        final CompoundNBT compound = new CompoundNBT();
 
         final IFactory<?, OUTPUT> factory = getFactoryForOutput((TypeToken<? extends OUTPUT>) TypeToken.of(object.getClass()));
-        compound.setString(NBT_TYPE, object.getClass().getName());
-        compound.setTag(NBT_DATA, factory.serialize(this, object));
+        compound.putString(NBT_TYPE, object.getClass().getName());
+        compound.put(NBT_DATA, factory.serialize(this, object));
 
         return compound;
     }
 
     @Override
     @SuppressWarnings(Suppression.UNCHECKED)
-    public <OUTPUT> OUTPUT deserialize(@NotNull final NBTTagCompound compound) throws IllegalArgumentException
+    public <OUTPUT> OUTPUT deserialize(@NotNull final CompoundNBT compound) throws IllegalArgumentException
     {
         String className = compound.getString(NBT_TYPE);
         className = processClassRenaming(className);
@@ -265,7 +265,7 @@ public final class StandardFactoryController implements IFactoryController
 
         try
         {
-            return factory.deserialize(this, compound.getCompoundTag(NBT_DATA));
+            return factory.deserialize(this, compound.getCompound(NBT_DATA));
         }
         catch (Throwable throwable)
         {
@@ -288,14 +288,14 @@ public final class StandardFactoryController implements IFactoryController
     @Override
     public <OUTPUT> void writeToBuffer(@NotNull final ByteBuf buffer, @NotNull final OUTPUT object) throws IllegalArgumentException
     {
-        final NBTTagCompound bufferCompound = serialize(object);
+        final CompoundNBT bufferCompound = serialize(object);
         ByteBufUtils.writeTag(buffer, bufferCompound);
     }
 
     @Override
     public <OUTPUT> OUTPUT readFromBuffer(@NotNull final ByteBuf buffer) throws IllegalArgumentException
     {
-        final NBTTagCompound bufferCompound = ByteBufUtils.readTag(buffer);
+        final CompoundNBT bufferCompound = ByteBufUtils.readTag(buffer);
         return deserialize(bufferCompound);
     }
 

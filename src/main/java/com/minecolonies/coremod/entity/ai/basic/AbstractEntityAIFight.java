@@ -14,8 +14,8 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemArmor;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.IItemHandler;
@@ -241,7 +241,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
                 if (bestLevelChest > bestLevel)
                 {
                     final ItemStack armorStack = bestHandler.getStackInSlot(bestSlotChest).copy();
-                    if (armorStack.getItem() instanceof ItemArmor)
+                    if (armorStack.getItem() instanceof ArmorItem)
                     {
                         armorToWear.put(entry.getKey(), armorStack);
                     }
@@ -259,7 +259,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
                 else
                 {
                     final ItemStack armorStack = new InvWrapper(worker.getInventoryCitizen()).getStackInSlot(bestSlot).copy();
-                    if (armorStack.getItem() instanceof ItemArmor)
+                    if (armorStack.getItem() instanceof ArmorItem)
                     {
                         armorToWear.put(entry.getKey(), armorStack);
                     }
@@ -323,10 +323,10 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
     {
         if (worker.getRandom().nextInt(60) <= 0)
         {
-            worker.setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStackUtils.EMPTY);
-            worker.setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStackUtils.EMPTY);
-            worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStackUtils.EMPTY);
-            worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStackUtils.EMPTY);
+            worker.setItemStackToSlot(EquipmentSlotType.CHEST, ItemStackUtils.EMPTY);
+            worker.setItemStackToSlot(EquipmentSlotType.FEET, ItemStackUtils.EMPTY);
+            worker.setItemStackToSlot(EquipmentSlotType.HEAD, ItemStackUtils.EMPTY);
+            worker.setItemStackToSlot(EquipmentSlotType.LEGS, ItemStackUtils.EMPTY);
 
             for (final Map.Entry<IToolType, ItemStack> armorStack : armorToWear.entrySet())
             {
@@ -343,13 +343,13 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
                 final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
                 if (ItemStackUtils.isEmpty(stack))
                 {
-                    worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, ItemStackUtils.EMPTY);
+                    worker.setItemStackToSlot(((ArmorItem) stack.getItem()).getEquipmentSlot(), ItemStackUtils.EMPTY);
                     continue;
                 }
 
-                if (stack.getItem() instanceof ItemArmor)
+                if (stack.getItem() instanceof ArmorItem)
                 {
-                    worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
+                    worker.setItemStackToSlot(((ArmorItem) stack.getItem()).getEquipmentSlot(), stack);
                     requiredArmor.remove(armorStack.getKey());
                     cancelAsynchRequestForArmor(armorStack.getKey());
                 }

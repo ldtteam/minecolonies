@@ -10,7 +10,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHal
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -66,7 +66,7 @@ public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage
     }
 
     @Override
-    public void messageOnServerThread(final RecallTownhallMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final RecallTownhallMessage message, final PlayerEntityMP player)
     {
         final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

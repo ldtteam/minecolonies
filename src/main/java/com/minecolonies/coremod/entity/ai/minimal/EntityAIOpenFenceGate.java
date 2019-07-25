@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.ai.minimal;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.block.BlockFenceGate;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.SoundEvent;
@@ -69,7 +69,7 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
      */
     private void toggleDoor(final boolean open)
     {
-        final IBlockState iblockstate = CompatibilityUtils.getWorld(this.theEntity).getBlockState(this.gatePosition);
+        final BlockState iblockstate = CompatibilityUtils.getWorld(this.theEntity).getBlockState(this.gatePosition);
         //If the block is a gate block and the fence gate state does not respond to the input open toggle it.
         if (iblockstate.getBlock() == this.gateBlock && (iblockstate.getValue(BlockFenceGate.OPEN)) != open)
         {

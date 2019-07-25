@@ -9,10 +9,10 @@ import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -75,7 +75,7 @@ public class WhereAmICommand extends AbstractSingleCommand implements IActionCom
 
     private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender) throws CommandException
     {
-        if (!(sender instanceof EntityPlayer))
+        if (!(sender instanceof PlayerEntity))
         {
             Log.getLogger().info("In the console...");
             return;
@@ -86,7 +86,7 @@ public class WhereAmICommand extends AbstractSingleCommand implements IActionCom
 
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(NONE));
+            sender.sendMessage(new StringTextComponent(NONE));
             return;
         }
         final BlockPos center = colony.getCenter();
@@ -94,14 +94,14 @@ public class WhereAmICommand extends AbstractSingleCommand implements IActionCom
 
         if (!ColonyManager.isCoordinateInAnyColony(sender.getEntityWorld(), playerPos))
         {
-            sender.sendMessage(new TextComponentString(String.format(NONE_CLOSE, Math.sqrt(distance))));
+            sender.sendMessage(new StringTextComponent(String.format(NONE_CLOSE, Math.sqrt(distance))));
             return;
         }
 
         final String colonyName = colony.getName();
         final String id = Integer.toString(colony.getID());
 
-        sender.sendMessage(new TextComponentString(String.format(INSIDE, colonyName, id, Math.sqrt(distance))));
+        sender.sendMessage(new StringTextComponent(String.format(INSIDE, colonyName, id, Math.sqrt(distance))));
     }
 
     @NotNull

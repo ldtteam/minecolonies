@@ -11,10 +11,10 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.block.BlockHorizontal;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -91,7 +91,7 @@ public class BuildingBarracks extends AbstractBuilding
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final IBlockState block, @NotNull final BlockPos pos, @NotNull final World world)
+    public void registerBlockPosition(@NotNull final BlockState block, @NotNull final BlockPos pos, @NotNull final World world)
     {
         super.registerBlockPosition(block, pos, world);
         if (block.getBlock() == ModBlocks.blockBarracksTowerSubstitution)
@@ -130,21 +130,21 @@ public class BuildingBarracks extends AbstractBuilding
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         super.readFromNBT(compound);
         towers.clear();
-        towers.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_TOWERS, Constants.NBT.TAG_COMPOUND))
+        towers.addAll(NBTUtils.streamCompound(compound.getList(TAG_TOWERS, Constants.NBT.TAG_COMPOUND))
                         .map(resultCompound -> BlockPosUtil.readFromNBT(resultCompound, TAG_POS))
                         .collect(Collectors.toList()));
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         super.writeToNBT(compound);
-        final NBTTagList towerTagList = towers.stream().map(pos -> BlockPosUtil.writeToNBT(new NBTTagCompound(), TAG_POS, pos)).collect(NBTUtils.toNBTTagList());
-        compound.setTag(TAG_TOWERS, towerTagList);
+        final ListNBT towerTagList = towers.stream().map(pos -> BlockPosUtil.writeToNBT(new CompoundNBT(), TAG_POS, pos)).collect(NBTUtils.toListNBT());
+        compound.put(TAG_TOWERS, towerTagList);
     }
 
     /**

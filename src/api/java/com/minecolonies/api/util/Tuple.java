@@ -15,7 +15,7 @@ public class Tuple<A, B> extends net.minecraft.util.Tuple<A, B>
     @Override
     public int hashCode()
     {
-        return getFirst().hashCode() * 31 + getSecond().hashCode() * 31;
+        return getA().hashCode() * 31 + getB().hashCode() * 31;
     }
 
     @Override
@@ -23,7 +23,7 @@ public class Tuple<A, B> extends net.minecraft.util.Tuple<A, B>
     {
         if (o instanceof net.minecraft.util.Tuple)
         {
-            return ((net.minecraft.util.Tuple) o).getFirst().equals(this.getFirst()) && ((net.minecraft.util.Tuple) o).getSecond().equals(this.getSecond());
+            return ((net.minecraft.util.Tuple) o).getA().equals(this.getA()) && ((net.minecraft.util.Tuple) o).getB().equals(this.getB());
         }
         return false;
     }

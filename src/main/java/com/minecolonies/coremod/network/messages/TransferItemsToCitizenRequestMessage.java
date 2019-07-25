@@ -10,7 +10,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -97,7 +97,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
     }
 
     @Override
-    public void messageOnServerThread(final TransferItemsToCitizenRequestMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final TransferItemsToCitizenRequestMessage message, final PlayerEntityMP player)
     {
         final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null)

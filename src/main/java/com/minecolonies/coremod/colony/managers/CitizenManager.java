@@ -18,9 +18,9 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveCitizenMessage;
 import com.minecolonies.coremod.network.messages.HappinessDataMessage;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -76,17 +76,17 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
-        maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
+        maxCitizens = compound.getInt(TAG_MAX_CITIZENS);
 
         //  Citizens before Buildings, because Buildings track the Citizens
-        citizens.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_CITIZENS, Constants.NBT.TAG_COMPOUND))
+        citizens.putAll(NBTUtils.streamCompound(compound.getList(TAG_CITIZENS, Constants.NBT.TAG_COMPOUND))
                           .map(this::deserializeCitizen)
                           .collect(Collectors.toMap(CitizenData::getId, Function.identity())));
     }
 
-    private CitizenData deserializeCitizen(@NotNull final NBTTagCompound compound)
+    private CitizenData deserializeCitizen(@NotNull final CompoundNBT compound)
     {
         final CitizenData data = CitizenData.createFromNBT(compound, colony);
         topCitizenId = Math.max(topCitizenId, data.getId());
@@ -94,19 +94,19 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
-        compound.setInteger(TAG_MAX_CITIZENS, maxCitizens);
+        compound.putInt(TAG_MAX_CITIZENS, maxCitizens);
 
-        @NotNull final NBTTagList citizenTagList = citizens.values().stream().map(citizen -> citizen.writeToNBT(new NBTTagCompound())).collect(NBTUtils.toNBTTagList());
-        compound.setTag(TAG_CITIZENS, citizenTagList);
+        @NotNull final ListNBT citizenTagList = citizens.values().stream().map(citizen -> citizen.writeToNBT(new CompoundNBT())).collect(NBTUtils.toListNBT());
+        compound.put(TAG_CITIZENS, citizenTagList);
     }
 
     @Override
     public void sendPackets(
-      @NotNull final Set<EntityPlayerMP> oldSubscribers,
+      @NotNull final Set<PlayerEntityMP> oldSubscribers,
       final boolean hasNewSubscribers,
-      @NotNull final Set<EntityPlayerMP> subscribers)
+      @NotNull final Set<PlayerEntityMP> subscribers)
     {
         if (isCitizensDirty || hasNewSubscribers)
         {
@@ -157,7 +157,7 @@ public class CitizenManager implements ICitizenManager
                 if (getMaxCitizens() == getCitizens().size() && !force)
                 {
                     LanguageHandler.sendPlayersMessage(
-                      colony.getMessageEntityPlayers(),
+                      colony.getMessagePlayerEntitys(),
                       "tile.blockHutTownHall.messageMaxSize",
                       colony.getName());
                 }
@@ -177,7 +177,7 @@ public class CitizenManager implements ICitizenManager
         }
         else
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.citizens.nospace");
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), "com.minecolonies.coremod.citizens.nospace");
         }
         return data;
     }
@@ -227,7 +227,7 @@ public class CitizenManager implements ICitizenManager
         colony.getWorkManager().clearWorkForCitizen(citizen);
 
         //  Inform Subscribers of removed citizen
-        for (final EntityPlayerMP player : colony.getPackageManager().getSubscribers())
+        for (final PlayerEntityMP player : colony.getPackageManager().getSubscribers())
         {
             MineColonies.getNetwork().sendTo(new ColonyViewRemoveCitizenMessage(colony, citizen.getId()), player);
         }

@@ -5,9 +5,9 @@ import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -39,7 +39,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         maxStackSize = 1;
     }
 
-    private static EnumActionResult handleZEqual(@NotNull final EntityPlayer playerIn, final int a, final int a2)
+    private static EnumActionResult handleZEqual(@NotNull final PlayerEntity playerIn, final int a, final int a2)
     {
         final int distance1 = Math.abs(a) + 1;
         final int distance2 = Math.abs(a2) + 1;
@@ -51,11 +51,11 @@ public class ItemCaliper extends AbstractItemMinecolonies
 
     @Override
     public EnumActionResult onItemUse(
-                                       final EntityPlayer player,
+                                       final PlayerEntity player,
                                        final World worldIn,
                                        final BlockPos pos,
                                        final EnumHand hand,
-                                       final EnumFacing facing,
+                                       final Direction facing,
                                        final float hitX,
                                        final float hitY,
                                        final float hitZ)
@@ -90,7 +90,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         return handlePlayerMessage(player, pos);
     }
 
-    private EnumActionResult handlePlayerMessage(@NotNull final EntityPlayer playerIn, @NotNull final BlockPos pos)
+    private EnumActionResult handlePlayerMessage(@NotNull final PlayerEntity playerIn, @NotNull final BlockPos pos)
     {
         if (startPosition.getX() == pos.getX())
         {
@@ -116,7 +116,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         return EnumActionResult.SUCCESS;
     }
 
-    private EnumActionResult handleYEqual(@NotNull final EntityPlayer playerIn, @NotNull final BlockPos pos, final int a, final int a2)
+    private EnumActionResult handleYEqual(@NotNull final PlayerEntity playerIn, @NotNull final BlockPos pos, final int a, final int a2)
     {
         if (startPosition.getZ() == pos.getZ())
         {
@@ -127,7 +127,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         return handleZEqual(playerIn, a, a2);
     }
 
-    private EnumActionResult handleXEqual(@NotNull final EntityPlayer playerIn, @NotNull final BlockPos pos)
+    private EnumActionResult handleXEqual(@NotNull final PlayerEntity playerIn, @NotNull final BlockPos pos)
     {
         if (startPosition.getY() == pos.getY())
         {

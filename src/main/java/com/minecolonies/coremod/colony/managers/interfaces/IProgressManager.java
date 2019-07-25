@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.ColonyProgressType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import net.minecraft.block.Block;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 public interface IProgressManager
@@ -62,13 +62,13 @@ public interface IProgressManager
      * Reads the progress manager from NBT.
      * @param compound the compound to read it from.
      */
-    void readFromNBT(@NotNull NBTTagCompound compound);
+    void readFromNBT(@NotNull CompoundNBT compound);
 
     /**
      * Writes the progress manager to NBT.
      * @param compound the compound to write it to.
      */
-    void writeToNBT(@NotNull NBTTagCompound compound);
+    void writeToNBT(@NotNull CompoundNBT compound);
 
     /**
      * Check if progress should be printed.

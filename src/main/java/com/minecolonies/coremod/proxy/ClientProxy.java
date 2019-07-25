@@ -32,11 +32,11 @@ import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.entity.PlayerEntitySP;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.RecipeBook;
@@ -138,7 +138,7 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void openSuggestionWindow(@NotNull final BlockPos pos, @NotNull final IBlockState state, @NotNull final ItemStack stack)
+    public void openSuggestionWindow(@NotNull final BlockPos pos, @NotNull final BlockState state, @NotNull final ItemStack stack)
     {
         new WindowSuggestBuildTool(pos, state, stack).open();
     }
@@ -321,11 +321,11 @@ public class ClientProxy extends CommonProxy
 
     @NotNull
     @Override
-    public RecipeBook getRecipeBookFromPlayer(@NotNull final EntityPlayer player)
+    public RecipeBook getRecipeBookFromPlayer(@NotNull final PlayerEntity player)
     {
-        if (player instanceof EntityPlayerSP)
+        if (player instanceof PlayerEntitySP)
         {
-            return ((EntityPlayerSP) player).getRecipeBook();
+            return ((PlayerEntitySP) player).getRecipeBook();
         }
 
         return super.getRecipeBookFromPlayer(player);

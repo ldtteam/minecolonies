@@ -5,7 +5,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 
@@ -96,7 +96,7 @@ public class WorkOrderChangeMessage extends AbstractMessage<WorkOrderChangeMessa
     }
 
     @Override
-    public void messageOnServerThread(final WorkOrderChangeMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final WorkOrderChangeMessage message, final PlayerEntityMP player)
     {
         final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))

@@ -14,8 +14,8 @@ import com.minecolonies.coremod.entity.ai.util.StudyItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBookshelf;
 import net.minecraft.item.Item;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -159,27 +159,27 @@ public class BuildingLibrary extends AbstractBuildingWorker
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         super.writeToNBT(compound);
-        @NotNull final NBTTagList bookcaseTagList = new NBTTagList();
+        @NotNull final ListNBT bookcaseTagList = new ListNBT();
         for (@NotNull final BlockPos entry : bookCases)
         {
-            @NotNull final NBTTagCompound bookCompound = new NBTTagCompound();
-            bookCompound.setTag(TAG_POS, NBTUtil.createPosTag(entry));
-            bookcaseTagList.appendTag(bookCompound);
+            @NotNull final CompoundNBT bookCompound = new CompoundNBT();
+            bookCompound.put(TAG_POS, NBTUtil.createPosTag(entry));
+            bookcaseTagList.add(bookCompound);
         }
-        compound.setTag(TAG_BOOKCASES, bookcaseTagList);
+        compound.put(TAG_BOOKCASES, bookcaseTagList);
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         super.readFromNBT(compound);
-        final NBTTagList furnaceTagList = compound.getTagList(TAG_BOOKCASES, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < furnaceTagList.tagCount(); ++i)
+        final ListNBT furnaceTagList = compound.getList(TAG_BOOKCASES, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < furnaceTagList.size(); ++i)
         {
-            bookCases.add(NBTUtil.getPosFromTag(furnaceTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
+            bookCases.add(NBTUtil.getPosFromTag(furnaceTagList.getCompound(i).getCompound(TAG_POS)));
         }
     }
 

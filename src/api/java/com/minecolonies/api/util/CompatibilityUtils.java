@@ -6,7 +6,7 @@ import net.minecraft.world.World;
 /**
  * This class group method use to insure compatibility between minecraft version.
  * <p>
- * This is the 1.12 version
+ * This is the 1.14 version
  */
 public final class CompatibilityUtils
 {

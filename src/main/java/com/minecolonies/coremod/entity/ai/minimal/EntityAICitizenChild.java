@@ -15,7 +15,7 @@ import com.minecolonies.coremod.entity.pathfinding.PathResult;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -176,7 +176,7 @@ public class EntityAICitizenChild extends EntityAIBase
               1.0D,
               (double) START_FOLLOW_DISTANCE),
             // Limit entity classes
-            target -> target.isEntityAlive() && (target instanceof EntityAgeable || target instanceof EntityPlayer))
+            target -> target.isEntityAlive() && (target instanceof EntityAgeable || target instanceof PlayerEntity))
           // Take the first entity
           .stream()
           .findFirst()
@@ -274,7 +274,7 @@ public class EntityAICitizenChild extends EntityAIBase
             if (rand.nextInt((int) (70 / Configurations.gameplay.growthModifier)) == 0 || AIActiveTime > 70000 / Configurations.gameplay.growthModifier)
             {
 
-                LanguageHandler.sendPlayersMessage(child.getCitizenColonyHandler().getColony().getMessageEntityPlayers(),
+                LanguageHandler.sendPlayersMessage(child.getCitizenColonyHandler().getColony().getMessagePlayerEntitys(),
                   "com.minecolonies.coremod.progress.childGrow",
                   child.getName());
                 // Grow up

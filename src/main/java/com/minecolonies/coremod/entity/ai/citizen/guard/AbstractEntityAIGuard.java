@@ -19,7 +19,7 @@ import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -483,9 +483,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                         {
                             return entity;
                         }
-                        else if (entity instanceof EntityPlayer && worker.canEntityBeSeen(entity))
+                        else if (entity instanceof PlayerEntity && worker.canEntityBeSeen(entity))
                         {
-                            colony.isValidAttackingPlayer((EntityPlayer) entity);
+                            colony.isValidAttackingPlayer((PlayerEntity) entity);
                         }
                     }
                 }
@@ -504,8 +504,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             {
                 if (worker.canEntityBeSeen(entity) && isWithinPersecutionDistance(entity.getPosition()))
                 {
-                    if (entity instanceof EntityPlayer && (colony.getPermissions().hasPermission((EntityPlayer) entity, Action.GUARDS_ATTACK)
-                                                             || colony.isValidAttackingPlayer((EntityPlayer) entity)))
+                    if (entity instanceof PlayerEntity && (colony.getPermissions().hasPermission((PlayerEntity) entity, Action.GUARDS_ATTACK)
+                                                             || colony.isValidAttackingPlayer((PlayerEntity) entity)))
                     {
                         return entity;
                     }

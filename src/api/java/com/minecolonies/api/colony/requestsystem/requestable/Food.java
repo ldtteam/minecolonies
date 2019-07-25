@@ -2,9 +2,8 @@ package com.minecolonies.api.colony.requestsystem.requestable;
 
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -32,23 +31,23 @@ public class Food implements IDeliverable
         this.result = result;
     }
 
-    public static NBTTagCompound serialize(final IFactoryController controller, final Food food)
+    public static CompoundNBT serialize(final IFactoryController controller, final Food food)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger(NBT_COUNT, food.count);
+        final CompoundNBT compound = new CompoundNBT();
+        compound.putInt(NBT_COUNT, food.count);
 
         if (!ItemStackUtils.isEmpty(food.result))
         {
-            compound.setTag(NBT_RESULT, food.result.serializeNBT());
+            compound.put(NBT_RESULT, food.result.serializeNBT());
         }
 
         return compound;
     }
 
-    public static Food deserialize(final IFactoryController controller, final NBTTagCompound compound)
+    public static Food deserialize(final IFactoryController controller, final CompoundNBT compound)
     {
-        final int count = compound.getInteger(NBT_COUNT);
-        final ItemStack result = compound.hasKey(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_RESULT)) : ItemStackUtils.EMPTY;
+        final int count = compound.getInt(NBT_COUNT);
+        final ItemStack result = compound.keySet().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
 
         return new Food(count, result);
     }
@@ -56,7 +55,7 @@ public class Food implements IDeliverable
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        return stack.getItem() instanceof ItemFood;
+        return stack.getItem().isFood();
     }
 
     @Override

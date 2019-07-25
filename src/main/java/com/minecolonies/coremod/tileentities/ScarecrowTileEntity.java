@@ -12,15 +12,15 @@ import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockFenceGate;
 import net.minecraft.block.BlockWall;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
@@ -168,10 +168,10 @@ public class ScarecrowTileEntity extends TileEntityChest
     public final void calculateSize(@NotNull final World world, @NotNull final BlockPos position)
     {
         //Calculate in all 4 directions
-        this.lengthPlusX = searchNextBlock(0, position.east(), EnumFacing.EAST, world);
-        this.lengthMinusX = searchNextBlock(0, position.west(), EnumFacing.WEST, world);
-        this.widthPlusZ = searchNextBlock(0, position.south(), EnumFacing.SOUTH, world);
-        this.widthMinusZ = searchNextBlock(0, position.north(), EnumFacing.NORTH, world);
+        this.lengthPlusX = searchNextBlock(0, position.east(), Direction.EAST, world);
+        this.lengthMinusX = searchNextBlock(0, position.west(), Direction.WEST, world);
+        this.widthPlusZ = searchNextBlock(0, position.south(), Direction.SOUTH, world);
+        this.widthMinusZ = searchNextBlock(0, position.north(), Direction.NORTH, world);
         markDirty();
     }
 
@@ -184,7 +184,7 @@ public class ScarecrowTileEntity extends TileEntityChest
      * @param world         the world object.
      * @return the distance.
      */
-    private int searchNextBlock(final int blocksChecked, @NotNull final BlockPos position, final EnumFacing direction, @NotNull final World world)
+    private int searchNextBlock(final int blocksChecked, @NotNull final BlockPos position, final Direction direction, @NotNull final World world)
     {
         if (blocksChecked >= getMaxRange() || isNoPartOfField(world, position))
         {
@@ -447,30 +447,30 @@ public class ScarecrowTileEntity extends TileEntityChest
     @Override
     public SPacketUpdateTileEntity getUpdatePacket()
     {
-        final NBTTagCompound compound = new NBTTagCompound();
+        final CompoundNBT compound = new CompoundNBT();
         this.writeToNBT(compound);
         if(colony != null)
         {
-            compound.setInteger(TAG_COLONY_ID, colony.getID());
+            compound.putInt(TAG_COLONY_ID, colony.getID());
         }
         return new SPacketUpdateTileEntity(this.pos, 0, compound);
     }
 
     @NotNull
     @Override
-    public NBTTagCompound getUpdateTag()
+    public CompoundNBT getUpdateTag()
     {
-        return writeToNBT(new NBTTagCompound());
+        return writeToNBT(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
     {
-        final NBTTagCompound compound = packet.getNbtCompound();
+        final CompoundNBT compound = packet.getNbtCompound();
         this.readFromNBT(compound);
-        if(compound.hasKey(TAG_COLONY_ID))
+        if(compound.keySet().contains(TAG_COLONY_ID))
         {
-            setOwner(ownerId, ColonyManager.getColonyView(compound.getInteger(TAG_COLONY_ID), world.provider.getDimension()));
+            setOwner(ownerId, ColonyManager.getColonyView(compound.getInt(TAG_COLONY_ID), world.provider.getDimension()));
         }
     }
 
@@ -487,7 +487,7 @@ public class ScarecrowTileEntity extends TileEntityChest
         {
             @Nullable final Entity entity = EntityUtils.getEntityFromUUID(world, colony.getPermissions().getOwner());
 
-            if (entity instanceof EntityPlayer)
+            if (entity instanceof PlayerEntity)
             {
                 colony.getBuildingManager().addNewField(this, pos, world);
             }
@@ -495,12 +495,12 @@ public class ScarecrowTileEntity extends TileEntityChest
     }
 
     @Override
-    public void readFromNBT(final NBTTagCompound compound)
+    public void readFromNBT(final CompoundNBT compound)
     {
-        final NBTTagList inventoryTagList = compound.getTagList(TAG_INVENTORY, TAG_COMPOUND);
-        for (int i = 0; i < inventoryTagList.tagCount(); ++i)
+        final ListNBT inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
+        for (int i = 0; i < inventoryTagList.size(); ++i)
         {
-            final NBTTagCompound inventoryCompound = inventoryTagList.getCompoundTagAt(i);
+            final CompoundNBT inventoryCompound = inventoryTagList.getCompound(i);
             final ItemStack stack = new ItemStack(inventoryCompound);
             if (ItemStackUtils.getSize(stack) <= 0)
             {
@@ -513,12 +513,12 @@ public class ScarecrowTileEntity extends TileEntityChest
         }
 
         taken = compound.getBoolean(TAG_TAKEN);
-        fieldStage = FieldStage.values()[compound.getInteger(TAG_STAGE)];
-        lengthPlusX = compound.getInteger(TAG_LENGTH_PLUS);
-        widthPlusZ = compound.getInteger(TAG_WIDTH_PLUS);
-        lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
-        widthMinusZ = compound.getInteger(TAG_WIDTH_MINUS);
-        ownerId = compound.getInteger(TAG_OWNER);
+        fieldStage = FieldStage.values()[compound.getInt(TAG_STAGE)];
+        lengthPlusX = compound.getInt(TAG_LENGTH_PLUS);
+        widthPlusZ = compound.getInt(TAG_WIDTH_PLUS);
+        lengthMinusX = compound.getInt(TAG_LENGTH_MINUS);
+        widthMinusZ = compound.getInt(TAG_WIDTH_MINUS);
+        ownerId = compound.getInt(TAG_OWNER);
         name = compound.getString(TAG_NAME);
         setOwner(ownerId);
 
@@ -526,12 +526,12 @@ public class ScarecrowTileEntity extends TileEntityChest
     }
 
     @Override
-    public NBTTagCompound writeToNBT(final NBTTagCompound compound)
+    public CompoundNBT writeToNBT(final CompoundNBT compound)
     {
-        @NotNull final NBTTagList inventoryTagList = new NBTTagList();
+        @NotNull final ListNBT inventoryTagList = new ListNBT();
         for (int slot = 0; slot < inventory.getSlots(); slot++)
         {
-            @NotNull final NBTTagCompound inventoryCompound = new NBTTagCompound();
+            @NotNull final CompoundNBT inventoryCompound = new CompoundNBT();
             final ItemStack stack = inventory.getStackInSlot(slot);
             if (stack == ItemStackUtils.EMPTY)
             {
@@ -541,18 +541,18 @@ public class ScarecrowTileEntity extends TileEntityChest
             {
                 stack.writeToNBT(inventoryCompound);
             }
-            inventoryTagList.appendTag(inventoryCompound);
+            inventoryTagList.add(inventoryCompound);
         }
-        compound.setTag(TAG_INVENTORY, inventoryTagList);
+        compound.put(TAG_INVENTORY, inventoryTagList);
 
-        compound.setBoolean(TAG_TAKEN, taken);
-        compound.setInteger(TAG_STAGE, fieldStage.ordinal());
-        compound.setInteger(TAG_LENGTH_PLUS, lengthPlusX);
-        compound.setInteger(TAG_WIDTH_PLUS, widthPlusZ);
-        compound.setInteger(TAG_LENGTH_MINUS, lengthMinusX);
-        compound.setInteger(TAG_WIDTH_MINUS, widthMinusZ);
-        compound.setInteger(TAG_OWNER, ownerId);
-        compound.setString(TAG_NAME, name);
+        compound.putBoolean(TAG_TAKEN, taken);
+        compound.putInt(TAG_STAGE, fieldStage.ordinal());
+        compound.putInt(TAG_LENGTH_PLUS, lengthPlusX);
+        compound.putInt(TAG_WIDTH_PLUS, widthPlusZ);
+        compound.putInt(TAG_LENGTH_MINUS, lengthMinusX);
+        compound.putInt(TAG_WIDTH_MINUS, widthMinusZ);
+        compound.putInt(TAG_OWNER, ownerId);
+        compound.putString(TAG_NAME, name);
 
         return super.writeToNBT(compound);
     }

@@ -6,7 +6,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.ColonyManager;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -36,23 +36,23 @@ public class SmeltableOre implements IDeliverable
         this.result = result;
     }
 
-    public static NBTTagCompound serialize(final IFactoryController controller, final SmeltableOre food)
+    public static CompoundNBT serialize(final IFactoryController controller, final SmeltableOre food)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger(NBT_COUNT, food.count);
+        final CompoundNBT compound = new CompoundNBT();
+        compound.putInt(NBT_COUNT, food.count);
 
         if (!ItemStackUtils.isEmpty(food.result))
         {
-            compound.setTag(NBT_RESULT, food.result.serializeNBT());
+            compound.put(NBT_RESULT, food.result.serializeNBT());
         }
 
         return compound;
     }
 
-    public static SmeltableOre deserialize(final IFactoryController controller, final NBTTagCompound compound)
+    public static SmeltableOre deserialize(final IFactoryController controller, final CompoundNBT compound)
     {
-        final int count = compound.getInteger(NBT_COUNT);
-        final ItemStack result = compound.hasKey(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_RESULT)) : ItemStackUtils.EMPTY;
+        final int count = compound.getInt(NBT_COUNT);
+        final ItemStack result = compound.keySet().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
 
         return new SmeltableOre(count, result);
     }

@@ -9,10 +9,10 @@ import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -42,14 +42,14 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
         final Colony colony = actionMenuState.getColonyForArgument("colony");
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.sendMessage(new StringTextComponent(NO_ARGUMENTS));
             return;
         }
 
         final CitizenData citizenData = actionMenuState.getCitizenForArgument("citizen");
         if (null == citizenData && requiresCitizen())
         {
-            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.sendMessage(new StringTextComponent(NO_ARGUMENTS));
             return;
         }
 
@@ -70,7 +70,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
     {
         if (args.length == 0)
         {
-            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.sendMessage(new StringTextComponent(NO_ARGUMENTS));
             return;
         }
 
@@ -81,7 +81,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
             colonyId = getIthArgument(args, 0, -1);
             if (colonyId == -1)
             {
-                final EntityPlayer player = server.getEntityWorld().getPlayerEntityByName(args[0]);
+                final PlayerEntity player = server.getEntityWorld().getPlayerEntityByName(args[0]);
                 if (player != null)
                 {
                     final IColony tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
@@ -96,9 +96,9 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
         }
 
         final Colony colony;
-        if (sender instanceof EntityPlayer && colonyId == -1)
+        if (sender instanceof PlayerEntity && colonyId == -1)
         {
-            final IColony tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
+            final IColony tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (PlayerEntity) sender);
             if (tempColony != null)
             {
                 colonyId = tempColony.getID();
@@ -110,16 +110,16 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
 
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.sendMessage(new StringTextComponent(NO_ARGUMENTS));
             return;
         }
 
-        if (sender instanceof EntityPlayer)
+        if (sender instanceof PlayerEntity)
         {
-            final EntityPlayer player = (EntityPlayer) sender;
+            final PlayerEntity player = (PlayerEntity) sender;
             if (!canPlayerUseCommand(player, getCommand(), colonyId))
             {
-                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new StringTextComponent(NOT_PERMITTED));
                 return;
             }
         }
@@ -131,7 +131,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
 
             if ((citizenId == -1 || colony.getCitizenManager().getCitizen(citizenId) == null) && requiresCitizen())
             {
-                sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+                sender.sendMessage(new StringTextComponent(NO_ARGUMENTS));
                 return;
             }
         }

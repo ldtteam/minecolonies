@@ -3,10 +3,10 @@ package com.minecolonies.coremod.tileentities;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.items.ModItems;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -69,7 +69,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
      * @param state the state of the block
      * @param rand Random class
      */
-    public void updateTick(final World worldIn, final BlockPos pos, final IBlockState state, final Random rand)
+    public void updateTick(final World worldIn, final BlockPos pos, final BlockState state, final Random rand)
     {
         if(getItems() == TileEntityBarrel.MAX_ITEMS)
         {
@@ -84,7 +84,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
         }
     }
 
-    private void doBarrelCompostTick(final World worldIn, final BlockPos pos, final IBlockState blockState)
+    private void doBarrelCompostTick(final World worldIn, final BlockPos pos, final BlockState blockState)
     {
         timer++;
         if (timer >= TIMER_END/AVERAGE_TICKS)
@@ -105,7 +105,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
      * @param pos the position
      * @return if the barrel took any item
      */
-    public boolean useBarrel(final World worldIn, final EntityPlayer playerIn, final ItemStack itemstack, final IBlockState state, final BlockPos pos)
+    public boolean useBarrel(final World worldIn, final PlayerEntity playerIn, final ItemStack itemstack, final BlockState state, final BlockPos pos)
     {
         if (done)
         {
@@ -163,7 +163,7 @@ public class TileEntityBarrel extends TileEntity implements ITickable
      * @param worldIn the world
      * @param state the state of the block
      */
-    public void updateBlock(final World worldIn, final IBlockState state)
+    public void updateBlock(final World worldIn, final BlockState state)
     {
          world.notifyBlockUpdate(pos, state, state, 0x03);
          world.markBlockRangeForRenderUpdate(pos,pos);
@@ -171,54 +171,54 @@ public class TileEntityBarrel extends TileEntity implements ITickable
     }
 
     @Override
-    public NBTTagCompound writeToNBT(final NBTTagCompound compound)
+    public CompoundNBT writeToNBT(final CompoundNBT compound)
     {
         super.writeToNBT(compound);
 
-        compound.setInteger("items", this.items);
-        compound.setInteger("timer", this.timer);
-        compound.setBoolean("done", this.done);
+        compound.putInt("items", this.items);
+        compound.putInt("timer", this.timer);
+        compound.putBoolean("done", this.done);
 
         return compound;
     }
 
     @Override
-    public void readFromNBT(final NBTTagCompound compound)
+    public void readFromNBT(final CompoundNBT compound)
     {
         super.readFromNBT(compound);
-        this.items = compound.getInteger("items");
-        this.timer = compound.getInteger("timer");
+        this.items = compound.getInt("items");
+        this.timer = compound.getInt("timer");
         this.done = compound.getBoolean("done");
     }
 
     @Override
     public SPacketUpdateTileEntity getUpdatePacket()
     {
-        final NBTTagCompound compound = new NBTTagCompound();
+        final CompoundNBT compound = new CompoundNBT();
         this.writeToNBT(compound);
         return new SPacketUpdateTileEntity(this.pos, 0, compound);
     }
 
     @NotNull
     @Override
-    public NBTTagCompound getUpdateTag()
+    public CompoundNBT getUpdateTag()
     {
-        return writeToNBT(new NBTTagCompound());
+        return writeToNBT(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
     {
-        final NBTTagCompound compound = packet.getNbtCompound();
+        final CompoundNBT compound = packet.getNbtCompound();
         this.readFromNBT(compound);
         world.markBlockRangeForRenderUpdate(pos,pos);
     }
 
     @Override
-    public final void handleUpdateTag(final NBTTagCompound tag)
+    public final void handleUpdateTag(final CompoundNBT tag)
     {
-        this.items = tag.getInteger("items");
-        this.timer = tag.getInteger("timer");
+        this.items = tag.getInt("items");
+        this.timer = tag.getInt("timer");
         this.done = tag.getBoolean("done");
     }
 

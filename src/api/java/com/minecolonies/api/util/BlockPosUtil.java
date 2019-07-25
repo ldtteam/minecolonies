@@ -2,15 +2,15 @@ package com.minecolonies.api.util;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.Tuple;
@@ -55,13 +55,13 @@ public final class BlockPosUtil
      * @param name     Name of the tag.
      * @param pos      Coordinates to write to NBT.
      */
-    public static NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound, final String name, @NotNull final BlockPos pos)
+    public static CompoundNBT writeToNBT(@NotNull final CompoundNBT compound, final String name, @NotNull final BlockPos pos)
     {
-        @NotNull final NBTTagCompound coordsCompound = new NBTTagCompound();
-        coordsCompound.setInteger("x", pos.getX());
-        coordsCompound.setInteger("y", pos.getY());
-        coordsCompound.setInteger("z", pos.getZ());
-        compound.setTag(name, coordsCompound);
+        @NotNull final CompoundNBT coordsCompound = new CompoundNBT();
+        coordsCompound.putInt("x", pos.getX());
+        coordsCompound.putInt("y", pos.getY());
+        coordsCompound.putInt("z", pos.getZ());
+        compound.put(name, coordsCompound);
         return compound;
     }
 
@@ -71,9 +71,9 @@ public final class BlockPosUtil
      * @param random a random object.
      * @return a tuple of two directions.
      */
-    private static Tuple<EnumFacing, EnumFacing> getRandomDirectionTuple(final Random random)
+    private static Tuple<Direction, Direction> getRandomDirectionTuple(final Random random)
     {
-        return new Tuple<>(EnumFacing.random(random), EnumFacing.random(random));
+        return new Tuple<>(Direction.random(random), Direction.random(random));
     }
 
     /**
@@ -95,11 +95,11 @@ public final class BlockPosUtil
                  || !world.getBlockState(pos.down()).getMaterial().isSolid()
                  || (!world.isAirBlock(pos) && !world.isAirBlock(pos.up())))
         {
-            final Tuple<EnumFacing, EnumFacing> direction = getRandomDirectionTuple(random);
+            final Tuple<Direction, Direction> direction = getRandomDirectionTuple(random);
             pos =
               new BlockPos(currentPosition)
-                .offset(direction.getFirst(), random.nextInt(LENGTH_RANGE))
-                .offset(direction.getSecond(), random.nextInt(LENGTH_RANGE))
+                .offset(direction.getA(), random.nextInt(LENGTH_RANGE))
+                .offset(direction.getB(), random.nextInt(LENGTH_RANGE))
                 .up(random.nextInt(UP_DOWN_RANGE))
                 .down(random.nextInt(UP_DOWN_RANGE));
 
@@ -122,12 +122,12 @@ public final class BlockPosUtil
      * @return Chunk coordinates read from the compound.
      */
     @NotNull
-    public static BlockPos readFromNBT(@NotNull final NBTTagCompound compound, final String name)
+    public static BlockPos readFromNBT(@NotNull final CompoundNBT compound, final String name)
     {
-        final NBTTagCompound coordsCompound = compound.getCompoundTag(name);
-        final int x = coordsCompound.getInteger("x");
-        final int y = coordsCompound.getInteger("y");
-        final int z = coordsCompound.getInteger("z");
+        final CompoundNBT coordsCompound = compound.getCompound(name);
+        final int x = coordsCompound.getInt("x");
+        final int y = coordsCompound.getInt("y");
+        final int z = coordsCompound.getInt("z");
         return new BlockPos(x, y, z);
     }
 
@@ -137,13 +137,13 @@ public final class BlockPosUtil
      * @param tagList Tag list to write compound with chunk coordinates to.
      * @param pos     Coordinate to write to the tag list.
      */
-    public static void writeToNBTTagList(@NotNull final NBTTagList tagList, @NotNull final BlockPos pos)
+    public static void writeToListNBT(@NotNull final ListNBT tagList, @NotNull final BlockPos pos)
     {
-        @NotNull final NBTTagCompound coordsCompound = new NBTTagCompound();
-        coordsCompound.setInteger("x", pos.getX());
-        coordsCompound.setInteger("y", pos.getY());
-        coordsCompound.setInteger("z", pos.getZ());
-        tagList.appendTag(coordsCompound);
+        @NotNull final CompoundNBT coordsCompound = new CompoundNBT();
+        coordsCompound.putInt("x", pos.getX());
+        coordsCompound.putInt("y", pos.getY());
+        coordsCompound.putInt("z", pos.getZ());
+        tagList.add(coordsCompound);
     }
 
     /**
@@ -155,12 +155,12 @@ public final class BlockPosUtil
      * @return Chunk coordinate read from the tag list.
      */
     @NotNull
-    public static BlockPos readFromNBTTagList(@NotNull final NBTTagList tagList, final int index)
+    public static BlockPos readFromListNBT(@NotNull final ListNBT tagList, final int index)
     {
-        final NBTTagCompound coordsCompound = tagList.getCompoundTagAt(index);
-        final int x = coordsCompound.getInteger("x");
-        final int y = coordsCompound.getInteger("y");
-        final int z = coordsCompound.getInteger("z");
+        final CompoundNBT coordsCompound = tagList.getCompound(index);
+        final int x = coordsCompound.getInt("x");
+        final int y = coordsCompound.getInt("y");
+        final int z = coordsCompound.getInt("z");
         return new BlockPos(x, y, z);
     }
 
@@ -430,7 +430,7 @@ public final class BlockPosUtil
      * @param coords Coordinates of the block.
      * @return Metadata of the block at the given coordinates.
      */
-    public static IBlockState getBlockState(@NotNull final World world, @NotNull final BlockPos coords)
+    public static BlockState getBlockState(@NotNull final World world, @NotNull final BlockPos coords)
     {
         return world.getBlockState(coords);
     }
@@ -444,7 +444,7 @@ public final class BlockPosUtil
      * @param flag    Flag to set.
      * @return True if block is placed, otherwise false.
      */
-    public static boolean setBlock(@NotNull final World worldIn, @NotNull final BlockPos coords, final IBlockState state, final int flag)
+    public static boolean setBlock(@NotNull final World worldIn, @NotNull final BlockPos coords, final BlockState state, final int flag)
     {
         return worldIn.setBlockState(coords, state, flag);
     }
@@ -552,10 +552,10 @@ public final class BlockPosUtil
      * @param neighbor the block its facing.
      * @return the directions its facing.
      */
-    public static EnumFacing getFacing(final BlockPos pos, final BlockPos neighbor)
+    public static Direction getFacing(final BlockPos pos, final BlockPos neighbor)
     {
         final BlockPos vector = neighbor.subtract(pos);
-        return EnumFacing.getFacingFromVector(vector.getX(), vector.getY(), -vector.getZ());
+        return Direction.getFacingFromVector(vector.getX(), vector.getY(), -vector.getZ());
     }
 
     /**
@@ -565,10 +565,10 @@ public final class BlockPosUtil
      * @param neighbor the block its facing.
      * @return the directions its facing.
      */
-    public static EnumFacing getXZFacing(final BlockPos pos, final BlockPos neighbor)
+    public static Direction getXZFacing(final BlockPos pos, final BlockPos neighbor)
     {
         final BlockPos vector = neighbor.subtract(pos);
-        return EnumFacing.getFacingFromVector(vector.getX(), 0, vector.getZ());
+        return Direction.getFacingFromVector(vector.getX(), 0, vector.getZ());
     }
 
     /**

@@ -5,13 +5,13 @@ import com.minecolonies.coremod.commands.IActionCommand;
 import com.ldtteam.structurize.items.ItemScanTool;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.CommandBlockBaseLogic;
 import net.minecraft.tileentity.TileEntityCommandBlock;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,17 +41,17 @@ public class ScanCommand implements IActionCommand
         final String playerArgument = actionMenuState.getStringForArgument("player");
 
         // Will throw ClassCastException if null, but should never be null as these values are required.
-        final int x1 = actionMenuState.getIntegerForArgument("x1");
-        final int y1 = actionMenuState.getIntegerForArgument("y1");
-        final int z1 = actionMenuState.getIntegerForArgument("z1");
-        final int x2 = actionMenuState.getIntegerForArgument("x2");
-        final int y2 = actionMenuState.getIntegerForArgument("y2");
-        final int z2 = actionMenuState.getIntegerForArgument("z2");
+        final int x1 = actionMenuState.getIntForArgument("x1");
+        final int y1 = actionMenuState.getIntForArgument("y1");
+        final int z1 = actionMenuState.getIntForArgument("z1");
+        final int x2 = actionMenuState.getIntForArgument("x2");
+        final int y2 = actionMenuState.getIntForArgument("y2");
+        final int z2 = actionMenuState.getIntForArgument("z2");
         final String name = actionMenuState.getStringForArgument("name");
 
         if (!name.matches("^[\\w]*"))
         {
-            sender.sendMessage(new TextComponentString(SPECIAL_CHARACTERS_ADVICE));
+            sender.sendMessage(new StringTextComponent(SPECIAL_CHARACTERS_ADVICE));
             return;
         }
 
@@ -62,7 +62,7 @@ public class ScanCommand implements IActionCommand
             server.addScheduledTask(() ->
             {
                 @Nullable final World world = server.getEntityWorld();
-                final EntityPlayer player;
+                final PlayerEntity player;
                 if (playerArgument != null)
                 {
                     if (playerArgument.equalsIgnoreCase("@p"))
@@ -75,29 +75,29 @@ public class ScanCommand implements IActionCommand
                         player = world.getPlayerEntityByName(playerArgument);
                     }
                 }
-                else if (sender instanceof EntityPlayer)
+                else if (sender instanceof PlayerEntity)
                 {
-                    player = (EntityPlayerMP) sender;
+                    player = (PlayerEntityMP) sender;
                 }
                 else
                 {
-                    sender.sendMessage(new TextComponentString(SCAN_FAILURE_MESSAGE));
+                    sender.sendMessage(new StringTextComponent(SCAN_FAILURE_MESSAGE));
                     return;
                 }
 
                 if (player == null)
                 {
-                    sender.sendMessage(new TextComponentString(SCAN_FAILURE_MESSAGE));
+                    sender.sendMessage(new StringTextComponent(SCAN_FAILURE_MESSAGE));
                     return;
                 }
 
                 ItemScanTool.saveStructure(world, from, to, player, name == null ? "" : name);
-                sender.sendMessage(new TextComponentString(SCAN_SUCCESS_MESSAGE));
+                sender.sendMessage(new StringTextComponent(SCAN_SUCCESS_MESSAGE));
             });
         }
         else
         {
-            sender.sendMessage(new TextComponentString(NO_PERMISSION_TO_SCAN_MESSAGE));
+            sender.sendMessage(new StringTextComponent(NO_PERMISSION_TO_SCAN_MESSAGE));
         }
     }
 }

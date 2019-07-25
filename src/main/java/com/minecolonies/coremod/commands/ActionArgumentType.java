@@ -9,8 +9,8 @@ import com.minecolonies.coremod.commands.AbstractCommandParser.ModuleContext;
 import com.minecolonies.coremod.commands.CommandEntryPointNew.MineColonyDataProvider;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.BlockPos;
@@ -75,9 +75,9 @@ public enum ActionArgumentType
     private static List<String> getAllPlayerNames(@NotNull final MinecraftServer server)
     {
         final PlayerList playerList = server.getPlayerList();
-        final List<EntityPlayerMP> allPlayersList = playerList.getPlayers();
+        final List<PlayerEntityMP> allPlayersList = playerList.getPlayers();
         final List<String> playerNames = new ArrayList<>(allPlayersList.size());
-        for (final EntityPlayerMP entityPlayerMP : allPlayersList)
+        for (final PlayerEntityMP entityPlayerMP : allPlayersList)
         {
             final String playerName = entityPlayerMP.getName();
             if (!playerNames.contains(playerName))
@@ -422,7 +422,7 @@ public enum ActionArgumentType
     }
 
     @Nullable
-    private EntityPlayerMP parseOnlinePlayerValue(@NotNull final MinecraftServer server, final String potentialArgumentValue)
+    private PlayerEntityMP parseOnlinePlayerValue(@NotNull final MinecraftServer server, final String potentialArgumentValue)
     {
         final List<String> playerNameStrings = getOnlinePlayerNames(server);
         if (playerNameStrings.contains(potentialArgumentValue))
@@ -440,7 +440,7 @@ public enum ActionArgumentType
     }
 
     @Nullable
-    private EntityPlayerMP parseAnyPlayerValue(@NotNull final MinecraftServer server, final String potentialArgumentValue)
+    private PlayerEntityMP parseAnyPlayerValue(@NotNull final MinecraftServer server, final String potentialArgumentValue)
     {
         final List<String> playerNameStrings = getAllPlayerNames(server);
         if (playerNameStrings.contains(potentialArgumentValue))
@@ -465,9 +465,9 @@ public enum ActionArgumentType
         if (null != result)
         {
             int colonyNumber = result.intValue();
-            if (sender instanceof EntityPlayer && colonyNumber == -1)
+            if (sender instanceof PlayerEntity && colonyNumber == -1)
             {
-                final IColony icolony = mineColonyDataProvider.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
+                final IColony icolony = mineColonyDataProvider.getIColonyByOwner(sender.getEntityWorld(), (PlayerEntity) sender);
                 if (icolony != null)
                 {
                     colonyNumber = icolony.getID();

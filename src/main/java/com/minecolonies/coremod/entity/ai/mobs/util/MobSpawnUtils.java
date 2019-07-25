@@ -20,9 +20,9 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -100,9 +100,9 @@ public final class MobSpawnUtils
     {
         mob.tasks.addTask(PRIORITY_ZERO, new EntityAISwimming(mob));
         mob.tasks.addTask(PRIORITY_FOUR, new EntityAIWalkToRandomHuts(mob, AI_MOVE_SPEED));
-        mob.targetTasks.addTask(PRIORITY_TWO, new EntityAINearestAttackableTarget<>(mob, EntityPlayer.class, true));
+        mob.targetTasks.addTask(PRIORITY_TWO, new EntityAINearestAttackableTarget<>(mob, PlayerEntity.class, true));
         mob.targetTasks.addTask(PRIORITY_THREE, new EntityAINearestAttackableTarget<>(mob, EntityCitizen.class, true));
-        mob.tasks.addTask(PRIORITY_FIVE, new EntityAIWatchClosest(mob, EntityPlayer.class, MAX_WATCH_DISTANCE));
+        mob.tasks.addTask(PRIORITY_FIVE, new EntityAIWatchClosest(mob, PlayerEntity.class, MAX_WATCH_DISTANCE));
 
         if (mob instanceof EntityArcherBarbarian || mob instanceof EntityArcherPirate)
         {
@@ -159,38 +159,38 @@ public final class MobSpawnUtils
     {
         if (mob instanceof EntityBarbarian)
         {
-            mob.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.STONE_AXE));
+            mob.setItemStackToSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.STONE_AXE));
         }
         else if (mob instanceof EntityArcherBarbarian || mob instanceof EntityArcherPirate)
         {
-            mob.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+            mob.setItemStackToSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.BOW));
         }
         else if (mob instanceof EntityChiefBarbarian)
         {
-            mob.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(ModItems.chiefSword));
-            mob.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(Items.CHAINMAIL_HELMET));
-            mob.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
-            mob.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(Items.CHAINMAIL_LEGGINGS));
-            mob.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(Items.CHAINMAIL_BOOTS));
+            mob.setItemStackToSlot(EquipmentSlotType.MAINHAND, new ItemStack(ModItems.chiefSword));
+            mob.setItemStackToSlot(EquipmentSlotType.HEAD, new ItemStack(Items.CHAINMAIL_HELMET));
+            mob.setItemStackToSlot(EquipmentSlotType.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
+            mob.setItemStackToSlot(EquipmentSlotType.LEGS, new ItemStack(Items.CHAINMAIL_LEGGINGS));
+            mob.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(Items.CHAINMAIL_BOOTS));
         }
         else if (mob instanceof AbstractEntityPirate)
         {
-            mob.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(ModItems.scimitar));
+            mob.setItemStackToSlot(EquipmentSlotType.MAINHAND, new ItemStack(ModItems.scimitar));
             if (mob instanceof EntityCaptainPirate)
             {
                 if (new Random().nextBoolean())
                 {
-                    mob.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(ModItems.pirateHelmet_1));
-                    mob.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ModItems.pirateChest_1));
-                    mob.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ModItems.pirateLegs_1));
-                    mob.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(ModItems.pirateBoots_1));
+                    mob.setItemStackToSlot(EquipmentSlotType.HEAD, new ItemStack(ModItems.pirateHelmet_1));
+                    mob.setItemStackToSlot(EquipmentSlotType.CHEST, new ItemStack(ModItems.pirateChest_1));
+                    mob.setItemStackToSlot(EquipmentSlotType.LEGS, new ItemStack(ModItems.pirateLegs_1));
+                    mob.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(ModItems.pirateBoots_1));
                 }
                 else
                 {
-                    mob.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(ModItems.pirateHelmet_2));
-                    mob.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(ModItems.pirateChest_2));
-                    mob.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(ModItems.pirateLegs_2));
-                    mob.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(ModItems.pirateBoots_2));
+                    mob.setItemStackToSlot(EquipmentSlotType.HEAD, new ItemStack(ModItems.pirateHelmet_2));
+                    mob.setItemStackToSlot(EquipmentSlotType.CHEST, new ItemStack(ModItems.pirateChest_2));
+                    mob.setItemStackToSlot(EquipmentSlotType.LEGS, new ItemStack(ModItems.pirateLegs_2));
+                    mob.setItemStackToSlot(EquipmentSlotType.FEET, new ItemStack(ModItems.pirateBoots_2));
                 }
             }
         }

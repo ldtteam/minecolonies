@@ -9,7 +9,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -103,7 +103,7 @@ public class TransferItemsRequestMessage extends AbstractMessage<TransferItemsRe
     }
 
     @Override
-    public void messageOnServerThread(final TransferItemsRequestMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final TransferItemsRequestMessage message, final PlayerEntityMP player)
     {
         final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null)
@@ -139,7 +139,7 @@ public class TransferItemsRequestMessage extends AbstractMessage<TransferItemsRe
         }
 
         final ItemStack itemStackToTake = new ItemStack(item, amountToTake, message.itemStack.getItemDamage());
-        itemStackToTake.setTagCompound(message.itemStack.getTagCompound());
+        itemStackToTake.putCompound(message.itemStack.getTagCompound());
 
         ItemStack remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(building.getTileEntity(), itemStackToTake);
 

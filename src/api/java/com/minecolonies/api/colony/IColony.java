@@ -3,7 +3,7 @@ package com.minecolonies.api.colony;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -145,13 +145,13 @@ public interface IColony
      * Remove a visiting player.
      * @param player the player.
      */
-    void removeVisitingPlayer(final EntityPlayer player);
+    void removeVisitingPlayer(final PlayerEntity player);
 
     /**
      * Add a visiting player.
      * @param player the player.
      */
-    void addVisitingPlayer(final EntityPlayer player);
+    void addVisitingPlayer(final PlayerEntity player);
 
     /**
      * Get the colony dimension.

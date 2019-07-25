@@ -11,11 +11,11 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -30,7 +30,7 @@ import java.util.Locale;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
-import static net.minecraft.util.EnumFacing.*;
+import static net.minecraft.util.Direction.*;
 
 /**
  * This block is used as a border to show the size of the building.
@@ -231,11 +231,11 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<Bloc
     @NotNull
     @Override
     @Deprecated
-    public IBlockState getStateFromMeta(final int meta)
+    public BlockState getStateFromMeta(final int meta)
     {
-        EnumFacing enumfacing = byIndex(meta);
+        Direction enumfacing = byIndex(meta);
 
-        if (enumfacing.getAxis() == EnumFacing.Axis.Y)
+        if (enumfacing.getAxis() == Direction.Axis.Y)
         {
             enumfacing = NORTH;
         }
@@ -244,7 +244,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<Bloc
     }
 
     @Override
-    public int getMetaFromState(@NotNull final IBlockState state)
+    public int getMetaFromState(@NotNull final BlockState state)
     {
         return state.getValue(FACING).getIndex();
     }
@@ -255,7 +255,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<Bloc
     @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
-    public boolean isFullCube(final IBlockState state)
+    public boolean isFullCube(final BlockState state)
     {
         return false;
     }
@@ -272,9 +272,9 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<Bloc
     @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
-    public AxisAlignedBB getBoundingBox(final IBlockState stateIn, final IBlockAccess source, final BlockPos pos)
+    public AxisAlignedBB getBoundingBox(final BlockState stateIn, final IBlockAccess source, final BlockPos pos)
     {
-        final IBlockState state = getActualState(stateIn, source, pos);
+        final BlockState state = getActualState(stateIn, source, pos);
         if(state.getValue(VARIANT).equals(Type.CORNER))
         {
             if (state.getValue(FACING).equals(NORTH))
@@ -340,7 +340,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<Bloc
      */
     @Deprecated
     @Override
-    public IBlockState getActualState(@NotNull final IBlockState state, @NotNull final IBlockAccess worldIn, @NotNull final BlockPos pos)
+    public BlockState getActualState(@NotNull final BlockState state, @NotNull final IBlockAccess worldIn, @NotNull final BlockPos pos)
     {
         return getTapeShape(state, worldIn, pos);
     }
@@ -352,7 +352,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<Bloc
      * @param position the position.Re
      * @return the blockState to use.
      */
-    private static IBlockState getTapeShape(@NotNull final IBlockState state, @NotNull final IBlockAccess world, @NotNull final BlockPos position)
+    private static BlockState getTapeShape(@NotNull final BlockState state, @NotNull final IBlockAccess world, @NotNull final BlockPos position)
     {
         final boolean[] connectors = new boolean[]{world.getBlockState(position.east()).getBlock() instanceof BlockConstructionTape,
                 world.getBlockState(position.west()).getBlock() instanceof BlockConstructionTape,
@@ -373,7 +373,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<Bloc
     @SideOnly(Side.CLIENT)
     @Override
     @Deprecated
-    public boolean shouldSideBeRendered(final IBlockState blockState, final IBlockAccess blockAccess, final BlockPos pos, final EnumFacing side)
+    public boolean shouldSideBeRendered(final BlockState blockState, final IBlockAccess blockAccess, final BlockPos pos, final Direction side)
     {
         return true;
     }
@@ -385,7 +385,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<Bloc
     @Nullable
     @Deprecated
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(final IBlockState blockState, final IBlockAccess worldIn, final BlockPos pos)
+    public AxisAlignedBB getCollisionBoundingBox(final BlockState blockState, final IBlockAccess worldIn, final BlockPos pos)
     {
         return null;
     }
@@ -396,14 +396,14 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<Bloc
     @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
-    public boolean isOpaqueCube(final IBlockState state)
+    public boolean isOpaqueCube(final BlockState state)
     {
         return false;
     }
 
     @Nullable
     @Override
-    public Item getItemDropped(final IBlockState state, final Random rand, final int fortune)
+    public Item getItemDropped(final BlockState state, final Random rand, final int fortune)
     {
         return null;
     }
@@ -423,17 +423,17 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<Bloc
     @NotNull
     @Override
     @Deprecated
-    public IBlockState getStateForPlacement(
+    public BlockState getStateForPlacement(
                                              final World worldIn,
                                              final BlockPos pos,
-                                             final EnumFacing facing,
+                                             final Direction facing,
                                              final float hitX,
                                              final float hitY,
                                              final float hitZ,
                                              final int meta,
                                              final EntityLivingBase placer)
     {
-        @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
+        @NotNull final Direction enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 

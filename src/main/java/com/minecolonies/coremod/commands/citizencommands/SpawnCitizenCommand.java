@@ -5,7 +5,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -98,7 +98,7 @@ public class SpawnCitizenCommand extends AbstractCitizensCommands implements IAc
     }
 
     @Override
-    public boolean canPlayerUseCommand(final EntityPlayer player, final Commands theCommand, final int colonyId)
+    public boolean canPlayerUseCommand(final PlayerEntity player, final Commands theCommand, final int colonyId)
     {
         final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0);
         return super.canPlayerUseCommand(player, theCommand, colonyId)

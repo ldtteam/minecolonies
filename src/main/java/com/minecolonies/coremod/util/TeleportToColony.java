@@ -8,12 +8,12 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHal
 import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.network.play.server.SPacketEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -55,18 +55,18 @@ public final class TeleportToColony
     @NotNull
     public static void colonyTeleport(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args)
     {
-        final EntityPlayer playerToTeleport;
+        final PlayerEntity playerToTeleport;
         final IColony colony;
         final int colonyId;
         final Entity senderEntity = sender.getCommandSenderEntity();
         //see if sent by a player and grab their name and Get the players Colony ID that sent the command
-        if (senderEntity instanceof EntityPlayer)
+        if (senderEntity instanceof PlayerEntity)
         {
             //if no args then this is a home colony TP and we get the players Colony ID
             if (args.length == 0)
             {
-                playerToTeleport = (EntityPlayer) sender;
-                colony = ColonyManager.getIColonyByOwner(((EntityPlayer) sender).world, (EntityPlayer) sender);
+                playerToTeleport = (PlayerEntity) sender;
+                colony = ColonyManager.getIColonyByOwner(((PlayerEntity) sender).world, (PlayerEntity) sender);
 
                 if(colony == null)
                 {
@@ -78,22 +78,22 @@ public final class TeleportToColony
             {
                 //if there is args then this will be to a friends colony TP and we use the Colony ID they specify
                 //will need to see if they friendly to destination colony
-                playerToTeleport = (EntityPlayer) sender;
+                playerToTeleport = (PlayerEntity) sender;
                 colonyId = Integer.valueOf(args[0]);
             }
         }
         else
         {
-            sender.sendMessage(new TextComponentString(CANT_FIND_PLAYER));
+            sender.sendMessage(new StringTextComponent(CANT_FIND_PLAYER));
             return;
         }
 
-        if (MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
+        if (MinecoloniesCommand.canExecuteCommand((PlayerEntity) sender))
         {
             teleportPlayer(playerToTeleport, colonyId, sender);
             return;
         }
-        sender.sendMessage(new TextComponentString("Please wait at least " + Configurations.gameplay.teleportBuffer + " seconds to teleport again"));
+        sender.sendMessage(new StringTextComponent("Please wait at least " + Configurations.gameplay.teleportBuffer + " seconds to teleport again"));
     }
 
     /**
@@ -102,14 +102,14 @@ public final class TeleportToColony
      * @param colID            the senders colony ID.
      * @param playerToTeleport the player which shall be teleported.
      */
-    private static void teleportPlayer(final EntityPlayer playerToTeleport, final int colID, final ICommandSender sender)
+    private static void teleportPlayer(final PlayerEntity playerToTeleport, final int colID, final ICommandSender sender)
     {
         final Colony colony = ColonyManager.getColonyByWorld(colID, FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0));
         final BuildingTownHall townHall = colony.getBuildingManager().getTownHall();
 
         if (townHall == null)
         {
-            sender.sendMessage(new TextComponentString(NO_TOWNHALL));
+            sender.sendMessage(new StringTextComponent(NO_TOWNHALL));
             return;
         }
 
@@ -120,15 +120,15 @@ public final class TeleportToColony
 
         if (colID < MIN_COLONY_ID)
         {
-            sender.sendMessage(new TextComponentString(CANT_FIND_COLONY));
+            sender.sendMessage(new StringTextComponent(CANT_FIND_COLONY));
             return;
         }
 
-        final EntityPlayerMP entityPlayerMP = (EntityPlayerMP) sender;
+        final PlayerEntityMP entityPlayerMP = (PlayerEntityMP) sender;
         if (dimension != colonyDimension)
         {
-            playerToTeleport.sendMessage(new TextComponentString("We got places to go, kid..."));
-            playerToTeleport.sendMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
+            playerToTeleport.sendMessage(new StringTextComponent("We got places to go, kid..."));
+            playerToTeleport.sendMessage(new StringTextComponent("Buckle up buttercup, this ain't no joy ride!!!"));
             final MinecraftServer server = sender.getEntityWorld().getMinecraftServer();
             final WorldServer worldServer = server.getWorld(colonyDimension);
 
@@ -137,7 +137,7 @@ public final class TeleportToColony
             entityPlayerMP.addExperience(0);
             entityPlayerMP.setPlayerHealthUpdated();
 
-            playerToTeleport.sendMessage(new TextComponentString("Hold onto your pants, we're going Inter-Dimensional!"));
+            playerToTeleport.sendMessage(new StringTextComponent("Hold onto your pants, we're going Inter-Dimensional!"));
 
             worldServer.getMinecraftServer().getPlayerList()
                     .transferPlayerToDimension(entityPlayerMP, colonyDimension, new Teleporter(worldServer));

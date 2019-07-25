@@ -11,7 +11,7 @@ import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -276,7 +276,7 @@ public final class EntityFishHook extends Entity
      * If a hook gets loaded, kill it immediately.
      */
     @Override
-    public void readEntityFromNBT(final NBTTagCompound unused)
+    public void readEntityFromNBT(final CompoundNBT unused)
     {
         this.setDead();
     }
@@ -286,7 +286,7 @@ public final class EntityFishHook extends Entity
      * A hook does not need to be saved.
      */
     @Override
-    public void writeEntityToNBT(final NBTTagCompound unused)
+    public void writeEntityToNBT(final CompoundNBT unused)
     {
         //We don't save this
     }

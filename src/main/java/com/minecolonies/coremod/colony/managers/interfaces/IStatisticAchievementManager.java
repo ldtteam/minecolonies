@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.managers.interfaces;
 
 import com.minecolonies.coremod.achievements.MineColoniesAchievement;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -13,13 +13,13 @@ public interface IStatisticAchievementManager
      * Reads all stats from nbt.
      * @param compound the compound.
      */
-    void readFromNBT(@NotNull final NBTTagCompound compound);
+    void readFromNBT(@NotNull final CompoundNBT compound);
 
     /**
      * Write all stats to nbt.
      * @param statsCompound the compound.
      */
-    void writeToNBT(@NotNull final NBTTagCompound statsCompound);
+    void writeToNBT(@NotNull final CompoundNBT statsCompound);
 
     /**
      * Check all achievements.

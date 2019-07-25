@@ -7,15 +7,15 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemArmor;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -76,7 +76,7 @@ public class CitizenItemHandler
 
             if (ItemStackUtils.isEmpty(resultStack) || ItemStackUtils.getSize(resultStack) != ItemStackUtils.getSize(compareStack))
             {
-                CompatibilityUtils.getWorld(citizen).playSound((EntityPlayer) null,
+                CompatibilityUtils.getWorld(citizen).playSound((PlayerEntity) null,
                   citizen.getPosition(),
                   SoundEvents.ENTITY_ITEM_PICKUP,
                   SoundCategory.AMBIENT,
@@ -105,7 +105,7 @@ public class CitizenItemHandler
      */
     public void removeHeldItem()
     {
-        citizen.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
+        citizen.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
     }
 
     /**
@@ -119,11 +119,11 @@ public class CitizenItemHandler
         citizen.getCitizenData().getInventory().setHeldItem(hand, slot);
         if (hand.equals(EnumHand.MAIN_HAND))
         {
-            citizen.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
+            citizen.setItemStackToSlot(EquipmentSlotType.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
         }
         else if (hand.equals(EnumHand.OFF_HAND))
         {
-            citizen.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
+            citizen.setItemStackToSlot(EquipmentSlotType.OFFHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
         }
     }
 
@@ -135,7 +135,7 @@ public class CitizenItemHandler
     public void setMainHeldItem(final int slot)
     {
         citizen.getCitizenData().getInventory().setHeldItem(EnumHand.MAIN_HAND, slot);
-        citizen.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
+        citizen.setItemStackToSlot(EquipmentSlotType.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
     }
 
     /**
@@ -174,7 +174,7 @@ public class CitizenItemHandler
 
         citizen.swingArm(citizen.getActiveHand());
 
-        final IBlockState blockState = CompatibilityUtils.getWorld(citizen).getBlockState(blockPos);
+        final BlockState blockState = CompatibilityUtils.getWorld(citizen).getBlockState(blockPos);
         final Block block = blockState.getBlock();
         if (breakBlock)
         {
@@ -200,14 +200,14 @@ public class CitizenItemHandler
             if (!CompatibilityUtils.getWorld(citizen).isRemote)
             {
                 final BlockPos vector = blockPos.subtract(citizen.getPosition());
-                final EnumFacing facing = EnumFacing.getFacingFromVector(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
+                final Direction facing = Direction.getFacingFromVector(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
 
                 MineColonies.getNetwork().sendToAllAround(
                   new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorld(citizen).getBlockState(blockPos), facing.ordinal()),
                   new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorld(citizen).provider.getDimension(), blockPos.getX(),
                     blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE));
             }
-            CompatibilityUtils.getWorld(citizen).playSound((EntityPlayer) null,
+            CompatibilityUtils.getWorld(citizen).playSound((PlayerEntity) null,
               blockPos,
               block.getSoundType(blockState, CompatibilityUtils.getWorld(citizen), blockPos, citizen).getBreakSound(),
               SoundCategory.BLOCKS,
@@ -235,7 +235,7 @@ public class CitizenItemHandler
         if (ItemStackUtils.getSize(heldItem) < 1)
         {
             citizen.getInventoryCitizen().setInventorySlotContents(citizen.getInventoryCitizen().getHeldItemSlot(hand), ItemStackUtils.EMPTY);
-            citizen.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
+            citizen.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
         }
     }
 
@@ -301,7 +301,7 @@ public class CitizenItemHandler
     {
         for (final ItemStack stack : citizen.getArmorInventoryList())
         {
-            if (ItemStackUtils.isEmpty(stack) || !(stack.getItem() instanceof ItemArmor))
+            if (ItemStackUtils.isEmpty(stack) || !(stack.getItem() instanceof ArmorItem))
             {
                 continue;
             }

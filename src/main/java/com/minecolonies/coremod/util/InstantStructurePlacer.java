@@ -11,10 +11,10 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
 import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -104,7 +104,7 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
                 for (int i = 0; i < structure.getWidth(); i++)
                 {
                     @NotNull final BlockPos localPos = new BlockPos(i, j, k);
-                    final IBlockState localState = this.structure.getBlockState(localPos);
+                    final BlockState localState = this.structure.getBlockState(localPos);
                     final Block localBlock = localState.getBlock();
 
                     final BlockPos worldPos = pos.add(localPos);
@@ -128,13 +128,13 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
 
         for (@NotNull final BlockPos coords : delayedBlocks)
         {
-            final IBlockState localState = this.structure.getBlockState(coords);
+            final BlockState localState = this.structure.getBlockState(coords);
             final BlockPos newWorldPos = pos.add(coords);
 
             handleBlockPlacement(newWorldPos, localState, complete, this.structure.getBlockInfo(coords).getTileEntityData(), structure.getWorld());
         }
 
-        for (final NBTTagCompound compound : this.structure.getEntityData())
+        for (final CompoundNBT compound : this.structure.getEntityData())
         {
             if (compound != null)
             {
@@ -164,16 +164,16 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
      * @param tileEntityData the tileEntity.
      * @param world          the world it is being placed in.
      */
-    private void handleBlockPlacement(final BlockPos pos, final IBlockState localState, final boolean complete, final NBTTagCompound tileEntityData, final World world)
+    private void handleBlockPlacement(final BlockPos pos, final BlockState localState, final boolean complete, final CompoundNBT tileEntityData, final World world)
     {
         for (final IPlacementHandler handlers : PlacementHandlers.handlers)
         {
             if (handlers.canHandle(world, pos, localState))
             {
                 final Object result = handlers.handle(world, pos, localState, tileEntityData, complete, structure.getLocalPosition(), structure.getSettings());
-                if (result instanceof IBlockState)
+                if (result instanceof BlockState)
                 {
-                    final IBlockState blockState = (IBlockState) result;
+                    final BlockState blockState = (BlockState) result;
 
                     final Colony colony = ColonyManager.getColonyByPosFromWorld(world, pos);
                     if (colony != null)

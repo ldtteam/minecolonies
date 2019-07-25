@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.util.NBTUtils;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -146,24 +146,24 @@ public interface IColonyManagerCapability
     public class Storage implements Capability.IStorage<IColonyManagerCapability>
     {
         @Override
-        public NBTBase writeNBT(@NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance, @Nullable final EnumFacing side)
+        public INBT writeNBT(@NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance, @Nullable final Direction side)
         {
-            final NBTTagCompound compound = new NBTTagCompound();
-            compound.setTag(TAG_COLONIES, instance.getColonies().stream().map(Colony::getColonyTag).filter(Objects::nonNull).collect(NBTUtils.toNBTTagList()));
-            compound.setInteger(TAG_MISSING_CHUNKS, instance.getMissingChunksToLoad());
+            final CompoundNBT compound = new CompoundNBT();
+            compound.put(TAG_COLONIES, instance.getColonies().stream().map(Colony::getColonyTag).filter(Objects::nonNull).collect(NBTUtils.toListNBT()));
+            compound.putInt(TAG_MISSING_CHUNKS, instance.getMissingChunksToLoad());
             return compound;
         }
 
         @Override
         public void readNBT(@NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance,
-                @Nullable final EnumFacing side, @NotNull final NBTBase nbt)
+                @Nullable final Direction side, @NotNull final INBT nbt)
         {
-            if(nbt instanceof NBTTagCompound)
+            if(nbt instanceof CompoundNBT)
             {
-                final NBTTagCompound compound = (NBTTagCompound) nbt;
-                NBTUtils.streamCompound(((NBTTagCompound) nbt).getTagList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
+                final CompoundNBT compound = (CompoundNBT) nbt;
+                NBTUtils.streamCompound(((CompoundNBT) nbt).getList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
                   .map(colonyCompound -> Colony.loadColony(colonyCompound, null)).filter(Objects::nonNull).forEach(instance::addColony);
-                instance.setMissingChunksToLoad(compound.getInteger(TAG_MISSING_CHUNKS));
+                instance.setMissingChunksToLoad(compound.getInt(TAG_MISSING_CHUNKS));
             }
         }
     }

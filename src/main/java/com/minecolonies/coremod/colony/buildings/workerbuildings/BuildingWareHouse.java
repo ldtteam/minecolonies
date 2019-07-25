@@ -24,8 +24,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
@@ -177,21 +177,21 @@ public class BuildingWareHouse extends AbstractBuilding
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         super.readFromNBT(compound);
 
         registeredDeliverymen.clear();
-        final NBTTagList deliverymanTagList = compound.getTagList(TAG_DELIVERYMAN, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < deliverymanTagList.tagCount(); i++)
+        final ListNBT deliverymanTagList = compound.getList(TAG_DELIVERYMAN, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < deliverymanTagList.size(); i++)
         {
-            final BlockPos pos = NBTUtil.getPosFromTag(deliverymanTagList.getCompoundTagAt(i));
+            final BlockPos pos = NBTUtil.getPosFromTag(deliverymanTagList.getCompound(i));
             if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuildingWorker && !registeredDeliverymen.contains(new Vec3d(pos)))
             {
                 registeredDeliverymen.add(new Vec3d(pos));
             }
         }
-        storageUpgrade = compound.getInteger(TAG_STORAGE);
+        storageUpgrade = compound.getInt(TAG_STORAGE);
     }
 
     @NotNull
@@ -202,16 +202,16 @@ public class BuildingWareHouse extends AbstractBuilding
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         super.writeToNBT(compound);
-        @NotNull final NBTTagList levelTagList = new NBTTagList();
+        @NotNull final ListNBT levelTagList = new ListNBT();
         for (@NotNull final Vec3d deliverymanBuilding : registeredDeliverymen)
         {
-            levelTagList.appendTag(NBTUtil.createPosTag(new BlockPos(deliverymanBuilding)));
+            levelTagList.add(NBTUtil.createPosTag(new BlockPos(deliverymanBuilding)));
         }
-        compound.setTag(TAG_DELIVERYMAN, levelTagList);
-        compound.setInteger(TAG_STORAGE, storageUpgrade);
+        compound.put(TAG_DELIVERYMAN, levelTagList);
+        compound.putInt(TAG_STORAGE, storageUpgrade);
     }
 
     /**

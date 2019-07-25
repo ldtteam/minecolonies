@@ -8,7 +8,7 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -96,12 +96,12 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     /**
-     * Read the WorkOrder data from the NBTTagCompound.
+     * Read the WorkOrder data from the CompoundNBT.
      *
      * @param compound NBT Tag compound.
      */
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound, final WorkManager manager)
+    public void readFromNBT(@NotNull final CompoundNBT compound, final WorkManager manager)
     {
         super.readFromNBT(compound, manager);
         final StructureName sn = new StructureName(compound.getString(TAG_SCHEMATIC_NAME));
@@ -124,30 +124,30 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
             }
         }
 
-        buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
+        buildingRotation = compound.getInt(TAG_BUILDING_ROTATION);
         requested = compound.getBoolean(TAG_IS_REQUESTED);
         isBuildingMirrored = compound.getBoolean(TAG_IS_MIRRORED);
-        amountOfRes = compound.getInteger(TAG_AMOUNT_OF_RES);
+        amountOfRes = compound.getInt(TAG_AMOUNT_OF_RES);
         levelUp = compound.getBoolean(TAG_LEVEL);
     }
 
     /**
-     * Save the Work Order to an NBTTagCompound.
+     * Save the Work Order to an CompoundNBT.
      *
      * @param compound NBT tag compound.
      */
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         super.writeToNBT(compound);
         if (workOrderName != null)
         {
-            compound.setString(TAG_WORKORDER_NAME, workOrderName);
+            compound.putString(TAG_WORKORDER_NAME, workOrderName);
         }
-        compound.setBoolean(TAG_IS_CLEARED, cleared);
+        compound.putBoolean(TAG_IS_CLEARED, cleared);
         if (md5 != null)
         {
-            compound.setString(TAG_SCHEMATIC_MD5, md5);
+            compound.putString(TAG_SCHEMATIC_MD5, md5);
         }
         if (structureName == null)
         {
@@ -155,13 +155,13 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         }
         else
         {
-            compound.setString(TAG_SCHEMATIC_NAME, structureName);
+            compound.putString(TAG_SCHEMATIC_NAME, structureName);
         }
-        compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
-        compound.setBoolean(TAG_IS_REQUESTED, requested);
-        compound.setBoolean(TAG_IS_MIRRORED, isBuildingMirrored);
-        compound.setInteger(TAG_AMOUNT_OF_RES, amountOfRes);
-        compound.setBoolean(TAG_LEVEL, levelUp);
+        compound.putInt(TAG_BUILDING_ROTATION, buildingRotation);
+        compound.putBoolean(TAG_IS_REQUESTED, requested);
+        compound.putBoolean(TAG_IS_MIRRORED, isBuildingMirrored);
+        compound.putInt(TAG_AMOUNT_OF_RES, amountOfRes);
+        compound.putBoolean(TAG_LEVEL, levelUp);
     }
 
     @Override
@@ -206,7 +206,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         }
 
         hasSentMessageForThisWorkOrder = true;
-        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+        LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
           "entity.builder.messageNoBuilder");
     }
 

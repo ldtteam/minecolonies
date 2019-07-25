@@ -14,8 +14,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
@@ -250,24 +250,24 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob implements
 
     @NotNull
     @Override
-    public NBTTagCompound writeToNBT(final NBTTagCompound compound)
+    public CompoundNBT writeToNBT(final CompoundNBT compound)
     {
-        compound.setLong(TAG_TIME, worldTimeAtSpawn);
-        compound.setInteger(TAG_STUCK_COUNTER, stuckCounter);
-        compound.setInteger(TAG_LADDER_COUNTER, ladderCounter);
-        compound.setInteger(TAG_COLONY_ID, this.colony == null ? 0 : colony.getID());
+        compound.putLong(TAG_TIME, worldTimeAtSpawn);
+        compound.putInt(TAG_STUCK_COUNTER, stuckCounter);
+        compound.putInt(TAG_LADDER_COUNTER, ladderCounter);
+        compound.putInt(TAG_COLONY_ID, this.colony == null ? 0 : colony.getID());
         return super.writeToNBT(compound);
     }
 
     @Override
-    public void readFromNBT(final NBTTagCompound compound)
+    public void readFromNBT(final CompoundNBT compound)
     {
         worldTimeAtSpawn = compound.getLong(TAG_TIME);
-        stuckCounter = compound.getInteger(TAG_STUCK_COUNTER);
-        ladderCounter = compound.getInteger(TAG_LADDER_COUNTER);
-        if (compound.hasKey(TAG_COLONY_ID))
+        stuckCounter = compound.getInt(TAG_STUCK_COUNTER);
+        ladderCounter = compound.getInt(TAG_LADDER_COUNTER);
+        if (compound.keySet().contains(TAG_COLONY_ID))
         {
-            final int colonyId = compound.getInteger(TAG_COLONY_ID);
+            final int colonyId = compound.getInt(TAG_COLONY_ID);
             if (colonyId != 0)
             {
                 setColony(ColonyManager.getColonyByWorld(colonyId, world));
@@ -301,7 +301,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob implements
     @Override
     protected void onDeathUpdate()
     {
-        if (!(this.getAttackingEntity() instanceof EntityPlayer) && (this.recentlyHit > 0 && this.canDropLoot() && world.getGameRules().getBoolean("doMobLoot")))
+        if (!(this.getAttackingEntity() instanceof PlayerEntity) && (this.recentlyHit > 0 && this.canDropLoot() && world.getGameRules().getBoolean("doMobLoot")))
         {
             final int experience = EntityXPOrb.getXPSplit(BARBARIAN_EXP_DROP);
             CompatibilityUtils.spawnEntity(world, new EntityXPOrb(world, this.posX, this.posY, this.posZ, experience));

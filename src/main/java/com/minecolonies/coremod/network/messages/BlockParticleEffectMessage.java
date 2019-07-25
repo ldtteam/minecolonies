@@ -3,9 +3,9 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -42,7 +42,7 @@ public class BlockParticleEffectMessage extends AbstractMessage<BlockParticleEff
      * @param state Block State
      * @param side  Side of the block causing effect
      */
-    public BlockParticleEffectMessage(final BlockPos pos, @NotNull final IBlockState state, final int side)
+    public BlockParticleEffectMessage(final BlockPos pos, @NotNull final BlockState state, final int side)
     {
         this.pos = pos;
         this.block = state.getBlock();
@@ -77,7 +77,7 @@ public class BlockParticleEffectMessage extends AbstractMessage<BlockParticleEff
         }
         else
         {
-            FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(message.pos, EnumFacing.byIndex(message.side));
+            FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(message.pos, Direction.byIndex(message.side));
         }
     }
 }

@@ -12,9 +12,9 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvid
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import net.minecraft.client.renderer.texture.ITickable;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ITickable;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,9 +26,8 @@ import java.util.function.Predicate;
  * Interface used to describe classes that function as managers for requests inside a colony.
  * Extends INBTSerializable to allow for easy reading and writing from NBT.
  */
-public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITickable
+public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickable
 {
-
     /**
      * The colony this manager manages the requests for.
      *

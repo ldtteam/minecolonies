@@ -14,7 +14,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.sounds.DeliverymanSounds;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,13 +56,13 @@ public class JobDeliveryman extends AbstractJob
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         super.readFromNBT(compound);
 
-        if(compound.hasKey(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
+        if(compound.keySet().contains(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
         {
-            rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
+            rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompound(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
         }
         else
         {
@@ -85,10 +85,10 @@ public class JobDeliveryman extends AbstractJob
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         super.writeToNBT(compound);
-        compound.setTag(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
+        compound.put(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
     }
 
     /**
@@ -194,12 +194,12 @@ public class JobDeliveryman extends AbstractJob
         }
 
         this.setReturning(true);
-        final IToken<?> current = getTaskQueueFromDataStore().getFirst();
+        final IToken<?> current = getTaskQueueFromDataStore().getA();
 
         getColony().getRequestManager().updateRequestState(current, successful ? RequestState.COMPLETED : RequestState.CANCELLED);
 
         //Just to be sure lets delete them!
-        if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst())
+        if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getA())
             getTaskQueueFromDataStore().removeFirst();
     }
 

@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.items;
 
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -70,17 +70,17 @@ public final class ModItems
         compost = new ItemCompost();
         resourceScroll = new ItemResourceScroll();
 
-        santaHat = new ItemSantaHead("santa_hat", ModCreativeTabs.MINECOLONIES, ItemSantaHead.SANTA_HAT, 0, EntityEquipmentSlot.HEAD);
+        santaHat = new ItemSantaHead("santa_hat", ModCreativeTabs.MINECOLONIES, ItemSantaHead.SANTA_HAT, 0, EquipmentSlotType.HEAD);
 
-        pirateHelmet_1 = new ItemPirateGear("pirate_hat", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EntityEquipmentSlot.HEAD);
-        pirateChest_1 = new ItemPirateGear("pirate_top", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EntityEquipmentSlot.CHEST);
-        pirateLegs_1 = new ItemPirateGear("pirate_leggins", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 1, EntityEquipmentSlot.LEGS);
-        pirateBoots_1 = new ItemPirateGear("pirate_boots", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EntityEquipmentSlot.FEET);
+        pirateHelmet_1 = new ItemPirateGear("pirate_hat", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EquipmentSlotType.HEAD);
+        pirateChest_1 = new ItemPirateGear("pirate_top", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EquipmentSlotType.CHEST);
+        pirateLegs_1 = new ItemPirateGear("pirate_leggins", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 1, EquipmentSlotType.LEGS);
+        pirateBoots_1 = new ItemPirateGear("pirate_boots", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EquipmentSlotType.FEET);
 
-        pirateHelmet_2 = new ItemPirateGear("pirate_cap", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 0, EntityEquipmentSlot.HEAD);
-        pirateChest_2 = new ItemPirateGear("pirate_chest", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 0, EntityEquipmentSlot.CHEST);
-        pirateLegs_2 = new ItemPirateGear("pirate_legs", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 1, EntityEquipmentSlot.LEGS);
-        pirateBoots_2 = new ItemPirateGear("pirate_shoes", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 0, EntityEquipmentSlot.FEET);
+        pirateHelmet_2 = new ItemPirateGear("pirate_cap", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 0, EquipmentSlotType.HEAD);
+        pirateChest_2 = new ItemPirateGear("pirate_chest", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 0, EquipmentSlotType.CHEST);
+        pirateLegs_2 = new ItemPirateGear("pirate_legs", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 1, EquipmentSlotType.LEGS);
+        pirateBoots_2 = new ItemPirateGear("pirate_shoes", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 0, EquipmentSlotType.FEET);
 
         itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
         itemAchievementProxyTown = new ItemAchievementProxy("sizeTown");

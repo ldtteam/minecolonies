@@ -9,9 +9,9 @@ import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -62,12 +62,12 @@ public final class ConstructionTapeHelper
     {
         if (Configurations.gameplay.builderPlaceConstructionTape)
         {
-            final IBlockState constructionTape = ModBlocks.blockConstructionTape.getDefaultState();
+            final BlockState constructionTape = ModBlocks.blockConstructionTape.getDefaultState();
 
-            final int x1 = corners.getFirst().getFirst();
-            final int x3 = corners.getFirst().getSecond();
-            final int z1 = corners.getSecond().getFirst();
-            final int z3 = corners.getSecond().getSecond();
+            final int x1 = corners.getA().getA();
+            final int x3 = corners.getA().getB();
+            final int z1 = corners.getB().getA();
+            final int z3 = corners.getB().getB();
             final int y = pos.getY();
             int newY;
 
@@ -77,10 +77,10 @@ public final class ConstructionTapeHelper
                 {
                     newY = checkIfPlaceable(i, y, z1, world);
                     final BlockPos row1 = new BlockPos(i, newY, z1);
-                    world.setBlockState(row1, constructionTape.withProperty(FACING, EnumFacing.SOUTH));
+                    world.setBlockState(row1, constructionTape.withProperty(FACING, Direction.SOUTH));
                     newY = checkIfPlaceable(i, y, z3, world);
                     final BlockPos row2 = new BlockPos(i, newY, z3);
-                    world.setBlockState(row2, constructionTape.withProperty(FACING, EnumFacing.NORTH));
+                    world.setBlockState(row2, constructionTape.withProperty(FACING, Direction.NORTH));
                 }
             }
             else
@@ -89,10 +89,10 @@ public final class ConstructionTapeHelper
                 {
                     newY = checkIfPlaceable(i, y, z1, world);
                     final BlockPos row1 = new BlockPos(i, newY, z1);
-                    world.setBlockState(row1, constructionTape.withProperty(FACING, EnumFacing.SOUTH));
+                    world.setBlockState(row1, constructionTape.withProperty(FACING, Direction.SOUTH));
                     newY = checkIfPlaceable(i, y, z3, world);
                     final BlockPos row2 = new BlockPos(i, newY, z3);
-                    world.setBlockState(row2, constructionTape.withProperty(FACING, EnumFacing.NORTH));
+                    world.setBlockState(row2, constructionTape.withProperty(FACING, Direction.NORTH));
                 }
             }
             if (z1 < z3)
@@ -101,10 +101,10 @@ public final class ConstructionTapeHelper
                 {
                     newY = checkIfPlaceable(x1, y, i, world);
                     final BlockPos row3 = new BlockPos(x1, newY, i);
-                    world.setBlockState(row3, constructionTape.withProperty(FACING, EnumFacing.EAST));
+                    world.setBlockState(row3, constructionTape.withProperty(FACING, Direction.EAST));
                     newY = checkIfPlaceable(x3, y, i, world);
                     final BlockPos row4 = new BlockPos(x3, newY, i);
-                    world.setBlockState(row4, constructionTape.withProperty(FACING, EnumFacing.WEST));
+                    world.setBlockState(row4, constructionTape.withProperty(FACING, Direction.WEST));
                 }
             }
             else
@@ -113,10 +113,10 @@ public final class ConstructionTapeHelper
                 {
                     newY = checkIfPlaceable(x1, y, i, world);
                     final BlockPos row3 = new BlockPos(x1, newY, i);
-                    world.setBlockState(row3, constructionTape.withProperty(FACING, EnumFacing.EAST));
+                    world.setBlockState(row3, constructionTape.withProperty(FACING, Direction.EAST));
                     newY = checkIfPlaceable(x3, y, i, world);
                     final BlockPos row4 = new BlockPos(x3, newY, i);
-                    world.setBlockState(row4, constructionTape.withProperty(FACING, EnumFacing.WEST));
+                    world.setBlockState(row4, constructionTape.withProperty(FACING, Direction.WEST));
                 }
             }
             newY = checkIfPlaceable(x1, y, z1, world);
@@ -127,10 +127,10 @@ public final class ConstructionTapeHelper
             final BlockPos corner3 = new BlockPos(x3, newY, z1);
             newY = checkIfPlaceable(x3, y, z3, world);
             final BlockPos corner4 = new BlockPos(x3, newY, z3);
-            world.setBlockState(corner1, constructionTape.withProperty(FACING, EnumFacing.SOUTH));
-            world.setBlockState(corner2, constructionTape.withProperty(FACING, EnumFacing.EAST));
-            world.setBlockState(corner3, constructionTape.withProperty(FACING, EnumFacing.WEST));
-            world.setBlockState(corner4, constructionTape.withProperty(FACING, EnumFacing.NORTH));
+            world.setBlockState(corner1, constructionTape.withProperty(FACING, Direction.SOUTH));
+            world.setBlockState(corner2, constructionTape.withProperty(FACING, Direction.EAST));
+            world.setBlockState(corner3, constructionTape.withProperty(FACING, Direction.WEST));
+            world.setBlockState(corner4, constructionTape.withProperty(FACING, Direction.NORTH));
         }
     }
 
@@ -187,10 +187,10 @@ public final class ConstructionTapeHelper
      */
     public static void removeConstructionTape(final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners, @NotNull final World world)
     {
-        final int x1 = corners.getFirst().getFirst();
-        final int x3 = corners.getFirst().getSecond();
-        final int z1 = corners.getSecond().getFirst();
-        final int z3 = corners.getSecond().getSecond();
+        final int x1 = corners.getA().getA();
+        final int x3 = corners.getA().getB();
+        final int z1 = corners.getB().getA();
+        final int z3 = corners.getB().getB();
         if (x1 < x3)
         {
             for (int i = x1; i <= x3; i++)

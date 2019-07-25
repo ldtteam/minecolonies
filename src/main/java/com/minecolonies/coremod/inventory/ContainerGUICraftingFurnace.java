@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.network.play.server.SPacketSetSlot;
-import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +32,7 @@ public class ContainerGUICraftingFurnace extends Container
     /**
      * The player assigned to it.
      */
-    private final EntityPlayer player;
+    private final PlayerEntity player;
 
     /**
      * Constructs the GUI with the player and furnace inventory.
@@ -42,7 +42,7 @@ public class ContainerGUICraftingFurnace extends Container
     public ContainerGUICraftingFurnace(final InventoryPlayer playerInventory, final World worldIn)
     {
         super();
-        this.furnaceInventory = new TileEntityFurnace();
+        this.furnaceInventory = new FurnaceTileEntity();
         this.worldObj = worldIn;
         this.player = playerInventory.player;
         this.addSlotToContainer(new Slot(furnaceInventory, 0 , 56, 17)
@@ -55,7 +55,7 @@ public class ContainerGUICraftingFurnace extends Container
 
             @NotNull
             @Override
-            public ItemStack onTake(final EntityPlayer player, @NotNull final ItemStack stack)
+            public ItemStack onTake(final PlayerEntity player, @NotNull final ItemStack stack)
             {
                 return ItemStack.EMPTY;
             }
@@ -74,7 +74,7 @@ public class ContainerGUICraftingFurnace extends Container
             }
 
             @Override
-            public boolean canTakeStack(final EntityPlayer par1EntityPlayer)
+            public boolean canTakeStack(final PlayerEntity par1PlayerEntity)
             {
                 return false;
             }
@@ -110,7 +110,7 @@ public class ContainerGUICraftingFurnace extends Container
 
     @NotNull
     @Override
-    public ItemStack slotClick(final int slotId, final int clickedButton, final ClickType mode, final EntityPlayer playerIn)
+    public ItemStack slotClick(final int slotId, final int clickedButton, final ClickType mode, final PlayerEntity playerIn)
     {
         final ItemStack clickResult;
         if (slotId >= 0 && slotId < FURNACE_SLOTS)
@@ -142,7 +142,7 @@ public class ContainerGUICraftingFurnace extends Container
 
         if (!worldObj.isRemote)
         {
-            final EntityPlayerMP entityPlayerMP = (EntityPlayerMP) player;
+            final PlayerEntityMP entityPlayerMP = (PlayerEntityMP) player;
             final ItemStack result = FurnaceRecipes.instance().getSmeltingResult(furnaceInventory.getStackInSlot(0)).copy();
 
             this.furnaceInventory.setInventorySlotContents(1, result);
@@ -174,14 +174,14 @@ public class ContainerGUICraftingFurnace extends Container
     }
 
     @Override
-    public boolean canInteractWith(@NotNull final EntityPlayer playerIn)
+    public boolean canInteractWith(@NotNull final PlayerEntity playerIn)
     {
         return true;
     }
 
     @NotNull
     @Override
-    public ItemStack transferStackInSlot(final EntityPlayer playerIn, final int index)
+    public ItemStack transferStackInSlot(final PlayerEntity playerIn, final int index)
     {
         if (index <= FURNACE_SLOTS)
         {

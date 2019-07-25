@@ -17,7 +17,7 @@ import com.ldtteam.structurize.network.messages.LSStructureDisplayerMessage;
 import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
 import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structures.helpers.Structure;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
@@ -266,7 +266,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
         else
         {
             final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint());;
-            final IBlockState state  = Settings.instance.getActiveStructure().getBlockState(offset);
+            final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset);
             MineColonies.getNetwork().sendToServer(new BuildingMoveMessage(
                     structureName.toString(),
                     structureName.toString(),

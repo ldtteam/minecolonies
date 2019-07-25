@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
@@ -65,7 +65,7 @@ public class CompostParticleMessage extends AbstractMessage<CompostParticleMessa
         final WorldClient world = ctx.getClientHandler().world;
         final int amount = random.nextInt(15) + 1;
         final BlockPos pos = message.pos;
-        final IBlockState iblockstate = world.getBlockState(pos);
+        final BlockState iblockstate = world.getBlockState(pos);
         double d0;
         double d1;
         double d2;

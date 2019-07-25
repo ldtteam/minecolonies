@@ -5,7 +5,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -74,7 +74,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      * @return boolean.
      */
 
-    public boolean canPlayerUseCommand(final EntityPlayer player, final Commands theCommand, final int colonyId)
+    public boolean canPlayerUseCommand(final PlayerEntity player, final Commands theCommand, final int colonyId)
     {
         if (isPlayerOpped(player))
         {
@@ -99,10 +99,10 @@ public abstract class AbstractSingleCommand implements ISubCommand
     @NotNull
     public static boolean isPlayerOpped(@NotNull final ICommandSender sender)
     {
-        if (sender instanceof EntityPlayer)
+        if (sender instanceof PlayerEntity)
         {
             return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
-                     .canSendCommands(((EntityPlayer) sender).getGameProfile());
+                     .canSendCommands(((PlayerEntity) sender).getGameProfile());
         }
         return true;
     }
@@ -156,7 +156,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      * @param player the player.
      * @return true if so.
      */
-    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
+    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final PlayerEntity player)
     {
         return colony.getPermissions().getRank(player).equals(Rank.OFFICER) || colony.getPermissions().getRank(player).equals(Rank.OWNER);
     }

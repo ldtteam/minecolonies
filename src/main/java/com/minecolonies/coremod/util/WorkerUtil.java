@@ -12,15 +12,15 @@ import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.pathfinding.PathResult;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.MoverType;
 import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.Template;
@@ -228,7 +228,7 @@ public final class WorkerUtil
                     final BlockInfo te = structure.getBlockInfo(localPos);
                     if (te != null)
                     {
-                        final NBTTagCompound teData = te.getTileEntityData();
+                        final CompoundNBT teData = te.getTileEntityData();
                         if (teData != null && teData.getString(LEVEL_SIGN_FIRST_ROW).equals(LEVEL_SIGN_TEXT))
                         {
                             // try to make an anchor in 0,0,0 instead of the middle of the structure
@@ -260,14 +260,14 @@ public final class WorkerUtil
 
             if (te instanceof TileEntitySign)
             {
-                final IBlockState iblockstate = world.getBlockState(levelSignPos);
+                final BlockState iblockstate = world.getBlockState(levelSignPos);
                 final TileEntitySign teLevelSign = (TileEntitySign) te;
 
-                teLevelSign.signText[0] = new TextComponentString(TextFormatting.getTextWithoutFormattingCodes(
+                teLevelSign.signText[0] = new StringTextComponent(TextFormatting.getTextWithoutFormattingCodes(
                   LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.minerMineNode") + ": " + levelId));
-                teLevelSign.signText[1] = new TextComponentString(TextFormatting.getTextWithoutFormattingCodes("Y: " + (level.getDepth() + 1)));
-                teLevelSign.signText[2] = new TextComponentString(TextFormatting.getTextWithoutFormattingCodes(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.minerNode") + ": " + level.getNumberOfBuiltNodes()));
-                teLevelSign.signText[3] = new TextComponentString(TextFormatting.getTextWithoutFormattingCodes(""));
+                teLevelSign.signText[1] = new StringTextComponent(TextFormatting.getTextWithoutFormattingCodes("Y: " + (level.getDepth() + 1)));
+                teLevelSign.signText[2] = new StringTextComponent(TextFormatting.getTextWithoutFormattingCodes(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.minerNode") + ": " + level.getNumberOfBuiltNodes()));
+                teLevelSign.signText[3] = new StringTextComponent(TextFormatting.getTextWithoutFormattingCodes(""));
 
                 teLevelSign.markDirty();
                 world.notifyBlockUpdate(levelSignPos, iblockstate, iblockstate, 3);

@@ -7,7 +7,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -92,7 +92,7 @@ public class CrusherSetModeMessage extends AbstractMessage<CrusherSetModeMessage
     }
 
     @Override
-    public void messageOnServerThread(final CrusherSetModeMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final CrusherSetModeMessage message, final PlayerEntityMP player)
     {
         final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

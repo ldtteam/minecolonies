@@ -8,11 +8,11 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.Structures;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -66,11 +66,11 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     @NotNull
     @Override
     public EnumActionResult onItemUse(
-            final EntityPlayer playerIn,
+            final PlayerEntity playerIn,
             final World worldIn,
             final BlockPos pos,
             final EnumHand hand,
-            final EnumFacing facing,
+            final Direction facing,
             final float hitX,
             final float hitY,
             final float hitZ)
@@ -89,7 +89,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
     @NotNull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(final World worldIn, final EntityPlayer playerIn, final EnumHand hand)
+    public ActionResult<ItemStack> onItemRightClick(final World worldIn, final PlayerEntity playerIn, final EnumHand hand)
     {
         final ItemStack stack = playerIn.getHeldItem(hand);
         if (worldIn.isRemote)
@@ -105,7 +105,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         return new ActionResult<>(EnumActionResult.FAIL, stack);
     }
 
-    private void placeSupplyShip(@Nullable final BlockPos pos, @NotNull final EnumFacing direction)
+    private void placeSupplyShip(@Nullable final BlockPos pos, @NotNull final Direction direction)
     {
         if(pos == null)
         {

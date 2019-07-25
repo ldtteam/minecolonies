@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverFactor
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 public class PrivateWorkerCraftingProductionResolverFactory implements IRequestResolverFactory<PrivateWorkerCraftingProductionResolver>
@@ -43,21 +43,21 @@ public class PrivateWorkerCraftingProductionResolverFactory implements IRequestR
 
     @NotNull
     @Override
-    public NBTTagCompound serialize(
+    public CompoundNBT serialize(
       @NotNull final IFactoryController controller, @NotNull final PrivateWorkerCraftingProductionResolver privateWorkerCraftingProductionResolverFactory)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
-        compound.setTag(NBT_TOKEN, controller.serialize(privateWorkerCraftingProductionResolverFactory.getRequesterId()));
-        compound.setTag(NBT_LOCATION, controller.serialize(privateWorkerCraftingProductionResolverFactory.getRequesterLocation()));
+        final CompoundNBT compound = new CompoundNBT();
+        compound.put(NBT_TOKEN, controller.serialize(privateWorkerCraftingProductionResolverFactory.getRequesterId()));
+        compound.put(NBT_LOCATION, controller.serialize(privateWorkerCraftingProductionResolverFactory.getRequesterLocation()));
         return compound;
     }
 
     @NotNull
     @Override
-    public PrivateWorkerCraftingProductionResolver deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+    public PrivateWorkerCraftingProductionResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
-        final IToken<?> token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
-        final ILocation location = controller.deserialize(nbt.getCompoundTag(NBT_LOCATION));
+        final IToken<?> token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
+        final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
 
         return new PrivateWorkerCraftingProductionResolver(location, token);
     }

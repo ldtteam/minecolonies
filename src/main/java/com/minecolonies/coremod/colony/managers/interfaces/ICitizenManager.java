@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.managers.interfaces;
 
 import com.minecolonies.coremod.colony.CitizenData;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -19,13 +19,13 @@ public interface ICitizenManager
      * Read the citizens from nbt.
      * @param compound the compound to read it from.
      */
-    void readFromNBT(@NotNull final NBTTagCompound compound);
+    void readFromNBT(@NotNull final CompoundNBT compound);
 
     /**
      * Write the citizens to nbt.
      * @param citizenCompound the compound to write it to.
      */
-    void writeToNBT(@NotNull final NBTTagCompound citizenCompound);
+    void writeToNBT(@NotNull final CompoundNBT citizenCompound);
 
     /**
      * Sends packages to update the citizens.
@@ -34,9 +34,9 @@ public interface ICitizenManager
      * @param subscribers all subscribers
      */
     void sendPackets(
-            @NotNull final Set<EntityPlayerMP> oldSubscribers,
+            @NotNull final Set<PlayerEntityMP> oldSubscribers,
             final boolean hasNewSubscribers,
-            @NotNull final Set<EntityPlayerMP> subscribers);
+            @NotNull final Set<PlayerEntityMP> subscribers);
 
     /**
      * Spawn a brand new Citizen.

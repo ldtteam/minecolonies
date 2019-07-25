@@ -11,11 +11,11 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockStairs;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -81,7 +81,7 @@ public class StructureIterator
         /**
          * The metadata of the block.
          */
-        public final IBlockState metadata;
+        public final BlockState metadata;
 
         /**
          * The item of the block.
@@ -96,12 +96,12 @@ public class StructureIterator
         /**
          * The metadata of the world block at the same position.
          */
-        public final IBlockState worldMetadata;
+        public final BlockState worldMetadata;
 
         /**
          * The entityInfo block.
          */
-        public final NBTTagCompound[] entity;
+        public final CompoundNBT[] entity;
 
         /**
          * Create one immutable Block containing all information needed.
@@ -115,8 +115,8 @@ public class StructureIterator
          * @param worldMetadata  the metadata of the world block
          */
         public StructureBlock(
-                               final Block block, final BlockPos blockPosition, final IBlockState metadata, final NBTTagCompound[] entity,
-                               final Item item, final Block worldBlock, final IBlockState worldMetadata)
+                               final Block block, final BlockPos blockPosition, final BlockState metadata, final CompoundNBT[] entity,
+                               final Item item, final Block worldBlock, final BlockState worldMetadata)
         {
             this.block = block;
             this.blockPosition = blockPosition;
@@ -139,7 +139,7 @@ public class StructureIterator
                 return true;
             }
             
-            final IBlockState structureBlockState = metadata;
+            final BlockState structureBlockState = metadata;
             final Block structureBlock = structureBlockState.getBlock();
 
             //All worldBlocks are equal the substitution block
@@ -148,7 +148,7 @@ public class StructureIterator
                 return true;
             }
 
-            final IBlockState worldBlockState = worldMetadata;
+            final BlockState worldBlockState = worldMetadata;
 
             //list of things to only check block for.
             //For the time being any flower pot is equal to each other.
@@ -168,7 +168,7 @@ public class StructureIterator
 
         private static boolean structureBlockEqualsWorldBlock(
                                                                @NotNull final Block structureBlock,
-                                                               @NotNull final Block worldBlock, @NotNull final IBlockState worldMetadata)
+                                                               @NotNull final Block worldBlock, @NotNull final BlockState worldMetadata)
         {
             return structureBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution || (
               structureBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution
@@ -419,10 +419,10 @@ public class StructureIterator
     @NotNull
     public StructureBlock getCurrentBlock()
     {
-        final NBTTagCompound[] entityData;
+        final CompoundNBT[] entityData;
         if (stage == Stage.SPAWN)
         {
-            entityData = Arrays.stream(this.theStructure.getEntityData()).filter(data -> data != null && isAtPos(data, this.theStructure.getLocalPosition())).toArray(NBTTagCompound[]::new);
+            entityData = Arrays.stream(this.theStructure.getEntityData()).filter(data -> data != null && isAtPos(data, this.theStructure.getLocalPosition())).toArray(CompoundNBT[]::new);
         }
         else
         {
@@ -437,9 +437,9 @@ public class StructureIterator
                                    BlockPosUtil.getBlockState(targetWorld, this.theStructure.getBlockPosition()));
     }
 
-    private boolean isAtPos(@NotNull final NBTTagCompound entityData, final BlockPos pos)
+    private boolean isAtPos(@NotNull final CompoundNBT entityData, final BlockPos pos)
     {
-        final NBTTagList list = entityData.getTagList("Pos", 6);
+        final ListNBT list = entityData.getList("Pos", 6);
         final int x = (int) list.getDoubleAt(0);
         final int y = (int) list.getDoubleAt(1);
         final int z = (int) list.getDoubleAt(2);

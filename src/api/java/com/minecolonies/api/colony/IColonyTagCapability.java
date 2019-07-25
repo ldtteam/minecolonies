@@ -2,9 +2,9 @@ package com.minecolonies.api.colony;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -211,12 +211,12 @@ public interface IColonyTagCapability
     class Storage implements Capability.IStorage<IColonyTagCapability>
     {
         @Override
-        public NBTBase writeNBT(@NotNull final Capability<IColonyTagCapability> capability, @NotNull final IColonyTagCapability instance, @Nullable final EnumFacing side)
+        public INBT writeNBT(@NotNull final Capability<IColonyTagCapability> capability, @NotNull final IColonyTagCapability instance, @Nullable final Direction side)
         {
-            final NBTTagCompound compound = new NBTTagCompound();
-            compound.setInteger(TAG_ID, instance.getOwningColony());
-            compound.setTag(TAG_COLONIES, instance.getAllCloseColonies().stream().map(Storage::write).collect(NBTUtils.toNBTTagList()));
-            compound.setTag(TAG_BUILDINGS_CLAIM, instance.getAllClaimingBuildings().entrySet().stream().map(Storage::writeClaims).collect(NBTUtils.toNBTTagList()));
+            final CompoundNBT compound = new CompoundNBT();
+            compound.putInt(TAG_ID, instance.getOwningColony());
+            compound.put(TAG_COLONIES, instance.getAllCloseColonies().stream().map(Storage::write).collect(NBTUtils.toListNBT()));
+            compound.put(TAG_BUILDINGS_CLAIM, instance.getAllClaimingBuildings().entrySet().stream().map(Storage::writeClaims).collect(NBTUtils.toListNBT()));
 
 
             return compound;
@@ -224,14 +224,14 @@ public interface IColonyTagCapability
 
         @Override
         public void readNBT(@NotNull final Capability<IColonyTagCapability> capability, @NotNull final IColonyTagCapability instance,
-                @Nullable final EnumFacing side, @NotNull final NBTBase nbt)
+                @Nullable final Direction side, @NotNull final INBT nbt)
         {
-            if(nbt instanceof NBTTagCompound && ((NBTTagCompound) nbt).hasKey(TAG_ID))
+            if(nbt instanceof CompoundNBT && ((CompoundNBT) nbt).keySet().contains(TAG_ID))
             {
-                instance.setOwningColony(((NBTTagCompound) nbt).getInteger(TAG_ID));
-                NBTUtils.streamCompound(((NBTTagCompound) nbt).getTagList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
-                        .map(compound -> compound.getInteger(TAG_ID)).forEach(instance::addColony);
-                NBTUtils.streamCompound(((NBTTagCompound) nbt).getTagList(TAG_BUILDINGS_CLAIM, Constants.NBT.TAG_COMPOUND)).forEach(tagCompound -> Storage.readClaims(tagCompound, instance));
+                instance.setOwningColony(((CompoundNBT) nbt).getInt(TAG_ID));
+                NBTUtils.streamCompound(((CompoundNBT) nbt).getList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
+                        .map(compound -> compound.getInt(TAG_ID)).forEach(instance::addColony);
+                NBTUtils.streamCompound(((CompoundNBT) nbt).getList(TAG_BUILDINGS_CLAIM, Constants.NBT.TAG_COMPOUND)).forEach(tagCompound -> Storage.readClaims(tagCompound, instance));
             }
         }
 
@@ -240,10 +240,10 @@ public interface IColonyTagCapability
          * @param id the id.
          * @return the compound of it.
          */
-        private static NBTTagCompound write(final int id)
+        private static CompoundNBT write(final int id)
         {
-            final NBTTagCompound compound = new NBTTagCompound();
-            compound.setInteger(TAG_ID, id);
+            final CompoundNBT compound = new CompoundNBT();
+            compound.putInt(TAG_ID, id);
             return compound;
         }
 
@@ -252,11 +252,11 @@ public interface IColonyTagCapability
          * @param entry the entry.
          * @return the resulting compound.
          */
-        private static NBTTagCompound writeClaims(@NotNull final Map.Entry<Integer, Set<BlockPos>> entry)
+        private static CompoundNBT writeClaims(@NotNull final Map.Entry<Integer, Set<BlockPos>> entry)
         {
-            final NBTTagCompound compound = new NBTTagCompound();
-            compound.setInteger(TAG_ID, entry.getKey());
-            compound.setTag(TAG_BUILDINGS, entry.getValue().stream().map(pos -> BlockPosUtil.writeToNBT(new NBTTagCompound(), TAG_BUILDING, pos)).collect(NBTUtils.toNBTTagList()));
+            final CompoundNBT compound = new CompoundNBT();
+            compound.putInt(TAG_ID, entry.getKey());
+            compound.put(TAG_BUILDINGS, entry.getValue().stream().map(pos -> BlockPosUtil.writeToNBT(new CompoundNBT(), TAG_BUILDING, pos)).collect(NBTUtils.toListNBT()));
             return compound;
         }
 
@@ -265,10 +265,10 @@ public interface IColonyTagCapability
          * @param compound the compound to read it from.
          * @param instance the instance to add it to.
          */
-        private static void readClaims(@NotNull final NBTTagCompound compound, @NotNull final IColonyTagCapability instance)
+        private static void readClaims(@NotNull final CompoundNBT compound, @NotNull final IColonyTagCapability instance)
         {
-            final int id = compound.getInteger(TAG_ID);
-            NBTUtils.streamCompound(compound.getTagList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND)).forEach(tagCompound -> instance.addBuildingClaim(id, BlockPosUtil.readFromNBT(((NBTTagCompound) tagCompound), TAG_BUILDING)));
+            final int id = compound.getInt(TAG_ID);
+            NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND)).forEach(tagCompound -> instance.addBuildingClaim(id, BlockPosUtil.readFromNBT(((CompoundNBT) tagCompound), TAG_BUILDING)));
         }
     }
 }

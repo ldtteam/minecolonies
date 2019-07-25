@@ -1,7 +1,7 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
@@ -66,19 +66,19 @@ public class ChunkLoadStorage
      * Intitialize a ChunLoadStorage from nbt.
      * @param compound the compound to use.
      */
-    public ChunkLoadStorage(final NBTTagCompound compound)
+    public ChunkLoadStorage(final CompoundNBT compound)
     {
-        this.colonyId = compound.getInteger(TAG_ID);
+        this.colonyId = compound.getInt(TAG_ID);
         this.xz = compound.getLong(TAG_POS);
-        this.dimension = compound.getInteger(TAG_DIMENSION);
+        this.dimension = compound.getInt(TAG_DIMENSION);
 
-        coloniesToAdd.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_COLONIES_TO_ADD, Constants.NBT.TAG_COMPOUND))
-                .map(tempCompound -> tempCompound.getInteger(TAG_COLONY_ID)).collect(Collectors.toList()));
-        coloniesToRemove.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_COLONIES_TO_REMOVE, Constants.NBT.TAG_COMPOUND))
-                .map(tempCompound -> tempCompound.getInteger(TAG_COLONY_ID)).collect(Collectors.toList()));
-        claimingBuilding.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_BUILDINGS_CLAIM, Constants.NBT.TAG_COMPOUND))
+        coloniesToAdd.addAll(NBTUtils.streamCompound(compound.getList(TAG_COLONIES_TO_ADD, Constants.NBT.TAG_COMPOUND))
+                .map(tempCompound -> tempCompound.getInt(TAG_COLONY_ID)).collect(Collectors.toList()));
+        coloniesToRemove.addAll(NBTUtils.streamCompound(compound.getList(TAG_COLONIES_TO_REMOVE, Constants.NBT.TAG_COMPOUND))
+                .map(tempCompound -> tempCompound.getInt(TAG_COLONY_ID)).collect(Collectors.toList()));
+        claimingBuilding.addAll(NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS_CLAIM, Constants.NBT.TAG_COMPOUND))
                                   .map(ChunkLoadStorage::readTupleFromNbt).collect(Collectors.toList()));
-        unClaimingBuilding.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_BUILDINGS_UNCLAIM, Constants.NBT.TAG_COMPOUND))
+        unClaimingBuilding.addAll(NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS_UNCLAIM, Constants.NBT.TAG_COMPOUND))
                                   .map(ChunkLoadStorage::readTupleFromNbt).collect(Collectors.toList()));
     }
 
@@ -123,25 +123,25 @@ public class ChunkLoadStorage
      * Write the ChunkLoadStorage to NBT.
      * @return the compound.
      */
-    public NBTTagCompound toNBT()
+    public CompoundNBT toNBT()
     {
-        final NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger(TAG_ID, colonyId);
-        compound.setLong(TAG_POS, xz);
-        compound.setInteger(TAG_DIMENSION, dimension);
+        final CompoundNBT compound = new CompoundNBT();
+        compound.putInt(TAG_ID, colonyId);
+        compound.putLong(TAG_POS, xz);
+        compound.putInt(TAG_DIMENSION, dimension);
 
-        compound.setTag(TAG_COLONIES_TO_ADD, coloniesToAdd.stream().map(ChunkLoadStorage::getCompoundOfColonyId).collect(NBTUtils.toNBTTagList()));
-        compound.setTag(TAG_COLONIES_TO_REMOVE, coloniesToRemove.stream().map(ChunkLoadStorage::getCompoundOfColonyId).collect(NBTUtils.toNBTTagList()));
-        compound.setTag(TAG_BUILDINGS, claimingBuilding.stream().map(ChunkLoadStorage::writeTupleToNBT).collect(NBTUtils.toNBTTagList()));
-        compound.setTag(TAG_BUILDINGS, unClaimingBuilding.stream().map(ChunkLoadStorage::writeTupleToNBT).collect(NBTUtils.toNBTTagList()));
+        compound.put(TAG_COLONIES_TO_ADD, coloniesToAdd.stream().map(ChunkLoadStorage::getCompoundOfColonyId).collect(NBTUtils.toListNBT()));
+        compound.put(TAG_COLONIES_TO_REMOVE, coloniesToRemove.stream().map(ChunkLoadStorage::getCompoundOfColonyId).collect(NBTUtils.toListNBT()));
+        compound.put(TAG_BUILDINGS, claimingBuilding.stream().map(ChunkLoadStorage::writeTupleToNBT).collect(NBTUtils.toListNBT()));
+        compound.put(TAG_BUILDINGS, unClaimingBuilding.stream().map(ChunkLoadStorage::writeTupleToNBT).collect(NBTUtils.toListNBT()));
 
         return compound;
     }
 
-    private static NBTTagCompound getCompoundOfColonyId(final int id)
+    private static CompoundNBT getCompoundOfColonyId(final int id)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger(TAG_COLONY_ID, id);
+        final CompoundNBT compound = new CompoundNBT();
+        compound.putInt(TAG_COLONY_ID, id);
         return compound;
     }
 
@@ -226,12 +226,12 @@ public class ChunkLoadStorage
         {
             for (final Tuple<Integer, BlockPos> tuple : unClaimingBuilding)
             {
-                cap.removeBuildingClaim(tuple.getFirst(), tuple.getSecond());
+                cap.removeBuildingClaim(tuple.getA(), tuple.getB());
             }
 
             for (final Tuple<Integer, BlockPos> tuple : claimingBuilding)
             {
-                cap.addBuildingClaim(tuple.getFirst(), tuple.getSecond());
+                cap.addBuildingClaim(tuple.getA(), tuple.getB());
             }
         }
     }
@@ -316,11 +316,11 @@ public class ChunkLoadStorage
      * @param tuple the tuple to write.
      * @return the resulting compound.
      */
-    private static NBTTagCompound writeTupleToNBT(final Tuple<Integer, BlockPos> tuple)
+    private static CompoundNBT writeTupleToNBT(final Tuple<Integer, BlockPos> tuple)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger(TAG_COLONY_ID, tuple.getFirst());
-        BlockPosUtil.writeToNBT(compound, TAG_BUILDING, tuple.getSecond());
+        final CompoundNBT compound = new CompoundNBT();
+        compound.putInt(TAG_COLONY_ID, tuple.getA());
+        BlockPosUtil.writeToNBT(compound, TAG_BUILDING, tuple.getB());
         return compound;
     }
 
@@ -329,8 +329,8 @@ public class ChunkLoadStorage
      * @param compound the compound to extract it from.
      * @return the tuple.
      */
-    private static Tuple<Integer, BlockPos> readTupleFromNbt(final NBTTagCompound compound)
+    private static Tuple<Integer, BlockPos> readTupleFromNbt(final CompoundNBT compound)
     {
-        return new Tuple<>(compound.getInteger(TAG_COLONY_ID), BlockPosUtil.readFromNBT(compound, TAG_BUILDING));
+        return new Tuple<>(compound.getInt(TAG_COLONY_ID), BlockPosUtil.readFromNBT(compound, TAG_BUILDING));
     }
 }

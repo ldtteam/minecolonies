@@ -5,9 +5,9 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.EntityTippedArrow;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
 
 /**
@@ -41,17 +41,17 @@ public class GuardArrow extends EntityTippedArrow
     }
 
     @Override
-    public void writeEntityToNBT(final NBTTagCompound compound)
+    public void writeEntityToNBT(final CompoundNBT compound)
     {
         super.writeEntityToNBT(compound);
-        compound.setInteger(TAG_COLONY, colony.getID());
+        compound.putInt(TAG_COLONY, colony.getID());
     }
 
     @Override
-    public void readEntityFromNBT(final NBTTagCompound compound)
+    public void readEntityFromNBT(final CompoundNBT compound)
     {
         super.readEntityFromNBT(compound);
-        final int colonyID = compound.getInteger(TAG_COLONY);
+        final int colonyID = compound.getInt(TAG_COLONY);
         colony = ColonyManager.getColonyByWorld(colonyID, world);
     }
 
@@ -61,9 +61,9 @@ public class GuardArrow extends EntityTippedArrow
         super.arrowHit(targetEntity);
         if (targetEntity.getHealth() <= 0.0F)
         {
-            if (targetEntity instanceof EntityPlayer)
+            if (targetEntity instanceof PlayerEntity)
             {
-                final EntityPlayer player = (EntityPlayer) targetEntity;
+                final PlayerEntity player = (PlayerEntity) targetEntity;
                 if (colony.getPermissions().isColonyMember(player))
                 {
                     this.colony.getStatsManager().triggerAchievement(ModAchievements.achievementPlayerDeathGuard);

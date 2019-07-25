@@ -16,11 +16,11 @@ import com.minecolonies.coremod.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.coremod.sounds.FishermanSounds;
 import com.minecolonies.coremod.util.SoundUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.ItemFishingRod;
+import net.minecraft.item.FishingRodItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
@@ -301,7 +301,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean hasRodButNotEquipped()
     {
-        return worker.getCitizenInventoryHandler().hasItemInInventory(Items.FISHING_ROD, -1) && worker.getHeldItemMainhand() != null && !(worker.getHeldItemMainhand().getItem() instanceof ItemFishingRod);
+        return worker.getCitizenInventoryHandler().hasItemInInventory(Items.FISHING_ROD, -1) && worker.getHeldItemMainhand() != null && !(worker.getHeldItemMainhand().getItem() instanceof FishingRodItem);
     }
 
     /**
@@ -531,7 +531,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         if (!world.isRemote)
         {
             WorkerUtil.faceBlock(job.getWater(), worker);
-            world.playSound((EntityPlayer) null,
+            world.playSound((PlayerEntity) null,
               this.worker.getPosition(),
               SoundEvents.ENTITY_BOBBER_THROW,
               SoundCategory.NEUTRAL,

@@ -5,7 +5,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
@@ -91,7 +91,7 @@ public class ContainerField extends Container
 
     @Nullable
     @Override
-    public ItemStack transferStackInSlot(@NotNull final EntityPlayer playerIn, final int slotIndex)
+    public ItemStack transferStackInSlot(@NotNull final PlayerEntity playerIn, final int slotIndex)
     {
         if (slotIndex == 0)
         {
@@ -116,7 +116,7 @@ public class ContainerField extends Container
     }
 
     @Override
-    public boolean canInteractWith(@NotNull final EntityPlayer playerIn)
+    public boolean canInteractWith(@NotNull final PlayerEntity playerIn)
     {
         return colony.getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS);
     }

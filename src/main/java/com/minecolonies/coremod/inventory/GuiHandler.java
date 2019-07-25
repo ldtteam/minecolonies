@@ -12,7 +12,7 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 public class GuiHandler implements IGuiHandler
 {
     @Override
-    public Object getServerGuiElement(final int id, final EntityPlayer player, final World world, final int x, final int y, final int z)
+    public Object getServerGuiElement(final int id, final PlayerEntity player, final World world, final int x, final int y, final int z)
     {
         if (id == ID.DEFAULT.ordinal())
         {
@@ -80,7 +80,7 @@ public class GuiHandler implements IGuiHandler
     }
 
     @Override
-    public Object getClientGuiElement(final int id, final EntityPlayer player, final World world, final int x, final int y, final int z)
+    public Object getClientGuiElement(final int id, final PlayerEntity player, final World world, final int x, final int y, final int z)
     {
         if (id == ID.DEFAULT.ordinal())
         {

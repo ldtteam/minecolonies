@@ -11,14 +11,14 @@ import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -33,8 +33,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
-import static net.minecraft.util.EnumFacing.NORTH;
-import static net.minecraft.util.EnumFacing.fromAngle;
+import static net.minecraft.util.Direction.NORTH;
+import static net.minecraft.util.Direction.fromAngle;
 
 /**
  * The class handling the fieldBlocks, placement and activation.
@@ -105,13 +105,13 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
 
     @NotNull
     @Override
-    public EnumBlockRenderType getRenderType(final IBlockState state)
+    public EnumBlockRenderType getRenderType(final BlockState state)
     {
         return EnumBlockRenderType.INVISIBLE;
     }
 
     @Override
-    public int getMetaFromState(@NotNull final IBlockState state)
+    public int getMetaFromState(@NotNull final BlockState state)
     {
         return state.getValue(FACING).getIndex();
     }
@@ -119,7 +119,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
     //todo: remove once we no longer need to support this
     @SuppressWarnings(DEPRECATION)
     @Override
-    public boolean isFullCube(final IBlockState state)
+    public boolean isFullCube(final BlockState state)
     {
         return false;
     }
@@ -134,7 +134,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
     @NotNull
     @SuppressWarnings(DEPRECATION)
     @Override
-    public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
+    public AxisAlignedBB getBoundingBox(final BlockState state, final IBlockAccess source, final BlockPos pos)
     {
         return new AxisAlignedBB((float) START_COLLISION,
                                   (float) BOTTOM_COLLISION,
@@ -147,7 +147,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
     //todo: remove once we no longer need to support this
     @SuppressWarnings(DEPRECATION)
     @Override
-    public boolean isOpaqueCube(final IBlockState state)
+    public boolean isOpaqueCube(final BlockState state)
     {
         return false;
     }
@@ -164,10 +164,10 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
     public boolean onBlockActivated(
                                      final World worldIn,
                                      final BlockPos pos,
-                                     final IBlockState state,
-                                     final EntityPlayer playerIn,
+                                     final BlockState state,
+                                     final PlayerEntity playerIn,
                                      final EnumHand hand,
-                                     final EnumFacing facing,
+                                     final Direction facing,
                                      final float hitX,
                                      final float hitY,
                                      final float hitZ)
@@ -186,28 +186,28 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
     }
 
     // =======================================================================
-    // ======================= Rendering & IBlockState =======================
+    // ======================= Rendering & BlockState =======================
     // =======================================================================
 
     @SuppressWarnings(DEPRECATION)
     @NotNull
     @Override
-    public IBlockState getStateForPlacement(
+    public BlockState getStateForPlacement(
                                              final World worldIn,
                                              final BlockPos pos,
-                                             final EnumFacing facing,
+                                             final Direction facing,
                                              final float hitX,
                                              final float hitY,
                                              final float hitZ,
                                              final int meta,
                                              final EntityLivingBase placer)
     {
-        @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
+        @NotNull final Direction enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 
     @Override
-    public void onBlockPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
+    public void onBlockPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final BlockState state, final EntityLivingBase placer, final ItemStack stack)
     {
         //Only work on server side.
         if (worldIn.isRemote)
@@ -215,7 +215,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
             return;
         }
 
-        if (placer instanceof EntityPlayer)
+        if (placer instanceof PlayerEntity)
         {
             @Nullable final Colony colony = ColonyManager.getColonyByPosFromWorld(worldIn, pos);
 
@@ -238,14 +238,14 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
     }
 
     @Override
-    public void onBlockHarvested(final World worldIn, final BlockPos pos, final IBlockState state, final EntityPlayer player)
+    public void onBlockHarvested(final World worldIn, final BlockPos pos, final BlockState state, final PlayerEntity player)
     {
         notifyColonyAboutDestruction(worldIn, pos);
         super.onBlockHarvested(worldIn, pos, state, player);
     }
 
     @Override
-    public void onPlayerDestroy(final World worldIn, final BlockPos pos, final IBlockState state)
+    public void onPlayerDestroy(final World worldIn, final BlockPos pos, final BlockState state)
     {
         notifyColonyAboutDestruction(worldIn, pos);
         super.onPlayerDestroy(worldIn, pos, state);
@@ -273,7 +273,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
     }
 
     @Override
-    public boolean hasTileEntity(final IBlockState state)
+    public boolean hasTileEntity(final BlockState state)
     {
         return true;
     }

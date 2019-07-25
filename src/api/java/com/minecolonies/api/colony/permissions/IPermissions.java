@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.permissions;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -14,19 +14,19 @@ public interface IPermissions
     /**
      * Returns whether the player has the permission for an action.
      *
-     * @param player {@link EntityPlayer} player.
+     * @param player {@link PlayerEntity} player.
      * @param action {@link Action} action.
      * @return true if has permission, otherwise false.
      */
-    boolean hasPermission(EntityPlayer player, Action action);
+    boolean hasPermission(PlayerEntity player, Action action);
 
     /**
      * Returns whether the player is a member of the colony.
      *
-     * @param player {@link EntityPlayer} to check.
+     * @param player {@link PlayerEntity} to check.
      * @return true if the player is a member of the colony.
      */
-    boolean isColonyMember(EntityPlayer player);
+    boolean isColonyMember(PlayerEntity player);
 
     /**
      * Returns an unmodifiable map of the players list.

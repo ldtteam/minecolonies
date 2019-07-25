@@ -6,13 +6,13 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -53,23 +53,23 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     @Override
     @NotNull
     public EnumActionResult onItemUse(
-                                       final EntityPlayer playerIn,
+                                       final PlayerEntity playerIn,
                                        final World worldIn,
                                        final BlockPos pos,
                                        final EnumHand hand,
-                                       final EnumFacing facing,
+                                       final Direction facing,
                                        final float hitX,
                                        final float hitY,
                                        final float hitZ)
     {
         final ItemStack scroll = playerIn.getHeldItem(hand);
 
-        final NBTTagCompound compound = checkForCompound(scroll);
+        final CompoundNBT compound = checkForCompound(scroll);
         final TileEntity entity = worldIn.getTileEntity(pos);
 
         if (entity instanceof TileEntityColonyBuilding)
         {
-            compound.setInteger(TAG_COLONY_ID, ((TileEntityColonyBuilding) entity).getColonyId());
+            compound.putInt(TAG_COLONY_ID, ((TileEntityColonyBuilding) entity).getColonyId());
             BlockPosUtil.writeToNBT(compound, TAG_BUILDER, ((TileEntityColonyBuilding) entity).getPosition());
 
             if (!worldIn.isRemote)
@@ -77,9 +77,9 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
                 LanguageHandler.sendPlayerMessage(playerIn, TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET, ((TileEntityColonyBuilding) entity).getColonyId());
             }
         }
-        else if (compound.hasKey(TAG_COLONY_ID) && compound.hasKey(TAG_BUILDER) && worldIn.isRemote)
+        else if (compound.keySet().contains(TAG_COLONY_ID) && compound.keySet().contains(TAG_BUILDER) && worldIn.isRemote)
         {
-            final int colonyId = compound.getInteger(TAG_COLONY_ID);
+            final int colonyId = compound.getInt(TAG_COLONY_ID);
             final BlockPos builderPos = BlockPosUtil.readFromNBT(compound, TAG_BUILDER);
             MineColonies.proxy.openResourceScrollWindow(colonyId, builderPos);
         }
@@ -99,7 +99,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     @NotNull
     public ActionResult<ItemStack> onItemRightClick(
                                                      final World worldIn,
-                                                     final EntityPlayer playerIn,
+                                                     final PlayerEntity playerIn,
                                                      final EnumHand hand)
     {
         final ItemStack cllipboard = playerIn.getHeldItem(hand);
@@ -109,11 +109,11 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             return new ActionResult<>(EnumActionResult.SUCCESS, cllipboard);
         }
 
-        final NBTTagCompound compound = checkForCompound(cllipboard);
+        final CompoundNBT compound = checkForCompound(cllipboard);
 
-        if (compound.hasKey(TAG_COLONY_ID) && compound.hasKey(TAG_BUILDER))
+        if (compound.keySet().contains(TAG_COLONY_ID) && compound.keySet().contains(TAG_BUILDER))
         {
-            final int colonyId = compound.getInteger(TAG_COLONY_ID);
+            final int colonyId = compound.getInt(TAG_COLONY_ID);
             final BlockPos builderPos = BlockPosUtil.readFromNBT(compound, TAG_BUILDER);
             MineColonies.proxy.openResourceScrollWindow(colonyId, builderPos);
         }
@@ -131,11 +131,11 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      *
      * @param item the item to check in for.
      */
-    private static NBTTagCompound checkForCompound(final ItemStack item)
+    private static CompoundNBT checkForCompound(final ItemStack item)
     {
         if (!item.hasTagCompound())
         {
-            item.setTagCompound(new NBTTagCompound());
+            item.putCompound(new CompoundNBT());
         }
         return item.getTagCompound();
     }

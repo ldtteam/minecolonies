@@ -8,7 +8,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
@@ -114,12 +114,12 @@ public abstract class AbstractWorkOrder
     }
 
     /**
-     * Create a Work Order from a saved NBTTagCompound.
+     * Create a Work Order from a saved CompoundNBT.
      *
      * @param compound the compound that contains the data for the Work Order
      * @return {@link AbstractWorkOrder} from the NBT
      */
-    public static AbstractWorkOrder createFromNBT(@NotNull final NBTTagCompound compound, final WorkManager manager)
+    public static AbstractWorkOrder createFromNBT(@NotNull final CompoundNBT compound, final WorkManager manager)
     {
         @Nullable AbstractWorkOrder order = null;
         @Nullable Class<? extends AbstractWorkOrder> oclass = null;
@@ -146,9 +146,9 @@ public abstract class AbstractWorkOrder
         }
         try
         {
-            if (compound.hasKey(TAG_TH_PRIORITY))
+            if (compound.keySet().contains(TAG_TH_PRIORITY))
             {
-                order.setPriority(compound.getInteger(TAG_TH_PRIORITY));
+                order.setPriority(compound.getInt(TAG_TH_PRIORITY));
             }
             order.readFromNBT(compound, manager);
         }
@@ -163,21 +163,21 @@ public abstract class AbstractWorkOrder
     }
 
     /**
-     * Read the WorkOrder data from the NBTTagCompound.
+     * Read the WorkOrder data from the CompoundNBT.
      *  @param compound NBT Tag compound
      * @param manager the workManager calling this method.
      */
-    public void readFromNBT(@NotNull final NBTTagCompound compound, final WorkManager manager)
+    public void readFromNBT(@NotNull final CompoundNBT compound, final WorkManager manager)
     {
-        id = compound.getInteger(TAG_ID);
-        if (compound.hasKey(TAG_TH_PRIORITY))
+        id = compound.getInt(TAG_ID);
+        if (compound.keySet().contains(TAG_TH_PRIORITY))
         {
-            priority = compound.getInteger(TAG_TH_PRIORITY);
+            priority = compound.getInt(TAG_TH_PRIORITY);
         }
 
-        if (compound.hasKey(TAG_CLAIMED_BY))
+        if (compound.keySet().contains(TAG_CLAIMED_BY))
         {
-            final int citizenId = compound.getInteger(TAG_CLAIMED_BY);
+            final int citizenId = compound.getInt(TAG_CLAIMED_BY);
             if (manager.colony != null)
             {
                 final CitizenData data = manager.colony.getCitizenManager().getCitizen(citizenId);
@@ -187,7 +187,7 @@ public abstract class AbstractWorkOrder
                 }
             }
         }
-        else if (compound.hasKey(TAG_CLAIMED_BY_BUILDING))
+        else if (compound.keySet().contains(TAG_CLAIMED_BY_BUILDING))
         {
             claimedBy = BlockPosUtil.readFromNBT(compound, TAG_CLAIMED_BY_BUILDING);
         }
@@ -337,11 +337,11 @@ public abstract class AbstractWorkOrder
     }
 
     /**
-     * Save the Work Order to an NBTTagCompound.
+     * Save the Work Order to an CompoundNBT.
      *
      * @param compound NBT tag compount
      */
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         final String s = nameToClassBiMap.inverse().get(this.getClass());
 
@@ -350,9 +350,9 @@ public abstract class AbstractWorkOrder
             throw new IllegalStateException(this.getClass() + " is missing a mapping! This is a bug!");
         }
 
-        compound.setInteger(TAG_TH_PRIORITY, priority);
-        compound.setString(TAG_TYPE, s);
-        compound.setInteger(TAG_ID, id);
+        compound.putInt(TAG_TH_PRIORITY, priority);
+        compound.putString(TAG_TYPE, s);
+        compound.putInt(TAG_ID, id);
         if (claimedBy != null)
         {
             BlockPosUtil.writeToNBT(compound, TAG_CLAIMED_BY_BUILDING, claimedBy);

@@ -108,7 +108,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             @Nullable final TileEntity chest = searchRightChestForStack(stack);
             if (chest == null)
             {
-                LanguageHandler.sendPlayersMessage(getColony().getMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL);
+                LanguageHandler.sendPlayersMessage(getColony().getMessagePlayerEntitys(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL);
                 return;
             }
             final IItemHandler handler = chest.getCapability(ITEM_HANDLER_CAPABILITY, null);

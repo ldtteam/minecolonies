@@ -21,17 +21,17 @@ import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -58,7 +58,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
     /**
      * The state at the offset position.
      */
-    private IBlockState state;
+    private BlockState state;
 
     private String   structureName;
     private String   workOrderName;
@@ -93,7 +93,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
       final int rotation,
       final boolean isHut,
       final Mirror mirror,
-      final IBlockState state)
+      final BlockState state)
     {
         super();
         this.structureName = structureName;
@@ -149,16 +149,16 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
 
         buf.writeBoolean(mirror);
 
-        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new NBTTagCompound(), state));
+        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new CompoundNBT(), state));
     }
 
     @Override
-    public void messageOnServerThread(final BuildToolPlaceMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final BuildToolPlaceMessage message, final PlayerEntityMP player)
     {
         final StructureName sn = new StructureName(message.structureName);
         if (!Structures.hasMD5(sn))
         {
-            player.sendMessage(new TextComponentString("Can not build " + message.workOrderName + ": schematic missing!"));
+            player.sendMessage(new StringTextComponent("Can not build " + message.workOrderName + ": schematic missing!"));
             return;
         }
         if (message.isHut)
@@ -183,12 +183,12 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      */
     private static void handleHut(
       @NotNull final World world,
-      @NotNull final EntityPlayer player,
+      @NotNull final PlayerEntity player,
       final StructureName sn,
       final int rotation,
       @NotNull final BlockPos buildPos,
       final boolean mirror,
-      final IBlockState state)
+      final BlockState state)
     {
         final String hut = sn.getSection();
         final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
@@ -215,14 +215,14 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                 if (slot != -1)
                 {
                     final ItemStack stack = player.inventory.getStackInSlot(slot);
-                    final NBTTagCompound compound = stack.getTagCompound();
+                    final CompoundNBT compound = stack.getTagCompound();
                     if (compound != null)
                     {
-                        if (compound.hasKey(TAG_OTHER_LEVEL))
+                        if (compound.keySet().contains(TAG_OTHER_LEVEL))
                         {
-                            level = compound.getInteger(TAG_OTHER_LEVEL);
+                            level = compound.getInt(TAG_OTHER_LEVEL);
                         }
-                        if (compound.hasKey(TAG_PASTEABLE))
+                        if (compound.keySet().contains(TAG_PASTEABLE))
                         {
                             String schematic = sn.toString();
                             schematic = schematic.substring(0, schematic.length()-1);
@@ -255,7 +255,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * @param mirror        Whether or not the strcture is mirrored.
      */
     private static void handleDecoration(
-                                          @NotNull final World world, @NotNull final EntityPlayer player,
+                                          @NotNull final World world, @NotNull final PlayerEntity player,
                                           final StructureName sn, final String workOrderName,
                                           final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
@@ -298,7 +298,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * @param complete      if pasted.
      */
     private static void setupBuilding(
-      @NotNull final World world, @NotNull final EntityPlayer player,
+      @NotNull final World world, @NotNull final PlayerEntity player,
       final StructureName sn,
       final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final int level, final boolean complete)
     {
@@ -340,7 +340,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                   workOrder.getRotation(world),
                   workOrder.isMirrored());
 
-                building.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
+                building.setCorners(corners.getA().getA(), corners.getA().getB(), corners.getB().getA(), corners.getB().getB());
                 building.setHeight(wrapper.getHeight());
 
                 ConstructionTapeHelper.placeConstructionTape(building.getLocation(), corners, world);

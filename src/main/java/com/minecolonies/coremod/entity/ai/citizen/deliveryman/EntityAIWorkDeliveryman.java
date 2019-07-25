@@ -26,13 +26,12 @@ import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventTyp
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -321,7 +320,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final int amount = workerRequiresItem(building, stack, alreadyKept);
         if (amount <= 0
               || (building instanceof BuildingCook
-                    && stack.getItem() instanceof ItemFood))
+                    && stack.getItem().isFood()))
         {
             return false;
         }
@@ -548,7 +547,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     else if (buildingToDeliver instanceof TileEntityColonyBuilding)
                     {
                         chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL,
-                          new TextComponentString(" :" + building.getSchematicName()));
+                          new StringTextComponent(" :" + building.getSchematicName()));
                     }
                 }
 

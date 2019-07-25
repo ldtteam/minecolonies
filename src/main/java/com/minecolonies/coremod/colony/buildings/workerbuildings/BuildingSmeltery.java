@@ -11,10 +11,10 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
-import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemSword;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.SwordItem;
 import net.minecraft.item.ItemTool;
-import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -56,9 +56,9 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
     {
         super(c, l);
         keepX.put(ColonyManager.getCompatibilityManager()::isOre, new Tuple<>(Integer.MAX_VALUE, true));
-        keepX.put(TileEntityFurnace::isItemFuel, new Tuple<>(Integer.MAX_VALUE, true));
+        keepX.put(FurnaceTileEntity::isFuel, new Tuple<>(Integer.MAX_VALUE, true));
         keepX.put(stack -> !ItemStackUtils.isEmpty(stack)
-                && (stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool || stack.getItem() instanceof ItemArmor)
+                && (stack.getItem() instanceof SwordItem || stack.getItem() instanceof ItemTool || stack.getItem() instanceof ArmorItem)
                 , new Tuple<>(STUFF_TO_KEEP, true));
     }
 

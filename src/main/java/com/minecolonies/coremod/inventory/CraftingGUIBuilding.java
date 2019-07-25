@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
@@ -37,7 +37,7 @@ public class CraftingGUIBuilding extends Container
     /**
      * The player assigned to it.
      */
-    private final EntityPlayer player;
+    private final PlayerEntity player;
 
     /**
      * Boolean variable defining if complete grid or not 3x3(true), 2x2(false).
@@ -68,7 +68,7 @@ public class CraftingGUIBuilding extends Container
         this.addSlotToContainer(new SlotCrafting(playerInventory.player, this.craftMatrix, this.craftResult, 0, X_CRAFT_RESULT, Y_CRAFT_RESULT)
         {
             @Override
-            public boolean canTakeStack(final EntityPlayer playerIn)
+            public boolean canTakeStack(final PlayerEntity playerIn)
             {
                 return false;
             }
@@ -88,7 +88,7 @@ public class CraftingGUIBuilding extends Container
 
                     @NotNull
                     @Override
-                    public ItemStack onTake(final EntityPlayer player, @NotNull final ItemStack stack)
+                    public ItemStack onTake(final PlayerEntity player, @NotNull final ItemStack stack)
                     {
                         return ItemStack.EMPTY;
                     }
@@ -107,7 +107,7 @@ public class CraftingGUIBuilding extends Container
                     }
 
                     @Override
-                    public boolean canTakeStack(final EntityPlayer par1EntityPlayer)
+                    public boolean canTakeStack(final PlayerEntity par1PlayerEntity)
                     {
                         return false;
                     }
@@ -151,7 +151,7 @@ public class CraftingGUIBuilding extends Container
     {
         if (!worldObj.isRemote)
         {
-            final EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
+            final PlayerEntityMP entityplayermp = (PlayerEntityMP) player;
             ItemStack itemstack = ItemStack.EMPTY;
             final IRecipe irecipe = CraftingManager.findMatchingRecipe(craftMatrix, worldObj);
             if (irecipe != null && (irecipe.isDynamic()
@@ -171,14 +171,14 @@ public class CraftingGUIBuilding extends Container
     }
 
     @Override
-    public boolean canInteractWith(@NotNull final EntityPlayer playerIn)
+    public boolean canInteractWith(@NotNull final PlayerEntity playerIn)
     {
         return true;
     }
 
     @NotNull
     @Override
-    public ItemStack slotClick(final int slotId, final int clickedButton, final ClickType mode, final EntityPlayer playerIn)
+    public ItemStack slotClick(final int slotId, final int clickedButton, final ClickType mode, final PlayerEntity playerIn)
     {
         if (slotId >= 1 && slotId < CRAFTING_SLOTS + (complete ? ADDITIONAL_SLOTS : 0))
         {
@@ -229,7 +229,7 @@ public class CraftingGUIBuilding extends Container
 
     @NotNull
     @Override
-    public ItemStack transferStackInSlot(final EntityPlayer playerIn, final int index)
+    public ItemStack transferStackInSlot(final PlayerEntity playerIn, final int index)
     {
         final int total_crafting_slots = CRAFTING_SLOTS + (complete ? ADDITIONAL_SLOTS : 0);
         if (index <= total_crafting_slots)
@@ -301,7 +301,7 @@ public class CraftingGUIBuilding extends Container
      * Getter for the player.
      * @return the player.
      */
-    public EntityPlayer getPlayer()
+    public PlayerEntity getPlayer()
     {
         return player;
     }

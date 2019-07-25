@@ -16,9 +16,9 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -85,7 +85,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         setResistance(RESISTANCE);
         //Hardness of 10 takes a long time to mine to not loose progress
         setHardness(Configurations.gameplay.pvp_mode ? HARDNESS * HARDNESS_PVP_FACTOR : HARDNESS);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, Direction.NORTH));
     }
 
     /**
@@ -109,7 +109,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
-    public boolean isFullBlock(final IBlockState state)
+    public boolean isFullBlock(final BlockState state)
     {
         return false;
     }
@@ -123,27 +123,27 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @NotNull
     @Override
     @Deprecated
-    public IBlockState getStateFromMeta(final int meta)
+    public BlockState getStateFromMeta(final int meta)
     {
-        EnumFacing enumfacing = EnumFacing.byIndex(meta);
+        Direction enumfacing = Direction.byIndex(meta);
 
-        if (enumfacing.getAxis() == EnumFacing.Axis.Y)
+        if (enumfacing.getAxis() == Direction.Axis.Y)
         {
-            enumfacing = EnumFacing.NORTH;
+            enumfacing = Direction.NORTH;
         }
 
         return this.getDefaultState().withProperty(FACING, enumfacing);
     }
 
     // =======================================================================
-    // ======================= Rendering & IBlockState =======================
+    // ======================= Rendering & BlockState =======================
     // =======================================================================
 
     /**
      * Convert the BlockState into the correct metadata value.
      */
     @Override
-    public int getMetaFromState(final IBlockState state)
+    public int getMetaFromState(final BlockState state)
     {
         return state.getValue(FACING).getIndex();
     }
@@ -157,7 +157,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @NotNull
     @Override
     @Deprecated
-    public IBlockState withRotation(@NotNull final IBlockState state, final Rotation rot)
+    public BlockState withRotation(@NotNull final BlockState state, final Rotation rot)
     {
         return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
     }
@@ -169,7 +169,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @NotNull
     @Override
     @Deprecated
-    public IBlockState withMirror(@NotNull final IBlockState state, final Mirror mirrorIn)
+    public BlockState withMirror(@NotNull final BlockState state, final Mirror mirrorIn)
     {
         return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
     }
@@ -180,7 +180,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
-    public boolean isFullCube(final IBlockState state)
+    public boolean isFullCube(final BlockState state)
     {
         return false;
     }
@@ -191,7 +191,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
-    public boolean isOpaqueCube(final IBlockState state)
+    public boolean isOpaqueCube(final BlockState state)
     {
         return false;
     }
@@ -208,10 +208,10 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public boolean onBlockActivated(
                                      final World worldIn,
                                      final BlockPos pos,
-                                     final IBlockState state,
-                                     final EntityPlayer playerIn,
+                                     final BlockState state,
+                                     final PlayerEntity playerIn,
                                      final EnumHand hand,
-                                     final EnumFacing facing,
+                                     final Direction facing,
                                      final float hitX,
                                      final float hitY,
                                      final float hitZ)
@@ -236,17 +236,17 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @SuppressWarnings(DEPRECATION)
     @NotNull
     @Override
-    public IBlockState getStateForPlacement(
+    public BlockState getStateForPlacement(
                                              final World worldIn,
                                              final BlockPos pos,
-                                             final EnumFacing facing,
+                                             final Direction facing,
                                              final float hitX,
                                              final float hitY,
                                              final float hitZ,
                                              final int meta,
                                              final EntityLivingBase placer)
     {
-        @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
+        @NotNull final Direction enumFacing = (placer == null) ? Direction.NORTH : Direction.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 
@@ -260,11 +260,11 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * @param state   the state the placed block is in.
      * @param placer  the player placing the block.
      * @param stack   the itemstack from where the block was placed.
-     * @see Block#onBlockPlacedBy(World, BlockPos, IBlockState,
+     * @see Block#onBlockPlacedBy(World, BlockPos, BlockState,
      * EntityLivingBase, ItemStack)
      */
     @Override
-    public void onBlockPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
+    public void onBlockPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final BlockState state, final EntityLivingBase placer, final ItemStack stack)
     {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 
@@ -277,7 +277,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         }
 
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
-        if (placer instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
+        if (placer instanceof PlayerEntity && tileEntity instanceof TileEntityColonyBuilding)
         {
             @NotNull final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
             @Nullable final Colony colony = ColonyManager.getColonyByPosFromWorld(worldIn, hut.getPosition());
@@ -298,7 +298,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     }
 
     @Override
-    public boolean canRenderInLayer(final IBlockState state, final BlockRenderLayer layer)
+    public boolean canRenderInLayer(final BlockState state, final BlockRenderLayer layer)
     {
         if (layer == BlockRenderLayer.CUTOUT || layer == BlockRenderLayer.SOLID)
         {
@@ -308,7 +308,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     }
 
     @Override
-    public boolean doesSideBlockRendering(final IBlockState state, final IBlockAccess world, final BlockPos pos, final EnumFacing face)
+    public boolean doesSideBlockRendering(final BlockState state, final IBlockAccess world, final BlockPos pos, final Direction face)
     {
         return false;
     }
@@ -325,12 +325,12 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * @param stack   the itemstack from where the block was placed.
      * @param mirror  the mirror used.
      * @param style   the style of the building
-     * @see Block#onBlockPlacedBy(World, BlockPos, IBlockState,
+     * @see Block#onBlockPlacedBy(World, BlockPos, BlockState,
      * EntityLivingBase, ItemStack)
      */
     public void onBlockPlacedByBuildTool(
                                           @NotNull final World worldIn, @NotNull final BlockPos pos,
-                                          final IBlockState state, final EntityLivingBase placer, final ItemStack stack, final boolean mirror, final String style)
+                                          final BlockState state, final EntityLivingBase placer, final ItemStack stack, final boolean mirror, final String style)
     {
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
         if (tileEntity instanceof TileEntityColonyBuilding)

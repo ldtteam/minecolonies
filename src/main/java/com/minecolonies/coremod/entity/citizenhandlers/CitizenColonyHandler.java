@@ -280,10 +280,10 @@ public class CitizenColonyHandler
         if (homeBuilding instanceof BuildingHome)
         {
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = homeBuilding.getCorners();
-            return new AxisAlignedBB(corners.getFirst().getFirst(), citizen.posY - 1, corners.getSecond().getFirst(),
-              corners.getFirst().getSecond(),
+            return new AxisAlignedBB(corners.getA().getA(), citizen.posY - 1, corners.getB().getA(),
+              corners.getA().getB(),
               citizen.posY + 1,
-              corners.getSecond().getSecond()).intersectsWithXZ(new Vec3d(citizen.getPosition()));
+              corners.getB().getB()).intersectsWithXZ(new Vec3d(citizen.getPosition()));
         }
 
         @Nullable final BlockPos homePosition = citizen.getHomePosition();

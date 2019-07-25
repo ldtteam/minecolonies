@@ -19,9 +19,9 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
-import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -184,10 +184,10 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
 
             final ItemStack stack = new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, 1, false);
             final Tuple<ItemStack, Integer> materialTuple = getMaterialAndAmount(stack);
-            final ItemStack material = materialTuple.getFirst();
+            final ItemStack material = materialTuple.getA();
             if (!ItemStackUtils.isEmpty(material))
             {
-                material.setCount(materialTuple.getSecond());
+                material.setCount(materialTuple.getB());
                 material.setItemDamage(0);
                 new InvWrapper(worker.getInventoryCitizen()).setStackInSlot(slot, material);
                 if (getOwnBuilding().getBuildingLevel() > 0 && stack.isItemEnchanted() &&
@@ -226,31 +226,31 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     {
         int amount = 1;
         ItemStack material = ItemStackUtils.EMPTY;
-        if (stack.getItem() instanceof ItemSword)
+        if (stack.getItem() instanceof SwordItem)
         {
-            material = Item.ToolMaterial.valueOf(((ItemSword) stack.getItem()).getToolMaterialName()).getRepairItemStack();
+            material = Item.ToolMaterial.valueOf(((SwordItem) stack.getItem()).getToolMaterialName()).getRepairItemStack();
         }
         else if (stack.getItem() instanceof ItemTool)
         {
             material = Item.ToolMaterial.valueOf(((ItemTool) stack.getItem()).getToolMaterialName()).getRepairItemStack();
         }
-        else if (stack.getItem() instanceof ItemArmor)
+        else if (stack.getItem() instanceof ArmorItem)
         {
-            material = ((ItemArmor) stack.getItem()).getArmorMaterial().getRepairItemStack();
-            final EntityEquipmentSlot eq = ((ItemArmor) stack.getItem()).armorType;
-            if (eq == EntityEquipmentSlot.CHEST)
+            material = ((ArmorItem) stack.getItem()).getArmorMaterial().getRepairItemStack();
+            final EquipmentSlotType eq = ((ArmorItem) stack.getItem()).getEquipmentSlot();
+            if (eq == EquipmentSlotType.CHEST)
             {
                 amount = CHEST_MAT_AMOUNT;
             }
-            else if (eq == EntityEquipmentSlot.LEGS)
+            else if (eq == EquipmentSlotType.LEGS)
             {
                 amount = LEGS_MAT_AMOUNT;
             }
-            else if (eq == EntityEquipmentSlot.HEAD)
+            else if (eq == EquipmentSlotType.HEAD)
             {
                 amount = HEAD_MAT_AMOUNT;
             }
-            else if (eq == EntityEquipmentSlot.FEET)
+            else if (eq == EquipmentSlotType.FEET)
             {
                 amount = FEET_MAT_AMOUNT;
             }
@@ -263,7 +263,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
      *
      * @param furnace the furnace to retrieve from.
      */
-    protected void extractFromFurnace(final TileEntityFurnace furnace)
+    protected void extractFromFurnace(final FurnaceTileEntity furnace)
     {
         final ItemStack ingots = new InvWrapper(furnace).extractItem(RESULT_SLOT, STACKSIZE, false);
         final int multiplier = ((BuildingSmeltery) getOwnBuilding()).ingotMultiplier(worker.getCitizenData().getLevel(), worker.getRandom());
@@ -364,9 +364,9 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
      */
     private static boolean isSmeltableToolOrWeapon(final ItemStack stack)
     {
-        return !ItemStackUtils.isEmpty(stack) && (stack.getItem() instanceof ItemSword
+        return !ItemStackUtils.isEmpty(stack) && (stack.getItem() instanceof SwordItem
                                                     || stack.getItem() instanceof ItemTool
-                                                    || stack.getItem() instanceof ItemArmor)
+                                                    || stack.getItem() instanceof ArmorItem)
                  && !stack.getItem().isDamaged(stack);
     }
 

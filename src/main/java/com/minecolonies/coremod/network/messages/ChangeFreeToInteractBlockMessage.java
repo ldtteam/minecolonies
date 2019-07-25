@@ -8,7 +8,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -110,7 +110,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
     }
 
     @Override
-    public void messageOnServerThread(final ChangeFreeToInteractBlockMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final ChangeFreeToInteractBlockMessage message, final PlayerEntityMP player)
     {
         final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

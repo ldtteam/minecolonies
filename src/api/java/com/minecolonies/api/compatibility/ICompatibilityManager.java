@@ -1,9 +1,9 @@
 package com.minecolonies.api.compatibility;
 
 import com.minecolonies.api.crafting.ItemStorage;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +48,7 @@ public interface ICompatibilityManager
      * @param block the leave.
      * @return the sapling stack.
      */
-    ItemStack getSaplingForLeaf(final IBlockState block);
+    ItemStack getSaplingForLeaf(final BlockState block);
 
     /**
      * Get a copy of the list of saplings.
@@ -92,7 +92,7 @@ public interface ICompatibilityManager
      * @param block the block to check.
      * @return boolean if so.
      */
-    boolean isOre(final IBlockState block);
+    boolean isOre(final BlockState block);
 
     /**
      * Test if an itemStack is an ore.
@@ -125,21 +125,21 @@ public interface ICompatibilityManager
      *
      * @param compound NBT-Tag.
      */
-    void writeToNBT(@NotNull final NBTTagCompound compound);
+    void writeToNBT(@NotNull final CompoundNBT compound);
 
     /**
      * Read Colonies from saved NBT data.
      *
      * @param compound NBT Tag.
      */
-    void readFromNBT(@NotNull final NBTTagCompound compound);
+    void readFromNBT(@NotNull final CompoundNBT compound);
 
     /**
      * Connect a certain block as leave to an ItemStack as sapling.
      * @param block the block to connect the sapling to.
      * @param stack the sapling.
      */
-    void connectLeafToSapling(IBlockState block, ItemStack stack);
+    void connectLeafToSapling(BlockState block, ItemStack stack);
 
     /**
      * If discovery process ran already.

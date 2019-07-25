@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.fisherman;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import org.jetbrains.annotations.NotNull;
@@ -189,7 +189,7 @@ public final class Pond
      * @return new Pond instance.
      */
     @NotNull
-    public static Pond readFromNBT(@NotNull final NBTTagCompound compound)
+    public static Pond readFromNBT(@NotNull final CompoundNBT compound)
     {
         return new Pond(BlockPosUtil.readFromNBT(compound, TAG_LOCATION));
     }
@@ -222,7 +222,7 @@ public final class Pond
      *
      * @param compound nbt tag compound to write to.
      */
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
     }

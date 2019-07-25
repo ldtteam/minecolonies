@@ -21,14 +21,14 @@ import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -51,7 +51,7 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
     /**
      * The state at the offset position.
      */
-    private IBlockState state;
+    private BlockState state;
 
     private String   structureName;
     private String   workOrderName;
@@ -86,7 +86,7 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
       final int rotation,
       final Mirror mirror,
       final AbstractBuildingView building,
-      final IBlockState state)
+      final BlockState state)
     {
         super();
         this.structureName = structureName;
@@ -129,16 +129,16 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
         buf.writeInt(rotation);
         buf.writeBoolean(mirror);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
-        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new NBTTagCompound(), state));
+        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new CompoundNBT(), state));
     }
 
     @Override
-    public void messageOnServerThread(final BuildingMoveMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final BuildingMoveMessage message, final PlayerEntityMP player)
     {
         final StructureName sn = new StructureName(message.structureName);
         if (!Structures.hasMD5(sn))
         {
-            player.sendMessage(new TextComponentString("Can not build " + message.workOrderName + ": schematic missing!"));
+            player.sendMessage(new StringTextComponent("Can not build " + message.workOrderName + ": schematic missing!"));
             return;
         }
         handleHut(CompatibilityUtils.getWorld(player), player, sn, message.rotation, message.pos, message.mirror, message.buildingId, message.state);
@@ -157,9 +157,9 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
      * @param state         the hut state.
      */
     private static void handleHut(
-      @NotNull final World world, @NotNull final EntityPlayer player,
+      @NotNull final World world, @NotNull final PlayerEntity player,
       final StructureName sn,
-      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockPos oldBuildingId, final IBlockState state)
+      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockPos oldBuildingId, final BlockState state)
     {
         final String hut = sn.getSection();
         final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
@@ -209,7 +209,7 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
      * @param oldBuilding The old building id.
      */
     private static void setupBuilding(
-      @NotNull final World world, @NotNull final EntityPlayer player,
+      @NotNull final World world, @NotNull final PlayerEntity player,
       final StructureName sn,
       final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, @Nullable final AbstractBuilding oldBuilding)
     {
@@ -284,7 +284,7 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
 
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildRemoval(oldBuilding, oldBuilding.getBuildingLevel()), false);
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildBuilding(building, building.getBuildingLevel()), false);
-            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), "com.minecolonies.coremod.workOrderAdded");
         }
     }
 }

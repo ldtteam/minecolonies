@@ -5,7 +5,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,7 +84,7 @@ public class ToggleHousingMessage extends AbstractMessage<ToggleHousingMessage, 
      * @param player  the player associated.
      */
     @Override
-    public void messageOnServerThread(final ToggleHousingMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final ToggleHousingMessage message, final PlayerEntityMP player)
     {
         final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

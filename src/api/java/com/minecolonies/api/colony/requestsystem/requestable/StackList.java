@@ -2,10 +2,12 @@ package com.minecolonies.api.colony.requestsystem.requestable;
 
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.tags.Tag;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -140,25 +142,25 @@ public class StackList implements IDeliverable
      * @param input the input.
      * @return the compound.
      */
-    public static NBTTagCompound serialize(final IFactoryController controller, final StackList input)
+    public static CompoundNBT serialize(final IFactoryController controller, final StackList input)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
-        @NotNull final NBTTagList neededResTagList = new NBTTagList();
+        final CompoundNBT compound = new CompoundNBT();
+        @NotNull final ListNBT neededResTagList = new ListNBT();
         for (@NotNull final ItemStack resource : input.theStacks)
         {
-            neededResTagList.appendTag(resource.serializeNBT());
+            neededResTagList.add(resource.serializeNBT());
         }
-        compound.setTag(NBT_STACK_LIST, neededResTagList);
+        compound.put(NBT_STACK_LIST, neededResTagList);
 
-        compound.setBoolean(NBT_MATCHMETA, input.matchMeta);
-        compound.setBoolean(NBT_MATCHNBT, input.matchNBT);
-        compound.setBoolean(NBT_MATCHOREDIC, input.matchOreDic);
+        compound.putBoolean(NBT_MATCHMETA, input.matchMeta);
+        compound.putBoolean(NBT_MATCHNBT, input.matchNBT);
+        compound.putBoolean(NBT_MATCHOREDIC, input.matchOreDic);
 
         if (!ItemStackUtils.isEmpty(input.result))
         {
-            compound.setTag(NBT_RESULT, input.result.serializeNBT());
+            compound.put(NBT_RESULT, input.result.serializeNBT());
         }
-        compound.setString(TAG_DESCRIPTION, input.description);
+        compound.putString(TAG_DESCRIPTION, input.description);
 
         return compound;
     }
@@ -169,22 +171,22 @@ public class StackList implements IDeliverable
      * @param compound the compound.
      * @return the deliverable.
      */
-    public static StackList deserialize(final IFactoryController controller, final NBTTagCompound compound)
+    public static StackList deserialize(final IFactoryController controller, final CompoundNBT compound)
     {
         final List<ItemStack> stacks = new ArrayList<>();
 
-        final NBTTagList neededResTagList = compound.getTagList(NBT_STACK_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < neededResTagList.tagCount(); ++i)
+        final ListNBT neededResTagList = compound.getList(NBT_STACK_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < neededResTagList.size(); ++i)
         {
-            final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
-            stacks.add(new ItemStack(neededRes));
+            final CompoundNBT neededRes = neededResTagList.getCompound(i);
+            stacks.add(ItemStack.read(neededRes));
         }
 
         final boolean matchMeta = compound.getBoolean(NBT_MATCHMETA);
         final boolean matchNBT = compound.getBoolean(NBT_MATCHNBT);
         final boolean matchOreDic = compound.getBoolean(NBT_MATCHOREDIC);
-        final ItemStack result = compound.hasKey(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_RESULT)) : ItemStackUtils.EMPTY;
-        final String desc = compound.hasKey(TAG_DESCRIPTION) ? compound.getString(TAG_DESCRIPTION) : LIST_REQUEST_DISPLAY_STRING;
+        final ItemStack result = compound.keySet().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
+        final String desc = compound.keySet().contains(TAG_DESCRIPTION) ? compound.getString(TAG_DESCRIPTION) : LIST_REQUEST_DISPLAY_STRING;
         return new StackList(stacks, matchMeta, matchNBT, matchOreDic, result, desc);
     }
 
@@ -195,9 +197,13 @@ public class StackList implements IDeliverable
         {
             for (final ItemStack tempStack : theStacks)
             {
-                if (OreDictionary.itemMatches(tempStack, stack, matchMeta))
+                for (final ResourceLocation tag: tempStack.getItem().getTags())
                 {
-                    return true;
+                    final Tag<Item> theTag = new Tag<>(tag);
+                    if (theTag.contains(stack.getItem()));
+                    {
+                        return true;
+                    }
                 }
             }
         }

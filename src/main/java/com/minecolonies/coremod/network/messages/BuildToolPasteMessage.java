@@ -23,18 +23,18 @@ import com.ldtteam.structurize.management.Structures;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -59,7 +59,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
     /**
      * The state at the offset position.
      */
-    private IBlockState state;
+    private BlockState state;
 
     private boolean                  complete;
     private String                   structureName;
@@ -101,7 +101,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
       final String workOrderName, final BlockPos pos,
       final int rotation, final boolean isHut,
       final Mirror mirror, final boolean complete,
-      final WindowBuildTool.FreeMode freeMode, final IBlockState state)
+      final WindowBuildTool.FreeMode freeMode, final BlockState state)
     {
         super();
         this.structureName = structureName;
@@ -177,16 +177,16 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             buf.writeInt(freeMode.ordinal());
         }
 
-        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new NBTTagCompound(), state));
+        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new CompoundNBT(), state));
     }
 
     @Override
-    public void messageOnServerThread(final BuildToolPasteMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final BuildToolPasteMessage message, final PlayerEntityMP player)
     {
         final StructureName sn = new StructureName(message.structureName);
         if (!Structures.hasMD5(sn))
         {
-            player.sendMessage(new TextComponentString("Can not build " + message.workOrderName + ": schematic missing!"));
+            player.sendMessage(new StringTextComponent("Can not build " + message.workOrderName + ": schematic missing!"));
             return;
         }
 
@@ -262,9 +262,9 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      * @param state         The state of the hut.
      */
     private static void handleHut(
-                                   @NotNull final World world, @NotNull final EntityPlayer player,
+                                   @NotNull final World world, @NotNull final PlayerEntity player,
                                    final StructureName sn,
-                                   final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final IBlockState state)
+                                   final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockState state)
     {
         final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
         if (tempColony != null
@@ -296,7 +296,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      * @param mirror        Whether or not the strcture is mirrored.
      */
     private static void setupBuilding(
-                                       @NotNull final World world, @NotNull final EntityPlayer player,
+                                       @NotNull final World world, @NotNull final PlayerEntity player,
                                        final StructureName sn,
                                        final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
@@ -348,7 +348,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
                   workOrder.getRotation(world),
                   workOrder.isMirrored());
 
-                building.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
+                building.setCorners(corners.getA().getA(), corners.getA().getB(), corners.getB().getA(), corners.getB().getB());
                 building.setHeight(wrapper.getHeight());
             }
 

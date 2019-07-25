@@ -10,7 +10,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.GuiHandler;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
@@ -134,7 +134,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     }
 
     @Override
-    public void messageOnServerThread(final OpenInventoryMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final OpenInventoryMessage message, final PlayerEntityMP player)
     {
         switch (message.inventoryType)
         {
@@ -152,7 +152,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
         }
     }
 
-    private static void doCitizenInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
+    private static void doCitizenInventory(final OpenInventoryMessage message, final PlayerEntityMP player)
     {
         @Nullable final EntityCitizen citizen = (EntityCitizen) CompatibilityUtils.getWorld(player).getEntityByID(message.entityID);
         if (citizen != null && checkPermissions(citizen.getCitizenColonyHandler().getColony(), player))
@@ -166,7 +166,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
         }
     }
 
-    private static void doHutInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
+    private static void doHutInventory(final OpenInventoryMessage message, final PlayerEntityMP player)
     {
         if (checkPermissions(ColonyManager.getClosestColony(player.getEntityWorld(), message.tePos), player))
         {
@@ -180,7 +180,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
         }
     }
 
-    private static void doFieldInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
+    private static void doFieldInventory(final OpenInventoryMessage message, final PlayerEntityMP player)
     {
         if (checkPermissions(ColonyManager.getClosestColony(player.getEntityWorld(), message.tePos), player))
         {
@@ -193,7 +193,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
         }
     }
 
-    private static boolean checkPermissions(final Colony colony, final EntityPlayerMP player)
+    private static boolean checkPermissions(final Colony colony, final PlayerEntityMP player)
     {
         //Verify player has permission to change this huts settings
         return colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS);

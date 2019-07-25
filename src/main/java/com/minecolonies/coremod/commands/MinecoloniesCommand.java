@@ -5,7 +5,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.commands.colonycommands.HomeTeleportCommand;
 import com.minecolonies.coremod.commands.colonycommands.LoadColonyBackupCommand;
 import com.minecolonies.coremod.commands.generalcommands.*;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
@@ -55,7 +55,7 @@ public class MinecoloniesCommand extends AbstractSplitCommand
      * @param player the player executing.
      * @return true if should be able to.
      */
-    public static boolean canExecuteCommand(@NotNull final EntityPlayer player)
+    public static boolean canExecuteCommand(@NotNull final PlayerEntity player)
     {
         if (Configurations.gameplay.teleportBuffer == 0 || AbstractSingleCommand.isPlayerOpped(player))
         {

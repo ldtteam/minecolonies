@@ -24,16 +24,16 @@ import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
 import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.*;
@@ -373,7 +373,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 return true;
             }
 
-            @Nullable final IBlockState blockState = structureBlock.metadata;
+            @Nullable final BlockState blockState = structureBlock.metadata;
             //We need to deal with materials
             return placeBlockAt(blockState, structureBlock.blockPosition);
         }
@@ -412,7 +412,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         }
     }
 
-    private boolean placeBlockAt(@NotNull final IBlockState blockState, @NotNull final BlockPos coords)
+    private boolean placeBlockAt(@NotNull final BlockState blockState, @NotNull final BlockPos coords)
     {
         if (blockState instanceof BlockGrassPath)
         {
@@ -420,9 +420,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         }
 
         final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
-        worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? ItemStackUtils.EMPTY : item);
+        worker.setItemStackToSlot(EquipmentSlotType.MAINHAND, item == null ? ItemStackUtils.EMPTY : item);
 
-        final IBlockState decrease;
+        final BlockState decrease;
         for (final IPlacementHandler handlers : PlacementHandlers.handlers)
         {
             if (handlers.canHandle(world, coords, blockState))
@@ -443,7 +443,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     }
                 }
 
-                final IBlockState worldState = world.getBlockState(coords);
+                final BlockState worldState = world.getBlockState(coords);
 
                 if (worldState.getMaterial() != Material.AIR
                       && !(worldState.getBlock() instanceof BlockDoublePlant && worldState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.UPPER)))
@@ -467,9 +467,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     continue;
                 }
 
-                if (result instanceof IBlockState)
+                if (result instanceof BlockState)
                 {
-                    decrease = (IBlockState) result;
+                    decrease = (BlockState) result;
                     decreaseInventory(coords, decrease.getBlock(), decrease);
                     connectBlockToBuildingIfNecessary(decrease, coords);
                     worker.swingArm(worker.getActiveHand());
@@ -485,7 +485,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     {
                         final ItemStack itemStack = worker.getInventoryCitizen().getStackInSlot(slot);
                         worker.getInventoryCitizen().getStackInSlot(slot);
-                        worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, itemStack);
+                        worker.setItemStackToSlot(EquipmentSlotType.MAINHAND, itemStack);
                         itemStack.damageItem(1, worker);
                     }
                 }
@@ -598,9 +598,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         return getWorkingPosition(distance, targetPosition, 0);
     }
 
-    private boolean decreaseInventory(@NotNull final BlockPos pos, final Block block, @NotNull final IBlockState state)
+    private boolean decreaseInventory(@NotNull final BlockPos pos, final Block block, @NotNull final BlockState state)
     {
-        @NotNull final IBlockState stateToPlace = state;
+        @NotNull final BlockState stateToPlace = state;
 
         //Move out of the way when placing blocks
         if (MathHelper.floor(worker.posX) == pos.getX()
@@ -665,7 +665,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * @param blockState itself
      * @param pos        the position of the block.
      */
-    public void connectBlockToBuildingIfNecessary(@NotNull final IBlockState blockState, @NotNull final BlockPos pos)
+    public void connectBlockToBuildingIfNecessary(@NotNull final BlockState blockState, @NotNull final BlockPos pos)
     {
         /*
          * Classes can overwrite this if necessary.
@@ -750,7 +750,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             }
 
             @Nullable Block block = structureBlock.block;
-            @Nullable IBlockState blockState = structureBlock.metadata;
+            @Nullable BlockState blockState = structureBlock.metadata;
             if (block == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution
                   || shallReplaceSolidSubstitutionBlock(structureBlock.worldBlock, structureBlock.worldMetadata))
             {
@@ -780,7 +780,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * @param worldMetadata the world metadata.
      * @return true if should be overwritten.
      */
-    public abstract boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final IBlockState worldMetadata);
+    public abstract boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final BlockState worldMetadata);
 
     /**
      * Searches a handy block to substitute a non-solid space which should be guaranteed solid.
@@ -788,7 +788,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * @param location the location the block should be at.
      * @return the Block.
      */
-    public abstract IBlockState getSolidSubstitution(BlockPos location);
+    public abstract BlockState getSolidSubstitution(BlockPos location);
 
     /**
      * Loads the structure given the name, rotation and position.
@@ -829,7 +829,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         }
         if (getProgressPos() != null)
         {
-            this.currentStructure.setStage(getProgressPos().getSecond());
+            this.currentStructure.setStage(getProgressPos().getB());
         }
     }
 
@@ -888,7 +888,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             //We need to deal with materials
             if (Configurations.gameplay.builderInfiniteResources || currentBlock.worldMetadata.getMaterial().isLiquid())
             {
-                worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
+                worker.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
                 world.setBlockToAir(currentBlock.blockPosition);
                 world.setBlockState(currentBlock.blockPosition, Blocks.AIR.getDefaultState());
                 worker.swingArm(worker.getActiveHand());
@@ -1006,14 +1006,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     @SuppressWarnings(MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED)
     private Boolean spawnEntity(@NotNull final StructureIterator.StructureBlock currentBlock)
     {
-        final NBTTagCompound[] entityInfos = currentBlock.entity;
+        final CompoundNBT[] entityInfos = currentBlock.entity;
         if (entityInfos.length == 0)
         {
             return true;
         }
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.spawning"));
 
-        for (final NBTTagCompound entityInfo : entityInfos)
+        for (final CompoundNBT entityInfo : entityInfos)
         {
             if (entityInfo == null)
             {

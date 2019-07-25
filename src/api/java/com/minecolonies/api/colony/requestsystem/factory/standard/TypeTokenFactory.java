@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.requestsystem.factory.ITypeOverrideHandler;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 public class TypeTokenFactory implements IFactory<Class, TypeToken>
@@ -36,18 +36,18 @@ public class TypeTokenFactory implements IFactory<Class, TypeToken>
 
     @NotNull
     @Override
-    public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final TypeToken typeToken)
+    public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final TypeToken typeToken)
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        CompoundNBT compound = new CompoundNBT();
 
-        compound.setString(NbtTagConstants.TAG_VALUE, typeToken.getRawType().getName());
+        compound.putString(NbtTagConstants.TAG_VALUE, typeToken.getRawType().getName());
 
         return compound;
     }
 
     @NotNull
     @Override
-    public TypeToken deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt) throws Throwable
+    public TypeToken deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt) throws Throwable
     {
         try
         {

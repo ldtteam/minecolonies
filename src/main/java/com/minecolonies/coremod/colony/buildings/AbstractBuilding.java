@@ -41,17 +41,17 @@ import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -192,11 +192,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         super.readFromNBT(compound);
         loadRequestSystemFromNBT(compound);
-        if (compound.hasKey(TAG_IS_BUILT))
+        if (compound.keySet().contains(TAG_IS_BUILT))
         {
             isBuilt = compound.getBoolean(TAG_IS_BUILT);
         }
@@ -204,19 +204,19 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         {
             isBuilt = true;
         }
-        if (compound.hasKey(TAG_CUSTOM_NAME))
+        if (compound.keySet().contains(TAG_CUSTOM_NAME))
         {
             this.customName = compound.getString(TAG_CUSTOM_NAME);
         }
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         super.writeToNBT(compound);
         writeRequestSystemToNBT(compound);
-        compound.setBoolean(TAG_IS_BUILT, isBuilt);
-        compound.setString(TAG_CUSTOM_NAME, customName);
+        compound.putBoolean(TAG_IS_BUILT, isBuilt);
+        compound.putString(TAG_CUSTOM_NAME, customName);
     }
 
     /**
@@ -276,27 +276,27 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         final WorkOrderBuildBuilding workOrderBuildBuilding = new WorkOrderBuildBuilding(this, level);
         if (!canBeBuiltByBuilder(level) && !workOrderBuildBuilding.canBeResolved(colony, level))
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
               "entity.builder.messageBuilderNecessary", Integer.toString(level));
             return;
         }
 
         if (workOrderBuildBuilding.tooFarFromAnyBuilder(colony, level) && builder.equals(BlockPos.ORIGIN))
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
               "entity.builder.messageBuildersTooFar");
             return;
         }
 
         if (getLocation().getY() + getHeight() >= 256)
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
               "entity.builder.messageBuildTooHigh");
             return;
         }
         else if (getLocation().getY() <= 1)
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
               "entity.builder.messageBuildTooLow");
             return;
         }
@@ -310,7 +310,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             }
             else
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
                   "entity.builder.messageBuilderNecessary", Integer.toString(level));
                 return;
             }
@@ -319,7 +319,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         colony.getWorkManager().addWorkOrder(workOrderBuildBuilding, false);
         colony.getProgressManager().progressWorkOrderPlacement(workOrderBuildBuilding);
 
-        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
+        LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), "com.minecolonies.coremod.workOrderAdded");
         markDirty();
     }
 
@@ -440,7 +440,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         buf.writeBoolean(isMirrored());
         buf.writeInt(getClaimRadius(getBuildingLevel()));
 
-        final NBTTagCompound requestSystemCompound = new NBTTagCompound();
+        final CompoundNBT requestSystemCompound = new CompoundNBT();
         writeRequestSystemToNBT(requestSystemCompound);
 
         final ImmutableCollection<IRequestResolver<?>> resolvers = getResolvers();
@@ -500,7 +500,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * @param player  the requesting player.
      * @param builder the assigned builder.
      */
-    public void requestUpgrade(final EntityPlayer player, final BlockPos builder)
+    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
         if (getBuildingLevel() < getMaxBuildingLevel())
         {
@@ -541,9 +541,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public void deconstruct()
     {
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> tuple = getCorners();
-        for (int x = tuple.getFirst().getFirst(); x < tuple.getFirst().getSecond(); x++)
+        for (int x = tuple.getA().getA(); x < tuple.getA().getB(); x++)
         {
-            for (int z = tuple.getSecond().getFirst(); z < tuple.getSecond().getSecond(); z++)
+            for (int z = tuple.getB().getA(); z < tuple.getB().getB(); z++)
             {
                 for (int y = getLocation().getY() - 1; y < getLocation().getY() + this.getHeight(); y++)
                 {
@@ -581,7 +581,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
           workOrder.getRotation(colony.getWorld()),
           workOrder.isMirrored());
         this.setHeight(wrapper.getHeight());
-        this.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
+        this.setCorners(corners.getA().getA(), corners.getA().getB(), corners.getB().getA(), corners.getB().getB());
         this.isBuilt = true;
 
         if (newLevel > getBuildingLevel())
@@ -606,14 +606,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         for (final Map.Entry<Predicate<ItemStack>, Tuple<Integer, Boolean>> entry : getRequiredItemsAndAmount().entrySet())
         {
-            if (inventory && !entry.getValue().getSecond())
+            if (inventory && !entry.getValue().getB())
             {
                 continue;
             }
             if (entry.getKey().test(stack))
             {
                 final ItemStorage kept = ItemStorage.getItemStackOfListMatchingPredicate(localAlreadyKept, entry.getKey());
-                final int toKeep = entry.getValue().getFirst();
+                final int toKeep = entry.getValue().getA();
                 int rest = stack.getCount() - toKeep;
                 if (kept != null)
                 {
@@ -706,9 +706,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     //------------------------- !START! RequestSystem handling for minecolonies buildings -------------------------//
 
-    protected void writeRequestSystemToNBT(final NBTTagCompound compound)
+    protected void writeRequestSystemToNBT(final CompoundNBT compound)
     {
-        compound.setTag(TAG_RS_BUILDING_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
+        compound.put(TAG_RS_BUILDING_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
     }
 
     protected void setupRsDataStore()
@@ -722,20 +722,20 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                                   .getId();
     }
 
-    private void loadRequestSystemFromNBT(final NBTTagCompound compound)
+    private void loadRequestSystemFromNBT(final CompoundNBT compound)
     {
-        if (compound.hasKey(TAG_REQUESTOR_ID))
+        if (compound.keySet().contains(TAG_REQUESTOR_ID))
         {
-            this.requester = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(TAG_REQUESTOR_ID));
+            this.requester = StandardFactoryController.getInstance().deserialize(compound.getCompound(TAG_REQUESTOR_ID));
         }
         else
         {
             this.requester = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(BuildingBasedRequester.class), this);
         }
 
-        if (compound.hasKey(TAG_RS_BUILDING_DATASTORE))
+        if (compound.keySet().contains(TAG_RS_BUILDING_DATASTORE))
         {
-            this.rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(TAG_RS_BUILDING_DATASTORE));
+            this.rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompound(TAG_RS_BUILDING_DATASTORE));
         }
         else
         {
@@ -1255,11 +1255,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         if (!getCitizensByRequest().containsKey(token))
         {
-            return new TextComponentString("<UNKNOWN>");
+            return new StringTextComponent("<UNKNOWN>");
         }
 
         final Integer citizenData = getCitizensByRequest().get(token);
-        return new TextComponentString(this.getSchematicName() + " " + getColony().getCitizenManager().getCitizen(citizenData).getName());
+        return new StringTextComponent(this.getSchematicName() + " " + getColony().getCitizenManager().getCitizen(citizenData).getName());
     }
 
     public Optional<CitizenData> getCitizenForRequest(@NotNull final IToken token)

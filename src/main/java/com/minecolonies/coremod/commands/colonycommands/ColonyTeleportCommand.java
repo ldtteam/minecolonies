@@ -11,10 +11,10 @@ import com.minecolonies.coremod.util.TeleportToColony;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -64,7 +64,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
     }
 
     @Override
-    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
+    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final PlayerEntity player)
     {
         return colony.getPermissions().hasPermission(player, Action.TELEPORT_TO_COLONY);
     }
@@ -75,13 +75,13 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
         Colony colony = actionMenuState.getColonyForArgument("colony");
         if (null == colony)
         {
-            final EntityPlayer player = actionMenuState.getPlayerForArgument("player");
+            final PlayerEntity player = actionMenuState.getPlayerForArgument("player");
             if (player != null)
             {
                 IColony iColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
                 if (null == iColony)
                 {
-                    if (sender instanceof EntityPlayer)
+                    if (sender instanceof PlayerEntity)
                     {
                         final Entity senderEntity = sender.getCommandSenderEntity();
                         if (senderEntity != null)
@@ -105,7 +105,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
         // Required argument: would never be null at this point.
         if (null == colony)
         {
-            sender.sendMessage(new TextComponentString("You are not allowed to do this"));
+            sender.sendMessage(new StringTextComponent("You are not allowed to do this"));
             return;
         }
 
@@ -132,7 +132,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
 
         if (null == colony)
         {
-            sender.sendMessage(new TextComponentString("You are not allowed to do this"));
+            sender.sendMessage(new StringTextComponent("You are not allowed to do this"));
             return;
         }
 
@@ -142,20 +142,20 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
     private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final Colony colony)
     {
         //see if player is allowed to use in the configs
-        if ((sender instanceof EntityPlayer) && canPlayerUseCommand((EntityPlayer) sender, COLONYTP, colony.getID()))
+        if ((sender instanceof PlayerEntity) && canPlayerUseCommand((PlayerEntity) sender, COLONYTP, colony.getID()))
         {
             final Colony colonyIn = ColonyManager.getColonyByPosFromWorld(server.getWorld(sender.getEntityWorld().provider.getDimension()), sender.getPosition());
             if (isPlayerOpped(sender)
                     || (colonyIn != null
                     && colonyIn.hasTownHall()
-                    && colonyIn.getPermissions().hasPermission((EntityPlayer) sender, Action.TELEPORT_TO_COLONY)
-                    && ((EntityPlayer) sender).getDistanceSq(colonyIn.getBuildingManager().getTownHall().getLocation()) < MIN_DISTANCE_TO_TH))
+                    && colonyIn.getPermissions().hasPermission((PlayerEntity) sender, Action.TELEPORT_TO_COLONY)
+                    && ((PlayerEntity) sender).getDistanceSq(colonyIn.getBuildingManager().getTownHall().getLocation()) < MIN_DISTANCE_TO_TH))
             {
                 TeleportToColony.colonyTeleport(server, sender, String.valueOf(colony.getID()));
             }
             return;
         }
-        sender.sendMessage(new TextComponentString("You are not allowed to do this"));
+        sender.sendMessage(new StringTextComponent("You are not allowed to do this"));
     }
 
     @NotNull

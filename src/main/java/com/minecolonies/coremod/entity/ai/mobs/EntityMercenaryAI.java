@@ -168,7 +168,7 @@ public class EntityMercenaryAI extends EntityAIBase
                     if (!ItemStackUtils.isEmpty(stack))
                     {
                         entity.swingArm(EnumHand.OFF_HAND);
-                        LanguageHandler.sendPlayersMessage(entity.getColony().getMessageEntityPlayers(),
+                        LanguageHandler.sendPlayersMessage(entity.getColony().getMessagePlayerEntitys(),
                           "com.minecolonies.coremod.mercenary.stealBuilding",
                           stack.getDisplayName());
                     }

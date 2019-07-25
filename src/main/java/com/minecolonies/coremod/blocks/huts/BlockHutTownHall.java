@@ -7,9 +7,9 @@ import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
@@ -45,7 +45,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     }
 
     @Override
-    public void onBlockPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
+    public void onBlockPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final BlockState state, final EntityLivingBase placer, final ItemStack stack)
     {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 
@@ -54,7 +54,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
             return;
         }
 
-        if (placer.getActiveHand().equals(EnumHand.MAIN_HAND) && placer instanceof EntityPlayer)
+        if (placer.getActiveHand().equals(EnumHand.MAIN_HAND) && placer instanceof PlayerEntity)
         {
             final Colony colony = ColonyManager.getClosestColony(worldIn, pos);
             String style = Constants.DEFAULT_STYLE;
@@ -69,11 +69,11 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
             {
                 if (Configurations.gameplay.enableDynamicColonySizes)
                 {
-                    IColony ownedColony = ColonyManager.getIColonyByOwner(worldIn, (EntityPlayer) placer);
+                    IColony ownedColony = ColonyManager.getIColonyByOwner(worldIn, (PlayerEntity) placer);
 
                     if (ownedColony == null)
                     {
-                        ColonyManager.createColony(worldIn, pos, (EntityPlayer) placer, style);
+                        ColonyManager.createColony(worldIn, pos, (PlayerEntity) placer, style);
                     }
                     else
                     {
@@ -82,7 +82,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
                 }
                 else
                 {
-                    ColonyManager.createColony(worldIn, pos, (EntityPlayer) placer, style);
+                    ColonyManager.createColony(worldIn, pos, (PlayerEntity) placer, style);
                 }
             }
             else

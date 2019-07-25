@@ -2,7 +2,7 @@ package com.minecolonies.coremod.fixers;
 
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.datafix.IFixableData;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,11 +35,11 @@ public class TileEntityIdFixer implements IFixableData
 
     @NotNull
     @Override
-    public NBTTagCompound fixTagCompound(@NotNull final NBTTagCompound compound)
+    public CompoundNBT fixTagCompound(@NotNull final CompoundNBT compound)
     {
         String teID = compound.getString("id");
 
-        compound.setString("id", idsToFix.getOrDefault(teID, teID)); //only change value if teID is in the map
+        compound.putString("id", idsToFix.getOrDefault(teID, teID)); //only change value if teID is in the map
         return compound;
     }
 }

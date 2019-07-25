@@ -12,7 +12,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.permissions.ForgePermissionNodes;
 
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraftforge.server.permission.PermissionAPI;
@@ -30,7 +30,7 @@ public class CommandEntryPointNew extends AbstractCommandParser
             return ColonyManager.getAllColonies();
         }
 
-        public IColony getIColonyByOwner(final World entityWorld, final EntityPlayer sender)
+        public IColony getIColonyByOwner(final World entityWorld, final PlayerEntity sender)
         {
             return ColonyManager.getIColonyByOwner(entityWorld, sender);
         }
@@ -43,7 +43,7 @@ public class CommandEntryPointNew extends AbstractCommandParser
 
     public class ForgeCommandsPermissionsChecker implements PermissionsChecker
     {
-        public boolean hasPermission(final ForgePermissionNodes forgePermissionNode, final EntityPlayer player)
+        public boolean hasPermission(final ForgePermissionNodes forgePermissionNode, final PlayerEntity player)
         {
             return PermissionAPI.hasPermission(player.getGameProfile(), forgePermissionNode.getNodeName(), new PlayerContext(player));
         }
@@ -51,7 +51,7 @@ public class CommandEntryPointNew extends AbstractCommandParser
         @Override
         public boolean canUseCommands(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender)
         {
-            if (sender instanceof EntityPlayer)
+            if (sender instanceof PlayerEntity)
             {
                 return AbstractSingleCommand.isPlayerOpped(sender) || Configurations.gameplay.opLevelForServer <= 0;
             }

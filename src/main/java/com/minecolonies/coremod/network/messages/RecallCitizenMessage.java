@@ -11,7 +11,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
@@ -74,7 +74,7 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
     }
 
     @Override
-    public void messageOnServerThread(final RecallCitizenMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final RecallCitizenMessage message, final PlayerEntityMP player)
     {
         final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

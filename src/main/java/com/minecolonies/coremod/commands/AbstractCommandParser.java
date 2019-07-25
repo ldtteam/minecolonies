@@ -22,7 +22,7 @@ import com.minecolonies.coremod.colony.permissions.ForgePermissionNodes;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
@@ -56,7 +56,7 @@ public abstract class AbstractCommandParser extends CommandBase
 
     public interface PermissionsChecker
     {
-        boolean hasPermission(ForgePermissionNodes forgePermissionNode, EntityPlayer player);
+        boolean hasPermission(ForgePermissionNodes forgePermissionNode, PlayerEntity player);
         boolean canUseCommands(MinecraftServer server, ICommandSender sender);
     }
 
@@ -305,11 +305,11 @@ public abstract class AbstractCommandParser extends CommandBase
         final String badArgument = parsingResult.getBadArgument();
         throwCommandUsageExceptionIfRequiredArgumentsAreNotProvided(executionTreeNode, actionMenu, executionActionArgumentList, actionMenuState, badArgument, sender);
 
-        if (sender instanceof EntityPlayer)
+        if (sender instanceof PlayerEntity)
         {
             final ForgePermissionNodes forgePermissionNode = actionMenu.getForgePermissionNode();
 
-            final EntityPlayer player = (EntityPlayer) sender;
+            final PlayerEntity player = (PlayerEntity) sender;
             if (!permissionsChecker.hasPermission(forgePermissionNode, player))
             {
                 // TODO: Do something if permission check fails.

@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
 import com.minecolonies.api.util.Vec2i;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -92,10 +92,10 @@ public class Node
      * @return Node created from compound
      */
     @NotNull
-    public static Node createFromNBT(@NotNull final NBTTagCompound compound)
+    public static Node createFromNBT(@NotNull final CompoundNBT compound)
     {
         // for backwards compatibility check if the types are doubles
-        final boolean hasDoubles = compound.hasKey(TAG_X, Constants.NBT.TAG_DOUBLE);
+        final boolean hasDoubles = compound.keySet().contains(TAG_X, Constants.NBT.TAG_DOUBLE);
 
         final int x;
         final int z;
@@ -106,8 +106,8 @@ public class Node
         }
         else
         {
-            x = compound.getInteger(TAG_X);
-            z = compound.getInteger(TAG_Z);
+            x = compound.getInt(TAG_X);
+            z = compound.getInt(TAG_Z);
         }
 
         final NodeType style = NodeType.valueOf(compound.getString(TAG_STYLE));
@@ -115,7 +115,7 @@ public class Node
         final NodeStatus status = NodeStatus.valueOf(compound.getString(TAG_STATUS));
 
         Vec2i parent = null;
-        if (compound.hasKey(TAG_PARENTX))
+        if (compound.keySet().contains(TAG_PARENTX))
         {
             if (hasDoubles)
             {
@@ -125,7 +125,7 @@ public class Node
             }
             else
             {
-                parent = new Vec2i(compound.getInteger(TAG_PARENTX), compound.getInteger(TAG_PARENTZ));
+                parent = new Vec2i(compound.getInt(TAG_PARENTX), compound.getInt(TAG_PARENTZ));
             }
         }
 
@@ -142,18 +142,18 @@ public class Node
      *
      * @param compound Compound to write to
      */
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
-        compound.setInteger(TAG_X, x);
-        compound.setInteger(TAG_Z, z);
+        compound.putInt(TAG_X, x);
+        compound.putInt(TAG_Z, z);
 
-        compound.setString(TAG_STYLE, style.name());
-        compound.setString(TAG_STATUS, status.name());
+        compound.putString(TAG_STYLE, style.name());
+        compound.putString(TAG_STATUS, status.name());
 
         if (parent != null)
         {
-            compound.setInteger(TAG_PARENTX, parent.getX());
-            compound.setInteger(TAG_PARENTZ, parent.getZ());
+            compound.putInt(TAG_PARENTX, parent.getX());
+            compound.putInt(TAG_PARENTZ, parent.getZ());
         }
     }
 

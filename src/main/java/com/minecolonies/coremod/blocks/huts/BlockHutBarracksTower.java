@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.blocks.huts;
 
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -42,7 +42,7 @@ public class BlockHutBarracksTower extends AbstractBlockHut<BlockHutBarracksTowe
      */
     @Override
     @Deprecated
-    public List<ItemStack> getDrops(final IBlockAccess world, final BlockPos pos, final IBlockState state, final int fortune)
+    public List<ItemStack> getDrops(final IBlockAccess world, final BlockPos pos, final BlockState state, final int fortune)
     {
         return Collections.emptyList();
     }

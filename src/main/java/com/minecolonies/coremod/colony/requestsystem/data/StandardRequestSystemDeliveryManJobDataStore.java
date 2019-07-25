@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -95,24 +95,24 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
 
         @NotNull
         @Override
-        public NBTTagCompound serialize(
+        public CompoundNBT serialize(
           @NotNull final IFactoryController controller, @NotNull final StandardRequestSystemDeliveryManJobDataStore standardRequestSystemDeliveryManJobDataStore)
         {
-            final NBTTagCompound compound = new NBTTagCompound();
+            final CompoundNBT compound = new CompoundNBT();
 
-            compound.setTag(TAG_TOKEN, controller.serialize(standardRequestSystemDeliveryManJobDataStore.id));
-            compound.setTag(TAG_LIST, standardRequestSystemDeliveryManJobDataStore.queue.stream().map(controller::serialize).collect(NBTUtils.toNBTTagList()));
-            compound.setBoolean(TAG_VALUE, standardRequestSystemDeliveryManJobDataStore.returning);
+            compound.put(TAG_TOKEN, controller.serialize(standardRequestSystemDeliveryManJobDataStore.id));
+            compound.put(TAG_LIST, standardRequestSystemDeliveryManJobDataStore.queue.stream().map(controller::serialize).collect(NBTUtils.toListNBT()));
+            compound.putBoolean(TAG_VALUE, standardRequestSystemDeliveryManJobDataStore.returning);
 
             return compound;
         }
 
         @NotNull
         @Override
-        public StandardRequestSystemDeliveryManJobDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt) throws Throwable
+        public StandardRequestSystemDeliveryManJobDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt) throws Throwable
         {
-            final IToken<?> token = controller.deserialize(nbt.getCompoundTag(TAG_TOKEN));
-            final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getTagList(TAG_LIST, Constants.NBT.TAG_COMPOUND))
+            final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
+            final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getList(TAG_LIST, Constants.NBT.TAG_COMPOUND))
                                           .map(nbtTagCompound -> (IToken<?>) controller.deserialize(nbtTagCompound))
                                           .collect(Collectors.toCollection(LinkedList<IToken<?>>::new));
             final boolean returning = nbt.getBoolean(TAG_VALUE);

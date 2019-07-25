@@ -25,11 +25,11 @@ import com.minecolonies.coremod.network.messages.ColonyViewRemoveWorkOrderMessag
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
@@ -77,7 +77,7 @@ public class Colony implements IColony
     /**
      * List of waypoints of the colony.
      */
-    private final Map<BlockPos, IBlockState> wayPoints = new HashMap<>();
+    private final Map<BlockPos, BlockState> wayPoints = new HashMap<>();
 
     /**
      * Work Manager of the colony (Request System).
@@ -194,12 +194,12 @@ public class Colony implements IColony
     /**
      * The NBTTag compound of the colony itself.
      */
-    private NBTTagCompound colonyTag;
+    private CompoundNBT colonyTag;
 
     /**
      * List of players visiting the colony.
      */
-    private final List<EntityPlayer> visitingPlayers = new ArrayList<>();
+    private final List<PlayerEntity> visitingPlayers = new ArrayList<>();
 
     /**
      * List of players attacking the colony.
@@ -325,11 +325,11 @@ public class Colony implements IColony
      * @return loaded colony.
      */
     @Nullable
-    public static Colony loadColony(@NotNull final NBTTagCompound compound, @Nullable final World world)
+    public static Colony loadColony(@NotNull final CompoundNBT compound, @Nullable final World world)
     {
         try
         {
-            final int id = compound.getInteger(TAG_ID);
+            final int id = compound.getInt(TAG_ID);
             @NotNull final Colony c = new Colony(id, world);
             c.name = compound.getString(TAG_NAME);
             c.center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
@@ -363,12 +363,12 @@ public class Colony implements IColony
      *
      * @param compound compound to read from.
      */
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
-        dimensionId = compound.getInteger(TAG_DIMENSION);
+        dimensionId = compound.getInt(TAG_DIMENSION);
 
-        if (compound.hasKey(TAG_NEED_TO_MOURN))
+        if (compound.keySet().contains(TAG_NEED_TO_MOURN))
         {
             needToMourn = compound.getBoolean(TAG_NEED_TO_MOURN);
             mourning = compound.getBoolean(TAG_MOURNING);
@@ -379,15 +379,15 @@ public class Colony implements IColony
             mourning = false;
         }
 
-        boughtCitizenCost = compound.getInteger(TAG_BOUGHT_CITIZENS);
+        boughtCitizenCost = compound.getInt(TAG_BOUGHT_CITIZENS);
         mercenaryLastUse = compound.getLong(TAG_MERCENARY_TIME);
 
         // Permissions
         permissions.loadPermissions(compound);
 
-        if (compound.hasKey(TAG_CITIZEN_MANAGER))
+        if (compound.keySet().contains(TAG_CITIZEN_MANAGER))
         {
-            citizenManager.readFromNBT(compound.getCompoundTag(TAG_CITIZEN_MANAGER));
+            citizenManager.readFromNBT(compound.getCompound(TAG_CITIZEN_MANAGER));
         }
         else
         {
@@ -395,9 +395,9 @@ public class Colony implements IColony
             citizenManager.readFromNBT(compound);
         }
 
-        if (compound.hasKey(TAG_BUILDING_MANAGER))
+        if (compound.keySet().contains(TAG_BUILDING_MANAGER))
         {
-            buildingManager.readFromNBT(compound.getCompoundTag(TAG_BUILDING_MANAGER));
+            buildingManager.readFromNBT(compound.getCompound(TAG_BUILDING_MANAGER));
         }
         else
         {
@@ -405,9 +405,9 @@ public class Colony implements IColony
             buildingManager.readFromNBT(compound);
         }
 
-        if (compound.hasKey(TAG_STATS_MANAGER))
+        if (compound.keySet().contains(TAG_STATS_MANAGER))
         {
-            statsManager.readFromNBT(compound.getCompoundTag(TAG_STATS_MANAGER));
+            statsManager.readFromNBT(compound.getCompound(TAG_STATS_MANAGER));
         }
         else
         {
@@ -415,12 +415,12 @@ public class Colony implements IColony
             statsManager.readFromNBT(compound);
         }
 
-        if (compound.hasKey(TAG_PROGRESS_MANAGER))
+        if (compound.keySet().contains(TAG_PROGRESS_MANAGER))
         {
             progressManager.readFromNBT(compound);
         }
 
-        if (compound.hasKey(TAG_HAPPINESS_MODIFIER))
+        if (compound.keySet().contains(TAG_HAPPINESS_MODIFIER))
         {
             colonyHappinessManager.setLockedHappinessModifier(Optional.of(compound.getDouble(TAG_HAPPINESS_MODIFIER)));
         }
@@ -432,49 +432,49 @@ public class Colony implements IColony
         raidManager.readFromNBT(compound);
 
         //  Workload
-        workManager.readFromNBT(compound.getCompoundTag(TAG_WORK));
+        workManager.readFromNBT(compound.getCompound(TAG_WORK));
 
         // Waypoints
-        final NBTTagList wayPointTagList = compound.getTagList(TAG_WAYPOINT, NBT.TAG_COMPOUND);
-        for (int i = 0; i < wayPointTagList.tagCount(); ++i)
+        final ListNBT wayPointTagList = compound.getList(TAG_WAYPOINT, NBT.TAG_COMPOUND);
+        for (int i = 0; i < wayPointTagList.size(); ++i)
         {
-            final NBTTagCompound blockAtPos = wayPointTagList.getCompoundTagAt(i);
+            final CompoundNBT blockAtPos = wayPointTagList.getCompound(i);
             final BlockPos pos = BlockPosUtil.readFromNBT(blockAtPos, TAG_WAYPOINT);
-            final IBlockState state = NBTUtil.readBlockState(blockAtPos);
+            final BlockState state = NBTUtil.readBlockState(blockAtPos);
             wayPoints.put(pos, state);
         }
 
         // Free blocks
-        final NBTTagList freeBlockTagList = compound.getTagList(TAG_FREE_BLOCKS, NBT.TAG_STRING);
-        for (int i = 0; i < freeBlockTagList.tagCount(); ++i)
+        final ListNBT freeBlockTagList = compound.getList(TAG_FREE_BLOCKS, NBT.TAG_STRING);
+        for (int i = 0; i < freeBlockTagList.size(); ++i)
         {
             freeBlocks.add(Block.getBlockFromName(freeBlockTagList.getStringTagAt(i)));
         }
 
         // Free positions
-        final NBTTagList freePositionTagList = compound.getTagList(TAG_FREE_POSITIONS, NBT.TAG_COMPOUND);
-        for (int i = 0; i < freePositionTagList.tagCount(); ++i)
+        final ListNBT freePositionTagList = compound.getList(TAG_FREE_POSITIONS, NBT.TAG_COMPOUND);
+        for (int i = 0; i < freePositionTagList.size(); ++i)
         {
-            final NBTTagCompound blockTag = freePositionTagList.getCompoundTagAt(i);
+            final CompoundNBT blockTag = freePositionTagList.getCompound(i);
             final BlockPos block = BlockPosUtil.readFromNBT(blockTag, TAG_FREE_POSITIONS);
             freePositions.add(block);
         }
 
         happinessData.readFromNBT(compound);
-        packageManager.setLastContactInHours(compound.getInteger(TAG_ABANDONED));
+        packageManager.setLastContactInHours(compound.getInt(TAG_ABANDONED));
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
 
-        if (compound.hasKey(TAG_MOVE_IN))
+        if (compound.keySet().contains(TAG_MOVE_IN))
         {
             moveIn = compound.getBoolean(TAG_MOVE_IN);
         }
 
-        if (compound.hasKey(TAG_STYLE))
+        if (compound.keySet().contains(TAG_STYLE))
         {
             this.style = compound.getString(TAG_STYLE);
         }
 
-        if (compound.hasKey(TAG_RAIDABLE))
+        if (compound.keySet().contains(TAG_RAIDABLE))
         {
             this.raidManager.setCanHaveRaiderEvents(compound.getBoolean(TAG_RAIDABLE));
         }
@@ -483,7 +483,7 @@ public class Colony implements IColony
             this.raidManager.setCanHaveRaiderEvents(true);
         }
 
-        if (compound.hasKey(TAG_AUTO_DELETE))
+        if (compound.keySet().contains(TAG_AUTO_DELETE))
         {
             this.canColonyBeAutoDeleted = compound.getBoolean(TAG_AUTO_DELETE);
         }
@@ -492,15 +492,15 @@ public class Colony implements IColony
             this.canColonyBeAutoDeleted = true;
         }
 
-        if (compound.hasKey(TAG_TEAM_COLOR))
+        if (compound.keySet().contains(TAG_TEAM_COLOR))
         {
-            this.setColonyColor(TextFormatting.values()[compound.getInteger(TAG_TEAM_COLOR)]);
+            this.setColonyColor(TextFormatting.values()[compound.getInt(TAG_TEAM_COLOR)]);
         }
 
         this.requestManager.reset();
-        if (compound.hasKey(TAG_REQUESTMANAGER))
+        if (compound.keySet().contains(TAG_REQUESTMANAGER))
         {
-            this.requestManager.deserializeNBT(compound.getCompoundTag(TAG_REQUESTMANAGER));
+            this.requestManager.deserializeNBT(compound.getCompound(TAG_REQUESTMANAGER));
         }
 
         this.colonyTag = compound;
@@ -521,89 +521,89 @@ public class Colony implements IColony
      *
      * @param compound compound to write to.
      */
-    public NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound)
+    public CompoundNBT writeToNBT(@NotNull final CompoundNBT compound)
     {
         //  Core attributes
-        compound.setInteger(TAG_ID, id);
-        compound.setInteger(TAG_DIMENSION, dimensionId);
+        compound.putInt(TAG_ID, id);
+        compound.putInt(TAG_DIMENSION, dimensionId);
 
         //  Basic data
-        compound.setString(TAG_NAME, name);
+        compound.putString(TAG_NAME, name);
         BlockPosUtil.writeToNBT(compound, TAG_CENTER, center);
 
-        compound.setBoolean(TAG_MANUAL_HIRING, manualHiring);
-        compound.setBoolean(TAG_NEED_TO_MOURN, needToMourn);
-        compound.setBoolean(TAG_MOURNING, mourning);
+        compound.putBoolean(TAG_MANUAL_HIRING, manualHiring);
+        compound.putBoolean(TAG_NEED_TO_MOURN, needToMourn);
+        compound.putBoolean(TAG_MOURNING, mourning);
 
         // Bought citizen count
-        compound.setInteger(TAG_BOUGHT_CITIZENS, boughtCitizenCost);
+        compound.putInt(TAG_BOUGHT_CITIZENS, boughtCitizenCost);
 
-        compound.setLong(TAG_MERCENARY_TIME, mercenaryLastUse);
+        compound.putLong(TAG_MERCENARY_TIME, mercenaryLastUse);
 
         // Permissions
         permissions.savePermissions(compound);
 
-        final NBTTagCompound buildingCompound = new NBTTagCompound();
+        final CompoundNBT buildingCompound = new CompoundNBT();
         buildingManager.writeToNBT(buildingCompound);
-        compound.setTag(TAG_BUILDING_MANAGER, buildingCompound);
+        compound.put(TAG_BUILDING_MANAGER, buildingCompound);
 
-        final NBTTagCompound citizenCompound = new NBTTagCompound();
+        final CompoundNBT citizenCompound = new CompoundNBT();
         citizenManager.writeToNBT(citizenCompound);
-        compound.setTag(TAG_CITIZEN_MANAGER, citizenCompound);
+        compound.put(TAG_CITIZEN_MANAGER, citizenCompound);
 
         colonyHappinessManager.getLockedHappinessModifier().ifPresent(d -> compound.setDouble(TAG_HAPPINESS_MODIFIER, d));
 
-        final NBTTagCompound statsCompound = new NBTTagCompound();
+        final CompoundNBT statsCompound = new CompoundNBT();
         statsManager.writeToNBT(statsCompound);
-        compound.setTag(TAG_STATS_MANAGER, statsCompound);
+        compound.put(TAG_STATS_MANAGER, statsCompound);
 
         //  Workload
-        @NotNull final NBTTagCompound workManagerCompound = new NBTTagCompound();
+        @NotNull final CompoundNBT workManagerCompound = new CompoundNBT();
         workManager.writeToNBT(workManagerCompound);
-        compound.setTag(TAG_WORK, workManagerCompound);
+        compound.put(TAG_WORK, workManagerCompound);
 
         progressManager.writeToNBT(compound);
         raidManager.writeToNBT(compound);
 
         // Waypoints
-        @NotNull final NBTTagList wayPointTagList = new NBTTagList();
-        for (@NotNull final Map.Entry<BlockPos, IBlockState> entry : wayPoints.entrySet())
+        @NotNull final ListNBT wayPointTagList = new ListNBT();
+        for (@NotNull final Map.Entry<BlockPos, BlockState> entry : wayPoints.entrySet())
         {
-            @NotNull final NBTTagCompound wayPointCompound = new NBTTagCompound();
+            @NotNull final CompoundNBT wayPointCompound = new CompoundNBT();
             BlockPosUtil.writeToNBT(wayPointCompound, TAG_WAYPOINT, entry.getKey());
             NBTUtil.writeBlockState(wayPointCompound, entry.getValue());
 
-            wayPointTagList.appendTag(wayPointCompound);
+            wayPointTagList.add(wayPointCompound);
         }
-        compound.setTag(TAG_WAYPOINT, wayPointTagList);
+        compound.put(TAG_WAYPOINT, wayPointTagList);
 
         // Free blocks
-        @NotNull final NBTTagList freeBlocksTagList = new NBTTagList();
+        @NotNull final ListNBT freeBlocksTagList = new ListNBT();
         for (@NotNull final Block block : freeBlocks)
         {
-            freeBlocksTagList.appendTag(new NBTTagString(block.getRegistryName().toString()));
+            freeBlocksTagList.add(new NBTTagString(block.getRegistryName().toString()));
         }
-        compound.setTag(TAG_FREE_BLOCKS, freeBlocksTagList);
+        compound.put(TAG_FREE_BLOCKS, freeBlocksTagList);
 
         // Free positions
-        @NotNull final NBTTagList freePositionsTagList = new NBTTagList();
+        @NotNull final ListNBT freePositionsTagList = new ListNBT();
         for (@NotNull final BlockPos pos : freePositions)
         {
-            @NotNull final NBTTagCompound wayPointCompound = new NBTTagCompound();
+            @NotNull final CompoundNBT wayPointCompound = new CompoundNBT();
             BlockPosUtil.writeToNBT(wayPointCompound, TAG_FREE_POSITIONS, pos);
-            freePositionsTagList.appendTag(wayPointCompound);
+            freePositionsTagList.add(wayPointCompound);
         }
-        compound.setTag(TAG_FREE_POSITIONS, freePositionsTagList);
+        compound.put(TAG_FREE_POSITIONS, freePositionsTagList);
 
         happinessData.writeToNBT(compound);
-        compound.setInteger(TAG_ABANDONED, packageManager.getLastContactInHours());
-        compound.setBoolean(TAG_MANUAL_HOUSING, manualHousing);
-        compound.setBoolean(TAG_MOVE_IN, moveIn);
-        compound.setTag(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
-        compound.setString(TAG_STYLE, style);
-        compound.setBoolean(TAG_RAIDABLE, raidManager.canHaveRaiderEvents());
-        compound.setBoolean(TAG_AUTO_DELETE, canColonyBeAutoDeleted);
-        compound.setInteger(TAG_TEAM_COLOR, colonyTeamColor.ordinal());
+        compound.putInt(TAG_ABANDONED, packageManager.getLastContactInHours());
+        compound.putBoolean(TAG_MANUAL_HOUSING, manualHousing);
+        compound.putBoolean(TAG_MOVE_IN, moveIn);
+        compound.put(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
+        compound.putString(TAG_STYLE, style);
+        compound.putBoolean(TAG_RAIDABLE, raidManager.canHaveRaiderEvents());
+        compound.putBoolean(TAG_AUTO_DELETE, canColonyBeAutoDeleted);
+        compound.putInt(TAG_TEAM_COLOR, colonyTeamColor.ordinal());
         this.colonyTag = compound;
 
         isActive = false;
@@ -677,10 +677,10 @@ public class Colony implements IColony
 
         getRequestManager().update();
 
-        final List<EntityPlayer> visitors = new ArrayList<>(visitingPlayers);
+        final List<PlayerEntity> visitors = new ArrayList<>(visitingPlayers);
 
         //Clean up visiting player.
-        for (final EntityPlayer player : visitors)
+        for (final PlayerEntity player : visitors)
         {
             if (!packageManager.getSubscribers().contains(player))
             {
@@ -824,7 +824,7 @@ public class Colony implements IColony
                     player.refreshList(this);
                     if (player.getGuards().isEmpty())
                     {
-                        LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), "You successfully defended your colony against, " + player.getPlayer().getName());
+                        LanguageHandler.sendPlayersMessage(getMessagePlayerEntitys(), "You successfully defended your colony against, " + player.getPlayer().getName());
                     }
                 }
             }
@@ -902,12 +902,12 @@ public class Colony implements IColony
             final int stopAt = world.rand.nextInt(entries.length);
             final Object obj = entries[stopAt];
 
-            if (obj instanceof Map.Entry && ((Map.Entry) obj).getKey() instanceof BlockPos && ((Map.Entry) obj).getValue() instanceof IBlockState)
+            if (obj instanceof Map.Entry && ((Map.Entry) obj).getKey() instanceof BlockPos && ((Map.Entry) obj).getValue() instanceof BlockState)
             {
                 @NotNull final BlockPos key = (BlockPos) ((Map.Entry) obj).getKey();
                 if (world.isBlockLoaded(key))
                 {
-                    @NotNull final IBlockState value = (IBlockState) ((Map.Entry) obj).getValue();
+                    @NotNull final BlockState value = (BlockState) ((Map.Entry) obj).getValue();
                     if (world.getBlockState(key).getBlock() != (value.getBlock()))
                     {
                         wayPoints.remove(key);
@@ -1061,7 +1061,7 @@ public class Colony implements IColony
     }
 
     @NotNull
-    public List<EntityPlayer> getMessageEntityPlayers()
+    public List<PlayerEntity> getMessagePlayerEntitys()
     {
         return ServerUtils.getPlayersFromUUID(this.world, this.getPermissions().getMessagePlayers());
     }
@@ -1138,7 +1138,7 @@ public class Colony implements IColony
     public void removeWorkOrderInView(final int orderId)
     {
         //  Inform Subscribers of removed workOrder
-        for (final EntityPlayerMP player : packageManager.getSubscribers())
+        for (final PlayerEntityMP player : packageManager.getSubscribers())
         {
             MineColonies.getNetwork().sendTo(new ColonyViewRemoveWorkOrderMessage(this, orderId), player);
         }
@@ -1165,7 +1165,7 @@ public class Colony implements IColony
      * @param point the waypoint to add.
      * @param block the block at the waypoint.
      */
-    public void addWayPoint(final BlockPos point, final IBlockState block)
+    public void addWayPoint(final BlockPos point, final BlockState block)
     {
         wayPoints.put(point, block);
         this.markDirty();
@@ -1232,7 +1232,7 @@ public class Colony implements IColony
      *
      * @return copy of hashmap.
      */
-    public Map<BlockPos, IBlockState> getWayPoints()
+    public Map<BlockPos, BlockState> getWayPoints()
     {
         return new HashMap<>(wayPoints);
     }
@@ -1343,31 +1343,31 @@ public class Colony implements IColony
      *
      * @return the list.
      */
-    public ImmutableList<EntityPlayer> getVisitingPlayers()
+    public ImmutableList<PlayerEntity> getVisitingPlayers()
     {
         return ImmutableList.copyOf(visitingPlayers);
     }
 
     @Override
-    public void addVisitingPlayer(final EntityPlayer player)
+    public void addVisitingPlayer(final PlayerEntity player)
     {
         final Rank rank = getPermissions().getRank(player);
         if (rank != Rank.OWNER && rank != Rank.OFFICER && !visitingPlayers.contains(player) && Configurations.gameplay.sendEnteringLeavingMessages)
         {
             visitingPlayers.add(player);
             LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName(), this.getName());
+            LanguageHandler.sendPlayersMessage(getMessagePlayerEntitys(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName(), this.getName());
         }
     }
 
     @Override
-    public void removeVisitingPlayer(final EntityPlayer player)
+    public void removeVisitingPlayer(final PlayerEntity player)
     {
-        if (!getMessageEntityPlayers().contains(player) && Configurations.gameplay.sendEnteringLeavingMessages)
+        if (!getMessagePlayerEntitys().contains(player) && Configurations.gameplay.sendEnteringLeavingMessages)
         {
             visitingPlayers.remove(player);
             LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName(), this.getName());
+            LanguageHandler.sendPlayersMessage(getMessagePlayerEntitys(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName(), this.getName());
         }
     }
 
@@ -1376,13 +1376,13 @@ public class Colony implements IColony
      *
      * @return the tag of it.
      */
-    public NBTTagCompound getColonyTag()
+    public CompoundNBT getColonyTag()
     {
         try
         {
             if (this.colonyTag == null || this.isActive)
             {
-                this.writeToNBT(new NBTTagCompound());
+                this.writeToNBT(new CompoundNBT());
             }
         }
         catch (final Exception e)
@@ -1433,7 +1433,7 @@ public class Colony implements IColony
         this.needToMourn = needToMourn;
         if (needToMourn)
         {
-            LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN, name);
+            LanguageHandler.sendPlayersMessage(getMessagePlayerEntitys(), COM_MINECOLONIES_COREMOD_MOURN, name);
         }
     }
 
@@ -1452,7 +1452,7 @@ public class Colony implements IColony
      *
      * @param entityCitizen the citizen to add.
      */
-    public void addGuardToAttackers(final EntityCitizen entityCitizen, final EntityPlayer player)
+    public void addGuardToAttackers(final EntityCitizen entityCitizen, final PlayerEntity player)
     {
         if (player == null)
         {
@@ -1465,21 +1465,21 @@ public class Colony implements IColony
             {
                 if (attackingPlayer.addGuard(entityCitizen))
                 {
-                    LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(),
+                    LanguageHandler.sendPlayersMessage(getMessagePlayerEntitys(),
                       "Beware, " + attackingPlayer.getPlayer().getName() + " has now: " + attackingPlayer.getGuards().size() + " guards!");
                 }
                 return;
             }
         }
 
-        for (final EntityPlayer visitingPlayer : visitingPlayers)
+        for (final PlayerEntity visitingPlayer : visitingPlayers)
         {
             if (visitingPlayer.equals(player))
             {
                 final AttackingPlayer attackingPlayer = new AttackingPlayer(visitingPlayer);
                 attackingPlayer.addGuard(entityCitizen);
                 attackingPlayers.add(attackingPlayer);
-                LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), "Beware, " + visitingPlayer.getName() + " is attacking you and he brought guards.");
+                LanguageHandler.sendPlayersMessage(getMessagePlayerEntitys(), "Beware, " + visitingPlayer.getName() + " is attacking you and he brought guards.");
             }
         }
     }
@@ -1490,7 +1490,7 @@ public class Colony implements IColony
      * @param player the player to check..
      * @return true if so.
      */
-    public boolean isValidAttackingPlayer(final EntityPlayer player)
+    public boolean isValidAttackingPlayer(final PlayerEntity player)
     {
         if (packageManager.getLastContactInHours() > 1)
         {

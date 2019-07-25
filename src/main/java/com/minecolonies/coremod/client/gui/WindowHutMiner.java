@@ -76,9 +76,9 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
 
                 rowPane.findPaneOfTypeByID("lvl", Label.class).setLabelText(Integer.toString(index));
                 rowPane.findPaneOfTypeByID("nONodes", Label.class)
-                       .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.minerNode") + ": " + levelsInfo.get(index).getFirst());
+                       .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.minerNode") + ": " + levelsInfo.get(index).getA());
                 rowPane.findPaneOfTypeByID("yLevel", Label.class)
-                       .setLabelText("Y: " + (levelsInfo.get(index).getSecond() + 1));
+                       .setLabelText("Y: " + (levelsInfo.get(index).getB() + 1));
                        // ^^ 1 is for Y depth fix
             }
         });

@@ -5,7 +5,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -131,7 +131,7 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected boolean isPassable(@NotNull final IBlockState block)
+    protected boolean isPassable(@NotNull final BlockState block)
     {
         return super.isPassable(block) || block.getMaterial() == Material.LEAVES || Compatibility.isDynamicTrunkShell(block.getBlock());
     }

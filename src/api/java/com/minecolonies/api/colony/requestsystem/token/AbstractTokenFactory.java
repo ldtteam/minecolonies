@@ -3,7 +3,7 @@ package com.minecolonies.api.colony.requestsystem.token;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -34,12 +34,12 @@ public abstract class AbstractTokenFactory<I> implements ITokenFactory<I, Standa
      */
     @NotNull
     @Override
-    public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StandardToken request)
+    public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StandardToken request)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
+        final CompoundNBT compound = new CompoundNBT();
 
-        compound.setLong(NBT_LSB, request.getIdentifier().getLeastSignificantBits());
-        compound.setLong(NBT_MSB, request.getIdentifier().getMostSignificantBits());
+        compound.putLong(NBT_LSB, request.getIdentifier().getLeastSignificantBits());
+        compound.putLong(NBT_MSB, request.getIdentifier().getMostSignificantBits());
 
         return compound;
     }
@@ -53,7 +53,7 @@ public abstract class AbstractTokenFactory<I> implements ITokenFactory<I, Standa
      */
     @NotNull
     @Override
-    public StandardToken deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+    public StandardToken deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
         final Long msb = nbt.getLong(NBT_MSB);
         final Long lsb = nbt.getLong(NBT_LSB);

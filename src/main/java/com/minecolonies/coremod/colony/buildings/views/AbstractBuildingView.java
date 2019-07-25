@@ -20,10 +20,10 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.network.messages.HutRenameMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -342,7 +342,7 @@ public abstract class AbstractBuildingView implements IRequester
         final int resolverSize = buf.readInt();
         for (int i = 0; i < resolverSize; i++)
         {
-            final NBTTagCompound compound = ByteBufUtils.readTag(buf);
+            final CompoundNBT compound = ByteBufUtils.readTag(buf);
             if (compound != null)
             {
                 list.add(StandardFactoryController.getInstance().deserialize(compound));
@@ -350,7 +350,7 @@ public abstract class AbstractBuildingView implements IRequester
         }
 
         resolvers = ImmutableList.copyOf(list);
-        final NBTTagCompound compound = ByteBufUtils.readTag(buf);
+        final CompoundNBT compound = ByteBufUtils.readTag(buf);
         if (compound != null)
         {
             requesterId = StandardFactoryController.getInstance().deserialize(compound);
@@ -359,9 +359,9 @@ public abstract class AbstractBuildingView implements IRequester
         loadRequestSystemFromNBT(ByteBufUtils.readTag(buf));
     }
 
-    private void loadRequestSystemFromNBT(final NBTTagCompound compound)
+    private void loadRequestSystemFromNBT(final CompoundNBT compound)
     {
-        this.rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(TAG_RS_BUILDING_DATASTORE));
+        this.rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompound(TAG_RS_BUILDING_DATASTORE));
     }
 
     private IRequestSystemBuildingDataStore getDataStore()
@@ -498,15 +498,15 @@ public abstract class AbstractBuildingView implements IRequester
         {
             if (getColony() == null || !getCitizensByRequest().containsKey(token) || getColony().getCitizen(getCitizensByRequest().get(token)) == null)
             {
-                return new TextComponentString("<UNKNOWN>");
+                return new StringTextComponent("<UNKNOWN>");
             }
 
-            return new TextComponentString(getColony().getCitizen(getCitizensByRequest().get(token)).getName());
+            return new StringTextComponent(getColony().getCitizen(getCitizensByRequest().get(token)).getName());
         }
         catch (final Exception ex)
         {
             Log.getLogger().warn(ex);
-            return new TextComponentString("");
+            return new StringTextComponent("");
         }
     }
 

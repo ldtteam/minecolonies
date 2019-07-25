@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.StandardPlayerRequestResolver;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,24 +66,24 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
 
     @NotNull
     @Override
-    public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StandardPlayerRequestResolver playerRequestResolver)
+    public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StandardPlayerRequestResolver playerRequestResolver)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
-        compound.setTag(NBT_TOKEN, controller.serialize(playerRequestResolver.getRequesterId()));
-        compound.setTag(NBT_LOCATION, controller.serialize(playerRequestResolver.getRequesterLocation()));
-        compound.setTag(NBT_ASSIGNED_REQUESTS, playerRequestResolver.getAllAssignedRequests().stream().map(controller::serialize).collect(NBTUtils.toNBTTagList()));
+        final CompoundNBT compound = new CompoundNBT();
+        compound.put(NBT_TOKEN, controller.serialize(playerRequestResolver.getRequesterId()));
+        compound.put(NBT_LOCATION, controller.serialize(playerRequestResolver.getRequesterLocation()));
+        compound.put(NBT_ASSIGNED_REQUESTS, playerRequestResolver.getAllAssignedRequests().stream().map(controller::serialize).collect(NBTUtils.toListNBT()));
         return compound;
     }
 
     @NotNull
     @Override
-    public StandardPlayerRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+    public StandardPlayerRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
-        final IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
-        final ILocation location = controller.deserialize(nbt.getCompoundTag(NBT_LOCATION));
+        final IToken token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
+        final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
 
         final Set<IToken<?>> assignedRequests =
-          NBTUtils.streamCompound(nbt.getTagList(NBT_ASSIGNED_REQUESTS, Constants.NBT.TAG_COMPOUND)).map(c -> (IToken<?>) controller.deserialize(c)).collect(Collectors.toSet());
+          NBTUtils.streamCompound(nbt.getList(NBT_ASSIGNED_REQUESTS, Constants.NBT.TAG_COMPOUND)).map(c -> (IToken<?>) controller.deserialize(c)).collect(Collectors.toSet());
 
         final StandardPlayerRequestResolver resolver = new StandardPlayerRequestResolver(location, token);
         resolver.setAllAssignedRequests(assignedRequests);

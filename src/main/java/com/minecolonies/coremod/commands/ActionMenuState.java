@@ -2,7 +2,7 @@ package com.minecolonies.coremod.commands;
 
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntityMP;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -101,7 +101,7 @@ public class ActionMenuState
         return null;
     }
 
-    public EntityPlayerMP getPlayerForArgument(@NotNull final String argumentName)
+    public PlayerEntityMP getPlayerForArgument(@NotNull final String argumentName)
     {
         for (final ActionArgument actionArgument : getAllArgumentsList())
         {
@@ -109,14 +109,14 @@ public class ActionMenuState
             {
                 if (ActionArgumentType.ONLINE_PLAYER == actionArgument.getType() || ActionArgumentType.PLAYER == actionArgument.getType())
                 {
-                    return (EntityPlayerMP) getValue(actionArgument);
+                    return (PlayerEntityMP) getValue(actionArgument);
                 }
             }
         }
         return null;
     }
 
-    public EntityPlayerMP getOnlinePlayerForArgument(@NotNull final String argumentName)
+    public PlayerEntityMP getOnlinePlayerForArgument(@NotNull final String argumentName)
     {
         for (final ActionArgument actionArgument : getAllArgumentsList())
         {
@@ -124,7 +124,7 @@ public class ActionMenuState
             {
                 if (ActionArgumentType.ONLINE_PLAYER == actionArgument.getType())
                 {
-                    return (EntityPlayerMP) getValue(actionArgument);
+                    return (PlayerEntityMP) getValue(actionArgument);
                 }
             }
         }
@@ -182,7 +182,7 @@ public class ActionMenuState
         }
     }
 
-    public Integer getIntegerForArgument(@NotNull final String argumentName)
+    public Integer getIntForArgument(@NotNull final String argumentName)
     {
         for (final ActionArgument actionArgument : getAllArgumentsList())
         {
@@ -236,7 +236,7 @@ public class ActionMenuState
 
     public int getIntValueForArgument(@NotNull final String argumentName, final int defaultValue)
     {
-        final Integer integerObject = getIntegerForArgument(argumentName);
+        final Integer integerObject = getIntForArgument(argumentName);
         if (null != integerObject)
         {
             return integerObject.intValue();

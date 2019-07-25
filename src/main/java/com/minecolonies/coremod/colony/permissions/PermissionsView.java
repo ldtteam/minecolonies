@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.network.PacketUtils;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -191,7 +191,7 @@ public class PermissionsView implements IPermissions
      * @return the rank.
      */
     @NotNull
-    public Rank getRank(@NotNull final EntityPlayer player)
+    public Rank getRank(@NotNull final PlayerEntity player)
     {
         return getRank(player.getUniqueID());
     }
@@ -205,13 +205,13 @@ public class PermissionsView implements IPermissions
     }
 
     @Override
-    public boolean hasPermission(@NotNull final EntityPlayer player, @NotNull final Action action)
+    public boolean hasPermission(@NotNull final PlayerEntity player, @NotNull final Action action)
     {
         return hasPermission(getRank(player), action);
     }
 
     @Override
-    public boolean isColonyMember(@NotNull final EntityPlayer player)
+    public boolean isColonyMember(@NotNull final PlayerEntity player)
     {
         return players.containsKey(player.getUniqueID());
     }

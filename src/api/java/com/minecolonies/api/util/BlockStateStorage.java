@@ -1,7 +1,7 @@
 package com.minecolonies.api.util;
 
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -14,7 +14,7 @@ public class BlockStateStorage
     /**
      * The state to store.
      */
-    private final IBlockState state;
+    private final BlockState state;
 
     /**
      * List of properties used to compare
@@ -40,7 +40,7 @@ public class BlockStateStorage
      * @param exclude           True: states are compared ignoring the properties in the given list.
      *                          False: states are only compared within the properties on the list.
      */
-    public BlockStateStorage(@NotNull final IBlockState state, @NotNull final List<IProperty> compareProperties, final boolean exclude)
+    public BlockStateStorage(@NotNull final BlockState state, @NotNull final List<IProperty> compareProperties, final boolean exclude)
     {
         this.state = state;
         this.propertyList = compareProperties;
@@ -80,7 +80,7 @@ public class BlockStateStorage
      *
      * @return state
      */
-    public IBlockState getState()
+    public BlockState getState()
     {
         return state;
     }

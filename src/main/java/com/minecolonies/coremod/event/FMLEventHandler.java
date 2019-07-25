@@ -7,7 +7,7 @@ import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.ServerUUIDMessage;
 import com.minecolonies.coremod.network.messages.UpdateChunkRangeCapabilityMessage;
 import com.minecolonies.coremod.sounds.ModSoundEvents;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
@@ -68,13 +68,13 @@ public class FMLEventHandler
     @SubscribeEvent
     public void onPlayerLogin(@NotNull final PlayerEvent.PlayerLoggedInEvent event)
     {
-        if (event.player instanceof EntityPlayerMP)
+        if (event.player instanceof PlayerEntityMP)
         {
-            MineColonies.getNetwork().sendTo(new ServerUUIDMessage(), (EntityPlayerMP) event.player);
-            MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), (EntityPlayerMP) event.player);
+            MineColonies.getNetwork().sendTo(new ServerUUIDMessage(), (PlayerEntityMP) event.player);
+            MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), (PlayerEntityMP) event.player);
 
             // This automatically reloads the owner of the colony if failed.
-            ColonyManager.getIColonyByOwner(((EntityPlayerMP) event.player).getServerWorld(), event.player);
+            ColonyManager.getIColonyByOwner(((PlayerEntityMP) event.player).getServerWorld(), event.player);
             //ColonyManager.syncAllColoniesAchievements();
         }
     }

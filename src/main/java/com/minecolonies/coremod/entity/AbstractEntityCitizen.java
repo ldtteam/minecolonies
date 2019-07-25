@@ -4,14 +4,14 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.util.SoundUtils;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.INpc;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemShield;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ShieldItem;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -103,7 +103,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements INp
 
     @NotNull
     @Override
-    public EnumActionResult applyPlayerInteraction(final EntityPlayer player, final Vec3d vec, final EnumHand hand)
+    public EnumActionResult applyPlayerInteraction(final PlayerEntity player, final Vec3d vec, final EnumHand hand)
     {
         SoundUtils.playInteractionSoundAtCitizenWithChance(CompatibilityUtils.getWorld(this), this.getPosition(), ONE_HUNDRED_PERCENT, this);
         return super.applyPlayerInteraction(player, vec, hand);
@@ -266,7 +266,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements INp
     @Override
     public boolean isActiveItemStackBlocking()
     {
-        return getActiveItemStack().getItem() instanceof ItemShield;
+        return getActiveItemStack().getItem() instanceof ShieldItem;
     }
 
     /**
@@ -274,7 +274,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements INp
      * logic.
      */
     @Override
-    protected void updateFallState(final double y, final boolean onGroundIn, @NotNull final IBlockState state, @NotNull final BlockPos pos)
+    protected void updateFallState(final double y, final boolean onGroundIn, @NotNull final BlockState state, @NotNull final BlockPos pos)
     {
         if (!onGround)
         {

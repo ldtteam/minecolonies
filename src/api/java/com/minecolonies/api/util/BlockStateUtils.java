@@ -1,7 +1,7 @@
 package com.minecolonies.api.util;
 
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -36,7 +36,7 @@ public class BlockStateUtils
      * @param propertyName property name to search for
      * @return true or false
      */
-    public static boolean stateEqualsStateByBlockAndProp(@NotNull final IBlockState state1, @NotNull final IBlockState state2, @NotNull final String propertyName)
+    public static boolean stateEqualsStateByBlockAndProp(@NotNull final BlockState state1, @NotNull final BlockState state2, @NotNull final String propertyName)
     {
         if (state1.getBlock() != state2.getBlock())
         {
@@ -61,7 +61,7 @@ public class BlockStateUtils
      * @param propertyName the property name we're searching for
      * @return true if states match in the property
      */
-    public static boolean stateEqualsStateInPropertyByName(@NotNull final IBlockState state1, @NotNull final IBlockState state2, @NotNull final String propertyName)
+    public static boolean stateEqualsStateInPropertyByName(@NotNull final BlockState state1, @NotNull final BlockState state2, @NotNull final String propertyName)
     {
         final IProperty propertyOne = getPropertyByNameFromState(state1, propertyName);
 
@@ -86,7 +86,7 @@ public class BlockStateUtils
      * @param state Blockstate we're checking for a property
      * @param name  name of the property to find
      */
-    public static IProperty getPropertyByNameFromState(@NotNull final IBlockState state, @NotNull final String name)
+    public static IProperty getPropertyByNameFromState(@NotNull final BlockState state, @NotNull final String name)
     {
         IProperty property = propertyBlockMap.get(state.getBlock().getRegistryName().toString() + ":" + name);
 
@@ -134,7 +134,7 @@ public class BlockStateUtils
      * @param prop   IProperty to not compare
      * @return true if states are equal without the property
      */
-    public static boolean stateEqualsStateWithoutProp(@NotNull final IBlockState state1, @NotNull final IBlockState state2, @NotNull final IProperty prop)
+    public static boolean stateEqualsStateWithoutProp(@NotNull final BlockState state1, @NotNull final BlockState state2, @NotNull final IProperty prop)
     {
         if (!state1.getPropertyKeys().contains(prop) || !state2.getPropertyKeys().contains(prop))
         {
@@ -151,7 +151,7 @@ public class BlockStateUtils
      * @param state2 Second state to compare
      * @return True if states are equal
      */
-    public static boolean stateEqualsStateInBlockAndProp(final IBlockState state1, final IBlockState state2)
+    public static boolean stateEqualsStateInBlockAndProp(final BlockState state1, final BlockState state2)
     {
         if (state1 == null || state2 == null)
         {

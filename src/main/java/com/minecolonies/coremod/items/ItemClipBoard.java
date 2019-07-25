@@ -5,13 +5,13 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -55,33 +55,33 @@ public class ItemClipBoard extends AbstractItemMinecolonies
     @Override
     @NotNull
     public EnumActionResult onItemUse(
-                                       final EntityPlayer playerIn,
+                                       final PlayerEntity playerIn,
                                        final World worldIn,
                                        final BlockPos pos,
                                        final EnumHand hand,
-                                       final EnumFacing facing,
+                                       final Direction facing,
                                        final float hitX,
                                        final float hitY,
                                        final float hitZ)
     {
         final ItemStack clipboard = playerIn.getHeldItem(hand);
 
-        final NBTTagCompound compound = checkForCompound(clipboard);
+        final CompoundNBT compound = checkForCompound(clipboard);
         final TileEntity entity = worldIn.getTileEntity(pos);
 
         if (entity instanceof TileEntityColonyBuilding)
         {
-            compound.setInteger(TAG_COLONY, ((TileEntityColonyBuilding) entity).getColonyId());
+            compound.putInt(TAG_COLONY, ((TileEntityColonyBuilding) entity).getColonyId());
             if (!worldIn.isRemote)
             {
                 LanguageHandler.sendPlayerMessage(playerIn, TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET, ((TileEntityColonyBuilding) entity).getColonyId());
             }
         }
-        else if (compound.hasKey(TAG_COLONY))
+        else if (compound.keySet().contains(TAG_COLONY))
         {
             if (worldIn.isRemote)
             {
-                final int colonyId = compound.getInteger(TAG_COLONY);
+                final int colonyId = compound.getInt(TAG_COLONY);
                 MineColonies.proxy.openClipBoardWindow(colonyId);
             }
         }
@@ -101,7 +101,7 @@ public class ItemClipBoard extends AbstractItemMinecolonies
     @NotNull
     public ActionResult<ItemStack> onItemRightClick(
                                                      final World worldIn,
-                                                     final EntityPlayer playerIn,
+                                                     final PlayerEntity playerIn,
                                                      final EnumHand hand)
     {
         final ItemStack cllipboard = playerIn.getHeldItem(hand);
@@ -111,11 +111,11 @@ public class ItemClipBoard extends AbstractItemMinecolonies
             return new ActionResult<>(EnumActionResult.SUCCESS, cllipboard);
         }
 
-        final NBTTagCompound compound = checkForCompound(cllipboard);
+        final CompoundNBT compound = checkForCompound(cllipboard);
 
-        if (compound.hasKey(TAG_COLONY))
+        if (compound.keySet().contains(TAG_COLONY))
         {
-            final int colonyId = compound.getInteger(TAG_COLONY);
+            final int colonyId = compound.getInt(TAG_COLONY);
             MineColonies.proxy.openClipBoardWindow(colonyId);
         }
         else
@@ -132,11 +132,11 @@ public class ItemClipBoard extends AbstractItemMinecolonies
      *
      * @param scepter the scepter to check in for.
      */
-    private static NBTTagCompound checkForCompound(final ItemStack scepter)
+    private static CompoundNBT checkForCompound(final ItemStack scepter)
     {
         if (!scepter.hasTagCompound())
         {
-            scepter.setTagCompound(new NBTTagCompound());
+            scepter.putCompound(new CompoundNBT());
         }
         return scepter.getTagCompound();
     }

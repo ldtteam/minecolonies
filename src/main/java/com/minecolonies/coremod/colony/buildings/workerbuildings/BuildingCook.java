@@ -12,7 +12,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsVi
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +51,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         super(c, l);
         keepX.put(ItemStackUtils.ISFOOD, new Tuple<>(STACKSIZE, true));
         keepX.put(ItemStackUtils.ISCOOKABLE, new Tuple<>(STACKSIZE, true));
-        keepX.put(TileEntityFurnace::isItemFuel, new Tuple<>(STACKSIZE, true));
+        keepX.put(FurnaceTileEntity::isFuel, new Tuple<>(STACKSIZE, true));
     }
 
     @NotNull

@@ -18,7 +18,7 @@ import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.ItemFood;
+import net.minecraft.item.Food;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -240,7 +240,7 @@ public class EntityAIEatTask extends EntityAIBase
             return EAT;
         }
 
-        final ItemFood itemFood = (ItemFood) stack.getItem();
+        final Food itemFood = stack.getItem();
         citizenData.increaseSaturation(itemFood.getHealAmount(stack) / 2.0);
         citizenData.getInventory().decrStackSize(foodSlot, 1);
         citizenData.markDirty();

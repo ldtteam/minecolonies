@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.baker;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 public class BakingProduct
@@ -55,12 +55,12 @@ public class BakingProduct
      * @param productCompound the compound to use.
      * @return the restored BakingProduct.
      */
-    public static BakingProduct createFromNBT(final NBTTagCompound productCompound)
+    public static BakingProduct createFromNBT(final CompoundNBT productCompound)
     {
-        if (productCompound.hasKey(TAG_STATE))
+        if (productCompound.keySet().contains(TAG_STATE))
         {
-            final ProductState state = ProductState.values()[productCompound.getInteger(TAG_STATE)];
-            final int recipeId = productCompound.getInteger(TAG_RECIPE_ID);
+            final ProductState state = ProductState.values()[productCompound.getInt(TAG_STATE)];
+            final int recipeId = productCompound.getInt(TAG_RECIPE_ID);
             final BakingProduct bakingProduct = new BakingProduct(new ItemStack(productCompound), recipeId);
             bakingProduct.setState(state);
             return bakingProduct;
@@ -152,10 +152,10 @@ public class BakingProduct
      *
      * @param productCompound the compound to write it to.
      */
-    public void writeToNBT(final NBTTagCompound productCompound)
+    public void writeToNBT(final CompoundNBT productCompound)
     {
-        productCompound.setInteger(TAG_STATE, state.ordinal());
-        productCompound.setInteger(TAG_RECIPE_ID, recipeId);
+        productCompound.putInt(TAG_STATE, state.ordinal());
+        productCompound.putInt(TAG_RECIPE_ID, recipeId);
         endProduct.writeToNBT(productCompound);
     }
 
@@ -163,7 +163,7 @@ public class BakingProduct
     public int hashCode()
     {
         int result = state.hashCode();
-        result = 31 * result + endProduct.writeToNBT(new NBTTagCompound()).hashCode();
+        result = 31 * result + endProduct.writeToNBT(new CompoundNBT()).hashCode();
         result = 31 * result + recipeId;
         return result;
     }

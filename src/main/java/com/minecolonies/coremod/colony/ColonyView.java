@@ -20,8 +20,8 @@ import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -41,7 +41,7 @@ import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 public final class ColonyView implements IColony
 {
     /**
-     * Max allowed NBTTagCompound in bytes 
+     * Max allowed CompoundNBT in bytes
      */
     private static final int MAX_BYTES_NBTCOMPOUND = (int) 1e6;
 
@@ -171,7 +171,7 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Create a ColonyView given a UUID and NBTTagCompound.
+     * Create a ColonyView given a UUID and CompoundNBT.
      *
      * @param id Id of the colony view.
      * @return the new colony view.
@@ -582,7 +582,7 @@ public final class ColonyView implements IColony
 
         if (buf.readBoolean())
         {
-            final NBTTagCompound compound = ByteBufUtils.readTag(buf);
+            final CompoundNBT compound = ByteBufUtils.readTag(buf);
             this.requestManager = new StandardRequestManager(this);
             this.requestManager.deserializeNBT(compound);
         }
@@ -909,7 +909,7 @@ public final class ColonyView implements IColony
     }
 
     @Override
-    public void removeVisitingPlayer(final EntityPlayer player)
+    public void removeVisitingPlayer(final PlayerEntity player)
     {
         /*
          * Intentionally left empty.
@@ -917,7 +917,7 @@ public final class ColonyView implements IColony
     }
 
     @Override
-    public void addVisitingPlayer(final EntityPlayer player)
+    public void addVisitingPlayer(final PlayerEntity player)
     {
         /*
          * Intentionally left empty.

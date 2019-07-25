@@ -7,8 +7,8 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -56,44 +56,44 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
     @NotNull
     @Override
-    public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final RecipeStorage recipeStorage)
+    public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final RecipeStorage recipeStorage)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
-        @NotNull final NBTTagList inputTagList = new NBTTagList();
+        final CompoundNBT compound = new CompoundNBT();
+        @NotNull final ListNBT inputTagList = new ListNBT();
         for (@NotNull final ItemStack stack : recipeStorage.getInput())
         {
-            @NotNull final NBTTagCompound neededRes = new NBTTagCompound();
+            @NotNull final CompoundNBT neededRes = new CompoundNBT();
             stack.writeToNBT(neededRes);
-            inputTagList.appendTag(neededRes);
+            inputTagList.add(neededRes);
         }
-        compound.setTag(INPUT_TAG, inputTagList);
+        compound.put(INPUT_TAG, inputTagList);
         recipeStorage.getPrimaryOutput().writeToNBT(compound);
 
         if(recipeStorage.getIntermediate() != null)
         {
             NBTUtil.writeBlockState(compound, recipeStorage.getIntermediate().getDefaultState());
         }
-        compound.setInteger(TAG_GRID, recipeStorage.getGridSize());
-        compound.setTag(TAG_TOKEN, StandardFactoryController.getInstance().serialize(recipeStorage.getToken()));
+        compound.putInt(TAG_GRID, recipeStorage.getGridSize());
+        compound.put(TAG_TOKEN, StandardFactoryController.getInstance().serialize(recipeStorage.getToken()));
         return compound;
     }
 
     @NotNull
     @Override
-    public RecipeStorage deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+    public RecipeStorage deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
         final List<ItemStack> input = new ArrayList<>();
-        final NBTTagList inputTagList = nbt.getTagList(INPUT_TAG, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < inputTagList.tagCount(); ++i)
+        final ListNBT inputTagList = nbt.getList(INPUT_TAG, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < inputTagList.size(); ++i)
         {
-            final NBTTagCompound inputTag = inputTagList.getCompoundTagAt(i);
+            final CompoundNBT inputTag = inputTagList.getCompound(i);
             input.add(new ItemStack(inputTag));
         }
 
         final ItemStack primaryOutput = new ItemStack(nbt);
         final Block intermediate = NBTUtil.readBlockState(nbt).getBlock();
-        final int gridSize = nbt.getInteger(TAG_GRID);
-        final IToken token = StandardFactoryController.getInstance().deserialize(nbt.getCompoundTag(TAG_TOKEN));
+        final int gridSize = nbt.getInt(TAG_GRID);
+        final IToken token = StandardFactoryController.getInstance().deserialize(nbt.getCompound(TAG_TOKEN));
 
         return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate);
     }

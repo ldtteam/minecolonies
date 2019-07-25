@@ -19,10 +19,10 @@ import com.minecolonies.coremod.util.WorkerUtil;
 import com.ldtteam.structurize.management.Structures;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -296,24 +296,24 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     private void validateLadderOrientation()
     {
         @Nullable final BuildingMiner buildingMiner = getOwnBuilding();
-        final EnumFacing ladderOrientation = world.getBlockState(buildingMiner.getLadderLocation()).getValue(BlockLadder.FACING);
+        final Direction ladderOrientation = world.getBlockState(buildingMiner.getLadderLocation()).getValue(BlockLadder.FACING);
 
-        if (ladderOrientation == EnumFacing.WEST)
+        if (ladderOrientation == Direction.WEST)
         {
             buildingMiner.setVectorX(-1);
             buildingMiner.setVectorZ(0);
         }
-        else if (ladderOrientation == EnumFacing.EAST)
+        else if (ladderOrientation == Direction.EAST)
         {
             buildingMiner.setVectorX(1);
             buildingMiner.setVectorZ(0);
         }
-        else if (ladderOrientation == EnumFacing.SOUTH)
+        else if (ladderOrientation == Direction.SOUTH)
         {
             buildingMiner.setVectorX(0);
             buildingMiner.setVectorZ(1);
         }
-        else if (ladderOrientation == EnumFacing.NORTH)
+        else if (ladderOrientation == Direction.NORTH)
         {
             buildingMiner.setVectorX(0);
             buildingMiner.setVectorZ(-1);
@@ -354,7 +354,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     }
 
     @Override
-    protected void triggerMinedBlock(@NotNull final IBlockState blockToMine)
+    protected void triggerMinedBlock(@NotNull final BlockState blockToMine)
     {
         super.triggerMinedBlock(blockToMine);
         if (ColonyManager.getCompatibilityManager().isLuckyBlock(new ItemStack(blockToMine.getBlock())))
@@ -408,7 +408,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
 
         //Get ladder orientation
-        final IBlockState metadata = getBlockState(safeStand);
+        final BlockState metadata = getBlockState(safeStand);
 
         //set cobblestone
         setBlockFromInventory(nextCobble, Blocks.COBBLESTONE);
@@ -419,7 +419,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         return MINER_CHECK_MINESHAFT;
     }
 
-    private IBlockState getBlockState(@NotNull final BlockPos pos)
+    private BlockState getBlockState(@NotNull final BlockPos pos)
     {
         return world.getBlockState(pos);
     }
@@ -772,7 +772,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         setBlockFromInventory(location, block, block.getDefaultState());
     }
 
-    private void setBlockFromInventory(@NotNull final BlockPos location, final Block block, final IBlockState metadata)
+    private void setBlockFromInventory(@NotNull final BlockPos location, final Block block, final BlockState metadata)
     {
         final int slot;
         if (block instanceof BlockLadder)
@@ -911,13 +911,13 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     }
 
     @Override
-    public boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final IBlockState worldMetadata)
+    public boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final BlockState worldMetadata)
     {
         return ColonyManager.getCompatibilityManager().isOre(worldMetadata);
     }
 
     @Override
-    public IBlockState getSolidSubstitution(final BlockPos ignored)
+    public BlockState getSolidSubstitution(final BlockPos ignored)
     {
         return Blocks.COBBLESTONE.getDefaultState();
     }

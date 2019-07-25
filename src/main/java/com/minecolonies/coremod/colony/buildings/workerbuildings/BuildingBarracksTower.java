@@ -5,8 +5,8 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -71,7 +71,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     }
 
     @Override
-    public void requestUpgrade(final EntityPlayer player, final BlockPos builder)
+    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
         final int buildingLevel = getBuildingLevel();
         final AbstractBuilding building = getColony().getBuildingManager().getBuilding(barracks);
@@ -103,19 +103,19 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         super.readFromNBT(compound);
-        barracks = NBTUtil.getPosFromTag(compound.getCompoundTag(TAG_POS));
+        barracks = NBTUtil.getPosFromTag(compound.getCompound(TAG_POS));
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         super.writeToNBT(compound);
         if (barracks != null)
         {
-            compound.setTag(TAG_POS, NBTUtil.createPosTag(barracks));
+            compound.put(TAG_POS, NBTUtil.createPosTag(barracks));
         }
     }
 

@@ -6,7 +6,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -110,7 +110,7 @@ public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessa
     }
 
     @Override
-    public void messageOnServerThread(final BuyCitizenMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final BuyCitizenMessage message, final PlayerEntityMP player)
     {
         final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
 
@@ -150,7 +150,7 @@ public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessa
                 data.setCharisma((int) Math.round(rand.nextDouble() * (high - low) + low));
                 data.setStrength((int) Math.round(rand.nextDouble() * (high - low) + low));
 
-                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.progress.hireCitizen");
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), "com.minecolonies.coremod.progress.hireCitizen");
                 colony.getCitizenManager().spawnOrCreateCitizen(data, colony.getWorld(), null, true);
             }
         }

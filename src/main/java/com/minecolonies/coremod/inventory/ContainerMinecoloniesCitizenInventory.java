@@ -5,7 +5,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -129,7 +129,7 @@ public class ContainerMinecoloniesCitizenInventory extends Container
      *                 {@link #inventorySlots}.
      */
     @Override
-    public ItemStack transferStackInSlot(final EntityPlayer playerIn, final int index)
+    public ItemStack transferStackInSlot(final PlayerEntity playerIn, final int index)
     {
         final Slot slot = this.inventorySlots.get(index);
 
@@ -170,7 +170,7 @@ public class ContainerMinecoloniesCitizenInventory extends Container
      * Called when the container is closed.
      */
     @Override
-    public void onContainerClosed(final EntityPlayer playerIn)
+    public void onContainerClosed(final PlayerEntity playerIn)
     {
         super.onContainerClosed(playerIn);
         this.chestInventory.closeInventory(playerIn);
@@ -179,7 +179,7 @@ public class ContainerMinecoloniesCitizenInventory extends Container
     /**
      * Determines whether supplied player can use this container
      */
-    public boolean canInteractWith(final EntityPlayer playerIn)
+    public boolean canInteractWith(final PlayerEntity playerIn)
     {
         return this.chestInventory.isUsableByPlayer(playerIn);
     }

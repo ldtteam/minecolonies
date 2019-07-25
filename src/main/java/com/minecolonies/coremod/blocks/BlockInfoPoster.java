@@ -7,11 +7,11 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -21,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
-import static net.minecraft.util.EnumFacing.NORTH;
-import static net.minecraft.util.EnumFacing.fromAngle;
+import static net.minecraft.util.Direction.NORTH;
+import static net.minecraft.util.Direction.fromAngle;
 
 /**
  * Class for the minecolonies info Poster.
@@ -64,11 +64,11 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     }
 
     @Override
-    public IBlockState getStateFromMeta(final int meta)
+    public BlockState getStateFromMeta(final int meta)
     {
-        EnumFacing enumfacing = EnumFacing.byIndex(meta);
+        Direction enumfacing = Direction.byIndex(meta);
 
-        if (enumfacing.getAxis() == EnumFacing.Axis.Y)
+        if (enumfacing.getAxis() == Direction.Axis.Y)
         {
             enumfacing = NORTH;
         }
@@ -77,25 +77,25 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     }
 
     @Override
-    public int getMetaFromState(final IBlockState state)
+    public int getMetaFromState(final BlockState state)
     {
-        return ((EnumFacing) state.getValue(FACING)).getIndex();
+        return ((Direction) state.getValue(FACING)).getIndex();
     }
 
     @Override
-    public IBlockState withRotation(final IBlockState state, final Rotation rot)
+    public BlockState withRotation(final BlockState state, final Rotation rot)
     {
-        return state.withProperty(FACING, rot.rotate((EnumFacing) state.getValue(FACING)));
+        return state.withProperty(FACING, rot.rotate((Direction) state.getValue(FACING)));
     }
 
     @Override
-    public IBlockState withMirror(final IBlockState state, final Mirror mirrorIn)
+    public BlockState withMirror(final BlockState state, final Mirror mirrorIn)
     {
-        return state.withRotation(mirrorIn.toRotation((EnumFacing) state.getValue(FACING)));
+        return state.withRotation(mirrorIn.toRotation((Direction) state.getValue(FACING)));
     }
 
     @Override
-    public boolean isFullCube(final IBlockState state)
+    public boolean isFullCube(final BlockState state)
     {
         return false;
     }
@@ -107,15 +107,15 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     }
 
     @Override
-    public boolean isOpaqueCube(final IBlockState state)
+    public boolean isOpaqueCube(final BlockState state)
     {
         return false;
     }
 
     @Override
-    public void onBlockPlacedBy(final World worldIn, final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
+    public void onBlockPlacedBy(final World worldIn, final BlockPos pos, final BlockState state, final EntityLivingBase placer, final ItemStack stack)
     {
-        @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
+        @NotNull final Direction enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
         this.getDefaultState().withProperty(FACING, enumFacing);
     }
 
@@ -126,7 +126,7 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     }
 
     @Override
-    public boolean hasTileEntity(final IBlockState state)
+    public boolean hasTileEntity(final BlockState state)
     {
         return true;
     }

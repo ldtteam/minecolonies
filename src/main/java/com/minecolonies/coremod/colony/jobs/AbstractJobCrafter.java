@@ -11,7 +11,7 @@ import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -57,13 +57,13 @@ public abstract class AbstractJobCrafter extends AbstractJob
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         super.readFromNBT(compound);
 
-        if(compound.hasKey(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
+        if(compound.keySet().contains(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
         {
-            rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
+            rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompound(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
         }
         else
         {
@@ -79,10 +79,10 @@ public abstract class AbstractJobCrafter extends AbstractJob
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         super.writeToNBT(compound);
-        compound.setTag(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
+        compound.put(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
     }
 
     /**
@@ -156,12 +156,12 @@ public abstract class AbstractJobCrafter extends AbstractJob
             return;
         }
 
-        final IToken<?> current = getTaskQueueFromDataStore().getFirst();
+        final IToken<?> current = getTaskQueueFromDataStore().getA();
 
         getColony().getRequestManager().updateRequestState(current, successful ? RequestState.COMPLETED : RequestState.CANCELLED);
 
         //Just to be sure lets delete them!
-        if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getFirst())
+        if (!getTaskQueueFromDataStore().isEmpty() && current == getTaskQueueFromDataStore().getA())
             getTaskQueueFromDataStore().removeFirst();
     }
 

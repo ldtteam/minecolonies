@@ -1,8 +1,8 @@
 package com.minecolonies.api.util;
 
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 
 import java.util.*;
 import java.util.stream.Collector;
@@ -13,45 +13,45 @@ import java.util.stream.StreamSupport;
 public class NBTUtils
 {
 
-    public static Stream<NBTTagCompound> streamCompound(final NBTTagList list)
+    public static Stream<CompoundNBT> streamCompound(final ListNBT list)
     {
-        return streamBase(list).filter(b -> b instanceof NBTTagCompound).map(b -> (NBTTagCompound) b);
+        return streamBase(list).filter(b -> b instanceof CompoundNBT).map(b -> (CompoundNBT) b);
     }
 
-    public static Stream<NBTBase> streamBase(final NBTTagList list)
+    public static Stream<INBT> streamBase(final ListNBT list)
     {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(new TagListIterator(list), Spliterator.ORDERED), false);
     }
 
-    public static Collector<NBTTagCompound, ?, NBTTagList> toNBTTagList()
+    public static Collector<CompoundNBT, ?, ListNBT> toListNBT()
     {
         return Collectors.collectingAndThen(
                 Collectors.toList(),
                 list -> {
-                    final NBTTagList tagList = new NBTTagList();
-                    list.forEach(tagList::appendTag);
+                    final ListNBT tagList = new ListNBT();
+                    list.forEach(tagList::add);
 
                     return tagList;
                 });
     }
 
-    private static class TagListIterator implements Iterator<NBTBase>
+    private static class TagListIterator implements Iterator<INBT>
     {
 
-        private final NBTTagList list;
+        private final ListNBT list;
         private int currentIndex = 0;
-        private TagListIterator(final NBTTagList list) {this.list = list;}
+        private TagListIterator(final ListNBT list) {this.list = list;}
 
         @Override
         public boolean hasNext()
         {
-            return currentIndex < list.tagCount();
+            return currentIndex < list.size();
         }
 
         @Override
-        public NBTBase next()
+        public INBT next()
         {
-            return list.getCompoundTagAt(currentIndex++);
+            return list.getCompound(currentIndex++);
         }
     }
 }

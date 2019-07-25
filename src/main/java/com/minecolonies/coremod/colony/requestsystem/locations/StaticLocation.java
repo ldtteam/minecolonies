@@ -4,7 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -143,11 +143,11 @@ public class StaticLocation implements ILocation
          */
         @NotNull
         @Override
-        public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StaticLocation request)
+        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StaticLocation request)
         {
-            final NBTTagCompound compound = new NBTTagCompound();
-            compound.setLong(NBT_POS, request.getInDimensionLocation().toLong());
-            compound.setInteger(NBT_DIM, request.getDimension());
+            final CompoundNBT compound = new CompoundNBT();
+            compound.putLong(NBT_POS, request.getInDimensionLocation().toLong());
+            compound.putInt(NBT_DIM, request.getDimension());
             return compound;
         }
 
@@ -160,10 +160,10 @@ public class StaticLocation implements ILocation
          */
         @NotNull
         @Override
-        public StaticLocation deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+        public StaticLocation deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
         {
             final BlockPos pos = BlockPos.fromLong(nbt.getLong(NBT_POS));
-            final Integer dim = nbt.getInteger(NBT_DIM);
+            final Integer dim = nbt.getInt(NBT_DIM);
             return new StaticLocation(pos, dim);
         }
 

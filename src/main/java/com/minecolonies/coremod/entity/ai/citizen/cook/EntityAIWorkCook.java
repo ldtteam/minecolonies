@@ -14,9 +14,9 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -69,7 +69,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     /**
      * The citizen the worker is currently trying to serve.
      */
-    private final List<EntityPlayer> playerToServe = new ArrayList<>();
+    private final List<PlayerEntity> playerToServe = new ArrayList<>();
 
     /**
      * The building range the cook should search for clients.
@@ -104,7 +104,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
      * @param furnace the furnace to retrieve from.
      */
     @Override
-    protected void extractFromFurnace(final TileEntityFurnace furnace)
+    protected void extractFromFurnace(final FurnaceTileEntity furnace)
     {
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
                 new InvWrapper(furnace), RESULT_SLOT,
@@ -202,9 +202,9 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             citizenToServe.get(0).getCitizenData().setJustAte(true);
         }
 
-        if (citizenToServe.isEmpty() && living instanceof EntityPlayer)
+        if (citizenToServe.isEmpty() && living instanceof PlayerEntity)
         {
-            LanguageHandler.sendPlayerMessage((EntityPlayer) living, "com.minecolonies.coremod.cook.serve.player", worker.getName());
+            LanguageHandler.sendPlayerMessage((PlayerEntity) living, "com.minecolonies.coremod.cook.serve.player", worker.getName());
         }
         removeFromQueue();
 
@@ -249,7 +249,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         citizenToServe.clear();
         final List<EntityCitizen> citizenList = world.getEntitiesWithinAABB(EntityCitizen.class,
           range, cit -> !(cit.getCitizenJobHandler().getColonyJob() instanceof JobCook) && cit.shouldBeFed());
-        final List<EntityPlayer> playerList = world.getEntitiesWithinAABB(EntityPlayer.class,
+        final List<PlayerEntity> playerList = world.getEntitiesWithinAABB(PlayerEntity.class,
           range, player -> player != null && player.getFoodStats().getFoodLevel() < LEVEL_TO_FEED_PLAYER);
 
         if (!citizenList.isEmpty() || !playerList.isEmpty())

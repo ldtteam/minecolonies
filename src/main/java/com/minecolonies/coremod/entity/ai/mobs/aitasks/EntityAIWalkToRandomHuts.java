@@ -7,10 +7,10 @@ import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.PathResult;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockLadder;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -35,7 +35,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     /**
      * All directions.
      */
-    private final List<EnumFacing> directions = Arrays.asList(Arrays.copyOf(EnumFacing.HORIZONTALS, 4));
+    private final List<Direction> directions = Arrays.asList(Arrays.copyOf(Direction.HORIZONTALS, 4));
 
     /**
      * The world.
@@ -216,8 +216,8 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
 
                 entity.setLadderCounter(entity.getLadderCounter() + 1);
                 notStuckTime = 0;
-                final IBlockState ladderHere = world.getBlockState(entity.getPosition());
-                final IBlockState ladderUp = world.getBlockState(entity.getPosition().up());
+                final BlockState ladderHere = world.getBlockState(entity.getPosition());
+                final BlockState ladderUp = world.getBlockState(entity.getPosition().up());
                 if (entity.getLadderCounter() <= LADDERS_TO_PLACE || random.nextBoolean())
                 {
                     if (ladderHere.getBlock() == Blocks.LADDER && ladderUp.getBlock() != Blocks.LADDER && !ladderHere.getMaterial().isLiquid())
@@ -230,7 +230,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
                     }
                     else if (ladderUp.getBlock() != Blocks.LADDER && ladderHere.getBlock() != Blocks.LADDER)
                     {
-                        for (final EnumFacing dir : directions)
+                        for (final Direction dir : directions)
                         {
                             if (world.getBlockState(entity.getPosition().offset(dir)).getMaterial().isSolid())
                             {
@@ -249,9 +249,9 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
                 }
                 else
                 {
-                    for (final EnumFacing dir : directions)
+                    for (final Direction dir : directions)
                     {
-                        final IBlockState state = world.getBlockState(entity.getPosition().offset(dir));
+                        final BlockState state = world.getBlockState(entity.getPosition().offset(dir));
                         if ((state.getMaterial().isSolid() && state.getBlock() != Blocks.LADDER) || state.getBlock() instanceof BlockDoor)
                         {
                             final BlockPos posToDestroy;

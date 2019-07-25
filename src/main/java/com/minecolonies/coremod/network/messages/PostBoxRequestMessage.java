@@ -8,7 +8,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -84,7 +84,7 @@ public class PostBoxRequestMessage extends AbstractMessage<PostBoxRequestMessage
     }
 
     @Override
-    public void messageOnServerThread(final PostBoxRequestMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final PostBoxRequestMessage message, final PlayerEntityMP player)
     {
         final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null)

@@ -26,8 +26,8 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraf
 import com.minecolonies.coremod.network.messages.BuildingHiringModeMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -329,25 +329,25 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         super.readFromNBT(compound);
 
-        if (compound.hasKey(TAG_WORKER))
+        if (compound.keySet().contains(TAG_WORKER))
         {
             try
             {
-                final NBTTagList workersTagList = compound.getTagList(TAG_WORKER, Constants.NBT.TAG_COMPOUND);
-                for (int i = 0; i < workersTagList.tagCount(); ++i)
+                final ListNBT workersTagList = compound.getList(TAG_WORKER, Constants.NBT.TAG_COMPOUND);
+                for (int i = 0; i < workersTagList.size(); ++i)
                 {
                     final CitizenData data;
-                    if (workersTagList.getCompoundTagAt(i).hasKey(TAG_ID))
+                    if (workersTagList.getCompound(i).keySet().contains(TAG_ID))
                     {
-                        data = getColony().getCitizenManager().getCitizen(workersTagList.getCompoundTagAt(i).getInteger(TAG_ID));
+                        data = getColony().getCitizenManager().getCitizen(workersTagList.getCompound(i).getInt(TAG_ID));
                     }
-                    else if (workersTagList.getCompoundTagAt(i).hasKey(TAG_WORKER_ID))
+                    else if (workersTagList.getCompound(i).keySet().contains(TAG_WORKER_ID))
                     {
-                        data = getColony().getCitizenManager().getCitizen(workersTagList.getCompoundTagAt(i).getInteger(TAG_WORKER_ID));
+                        data = getColony().getCitizenManager().getCitizen(workersTagList.getCompound(i).getInt(TAG_WORKER_ID));
                     }
                     else
                     {
@@ -363,41 +363,41 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding
             catch (final Exception e)
             {
                 MineColonies.getLogger().warn("Warning: Updating data structures:", e);
-                final CitizenData worker = getColony().getCitizenManager().getCitizen(compound.getInteger(TAG_WORKER));
+                final CitizenData worker = getColony().getCitizenManager().getCitizen(compound.getInt(TAG_WORKER));
                 assignCitizen(worker);
             }
         }
 
-        this.hiringMode = HiringMode.values()[compound.getInteger(TAG_HIRING_MODE)];
+        this.hiringMode = HiringMode.values()[compound.getInt(TAG_HIRING_MODE)];
 
         recipes.clear();
-        final NBTTagList recipesTags = compound.getTagList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
+        final ListNBT recipesTags = compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
         recipes.addAll(NBTUtils.streamCompound(recipesTags)
                 .map(recipeCompound -> (IToken) StandardFactoryController.getInstance().deserialize(recipeCompound))
                 .collect(Collectors.toList()));
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         super.writeToNBT(compound);
-        @NotNull final NBTTagList workersTagList = new NBTTagList();
+        @NotNull final ListNBT workersTagList = new ListNBT();
         for (@NotNull final CitizenData data : getAssignedCitizen())
         {
             if (data != null)
             {
-                final NBTTagCompound idCompound = new NBTTagCompound();
-                idCompound.setInteger(TAG_WORKER_ID, data.getId());
-                workersTagList.appendTag(idCompound);
+                final CompoundNBT idCompound = new CompoundNBT();
+                idCompound.putInt(TAG_WORKER_ID, data.getId());
+                workersTagList.add(idCompound);
             }
         }
-        compound.setTag(TAG_WORKER, workersTagList);
+        compound.put(TAG_WORKER, workersTagList);
 
-        compound.setInteger(TAG_HIRING_MODE, this.hiringMode.ordinal());
-        @NotNull final NBTTagList recipesTagList = recipes.stream()
+        compound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
+        @NotNull final ListNBT recipesTagList = recipes.stream()
                                                      .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
-                                                     .collect(NBTUtils.toNBTTagList());
-        compound.setTag(TAG_RECIPES, recipesTagList);
+                                                     .collect(NBTUtils.toListNBT());
+        compound.put(TAG_RECIPES, recipesTagList);
     }
 
     /**

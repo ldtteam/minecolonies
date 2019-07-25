@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.colony;
 
 import com.minecolonies.coremod.entity.EntityCitizen;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -18,7 +18,7 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
 {
 
     @Override
-    public void notifyBlockUpdate(@NotNull final World worldIn, @NotNull final BlockPos pos, @NotNull final IBlockState oldState, @NotNull final IBlockState newState, final int flags)
+    public void notifyBlockUpdate(@NotNull final World worldIn, @NotNull final BlockPos pos, @NotNull final BlockState oldState, @NotNull final BlockState newState, final int flags)
     {
         //Not needed
 
@@ -40,7 +40,7 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
 
     @Override
     public void playSoundToAllNearExcept(
-                                          final EntityPlayer player, @NotNull final SoundEvent soundIn, @NotNull final SoundCategory category, final double x,
+                                          final PlayerEntity player, @NotNull final SoundEvent soundIn, @NotNull final SoundCategory category, final double x,
                                           final double y, final double z, final float volume, final float pitch)
     {
         //Not needed
@@ -109,7 +109,7 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
     }
 
     @Override
-    public void playEvent(final EntityPlayer player, final int type, @NotNull final BlockPos blockPosIn, final int data)
+    public void playEvent(final PlayerEntity player, final int type, @NotNull final BlockPos blockPosIn, final int data)
     {
         //Not needed
 

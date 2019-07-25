@@ -19,13 +19,13 @@ import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.*;
 import com.minecolonies.coremod.util.TownHallRecipe;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -65,7 +65,7 @@ public abstract class CommonProxy implements IProxy
     /**
      * Used to store IExtendedEntityProperties data temporarily between player death and respawn.
      */
-    private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<>();
+    private static final Map<String, CompoundNBT> playerPropertiesData = new HashMap<>();
     private              int                         nextEntityId         = 0;
 
     /**
@@ -75,7 +75,7 @@ public abstract class CommonProxy implements IProxy
      * @param compound An NBT Tag Compound that stores the IExtendedEntityProperties
      *                 data only.
      */
-    public static void storeEntityData(final String name, final NBTTagCompound compound)
+    public static void storeEntityData(final String name, final CompoundNBT compound)
     {
         playerPropertiesData.put(name, compound);
     }
@@ -85,9 +85,9 @@ public abstract class CommonProxy implements IProxy
      * or null if none exists.
      *
      * @param name player UUID + Properties name, HashMap key.
-     * @return NBTTagCompound PlayerProperties NBT compound.
+     * @return CompoundNBT PlayerProperties NBT compound.
      */
-    public static NBTTagCompound getEntityData(final String name)
+    public static CompoundNBT getEntityData(final String name)
     {
         return playerPropertiesData.remove(name);
     }
@@ -297,7 +297,7 @@ public abstract class CommonProxy implements IProxy
     }
 
     @Override
-    public void openSuggestionWindow(@NotNull BlockPos pos, @NotNull IBlockState state, @NotNull final ItemStack stack)
+    public void openSuggestionWindow(@NotNull BlockPos pos, @NotNull BlockState state, @NotNull final ItemStack stack)
     {
         /*
          * Intentionally left empty.
@@ -366,9 +366,9 @@ public abstract class CommonProxy implements IProxy
 
     @NotNull
     @Override
-    public RecipeBook getRecipeBookFromPlayer(@NotNull final EntityPlayer player)
+    public RecipeBook getRecipeBookFromPlayer(@NotNull final PlayerEntity player)
     {
-        return ((EntityPlayerMP) player).getRecipeBook();
+        return ((PlayerEntityMP) player).getRecipeBook();
     }
 
     @Override

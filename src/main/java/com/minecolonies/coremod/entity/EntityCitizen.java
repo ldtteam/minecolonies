@@ -44,18 +44,18 @@ import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.ai.EntityAIWatchClosest2;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemNameTag;
-import net.minecraft.item.ItemShield;
+import net.minecraft.item.ShieldItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -126,7 +126,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * Backup of the citizen.
      */
-    private NBTTagCompound dataBackup = null;
+    private CompoundNBT dataBackup = null;
 
     /**
      * The citizen experience handler.
@@ -260,7 +260,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.tasks.addTask(++priority, new EntityAIGoHome(this));
         this.tasks.addTask(++priority, new EntityAIOpenDoor(this, true));
         this.tasks.addTask(priority, new EntityAIOpenFenceGate(this, true));
-        this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityPlayer.class, WATCH_CLOSEST2, 1.0F));
+        this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, PlayerEntity.class, WATCH_CLOSEST2, 1.0F));
         this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
         this.tasks.addTask(++priority, new EntityAICitizenWander(this, DEFAULT_SPEED, 1.0D));
         this.tasks.addTask(++priority, new EntityAIWatchClosest(this, EntityLiving.class, WATCH_CLOSEST));
@@ -353,9 +353,9 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
         }
 
-        if (sourceEntity instanceof EntityPlayer && getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
+        if (sourceEntity instanceof PlayerEntity && getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
         {
-            if (!AbstractBuildingGuards.checkIfGuardShouldTakeDamage(this, (EntityPlayer) sourceEntity))
+            if (!AbstractBuildingGuards.checkIfGuardShouldTakeDamage(this, (PlayerEntity) sourceEntity))
             {
                 return false;
             }
@@ -462,7 +462,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     @SuppressWarnings(UNCHECKED)
     @Override
-    public <T> T getCapability(@NotNull final Capability<T> capability, final EnumFacing facing)
+    public <T> T getCapability(@NotNull final Capability<T> capability, final Direction facing)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
@@ -485,7 +485,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public boolean hasCapability(@NotNull final Capability<?> capability, final EnumFacing facing)
+    public boolean hasCapability(@NotNull final Capability<?> capability, final Direction facing)
     {
         if (getCitizenData() == null)
         {
@@ -503,7 +503,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     protected void damageShield(final float damage)
     {
-        if (getHeldItem(getActiveHand()).getItem() instanceof ItemShield)
+        if (getHeldItem(getActiveHand()).getItem() instanceof ShieldItem)
         {
             citizenItemHandler.damageItemInHand(this.getActiveHand(), (int) damage);
         }
@@ -522,7 +522,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         double penalty = CITIZEN_DEATH_PENALTY;
         if (citizenColonyHandler.getColony() != null && getCitizenData() != null)
         {
-            if (damageSource.getTrueSource() instanceof EntityPlayer && !world.isRemote)
+            if (damageSource.getTrueSource() instanceof PlayerEntity && !world.isRemote)
             {
                 boolean isBarbarianClose = false;
                 for (final AbstractEntityMinecoloniesMob barbarian : this.getCitizenColonyHandler().getColony().getRaiderManager().getHorde((WorldServer) world))
@@ -600,7 +600,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @return If citizen should interact or not.
      */
     @Override
-    public boolean processInteract(final EntityPlayer player, @NotNull final EnumHand hand)
+    public boolean processInteract(final PlayerEntity player, @NotNull final EnumHand hand)
     {
         final ColonyView colonyView = ColonyManager.getColonyView(citizenColonyHandler.getColonyId(), player.world.provider.getDimension());
         if (colonyView != null && !colonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
@@ -640,29 +640,29 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public void writeEntityToNBT(final NBTTagCompound compound)
+    public void writeEntityToNBT(final CompoundNBT compound)
     {
         super.writeEntityToNBT(compound);
-        compound.setInteger(TAG_STATUS, citizenStatusHandler.getStatus().ordinal());
+        compound.putInt(TAG_STATUS, citizenStatusHandler.getStatus().ordinal());
         if (citizenColonyHandler.getColony() != null && citizenData != null)
         {
-            compound.setInteger(TAG_COLONY_ID, citizenColonyHandler.getColony().getID());
-            compound.setInteger(TAG_CITIZEN, citizenData.getId());
+            compound.putInt(TAG_COLONY_ID, citizenColonyHandler.getColony().getID());
+            compound.putInt(TAG_CITIZEN, citizenData.getId());
         }
 
-        compound.setBoolean(TAG_DAY, isDay);
-        compound.setBoolean(TAG_CHILD, isChild);
-        compound.setBoolean(TAG_MOURNING, mourning);
+        compound.putBoolean(TAG_DAY, isDay);
+        compound.putBoolean(TAG_CHILD, isChild);
+        compound.putBoolean(TAG_MOURNING, mourning);
     }
 
     @Override
-    public void readEntityFromNBT(final NBTTagCompound compound)
+    public void readEntityFromNBT(final CompoundNBT compound)
     {
         super.readEntityFromNBT(compound);
 
-        citizenStatusHandler.setStatus(Status.values()[compound.getInteger(TAG_STATUS)]);
-        citizenColonyHandler.setColonyId(compound.getInteger(TAG_COLONY_ID));
-        citizenId = compound.getInteger(TAG_CITIZEN);
+        citizenStatusHandler.setStatus(Status.values()[compound.getInt(TAG_STATUS)]);
+        citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
+        citizenId = compound.getInt(TAG_CITIZEN);
 
         if (isServerWorld())
         {
@@ -672,12 +672,12 @@ public class EntityCitizen extends AbstractEntityCitizen
         isDay = compound.getBoolean(TAG_DAY);
         setIsChild(compound.getBoolean(TAG_CHILD));
 
-        if (compound.hasKey(TAG_MOURNING))
+        if (compound.keySet().contains(TAG_MOURNING))
         {
             mourning = compound.getBoolean(TAG_MOURNING);
         }
 
-        if (compound.hasKey(TAG_HELD_ITEM_SLOT) || compound.hasKey(TAG_OFFHAND_HELD_ITEM_SLOT))
+        if (compound.keySet().contains(TAG_HELD_ITEM_SLOT) || compound.keySet().contains(TAG_OFFHAND_HELD_ITEM_SLOT))
         {
             this.dataBackup = compound;
         }
@@ -710,19 +710,19 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             if (getOffsetTicks() % TICKS_20 == 0)
             {
-                final ItemStack hat = getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+                final ItemStack hat = getItemStackFromSlot(EquipmentSlotType.HEAD);
                 if (LocalDate.now(Clock.systemDefaultZone()).getMonth() == Month.DECEMBER
                       && Configurations.gameplay.holidayFeatures
                       && !(getCitizenJobHandler().getColonyJob() instanceof JobStudent))
                 {
                     if (hat.isEmpty())
                     {
-                        this.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(ModItems.santaHat));
+                        this.setItemStackToSlot(EquipmentSlotType.HEAD, new ItemStack(ModItems.santaHat));
                     }
                 }
                 else if (!hat.isEmpty() && hat.getItem() == ModItems.santaHat)
                 {
-                    this.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStackUtils.EMPTY);
+                    this.setItemStackToSlot(EquipmentSlotType.HEAD, ItemStackUtils.EMPTY);
                 }
 
                 this.setAlwaysRenderNameTag(Configurations.gameplay.alwaysRenderNameTag);
@@ -793,16 +793,16 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (dataBackup != null)
         {
-            final NBTTagList nbttaglist = dataBackup.getTagList("Inventory", 10);
+            final ListNBT nbttaglist = dataBackup.getList("Inventory", 10);
             this.getCitizenData().getInventory().readFromNBT(nbttaglist);
-            if (dataBackup.hasKey(TAG_HELD_ITEM_SLOT))
+            if (dataBackup.keySet().contains(TAG_HELD_ITEM_SLOT))
             {
-                this.getCitizenData().getInventory().setHeldItem(EnumHand.MAIN_HAND, dataBackup.getInteger(TAG_HELD_ITEM_SLOT));
+                this.getCitizenData().getInventory().setHeldItem(EnumHand.MAIN_HAND, dataBackup.getInt(TAG_HELD_ITEM_SLOT));
             }
 
-            if (dataBackup.hasKey(TAG_OFFHAND_HELD_ITEM_SLOT))
+            if (dataBackup.keySet().contains(TAG_OFFHAND_HELD_ITEM_SLOT))
             {
-                this.getCitizenData().getInventory().setHeldItem(EnumHand.OFF_HAND, dataBackup.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
+                this.getCitizenData().getInventory().setHeldItem(EnumHand.OFF_HAND, dataBackup.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));
             }
 
             dataBackup = null;
@@ -821,7 +821,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                 if (Configurations.gameplay.allowGlobalNameChanges == 0 &&
                       Arrays.stream(Configurations.gameplay.specialPermGroup).noneMatch(owner -> owner.equals(citizenColonyHandler.getColony().getPermissions().getOwnerName())))
                 {
-                    LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessageEntityPlayers(), CITIZEN_RENAME_NOT_ALLOWED);
+                    LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessagePlayerEntitys(), CITIZEN_RENAME_NOT_ALLOWED);
                     return;
                 }
 
@@ -832,7 +832,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                     {
                         if (citizen.getName().equals(name))
                         {
-                            LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessageEntityPlayers(), CITIZEN_RENAME_SAME);
+                            LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessagePlayerEntitys(), CITIZEN_RENAME_SAME);
                             return;
                         }
                     }

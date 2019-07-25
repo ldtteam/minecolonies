@@ -7,10 +7,10 @@ import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -61,12 +61,12 @@ public class RSResetAllCommand extends AbstractSingleCommand implements IActionC
 
     private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender) throws CommandException
     {
-        if (sender instanceof EntityPlayer)
+        if (sender instanceof PlayerEntity)
         {
-            final EntityPlayer player = (EntityPlayer) sender;
+            final PlayerEntity player = (PlayerEntity) sender;
             if (!isPlayerOpped(player))
             {
-                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new StringTextComponent(NOT_PERMITTED));
                 return;
             }
         }
@@ -75,7 +75,7 @@ public class RSResetAllCommand extends AbstractSingleCommand implements IActionC
         {
             colony.getRequestManager().reset();
         }
-        sender.sendMessage(new TextComponentString(String.format(SUCCESS_MESSAGE)));
+        sender.sendMessage(new StringTextComponent(String.format(SUCCESS_MESSAGE)));
     }
 
     @NotNull

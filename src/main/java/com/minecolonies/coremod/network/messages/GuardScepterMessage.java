@@ -3,9 +3,9 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.items.ModItems;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +73,7 @@ public class GuardScepterMessage extends AbstractMessage<GuardScepterMessage, IM
     }
 
     @Override
-    public void messageOnServerThread(final GuardScepterMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final GuardScepterMessage message, final PlayerEntityMP player)
     {
         final ItemStack scepter;
         boolean giveToPlayer = true;
@@ -89,20 +89,20 @@ public class GuardScepterMessage extends AbstractMessage<GuardScepterMessage, IM
 
         if (!scepter.hasTagCompound())
         {
-            scepter.setTagCompound(new NBTTagCompound());
+            scepter.putCompound(new CompoundNBT());
         }
-        final NBTTagCompound compound = scepter.getTagCompound();
+        final CompoundNBT compound = scepter.getTagCompound();
 
         //Should never happen.
         if (compound == null)
         {
             return;
         }
-        compound.setInteger("task", message.taskId);
+        compound.putInt("task", message.taskId);
 
         final int emptySlot = player.inventory.getFirstEmptyStack();
         BlockPosUtil.writeToNBT(compound, TAG_POS, message.buildingId);
-        compound.setInteger(TAG_ID, message.colonyId);
+        compound.putInt(TAG_ID, message.colonyId);
 
         if (giveToPlayer)
         {

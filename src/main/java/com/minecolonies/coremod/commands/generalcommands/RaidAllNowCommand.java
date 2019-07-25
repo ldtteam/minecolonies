@@ -8,10 +8,10 @@ import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -25,7 +25,7 @@ public class RaidAllNowCommand extends AbstractSingleCommand implements IActionC
 {
 
     public static final  String              DESC       = "raid-now";
-    private static final TextComponentString SUCCESSFUL = new TextComponentString("Command Successful");
+    private static final StringTextComponent SUCCESSFUL = new StringTextComponent("Command Successful");
 
     /**
      * no-args constructor called by new CommandEntryPoint executer.
@@ -65,9 +65,9 @@ public class RaidAllNowCommand extends AbstractSingleCommand implements IActionC
 
     private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender) throws CommandException
     {
-        if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
+        if (sender instanceof PlayerEntity && !isPlayerOpped(sender))
         {
-            sender.sendMessage(new TextComponentString("Must be OP to use command"));
+            sender.sendMessage(new StringTextComponent("Must be OP to use command"));
             return;
         }
 

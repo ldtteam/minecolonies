@@ -10,10 +10,10 @@ import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -58,7 +58,7 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
     }
 
     @Override
-    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
+    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final PlayerEntity player)
     {
         return colony.getPermissions().getRank(player).equals(Rank.OWNER);
     }
@@ -72,7 +72,7 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
         if (colony == null)
         {
             final String noColonyFoundMessage = String.format(NO_COLONY_MESSAGE);
-            sender.sendMessage(new TextComponentString(noColonyFoundMessage));
+            sender.sendMessage(new StringTextComponent(noColonyFoundMessage));
             return;
         }
 
@@ -87,14 +87,14 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
         if (args.length == 0)
         {
             IColony colony = null;
-            if (sender instanceof EntityPlayer)
+            if (sender instanceof PlayerEntity)
             {
-                colony = ColonyManager.getIColonyByOwner(CompatibilityUtils.getWorld((EntityPlayer) sender), (EntityPlayer) sender);
+                colony = ColonyManager.getIColonyByOwner(CompatibilityUtils.getWorld((PlayerEntity) sender), (PlayerEntity) sender);
             }
 
             if (colony == null)
             {
-                sender.sendMessage(new TextComponentString(NO_COLONY_MESSAGE));
+                sender.sendMessage(new StringTextComponent(NO_COLONY_MESSAGE));
                 return;
             }
             colonyId = colony.getID();
@@ -112,7 +112,7 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
         if (colony == null)
         {
             final String noColonyFoundMessage = String.format(COLONY_X_NULL, colonyId);
-            sender.sendMessage(new TextComponentString(noColonyFoundMessage));
+            sender.sendMessage(new StringTextComponent(noColonyFoundMessage));
             return;
         }
 

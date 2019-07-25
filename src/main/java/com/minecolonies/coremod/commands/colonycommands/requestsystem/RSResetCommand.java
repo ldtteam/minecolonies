@@ -9,10 +9,10 @@ import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -60,7 +60,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
         final Colony colony = actionMenuState.getColonyForArgument("colony");
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(COLONY_NOT_FOUND));
+            sender.sendMessage(new StringTextComponent(COLONY_NOT_FOUND));
             return;
         }
 
@@ -72,19 +72,19 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
     {
         if (args.length == 0)
         {
-            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.sendMessage(new StringTextComponent(NO_ARGUMENTS));
             return;
         }
 
         final Entity senderEntity = sender.getCommandSenderEntity();
 
         int colonyId = getIthArgument(args, 0, -1);
-        if (colonyId == -1 && senderEntity instanceof EntityPlayer)
+        if (colonyId == -1 && senderEntity instanceof PlayerEntity)
         {
-            final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
+            final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), ((PlayerEntity) sender).getUniqueID());
             if (colony == null)
             {
-                sender.sendMessage(new TextComponentString(COLONY_NULL));
+                sender.sendMessage(new StringTextComponent(COLONY_NULL));
                 return;
             }
             colonyId = colony.getID();
@@ -94,7 +94,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
 
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
+            sender.sendMessage(new StringTextComponent(String.format(COLONY_NULL, colonyId)));
             return;
         }
 
@@ -105,18 +105,18 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
     {
         final Entity senderEntity = sender.getCommandSenderEntity();
 
-        if (senderEntity instanceof EntityPlayer)
+        if (senderEntity instanceof PlayerEntity)
         {
-            final EntityPlayer player = (EntityPlayer) sender;
+            final PlayerEntity player = (PlayerEntity) sender;
             if (!canPlayerUseCommand(player, RSRESET, colony.getID()))
             {
-                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new StringTextComponent(NOT_PERMITTED));
                 return;
             }
         }
 
         colony.getRequestManager().reset();
-        sender.sendMessage(new TextComponentString(String.format(SUCCESS_MESSAGE, colony.getID())));
+        sender.sendMessage(new StringTextComponent(String.format(SUCCESS_MESSAGE, colony.getID())));
     }
 
     @NotNull

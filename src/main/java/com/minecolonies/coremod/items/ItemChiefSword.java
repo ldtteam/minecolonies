@@ -7,9 +7,9 @@ import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbaria
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
+import net.minecraft.item.SwordItem;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +21,7 @@ import static com.minecolonies.api.util.constant.Constants.*;
 /**
  * Class handling the Chief Sword item.
  */
-public class ItemChiefSword extends ItemSword
+public class ItemChiefSword extends SwordItem
 {
     private static final int LEVITATION_EFFECT_DURATION   = 20*10;
     private static final int LEVITATION_EFFECT_MULTIPLIER = 3;
@@ -41,7 +41,7 @@ public class ItemChiefSword extends ItemSword
     public void onUpdate(final ItemStack stack, final World worldIn, final Entity entityIn, final int itemSlot, final boolean isSelected)
     {
 
-        if (entityIn instanceof EntityPlayer && isSelected)
+        if (entityIn instanceof PlayerEntity && isSelected)
         {
             final Stream<AbstractEntityMinecoloniesMob> barbarians = BarbarianUtils.getBarbariansCloseToEntity(entityIn, GLOW_EFFECT_DISTANCE).stream();
             barbarians.forEach(entity -> entity.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER)));
@@ -51,7 +51,7 @@ public class ItemChiefSword extends ItemSword
     @Override
     public boolean hitEntity(final ItemStack stack, final EntityLivingBase target, @NotNull final EntityLivingBase attacker)
     {
-        if (attacker instanceof EntityPlayer && target instanceof AbstractEntityBarbarian)
+        if (attacker instanceof PlayerEntity && target instanceof AbstractEntityBarbarian)
         {
             target.addPotionEffect(new PotionEffect(LEVITATION_EFFECT, LEVITATION_EFFECT_DURATION, LEVITATION_EFFECT_MULTIPLIER));
         }

@@ -24,10 +24,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockFalling;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -152,7 +152,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         requestMaterialsState();
         if (getProgressPos() != null)
         {
-            job.getStructure().setLocalPosition(getProgressPos().getFirst());
+            job.getStructure().setLocalPosition(getProgressPos().getA());
         }
     }
 
@@ -196,7 +196,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
             final BlockPos worldPos = blockInfo.getPos().add(job.getStructure().getOffsetPosition());
 
-            @Nullable IBlockState blockState = blockInfo.getState();
+            @Nullable BlockState blockState = blockInfo.getState();
             @Nullable Block block = blockState.getBlock();
 
             if (StructurePlacementUtils.isStructureBlockEqualWorldBlock(world, worldPos, blockState)
@@ -220,7 +220,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             final Block worldBlock = BlockPosUtil.getBlock(world, job.getStructure().getBlockPosition());
             if (block instanceof BlockFalling)
             {
-                final IBlockState downState = BlockPosUtil.getBlockState(world, worldPos.down());
+                final BlockState downState = BlockPosUtil.getBlockState(world, worldPos.down());
                 if (!downState.getMaterial().isSolid())
                 {
                     requestBlockToBuildingIfRequired(buildingWorker, getSolidSubstitution(worldPos), blockInfo);
@@ -237,7 +237,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
         }
 
-        for (final NBTTagCompound entityInfo : job.getStructure().getEntityData())
+        for (final CompoundNBT entityInfo : job.getStructure().getEntityData())
         {
             if (entityInfo != null)
             {
@@ -259,7 +259,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
      * @param blockState the block to add.
      * @param blockInfo the complete blockinfo.
      */
-    private void requestBlockToBuildingIfRequired(final AbstractBuildingStructureBuilder building, final IBlockState blockState, final BlockInfo blockInfo)
+    private void requestBlockToBuildingIfRequired(final AbstractBuildingStructureBuilder building, final BlockState blockState, final BlockInfo blockInfo)
     {
         if (blockInfo.getTileEntityData() != null)
         {
@@ -473,7 +473,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
 
         final ItemStack resStack = new ItemStack(resource.getItem(), Math.min(STACKSIZE, resource.getAmount()), resource.getDamageValue());
-        resStack.setTagCompound(resource.getItemStack().getTagCompound());
+        resStack.putCompound(resource.getItemStack().getTagCompound());
         return resStack;
     }
 
