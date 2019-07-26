@@ -93,8 +93,8 @@ public class BuildingStonemason extends AbstractBuildingCrafter
             return false;
         }
 
-        int amountOfValidBlocks = 0;
-        int blocks = 0;
+        double amountOfValidBlocks = 0;
+        double blocks = 0;
 
 
         if (storage.getPrimaryOutput().getItem() instanceof ItemBlock)
@@ -149,7 +149,7 @@ public class BuildingStonemason extends AbstractBuildingCrafter
             }
         }
 
-        return amountOfValidBlocks > 0 && blocks/amountOfValidBlocks > MIN_PERCENTAGE_TO_CRAFT;
+        return amountOfValidBlocks > 0 && amountOfValidBlocks/blocks > MIN_PERCENTAGE_TO_CRAFT;
     }
 
     /**
