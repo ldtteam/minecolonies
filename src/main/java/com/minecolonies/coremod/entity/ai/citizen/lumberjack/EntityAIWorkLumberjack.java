@@ -3,17 +3,18 @@ package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.pathfinding.PathJobFindTree;
+import com.minecolonies.coremod.entity.pathfinding.TreePathResult;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.block.SoundType;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -162,12 +163,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * The active pathfinding job used to walk to trees.
      */
     @Nullable
-    private PathJobFindTree.TreePathResult pathResult;
+    private TreePathResult pathResult;
     /**
      * A counter by how much the tree search radius
      * has been increased by now.
      */
-    private int                            searchIncrement = 0;
+    private int            searchIncrement = 0;
 
     /**
      * Create a new LumberjackAI.
@@ -276,7 +277,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private IAIState findTree()
     {
-        final AbstractBuilding building = getOwnBuilding();
+        final IBuilding building = getOwnBuilding();
 
         // Waiting for current path to finish
         if (pathResult != null && pathResult.isInProgress())
@@ -592,7 +593,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             {
                 final Block block = ((ItemBlock) stack.getItem()).getBlock();
                 placeSaplings(saplingSlot, stack, block);
-                final SoundType soundType = block.getSoundType(world.getBlockState(location), world, location, worker);
+                final SoundType soundType = block.getSoundType(world.getBlockState(location), world, location, (Entity) worker);
                 world.playSound(null,
                   this.worker.getPosition(),
                   soundType.getPlaceSound(),

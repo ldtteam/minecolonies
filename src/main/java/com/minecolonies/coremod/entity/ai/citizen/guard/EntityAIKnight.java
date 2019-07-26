@@ -11,6 +11,7 @@ import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
@@ -188,7 +189,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
             }
 
             target.attackEntityFrom(source, (float) damageToBeDealt);
-            target.setRevengeTarget(worker);
+            target.setRevengeTarget((EntityLivingBase) worker);
             worker.decreaseSaturationForContinuousAction();
 
             worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);

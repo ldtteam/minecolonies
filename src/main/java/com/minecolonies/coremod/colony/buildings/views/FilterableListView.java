@@ -2,8 +2,9 @@ package com.minecolonies.coremod.colony.buildings.views;
 
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.network.messages.AssignFilterableItemMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
@@ -29,7 +30,7 @@ public abstract class FilterableListView extends AbstractBuildingWorker.View
      * @param c the colony.
      * @param l the location.
      */
-    public FilterableListView(final ColonyView c, @NotNull final BlockPos l)
+    public FilterableListView(final IColonyView c, @NotNull final BlockPos l)
     {
         super(c, l);
     }

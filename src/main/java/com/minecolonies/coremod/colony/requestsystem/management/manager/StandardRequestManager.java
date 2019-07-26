@@ -105,8 +105,8 @@ public class StandardRequestManager implements IStandardRequestManager
         ResolverHandler.registerResolver(this, playerRequestResolver);
         ResolverHandler.registerResolver(this, retryingRequestResolver);
 
-        this.playerRequestResolverId = playerRequestResolver.getRequesterId();
-        this.retryingRequestResolverId = retryingRequestResolver.getRequesterId();
+        this.playerRequestResolverId = playerRequestResolver.getId();
+        this.retryingRequestResolverId = retryingRequestResolver.getId();
     }
 
     private IToken<?> registerDataStore(TypeToken<? extends IDataStore> typeToken)
@@ -154,7 +154,7 @@ public class StandardRequestManager implements IStandardRequestManager
     {
         final IRequest<T> request = RequestHandler.createRequest(this, requester, object);
         markDirty();
-        return request.getToken();
+        return request.getId();
     }
 
     /**
@@ -252,7 +252,7 @@ public class StandardRequestManager implements IStandardRequestManager
     {
         final IRequest<?> request = RequestHandler.getRequest(this, requestToken);
 
-        return getResolverForToken(ResolverHandler.getResolverForRequest(this, request).getRequesterId());
+        return getResolverForToken(ResolverHandler.getResolverForRequest(this, request).getId());
     }
 
     /**

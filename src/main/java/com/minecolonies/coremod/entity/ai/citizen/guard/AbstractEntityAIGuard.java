@@ -1,17 +1,19 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
@@ -152,7 +154,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         if (BlockPosUtil.getDistance2D(worker.getPosition(), buildingGuards.getPlayerToFollow()) > MAX_FOLLOW_DERIVATION)
         {
-            TeleportHelper.teleportCitizen(worker, worker.world, buildingGuards.getPlayerToFollow());
+            TeleportHelper.teleportCitizen(worker, worker.getEntityWorld(), buildingGuards.getPlayerToFollow());
             return DECIDE;
         }
 
@@ -255,7 +257,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             case FOLLOW:
                 return follow();
             default:
-                worker.isWorkerAtSiteWithMove(worker.getCitizenColonyHandler().getWorkBuilding().getLocation(), GUARD_POS_RANGE);
+                worker.isWorkerAtSiteWithMove(worker.getCitizenColonyHandler().getWorkBuilding().getPosition(), GUARD_POS_RANGE);
                 break;
         }
 
@@ -331,7 +333,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     {
         reduceAttackDelay(1);
 
-        final Colony colony = worker.getCitizenColonyHandler().getColony();
+        final IColony colony = worker.getCitizenColonyHandler().getColony();
         if (worker.getLastAttackedEntity() != null && !worker.getLastAttackedEntity().isDead)
         {
             if (!isWithinPersecutionDistance(worker.getLastAttackedEntity().getPosition()))
@@ -356,9 +358,9 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         if (colony != null)
         {
-            if (!colony.getRaiderManager().getHorde((WorldServer) worker.world).isEmpty() || colony.isColonyUnderAttack())
+            if (!colony.getRaiderManager().getHorde((WorldServer) worker.getEntityWorld()).isEmpty() || colony.isColonyUnderAttack())
             {
-                for (final CitizenData citizen : colony.getCitizenManager().getCitizens())
+                for (final ICitizenData citizen : colony.getCitizenManager().getCitizens())
                 {
                     if (citizen.getCitizenEntity().isPresent())
                     {
@@ -367,7 +369,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                         {
                             return entity;
                         }
-                        else if (entity instanceof EntityCitizen && worker.canEntityBeSeen(entity) && (((EntityCitizen) entity).getCitizenJobHandler()
+                        else if (entity instanceof EntityCitizen && worker.canEntityBeSeen(entity) && (((IEntityCitizen) entity).getCitizenJobHandler()
                                                                                                          .getColonyJob() instanceof AbstractJobGuard))
                         {
                             return entity;
@@ -397,7 +399,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     {
                         return entity;
                     }
-                    else if (entity instanceof EntityCitizen && colony.isValidAttackingGuard((EntityCitizen) entity))
+                    else if (entity instanceof EntityCitizen && colony.isValidAttackingGuard((IEntityCitizen) entity))
                     {
                         return entity;
                     }
@@ -510,12 +512,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     {
         final AbstractBuildingGuards building = getOwnBuilding();
 
-        final double x1 = worker.posX + (building.getBonusVision() + DEFAULT_VISION);
-        final double x2 = worker.posX - (building.getBonusVision() + DEFAULT_VISION);
-        final double y1 = worker.posY + Y_VISION;
-        final double y2 = worker.posY - Y_VISION;
-        final double z1 = worker.posZ + (building.getBonusVision() + DEFAULT_VISION);
-        final double z2 = worker.posZ - (building.getBonusVision() + DEFAULT_VISION);
+        final double x1 = worker.getPosition().getX() + (building.getBonusVision() + DEFAULT_VISION);
+        final double x2 = worker.getPosition().getX() - (building.getBonusVision() + DEFAULT_VISION);
+        final double y1 = worker.getPosition().getY() + Y_VISION;
+        final double y2 = worker.getPosition().getY() - Y_VISION;
+        final double z1 = worker.getPosition().getZ() + (building.getBonusVision() + DEFAULT_VISION);
+        final double z2 = worker.getPosition().getZ() - (building.getBonusVision() + DEFAULT_VISION);
 
         return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
     }

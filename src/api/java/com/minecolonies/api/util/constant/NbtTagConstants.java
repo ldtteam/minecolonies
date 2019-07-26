@@ -144,6 +144,11 @@ public final class NbtTagConstants
     public static final String TAG_RAIDABLE = "raidable";
 
     /**
+     * Tag on the ancient tome used to indicate if a raid will happen.
+     */
+    public static final String TAG_RAID_WILL_HAPPEN = "raidWillHappen";
+
+    /**
      * Tag to store if auto deletable to a colony.
      */
     public static final String TAG_AUTO_DELETE = "autoDelete";

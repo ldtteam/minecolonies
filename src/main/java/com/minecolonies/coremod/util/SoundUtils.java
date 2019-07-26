@@ -3,6 +3,7 @@ package com.minecolonies.coremod.util;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.entity.AbstractEntityCitizen;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.sounds.AbstractWorkerSounds;
 import com.minecolonies.coremod.sounds.ModSoundEvents;
 import net.minecraft.entity.player.EntityPlayer;
@@ -179,14 +180,14 @@ public final class SoundUtils
 
             if (citizen instanceof EntityCitizen)
             {
-                if (((EntityCitizen) citizen).getCitizenColonyHandler().getWorkBuilding() != null)
+                if (((IEntityCitizen) citizen).getCitizenColonyHandler().getWorkBuilding() != null)
                 {
-                    prefix = ((EntityCitizen) citizen).getCitizenColonyHandler().getWorkBuilding().getJobName();
+                    prefix = ((IEntityCitizen) citizen).getCitizenColonyHandler().getWorkBuilding().getJobName();
                 }
 
-                if (GUARD_TOWER.equals(prefix) && ((EntityCitizen) citizen).getCitizenColonyHandler().getWorkBuilding() instanceof AbstractBuildingGuards)
+                if (GUARD_TOWER.equals(prefix) && ((IEntityCitizen) citizen).getCitizenColonyHandler().getWorkBuilding() instanceof AbstractBuildingGuards)
                 {
-                    if (((AbstractBuildingGuards) ((EntityCitizen) citizen).getCitizenColonyHandler().getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
+                    if (((AbstractBuildingGuards) ((IEntityCitizen) citizen).getCitizenColonyHandler().getWorkBuilding()).getJob() == AbstractBuildingGuards.GuardJob.RANGER)
                     {
                         prefix = "archer";
                     }

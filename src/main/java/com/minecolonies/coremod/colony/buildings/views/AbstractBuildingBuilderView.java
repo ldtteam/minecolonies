@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.colony.buildings.views;
 
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -49,7 +50,7 @@ public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorker
      * @param c the colony.
      * @param l the position.
      */
-    public AbstractBuildingBuilderView(final ColonyView c, final BlockPos l)
+    public AbstractBuildingBuilderView(final IColonyView c, final BlockPos l)
     {
         super(c, l);
     }

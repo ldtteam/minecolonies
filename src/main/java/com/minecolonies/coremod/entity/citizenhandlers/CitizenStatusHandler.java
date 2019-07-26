@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.citizenhandlers;
 
 import com.minecolonies.api.entity.ai.Status;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.Objects;
@@ -11,12 +11,12 @@ import static com.minecolonies.api.util.constant.CitizenConstants.MAX_LINES_OF_L
 /**
  * Handles the status updates of the citizen.
  */
-public class CitizenStatusHandler
+public class CitizenStatusHandler implements ICitizenStatusHandler
 {
     /**
      * The citizen assigned to this manager.
      */
-    private final EntityCitizen citizen;
+    private final IEntityCitizen citizen;
 
     /**
      * The Current Status.
@@ -32,7 +32,7 @@ public class CitizenStatusHandler
      * Constructor for the experience handler.
      * @param citizen the citizen owning the handler.
      */
-    public CitizenStatusHandler(final EntityCitizen citizen)
+    public CitizenStatusHandler(final IEntityCitizen citizen)
     {
         this.citizen = citizen;
     }
@@ -42,6 +42,7 @@ public class CitizenStatusHandler
      *
      * @return a ITextComponent with the length 4 describing it.
      */
+    @Override
     public ITextComponent[] getLatestStatus()
     {
         return latestStatus.clone();
@@ -52,6 +53,7 @@ public class CitizenStatusHandler
      *
      * @param status the new status to set.
      */
+    @Override
     public void setLatestStatus(final ITextComponent... status)
     {
         boolean hasChanged = false;
@@ -86,6 +88,7 @@ public class CitizenStatusHandler
      *
      * @param status the latest status to append
      */
+    @Override
     public void addLatestStatus(final ITextComponent status)
     {
         System.arraycopy(latestStatus, 0, latestStatus, 1, latestStatus.length - 1);
@@ -97,6 +100,7 @@ public class CitizenStatusHandler
      * Getter for the current status.
      * @return the status.
      */
+    @Override
     public Status getStatus()
     {
         return status;
@@ -106,6 +110,7 @@ public class CitizenStatusHandler
      * Setter for the current status.
      * @param status the status to set.
      */
+    @Override
     public void setStatus(final Status status)
     {
         this.status = status;

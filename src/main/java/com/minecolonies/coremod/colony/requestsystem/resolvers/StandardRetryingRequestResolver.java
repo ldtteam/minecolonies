@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IRetryable;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -91,7 +92,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Override
     public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends IRetryable> requestToCheck)
     {
-        return getCurrentlyBeingReassignedRequest() == null || requestToCheck.getToken() != getCurrentlyBeingReassignedRequest()
+        return getCurrentlyBeingReassignedRequest() == null || requestToCheck.getId() != getCurrentlyBeingReassignedRequest()
                  || getCurrentReassignmentAttempt() < getMaximalTries();
     }
 
@@ -105,8 +106,8 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Override
     public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request) throws RuntimeException
     {
-        delays.put(request.getToken(), getMaximalDelayBetweenRetriesInTicks());
-        assignedRequests.put(request.getToken(), assignedRequests.containsKey(request.getToken()) ? assignedRequests.get(request.getToken()) + 1 : 1);
+        delays.put(request.getId(), getMaximalDelayBetweenRetriesInTicks());
+        assignedRequests.put(request.getId(), assignedRequests.containsKey(request.getId()) ? assignedRequests.get(request.getId()) + 1 : 1);
     }
 
     @SuppressWarnings(RAWTYPES)
@@ -122,10 +123,10 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Override
     public IRequest<?> onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
     {
-        if (assignedRequests.containsKey(request.getToken()))
+        if (assignedRequests.containsKey(request.getId()))
         {
-            delays.remove(request.getToken());
-            assignedRequests.remove(request.getToken());
+            delays.remove(request.getId());
+            assignedRequests.remove(request.getId());
         }
 
         //No further processing needed.
@@ -180,7 +181,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 
             assignedRequests.put(t, ++currentAttempt);
 
-            if (resultingResolver != null && !resultingResolver.equals(getRequesterId()))
+            if (resultingResolver != null && !resultingResolver.equals(getId()))
             {
                 assignedRequests.remove(t);
                 delays.remove(t);
@@ -215,7 +216,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
-    public IToken<?> getRequesterId()
+    public IToken<?> getId()
     {
         return id;
     }
@@ -228,15 +229,23 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
-    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCompleted(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         //Noop, we do not schedule child requests. So this is never called.
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        //Noop, see onRequestComplete.
+        final IRequest<?> cancelledRequest = manager.getRequestForToken(token);
+        if (cancelledRequest != null && cancelledRequest.hasParent())
+        {
+            final IRequest<?> parentRequest = manager.getRequestForToken(cancelledRequest.getParent());
+            if (parentRequest.getState() != RequestState.CANCELLED && parentRequest.getState() != RequestState.OVERRULED)
+            {
+                manager.updateRequestState(cancelledRequest.getParent(), RequestState.CANCELLED);
+            }
+        }
     }
 
     @NotNull
@@ -274,11 +283,11 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
                 .filter(Objects::nonNull)
                 .forEach(request ->
                 {
-                    final IToken newResolverToken = manager.reassignRequest(request.getToken(), ImmutableList.of(getRequesterId()));
+                    final IToken newResolverToken = manager.reassignRequest(request.getId(), ImmutableList.of(getId()));
 
-                    if (newResolverToken != getRequesterId())
+                    if (newResolverToken != getId())
                     {
-                        assignedRequests.remove(request.getToken());
+                        assignedRequests.remove(request.getId());
                     }
                 });
     }

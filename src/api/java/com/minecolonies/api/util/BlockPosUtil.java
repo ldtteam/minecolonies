@@ -1,5 +1,6 @@
 package com.minecolonies.api.util;
 
+import com.minecolonies.coremod.entity.IBaseEntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -432,6 +433,23 @@ public final class BlockPosUtil
     public static boolean setBlock(@NotNull final World worldIn, @NotNull final BlockPos coords, final IBlockState state, final int flag)
     {
         return worldIn.setBlockState(coords, state, flag);
+    }
+
+    /**
+     * {@link EntityUtils#tryMoveLivingToXYZ(EntityLiving, int, int, int)}.
+     *
+     * @param living      A living entity.
+     * @param destination chunk coordinates to check moving to.
+     * @return True when XYZ is found, an set moving to, otherwise false.
+     */
+    public static boolean tryMoveBaseCitizenEntityToXYZ(@NotNull final IBaseEntityCitizen living, @NotNull final BlockPos destination)
+    {
+        if (!(living instanceof EntityLiving))
+        {
+            return false;
+        }
+
+        return EntityUtils.tryMoveLivingToXYZ((EntityLiving) living, destination.getX(), destination.getY(), destination.getZ());
     }
 
     /**

@@ -1,12 +1,15 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingContainer;
+import com.minecolonies.coremod.colony.buildings.IBuildingContainer;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.inventory.api.CombinedItemHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -40,7 +43,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.MIN_SLOTS_FOR
 /**
  * Class which handles the tileEntity of our colonyBuildings.
  */
-public class TileEntityColonyBuilding extends TileEntityChest
+public class TileEntityColonyBuilding extends TileEntityChest implements ITileEntityColonyBuilding
 {
     /**
      * NBTTag to store the colony id.
@@ -57,12 +60,12 @@ public class TileEntityColonyBuilding extends TileEntityChest
     /**
      * The colony.
      */
-    private Colony colony;
+    private IColony colony;
 
     /**
      * The building the tileEntity belongs to.
      */
-    private AbstractBuildingContainer building;
+    private IBuildingContainer building;
 
     /**
      * Check if the building has a mirror.
@@ -92,6 +95,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      *
      * @return ID of the colony.
      */
+    @Override
     public int getColonyId()
     {
         return colonyId;
@@ -102,7 +106,8 @@ public class TileEntityColonyBuilding extends TileEntityChest
      *
      * @return Colony of the tile entity.
      */
-    public Colony getColony()
+    @Override
+    public IColony getColony()
     {
         if (colony == null)
         {
@@ -120,11 +125,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
         {
             if (colonyId == 0)
             {
-                colony = ColonyManager.getColonyByPosFromWorld(getWorld(), this.getPos());
+                colony = IColonyManager.getInstance().getColonyByPosFromWorld(getWorld(), this.getPos());
             }
             else
             {
-                colony = ColonyManager.getColonyByWorld(colonyId, getWorld());
+                colony = IColonyManager.getInstance().getColonyByWorld(colonyId, getWorld());
             }
 
             // It's most probably previewed building, please don't spam it here.
@@ -151,6 +156,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      *
      * @return Block Coordinates of the tile entity.
      */
+    @Override
     public BlockPos getPosition()
     {
         return pos;
@@ -162,17 +168,18 @@ public class TileEntityColonyBuilding extends TileEntityChest
      * @param itemStackSelectionPredicate the stack to search for.
      * @return the position or null.
      */
+    @Override
     @Nullable
     public BlockPos getPositionOfChestWithItemStack(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         final Predicate<ItemStack> notEmptyPredicate = itemStackSelectionPredicate.and(ItemStackUtils.NOT_EMPTY_PREDICATE);
-        @Nullable final AbstractBuildingContainer theBuilding = getBuilding();
+        @Nullable final IBuildingContainer theBuilding = getBuilding();
 
         if (theBuilding != null)
         {
-            if (isInTileEntity(theBuilding.getTileEntity(), notEmptyPredicate))
+            if (ITileEntityColonyBuilding.isInTileEntity(theBuilding.getTileEntity(), notEmptyPredicate))
             {
-                return theBuilding.getLocation();
+                return theBuilding.getPosition();
             }
 
             for (final BlockPos pos : theBuilding.getAdditionalCountainers())
@@ -181,7 +188,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
                 if ((entity instanceof TileEntityRack
                        && ((TileEntityRack) entity).hasItemStack(notEmptyPredicate))
                       || (entity instanceof TileEntityChest
-                            && isInTileEntity((TileEntityChest) entity, notEmptyPredicate)))
+                            && ITileEntityColonyBuilding.isInTileEntity(entity, notEmptyPredicate)))
                 {
                     return pos;
                 }
@@ -191,26 +198,12 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     /**
-     * Finds the first @see ItemStack the type of {@code is}.
-     * It will be taken from the chest and placed in the worker inventory.
-     * Make sure that the worker stands next the chest to not break immersion.
-     * Also make sure to have inventory space for the stack.
-     *
-     * @param entity                      the tileEntity chest or building.
-     * @param itemStackSelectionPredicate the itemStack predicate.
-     * @return true if found the stack.
-     */
-    public static boolean isInTileEntity(final TileEntityChest entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
-    {
-        return InventoryFunctions.matchFirstInProvider(entity, itemStackSelectionPredicate);
-    }
-
-    /**
      * Sets the colony of the tile entity.
      *
      * @param c Colony to set in references.
      */
-    public void setColony(final Colony c)
+    @Override
+    public void setColony(final IColony c)
     {
         colony = c;
         colonyId = c.getID();
@@ -263,7 +256,8 @@ public class TileEntityColonyBuilding extends TileEntityChest
      *
      * @return {@link AbstractBuildingContainer} associated with the tile entity.
      */
-    public AbstractBuildingContainer getBuilding()
+    @Override
+    public IBuildingContainer getBuilding()
     {
         if (building == null)
         {
@@ -277,7 +271,8 @@ public class TileEntityColonyBuilding extends TileEntityChest
      *
      * @param b {@link AbstractBuildingContainer} to associate with the tile entity.
      */
-    public void setBuilding(final AbstractBuildingContainer b)
+    @Override
+    public void setBuilding(final IBuildingContainer b)
     {
         building = b;
     }
@@ -297,9 +292,10 @@ public class TileEntityColonyBuilding extends TileEntityChest
      *
      * @return {@link AbstractBuildingView} the tile entity is associated with.
      */
-    public AbstractBuildingView getBuildingView()
+    @Override
+    public IBuildingView getBuildingView()
     {
-        final ColonyView c = ColonyManager.getColonyView(colonyId, world.provider.getDimension());
+        final IColonyView c = IColonyManager.getInstance().getColonyView(colonyId, world.provider.getDimension());
         return c == null ? null : c.getBuilding(getPosition());
     }
 
@@ -335,7 +331,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
         if (!getWorld().isRemote && colonyId == 0)
         {
-            final Colony tempColony = ColonyManager.getColonyByPosFromWorld(getWorld(), this.getPosition());
+            final IColony tempColony = IColonyManager.getInstance().getColonyByPosFromWorld(getWorld(), this.getPosition());
             if (tempColony != null)
             {
                 colonyId = tempColony.getID();
@@ -361,6 +357,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      * @param player Player to check permission of.
      * @return True when player has access, or building doesn't exist, otherwise false.
      */
+    @Override
     public boolean hasAccessPermission(final EntityPlayer player)
     {
         //TODO This is called every tick the GUI is open. Is that bad?
@@ -372,6 +369,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      *
      * @param mirror true if so.
      */
+    @Override
     public void setMirror(final boolean mirror)
     {
         this.mirror = mirror;
@@ -382,6 +380,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      *
      * @return true if so.
      */
+    @Override
     public boolean isMirrored()
     {
         return mirror;
@@ -392,6 +391,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      *
      * @return the string of it.
      */
+    @Override
     public String getStyle()
     {
         return this.style;
@@ -402,6 +402,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      *
      * @param style the style to set.
      */
+    @Override
     public void setStyle(final String style)
     {
         this.style = style;

@@ -2,10 +2,12 @@ package com.minecolonies.coremod.colony.jobs;
 
 import com.ldtteam.structures.helpers.Structure;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +36,7 @@ public abstract class AbstractJobStructure extends AbstractJob
      *
      * @param entity the citizen data.
      */
-    public AbstractJobStructure(final CitizenData entity)
+    public AbstractJobStructure(final ICitizenData entity)
     {
         super(entity);
     }
@@ -92,22 +94,24 @@ public abstract class AbstractJobStructure extends AbstractJob
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public NBTTagCompound serializeNBT()
     {
-        super.readFromNBT(compound);
-        if (compound.hasKey(TAG_WORK_ORDER))
-        {
-            workOrderId = compound.getInteger(TAG_WORK_ORDER);
-        }
-    }
-
-    @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
+        final NBTTagCompound compound = super.serializeNBT();
         if (workOrderId != 0)
         {
             compound.setInteger(TAG_WORK_ORDER, workOrderId);
+        }
+
+        return compound;
+    }
+
+    @Override
+    public void deserializeNBT(final NBTTagCompound compound)
+    {
+        super.deserializeNBT(compound);
+        if (compound.hasKey(TAG_WORK_ORDER))
+        {
+            workOrderId = compound.getInteger(TAG_WORK_ORDER);
         }
     }
 
@@ -139,7 +143,7 @@ public abstract class AbstractJobStructure extends AbstractJob
      */
     private void resetNeededItems()
     {
-        final AbstractBuilding workerBuilding = this.getCitizen().getWorkBuilding();
+        final IBuilding workerBuilding = this.getCitizen().getWorkBuilding();
         if (workerBuilding instanceof BuildingBuilder)
         {
             ((BuildingBuilder) workerBuilding).resetNeededResources();

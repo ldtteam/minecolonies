@@ -1,9 +1,11 @@
 package com.minecolonies.coremod.colony.pvp;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -24,7 +26,7 @@ public class AttackingPlayer
     /**
      * The guards coming with him.
      */
-    private final List<EntityCitizen> guards = new ArrayList<>();
+    private final List<IEntityCitizen> guards = new ArrayList<>();
 
     /**
      * Creates a new Attacking player.
@@ -48,7 +50,7 @@ public class AttackingPlayer
      * Getter for a copy of the guard list.
      * @return an immutable copy the list.
      */
-    public List<EntityCitizen> getGuards()
+    public List<IEntityCitizen> getGuards()
     {
         return ImmutableList.copyOf(guards);
     }
@@ -57,7 +59,7 @@ public class AttackingPlayer
      * Adds a new guard to the list.
      * @param guard the guard to add.
      */
-    public boolean addGuard(final EntityCitizen guard)
+    public boolean addGuard(final IEntityCitizen guard)
     {
         if (!guards.contains(guard))
         {
@@ -71,7 +73,7 @@ public class AttackingPlayer
      * Removes a guard to the list.
      * @param guard the guard to remove.
      */
-    public void removeGuard(final EntityCitizen guard)
+    public void removeGuard(final IEntityCitizen guard)
     {
         guards.add(guard);
     }
@@ -96,9 +98,9 @@ public class AttackingPlayer
      * @param colony the colony.
      * @return true if so.
      */
-    public static boolean isValidAttack(final EntityCitizen citizen, final Colony colony)
+    public static boolean isValidAttack(final IEntityCitizen citizen, final Colony colony)
     {
-        final Colony guardColony = citizen.getCitizenColonyHandler().getColony();
+        final IColony guardColony = citizen.getCitizenColonyHandler().getColony();
         if (guardColony == null)
         {
             return false;
@@ -117,9 +119,9 @@ public class AttackingPlayer
      */
     public void refreshList(final Colony colony)
     {
-        for (final EntityCitizen citizen : new ArrayList<>(guards))
+        for (final IEntityCitizen citizen : new ArrayList<>(guards))
         {
-            if (citizen.isDead || !colony.isCoordInColony(colony.getWorld(), citizen.getPosition()))
+            if (citizen.isDead() || !colony.isCoordInColony(colony.getWorld(), citizen.getPosition()))
             {
                 guards.remove(citizen);
             }

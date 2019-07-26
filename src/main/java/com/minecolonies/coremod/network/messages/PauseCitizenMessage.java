@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -77,7 +78,7 @@ public class PauseCitizenMessage extends AbstractMessage<PauseCitizenMessage, IM
     @Override
     public void messageOnServerThread(final PauseCitizenMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.colonyDim);
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.colonyDim);
         
         if (colony != null)
         {
@@ -87,7 +88,7 @@ public class PauseCitizenMessage extends AbstractMessage<PauseCitizenMessage, IM
                 return;
             }
 
-            final CitizenData citizen = colony.getCitizenManager().getCitizen(message.citizenID);
+            final ICitizenData citizen = colony.getCitizenManager().getCitizen(message.citizenID);
             citizen.setPaused(!citizen.isPaused());
         }
     }

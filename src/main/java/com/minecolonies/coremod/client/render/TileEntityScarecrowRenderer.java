@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.render;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.huts.BlockHutField;
+import com.minecolonies.coremod.blocks.huts.IBlockHutField;
 import com.minecolonies.coremod.client.model.ModelScarecrowBoth;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.client.renderer.GlStateManager;
@@ -92,7 +93,7 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
         //In the case of worldLags tileEntities may sometimes disappear.
         if (getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockHutField)
         {
-            final EnumFacing facing = getWorld().getBlockState(te.getPos()).getValue(BlockHutField.FACING);
+            final EnumFacing facing = getWorld().getBlockState(te.getPos()).getValue(IBlockHutField.FACING);
             switch (facing)
             {
                 case EAST:

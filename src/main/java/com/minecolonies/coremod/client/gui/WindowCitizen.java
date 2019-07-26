@@ -8,14 +8,17 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Alignment;
-import com.minecolonies.blockout.controls.*;
+import com.minecolonies.blockout.controls.Button;
+import com.minecolonies.blockout.controls.Image;
+import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ICitizenDataView;
+import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsToCitizenRequestMessage;
@@ -44,7 +47,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
     /**
      * The citizenData.View object.
      */
-    private final CitizenDataView citizen;
+    private final ICitizenDataView citizen;
 
     /**
      * Enum for the available hearts
@@ -101,9 +104,9 @@ public class WindowCitizen extends AbstractWindowRequestTree
      *
      * @param citizen citizen to bind the window to.
      */
-    public WindowCitizen(final CitizenDataView citizen)
+    public WindowCitizen(final ICitizenDataView citizen)
     {
-        super(citizen.getWorkBuilding(),Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX, ColonyManager.getColonyView(citizen.getColonyId(), Minecraft.getMinecraft().world.provider.getDimension()));
+        super(citizen.getWorkBuilding(),Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX, IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getMinecraft().world.provider.getDimension()));
         this.citizen = citizen;
     }
 
@@ -142,7 +145,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
     /**
      * Creates an health bar according to the citizen maxHealth and currentHealth.
      */
-    public static void createHealthBar(final CitizenDataView citizen, final View healthBarView)
+    public static void createHealthBar(final ICitizenDataView citizen, final View healthBarView)
     {
         int health = (int) citizen.getHealth();
 
@@ -217,7 +220,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
         findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
 
         //Max saturation (Black food items).
-        for (int i = 0; i < CitizenData.MAX_SATURATION; i++)
+        for (int i = 0; i < ICitizenData.MAX_SATURATION; i++)
         {
             @NotNull final Image saturation = new Image();
             saturation.setImage(Gui.ICONS, EMPTY_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH, false);
@@ -285,7 +288,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
      * @param citizen the citizen.
      * @param window  the window to fill.
      */
-    public static void createXpBar(final CitizenDataView citizen, final AbstractWindowSkeleton window)
+    public static void createXpBar(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
         //Calculates how much percent of the next level has been completed.
         final double experienceRatio = ExperienceUtils.getPercentOfLevelCompleted(citizen.getExperience(), citizen.getLevel());
@@ -317,7 +320,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
      * @param citizen pointer to the citizen data view
      * @param window  pointer to the current window
      */
-    public static void createHappinessBar(final CitizenDataView citizen, final AbstractWindowSkeleton window)
+    public static void createHappinessBar(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
         //Calculates how much percent of the next level has been completed. 
         final double experienceRatio = (citizen.getHappiness() / CitizenHappinessHandler.MAX_HAPPINESS) * XP_BAR_WIDTH;
@@ -350,7 +353,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
      * @param citizen the citizen to use.
      * @param window  the window to fill.
      */
-    public static void createSkillContent(final CitizenDataView citizen, final AbstractWindowSkeleton window)
+    public static void createSkillContent(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
         window.findPaneOfTypeByID(STRENGTH, Label.class).setLabelText(
           LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.strength", citizen.getStrength()));
@@ -365,7 +368,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
     }
 
     @Override
-    public ImmutableList<IRequest> getOpenRequestsFromBuilding(final AbstractBuildingView building)
+    public ImmutableList<IRequest> getOpenRequestsFromBuilding(final IBuildingView building)
     {
         return building.getOpenRequests(citizen);
     }
@@ -398,6 +401,8 @@ public class WindowCitizen extends AbstractWindowRequestTree
                 break;
         }
     }
+
+
 
     @Override
     public void fulfill(@NotNull final Button button)
@@ -439,11 +444,11 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
             if (citizen.getWorkBuilding() != null)
             {
-                colony.getBuilding(citizen.getWorkBuilding()).onRequestComplete(colony.getRequestManager(), tRequest.getToken());
+                colony.getBuilding(citizen.getWorkBuilding()).onRequestedRequestCompleted(colony.getRequestManager(), tRequest);
             }
             MineColonies.getNetwork().sendToServer(
               new TransferItemsToCitizenRequestMessage(citizen, itemStack, isCreative ? amount : Math.min(amount, count), citizen.getColonyId()));
-            MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getToken(), RequestState.OVERRULED, itemStack));
+            MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getId(), RequestState.OVERRULED, itemStack));
         }
         button.disable();
         updateRequests();

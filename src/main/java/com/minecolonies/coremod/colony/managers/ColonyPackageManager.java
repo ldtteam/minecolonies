@@ -4,9 +4,11 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.managers.interfaces.IColonyPackageManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
+import com.minecolonies.coremod.colony.workorders.IWorkManager;
+import com.minecolonies.coremod.colony.workorders.IWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkManager;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
@@ -239,10 +241,10 @@ public class ColonyPackageManager implements IColonyPackageManager
     @Override
     public void sendWorkOrderPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
     {
-        final WorkManager workManager = colony.getWorkManager();
+        final IWorkManager workManager = colony.getWorkManager();
         if (workManager.isDirty() || hasNewSubscribers)
         {
-            for (final AbstractWorkOrder workOrder : workManager.getWorkOrders().values())
+            for (final IWorkOrder workOrder : workManager.getWorkOrders().values())
             {
                 if (!(workOrder instanceof WorkOrderBuildMiner))
                 {

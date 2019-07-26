@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.smelter;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSmeltery;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
@@ -157,7 +157,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
             worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, slot);
         }
 
-        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getLocation());
+        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
 
         if (progress >= getRequiredProgressForMakingRawMaterial())
         {
@@ -319,7 +319,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     protected boolean isSmeltable(final ItemStack stack)
     {
         return !ItemStackUtils.isEmpty(stack) && ItemStackUtils.IS_SMELTABLE.and(
-          itemStack -> ColonyManager.getCompatibilityManager().isOre(stack)).test(stack);
+          itemStack -> IColonyManager.getInstance().getCompatibilityManager().isOre(stack)).test(stack);
     }
 
     /**

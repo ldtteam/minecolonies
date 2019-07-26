@@ -165,6 +165,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
 
     @NotNull
     @Override
+    @SuppressWarnings(DEPRECATION)
     public IBlockState getStateFromMeta(final int meta)
     {
         int theMeta = meta;
@@ -180,6 +181,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
 
     @NotNull
     @Override
+    @SuppressWarnings(DEPRECATION)
     public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
     {
         if (facing.getAxis().isHorizontal())

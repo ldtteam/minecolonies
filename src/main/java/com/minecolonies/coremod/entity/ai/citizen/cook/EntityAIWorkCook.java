@@ -9,6 +9,7 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.HUNGRY_INV_FULL;
@@ -63,7 +65,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     /**
      * The citizen the worker is currently trying to serve.
      */
-    private final List<EntityCitizen> citizenToServe = new ArrayList<>();
+    private final List<IEntityCitizen> citizenToServe = new ArrayList<>();
 
     /**
      * The citizen the worker is currently trying to serve.
@@ -147,7 +149,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             return START_WORKING;
         }
 
-        final Entity living = citizenToServe.isEmpty() ? playerToServe.get(0) : citizenToServe.get(0);
+        final Entity living = citizenToServe.isEmpty() ? playerToServe.get(0) : (Entity) citizenToServe.get(0);
 
         if (range == null)
         {
@@ -237,8 +239,13 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         }
 
         citizenToServe.clear();
-        final List<EntityCitizen> citizenList = world.getEntitiesWithinAABB(EntityCitizen.class,
-          range, cit -> !(cit.getCitizenJobHandler().getColonyJob() instanceof JobCook) && cit.shouldBeFed());
+        final List<IEntityCitizen> citizenList = world.getEntitiesWithinAABB(Entity.class, range)
+          .stream()
+          .filter(e -> e instanceof IEntityCitizen)
+          .map(e -> (IEntityCitizen) e)
+          .filter(cit -> !(cit.getCitizenJobHandler().getColonyJob() instanceof JobCook) && cit.shouldBeFed())
+          .collect(Collectors.toList());
+
         final List<EntityPlayer> playerList = world.getEntitiesWithinAABB(EntityPlayer.class,
           range, player -> player != null && player.getFoodStats().getFoodLevel() < LEVEL_TO_FEED_PLAYER);
 

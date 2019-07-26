@@ -16,7 +16,6 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
-import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -27,6 +26,7 @@ import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
@@ -39,7 +39,7 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestRe
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.tileentities.ITileEntityColonyBuilding;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.ByteBuf;
@@ -78,7 +78,7 @@ import static com.minecolonies.api.util.constant.Suppression.*;
  * to their views and blocks.
  */
 @SuppressWarnings("squid:S2390")
-public abstract class AbstractBuilding extends AbstractBuildingContainer implements IRequestResolverProvider, IRequester
+public abstract class AbstractBuilding extends AbstractBuildingContainer implements IBuilding
 {
     /**
      * The data store id for request system related data.
@@ -124,6 +124,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * Getter for the custom name of a building.
      * @return the custom name.
      */
+    @Override
     @NotNull
     public String getCustomBuildingName()
     {
@@ -133,6 +134,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     /**
      * Executed when a new day start.
      */
+    @Override
     public void onWakeUp()
     {
         /*
@@ -144,12 +146,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * Executed every time when citizen finish inventory cleanup called after citizen got paused.
      * Use for cleaning a state only.
      */
-    public void onCleanUp(final CitizenData citizen)
+    @Override
+    public void onCleanUp(final ICitizenData citizen)
     {
-        // Cancel all open requests
-        //Why is this next line here!!!?!?!?!?!?!?
-        //getOpenRequestsOfBuilding(citizen).forEach(r -> colony.getRequestManager().updateRequestState(r.getToken(), RequestState.CANCELLED));
-
         /*
          * Buildings override this if required.
          */
@@ -159,7 +158,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * Executed when RestartCitizenMessage is called and worker is paused.
      * Use for reseting, onCleanUp is called before this
      */
-    public void onRestart(final CitizenData citizen)
+    @Override
+    public void onRestart(final ICitizenData citizen)
     {
         // Unpause citizen
         citizen.setPaused(false);
@@ -168,11 +168,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
          */
     }
 
+    @Override
     public void onPlacement()
     {
         if (Configurations.gameplay.enableDynamicColonySizes)
         {
-            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), getLocation(), colony.getDimension(), getClaimRadius());
+            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), getPosition(), colony.getDimension(), getClaimRadius());
         }
     }
 
@@ -182,6 +183,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * @param block Block you want to know whether it matches this class or not.
      * @return True if the block matches this class, otherwise false.
      */
+    @Override
     public boolean isMatchingBlock(@NotNull final Block block)
     {
         final Class<?> c = BuildingRegistry.getBlockClassToBuildingClassMap().get(block.getClass());
@@ -189,9 +191,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
-        super.readFromNBT(compound);
+        super.deserializeNBT(compound);
         loadRequestSystemFromNBT(compound);
         if (compound.hasKey(TAG_IS_BUILT))
         {
@@ -208,18 +210,20 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public NBTTagCompound serializeNBT()
     {
-        super.writeToNBT(compound);
+        final NBTTagCompound compound = super.serializeNBT();
         writeRequestSystemToNBT(compound);
         compound.setBoolean(TAG_IS_BUILT, isBuilt);
         compound.setString(TAG_CUSTOM_NAME, customName);
+        return compound;
     }
 
     /**
      * Destroys the block.
      * Calls {@link #onDestroyed()}.
      */
+    @Override
     public final void destroy()
     {
         onDestroyed();
@@ -229,14 +233,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void onDestroyed()
     {
-        final TileEntityColonyBuilding tileEntityNew = this.getTileEntity();
+        final ITileEntityColonyBuilding tileEntityNew = this.getTileEntity();
         final World world = colony.getWorld();
-        final Block block = world.getBlockState(this.getLocation()).getBlock();
+        final Block block = world.getBlockState(this.getPosition()).getBlock();
 
         if (tileEntityNew != null)
         {
-            InventoryHelper.dropInventoryItems(world, this.getLocation(), (IInventory) tileEntityNew);
-            world.updateComparatorOutputLevel(this.getLocation(), block);
+            InventoryHelper.dropInventoryItems(world, this.getPosition(), (IInventory) tileEntityNew);
+            world.updateComparatorOutputLevel(this.getPosition(), block);
         }
 
         if (Configurations.gameplay.enableDynamicColonySizes)
@@ -249,6 +253,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     /**
      * Ticks once a second(once per 20 ticks) for calculations which do not need to be checked each tick.
      */
+    @Override
     public void secondsWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
         // Empty, override to use
@@ -285,13 +290,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             return;
         }
         
-        if(getLocation().getY() + getHeight() >= 256)
+        if(getPosition().getY() + getHeight() >= 256)
         {
         	LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
         	  "entity.builder.messageBuildTooHigh");
             return;
         }
-        else if(getLocation().getY() <= 1)
+        else if(getPosition().getY() <= 1)
         {
         	LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
         	  "entity.builder.messageBuildTooLow");
@@ -300,7 +305,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         if (!builder.equals(BlockPos.ORIGIN))
         {
-             final AbstractBuilding building =  colony.getBuildingManager().getBuilding(builder);
+             final IBuilding building =  colony.getBuildingManager().getBuilding(builder);
              if (building instanceof AbstractBuildingStructureBuilder && (building.getBuildingLevel() >= level || canBeBuiltByBuilder(level)))
              {
                  workOrderBuildBuilding.setClaimedBy(builder);
@@ -325,6 +330,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      *
      * @return true if so.
      */
+    @Override
     public boolean canBeBuiltByBuilder(final int newLevel)
     {
         return false;
@@ -345,6 +351,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      *
      * @return true if the building is building, upgrading or repairing.
      */
+    @Override
     public boolean hasWorkOrder()
     {
         return getCurrentWorkOrderLevel() != NO_WORK_ORDER;
@@ -373,6 +380,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * <p>
      * Remove either the upgrade or repair work order
      */
+    @Override
     public void removeWorkOrder()
     {
         for (@NotNull final WorkOrderBuildBuilding o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildBuilding.class))
@@ -383,7 +391,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                 markDirty();
 
                 final BlockPos buildingPos = o.getClaimedBy();
-                final AbstractBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
+                final IBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
                 if (building != null && building.getMainCitizen() != null)
                 {
                     building.cancelAllRequestsOfCitizen(building.getMainCitizen());
@@ -397,6 +405,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * Method to calculate the radius to be claimed by this building depending on the level.
      * @return the radius.
      */
+    @Override
     public int getClaimRadius()
     {
         switch(getBuildingLevel())
@@ -419,6 +428,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      *
      * @param buf ByteBuf to write to.
      */
+    @Override
     public void serializeToView(@NotNull final ByteBuf buf)
     {
         buf.writeInt(this.getClass().getName().hashCode());
@@ -442,9 +452,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         buf.writeInt(resolvers.size());
         for (final IRequestResolver<?> resolver : resolvers)
         {
-            ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(resolver.getRequesterId()));
+            ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(resolver.getId()));
         }
-        ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(getRequesterId()));
+        ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(getId()));
         ByteBufUtils.writeTag(buf, requestSystemCompound);
 
     }
@@ -454,6 +464,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      *
      * @return true if so.
      */
+    @Override
     public boolean isBeingGathered()
     {
         return this.beingGathered;
@@ -463,6 +474,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * Set the custom building name of the building.
      * @param name the name to set.
      */
+    @Override
     public void setCustomBuildingName(final String name)
     {
         this.customName = name;
@@ -473,6 +485,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * Check if the building should be gathered by the dman.
      * @return true if so.
      */
+    @Override
     public boolean canBeGathered()
     {
         return true;
@@ -483,6 +496,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      *
      * @param gathering value to set.
      */
+    @Override
     public void setBeingGathered(final boolean gathering)
     {
         this.beingGathered = gathering;
@@ -494,6 +508,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * @param player the requesting player.
      * @param builder the assigned builder.
      */
+    @Override
     public void requestUpgrade(final EntityPlayer player, final BlockPos builder)
     {
         if (getBuildingLevel() < getMaxBuildingLevel())
@@ -511,6 +526,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * @param builder
      * @param builder the assigned builder.
      */
+    @Override
     public void requestRepair(final BlockPos builder)
     {
         if (getBuildingLevel() > 0)
@@ -524,6 +540,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      *
      * @return true if so.
      */
+    @Override
     public boolean isBuilt()
     {
         return isBuilt;
@@ -532,6 +549,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     /**
      * Deconstruct the building on destroyed.
      */
+    @Override
     public void deconstruct()
     {
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> tuple = getCorners();
@@ -539,7 +557,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         {
             for (int z = tuple.getSecond().getFirst(); z < tuple.getSecond().getSecond(); z++)
             {
-                for (int y = getLocation().getY() - 1; y < getLocation().getY() + this.getHeight(); y++)
+                for (int y = getPosition().getY() - 1; y < getPosition().getY() + this.getHeight(); y++)
                 {
                     getColony().getWorld().destroyBlock(new BlockPos(x, y, z), false);
                 }
@@ -553,6 +571,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      *
      * @param newLevel The new level.
      */
+    @Override
     public void onUpgradeComplete(final int newLevel)
     {
         if (Configurations.gameplay.enableDynamicColonySizes)
@@ -562,14 +581,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
         colony.getProgressManager().progressBuildBuilding(this,
           colony.getBuildingManager().getBuildings().values().stream()
-            .filter(building -> building instanceof AbstractBuildingWorker).mapToInt(AbstractSchematicProvider::getBuildingLevel).sum(),
+            .filter(building -> building instanceof AbstractBuildingWorker).mapToInt(ISchematicProvider::getBuildingLevel).sum(),
           colony.getBuildingManager().getBuildings().values().stream()
-            .filter(building -> building instanceof BuildingHome).mapToInt(AbstractSchematicProvider::getBuildingLevel).sum()
+            .filter(building -> building instanceof BuildingHome).mapToInt(ISchematicProvider::getBuildingLevel).sum()
         );
         final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, newLevel);
         final Structure wrapper = new Structure(colony.getWorld(), workOrder.getStructureName(), new PlacementSettings());
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-          = ColonyUtils.calculateCorners(this.getLocation(),
+          = ColonyUtils.calculateCorners(this.getPosition(),
           colony.getWorld(),
           wrapper,
           workOrder.getRotation(colony.getWorld()),
@@ -589,6 +608,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * @param inventory        if it should be in the inventory or in the building.
      * @return the amount which can get dumped or 0 if not.
      */
+    @Override
     public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory)
     {
         for (final Map.Entry<Predicate<ItemStack>, Tuple<Integer, Boolean>> entry : getRequiredItemsAndAmount().entrySet())
@@ -641,6 +661,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      *
      * @return a list of objects which should be kept.
      */
+    @Override
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(keepX);
@@ -661,6 +682,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * @param world the world to do it in.
      * @return the itemStack which has been replaced or the itemStack which could not be transfered
      */
+    @Override
     @Nullable
     public ItemStack forceTransferStack(final ItemStack stack, final World world)
     {
@@ -766,7 +788,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * @param <R>         the type of the request.
      * @return the Token of the request.
      */
-    public <R extends IRequestable> IToken<?> createRequest(@NotNull final CitizenData citizenData, @NotNull final R requested, final boolean async)
+    @Override
+    public <R extends IRequestable> IToken<?> createRequest(@NotNull final ICitizenData citizenData, @NotNull final R requested, final boolean async)
     {
         final IToken requestToken = colony.getRequestManager().createRequest(requester, requested);
         if (async)
@@ -790,6 +813,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * @param <R>         the type of the request.
      * @return the Token of the request.
      */
+    @Override
     public <R extends IRequestable> IToken<?> createRequest(@NotNull final R requested, final boolean async)
     {
         final IToken requestToken = colony.getRequestManager().createRequest(requester, requested);
@@ -827,13 +851,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         getOpenRequestsByCitizen().get(citizenId).add(requestToken);
     }
 
-    public boolean hasWorkerOpenRequests(@NotNull final CitizenData citizen)
+    @Override
+    public boolean hasWorkerOpenRequests(@NotNull final ICitizenData citizen)
     {
         return !getOpenRequests(citizen).isEmpty();
     }
 
+    @Override
     @SuppressWarnings(RAWTYPES)
-    public ImmutableList<IRequest> getOpenRequests(@NotNull final CitizenData data)
+    public ImmutableList<IRequest> getOpenRequests(@NotNull final ICitizenData data)
     {
         if (!getOpenRequestsByCitizen().containsKey(data.getId()))
         {
@@ -847,38 +873,43 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                                       .iterator());
     }
 
+    @Override
     @SuppressWarnings(RAWTYPES)
-    public boolean hasWorkerOpenRequestsFiltered(@NotNull final CitizenData citizen, @NotNull final Predicate<IRequest> selectionPredicate)
+    public boolean hasWorkerOpenRequestsFiltered(@NotNull final ICitizenData citizen, @NotNull final Predicate<IRequest> selectionPredicate)
     {
         return getOpenRequests(citizen).stream().anyMatch(selectionPredicate);
     }
 
-    public <R> boolean hasWorkerOpenRequestsOfType(@NotNull final CitizenData citizenData, final TypeToken<R> requestType)
+    @Override
+    public <R> boolean hasWorkerOpenRequestsOfType(@NotNull final ICitizenData citizenData, final TypeToken<R> requestType)
     {
         return !getOpenRequestsOfType(citizenData, requestType).isEmpty();
     }
 
+    @Override
     @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(
-      @NotNull final CitizenData citizenData,
+      @NotNull final ICitizenData citizenData,
       final TypeToken<R> requestType)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
-                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
                                       .iterator());
     }
 
-    public boolean hasCitizenCompletedRequests(@NotNull final CitizenData data)
+    @Override
+    public boolean hasCitizenCompletedRequests(@NotNull final ICitizenData data)
     {
         return !getCompletedRequests(data).isEmpty();
     }
 
+    @Override
     @SuppressWarnings(RAWTYPES)
-    public ImmutableList<IRequest> getCompletedRequests(@NotNull final CitizenData data)
+    public ImmutableList<IRequest> getCompletedRequests(@NotNull final ICitizenData data)
     {
         if (!getCompletedRequestsByCitizen().containsKey(data.getId()))
         {
@@ -889,27 +920,29 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                                       .map(getColony().getRequestManager()::getRequestForToken).filter(Objects::nonNull).iterator());
     }
 
+    @Override
     @SuppressWarnings({GENERIC_WILDCARD, RAWTYPES, UNCHECKED})
-    public <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfType(@NotNull final CitizenData citizenData, final TypeToken<R> requestType)
+    public <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfType(@NotNull final ICitizenData citizenData, final TypeToken<R> requestType)
     {
         return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
                                       .filter(request -> {
-                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
                                       .iterator());
     }
 
+    @Override
     @SuppressWarnings({GENERIC_WILDCARD, RAWTYPES, UNCHECKED})
     public <R> ImmutableList<IRequest<? extends R>> getCompletedRequestsOfTypeFiltered(
-      @NotNull final CitizenData citizenData,
+      @NotNull final ICitizenData citizenData,
       final TypeToken<R> requestType,
       final Predicate<IRequest<? extends R>> filter)
     {
         return ImmutableList.copyOf(getCompletedRequests(citizenData).stream()
                                       .filter(request -> {
-                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
@@ -917,7 +950,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                                       .iterator());
     }
 
-    public void markRequestAsAccepted(@NotNull final CitizenData data, @NotNull final IToken<?> token)
+    @Override
+    public void markRequestAsAccepted(@NotNull final ICitizenData data, @NotNull final IToken<?> token)
     {
         if (!getCompletedRequestsByCitizen().containsKey(data.getId()) || !getCompletedRequestsByCitizen().get(data.getId()).contains(token))
         {
@@ -934,25 +968,26 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         markDirty();
     }
 
-    public void cancelAllRequestsOfCitizen(@NotNull final CitizenData data)
+    @Override
+    public void cancelAllRequestsOfCitizen(@NotNull final ICitizenData data)
     {
         getOpenRequests(data).forEach(request ->
         {
-            getColony().getRequestManager().updateRequestState(request.getToken(), RequestState.CANCELLED);
+            getColony().getRequestManager().updateRequestState(request.getId(), RequestState.CANCELLED);
 
             if (getOpenRequestsByRequestableType().containsKey(TypeToken.of(request.getRequest().getClass())))
             {
-                getOpenRequestsByRequestableType().get(TypeToken.of(request.getRequest().getClass())).remove(request.getToken());
+                getOpenRequestsByRequestableType().get(TypeToken.of(request.getRequest().getClass())).remove(request.getId());
                 if (getOpenRequestsByRequestableType().get(TypeToken.of(request.getRequest().getClass())).isEmpty())
                 {
                     getOpenRequestsByRequestableType().remove(TypeToken.of(request.getRequest().getClass()));
                 }
             }
 
-            getCitizensByRequest().remove(request.getToken());
+            getCitizensByRequest().remove(request.getId());
         });
 
-        getCompletedRequests(data).forEach(request -> getColony().getRequestManager().updateRequestState(request.getToken(), RequestState.RECEIVED));
+        getCompletedRequests(data).forEach(request -> getColony().getRequestManager().updateRequestState(request.getId(), RequestState.RECEIVED));
 
         if (getOpenRequestsByCitizen().containsKey(data.getId()))
         {
@@ -975,6 +1010,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      *
      * @param stack the stack.
      */
+    @Override
     @SuppressWarnings("squid:S135")
     public void overruleNextOpenRequestWithStack(@NotNull final ItemStack stack)
     {
@@ -1006,7 +1042,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                     continue;
                 }
 
-                getColony().getRequestManager().overruleRequest(target.getToken(), stack.copy());
+                getColony().getRequestManager().overruleRequest(target.getId(), stack.copy());
                 return;
             }
 
@@ -1015,7 +1051,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         for (final int citizenId : citizenIdsWithRequests)
         {
-            final CitizenData data = getColony().getCitizenManager().getCitizen(citizenId);
+            final ICitizenData data = getColony().getCitizenManager().getCitizen(citizenId);
 
             if (data == null)
             {
@@ -1029,20 +1065,21 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                 continue;
             }
 
-            getColony().getRequestManager().overruleRequest(target.getToken(), stack.copy());
+            getColony().getRequestManager().overruleRequest(target.getId(), stack.copy());
             return;
         }
     }
 
+    @Override
     @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(
-      @NotNull final CitizenData citizenData,
+      @NotNull final ICitizenData citizenData,
       final TypeToken<R> requestType,
       final Predicate<IRequest<? extends R>> filter)
     {
         return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
                                       .filter(request -> {
-                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getRequestType());
+                                          final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(request.getType());
                                           return requestTypes.contains(requestType);
                                       })
                                       .map(request -> (IRequest<? extends R>) request)
@@ -1050,7 +1087,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                                       .iterator());
     }
 
-    public boolean overruleNextOpenRequestOfCitizenWithStack(@NotNull final CitizenData citizenData, @NotNull final ItemStack stack)
+    @Override
+    public boolean overruleNextOpenRequestOfCitizenWithStack(@NotNull final ICitizenData citizenData, @NotNull final ItemStack stack)
     {
         if (ItemStackUtils.isEmpty(stack))
         {
@@ -1067,7 +1105,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
                 if (!crafterJob.getAssignedTasks().isEmpty())
                 {
-                    final IRequest<? extends IDeliverable> deliverableChildRequest = crafterJob.getAssignedTasks()
+                    final List<IToken<?>> assignedTasks = crafterJob.getAssignedTasks();
+                    final IRequest<? extends IDeliverable> deliverableChildRequest = assignedTasks
                                                                                        .stream()
                                                                                        .map(getColony().getRequestManager()::getRequestForToken)
                                                                                        .map(IRequest::getChildren)
@@ -1083,7 +1122,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                     if (deliverableChildRequest != null)
                     {
                         deliverableChildRequest.overrideCurrentDeliveries(ImmutableList.of(stack));
-                        getColony().getRequestManager().overruleRequest(deliverableChildRequest.getToken(), stack.copy());
+                        getColony().getRequestManager().overruleRequest(deliverableChildRequest.getId(), stack.copy());
                         return true;
                     }
                 }
@@ -1093,7 +1132,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
 
         target.overrideCurrentDeliveries(ImmutableList.of(stack));
-        getColony().getRequestManager().overruleRequest(target.getToken(), stack.copy());
+        getColony().getRequestManager().overruleRequest(target.getId(), stack.copy());
         return true;
     }
 
@@ -1107,12 +1146,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
 
         List<IToken<?>> validRequesterTokens = Lists.newArrayList();
-        validRequesterTokens.add(this.getRequesterId());
-        this.getResolvers().forEach(iRequestResolver -> validRequesterTokens.add(iRequestResolver.getRequesterId()));
+        validRequesterTokens.add(this.getId());
+        this.getResolvers().forEach(iRequestResolver -> validRequesterTokens.add(iRequestResolver.getId()));
 
         return queue
                  .stream()
-                 .filter(request -> validRequesterTokens.contains(request.getRequester().getRequesterId()) && request.getRequest().matches(stack))
+                 .filter(request -> validRequesterTokens.contains(request.getRequester().getId()) && request.getRequest().matches(stack))
                  .findFirst()
                  .orElse(null);
     }
@@ -1134,7 +1173,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    public IToken<?> getRequesterId()
+    public IToken<?> getId()
     {
         return getToken();
     }
@@ -1142,7 +1181,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public IToken<?> getToken()
     {
-        return requester.getRequesterId();
+        return requester.getId();
     }
 
     @Override
@@ -1163,12 +1202,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         return createResolvers();
     }
 
+    @Override
     public ImmutableCollection<IRequestResolver<?>> createResolvers()
     {
-        return ImmutableList.of(new BuildingRequestResolver(getRequester().getRequesterLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(
+        return ImmutableList.of(new BuildingRequestResolver(getRequester().getLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(
           TypeConstants.ITOKEN)));
     }
 
+    @Override
     public IRequester getRequester()
     {
         return requester;
@@ -1176,82 +1217,81 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     @NotNull
     @Override
-    public ILocation getRequesterLocation()
+    public ILocation getLocation()
     {
-        return getRequester().getRequesterLocation();
+        return getRequester().getLocation();
     }
 
     @Override
-    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCompleted(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        final Integer citizenThatRequested = getCitizensByRequest().remove(token);
-        getOpenRequestsByCitizen().get(citizenThatRequested).remove(token);
+        final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
+        getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
 
         if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
         {
             getOpenRequestsByCitizen().remove(citizenThatRequested);
         }
 
-        final IRequest<?> requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
-        getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).remove(token);
+        getOpenRequestsByRequestableType().get(TypeToken.of(request.getRequest().getClass())).remove(request.getId());
 
-        if (getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).isEmpty())
+        if (getOpenRequestsByRequestableType().get(TypeToken.of(request.getRequest().getClass())).isEmpty())
         {
-            getOpenRequestsByRequestableType().remove(TypeToken.of(requestThatCompleted.getRequest().getClass()));
+            getOpenRequestsByRequestableType().remove(TypeToken.of(request.getRequest().getClass()));
         }
 
         if (!getCompletedRequestsByCitizen().containsKey(citizenThatRequested))
         {
             getCompletedRequestsByCitizen().put(citizenThatRequested, new ArrayList<>());
         }
-        getCompletedRequestsByCitizen().get(citizenThatRequested).add(token);
+        getCompletedRequestsByCitizen().get(citizenThatRequested).add(request.getId());
 
         markDirty();
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        final int citizenThatRequested = getCitizensByRequest().remove(token);
-        getOpenRequestsByCitizen().get(citizenThatRequested).remove(token);
+        final int citizenThatRequested = getCitizensByRequest().remove(request.getId());
+        getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
 
         if (getOpenRequestsByCitizen().get(citizenThatRequested).isEmpty())
         {
             getOpenRequestsByCitizen().remove(citizenThatRequested);
         }
 
-        final IRequest<?> requestThatCompleted = getColony().getRequestManager().getRequestForToken(token);
-        if (requestThatCompleted != null && getOpenRequestsByRequestableType().containsKey(TypeToken.of(requestThatCompleted.getRequest().getClass())))
+        if (getOpenRequestsByRequestableType().containsKey(TypeToken.of(request.getRequest().getClass())))
         {
-            getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).remove(token);
-            if (getOpenRequestsByRequestableType().get(TypeToken.of(requestThatCompleted.getRequest().getClass())).isEmpty())
+            getOpenRequestsByRequestableType().get(TypeToken.of(request.getRequest().getClass())).remove(request.getId());
+            if (getOpenRequestsByRequestableType().get(TypeToken.of(request.getRequest().getClass())).isEmpty())
             {
-                getOpenRequestsByRequestableType().remove(TypeToken.of(requestThatCompleted.getRequest().getClass()));
+                getOpenRequestsByRequestableType().remove(TypeToken.of(request.getRequest().getClass()));
             }
         }
 
         //Check if the citizen did not die.
         if (getColony().getCitizenManager().getCitizen(citizenThatRequested) != null)
         {
-            getColony().getCitizenManager().getCitizen(citizenThatRequested).onRequestCancelled(token);
+            getColony().getCitizenManager().getCitizen(citizenThatRequested).onRequestCancelled(request.getId());
         }
         markDirty();
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        if (!getCitizensByRequest().containsKey(token))
+        if (!getCitizensByRequest().containsKey(request.getId()))
         {
             return new TextComponentString("<UNKNOWN>");
         }
 
-        final Integer citizenData = getCitizensByRequest().get(token);
+        final Integer citizenData = getCitizensByRequest().get(request.getId());
         return new TextComponentString(this.getSchematicName() + " " + getColony().getCitizenManager().getCitizen(citizenData).getName());
     }
 
-    public Optional<CitizenData> getCitizenForRequest(@NotNull final IToken token)
+    @Override
+    public Optional<ICitizenData> getCitizenForRequest(@NotNull final IToken token)
     {
         if (!getCitizensByRequest().containsKey(token) || getColony() == null)
         {
