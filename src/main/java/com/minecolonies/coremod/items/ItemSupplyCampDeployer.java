@@ -4,7 +4,7 @@ import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.placementhandlers.PlacementError;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;

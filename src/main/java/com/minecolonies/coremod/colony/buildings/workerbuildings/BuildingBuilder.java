@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.blockout.views.Window;
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.client.gui.WindowHutBuilder;

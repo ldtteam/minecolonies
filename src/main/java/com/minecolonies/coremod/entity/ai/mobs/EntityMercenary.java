@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.entity.ai.mobs;
 
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.blockout.Log;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;

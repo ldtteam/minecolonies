@@ -2,11 +2,11 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.controls.Button;
-import com.minecolonies.blockout.controls.ButtonHandler;
-import com.minecolonies.blockout.controls.ButtonImage;
-import com.minecolonies.blockout.controls.ItemIcon;
-import com.minecolonies.blockout.views.Window;
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.ButtonHandler;
+import com.ldtteam.blockout.controls.ButtonImage;
+import com.ldtteam.blockout.controls.ItemIcon;
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.network.messages.BuyCitizenMessage;

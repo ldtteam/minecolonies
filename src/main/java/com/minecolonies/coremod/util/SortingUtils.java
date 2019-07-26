@@ -2,7 +2,7 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.blockout.Log;
+import com.ldtteam.blockout.Log;
 import com.minecolonies.coremod.inventory.api.CombinedItemHandler;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

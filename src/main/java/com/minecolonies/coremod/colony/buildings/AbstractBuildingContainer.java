@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.blockout.Log;
+import com.ldtteam.blockout.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.colony.Colony;

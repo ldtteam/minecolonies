@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.items;
 
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;

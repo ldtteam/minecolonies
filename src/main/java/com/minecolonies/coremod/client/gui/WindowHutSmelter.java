@@ -2,9 +2,9 @@ package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.views.View;
+import com.ldtteam.blockout.views.View;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSmeltery;
 import net.minecraft.item.ItemStack;

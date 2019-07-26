@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.mobs.util;
 
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.init.Blocks;

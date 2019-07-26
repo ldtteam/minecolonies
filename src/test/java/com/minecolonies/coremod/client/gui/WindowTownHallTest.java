@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.blockout.controls.Label;
-import com.minecolonies.blockout.views.ScrollingList;
+import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;

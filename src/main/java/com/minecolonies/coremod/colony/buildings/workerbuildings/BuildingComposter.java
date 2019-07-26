@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.blockout.views.Window;
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowHutComposter;
 import com.minecolonies.coremod.colony.CitizenData;

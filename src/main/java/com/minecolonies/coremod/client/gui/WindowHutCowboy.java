@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.blockout.controls.Button;
+import com.ldtteam.blockout.controls.Button;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCowboy;
 import org.jetbrains.annotations.NotNull;
 

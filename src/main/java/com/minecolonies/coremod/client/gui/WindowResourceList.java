@@ -2,12 +2,12 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.Pane;
-import com.minecolonies.blockout.controls.ItemIcon;
-import com.minecolonies.blockout.controls.Label;
-import com.minecolonies.blockout.views.ScrollingList;
+import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.controls.ItemIcon;
+import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;

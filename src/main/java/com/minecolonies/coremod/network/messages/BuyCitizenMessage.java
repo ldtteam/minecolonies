@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;

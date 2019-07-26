@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.ModBlocks;

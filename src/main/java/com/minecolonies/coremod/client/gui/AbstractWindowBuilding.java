@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.blockout.controls.Button;
-import com.minecolonies.blockout.controls.Label;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.Label;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;

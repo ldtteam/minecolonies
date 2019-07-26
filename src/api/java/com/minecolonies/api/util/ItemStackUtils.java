@@ -1,34 +1,31 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.compatibility.Compatibility;
-import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.item.ArmorStandEntity;
+import net.minecraft.entity.item.ItemFrameEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
-import net.minecraft.item.ArmorItem.ArmorMaterial;
-import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.*;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.world.World;
-import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -110,50 +107,6 @@ public final class ItemStackUtils
     }
 
     /**
-     * Get itemStack of tileEntityData. Retrieve the data from the tileEntity.
-     *
-     * @param compound the tileEntity stored in a compound.
-     * @param world    the world.
-     * @return the list of itemstacks.
-     */
-    public static List<ItemStack> getItemStacksOfTileEntity(final CompoundNBT compound, final World world)
-    {
-        final List<ItemStack> items = new ArrayList<>();
-        if (compound != null)
-        {
-            final TileEntity tileEntity = TileEntity.create(world, compound);
-            if (tileEntity instanceof TileEntityFlowerPot)
-            {
-                items.add(((TileEntityFlowerPot) tileEntity).getFlowerItemStack());
-            }
-            else if (tileEntity instanceof TileEntityLockable)
-            {
-                for (int i = 0; i < ((TileEntityLockable) tileEntity).getSizeInventory(); i++)
-                {
-                    final ItemStack stack = ((TileEntityLockable) tileEntity).getStackInSlot(i);
-                    if (!ItemStackUtils.isEmpty(stack))
-                    {
-                        items.add(stack);
-                    }
-                }
-            }
-            else if (tileEntity != null && ChiselAndBitsCheck.isChiselAndBitsTileEntity(tileEntity))
-            {
-                items.addAll(ChiselAndBitsCheck.getBitStacks(tileEntity));
-            }
-            else if (tileEntity instanceof BedTileEntity)
-            {
-                items.add(new ItemStack(Items.BED, 1, ((BedTileEntity) tileEntity).getColor().getMetadata()));
-            }
-            else if (tileEntity instanceof TileEntityBanner)
-            {
-                items.add(((TileEntityBanner) tileEntity).getItem());
-            }
-        }
-        return items;
-    }
-
-    /**
      * Get the entity of an entityInfo object.
      *
      * @param entityData the input.
@@ -165,13 +118,24 @@ public final class ItemStackUtils
     {
         try
         {
-            return EntityList.createEntityFromNBT(entityData, world);
+            final Optional<EntityType<?>> type = EntityType.readEntityType(entityData);
+            if (type.isPresent())
+            {
+                final Entity entity = type.get().create(world);
+                if (entity != null)
+                {
+                    entity.read(entityData);
+                    return entity;
+                }
+            }
+
         }
         catch (final RuntimeException e)
         {
             Log.getLogger().info("Couldn't restore entitiy", e);
             return null;
         }
+        return null;
     }
 
     /**
@@ -211,9 +175,9 @@ public final class ItemStackUtils
         if (entity != null)
         {
             final List<ItemStorage> request = new ArrayList<>();
-            if (entity instanceof EntityItemFrame)
+            if (entity instanceof ItemFrameEntity)
             {
-                final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
+                final ItemStack stack = ((ItemFrameEntity) entity).getDisplayedItem();
                 if (!ItemStackUtils.isEmpty(stack))
                 {
                     ItemStackUtils.setSize(stack, 1);
@@ -221,15 +185,15 @@ public final class ItemStackUtils
                 }
                 request.add(new ItemStorage(new ItemStack(Items.ITEM_FRAME, 1)));
             }
-            else if (entity instanceof EntityArmorStand)
+            else if (entity instanceof ArmorStandEntity)
             {
-                request.add(new ItemStorage(entity.getPickedResult(new RayTraceResult(placer))));
+                request.add(new ItemStorage(entity.getPickedResult(new EntityRayTraceResult(placer))));
                 entity.getArmorInventoryList().forEach(item -> request.add(new ItemStorage(item)));
                 entity.getHeldEquipment().forEach(item -> request.add(new ItemStorage(item)));
             }
-            else if (!(entity instanceof EntityMob))
+            else if (!(entity instanceof MobEntity))
             {
-                request.add(new ItemStorage(entity.getPickedResult(new RayTraceResult(placer))));
+                request.add(new ItemStorage(entity.getPickedResult(new EntityRayTraceResult(placer))));
             }
 
             return request.stream().filter(stack -> !stack.getItemStack().isEmpty()).collect(Collectors.toList());
@@ -430,7 +394,7 @@ public final class ItemStackUtils
         final Item item = stack.getItem();
         return item == Items.ITEM_FRAME
                  || item == Items.ARMOR_STAND
-                 || item == Items.BANNER
+                 || item instanceof BannerItem
                  || !(item instanceof BlockItem)
                  || !Block.getBlockFromItem(item).getDefaultState().getMaterial().isSolid();
     }
@@ -534,7 +498,7 @@ public final class ItemStackUtils
         }
         //calculate fortune enchantment
         int fortune = 0;
-        if (tool.isItemEnchanted())
+        if (tool.isEnchanted())
         {
             final ListNBT t = tool.getEnchantmentTagList();
 
@@ -557,7 +521,7 @@ public final class ItemStackUtils
             return false;
         }
         boolean hasSilk = false;
-        if (tool.isItemEnchanted())
+        if (tool.isEnchanted())
         {
             final ListNBT t = tool.getEnchantmentTagList();
 
@@ -581,7 +545,7 @@ public final class ItemStackUtils
      */
     public static boolean doesItemServeAsWeapon(@NotNull final ItemStack stack)
     {
-        return stack.getItem() instanceof SwordItem || stack.getItem() instanceof ItemTool || Compatibility.isTinkersWeapon(stack);
+        return stack.getItem() instanceof SwordItem || stack.getItem() instanceof ToolItem || Compatibility.isTinkersWeapon(stack);
     }
 
     /**
@@ -696,10 +660,10 @@ public final class ItemStackUtils
         if (!isEmpty(itemStack1) &&
               !isEmpty(itemStack2) &&
               itemStack1.getItem() == itemStack2.getItem() &&
-              (itemStack1.getItemDamage() == itemStack2.getItemDamage() || !matchMeta))
+              (itemStack1.getDamage() == itemStack2.getDamage() || !matchMeta))
         {
             // Then sort on NBT
-            if (itemStack1.hasTagCompound() && itemStack2.hasTagCompound())
+            if (itemStack1.hasTag() && itemStack2.hasTag())
             {
                 // Then sort on stack size
                 return ItemStack.areItemStackTagsEqual(itemStack1, itemStack2) || !matchNBT;
@@ -778,20 +742,7 @@ public final class ItemStackUtils
     @NotNull
     public static ItemStack deserializeFromNBT(@NotNull final CompoundNBT compound)
     {
-        return new ItemStack(compound);
-    }
-
-    /**
-     * Check if the itemStack is some preferrable type of fuel.
-     *
-     * @param stack the itemStack to test.
-     * @return true if so.
-     */
-    public boolean isPreferrableFuel(@NotNull final ItemStack stack)
-    {
-        return stack.isItemEqualIgnoreDurability(new ItemStack(Items.COAL))
-                 || stack.isItemEqualIgnoreDurability(new ItemStack(Blocks.LOG))
-                 || stack.isItemEqualIgnoreDurability(new ItemStack(Blocks.LOG2));
+        return ItemStack.read(compound);
     }
 
     /**
@@ -807,14 +758,7 @@ public final class ItemStackUtils
             return false;
         }
 
-        for (final int oreId : OreDictionary.getOreIDs(stack))
-        {
-            if (OreDictionary.getOreName(oreId).equals(SAPLINGS))
-            {
-                return true;
-            }
-        }
-        return false;
+        return new Tag<Item>(ItemTags.SAPLINGS.getId()).contains(stack.getItem());
     }
 
     /**

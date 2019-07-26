@@ -3,7 +3,7 @@ package com.minecolonies.coremod.tileentities;
 import com.ldtteam.structurize.blocks.ModBlocks;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;

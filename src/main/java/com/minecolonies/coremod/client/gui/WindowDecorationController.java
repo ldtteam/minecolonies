@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.structurize.util.PlacementSettings;
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.Log;
-import com.minecolonies.blockout.controls.Button;
-import com.minecolonies.blockout.controls.ButtonHandler;
-import com.minecolonies.blockout.controls.Label;
-import com.minecolonies.blockout.controls.TextField;
+import com.ldtteam.blockout.Log;
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.ButtonHandler;
+import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.controls.TextField;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;

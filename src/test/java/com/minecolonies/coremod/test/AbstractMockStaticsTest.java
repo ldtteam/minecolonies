@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.test;
 
 import com.minecolonies.api.compatibility.CompatibilityManager;
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.ColonyManager;
 import org.apache.logging.log4j.Logger;

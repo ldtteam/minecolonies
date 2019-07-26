@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.minecolonies.blockout.views.Window;
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowHutShepherd;
 import com.minecolonies.coremod.colony.CitizenData;

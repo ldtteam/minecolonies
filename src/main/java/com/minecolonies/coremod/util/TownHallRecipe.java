@@ -2,7 +2,7 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.Log;
+import com.ldtteam.blockout.Log;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.items.ModItems;
 import net.minecraft.entity.player.PlayerEntity;

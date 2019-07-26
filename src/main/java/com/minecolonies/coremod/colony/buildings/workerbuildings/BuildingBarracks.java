@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.blockout.views.Window;
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowBarracksBuilding;
 import com.minecolonies.coremod.colony.Colony;

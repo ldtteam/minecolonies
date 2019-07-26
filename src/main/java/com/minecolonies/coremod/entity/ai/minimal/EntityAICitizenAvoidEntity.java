@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.blockout.Log;
+import com.ldtteam.blockout.Log;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;

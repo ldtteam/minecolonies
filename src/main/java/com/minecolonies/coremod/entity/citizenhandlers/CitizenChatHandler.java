@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.citizenhandlers;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.ServerUtils;

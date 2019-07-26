@@ -2,7 +2,7 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.client.gui.WindowGuardControl;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;

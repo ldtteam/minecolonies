@@ -1,7 +1,6 @@
 package com.minecolonies.api.util;
 
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -144,30 +143,6 @@ public final class Utils
             }
         }
         return false;
-    }
-
-    /**
-     * Finds the highest block in one y coordinate, but ignores leaves etc.
-     *
-     * @param world world obj.
-     * @param x     x coordinate.
-     * @param z     z coordinate.
-     * @return yCoordinate.
-     */
-    public static int findTopGround(@NotNull final World world, final int x, final int z)
-    {
-        int yHolder = 1;
-        while (!world.canBlockSeeSky(new BlockPos(x, yHolder, z)))
-        {
-            yHolder++;
-        }
-        while (!world.getBlockState(new BlockPos(x, yHolder, z)).isOpaqueCube()
-                 || arrayContains(new Block[] {Blocks.AIR, Blocks.LEAVES, Blocks.LEAVES2}
-          , world.getBlockState(new BlockPos(x, yHolder, z)).getBlock()))
-        {
-            yHolder--;
-        }
-        return yHolder;
     }
 
     /**

@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.minecolonies.api.colony.ColonyProgressType;
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.Colony;

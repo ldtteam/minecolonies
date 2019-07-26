@@ -4,7 +4,7 @@ import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.BlockInfo;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.util.EntityUtils;
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.entity.EntityCitizen;
