@@ -2,7 +2,6 @@ package com.minecolonies.api.configuration;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,496 +19,142 @@ public class CommonConfiguration extends AbstractConfiguration
      *  --------------------------------------------------------------------------- */
 
     public final ForgeConfigSpec.IntValue initialCitizenAmount;
-
     public final ForgeConfigSpec.BooleanValue builderPlaceConstructionTape;
-
     public final ForgeConfigSpec.BooleanValue playerGetsGuidebookOnFirstJoin;
-
     public final ForgeConfigSpec.BooleanValue supplyChests;
-
     public final ForgeConfigSpec.BooleanValue allowInfiniteSupplyChests;
-
     public final ForgeConfigSpec.BooleanValue allowInfiniteColonies;
-
     public final ForgeConfigSpec.BooleanValue allowOtherDimColonies;
-
     public final ForgeConfigSpec.IntValue citizenRespawnInterval;
-
     public final ForgeConfigSpec.IntValue maxCitizenPerColony;
-
     public final ForgeConfigSpec.BooleanValue builderInfiniteResources;
-
     public final ForgeConfigSpec.BooleanValue limitToOneWareHousePerColony;
-
     public final ForgeConfigSpec.IntValue builderBuildBlockDelay;
-
     public final ForgeConfigSpec.IntValue blockMiningDelayModifier;
-
     public final ForgeConfigSpec.IntValue maxBlocksCheckedByBuilder;
-
     public final ForgeConfigSpec.IntValue chatFrequency;
-
     public final ForgeConfigSpec.BooleanValue enableInDevelopmentFeatures;
-
     public final ForgeConfigSpec.BooleanValue alwaysRenderNameTag;
-
     public final ForgeConfigSpec.DoubleValue growthModifier;
-
     public final ForgeConfigSpec.BooleanValue workersAlwaysWorkInRain;
-
     public final ForgeConfigSpec.BooleanValue sendEnteringLeavingMessages;
-
     public final ForgeConfigSpec.BooleanValue allowPlayerSchematics;
-
     public final ForgeConfigSpec.IntValue allowGlobalNameChanges;
-
     public final ForgeConfigSpec.BooleanValue holidayFeatures;
-
     public final ForgeConfigSpec.IntValue updateRate;
-
     public final ForgeConfigSpec.IntValue dirtFromCompost;
-
     public final ForgeConfigSpec.IntValue luckyBlockChance;
-
     public final ForgeConfigSpec.BooleanValue fixOrphanedChunks;
-
     public final ForgeConfigSpec.BooleanValue restrictBuilderUnderground;
-
     public final ForgeConfigSpec.DoubleValue fisherSpongeChance;
-
     public final ForgeConfigSpec.IntValue minThLevelToTeleport;
-
     public final ForgeConfigSpec.BooleanValue suggestBuildToolPlacement;
-
     public final ForgeConfigSpec.DoubleValue foodModifier;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
-    @Config.Comment("Time until a next teleport can be executed (in seconds). [Default: 120]")
-    public final ForgeConfigSpec.IntValue teleportBuffer = 120;
-
-    @Config.Comment("Which level counts as op level on the server. [Default: 3]")
-    public final ForgeConfigSpec.IntValue opLevelForServer = 3;
-
-    @Config.Comment("Sets the amount of hours until a colony will be deleted after not seeing it's mayor, set to zero to disable. [Default: 0]")
-    public final ForgeConfigSpec.IntValue autoDeleteColoniesInHours = 0;
-
-    @Config.Comment("Sets weither or not Colony structures are destroyed automatically. [Default: true]")
-    public final ForgeConfigSpec.BooleanValue autoDestroyColonyBlocks = true;
-
-    @Config.Comment("Should the player be allowed to use the '/mc rtp' command? [Default: true]")
-    public final ForgeConfigSpec.BooleanValue canPlayerUseRTPCommand = true;
-
-    @Config.Comment("Should the player be allowed to use the '/mc colony teleport' command? [Default: false]")
-    public final ForgeConfigSpec.BooleanValue canPlayerUseColonyTPCommand = false;
-
-    @Config.Comment("Should the player be allowed to use the '/mc home' command? [Default: true]")
-    public final ForgeConfigSpec.BooleanValue canPlayerUseHomeTPCommand = true;
-
-    @Config.Comment("Should the player be allowed to use the '/mc citizens info' command? [Default: true]")
-    public final ForgeConfigSpec.BooleanValue canPlayerUseCitizenInfoCommand = true;
-
-    @Config.Comment("Should the player be allowed to use the '/mc citizens list' command? [Default: true]")
-    public final ForgeConfigSpec.BooleanValue canPlayerUseListCitizensCommand = true;
-
-    @Config.Comment("Should the player be allowed to use the '/mc citizens respawn' command? [Default: true]")
-    public final ForgeConfigSpec.BooleanValue canPlayerRespawnCitizensCommand = true;
-
-    @Config.Comment("Should the player be allowed to use the '/mc colony info' command? [Default: true]")
-    public final ForgeConfigSpec.BooleanValue canPlayerUseShowColonyInfoCommand = true;
-
-    @Config.Comment("Should the player be allowed to use the '/mc citizens kill' command? [Default: true]")
-    public final ForgeConfigSpec.BooleanValue canPlayerUseKillCitizensCommand = true;
-
-    @Config.Comment("Should the player be allowed to use the '/mc colony addOfficer' command? [Default: true]")
-    public final ForgeConfigSpec.BooleanValue canPlayerUseAddOfficerCommand = true;
-
-    @Config.Comment("Should the player be allowed to use the '/mc colony delete' command? [Default: true]")
-    public final ForgeConfigSpec.BooleanValue canPlayerUseDeleteColonyCommand = true;
-
-    @Config.Comment("Should the player be allowed to use the '/mc colony refresh' command? [Default: false]")
-    public final ForgeConfigSpec.BooleanValue canPlayerUseRefreshColonyCommand = false;
-
-    @Config.Comment("Should the player be allowed to use the '/mc backup' command? [Default: false]")
-    public final ForgeConfigSpec.BooleanValue canPlayerUseBackupCommand = false;
-
-    @Config.Comment("Amount of attempts to find a save rtp. [Default: 4]")
-    public final ForgeConfigSpec.IntValue numberOfAttemptsForSafeTP = 4;
+    public final ForgeConfigSpec.IntValue teleportBuffer;
+    public final ForgeConfigSpec.IntValue opLevelForServer;
+    public final ForgeConfigSpec.IntValue autoDeleteColoniesInHours;
+    public final ForgeConfigSpec.BooleanValue autoDestroyColonyBlocks;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseRTPCommand;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseColonyTPCommand;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseHomeTPCommand;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseCitizenInfoCommand;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseListCitizensCommand;
+    public final ForgeConfigSpec.BooleanValue canPlayerRespawnCitizensCommand;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseShowColonyInfoCommand;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseKillCitizensCommand;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseAddOfficerCommand;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseDeleteColonyCommand;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseRefreshColonyCommand;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseBackupCommand;
+    public final ForgeConfigSpec.IntValue numberOfAttemptsForSafeTP;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Claim settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
-    @Config.Comment("Max distance a colony can claim a chunk from the center, 0 if disable maximum.  [Default: 0]")
-    public final ForgeConfigSpec.IntValue workingRangeTownHall = 0;
-
-    @Config.Comment("Colony size (radius in chunks around central colony chunk). Only for the static mode. [Default: 8]")
-    public final ForgeConfigSpec.IntValue workingRangeTownHallChunks = 8;
-
-    @Config.Comment("The minimum distances between town halls for dynamic colony sizes (used as default initial claim too). [Default: 3]")
-    public final ForgeConfigSpec.IntValue minTownHallPadding = 3;
-
-    @Config.Comment("Padding between colonies  - deprecated, don't use.  [Default: 20]")
-    public final ForgeConfigSpec.IntValue townHallPadding = 20;
-
-    @Config.Comment("Padding between colonies in chunks. [Default: 1]")
-    public final ForgeConfigSpec.IntValue townHallPaddingChunk = 1;
-
-    @Config.Comment("Should the min/max distance from spawn also affect colony placement? [Default: false]")
-    public final ForgeConfigSpec.BooleanValue restrictColonyPlacement = false;
-
-    @Config.Comment("Should the colony have a fixed radius or should it be dynamic. [Default: false]")
-    public final ForgeConfigSpec.BooleanValue enableDynamicColonySizes = false;
-
-    @Config.Comment("Max distance from world spawn. [Default: 8000]")
-    public final ForgeConfigSpec.IntValue maxDistanceFromWorldSpawn = 8000;
-
-    @Config.Comment("Min distance from world spawn. [Default: 512]")
-    public final ForgeConfigSpec.IntValue minDistanceFromWorldSpawn = 512;
-
-    @Config.Comment("Should players be allowed to build their colonies over existing villages? [Default: false]")
-    public final ForgeConfigSpec.BooleanValue protectVillages = false;
+    public final ForgeConfigSpec.IntValue     workingRangeTownHallChunks;
+    public final ForgeConfigSpec.IntValue     minTownHallPadding;
+    public final ForgeConfigSpec.IntValue     townHallPadding;
+    public final ForgeConfigSpec.IntValue     townHallPaddingChunk;
+    public final ForgeConfigSpec.BooleanValue restrictColonyPlacement;
+    public final ForgeConfigSpec.BooleanValue enableDynamicColonySizes;
+    public final ForgeConfigSpec.IntValue     maxDistanceFromWorldSpawn;
+    public final ForgeConfigSpec.IntValue     minDistanceFromWorldSpawn;
+    public final ForgeConfigSpec.BooleanValue protectVillages;
 
     /*  ------------------------------------------------------------------------- *
      *  ------------------- ######## Combat Settings ######## ------------------- *
      *  ------------------------------------------------------------------------- */
 
-    @Config.Comment("Whether or not to spawn barbarians. [Default: true]")
-    public final ForgeConfigSpec.BooleanValue doBarbariansSpawn = true;
-
-    @Config.RangeInt(min = (MIN_BARBARIAN_DIFFICULTY), max = MAX_BARBARIAN_DIFFICULTY)
-    @Config.Comment("The difficulty setting for barbarians. [Default: 5]")
-    public final ForgeConfigSpec.IntValue barbarianHordeDifficulty = 5;
-
-    @Config.RangeInt(min = (MIN_SPAWN_BARBARIAN_HORDE_SIZE), max = MAX_SPAWN_BARBARIAN_HORDE_SIZE)
-    @Config.Comment("The spawn size of a barbarian horde. [Default: 5]")
-    public final ForgeConfigSpec.IntValue spawnBarbarianSize = 5;
-
-    @Config.RangeInt(min = (MIN_BARBARIAN_HORDE_SIZE), max = MAX_BARBARIAN_HORDE_SIZE)
-    @Config.Comment("The max size of a barbarian horde. [Default: 20]")
-    public final ForgeConfigSpec.IntValue maxBarbarianSize = 20;
-
-    @Config.Comment("Whether or not to barbarians can break, scale, bridge obstacles. [Default: true]")
-    public final ForgeConfigSpec.BooleanValue doBarbariansBreakThroughWalls = true;
-
-    @Config.Comment("The average amount of nights between raids. [Default: 3]")
-    public final ForgeConfigSpec.IntValue averageNumberOfNightsBetweenRaids = 3;
-
-    @Config.Comment("The minimum number of nights between raids. [Default: 1]")
-    public final ForgeConfigSpec.IntValue minimumNumberOfNightsBetweenRaids = 1;
-
+    public final ForgeConfigSpec.BooleanValue doBarbariansSpawn;
+    public final ForgeConfigSpec.IntValue barbarianHordeDifficulty;
+    public final ForgeConfigSpec.IntValue spawnBarbarianSize;
+    public final ForgeConfigSpec.IntValue maxBarbarianSize;
+    public final ForgeConfigSpec.BooleanValue doBarbariansBreakThroughWalls;
+    public final ForgeConfigSpec.IntValue averageNumberOfNightsBetweenRaids;
+    public final ForgeConfigSpec.IntValue minimumNumberOfNightsBetweenRaids;
     // TODO: change to true over time
-    @Config.Comment("Should Mobs attack citizens? [Default: false")
-    public final ForgeConfigSpec.BooleanValue mobAttackCitizens = false;
-
-    @Config.Comment("Should Citizens call guards for help when attacked? default:true")
-    public final ForgeConfigSpec.BooleanValue citizenCallForHelp = true;
-
-    @Config.Comment("Should Guard Rangers benefit from Power/Smite/Bane of Arthropods enchants? [Default: true]")
-    public final ForgeConfigSpec.BooleanValue rangerEnchants = true;
-
-    @Config.Comment("Damage multiplier for Ranger Guards. [Default: 1.0]")
-    public final ForgeConfigSpec.DoubleValue rangerDamageMult = 1.0;
-
-    @Config.Comment("Damage multiplier for Knight Guards. [Default: 1.0]")
-    public final ForgeConfigSpec.DoubleValue knightDamageMult = 1.0;
-
-    @Config.Comment("Health multiplier for all Guards. [Default: 1.0]")
-    public final ForgeConfigSpec.DoubleValue guardHealthMult = 1.0;
-
-    @Config.Comment("Turn on Minecolonies pvp mode, attention (colonies can be destroyed and can be griefed under certain conditions). [Default: false]")
-    public final ForgeConfigSpec.BooleanValue pvp_mode = false;
-
-    @Config.Comment("Days until the pirate ships despawn again. [Default: 3]")
-    public final ForgeConfigSpec.IntValue daysUntilPirateshipsDespawn = 3;
-
-    @Config.Comment("Max Y level for Barbarians to spawn. [Default: 200]")
-    public final ForgeConfigSpec.IntValue maxYForBarbarians = 200;
+    public final ForgeConfigSpec.BooleanValue mobAttackCitizens;
+    public final ForgeConfigSpec.BooleanValue citizenCallForHelp;
+    public final ForgeConfigSpec.BooleanValue rangerEnchants;
+    public final ForgeConfigSpec.DoubleValue rangerDamageMult;
+    public final ForgeConfigSpec.DoubleValue knightDamageMult;
+    public final ForgeConfigSpec.DoubleValue guardHealthMult;
+    public final ForgeConfigSpec.BooleanValue pvp_mode;
+    public final ForgeConfigSpec.IntValue daysUntilPirateshipsDespawn;
+    public final ForgeConfigSpec.IntValue maxYForBarbarians;
 
     /*  ----------------------------------------------------------------------------- *
      *  ------------------- ######## Permission Settings ######## ------------------- *
      *  ----------------------------------------------------------------------------- */
 
-    @Config.Comment("Should the colony protection be enabled? [Default: true]")
-    public final ForgeConfigSpec.BooleanValue enableColonyProtection = true;
-
-    @Config.Comment("Independent from the colony protection, should explosions be turned off? [Default: true]")
-    public final ForgeConfigSpec.BooleanValue turnOffExplosionsInColonies = true;
-
-    @Config.Comment("Players who have special permission (Patreons for example)")
-    public String[] specialPermGroup = new String[]
-                                         {
-                                           "_Raycoms_"
-                                         };
-
-    @Config.Comment("Blocks players should be able to final ForgeConfigSpec.IntValueeract with in any colony (Ex vending machines)")
-    public String[] freeToInteractBlocks = new String[]
-                                             {
-                                               "block:dirt",
-                                               "0 0 0"
-                                             };
-
-    @Config.Comment("Seconds between permission messages. [Default: 30]")
-    public final ForgeConfigSpec.IntValue secondsBetweenPermissionMessages = 30;
+    public final ForgeConfigSpec.BooleanValue enableColonyProtection;
+    public final ForgeConfigSpec.BooleanValue turnOffExplosionsInColonies;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> specialPermGroup;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> freeToInteractBlocks;
+    public final ForgeConfigSpec.IntValue secondsBetweenPermissionMessages;
 
     /*  -------------------------------------------------------------------------------- *
      *  ------------------- ######## Compatibility Settings ######## ------------------- *
      *  -------------------------------------------------------------------------------- */
 
-    @Config.Comment("Ores for the miner to mine that aren't autodetected")
-    public String[] extraOres = new String[]
-                                  {
-                                    "minestuck:ore_cruxite",
-                                    "minestuck:ore_uranium",
-                                  };
-
-    @Config.Comment("ResourceLocations for extra entities for the GuardHut's list. \n"
-                      + "once done you'll need to recalculate the list."
-                      + "EntityMob's already calculated in list.")
-    public String[] guardResourceLocations = new String[]
-                                               {
-                                                 "minecraft:slime",
-                                                 "tconstruct:blueslime"
-                                               };
-
-    @Config.Comment("List of items the Students in the library can use. \n"
-                      + "Format: itemname;SkillIncreasePCT[100-1000];BreakPCT[0-100] \n"
-                      + "Example: minecraft:paper;400;100 \n"
-                      + "Which adds minecraft Paper with a 400%(4x) increased chance to skillup and a 100% chance to be used up during the try to skillup")
-    public final String[] configListStudyItems = new String[]
-                                                   {
-                                                     "minecraft:paper;400;100"
-                                                   };
-
-    @Config.Comment("The items and item-tags that the composter can use to produce compost.")
-    public String[] listOfCompostableItems = new String[]
-                                               {
-                                                 "minecraft:rotten_flesh",
-                                                 "minecraft:tallgrass",
-                                                 "minecraft:yellow_flower",
-                                                 "minecraft:red_flower",
-                                                 "minecraft:brown_mushroom",
-                                                 "minecraft:red_mushroom",
-                                                 "minecraft:final ForgeConfigSpec.DoubleValue_plant",
-                                                 "minecraft:feather",
-                                                 "food",
-                                                 "seed",
-                                                 "treeSapling"
-                                               };
-
-    @Config.Comment("The blocks where the miner has a chance to get a random ore.")
-    public String[] luckyBlocks = new String[]
-                                    {
-                                      "minecraft:stone",
-                                      "minecraft:cobblestone",
-                                    };
-
-    @Config.Comment("The random ores the miner can get separated by ! for rarity")
-    public String[] luckyOres = new String[]
-                                  {
-                                    "minecraft:coal_ore!64",
-                                    "minecraft:iron_ore!32",
-                                    "minecraft:gold_ore!16",
-                                    "minecraft:redstone_ore!8",
-                                    "minecraft:lapis_ore!4",
-                                    "minecraft:diamond_ore!2",
-                                    "minecraft:emerald_ore!1"
-                                  };
-
-    @Config.Comment("What the crusher can produce at the cost of 2:1")
-    public String[] crusherProduction = new String[]
-                                          {
-                                            "minecraft:cobblestone!minecraft:gravel",
-                                            "minecraft:gravel!minecraft:sand",
-                                            "minecraft:sand!minecraft:clay"
-                                          };
-
-    @Config.Comment("The different meshes which can be bought in the building with durability")
-    public String[] sifterMeshes = new String[]
-                                     {
-                                       "minecraft:string,0",
-                                       "minecraft:flfinal ForgeConfigSpec.IntValue,0.1",
-                                       "minecraft:iron_ingot,0.1",
-                                       "minecraft:diamond,0.1"
-                                     };
-
-    @Config.Comment("The blocks which can be sifted for items")
-    public String[] siftableBlocks = new String[]
-                                       {
-                                         "minecraft:dirt",
-                                         "minecraft:sand",
-                                         "minecraft:gravel",
-                                         "minecraft:soul_sand",
-                                       };
-
-    @Config.Comment("The possible drops from sifting - keyBlock, keyMesh, item, probability")
-    public String[] sifterDrops = new String[]
-                                    {
-                                      //Dirt with String mesh
-                                      "0,0,minecraft:wheat_seeds,25",
-                                      "0,0,minecraft:sapling:0,1",
-                                      "0,0,minecraft:sapling:1,1",
-                                      "0,0,minecraft:sapling:2,1",
-                                      "0,0,minecraft:sapling:3,1",
-
-                                      //Dirt with flfinal ForgeConfigSpec.IntValue mesh
-                                      "0,1,minecraft:wheat_seeds,50",
-                                      "0,1,minecraft:sapling:0,5",
-                                      "0,1,minecraft:sapling:1,5",
-                                      "0,1,minecraft:sapling:2,5",
-                                      "0,1,minecraft:sapling:3,5",
-                                      "0,1,minecraft:carrot:0,1",
-                                      "0,1,minecraft:potato:0,1",
-
-                                      //Dirt with iron mesh
-                                      "0,2,minecraft:wheat_seeds,50",
-                                      "0,2,minecraft:sapling:0,10",
-                                      "0,2,minecraft:sapling:1,10",
-                                      "0,2,minecraft:sapling:2,10",
-                                      "0,2,minecraft:sapling:3,10",
-                                      "0,2,minecraft:pumpkin_seeds:0,1",
-                                      "0,2,minecraft:melon_seeds:0,1",
-                                      "0,2,minecraft:beetroot_seeds:0,1",
-                                      "0,2,minecraft:carrot:0,1",
-                                      "0,2,minecraft:potato:0,1",
-                                      "0,2,minecraft:sapling:4,1",
-                                      "0,2,minecraft:sapling:5,1",
-
-                                      //Dirt with diamond mesh
-                                      "0,3,minecraft:wheat_seeds,25",
-                                      "0,3,minecraft:sapling:0,10",
-                                      "0,3,minecraft:sapling:1,10",
-                                      "0,3,minecraft:sapling:2,10",
-                                      "0,3,minecraft:sapling:3,10",
-                                      "0,3,minecraft:pumpkin_seeds:0,5",
-                                      "0,3,minecraft:melon_seeds:0,5",
-                                      "0,3,minecraft:beetroot_seeds:0,5",
-                                      "0,3,minecraft:carrot:0,5",
-                                      "0,3,minecraft:potato:0,5",
-                                      "0,3,minecraft:sapling:4,5",
-                                      "0,3,minecraft:sapling:5,5",
-
-                                      //Sand with string mesh
-                                      "1,0,minecraft:cactus,2.5",
-                                      "1,0,minecraft:reeds,2.5",
-
-                                      //Sand with flfinal ForgeConfigSpec.IntValue mesh
-                                      "1,1,minecraft:cactus,5",
-                                      "1,1,minecraft:reeds,5",
-                                      "1,1,minecraft:gold_nugget,5",
-
-                                      //Sand with iron mesh
-                                      "1,2,minecraft:cactus,10",
-                                      "1,2,minecraft:reeds,10",
-                                      "1,2,minecraft:dye:3,10",
-                                      "1,2,minecraft:gold_nugget,10",
-
-                                      //Sand with diamond mesh
-                                      "1,3,minecraft:cactus,15",
-                                      "1,3,minecraft:reeds,15",
-                                      "1,3,minecraft:dye:3,15",
-                                      "1,3,minecraft:gold_nugget,15",
-
-                                      //Gravel with string mesh
-                                      "2,0,minecraft:iron_nugget,5",
-                                      "2,0,minecraft:flfinal ForgeConfigSpec.IntValue,5",
-                                      "2,0,minecraft:coal,5",
-
-                                      //Gravel with flfinal ForgeConfigSpec.IntValue mesh
-                                      "2,1,minecraft:redstone,10",
-                                      "2,1,minecraft:iron_nugget,10",
-                                      "2,1,minecraft:flfinal ForgeConfigSpec.IntValue,10",
-                                      "2,1,minecraft:coal,10",
-
-                                      //Gravel with iron mesh
-                                      "2,2,minecraft:redstone,15",
-                                      "2,2,minecraft:iron_nugget,15",
-                                      "2,2,minecraft:coal,15",
-                                      "2,2,minecraft:dye:4,5",
-                                      "2,2,minecraft:iron_ingot,1",
-                                      "2,2,minecraft:gold_ingot,1",
-                                      "2,2,minecraft:emerald,1",
-                                      "2,2,minecraft:diamond,1",
-
-                                      //Gravel with diamond mesh
-                                      "2,3,minecraft:redstone,20",
-                                      "2,3,minecraft:coal,20",
-                                      "2,3,minecraft:dye:4,10",
-                                      "2,3,minecraft:iron_ingot,2.5",
-                                      "2,3,minecraft:gold_ingot,2.5",
-                                      "2,3,minecraft:emerald,2.5",
-                                      "2,3,minecraft:diamond,2.5",
-
-                                      //Soulsand with string mesh
-                                      "3,0,minecraft:nether_wart,5",
-                                      "3,0,minecraft:quartz,5",
-
-                                      //Soulsand with flfinal ForgeConfigSpec.IntValue mesh
-                                      "3,1,minecraft:nether_wart,10",
-                                      "3,1,minecraft:quartz,10",
-                                      "3,1,minecraft:glowstone_dust,5",
-
-                                      //Soulsand with iron mesh
-                                      "3,2,minecraft:nether_wart,10",
-                                      "3,2,minecraft:quartz,10",
-                                      "3,2,minecraft:glowstone_dust,10",
-                                      "3,2,minecraft:blaze_powder,1",
-                                      "3,2,minecraft:magma_cream,1",
-
-                                      //Soulsand with diamond mesh
-                                      "3,3,minecraft:nether_wart,15",
-                                      "3,3,minecraft:quartz,15",
-                                      "3,3,minecraft:glowstone_dust,15",
-                                      "3,3,minecraft:blaze_powder,5",
-                                      "3,3,minecraft:magma_cream,5",
-                                      "3,3,minecraft:skull:3,5",
-                                    };
-
-    @Config.Comment("Harvest trunk-size for dynamic trees:1-8. [Default: 5]")
-    public final ForgeConfigSpec.IntValue dynamicTreeHarvestSize = 5;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> extraOres;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> guardResourceLocations;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListStudyItems;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> listOfCompostableItems;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> luckyBlocks;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> luckyOres;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> crusherProduction ;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> sifterMeshes;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> siftableBlocks;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> sifterDrops;
+    public final ForgeConfigSpec.IntValue dynamicTreeHarvestSize;
 
     /*  ------------------------------------------------------------------------------ *
      *  ------------------- ######## Pathfinding Settings ######## ------------------- *
      *  ------------------------------------------------------------------------------ */
 
-    @Config.Comment("Draw pathfinding paths (might be laggy). [Default: false]")
-    public final ForgeConfigSpec.BooleanValue pathfindingDebugDraw = false;
-
-    @Config.Comment("Verbosity of pathfinding. [Default: 0]")
-    public final ForgeConfigSpec.IntValue pathfindingDebugVerbosity = 0;
-
-    @Config.Comment("Amount of additional threads to be used for pathfinding. [Default: 2]")
-    public final ForgeConfigSpec.IntValue pathfindingMaxThreadCount = 2;
-
-    @Config.Comment("Max amount of Nodes(positions) to map during pathfinding. Lowering increases performance, but might lead to pathing glitches. [Default: 5000]")
-    public final ForgeConfigSpec.IntValue pathfindingMaxNodes = 5000;
+    public final ForgeConfigSpec.BooleanValue pathfindingDebugDraw;
+    public final ForgeConfigSpec.IntValue pathfindingDebugVerbosity;
+    public final ForgeConfigSpec.IntValue pathfindingMaxThreadCount;
+    public final ForgeConfigSpec.IntValue pathfindingMaxNodes;
 
     /*  --------------------------------------------------------------------------------- *
      *  ------------------- ######## Request System Settings ######## ------------------- *
      *  --------------------------------------------------------------------------------- */
 
-    @Config.Comment("Should the request system prfinal ForgeConfigSpec.IntValue out debug information? Useful in case of malfunctioning of set system. [Default: false]")
-    public final ForgeConfigSpec.BooleanValue enableDebugLogging = false;
-
-    @Config.Comment("The maximal amount of tries that the request system will perform for retryable requests. Higher increases server load. [Default: 3]")
-    public final ForgeConfigSpec.IntValue maximalRetries = 3;
-
-    @Config.Comment("The amount of ticks between retries of the request system for retryable requests. Lower increases server load. [Default: 1200]")
-    public final ForgeConfigSpec.IntValue delayBetweenRetries = 1200;
-
-    @Config.Comment("The maximal amount of buildings the Delivery Man should try to gather before attempting a drop off at the warehouse. [Default: 6]")
-    public final ForgeConfigSpec.IntValue maximalBuildingsToGather = 6;
-
-    @Config.Comment("The minimal amount of buildings the Delivery Man should try to gather before attempting a drop off at the warehouse. [Default: 3]")
-    public final ForgeConfigSpec.IntValue minimalBuildingsToGather = 3;
-
-    @Config.Comment("Should the request system creatively resolve (if possible) when the player is required to resolve a request. [Default: false]")
-    public final ForgeConfigSpec.BooleanValue creativeResolve = false;
-
-    @Config.Comment("Should the player be allowed to use the '/mc colony rs reset' command? [Default: false]")
-    public final ForgeConfigSpec.BooleanValue canPlayerUseResetCommand = false;
+    public final ForgeConfigSpec.BooleanValue enableDebugLogging;
+    public final ForgeConfigSpec.IntValue maximalRetries;
+    public final ForgeConfigSpec.IntValue delayBetweenRetries;
+    public final ForgeConfigSpec.IntValue maximalBuildingsToGather;
+    public final ForgeConfigSpec.IntValue minimalBuildingsToGather;
+    public final ForgeConfigSpec.BooleanValue creativeResolve;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseResetCommand;
 
     /**
      * Builds common configuration.
@@ -520,53 +165,319 @@ public class CommonConfiguration extends AbstractConfiguration
     {
         createCategory(builder, "gameplay");
 
-        initialCitizenAmount = defineInteger(builder, "maxOperationsPerTick", 4, 1, 10);
-        builderPlaceConstructionTape = defineBoolean(builder, "ignoreSchematicsFromJar", true);
-        playerGetsGuidebookOnFirstJoin = defineBoolean(builder, "ignoreSchematicsFromJar", true);
-        supplyChests = defineBoolean(builder, "ignoreSchematicsFromJar", true);
-        allowInfiniteSupplyChests = defineBoolean(builder, "ignoreSchematicsFromJar", false);
-        allowInfiniteColonies = defineBoolean(builder, "ignoreSchematicsFromJar", false);
-        allowOtherDimColonies = defineBoolean(builder, "ignoreSchematicsFromJar", false);
-        citizenRespawnInterval = defineInteger(builder, "maxOperationsPerTick", 60, CITIZEN_RESPAWN_INTERVAL_MIN, CITIZEN_RESPAWN_INTERVAL_MAX);
-        maxCitizenPerColony = defineInteger(builder, "maxOperationsPerTick", 50, 4, 500);
-        builderInfiniteResources = defineBoolean(builder, "ignoreSchematicsFromJar", false);
-        limitToOneWareHousePerColony = defineBoolean(builder, "ignoreSchematicsFromJar", true);
-        builderBuildBlockDelay = defineInteger(builder, "maxOperationsPerTick", 15, 1, 500);
-        blockMiningDelayModifier = defineInteger(builder, "maxOperationsPerTick", 500, 1, 10000);
-        maxBlocksCheckedByBuilder = defineInteger(builder, "maxOperationsPerTick", 1000, 1000, 100000);
-        chatFrequency = defineInteger(builder, "maxOperationsPerTick", 30, 1, 100);
-        enableInDevelopmentFeatures = defineBoolean(builder, "ignoreSchematicsFromJar", false);
-        alwaysRenderNameTag = defineBoolean(builder, "ignoreSchematicsFromJar", true);
-        growthModifier = defineDouble(builder, "maxOperationsPerTick", 1, 1, 100);
-        workersAlwaysWorkInRain = defineBoolean(builder, "ignoreSchematicsFromJar", false);
-        sendEnteringLeavingMessages = defineBoolean(builder, "ignoreSchematicsFromJar", true);
-        allowPlayerSchematics = defineBoolean(builder, "ignoreSchematicsFromJar", false);
-        allowGlobalNameChanges = defineInteger(builder, "maxOperationsPerTick", 1, -1, 1);
-        holidayFeatures = defineBoolean(builder, "ignoreSchematicsFromJar", true);
-        updateRate = defineInteger(builder, "maxOperationsPerTick", 1, 0, 100);
-        dirtFromCompost = defineInteger(builder, "maxOperationsPerTick", 1, 0, 100);
-        luckyBlockChance = defineInteger(builder, "maxOperationsPerTick", 1, 0, 100);
-        fixOrphanedChunks = defineBoolean(builder, "ignoreSchematicsFromJar", false);
-        restrictBuilderUnderground = defineBoolean(builder, "ignoreSchematicsFromJar", true);
-        fisherSpongeChance = defineDouble(builder, "maxCachedChanges", 0.1, 0, 100);
-        minThLevelToTeleport = defineInteger(builder, "maxOperationsPerTick", 3, 0, 5);
-        suggestBuildToolPlacement = defineBoolean(builder, "ignoreSchematicsFromJar", true);
-        foodModifier = defineDouble(builder, "maxCachedChanges", 1.0, 0, 100);
-        ForgeConfigSpec.ConfigValue<List<? extends String>> list = defineList(builder, "key", (ArrayList<String>)Arrays.asList("s1", "s2", "s3", "s4"), s -> s instanceof String);
+        initialCitizenAmount = defineInteger(builder, "initialcitizenamount", 4, 1, 10);
+        builderPlaceConstructionTape = defineBoolean(builder, "builderplaceconstructiontape", true);
+        playerGetsGuidebookOnFirstJoin = defineBoolean(builder, "playergetsguidebookonfirstjoin", true);
+        supplyChests = defineBoolean(builder, "supplychests", true);
+        allowInfiniteSupplyChests = defineBoolean(builder, "allowinfinitesupplychests", false);
+        allowInfiniteColonies = defineBoolean(builder, "allowinfinitecolonies", false);
+        allowOtherDimColonies = defineBoolean(builder, "allowotherdimcolonies", false);
+        citizenRespawnInterval = defineInteger(builder, "citizenrespawninterval", 60, CITIZEN_RESPAWN_INTERVAL_MIN, CITIZEN_RESPAWN_INTERVAL_MAX);
+        maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 50, 4, 500);
+        builderInfiniteResources = defineBoolean(builder, "builderinfiniteresources", false);
+        limitToOneWareHousePerColony = defineBoolean(builder, "limittoonewarehousepercolony", true);
+        builderBuildBlockDelay = defineInteger(builder, "builderbuildblockdelay", 15, 1, 500);
+        blockMiningDelayModifier = defineInteger(builder, "blockminingdelaymodifier", 500, 1, 10000);
+        maxBlocksCheckedByBuilder = defineInteger(builder, "maxblockscheckedbybuilder", 1000, 1000, 100000);
+        chatFrequency = defineInteger(builder, "chatfrequency", 30, 1, 100);
+        enableInDevelopmentFeatures = defineBoolean(builder, "enableindevelopmentfeatures", false);
+        alwaysRenderNameTag = defineBoolean(builder, "alwaysrendernametag", true);
+        growthModifier = defineDouble(builder, "growthmodifier", 1, 1, 100);
+        workersAlwaysWorkInRain = defineBoolean(builder, "workersalwaysworkinrain", false);
+        sendEnteringLeavingMessages = defineBoolean(builder, "sendenteringleavingmessages", true);
+        allowPlayerSchematics = defineBoolean(builder, "allowplayerschematics", false);
+        allowGlobalNameChanges = defineInteger(builder, "allowglobalnamechanges", 1, -1, 1);
+        holidayFeatures = defineBoolean(builder, "holidayfeatures", true);
+        updateRate = defineInteger(builder, "updaterate", 1, 0, 100);
+        dirtFromCompost = defineInteger(builder, "dirtfromcompost", 1, 0, 100);
+        luckyBlockChance = defineInteger(builder, "luckyblockchance", 1, 0, 100);
+        fixOrphanedChunks = defineBoolean(builder, "fixorphanedchunks", false);
+        restrictBuilderUnderground = defineBoolean(builder, "restrictbuilderunderground", true);
+        fisherSpongeChance = defineDouble(builder, "fisherspongechance", 0.1, 0, 100);
+        minThLevelToTeleport = defineInteger(builder, "minthleveltoteleport", 3, 0, 5);
+        suggestBuildToolPlacement = defineBoolean(builder, "suggestbuildtoolplacement", true);
+        foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0, 100);
 
 
         swapToCategory(builder, "commands");
 
+        teleportBuffer = defineInteger(builder, "teleportbuffer", 120, 30, 99999);
+        opLevelForServer = defineInteger(builder, "oplevelforserver", 3, 0, 3);
+        autoDeleteColoniesInHours = defineInteger(builder, "autodeletecoloniesinhours", 0, 168, 10000);
+        autoDestroyColonyBlocks = defineBoolean(builder, "autodestroycolonyblocks", true);
+        canPlayerUseRTPCommand = defineBoolean(builder, "canplayerusertpcommand", true);
+        canPlayerUseColonyTPCommand = defineBoolean(builder, "canplayerusecolonytpcommand", false);
+        canPlayerUseHomeTPCommand = defineBoolean(builder, "canplayerusehometpcommand", true);
+        canPlayerUseCitizenInfoCommand = defineBoolean(builder, "canplayerusecitizeninfocommand", true);
+        canPlayerUseListCitizensCommand = defineBoolean(builder, "canplayeruselistcitizenscommand", true);
+        canPlayerRespawnCitizensCommand = defineBoolean(builder, "canplayerrespawncitizenscommand", true);
+        canPlayerUseShowColonyInfoCommand = defineBoolean(builder, "canplayeruseshowcolonyinfocommand", true);
+        canPlayerUseKillCitizensCommand = defineBoolean(builder, "canplayerusekillcitizenscommand", true);
+        canPlayerUseAddOfficerCommand = defineBoolean(builder, "canplayeruseaddofficercommand", true);
+        canPlayerUseDeleteColonyCommand = defineBoolean(builder, "canplayerusedeletecolonycommand", true);
+        canPlayerUseRefreshColonyCommand = defineBoolean(builder, "canplayeruserefreshcolonycommand", false);
+        canPlayerUseBackupCommand = defineBoolean(builder, "canplayerusebackupcommand", false);
+        numberOfAttemptsForSafeTP = defineInteger(builder, "numberofattemptsforsafetp", 4, 1, 10);
+
+
+        swapToCategory(builder, "claims");
+
+        /*workingRangeTownHall = defineInteger(builder, "workingrangetownhall", 0, 0, 0);*/
+
+        workingRangeTownHallChunks = defineInteger(builder, "workingrangetownhallchunks", 8, 1, 50);
+        minTownHallPadding = defineInteger(builder, "mintownhallpadding", 3, 1, 200);
+        townHallPadding = defineInteger(builder, "townhallpadding", 20, 1, 20000);
+        townHallPaddingChunk = defineInteger(builder, "townhallpaddingchunk", 1, 1, 200);
+        restrictColonyPlacement = defineBoolean(builder, "restrictcolonyplacement", false);
+        enableDynamicColonySizes = defineBoolean(builder, "enabledynamiccolonysizes", false);
+        maxDistanceFromWorldSpawn = defineInteger(builder, "maxdistancefromworldspawn", 8000, 1000, 100000);
+        minDistanceFromWorldSpawn = defineInteger(builder, "mindistancefromworldspawn", 512, 1, 1000);
+        protectVillages = defineBoolean(builder, "protectvillages", false);
+
         swapToCategory(builder, "combat");
+
+        doBarbariansSpawn = defineBoolean(builder, "dobarbariansspawn", true);
+        barbarianHordeDifficulty = defineInteger(builder,  "barbarianhordedifficulty", 5, MIN_BARBARIAN_DIFFICULTY, MAX_BARBARIAN_DIFFICULTY);
+        spawnBarbarianSize = defineInteger(builder,  "spawnbarbariansize", 5, MIN_SPAWN_BARBARIAN_HORDE_SIZE, MAX_SPAWN_BARBARIAN_HORDE_SIZE);
+        maxBarbarianSize = defineInteger(builder, "maxBarbarianSize", 20, MIN_BARBARIAN_HORDE_SIZE, MAX_BARBARIAN_HORDE_SIZE);
+        doBarbariansBreakThroughWalls = defineBoolean(builder, "dobarbariansbreakthroughwalls", true);
+        averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 3, 1, 10);
+        minimumNumberOfNightsBetweenRaids = defineInteger(builder, "minimumnumberofnightsbetweenraids", 1, 1, 30);
+        mobAttackCitizens = defineBoolean(builder, "mobattackcitizens", false);
+        citizenCallForHelp = defineBoolean(builder, "citizencallforhelp", true);
+        rangerEnchants = defineBoolean(builder, "rangerenchants", true);
+        rangerDamageMult = defineDouble(builder,  "rangerdamagemult", 1.0, 0.1, 5.0);
+        knightDamageMult = defineDouble(builder,  "knightdamagemult", 1.0, 0.1, 5.0);
+        guardHealthMult = defineDouble(builder,  "guardhealthmult", 1.0, 0.1, 5.0);
+        pvp_mode = defineBoolean(builder,   "pvp_mode", false);
+        daysUntilPirateshipsDespawn = defineInteger(builder,  "daysuntilpirateshipsdespawn", 3, 1, 10);
+        maxYForBarbarians = defineInteger(builder,  "maxyforbarbarians", 200, 1, 500);
 
         swapToCategory(builder, "permissions");
 
+        enableColonyProtection = defineBoolean(builder,  "enablecolonyprotection", true);
+        turnOffExplosionsInColonies = defineBoolean(builder, "turnoffexplosionsincolonies", true);
+        specialPermGroup = defineList(builder, "specialpermgroup",
+          Arrays.asList
+                   ("_Raycoms_" ),
+          s -> s instanceof String);
+        freeToInteractBlocks = defineList(builder, "freetointeractblocks",
+          Arrays.asList
+                   ("block:dirt",
+                     "0 0 0" ),
+          s -> s instanceof String);
+        secondsBetweenPermissionMessages = defineInteger(builder, "secondsBetweenPermissionMessages",  30, 1, 1000);
+
+
         swapToCategory(builder, "compatibility");
+
+        extraOres = defineList(builder, "extraOres",
+          Arrays.asList
+                   ("minestuck:ore_cruxite",
+                     "minestuck:ore_uranium" ),
+          s -> s instanceof String);
+        guardResourceLocations = defineList(builder, "guardresourcelocations",
+          Arrays.asList
+                   ("minecraft:slime",
+                     "tconstruct:blueslime" ),
+          s -> s instanceof String);
+        configListStudyItems = defineList(builder, "configliststudyitems",
+          Arrays.asList
+                   ("minecraft:paper;400;100"),
+          s -> s instanceof String);
+        listOfCompostableItems = defineList(builder, "listOfCompostableItems",
+          Arrays.asList
+                   ("minecraft:rotten_flesh",
+                     "minecraft:tallgrass",
+                     "minecraft:yellow_flower",
+                     "minecraft:red_flower",
+                     "minecraft:brown_mushroom",
+                     "minecraft:red_mushroom",
+                     "minecraft:final ForgeConfigSpec.DoubleValue_plant",
+                     "minecraft:feather",
+                     "food",
+                     "seed",
+                     "treeSapling"),
+          s -> s instanceof String);
+        luckyBlocks = defineList(builder, "luckyblocks",
+          Arrays.asList
+                   ("minecraft:stone",
+                     "minecraft:cobblestone"),
+          s -> s instanceof String);
+        luckyOres = defineList(builder, "luckyblocks",
+          Arrays.asList
+                   ("minecraft:coal_ore!64",
+                     "minecraft:iron_ore!32",
+                     "minecraft:gold_ore!16",
+                     "minecraft:redstone_ore!8",
+                     "minecraft:lapis_ore!4",
+                     "minecraft:diamond_ore!2",
+                     "minecraft:emerald_ore!1"),
+          s -> s instanceof String);
+        crusherProduction = defineList(builder, "crusherproduction",
+          Arrays.asList
+                   ("minecraft:cobblestone!minecraft:gravel",
+                     "minecraft:gravel!minecraft:sand",
+                     "minecraft:sand!minecraft:clay" ),
+          s -> s instanceof String);
+        sifterMeshes = defineList(builder, "siftermeshes",
+          Arrays.asList
+                   ("minecraft:string,0",
+                     "minecraft:flfinal ForgeConfigSpec.IntValue,0.1",
+                     "minecraft:iron_ingot,0.1",
+                     "minecraft:diamond,0.1" ),
+          s -> s instanceof String);
+        siftableBlocks = defineList(builder, "siftableblocks",
+          Arrays.asList
+                   ("minecraft:dirt",
+                     "minecraft:sand",
+                     "minecraft:gravel",
+                     "minecraft:soul_sand"),
+          s -> s instanceof String);
+
+        sifterDrops = defineList(builder, "sifterdrops",
+          Arrays.asList
+                   (//Dirt with String mesh
+                     "0,0,minecraft:wheat_seeds,25",
+                     "0,0,minecraft:sapling:0,1",
+                     "0,0,minecraft:sapling:1,1",
+                     "0,0,minecraft:sapling:2,1",
+                     "0,0,minecraft:sapling:3,1",
+
+                     //Dirt with flfinal ForgeConfigSpec.IntValue mesh
+                     "0,1,minecraft:wheat_seeds,50",
+                     "0,1,minecraft:sapling:0,5",
+                     "0,1,minecraft:sapling:1,5",
+                     "0,1,minecraft:sapling:2,5",
+                     "0,1,minecraft:sapling:3,5",
+                     "0,1,minecraft:carrot:0,1",
+                     "0,1,minecraft:potato:0,1",
+
+                     //Dirt with iron mesh
+                     "0,2,minecraft:wheat_seeds,50",
+                     "0,2,minecraft:sapling:0,10",
+                     "0,2,minecraft:sapling:1,10",
+                     "0,2,minecraft:sapling:2,10",
+                     "0,2,minecraft:sapling:3,10",
+                     "0,2,minecraft:pumpkin_seeds:0,1",
+                     "0,2,minecraft:melon_seeds:0,1",
+                     "0,2,minecraft:beetroot_seeds:0,1",
+                     "0,2,minecraft:carrot:0,1",
+                     "0,2,minecraft:potato:0,1",
+                     "0,2,minecraft:sapling:4,1",
+                     "0,2,minecraft:sapling:5,1",
+
+                     //Dirt with diamond mesh
+                     "0,3,minecraft:wheat_seeds,25",
+                     "0,3,minecraft:sapling:0,10",
+                     "0,3,minecraft:sapling:1,10",
+                     "0,3,minecraft:sapling:2,10",
+                     "0,3,minecraft:sapling:3,10",
+                     "0,3,minecraft:pumpkin_seeds:0,5",
+                     "0,3,minecraft:melon_seeds:0,5",
+                     "0,3,minecraft:beetroot_seeds:0,5",
+                     "0,3,minecraft:carrot:0,5",
+                     "0,3,minecraft:potato:0,5",
+                     "0,3,minecraft:sapling:4,5",
+                     "0,3,minecraft:sapling:5,5",
+
+                     //Sand with string mesh
+                     "1,0,minecraft:cactus,2.5",
+                     "1,0,minecraft:reeds,2.5",
+
+                     //Sand with flfinal ForgeConfigSpec.IntValue mesh
+                     "1,1,minecraft:cactus,5",
+                     "1,1,minecraft:reeds,5",
+                     "1,1,minecraft:gold_nugget,5",
+
+                     //Sand with iron mesh
+                     "1,2,minecraft:cactus,10",
+                     "1,2,minecraft:reeds,10",
+                     "1,2,minecraft:dye:3,10",
+                     "1,2,minecraft:gold_nugget,10",
+
+                     //Sand with diamond mesh
+                     "1,3,minecraft:cactus,15",
+                     "1,3,minecraft:reeds,15",
+                     "1,3,minecraft:dye:3,15",
+                     "1,3,minecraft:gold_nugget,15",
+
+                     //Gravel with string mesh
+                     "2,0,minecraft:iron_nugget,5",
+                     "2,0,minecraft:flfinal ForgeConfigSpec.IntValue,5",
+                     "2,0,minecraft:coal,5",
+
+                     //Gravel with flfinal ForgeConfigSpec.IntValue mesh
+                     "2,1,minecraft:redstone,10",
+                     "2,1,minecraft:iron_nugget,10",
+                     "2,1,minecraft:flfinal ForgeConfigSpec.IntValue,10",
+                     "2,1,minecraft:coal,10",
+
+                     //Gravel with iron mesh
+                     "2,2,minecraft:redstone,15",
+                     "2,2,minecraft:iron_nugget,15",
+                     "2,2,minecraft:coal,15",
+                     "2,2,minecraft:dye:4,5",
+                     "2,2,minecraft:iron_ingot,1",
+                     "2,2,minecraft:gold_ingot,1",
+                     "2,2,minecraft:emerald,1",
+                     "2,2,minecraft:diamond,1",
+
+                     //Gravel with diamond mesh
+                     "2,3,minecraft:redstone,20",
+                     "2,3,minecraft:coal,20",
+                     "2,3,minecraft:dye:4,10",
+                     "2,3,minecraft:iron_ingot,2.5",
+                     "2,3,minecraft:gold_ingot,2.5",
+                     "2,3,minecraft:emerald,2.5",
+                     "2,3,minecraft:diamond,2.5",
+
+                     //Soulsand with string mesh
+                     "3,0,minecraft:nether_wart,5",
+                     "3,0,minecraft:quartz,5",
+
+                     //Soulsand with flfinal ForgeConfigSpec.IntValue mesh
+                     "3,1,minecraft:nether_wart,10",
+                     "3,1,minecraft:quartz,10",
+                     "3,1,minecraft:glowstone_dust,5",
+
+                     //Soulsand with iron mesh
+                     "3,2,minecraft:nether_wart,10",
+                     "3,2,minecraft:quartz,10",
+                     "3,2,minecraft:glowstone_dust,10",
+                     "3,2,minecraft:blaze_powder,1",
+                     "3,2,minecraft:magma_cream,1",
+
+                     //Soulsand with diamond mesh
+                     "3,3,minecraft:nether_wart,15",
+                     "3,3,minecraft:quartz,15",
+                     "3,3,minecraft:glowstone_dust,15",
+                     "3,3,minecraft:blaze_powder,5",
+                     "3,3,minecraft:magma_cream,5",
+                     "3,3,minecraft:skull:3,5"),
+          s -> s instanceof String);
+        dynamicTreeHarvestSize = defineInteger(builder,  "dynamictreeharvestsize", 5, 1, 5);
+
 
         swapToCategory(builder, "pathfinding");
 
+        pathfindingDebugDraw = defineBoolean(builder,  "pathfindingdebugdraw", false);
+        pathfindingDebugVerbosity = defineInteger(builder,  "pathfindingdebugverbosity", 0, 0, 10);
+        pathfindingMaxThreadCount = defineInteger(builder,  "pathfindingmaxthreadcount", 2, 1, 10);
+        pathfindingMaxNodes = defineInteger(builder,  "pathfindingmaxnodes", 5000, 1, 10000);
+
+
         swapToCategory(builder, "requestSystem");
 
-        finishcategory(builder);
+        enableDebugLogging = defineBoolean(builder,  "enabledebuglogging", false);
+        maximalRetries = defineInteger(builder,  "maximalretries", 3, 1, 10);
+        delayBetweenRetries = defineInteger(builder,  "delaybetweenretries", 1200, 30, 10000);
+        maximalBuildingsToGather = defineInteger(builder,  "maximalbuildingstogather", 6, 1, 50);
+        minimalBuildingsToGather = defineInteger(builder,  "minimalbuildingstogather", 3, 1, 50);
+        creativeResolve = defineBoolean(builder,  "creativeresolve", false);
+        canPlayerUseResetCommand = defineBoolean(builder,  "canplayeruseresetcommand", false);
+
+
+        finishCategory(builder);
     }
 }
