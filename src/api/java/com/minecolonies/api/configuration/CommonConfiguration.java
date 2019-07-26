@@ -2,6 +2,10 @@ package com.minecolonies.api.configuration;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.Constants.MAX_BARBARIAN_HORDE_SIZE;
 
@@ -548,7 +552,8 @@ public class CommonConfiguration extends AbstractConfiguration
         minThLevelToTeleport = defineInteger(builder, "maxOperationsPerTick", 3, 0, 5);
         suggestBuildToolPlacement = defineBoolean(builder, "ignoreSchematicsFromJar", true);
         foodModifier = defineDouble(builder, "maxCachedChanges", 1.0, 0, 100);
-        
+        ForgeConfigSpec.ConfigValue<List<? extends String>> list = defineList(builder, "key", (ArrayList<String>)Arrays.asList("s1", "s2", "s3", "s4"), s -> s instanceof String);
+
 
         swapToCategory(builder, "commands");
 
