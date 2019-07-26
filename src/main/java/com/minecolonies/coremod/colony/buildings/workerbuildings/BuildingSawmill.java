@@ -91,8 +91,8 @@ public class BuildingSawmill extends AbstractBuildingCrafter
             return false;
         }
 
-        int amountOfValidBlocks = 0;
-        int blocks = 0;
+        double amountOfValidBlocks = 0;
+        double blocks = 0;
         for(final ItemStack stack : storage.getInput())
         {
             if(!ItemStackUtils.isEmpty(stack))
@@ -119,7 +119,7 @@ public class BuildingSawmill extends AbstractBuildingCrafter
             return true;
         }
 
-        return amountOfValidBlocks > 0 && blocks/amountOfValidBlocks > MIN_PERCENTAGE_TO_CRAFT;
+        return amountOfValidBlocks > 0 && amountOfValidBlocks/blocks > MIN_PERCENTAGE_TO_CRAFT;
     }
 
     /**
