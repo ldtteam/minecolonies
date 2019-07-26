@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Constants.DOUBLE;
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 

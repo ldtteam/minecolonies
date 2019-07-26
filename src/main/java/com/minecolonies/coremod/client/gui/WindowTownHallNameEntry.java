@@ -6,6 +6,7 @@ import com.minecolonies.blockout.controls.ButtonHandler;
 import com.minecolonies.blockout.controls.TextField;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.IColonyView;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -17,14 +18,14 @@ public class WindowTownHallNameEntry extends Window implements ButtonHandler
 {
     private static final String TOWNHALL_NAME_RESOURCE_SUFFIX = ":gui/townhall/windowtownhallnameentry.xml";
 
-    private final ColonyView colony;
+    private final IColonyView colony;
 
     /**
      * Constructor for a town hall rename entry window.
      *
      * @param c {@link ColonyView}
      */
-    public WindowTownHallNameEntry(final ColonyView c)
+    public WindowTownHallNameEntry(final IColonyView c)
     {
         super(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX);
         this.colony = c;

@@ -4,6 +4,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.CitizenDataView;
+import com.minecolonies.coremod.colony.ICitizenDataView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
@@ -272,7 +273,7 @@ public abstract class CommonProxy implements IProxy
     }
 
     @Override
-    public void showCitizenWindow(final CitizenDataView citizen)
+    public void showCitizenWindow(final ICitizenDataView citizen)
     {
         /*
          * Intentionally left empty.

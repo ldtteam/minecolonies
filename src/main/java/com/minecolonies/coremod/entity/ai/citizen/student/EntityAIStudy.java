@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.student;
 
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
@@ -65,7 +65,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
      */
     private IAIState study()
     {
-        final CitizenData data = worker.getCitizenData();
+        final ICitizenData data = worker.getCitizenData();
         if (data == null)
         {
             setDelay(STUDY_DELAY);

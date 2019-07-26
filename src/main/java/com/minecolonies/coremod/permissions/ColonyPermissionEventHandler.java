@@ -9,13 +9,14 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.permissions.PermissionEvent;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.ldtteam.structurize.items.ItemScanTool;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
@@ -200,7 +201,7 @@ public class ColonyPermissionEventHandler
 
         if (event.getState().getBlock() instanceof AbstractBlockHut)
         {
-            @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, event.getPos());
+            @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, event.getPos());
             if (building == null)
             {
                 return;
@@ -224,7 +225,7 @@ public class ColonyPermissionEventHandler
 
             if (Configurations.gameplay.pvp_mode && event.getState().getBlock() == ModBlocks.blockHutTownHall)
             {
-                ColonyManager.deleteColonyByWorld(building.getColony().getID(), false, event.getWorld());
+                IColonyManager.getInstance().deleteColonyByWorld(building.getColony().getID(), false, event.getWorld());
             }
         }
         else
@@ -609,7 +610,7 @@ public class ColonyPermissionEventHandler
             final Permissions perms = colony.getPermissions();
             if (event.getTarget() instanceof EntityCitizen)
             {
-                final EntityCitizen citizen = (EntityCitizen) event.getTarget();
+                final IEntityCitizen citizen = (IEntityCitizen) event.getTarget();
                 if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && perms.hasPermission(event.getEntityPlayer(), Action.GUARDS_ATTACK))
                 {
                     return;

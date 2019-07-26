@@ -42,23 +42,10 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
-        super.writeToNBT(compound);
-        @NotNull final NBTTagList itemsToCompost = new NBTTagList();
-        for(@NotNull final ItemStorage entry : itemsAllowed)
-        {
-            @NotNull final NBTTagCompound itemCompound = new NBTTagCompound();
-            entry.getItemStack().writeToNBT(itemCompound);
-            itemsToCompost.appendTag(itemCompound);
-        }
-        compound.setTag(TAG_ITEMLIST, itemsToCompost);
-    }
+        super.deserializeNBT(compound);
 
-    @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
         final NBTTagList itemsToCompost = compound.getTagList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < itemsToCompost.tagCount(); ++i)
         {
@@ -71,6 +58,21 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
                 Log.getLogger().info("Removing incompatible stack");
             }
         }
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT()
+    {
+        final NBTTagCompound compound = super.serializeNBT();
+        @NotNull final NBTTagList itemsToCompost = new NBTTagList();
+        for(@NotNull final ItemStorage entry : itemsAllowed)
+        {
+            @NotNull final NBTTagCompound itemCompound = new NBTTagCompound();
+            entry.getItemStack().writeToNBT(itemCompound);
+            itemsToCompost.appendTag(itemCompound);
+        }
+        compound.setTag(TAG_ITEMLIST, itemsToCompost);
+        return compound;
     }
 
     /**

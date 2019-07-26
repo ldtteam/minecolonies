@@ -9,8 +9,8 @@ import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
-import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.client.render.BipedModelType;
+import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.sounds.DeliverymanSounds;
@@ -36,7 +36,7 @@ public class JobDeliveryman extends AbstractJob
      *
      * @param entity the citizen who becomes a deliveryman
      */
-    public JobDeliveryman(final CitizenData entity)
+    public JobDeliveryman(final ICitizenData entity)
     {
         super(entity);
         setupRsDataStore();
@@ -55,21 +55,6 @@ public class JobDeliveryman extends AbstractJob
                              .getId();
     }
 
-    @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-
-        if(compound.hasKey(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
-        {
-            rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
-        }
-        else
-        {
-            setupRsDataStore();
-        }
-    }
-
     @NotNull
     @Override
     public String getName()
@@ -79,16 +64,33 @@ public class JobDeliveryman extends AbstractJob
 
     @NotNull
     @Override
-    public RenderBipedCitizen.Model getModel()
+    public BipedModelType getModel()
     {
-        return RenderBipedCitizen.Model.DELIVERYMAN;
+        return BipedModelType.DELIVERYMAN;
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public NBTTagCompound serializeNBT()
     {
-        super.writeToNBT(compound);
+        final NBTTagCompound compound = super.serializeNBT();
         compound.setTag(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
+
+        return compound;
+    }
+
+    @Override
+    public void deserializeNBT(final NBTTagCompound compound)
+    {
+        super.deserializeNBT(compound);
+
+        if(compound.hasKey(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
+        {
+            rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE));
+        }
+        else
+        {
+            setupRsDataStore();
+        }
     }
 
     /**

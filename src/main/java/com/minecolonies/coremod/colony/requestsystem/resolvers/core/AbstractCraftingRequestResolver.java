@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers.core;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -11,8 +10,10 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
+import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -29,47 +30,26 @@ import static com.minecolonies.api.util.constant.Constants.MAX_CRAFTING_CYCLE_DE
  */
 public abstract class AbstractCraftingRequestResolver extends AbstractRequestResolver<IDeliverable> implements IBuildingBasedRequester
 {
-    /**
-     * Variable to check if requests can be requested externally.
-     */
-    public final boolean isPublicCrafter;
 
-    /**
-     * Constructor to initialize.
-     * @param location the location.
-     * @param token the id.
-     * @param isPublicCrafter if public crafter or not.
-     */
     public AbstractCraftingRequestResolver(
-      @NotNull final ILocation location,
-      @NotNull final IToken<?> token, final boolean isPublicCrafter)
+      @NotNull final IToken<?> token,
+      @NotNull final ILocation location
+    )
     {
-        super(location, token);
-        this.isPublicCrafter = isPublicCrafter;
+        super(token, location, TypeConstants.DELIVERABLE);
     }
 
-    @Override
-    public TypeToken<? extends IDeliverable> getRequestType()
-    {
-        return TypeToken.of(IDeliverable.class);
-    }
+    abstract boolean isPublic();
 
     @Override
-    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
-            return Optional.ofNullable(manager.getColony().getRequesterBuildingForPosition(getRequesterLocation().getInDimensionLocation()));
+            return Optional.ofNullable(manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation()));
         }
 
         return Optional.empty();
-    }
-
-    @NotNull
-    @Override
-    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
-    {
-	//Noop
     }
 
     @Override
@@ -77,10 +57,10 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     {
         if (!manager.getColony().getWorld().isRemote)
         {
-            final ILocation requesterLocation = requestToCheck.getRequester().getRequesterLocation();
-            if (isPublicCrafter || requesterLocation.equals(getRequesterLocation()))
+            final ILocation requesterLocation = requestToCheck.getRequester().getLocation();
+            if (isPublic() || requesterLocation.equals(getLocation()))
             {
-                final Optional<AbstractBuilding> building = getBuilding(manager, requestToCheck.getToken()).map(r -> (AbstractBuilding) r);
+                final Optional<IBuilding> building = getBuilding(manager, requestToCheck.getId()).map(r -> (IBuilding) r);
                 return building.map(b -> canResolveForBuilding(manager, requestToCheck, b)).orElse(false);
             }
         }
@@ -95,14 +75,14 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
      * @param building the building to check.
      * @return true if so.
      */
-    public boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
+    public boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final IBuilding building)
     {
         if (createsCraftingCycle(manager, request, request))
         {
             return false;
         }
 
-        return building instanceof AbstractBuildingWorker && canBuildingCraftStack((AbstractBuildingWorker) building, itemStack -> request.getRequest().matches(itemStack));
+        return building instanceof AbstractBuildingWorker && canBuildingCraftStack((IBuildingWorker) building, itemStack -> request.getRequest().matches(itemStack));
     }
 
     /**
@@ -155,25 +135,25 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
      * @param stackPredicate predicate used to check if a building knows the recipe.
      * @return true if so.
      */
-    public abstract boolean canBuildingCraftStack(@NotNull final AbstractBuildingWorker building, Predicate<ItemStack> stackPredicate);
+    public abstract boolean canBuildingCraftStack(@NotNull final IBuildingWorker building, Predicate<ItemStack> stackPredicate);
 
     @Nullable
     @Override
     public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        final AbstractBuilding building = getBuilding(manager, request.getToken()).map(r -> (AbstractBuilding) r).get();
+        final IBuilding building = getBuilding(manager, request.getId()).map(r -> (IBuilding) r).get();
         return attemptResolveForBuilding(manager, request, building);
     }
 
     @Nullable
-    public List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
+    public List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final IBuilding building)
     {
-        final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
+        final IBuildingWorker buildingWorker = (IBuildingWorker) building;
         return attemptResolveForBuildingAndStack(manager, buildingWorker, itemStack -> request.getRequest().matches(itemStack), request.getRequest().getCount());
     }
 
     @Nullable
-    protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, @NotNull final Predicate<ItemStack> stackPrecicate, final int count)
+    protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager, @NotNull final IBuildingWorker building, @NotNull final Predicate<ItemStack> stackPrecicate, final int count)
     {
         final IRecipeStorage craftableCrafting = building.getFirstRecipe(stackPrecicate);
         if (craftableCrafting == null)
@@ -198,7 +178,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     @Override
     public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        final AbstractBuilding building = getBuilding(manager, request.getToken()).map(r -> (AbstractBuilding) r).get();
+        final IBuilding building = getBuilding(manager, request.getId()).map(r -> (IBuilding) r).get();
         resolveForBuilding(manager, request, building);
     }
 
@@ -208,9 +188,9 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
      * @param request the request.
      * @param building the building.
      */
-    public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
+    public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final IBuilding building)
     {
-        manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
+        manager.updateRequestState(request.getId(), RequestState.COMPLETED);
     }
 
 

@@ -14,7 +14,7 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.DropDownList;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
@@ -104,7 +104,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      * @param c          the colony view.
      * @param building the building.
      */
-    public WindowBuildBuilding(final ColonyView c, final AbstractBuildingView building)
+    public WindowBuildBuilding(final IColonyView c, final AbstractBuildingView building)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.building = building;
@@ -136,7 +136,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void moveBuildingClicked()
     {
-        final WindowMoveBuilding window = new WindowMoveBuilding(building.getLocation(), building, styles.get(stylesDropDownList.getSelectedIndex()));
+        final WindowMoveBuilding window = new WindowMoveBuilding(building.getPosition(), building, styles.get(stylesDropDownList.getSelectedIndex()));
         window.open();
     }
 
@@ -185,8 +185,9 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         builders.add(new Tuple<>(LanguageHandler.format("com.minecolonies.coremod.job.Builder") + ":", BlockPos.ORIGIN));
         builders.addAll(building.getColony().getBuildings().stream()
                           .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty() && !(build instanceof BuildingMiner.View))
-                          .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getLocation()))
+                          .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
                           .collect(Collectors.toList()));
+
         initBuilderNavigation();
     }
 
@@ -255,8 +256,8 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             }
         }
 
-        structure.setPosition(building.getLocation());
-        structure.rotate(BlockPosUtil.getRotationFromRotations(building.getRotation()), world, building.getLocation(), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
+        structure.setPosition(building.getPosition());
+        structure.rotate(BlockPosUtil.getRotationFromRotations(building.getRotation()), world, building.getPosition(), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
         while (structure.findNextBlock())
         {
             @Nullable final BlockInfo blockInfo = structure.getBlockInfo();

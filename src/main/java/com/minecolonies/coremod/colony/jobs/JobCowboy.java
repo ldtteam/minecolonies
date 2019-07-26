@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
+import com.minecolonies.coremod.client.render.BipedModelType;
 import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.herders.EntityAIWorkCowboy;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +18,7 @@ public class JobCowboy extends AbstractJob
      *
      * @param entity the entity.
      */
-    public JobCowboy(final CitizenData entity)
+    public JobCowboy(final ICitizenData entity)
     {
         super(entity);
     }
@@ -48,8 +49,8 @@ public class JobCowboy extends AbstractJob
      */
     @NotNull
     @Override
-    public RenderBipedCitizen.Model getModel()
+    public BipedModelType getModel()
     {
-        return RenderBipedCitizen.Model.COW_FARMER;
+        return BipedModelType.COW_FARMER;
     }
 }

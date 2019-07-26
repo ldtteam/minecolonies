@@ -7,10 +7,12 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutBaker;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import com.minecolonies.coremod.colony.buildings.views.FilterableListView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
@@ -172,16 +174,17 @@ public class BuildingBaker extends AbstractFilterableListBuilding
      */
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return new JobBaker(citizen);
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
         tasks.clear();
-        super.readFromNBT(compound);
+        super.deserializeNBT(compound);
+
         final NBTTagList taskTagList = compound.getTagList(TAG_TASKS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < taskTagList.tagCount(); ++i)
         {
@@ -211,9 +214,10 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public NBTTagCompound serializeNBT()
     {
-        super.writeToNBT(compound);
+        final NBTTagCompound compound = super.serializeNBT();
+
         @NotNull final NBTTagList tasksTagList = new NBTTagList();
         for (@NotNull final Map.Entry<ProductState, List<BakingProduct>> entry : tasks.entrySet())
         {
@@ -248,7 +252,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         }
         compound.setTag(TAG_FURNACES, furnacesTagList);
 
-        @NotNull final NBTTagList recipesTagList = new NBTTagList();
+        return compound;
     }
 
     /**
@@ -450,7 +454,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
          * @param c The ColonyView the building is in.
          * @param l The location of the building.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }

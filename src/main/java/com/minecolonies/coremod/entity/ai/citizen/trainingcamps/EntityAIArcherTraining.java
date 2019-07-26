@@ -167,19 +167,19 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             worker.swingArm(EnumHand.MAIN_HAND);
 
             final EntityTippedArrow arrow = new GuardArrow(world, worker);
-            final double xVector = currentShootingTarget.getX() - worker.posX;
+            final double xVector = currentShootingTarget.getX() - worker.getPosX();
             final double yVector = currentShootingTarget.getY() - arrow.posY;
-            final double zVector = currentShootingTarget.getZ() - worker.posZ;
+            final double zVector = currentShootingTarget.getZ() - worker.getPosZ();
             final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
 
             final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getLevel() + 1);
             arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
 
             worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-            worker.world.spawnEntity(arrow);
+            worker.getEntityWorld().spawnEntity(arrow);
 
-            final double xDiff = currentShootingTarget.getX() - worker.posX;
-            final double zDiff = currentShootingTarget.getZ() - worker.posZ;
+            final double xDiff = currentShootingTarget.getX() - worker.getPosX();
+            final double zDiff = currentShootingTarget.getZ() - worker.getPosZ();
             final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
             final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
             worker.move(MoverType.SELF, goToX, 0, goToZ);

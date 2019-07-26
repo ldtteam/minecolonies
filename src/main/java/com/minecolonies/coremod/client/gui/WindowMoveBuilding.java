@@ -6,7 +6,7 @@ import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.BuildingMoveMessage;
 import com.ldtteam.structurize.Structurize;
@@ -169,9 +169,9 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
     {
         super.onUpdate();
 
-        if (ColonyManager.isSchematicDownloaded())
+        if (IColonyManager.getInstance().isSchematicDownloaded())
         {
-            ColonyManager.setSchematicDownloaded(false);
+            IColonyManager.getInstance().setSchematicDownloaded(false);
         }
     }
 

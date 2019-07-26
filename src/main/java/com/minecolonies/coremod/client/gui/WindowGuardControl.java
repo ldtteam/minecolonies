@@ -10,6 +10,7 @@ import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
+import com.minecolonies.coremod.colony.ICitizenDataView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.GuardJob;
 import com.minecolonies.coremod.network.messages.GuardRecalculateMessage;
@@ -165,7 +166,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final CitizenDataView citizenDataView = building.getColony().getCitizen((building.getGuards().get(index)));
+                final ICitizenDataView citizenDataView = building.getColony().getCitizen((building.getGuards().get(index)));
                 if (citizenDataView != null)
                 {
                     final BlockPos pos = citizenDataView.getPosition();

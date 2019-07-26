@@ -5,13 +5,14 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.blockout.Log;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
 import net.minecraft.util.math.BlockPos;
@@ -27,7 +28,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
       @NotNull final ILocation location,
       @NotNull final IToken<?> token)
     {
-        super(location, token);
+        super(token, location, TypeConstants.DELIVERY);
     }
 
     @Override
@@ -45,7 +46,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         }
 
         final Colony colony = (Colony) manager.getColony();
-        final CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
+        final ICitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
                                               .stream()
                                               .filter(citizenData -> citizenData.getCitizenEntity()
                                                                        .map(entityCitizen -> requestToCheck.getRequest()
@@ -70,7 +71,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
         final Colony colony = (Colony) manager.getColony();
         //We can do an instant get here, since we are already filtering on anything that has no entity.
-        final CitizenData freeDeliveryMan = colony.getCitizenManager()
+        final ICitizenData freeDeliveryMan = colony.getCitizenManager()
                                               .getCitizens()
                                               .stream()
                                               .filter(citizenData -> citizenData.getCitizenEntity()
@@ -79,7 +80,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
                                                                                                .isReachableFromLocation(entityCitizen.getLocation()))
                                                                        .orElse(false))
                                               .filter(c -> c.getJob() instanceof JobDeliveryman)
-                                              .min(Comparator.comparing((CitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
+                                              .min(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
                                                      .thenComparing(Comparator.comparing(c -> {
                                                          BlockPos targetPos = request.getRequest().getTarget().getInDimensionLocation();
                                                          //We can do an instant get here, since we are already filtering on anything that has no entity.
@@ -95,7 +96,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         }
 
         final JobDeliveryman job = (JobDeliveryman) freeDeliveryMan.getJob();
-        job.addRequest(request.getToken());
+        job.addRequest(request.getId());
 
         return Lists.newArrayList();
     }
@@ -120,20 +121,20 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         if (!manager.getColony().getWorld().isRemote)
         {
             final Colony colony = (Colony) manager.getColony();
-            final CitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
+            final ICitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
                                                   .stream()
-                                                  .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).getTaskQueue().contains(request.getToken()))
+                                                  .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).getTaskQueue().contains(request.getId()))
                                                   .findFirst()
                                                   .orElse(null);
 
             if (freeDeliveryMan == null)
             {
-                MineColonies.getLogger().error("Parent cancellation of delivery request failed! Unknown request: " + request.getToken());
+                MineColonies.getLogger().error("Parent cancellation of delivery request failed! Unknown request: " + request.getId());
             }
             else
             {
                 final JobDeliveryman job = (JobDeliveryman) freeDeliveryMan.getJob();
-                job.onTaskDeletion(request.getToken());
+                job.onTaskDeletion(request.getId());
             }
         }
 
@@ -147,14 +148,22 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     }
 
     @Override
-    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCompleted(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         //We are not scheduling any child requests. So this should never be called.
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        Log.getLogger().error("cancelled");
+        final IRequest<?> cancelledRequest = manager.getRequestForToken(token);
+        if (cancelledRequest != null && cancelledRequest.hasParent())
+        {
+            final IRequest<?> parentRequest = manager.getRequestForToken(cancelledRequest.getParent());
+            if (parentRequest.getState() != RequestState.CANCELLED && parentRequest.getState() != RequestState.OVERRULED)
+            {
+                manager.updateRequestState(cancelledRequest.getParent(), RequestState.CANCELLED);
+            }
+        }
     }
 }

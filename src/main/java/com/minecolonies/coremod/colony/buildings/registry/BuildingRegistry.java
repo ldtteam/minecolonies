@@ -3,16 +3,18 @@ package com.minecolonies.coremod.colony.buildings.registry;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockPostBox;
 import com.minecolonies.coremod.blocks.huts.*;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
+import com.minecolonies.coremod.tileentities.ITileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -112,7 +114,7 @@ public class BuildingRegistry
      */
     private static void addMapping(
             final String name,
-            @NotNull final Class<? extends AbstractBuilding> buildingClass,
+            @NotNull final Class<? extends IBuilding> buildingClass,
             @NotNull final Class<? extends AbstractBuildingView> viewClass,
             @NotNull final Class<? extends AbstractBlockHut> parentBlock)
     {
@@ -159,7 +161,7 @@ public class BuildingRegistry
      * @return {@link AbstractBuilding} created from the compound.
      */
     @Nullable
-    public static AbstractBuilding createFromNBT(final Colony colony, @NotNull final NBTTagCompound compound)
+    public static IBuilding createFromNBT(final Colony colony, @NotNull final NBTTagCompound compound)
     {
         @Nullable AbstractBuilding building = null;
         @Nullable Class<?> oclass = null;
@@ -188,7 +190,7 @@ public class BuildingRegistry
 
         try
         {
-            building.readFromNBT(compound);
+            building.deserializeNBT(compound);
         }
         catch (final RuntimeException ex)
         {
@@ -208,9 +210,9 @@ public class BuildingRegistry
      * @return {@link AbstractBuilding} instance, without NBTTags applied.
      */
     @Nullable
-    public static AbstractBuilding create(final Colony colony, @NotNull final TileEntityColonyBuilding parent)
+    public static IBuilding create(final Colony colony, @NotNull final ITileEntityColonyBuilding parent)
     {
-        @Nullable AbstractBuilding building = null;
+        @Nullable IBuilding building = null;
         final Class<?> oclass;
 
         try
@@ -225,7 +227,7 @@ public class BuildingRegistry
 
             final BlockPos loc = parent.getPosition();
             final Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
-            building = (AbstractBuilding) constructor.newInstance(colony, loc);
+            building = (IBuilding) constructor.newInstance(colony, loc);
         }
         catch (@NotNull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception)
         {
@@ -243,7 +245,7 @@ public class BuildingRegistry
      * @return {@link AbstractBuildingView} created from reading the buf.
      */
     @Nullable
-    public static AbstractBuildingView createBuildingView(final ColonyView colony, final BlockPos id, @NotNull final ByteBuf buf)
+    public static AbstractBuildingView createBuildingView(final IColonyView colony, final BlockPos id, @NotNull final ByteBuf buf)
     {
         @Nullable AbstractBuildingView view = null;
         @Nullable Class<?> oclass = null;

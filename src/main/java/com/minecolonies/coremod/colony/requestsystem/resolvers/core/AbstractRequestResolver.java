@@ -1,56 +1,54 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers.core;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.RSConstants.CONST_DEFAULT_RESOLVER_PRIORITY;
-
 /**
- * ----------------------- Not Documented Object ---------------------
+ * An abstract implementation for the {@link IRequestResolver} interface that deals with most
+ * of the internal basic logic.
  */
 public abstract class AbstractRequestResolver<R extends IRequestable> implements IRequestResolver<R>
 {
     @NotNull
+    private final IToken<?> token;
+
+    @NotNull
     private final ILocation location;
 
     @NotNull
-    private final IToken<?> token;
+    private final TypeToken<? extends R> requestType;
 
-    public AbstractRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
+    public AbstractRequestResolver(
+      @NotNull final IToken<?> token,
+      @NotNull final ILocation location,
+      @NotNull final TypeToken<? extends R> requestType)
     {
-        this.location = location;
         this.token = token;
+        this.location = location;
+        this.requestType = requestType;
     }
 
     @Override
-    public IToken<?> getRequesterId()
+    public IToken<?> getId()
     {
         return token;
     }
 
     @NotNull
     @Override
-    public ILocation getRequesterLocation()
+    public ILocation getLocation()
     {
         return location;
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public TypeToken<? extends R> getRequestType()
     {
-        return new TextComponentString("Request System");
-    }
-
-    @Override
-    public int getPriority()
-    {
-        return CONST_DEFAULT_RESOLVER_PRIORITY;
+        return requestType;
     }
 }

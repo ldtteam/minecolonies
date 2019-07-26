@@ -9,8 +9,8 @@ import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.controls.*;
 import com.minecolonies.blockout.views.Box;
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.IColonyView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
@@ -171,13 +171,13 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             logo.setImage(request.getDisplayIcon());
         }
 
-        final ColonyView view = ColonyManager.getColonyView(colonyId, Minecraft.getMinecraft().world.provider.getDimension());
-        findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
+        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getMinecraft().world.provider.getDimension());
+        findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request).getFormattedText());
         final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
-        targetLabel.setLabelText(request.getRequester().getDeliveryLocation().toString());
+        targetLabel.setLabelText(request.getRequester().getLocation().toString());
 
 
-        final ColonyView colony = ColonyManager.getColonyView(colonyId, Minecraft.getMinecraft().world.provider.getDimension());
+        final IColonyView colony = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getMinecraft().world.provider.getDimension());
         if(colony == null)
         {
             Log.getLogger().warn("---Colony Null in WindowRequestDetail---");
@@ -186,14 +186,14 @@ public class WindowRequestDetail extends Window implements ButtonHandler
 
         try
         {
-            final IRequestResolver resolver = colony.getRequestManager().getResolverForRequest(request.getToken());
+            final IRequestResolver resolver = colony.getRequestManager().getResolverForRequest(request.getId());
             if(resolver == null)
             {
                 Log.getLogger().warn("---IRequestResolver Null in WindowRequestDetail---");
                 return;
             }
 
-            findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " + resolver.getDisplayName(view.getRequestManager(), request.getToken()).getFormattedText());
+            findPaneOfTypeByID(RESOLVER, Label.class).setLabelText("Resolver: " + resolver.getDisplayName(view.getRequestManager(), request).getFormattedText());
         }
         catch(@SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS) final IllegalArgumentException e)
         {

@@ -6,6 +6,8 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.RSConstants;
+import com.minecolonies.api.util.constant.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,6 +31,7 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      *
      * @return The class that represents this Type of Request this resolver can resolve.
      */
+    @NotNull
     TypeToken<? extends R> getRequestType();
 
     /**
@@ -75,7 +78,6 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      * @throws RuntimeException is thrown when the resolver could not resolve the request. Should never happen as attemptResolve should be called first,
      *                          and all requirements should be available to this resolver at this point in time.
      */
-    @Nullable
     void resolve(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
 
     /**
@@ -90,33 +92,28 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
     }
 
     /**
-     * Method called by the given manager to request a followup request.
-     * This should generally return a request that brings the result of the completed request to its requester.
+     * Called by the given manager to indicate that this request is being cancelled or overruled.
+     * This is called before the request data is updated, but after the state has been updated.
      *
-     * @param manager          The manager that requests to followup request.
-     * @param completedRequest The request that has been completed and the given manager is requesting a followup for.
-     * @return The followup request for the completed request. Null if none is needed.
+     * @param manager The manager who is about to update request tree information.
+     * @param requestBeingCancelledOrOverruled The request that is being cancelled or overruled.
      */
-    @Nullable
-    List<IRequest<?>> getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> completedRequest);
+    default void onRequestAssignedBeingCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> requestBeingCancelledOrOverruled)
+    {
+        //Noop
+    }
 
     /**
-     * Method used to indicate to this resolver that a parent of a request assigned to him has been cancelled,
-     * and that the resolver of the parent did not return a cleanup request.
-     * <p>
-     * If a followup request is needed (For example picking up crafting results to bring them to storage) a request can be made to the given manager
-     * which will properly handle the processing of the new request.
-     * <p>
-     * The returned request will then be used as the new parent and should be used to clean up the results of this request.
+     * Called by the given manager to indicate that this request has been cancelled or overruled.
+     * This is called after the request data is updated, and allows for cleanup requests being created, or for updating of external mechanics.
      *
-     * @param manager The manager that indicates the cancelling
-     * @param request The request that has been cancelled.
-     * @return the new request if necessary. It should not be assigned yet.
-     *
-     * @throws IllegalArgumentException is thrown when the cancelling failed.
+     * @param manager The manager who has updated the request tree information.
+     * @param requestCancelledOrOverruled The request that is cancelled or overruled.
      */
-    @Nullable
-    IRequest<?> onRequestCancelled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
+    default void onRequestAssignedCancelledOrOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> requestCancelledOrOverruled)
+    {
+        //Noop
+    }
 
     /**
      * Called by manager given to indicate that a colony has updated their available items.
@@ -129,20 +126,17 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
     }
 
     /**
-     * Method used to indicate to this resolver that a parent of a request assigned to him has been cancelled,
-     * and that the resolver of the parent did not return a cleanup request.
-     * <p>
-     * If a followup request is needed (For example picking up crafting results to bring them to storage) a request can be made to the given manager
-     * which will properly handle the processing of the new request.
-     * <p>
-     * The returned request will then be used as the new parent and should be used to clean up the results of this request.
+     * Method used to indicate that the given request has been overruled by the player.
+     * This is called after the children of the given request have been cancelled, but before the request it self is set to a completed state.
      *
-     * @param manager The manager that indicates the cancelling
-     * @param request The request that has been cancelled.
-     *
+     * @param manager The manager that is overruling the request.
+     * @param request The request that is being overruled.
      * @throws IllegalArgumentException is thrown when the cancelling failed.
      */
-    void onRequestBeingOverruled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request);
+    default void onRequestBeingOverruled(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> request)
+    {
+        //Noop
+    }
 
     /**
      * The priority of this resolver.
@@ -150,5 +144,8 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
      *
      * @return The priority of this resolver.
      */
-    int getPriority();
+    default int getPriority()
+    {
+        return RSConstants.CONST_DEFAULT_RESOLVER_PRIORITY;
+    }
 }

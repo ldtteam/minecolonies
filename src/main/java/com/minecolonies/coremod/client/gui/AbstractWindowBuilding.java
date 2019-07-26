@@ -4,7 +4,7 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.CMC_GUI_TO
 public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> extends AbstractWindowSkeleton
 {
     /**
-     * Type B is a class that extends {@link AbstractBuildingWorker.View}.
+     * Type B is a class that extends {@link com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View}.
      */
     protected final B          building;
     private final   Label      title;

@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.IColonyManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -17,7 +17,6 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Place a building directly without buildtool.
@@ -91,7 +90,7 @@ public class DirectPlaceMessage extends AbstractMessage<DirectPlaceMessage, IMes
     public void messageOnServerThread(final DirectPlaceMessage message, final EntityPlayerMP player)
     {
         final World world = player.getServerWorld();
-        final Colony colony = ColonyManager.getColonyByPosFromWorld(world, message.pos);
+        final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, message.pos);
         if (colony == null || colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
         {
             player.getServerWorld().setBlockState(message.pos, message.state);

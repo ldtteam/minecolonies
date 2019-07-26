@@ -1,65 +1,57 @@
 package com.minecolonies.api.colony.requestsystem.requester;
 
+import com.minecolonies.api.colony.requestsystem.location.ILocatable;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.IWorldNameable;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.MatchesPattern;
+
 /**
- * Interface that describes an object that can be located in the Minecraft universe and can request objects inside a colony.
+ * Interface that describes objects that can request requests inside a request system, while also getting notifications about
+ * request completion, and cancellation.
  */
-public interface IRequester
+public interface IRequester extends ILocatable
 {
     /**
      * Method to get the ID of a given requester.
      *
      * @return The id of this requester.
      */
-    IToken<?> getRequesterId();
-
-    /**
-     * Method used to get the location that a delivery has to be brought to.
-     * Usually this points for a Building to its Postbox.
-     *
-     * @return The location of the targetpoint of a delivery to this location.
-     */
     @NotNull
-    default ILocation getDeliveryLocation()
-    {
-        return getRequesterLocation();
-    }
-
-    /**
-     * Method to get the location of this locatable.
-     *
-     * @return the location.
-     */
-    @NotNull
-    ILocation getRequesterLocation();
+    IToken<?> getId();
 
     /**
      * Method called by the request system to notify this requester that a request is complete.
+     * Is also called by the request system, when a request has been overruled, and as such
+     * completed by the player, instead of the initially assigned resolver.
      *
-     * @param token the token of the request.
+     * @param manager The request manager that has completed the given request.
+     * @param request The request that has been completed.
      */
     @NotNull
-    void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token);
+    void onRequestedRequestCompleted(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request);
 
     /**
-     * Method called by the request system to notify this requester that a request has been overruled.
+     * Method called by the request system to notify this requester that a request has been cancelled.
      *
-     * @param token The token of the request.
+     * @param manager The request manager that has cancelled the given request.
+     * @param request The request that has been cancelled.
      */
     @NotNull
-    void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token);
+    void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request);
 
     /**
-     * Gets the name of the requester that requested the request given by the token.
+     * Gets the display name of the requester that requested the request.
      *
-     * @param token The token of the request for which the name of the requester is retrieved
+     * @param manager The request manager that wants to know what the display name of the requester for a given request is.
+     * @param request The request for which the display name is being requested.
      * @return The display name of the requester.
      */
     @NotNull
-    ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token);
+    ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request);
 }

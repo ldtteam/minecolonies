@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.colony.workorders;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,7 +25,7 @@ public class WorkOrderBuildRemoval extends WorkOrderBuild
      * @param building the building to build.
      * @param level    the level it should have.
      */
-    public WorkOrderBuildRemoval(@NotNull final AbstractBuilding building, final int level)
+    public WorkOrderBuildRemoval(@NotNull final IBuilding building, final int level)
     {
         super(building, level);
     }
@@ -36,7 +37,7 @@ public class WorkOrderBuildRemoval extends WorkOrderBuild
     }
 
     @Override
-    public boolean isValid(@NotNull final Colony colony)
+    public boolean isValid(@NotNull final IColony colony)
     {
         return true;
     }

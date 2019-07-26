@@ -2,9 +2,10 @@ package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
+import com.minecolonies.coremod.client.render.BipedModelType;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.fisherman.EntityAIWorkFisherman;
 import com.minecolonies.coremod.sounds.FishermanSounds;
@@ -52,7 +53,7 @@ public class JobFisherman extends AbstractJob
      *
      * @param entity The entity which will use this job class.
      */
-    public JobFisherman(final CitizenData entity)
+    public JobFisherman(final ICitizenData entity)
     {
         super(entity);
     }
@@ -99,9 +100,9 @@ public class JobFisherman extends AbstractJob
      */
     @NotNull
     @Override
-    public RenderBipedCitizen.Model getModel()
+    public BipedModelType getModel()
     {
-        return RenderBipedCitizen.Model.FISHERMAN;
+        return BipedModelType.FISHERMAN;
     }
 
     /**
@@ -112,7 +113,13 @@ public class JobFisherman extends AbstractJob
     @Override
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        super.writeToNBT(compound);
+
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT()
+    {
+        final NBTTagCompound compound = super.serializeNBT();
 
         @NotNull final NBTTagCompound waterTag = new NBTTagCompound();
         if (water != null)
@@ -126,6 +133,26 @@ public class JobFisherman extends AbstractJob
             BlockPosUtil.writeToNBTTagList(lakes, pond);
         }
         compound.setTag(TAG_PONDS, lakes);
+
+        return compound;
+    }
+
+    @Override
+    public void deserializeNBT(final NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+
+        if (compound.hasKey(TAG_WATER))
+        {
+            water = BlockPosUtil.readFromNBT(compound, TAG_WATER);
+        }
+
+        ponds = new ArrayList<>();
+        final NBTTagList listOfPonds = compound.getTagList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < listOfPonds.tagCount(); i++)
+        {
+            ponds.add(BlockPosUtil.readFromNBTTagList(listOfPonds, i));
+        }
     }
 
     /**
@@ -171,7 +198,7 @@ public class JobFisherman extends AbstractJob
     }
 
     @Override
-    public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
+    public void triggerDeathAchievement(final DamageSource source, final IEntityCitizen citizen)
     {
         super.triggerDeathAchievement(source, citizen);
         if (source.getTrueSource() instanceof EntityGuardian)

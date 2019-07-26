@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractBuildingDependentRequestResolver;
 import net.minecraft.tileentity.TileEntity;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +33,7 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
                                     @NotNull final ILocation location,
                                     @NotNull final IToken<?> token)
     {
-        super(location, token);
+        super(token, location, TypeConstants.DELIVERABLE);
     }
 
     @Override
@@ -51,14 +51,14 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
 
     @Override
     public boolean canResolveForBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final IBuilding building)
     {
         final List<TileEntity> tileEntities = new ArrayList<>();
-        tileEntities.add(building.getTileEntity());
+        tileEntities.add((TileEntity) building.getTileEntity());
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
         tileEntities.removeIf(Objects::isNull);
 
-        if (building.getCitizenForRequest(request.getToken()).isPresent() && building.getCitizenForRequest(request.getToken()).get().isRequestAsync(request.getToken()))
+        if (building.getCitizenForRequest(request.getId()).isPresent() && building.getCitizenForRequest(request.getId()).get().isRequestAsync(request.getId()))
         {
             return false;
         }
@@ -71,13 +71,13 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     @Nullable
     @Override
     public List<IToken<?>> attemptResolveForBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final IBuilding building)
     {
         return Lists.newArrayList();
     }
 
     @Override
-    public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
+    public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final IBuilding building)
     {
         final List<TileEntity> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
@@ -98,7 +98,7 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
               }
           });
 
-        manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
+        manager.updateRequestState(request.getId(), RequestState.COMPLETED);
     }
 
     @Nullable
@@ -127,14 +127,22 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
 
 
     @Override
-    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCompleted(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
 
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IRequestManager manager,@NotNull final IToken<?> token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager,@NotNull final IToken<?> token)
     {
-
+        final IRequest<?> cancelledRequest = manager.getRequestForToken(token);
+        if (cancelledRequest != null && cancelledRequest.hasParent())
+        {
+            final IRequest<?> parentRequest = manager.getRequestForToken(cancelledRequest.getParent());
+            if (parentRequest.getState() != RequestState.CANCELLED && parentRequest.getState() != RequestState.OVERRULED)
+            {
+                manager.updateRequestState(cancelledRequest.getParent(), RequestState.CANCELLED);
+            }
+        }
     }
 }

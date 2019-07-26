@@ -4,6 +4,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.jobs.*;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +52,7 @@ public class JobRegistry
      * Map to resolve names to class.
      */
     @NotNull
-    private static final BiMap<String, Class<? extends AbstractJob>> nameToClassMap = HashBiMap.create();
+    private static final BiMap<String, Class<? extends IJob>> nameToClassMap = HashBiMap.create();
     //fix for the annotation
     static
     {
@@ -99,7 +100,7 @@ public class JobRegistry
      * @param name     name of job class.
      * @param jobClass class of job.
      */
-    private static void addMapping(final String name, @NotNull final Class<? extends AbstractJob> jobClass)
+    private static void addMapping(final String name, @NotNull final Class<? extends IJob> jobClass)
     {
         if (nameToClassMap.containsKey(name))
         {
@@ -127,10 +128,10 @@ public class JobRegistry
      * @return New Job created from the data, or null.
      */
     @Nullable
-    public static AbstractJob createFromNBT(final CitizenData citizen, @NotNull final NBTTagCompound compound)
+    public static AbstractJob createFromNBT(final ICitizenData citizen, @NotNull final NBTTagCompound compound)
     {
         @Nullable AbstractJob job = null;
-        @Nullable Class<? extends AbstractJob> oclass = null;
+        @Nullable Class<? extends IJob> oclass = null;
 
         try
         {
@@ -169,7 +170,7 @@ public class JobRegistry
     }
 
     @NotNull
-    public static Map<Class<? extends AbstractJob>, String> getClassToNameMap()
+    public static Map<Class<? extends IJob>, String> getClassToNameMap()
     {
         return nameToClassMap.inverse();
     }

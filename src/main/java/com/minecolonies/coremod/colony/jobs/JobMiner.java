@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
+import com.minecolonies.coremod.client.render.BipedModelType;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner;
 import net.minecraft.util.DamageSource;
@@ -19,7 +20,7 @@ public class JobMiner extends AbstractJobStructure
      *
      * @param entity the entity to add the job to.
      */
-    public JobMiner(final CitizenData entity)
+    public JobMiner(final ICitizenData entity)
     {
         super(entity);
     }
@@ -33,9 +34,9 @@ public class JobMiner extends AbstractJobStructure
 
     @NotNull
     @Override
-    public RenderBipedCitizen.Model getModel()
+    public BipedModelType getModel()
     {
-        return RenderBipedCitizen.Model.MINER;
+        return BipedModelType.MINER;
     }
 
     /**
@@ -51,7 +52,7 @@ public class JobMiner extends AbstractJobStructure
     }
 
     @Override
-    public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
+    public void triggerDeathAchievement(final DamageSource source, final IEntityCitizen citizen)
     {
         super.triggerDeathAchievement(source, citizen);
         if (source == DamageSource.LAVA || source == DamageSource.IN_FIRE || source == DamageSource.ON_FIRE)

@@ -3,9 +3,12 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCrafting;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingProductionResolver;
+import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +26,7 @@ public class PrivateWorkerCraftingProductionResolver extends AbstractCraftingPro
       @NotNull final ILocation location,
       @NotNull final IToken<?> token)
     {
-        super(location, token, PrivateCrafting.class);
+        super(token, location, TypeConstants.PRIVATE_CRAFTING);
     }
 
     @Nullable
@@ -51,15 +54,66 @@ public class PrivateWorkerCraftingProductionResolver extends AbstractCraftingPro
 
     @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCompleted(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
 
     }
 
     @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    {
+        final IRequest<?> cancelledRequest = manager.getRequestForToken(token);
+
+    }
+
+    /**
+     * Method called by the request system to notify this requester that a request is complete.
+     * Is also called by the request system, when a request has been overruled, and as such
+     * completed by the player, instead of the initially assigned resolver.
+     *
+     * @param manager The request manager that has completed the given request.
+     * @param request The request that has been completed.
+     */
+    @NotNull
+    @Override
+    public void onRequestedRequestCompleted(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
 
+    }
+
+    /**
+     * Method called by the request system to notify this requester that a request has been cancelled.
+     *
+     * @param manager The request manager that has cancelled the given request.
+     * @param request The request that has been cancelled.
+     */
+    @NotNull
+    @Override
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    {
+        if (request != null && request.hasParent())
+        {
+            final IRequest<?> parentRequest = manager.getRequestForToken(request.getParent());
+            if (parentRequest.getState() != RequestState.CANCELLED && parentRequest.getState() != RequestState.OVERRULED)
+            {
+                manager.updateRequestState(request.getParent(), RequestState.CANCELLED);
+            }
+        }
+    }
+
+    /**
+     * Gets the display name of the requester that requested the request.
+     *
+     * @param manager The request manager that wants to know what the display name of the requester for a given request is.
+     * @param request The request for which the display name is being requested.
+     * @return The display name of the requester.
+     */
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    {
+        return null;
     }
 }

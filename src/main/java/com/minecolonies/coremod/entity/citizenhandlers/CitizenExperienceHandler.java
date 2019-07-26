@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.citizenhandlers;
 
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -24,7 +24,7 @@ import static com.minecolonies.coremod.entity.AbstractEntityCitizen.DATA_LEVEL;
 /**
  * Handles all experience related things of the citizen.
  */
-public class CitizenExperienceHandler
+public class CitizenExperienceHandler implements ICitizenExperienceHandler
 {
     /**
      * The citizen assigned to this manager.
@@ -53,6 +53,7 @@ public class CitizenExperienceHandler
     /**
      * Updates the level of the citizen.
      */
+    @Override
     public void updateLevel()
     {
         level = citizen.getCitizenData() == null ? 0 : citizen.getCitizenData().getLevel();
@@ -65,6 +66,7 @@ public class CitizenExperienceHandler
      *
      * @param modifier input modifier.
      */
+    @Override
     public void setSkillModifier(final int modifier)
     {
         this.skillModifier = modifier;
@@ -77,9 +79,10 @@ public class CitizenExperienceHandler
      *
      * @param xp the amount of points added.
      */
+    @Override
     public void addExperience(final double xp)
     {
-        final AbstractBuilding home = citizen.getCitizenColonyHandler().getHomeBuilding();
+        final IBuilding home = citizen.getCitizenColonyHandler().getHomeBuilding();
 
         final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
         final double citizenHutMaxLevel = home == null ? 1 : home.getMaxBuildingLevel();
@@ -169,11 +172,12 @@ public class CitizenExperienceHandler
      * Drop some experience share depending on the experience and
      * experienceLevel.
      */
+    @Override
     public void dropExperience()
     {
         int experience;
 
-        if (!CompatibilityUtils.getWorld(citizen).isRemote && citizen.getRecentlyHit() > 0 && citizen.checkCanDropLoot() && CompatibilityUtils.getWorld(citizen).getGameRules().getBoolean("doMobLoot"))
+        if (!CompatibilityUtils.getWorldFromCitizen(citizen).isRemote && citizen.getRecentlyHit() > 0 && citizen.checkCanDropLoot() && CompatibilityUtils.getWorldFromCitizen(citizen).getGameRules().getBoolean("doMobLoot"))
         {
             experience = (int) (citizen.getCitizenData().getExperience());
 
@@ -181,7 +185,7 @@ public class CitizenExperienceHandler
             {
                 final int j = EntityXPOrb.getXPSplit(experience);
                 experience -= j;
-                CompatibilityUtils.getWorld(citizen).spawnEntity(new EntityXPOrb(CompatibilityUtils.getWorld(citizen), citizen.posX, citizen.posY, citizen.posZ, j));
+                CompatibilityUtils.getWorldFromCitizen(citizen).spawnEntity(new EntityXPOrb(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.posX, citizen.posY, citizen.posZ, j));
             }
         }
 
@@ -191,7 +195,7 @@ public class CitizenExperienceHandler
             final double d2 = citizen.getRandom().nextGaussian() * 0.02D;
             final double d0 = citizen.getRandom().nextGaussian() * 0.02D;
             final double d1 = citizen.getRandom().nextGaussian() * 0.02D;
-            CompatibilityUtils.getWorld(citizen).spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
+            CompatibilityUtils.getWorldFromCitizen(citizen).spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
               citizen.posX + (citizen.getRandom().nextDouble() * citizen.width * 2.0F) - (double) citizen.width,
               citizen.posY + (citizen.getRandom().nextDouble() * citizen.height),
               citizen.posZ + (citizen.getRandom().nextDouble() * citizen.width * 2.0F) - (double) citizen.width,
@@ -204,6 +208,7 @@ public class CitizenExperienceHandler
     /**
      * Collect exp orbs around the entity.
      */
+    @Override
     public void gatherXp()
     {
         for (@NotNull final EntityXPOrb orb : getXPOrbsOnGrid())
@@ -222,13 +227,14 @@ public class CitizenExperienceHandler
     {
         @NotNull final AxisAlignedBB bb = new AxisAlignedBB(citizen.posX - 2, citizen.posY - 2, citizen.posZ - 2, citizen.posX + 2, citizen.posY + 2, citizen.posZ + 2);
 
-        return CompatibilityUtils.getWorld(citizen).getEntitiesWithinAABB(EntityXPOrb.class, bb);
+        return CompatibilityUtils.getWorldFromCitizen(citizen).getEntitiesWithinAABB(EntityXPOrb.class, bb);
     }
 
     /**
      * Get the level of the citizen.
      * @return the level.
      */
+    @Override
     public int getLevel()
     {
         return this.level;
@@ -238,6 +244,7 @@ public class CitizenExperienceHandler
      * Setter for the level.
      * @param level the level.
      */
+    @Override
     public void setLevel(final int level)
     {
         this.level = level;

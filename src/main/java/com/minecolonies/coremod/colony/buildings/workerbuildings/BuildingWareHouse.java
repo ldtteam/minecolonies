@@ -12,14 +12,12 @@ import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowHutWareHouse;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.tileentities.TileEntityRack;
-import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
+import com.minecolonies.coremod.tileentities.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -40,7 +38,7 @@ import java.util.*;
 /**
  * Class of the warehouse building.
  */
-public class BuildingWareHouse extends AbstractBuilding
+public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
 {
     /**
      * String describing the Warehouse.
@@ -75,7 +73,7 @@ public class BuildingWareHouse extends AbstractBuilding
     /**
      * The tileEntity of the building.
      */
-    private TileEntityWareHouse tileEntity;
+    private ITileEntityWareHouse tileEntity;
 
     /**
      * Storage upgrade level.
@@ -118,7 +116,8 @@ public class BuildingWareHouse extends AbstractBuilding
      * @param buildingWorker the building of the worker.
      * @return true if able to register or already registered
      */
-    public boolean registerWithWareHouse(final BuildingDeliveryman buildingWorker)
+    @Override
+    public boolean registerWithWareHouse(final IBuildingDeliveryman buildingWorker)
     {
         if (registeredDeliverymen.contains(new Vec3d(buildingWorker.getID())))
         {
@@ -161,7 +160,8 @@ public class BuildingWareHouse extends AbstractBuilding
      * @param buildingWorker the building of the deliveryman.
      * @return true if able to.
      */
-    public boolean canAccessWareHouse(final BuildingDeliveryman buildingWorker)
+    @Override
+    public boolean canAccessWareHouse(final IBuildingDeliveryman buildingWorker)
     {
         return registeredDeliverymen.contains(new Vec3d(buildingWorker.getID()));
     }
@@ -171,15 +171,16 @@ public class BuildingWareHouse extends AbstractBuilding
      *
      * @return the unmodifiable List of positions of them.
      */
+    @Override
     public List<Vec3d> getRegisteredDeliverymen()
     {
         return new ArrayList<>(Collections.unmodifiableList(registeredDeliverymen));
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
-        super.readFromNBT(compound);
+        super.deserializeNBT(compound);
 
         registeredDeliverymen.clear();
         final NBTTagList deliverymanTagList = compound.getTagList(TAG_DELIVERYMAN, Constants.NBT.TAG_COMPOUND);
@@ -194,17 +195,10 @@ public class BuildingWareHouse extends AbstractBuilding
         storageUpgrade = compound.getInteger(TAG_STORAGE);
     }
 
-    @NotNull
     @Override
-    public String getSchematicName()
+    public NBTTagCompound serializeNBT()
     {
-        return WAREHOUSE;
-    }
-
-    @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
+        final NBTTagCompound compound = super.serializeNBT();
         @NotNull final NBTTagList levelTagList = new NBTTagList();
         for (@NotNull final Vec3d deliverymanBuilding : registeredDeliverymen)
         {
@@ -212,6 +206,15 @@ public class BuildingWareHouse extends AbstractBuilding
         }
         compound.setTag(TAG_DELIVERYMAN, levelTagList);
         compound.setInteger(TAG_STORAGE, storageUpgrade);
+
+        return compound;
+    }
+
+    @NotNull
+    @Override
+    public String getSchematicName()
+    {
+        return WAREHOUSE;
     }
 
     /**
@@ -220,10 +223,10 @@ public class BuildingWareHouse extends AbstractBuilding
      * @return {@link TileEntityColonyBuilding} object of the building.
      */
     @Override
-    public TileEntityWareHouse getTileEntity()
+    public ITileEntityWareHouse getTileEntity()
     {
-        final TileEntity entity = super.getTileEntity();
-        return entity == null ? null : (TileEntityWareHouse) entity;
+        final ITileEntityColonyBuilding entity = super.getTileEntity();
+        return !(entity instanceof TileEntityWareHouse) ? null : (ITileEntityWareHouse) entity;
     }
 
     @Override
@@ -300,7 +303,7 @@ public class BuildingWareHouse extends AbstractBuilding
         final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
 
         builder.addAll(supers);
-        builder.add(new WarehouseRequestResolver(getRequester().getRequesterLocation(),
+        builder.add(new WarehouseRequestResolver(getRequester().getLocation(),
                                                   getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
@@ -311,6 +314,7 @@ public class BuildingWareHouse extends AbstractBuilding
      *
      * @param world the world object.
      */
+    @Override
     public void upgradeContainers(final World world)
     {
         if (storageUpgrade < MAX_STORAGE_UPGRADE)
@@ -350,7 +354,7 @@ public class BuildingWareHouse extends AbstractBuilding
          * @param c the colonyview to put it in
          * @param l the positon
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }

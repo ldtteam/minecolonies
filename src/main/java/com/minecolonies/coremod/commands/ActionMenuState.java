@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.commands;
 
-import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ICitizenData;
 import net.minecraft.entity.player.EntityPlayerMP;
 import org.jetbrains.annotations.NotNull;
 
@@ -86,7 +87,7 @@ public class ActionMenuState
         return allActionArgumentsList;
     }
 
-    public Colony getColonyForArgument(@NotNull final String argumentName)
+    public IColony getColonyForArgument(@NotNull final String argumentName)
     {
         for (final ActionArgument actionArgument : getAllArgumentsList())
         {
@@ -94,7 +95,7 @@ public class ActionMenuState
             {
                 if (ActionArgumentType.COLONY == actionArgument.getType())
                 {
-                    return (Colony) getValue(actionArgument);
+                    return (IColony) getValue(actionArgument);
                 }
             }
         }
@@ -131,7 +132,7 @@ public class ActionMenuState
         return null;
     }
 
-    public CitizenData getCitizenForArgument(@NotNull final String argumentName)
+    public ICitizenData getCitizenForArgument(@NotNull final String argumentName)
     {
         for (final ActionArgument actionArgument : getAllArgumentsList())
         {
@@ -139,7 +140,7 @@ public class ActionMenuState
             {
                 if (ActionArgumentType.CITIZEN == actionArgument.getType())
                 {
-                    return (CitizenData) getValue(actionArgument);
+                    return (ICitizenData) getValue(actionArgument);
                 }
             }
         }

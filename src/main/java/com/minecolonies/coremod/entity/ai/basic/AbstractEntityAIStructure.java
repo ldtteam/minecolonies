@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
+import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.StructurePlacementUtils;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -10,23 +12,21 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.util.StructureIterator;
 import com.minecolonies.coremod.util.WorkerUtil;
-import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
-import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;
@@ -46,7 +46,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.Suppression.MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED;
 import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
@@ -488,7 +487,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                         final ItemStack itemStack = worker.getInventoryCitizen().getStackInSlot(slot);
                         worker.getInventoryCitizen().getStackInSlot(slot);
                         worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, itemStack);
-                        itemStack.damageItem(1, worker);
+                        itemStack.damageItem(1, (EntityLivingBase) worker);
                     }
                 }
             }
@@ -605,12 +604,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         @NotNull final IBlockState stateToPlace = state;
 
         //Move out of the way when placing blocks
-        if (MathHelper.floor(worker.posX) == pos.getX()
-              && MathHelper.abs(pos.getY() - (int) worker.posY) <= 1
-              && MathHelper.floor(worker.posZ) == pos.getZ()
+        if (MathHelper.floor(worker.getPosX()) == pos.getX()
+              && MathHelper.abs(pos.getY() - (int) worker.getPosY()) <= 1
+              && MathHelper.floor(worker.getPosZ()) == pos.getZ()
               && worker.getNavigator().noPath())
         {
-            worker.getNavigator().moveAwayFromXYZ(pos, RUN_AWAY_SPEED, 1.0);
+            worker.getNavigator().moveAwayFromXYZ(pos, RUN_AWAY_SPEED, 1);
         }
 
         @NotNull final Block blockToPlace = block;
@@ -1049,13 +1048,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                     }
                     else if (entity instanceof EntityArmorStand)
                     {
-                        request.add(entity.getPickedResult(new RayTraceResult(worker)));
+                        request.add(entity.getPickedResult(new RayTraceResult((Entity) worker)));
                         entity.getArmorInventoryList().forEach(request::add);
                         entity.getHeldEquipment().forEach(request::add);
                     }
                     else
                     {
-                        request.add(entity.getPickedResult(new RayTraceResult(worker)));
+                        request.add(entity.getPickedResult(new RayTraceResult((Entity) worker)));
                     }
 
                     request.removeIf(ItemStackUtils::isEmpty);
@@ -1100,7 +1099,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      *
      * @return the EntityCitizen object.
      */
-    public EntityCitizen getWorker()
+    public IEntityCitizen getWorker()
     {
         return this.worker;
     }

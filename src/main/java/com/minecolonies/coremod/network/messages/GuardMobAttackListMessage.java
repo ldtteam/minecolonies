@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import io.netty.buffer.ByteBuf;
@@ -78,11 +78,11 @@ public class GuardMobAttackListMessage extends AbstractMessage<GuardMobAttackLis
     @Override
     protected void messageOnClientThread(final GuardMobAttackListMessage message, final MessageContext ctx)
     {
-        final ColonyView colonyView = ColonyManager.getColonyView(message.colonyId, Minecraft.getMinecraft().world.provider.getDimension());
+        final IColonyView IColonyView = IColonyManager.getInstance().getColonyView(message.colonyId, Minecraft.getMinecraft().world.provider.getDimension());
 
-        if (colonyView != null)
+        if (IColonyView != null)
         {
-            @Nullable final AbstractBuildingGuards.View buildingView = (AbstractBuildingGuards.View) colonyView.getBuilding(message.buildingId);
+            @Nullable final AbstractBuildingGuards.View buildingView = (AbstractBuildingGuards.View) IColonyView.getBuilding(message.buildingId);
 
             if (buildingView != null)
             {

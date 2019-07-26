@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.farmer;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.BlockUtils;
@@ -10,16 +11,16 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.huts.BlockHutField;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.network.messages.CompostParticleMessage;
+import com.minecolonies.coremod.tileentities.IScarecrow;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
@@ -251,17 +252,17 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private void searchAndAddFields()
     {
-        final Colony colony = worker.getCitizenColonyHandler().getColony();
+        final IColony colony = worker.getCitizenColonyHandler().getColony();
         if (colony != null)
         {
-            @Nullable final ScarecrowTileEntity newField = colony.getBuildingManager().getFreeField(worker.getCitizenData().getId(), world);
+            @Nullable final IScarecrow newField = colony.getBuildingManager().getFreeField(worker.getCitizenData().getId(), world);
 
             if (newField != null && getWorkBuilding() != null)
             {
                 newField.setOwner(worker.getCitizenData().getId());
                 newField.setTaken(true);
                 newField.markDirty();
-                getWorkBuilding().addFarmerFields(newField.getPos());
+                getWorkBuilding().addFarmerFields(newField.getPosition());
             }
         }
     }
@@ -694,7 +695,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @return citizen object
      */
     @Nullable
-    public EntityCitizen getCitizen()
+    public IEntityCitizen getCitizen()
     {
         return worker;
     }
