@@ -1,39 +1,22 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
-import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
-import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingProductionResolver;
-import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
 
 public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProductionResolver<PublicCrafting>
 {
-    /**
-     * Constructor to initialize.
-     *
-     * @param location the location.
-     * @param token    the id.
-     */
     public PublicWorkerCraftingProductionResolver(
       @NotNull final IToken<?> token,
       @NotNull final ILocation location)
@@ -41,153 +24,63 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         super(token, location, TypeConstants.PUBLIC_CRAFTING);
     }
 
-    @Nullable
+    @NotNull
     @Override
-    public List<IRequest<?>> getFollowupRequestForCompletion(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> completedRequest)
+    public void onRequestedRequestCompleted(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        final IColony colony = manager.getColony();
-        if (colony instanceof Colony || !completedRequest.hasParent())
-        {
-            //This is the crafting that got completed.
-            //We go up the tree one level to get the actual request.
-            //Get the requester for that request and ask where he wants his stuff delivered.
-            final IRequest<?> parentRequest = manager.getRequestForToken(completedRequest.getParent());
-            final IRequester parentRequestRequester = parentRequest.getRequester();
+        //Noop
+    }
 
-            final List<IRequest<?>> deliveries = Lists.newArrayList();
+    @NotNull
+    @Override
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    {
+        //We do not need to eliminate yet, since the request
+        manager.updateRequestState(request.getParent(), RequestState.CANCELLED);
+    }
 
-            completedRequest.getDeliveries().forEach(parentRequest::addDelivery);
-            completedRequest.getDeliveries().forEach(itemStack -> {
-                final Delivery delivery = new Delivery(getRequesterLocation(), parentRequestRequester.getDeliveryLocation(), itemStack);
+    @Override
+    public void onRequestAssignedBeingCancelledOrOverruled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> requestBeingCancelledOrOverruled)
+    {
+        eliminateRequestFromJobQueue(manager, requestBeingCancelledOrOverruled, true);
+    }
 
-                final IToken<?> requestToken =
-                  manager.createRequest(this,
-                    delivery);
-
-                deliveries.add(manager.getRequestForToken(requestToken));
-            });
-
-            return deliveries;
-        }
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    {
         return null;
     }
 
-    @Nullable
-    @Override
-    public IRequest<?> onRequestCancelled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request)
+    /**
+     * Method used to remove the request from the job queue of a citizen that it was assigned to.
+     * @param manager The manager that is used to query the world and the colony.
+     * @param request The request which needs to be eliminated
+     * @param notifyOnFailureToFind Indicate if an error should be logged when no citizen was found while searching.
+     */
+    private void eliminateRequestFromJobQueue(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request, boolean notifyOnFailureToFind)
     {
-        if (!manager.getColony().getWorld().isRemote)
-        {
-            final Colony colony = (Colony) manager.getColony();
-            final ICitizenData holdingCrafter = colony.getCitizenManager().getCitizens()
-                                                 .stream()
-                                                 .filter(c -> c.getJob() instanceof AbstractJobCrafter && (((AbstractJobCrafter) c.getJob()).getTaskQueue().contains(request.getId()) || ((AbstractJobCrafter) c.getJob()).getAssignedTasks().contains(request.getId())))
-                                                 .findFirst()
-                                                 .orElse(null);
+        final IColony colony = manager.getColony();
+        final ICitizenData holdingCrafter = colony.getCitizenManager().getCitizens()
+                                              .stream()
+                                              .filter(c -> c.getJob() instanceof AbstractJobCrafter && (((AbstractJobCrafter) c.getJob()).getTaskQueue().contains(request.getId()) || ((AbstractJobCrafter) c.getJob()).getAssignedTasks().contains(request.getId())))
+                                              .findFirst()
+                                              .orElse(null);
 
-            if (holdingCrafter == null)
+        if (holdingCrafter == null)
+        {
+            if (notifyOnFailureToFind)
             {
                 MineColonies.getLogger().error("Parent cancellation of crafting production failed! Unknown request: " + request.getId());
             }
-            else
-            {
-                final AbstractJobCrafter job = (AbstractJobCrafter) holdingCrafter.getJob();
-                job.onTaskDeletion(request.getId());
-            }
         }
-
-        return null;
-    }
-
-    @Override
-    public void onRequestBeingOverruled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request)
-    {
-        this.onRequestCancelled(manager, request);
-    }
-
-    @NotNull
-    @Override
-    public void onRequestedRequestCompleted(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
-    {
-        //Nice!
-    }
-
-    @NotNull
-    @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
-    {
-        this.onRequestCancelled(manager, (IRequest<? extends PublicCrafting>) Objects.requireNonNull(manager.getRequestForToken(token)));
-
-        final IRequest<?> cancelledRequest = manager.getRequestForToken(token);
-        if (cancelledRequest != null && cancelledRequest.hasParent())
+        else
         {
-            final IRequest<?> parentRequest = manager.getRequestForToken(cancelledRequest.getParent());
-            if (parentRequest.getState() != RequestState.CANCELLED && parentRequest.getState() != RequestState.OVERRULED)
-            {
-                manager.updateRequestState(cancelledRequest.getParent(), RequestState.CANCELLED);
-            }
+            final AbstractJobCrafter job = (AbstractJobCrafter) holdingCrafter.getJob();
+            job.onTaskDeletion(request.getId());
         }
-    }
-
-    @Override
-    protected boolean canBuildingCraftStack(@NotNull final IRequestManager manager, @NotNull final IBuildingWorker building, @NotNull final ItemStack stack)
-    {
-        if (manager.getColony().getWorld().isRemote)
-            return false;
-
-        //Check if we even have a worker available
-        return building.getAssignedCitizen()
-                  .stream()
-                  .anyMatch(c -> c.getJob() instanceof AbstractJobCrafter);
-    }
-
-    @Override
-    protected void onAssignedToThisResolverForBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request, final boolean simulation, @NotNull final IBuilding building)
-    {
-        if (manager.getColony().getWorld().isRemote)
-            return;
-
-        final ICitizenData freeCrafter = building.getAssignedCitizen()
-                                          .stream()
-                                          .filter(c -> c.getJob() instanceof AbstractJobCrafter)
-                                          .min(Comparator.comparing((ICitizenData c) -> ((AbstractJobCrafter) c.getJob()).getTaskQueue().size() + ((AbstractJobCrafter) c.getJob()).getAssignedTasks().size()))
-                                          .orElse(null);
-
-        if (freeCrafter == null)
-        {
-            onRequestCancelled(manager, request);
-            return;
-        }
-
-        final AbstractJobCrafter job = (AbstractJobCrafter) freeCrafter.getJob();
-        job.onTaskBeingScheduled(request.getId());
-    }
-
-    @Override
-    public void resolveForBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request, @NotNull final IBuilding building)
-    {
-        if (manager.getColony().getWorld().isRemote)
-            return;
-
-        final ICitizenData freeCrafter = building.getAssignedCitizen()
-                                             .stream()
-                                             .filter(c -> c.getJob() instanceof AbstractJobCrafter)
-                                             .filter(c -> ((AbstractJobCrafter) c.getJob()).getAssignedTasks().contains(request.getId()))
-                                             .findFirst()
-                                             .orElse(null);
-
-        if (freeCrafter == null)
-        {
-            onRequestCancelled(manager, request);
-            return;
-        }
-
-        final AbstractJobCrafter job = (AbstractJobCrafter) freeCrafter.getJob();
-        job.onTaskBeingResolved(request.getId());
     }
 }

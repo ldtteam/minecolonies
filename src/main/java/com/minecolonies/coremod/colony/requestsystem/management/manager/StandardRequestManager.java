@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.management.manager;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.IColony;
@@ -160,13 +161,9 @@ public class StandardRequestManager implements IStandardRequestManager
     /**
      * Mark the request manager and colony as dirty.
      */
-    private void markDirty()
+    public void markDirty()
     {
-        dirty = true;
-        if (colony != null)
-        {
-            colony.markDirty();
-        }
+        setDirty(true);
     }
 
     /**
@@ -182,7 +179,15 @@ public class StandardRequestManager implements IStandardRequestManager
     @Override
     public void setDirty(final boolean isDirty)
     {
-        this.dirty = isDirty;
+        if (isDirty)
+        {
+            dirty = true;
+            colony.markDirty();
+        }
+        else
+        {
+            dirty = false;
+        }
     }
 
     /**
@@ -196,24 +201,6 @@ public class StandardRequestManager implements IStandardRequestManager
     {
         RequestHandler.assignRequest(this, RequestHandler.getRequest(this, token));
         markDirty();
-    }
-
-    /**
-     * Method used to create and immediately assign a request.
-     *
-     * @param requester The requester of the requestable.
-     * @param object    The requestable
-     * @return The token that represents the request.
-     *
-     * @throws IllegalArgumentException when either createRequest or assignRequest have thrown an IllegalArgumentException
-     */
-    @NotNull
-    @Override
-    public <T extends IRequestable> IToken<?> createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object)
-    {
-        final IToken<?> token = createRequest(requester, object);
-        assignRequest(token);
-        return token;
     }
 
     @Override

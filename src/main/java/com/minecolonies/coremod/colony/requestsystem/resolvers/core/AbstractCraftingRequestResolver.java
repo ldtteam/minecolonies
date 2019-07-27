@@ -39,7 +39,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
         super(token, location, TypeConstants.DELIVERABLE);
     }
 
-    abstract boolean isPublic();
+    protected abstract boolean isPublic();
 
     @Override
     public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)

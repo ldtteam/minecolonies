@@ -202,7 +202,7 @@ public class StandardRequestManagerTest
 
         @SuppressWarnings(RAWTYPES)
         @Override
-        public IToken getToken()
+        public IToken getId()
         {
             return token;
         }
