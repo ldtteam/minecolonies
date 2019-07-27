@@ -1463,7 +1463,7 @@ public class CommandEntryPointTest
 //
 //        // Sender is a player
 //        // TODO: make this playerSender the owner of a colony
-//        final EntityPlayerMP playerSender = mock(EntityPlayerMP.class);
+//        final EntityPlayerMP playerSender = mockBlank(EntityPlayerMP.class);
 //
 //        // DO:
 //

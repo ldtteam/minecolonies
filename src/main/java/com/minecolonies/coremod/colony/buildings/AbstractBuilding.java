@@ -24,7 +24,6 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
@@ -1175,11 +1174,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public IToken<?> getId()
     {
-        return getToken();
+        return this.getId();
     }
 
     @Override
-    public IToken<?> getToken()
+    public IToken<?> getId()
     {
         return requester.getId();
     }

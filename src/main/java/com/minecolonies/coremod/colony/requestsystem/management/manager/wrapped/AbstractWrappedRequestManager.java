@@ -89,24 +89,6 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
         wrappedManager.assignRequest(token);
     }
 
-    /**
-     * Method used to create and immediately assign a request.
-     *
-     * @param requester The requester of the requestable.
-     * @param object    The requestable
-     * @return The token that represents the request.
-     *
-     * @throws IllegalArgumentException when either createRequest or assignRequest have thrown an IllegalArgumentException
-     */
-    @NotNull
-    @Override
-    public <T extends IRequestable> IToken<?> createAndAssignRequest(@NotNull final IRequester requester, @NotNull final T object) throws IllegalArgumentException
-    {
-        final IToken<?> token = createRequest(requester, object);
-        assignRequest(token);
-        return token;
-    }
-
     @Override
     public IToken<?> reassignRequest(@NotNull final IToken<?> token, @NotNull final Collection<IToken<?>> resolverTokenBlackList) throws IllegalArgumentException
     {

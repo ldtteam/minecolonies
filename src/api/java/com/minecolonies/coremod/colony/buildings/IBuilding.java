@@ -291,7 +291,7 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     IToken<?> getId();
 
     @Override
-    IToken<?> getToken();
+    IToken<?> getId();
 
     @Override
     ImmutableCollection<IRequestResolver<?>> getResolvers();
