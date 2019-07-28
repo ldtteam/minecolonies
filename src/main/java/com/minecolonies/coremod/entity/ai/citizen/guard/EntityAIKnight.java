@@ -12,7 +12,6 @@ import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
@@ -21,16 +20,17 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PHYSICAL;
+import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PROTECT;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
@@ -189,7 +189,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
                 damageToBeDealt *= 2;
             }
 
-            final DamageSource source = new DamageSource(worker.getName());
+            final DamageSource source = new EntityDamageSource(worker.getName(), worker);
             if (Configurations.gameplay.pvp_mode && target instanceof EntityPlayer)
             {
                 source.setDamageBypassesArmor();

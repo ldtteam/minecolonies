@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.structurize.util.PlacementSettings;
-import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Log;

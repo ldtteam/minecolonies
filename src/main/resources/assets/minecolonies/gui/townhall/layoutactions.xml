@@ -18,6 +18,8 @@
                     label="$(com.minecolonies.coremod.gui.townHall.togglespec)"/>
             <button id="rename" size="120 19" pos="38 176"
                     label="$(com.minecolonies.coremod.gui.townHall.rename)"/>
+            <button id="mercenaries" size="120 19" pos="38 199"
+                    label="$(com.minecolonies.coremod.gui.townHall.mercenary)"/>
 
             <label size="148 11" pos="201 30" style="bold" color="green"
                 label="$(com.minecolonies.coremod.gui.townHall.allies)"/>

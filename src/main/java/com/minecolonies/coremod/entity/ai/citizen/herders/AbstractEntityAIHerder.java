@@ -12,7 +12,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -528,7 +528,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getHeldItemMainhand()))
         {
             worker.swingArm(EnumHand.MAIN_HAND);
-            animal.attackEntityFrom(new DamageSource(worker.getName()), (float) BUTCHERING_ATTACK_DAMAGE);
+            animal.attackEntityFrom(new EntityDamageSource(worker.getName(), worker), (float) BUTCHERING_ATTACK_DAMAGE);
             worker.getHeldItemMainhand().damageItem(1, animal);
             worker.decreaseSaturationForAction();
         }

@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.mobs.aitasks;
 
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.RaiderConstants;
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
@@ -9,7 +8,7 @@ import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumHand;
 
 /**
@@ -18,14 +17,14 @@ import net.minecraft.util.EnumHand;
 public class EntityAIRaiderAttackMelee extends EntityAIBase
 {
 
-    private static final int                           CYCLES_TO_WAIT          = 100;
+    private static final int                           MAX_ATTACK_DELAY        = 60;
     private static final double                        HALF_ROTATION           = 180;
     private static final double                        MIN_DISTANCE_FOR_ATTACK = 2.5;
     private static final double                        ATTACK_SPEED            = 1.3;
     private static final int                           MUTEX_BITS              = 3;
     private final        AbstractEntityMinecoloniesMob entity;
     private              EntityLivingBase              target;
-    private              int                           lastAttack = 0;
+    private              int                           lastAttack              = 0;
 
     /**
      * Timer for the update rate of attack logic
@@ -103,7 +102,7 @@ public class EntityAIRaiderAttackMelee extends EntityAIBase
 
             if (entity.getDistance(target) <= MIN_DISTANCE_FOR_ATTACK && lastAttack <= 0 && entity.canEntityBeSeen(target))
             {
-                target.attackEntityFrom(new DamageSource(entity.getName()), (float) damageToBeDealt);
+                target.attackEntityFrom(new EntityDamageSource(entity.getName(), entity), (float) damageToBeDealt);
                 entity.swingArm(EnumHand.MAIN_HAND);
                 entity.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) 1.0D, (float) SoundUtils.getRandomPitch(entity.getRNG()));
                 target.setRevengeTarget(entity);
@@ -128,6 +127,6 @@ public class EntityAIRaiderAttackMelee extends EntityAIBase
      */
     protected int getAttackDelay()
     {
-        return CYCLES_TO_WAIT / Math.max(1, (int) ((Constants.MAX_BARBARIAN_DIFFICULTY - Configurations.gameplay.barbarianHordeDifficulty) * 0.1));
+        return MAX_ATTACK_DELAY - Configurations.gameplay.barbarianHordeDifficulty * 4;
     }
 }

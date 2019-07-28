@@ -9,7 +9,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
-import com.minecolonies.coremod.colony.buildings.views.FilterableListView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
@@ -441,9 +441,8 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     /**
      * The client view for the baker building.
      */
-    public static class View extends FilterableListView
+    public static class View extends AbstractFilterableListsView
     {
-
         /**
          * The client view constructor for the baker building.
          *

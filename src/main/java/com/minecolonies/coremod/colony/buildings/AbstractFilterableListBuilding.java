@@ -13,7 +13,11 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 
 /**
  * Abstract class for all buildings which require a filterable list of allowed items.
@@ -28,7 +32,7 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
     /**
      * List of allowed items.
      */
-    private final List<ItemStorage> itemsAllowed = new ArrayList<>();
+    private final Map<String, List<ItemStorage>> itemsAllowed = new HashMap<>();
 
     /**
      * The constructor of the building.
@@ -45,26 +49,45 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        @NotNull final NBTTagList itemsToCompost = new NBTTagList();
-        for(@NotNull final ItemStorage entry : itemsAllowed)
+        @NotNull final NBTTagList filterableListCompound = new NBTTagList();
+        for(@NotNull final Map.Entry<String, List<ItemStorage>> entry : itemsAllowed.entrySet())
         {
-            @NotNull final NBTTagCompound itemCompound = new NBTTagCompound();
-            entry.getItemStack().writeToNBT(itemCompound);
-            itemsToCompost.appendTag(itemCompound);
+            @NotNull final NBTTagCompound listCompound = new NBTTagCompound();
+            listCompound.setString(TAG_ID, entry.getKey());
+            @NotNull final NBTTagList filteredItems = new NBTTagList();
+            for(@NotNull final ItemStorage item : entry.getValue())
+            {
+                @NotNull final NBTTagCompound itemCompound = new NBTTagCompound();
+                item.getItemStack().writeToNBT(itemCompound);
+                filteredItems.appendTag(itemCompound);
+            }
+            listCompound.setTag(TAG_ITEMLIST, filteredItems);
+            filterableListCompound.appendTag(listCompound);
         }
-        compound.setTag(TAG_ITEMLIST, itemsToCompost);
+        compound.setTag(TAG_ITEMLIST, filterableListCompound);
     }
 
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        final NBTTagList itemsToCompost = compound.getTagList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < itemsToCompost.tagCount(); ++i)
+        final NBTTagList filterableList = compound.getTagList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < filterableList.tagCount(); ++i)
         {
             try
             {
-                itemsAllowed.add(new ItemStorage(new ItemStack(itemsToCompost.getCompoundTagAt(i))));
+                final NBTTagCompound listItem = filterableList.getCompoundTagAt(i);
+                final String id = listItem.getString(TAG_ID);
+                final NBTTagList filterableItems = listItem.getTagList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
+                final List<ItemStorage> items = new ArrayList<>();
+                for (int j = 0; j < filterableItems.tagCount(); ++j)
+                {
+                    items.add(new ItemStorage(new ItemStack(filterableItems.getCompoundTagAt(j))));
+                }
+                if (!items.isEmpty())
+                {
+                    itemsAllowed.put(id, items);
+                }
             }
             catch (Exception e)
             {
@@ -77,12 +100,24 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
      * Add a compostable item to the list.
      * @param item the item to add.
      */
-    public void addItem(final ItemStorage item)
+    public void addItem(final String id, final ItemStorage item)
     {
-        if(!itemsAllowed.contains(item))
+        if(itemsAllowed.containsKey(id))
         {
-            itemsAllowed.add(item);
+            if (!itemsAllowed.get(id).contains(item))
+            {
+                final List<ItemStorage> list = itemsAllowed.get(id);
+                list.add(item);
+                itemsAllowed.put(id, list);
+            }
         }
+        else
+        {
+            final List<ItemStorage> list = new ArrayList<>();
+            list.add(item);
+            itemsAllowed.put(id, list);
+        }
+        markDirty();
     }
 
     /**
@@ -90,27 +125,33 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
      * @param item the item to check.
      * @return true if so.
      */
-    public boolean isAllowedItem(final ItemStorage item)
+    public boolean isAllowedItem(final String id, final ItemStorage item)
     {
-        return itemsAllowed.contains(item);
+        return itemsAllowed.containsKey(id) && itemsAllowed.get(id).contains(item);
     }
 
     /**
      * Remove a compostable item from the list.
      * @param item the item to remove.
      */
-    public void removeItem(final ItemStorage item)
+    public void removeItem(final String id, final ItemStorage item)
     {
-        itemsAllowed.remove(item);
+        if(itemsAllowed.containsKey(id) && itemsAllowed.get(id).contains(item))
+        {
+            final List<ItemStorage> list = itemsAllowed.get(id);
+            list.remove(item);
+            itemsAllowed.put(id, list);
+        }
+        markDirty();
     }
 
     /**
      * Getter of copy of all allowed items.
      * @return a copy.
      */
-    public List<ItemStorage> getCopyOfAllowedItems()
+    public Map<String, List<ItemStorage>> getCopyOfAllowedItems()
     {
-        return new ArrayList<>(itemsAllowed);
+        return new HashMap<>(itemsAllowed);
     }
 
     @Override
@@ -118,9 +159,14 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
     {
         super.serializeToView(buf);
         buf.writeInt(itemsAllowed.size());
-        for (final ItemStorage item : itemsAllowed)
+        for (final Map.Entry<String, List<ItemStorage>> entry : itemsAllowed.entrySet())
         {
-            ByteBufUtils.writeItemStack(buf, item.getItemStack());
+            ByteBufUtils.writeUTF8String(buf, entry.getKey());
+            buf.writeInt(entry.getValue().size());
+            for (final ItemStorage item : entry.getValue())
+            {
+                ByteBufUtils.writeItemStack(buf, item.getItemStack());
+            }
         }
     }
 }
