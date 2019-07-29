@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCrafting;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -16,11 +15,8 @@ import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
-import com.minecolonies.coremod.colony.requestsystem.exceptions.NoBuildingWithAssignedRequestFoundException;
-import com.minecolonies.coremod.colony.requestsystem.exceptions.ResolvedRequestIsNotDeliverable;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -36,19 +32,30 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractCraftingProductionResolver<C extends AbstractCrafting> extends AbstractRequestResolver<C> implements IBuildingBasedRequester
 {
+    private final Class<C> cClass;
 
+    /**
+     * Constructor to initialize.
+     * @param location the location.
+     * @param token the id.
+     * @param cClass
+     */
     public AbstractCraftingProductionResolver(
-      @NotNull final IToken<?> token,
       @NotNull final ILocation location,
-      @NotNull final TypeToken<? extends C> requestType
-    )
+      @NotNull final IToken<?> token, final Class<C> cClass)
     {
-        super(token, location, requestType);
+        super(location, token);
+        this.cClass = cClass;
     }
 
-    @NotNull
     @Override
-    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    public TypeToken<? extends C> getRequestType()
+    {
+        return TypeToken.of(cClass);
+    }
+
+    @Override
+    public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
@@ -58,113 +65,84 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
         return Optional.empty();
     }
 
-    @NotNull
-    public Optional<IBuildingWorker> getWorkerBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
-        return this.getBuilding(manager, request)
-                                                              .map(requester -> ((IBuilding) requester))
-                                                              .filter(building -> building instanceof AbstractBuildingWorker)
-                                                              .map(building -> ((IBuildingWorker) building));
-
-    }
-
     @Override
     public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends C> requestToCheck)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
-            final Optional<IBuildingWorker> buildingWorkerOptional = this.getWorkerBuilding(manager, requestToCheck);
-            if (!buildingWorkerOptional.isPresent())
-                return false;
-
-            final IBuildingWorker iBuildingWorker = buildingWorkerOptional.get();
-            return canResolveForBuilding(manager, requestToCheck, iBuildingWorker);
+            final ILocation requesterLocation = requestToCheck.getRequester().getLocation();
+            return requesterLocation.equals(getLocation());
         }
 
         return false;
-    }
-
-    private boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, @NotNull final IBuildingWorker buildingWorker)
-    {
-        if (!(request.getRequest() instanceof IDeliverable))
-            return false;
-        final IDeliverable deliverable = (IDeliverable) request.getRequest();
-
-        return buildingWorker.getFirstRecipe(deliverable::matches) != null;
     }
 
     @Nullable
     @Override
     public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request)
     {
-        final Optional<IBuildingWorker> buildingWorkerOptional = this.getWorkerBuilding(manager, request);
-        if (!buildingWorkerOptional.isPresent())
-            return null;
-
-        final IBuildingWorker buildingWorker = buildingWorkerOptional.get();
-        return attemptResolveForBuilding(manager, request, buildingWorker);
+        final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
+        return attemptResolveForBuilding(manager, request, building);
     }
 
     @Nullable
-    private List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, @NotNull final IBuildingWorker buildingWorker)
+    public List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, @NotNull final AbstractBuilding building)
     {
-        if (!(request.getRequest() instanceof IDeliverable))
-        {
+        final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
+        return attemptResolveForBuildingAndStack(manager, buildingWorker, request.getRequest().getStack(), request.getRequest().getCount());
+    }
+
+    @Nullable
+    protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, final ItemStack stack, final int count)
+    {
+        if (!canBuildingCraftStack(manager, building, stack))
+	{
             return null;
-        }
+	}
 
-        final IDeliverable deliverable = (IDeliverable) request.getRequest();
-
-        if (!canBuildingCraftStack(buildingWorker, deliverable))
-        {
-            return null;
-        }
-
-        final IRecipeStorage fullfillableCrafting = buildingWorker.getFirstFullFillableRecipe(deliverable::matches);
+        final IRecipeStorage fullfillableCrafting = building.getFirstFullFillableRecipe(stack);
         if (fullfillableCrafting != null)
         {
             return ImmutableList.of();
         }
 
-        final IRecipeStorage craftableCrafting = buildingWorker.getFirstRecipe(deliverable::matches);
+        final IRecipeStorage craftableCrafting = building.getFirstRecipe(stack);
         if (craftableCrafting == null)
         {
             return null;
         }
 
-        return createRequestsForRecipe(manager, deliverable, buildingWorker, craftableCrafting);
+        return createRequestsForRecipe(manager, building, stack, count, craftableCrafting);
     }
 
-    private boolean canBuildingCraftStack(
-      @NotNull final IBuildingWorker buildingWorker,
-      @NotNull final IDeliverable deliverable
-    )
+    protected boolean canBuildingCraftStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, @NotNull final ItemStack stack)
     {
-        return buildingWorker.getFirstFullFillableRecipe(deliverable::matches) != null;
+        return true;
     }
 
-    @NotNull
-    private List<IToken<?>> createRequestsForRecipe(
-      @NotNull final IRequestManager manager,
-      @NotNull final IDeliverable deliverable,
-      @NotNull final IBuildingWorker building,
-      @NotNull final IRecipeStorage storage)
+    @Nullable
+    protected List<IToken<?>> createRequestsForRecipe(
+            @NotNull final IRequestManager manager,
+            @NotNull final AbstractBuildingWorker building,
+            final ItemStack requestStack,
+            final int count,
+            @NotNull final IRecipeStorage storage)
     {
-        final int craftingCount = CraftingUtils.calculateMaxCraftingCount(deliverable.getCount(), storage);
+        final int craftingCount = CraftingUtils.calculateMaxCraftingCount(count, storage);
         return storage.getCleanedInput().stream()
                  .filter(s -> !ItemStackUtils.isEmpty(s.getItemStack()))
                  .filter(s -> InventoryUtils.getItemCountInItemHandler(new InvWrapper(building.getMainCitizen().getInventory()),
                    stack -> !ItemStackUtils.isEmpty(stack) && s.getItemStack().isItemEqual(stack)) < s.getAmount())
                  .map(stack -> {
-                     final ItemStack craftingHelperStack = stack.getItemStack().copy();
-                     ItemStackUtils.setSize(craftingHelperStack, stack.getAmount() * craftingCount);
+                    final ItemStack craftingHelperStack = stack.getItemStack().copy();
+                    ItemStackUtils.setSize(craftingHelperStack, stack.getAmount() * craftingCount);
 
-                     return createNewRequestForStack(manager, craftingHelperStack);
-                 }).collect(Collectors.toList());
+                    return createNewRequestForStack(manager, craftingHelperStack);
+                }).collect(Collectors.toList());
     }
 
-    @NotNull
-    private IToken<?> createNewRequestForStack(@NotNull final IRequestManager manager, final ItemStack stack)
+    @Nullable
+    protected IToken<?> createNewRequestForStack(@NotNull final IRequestManager manager, final ItemStack stack)
     {
         return manager.createRequest(this, new Stack(stack.copy()));
     }
@@ -179,15 +157,11 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     @Override
     public void onAssignedToThisResolver(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, final boolean simulation)
     {
-        final IBuilding building = getBuilding(manager, request.getId()).map(r -> (IBuilding) r).get();
+        final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
         onAssignedToThisResolverForBuilding(manager, request, simulation, building);
     }
 
-    protected void onAssignedToThisResolverForBuilding(
-      @NotNull final IRequestManager manager,
-      @NotNull final IRequest<? extends C> request,
-      final boolean simulation,
-      @NotNull final IBuilding building)
+    protected void onAssignedToThisResolverForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, final boolean simulation, @NotNull final AbstractBuilding building)
     {
         //Noop
     }
@@ -195,30 +169,23 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     @Override
     public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request)
     {
-        final Optional<IBuildingWorker> buildingWorkerOptional = getWorkerBuilding(manager, request);
-        if (!buildingWorkerOptional.isPresent())
-            throw new NoBuildingWithAssignedRequestFoundException("Can not find building from request: " + request.toString());
-
-        final IBuildingWorker buildingWorker = buildingWorkerOptional.get();
-        resolveForBuilding(manager, request, buildingWorker);
+        final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
+        resolveForBuilding(manager, request, building);
     }
 
     /**
      * Resolve the request in a building.
-     *
-     * @param manager  the request manager.
-     * @param request  the request.
-     * @param buildingWorker the building.
+     * @param manager the request manager.
+     * @param request the request.
+     * @param building the building.
      */
-    private void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, @NotNull final IBuildingWorker buildingWorker)
+    public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, @NotNull final AbstractBuilding building)
     {
-        if (!(request.getRequest() instanceof IDeliverable))
-            throw new ResolvedRequestIsNotDeliverable("The request: " + request.toString() + " is not deliverable");
-
+        final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
         final IRecipeStorage storage = buildingWorker.getFirstFullFillableRecipe(request.getRequest().getStack());
+
         if (storage == null)
         {
-            //Not sure if we should throw.....
             Log.getLogger().error("Failed to craft a crafting recipe of: " + request.getRequest().getStack().toString() + ". Its ingredients are missing.");
             return;
         }

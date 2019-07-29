@@ -62,8 +62,8 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
         final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
 
         builder.addAll(supers);
-        builder.add(new PublicWorkerCraftingRequestResolver(getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN), getRequester().getLocation()));
-        builder.add(new PublicWorkerCraftingProductionResolver(getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN), getRequester().getLocation()));
+        builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+        builder.add(new PublicWorkerCraftingProductionResolver(getRequester().getLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
     }

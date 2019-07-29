@@ -5,12 +5,12 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
@@ -28,7 +28,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
       @NotNull final ILocation location,
       @NotNull final IToken<?> token)
     {
-        super(token, location, TypeConstants.DELIVERY);
+        super(location, token);
     }
 
     @Override
@@ -148,22 +148,14 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     }
 
     @Override
-    public void onRequestedRequestCompleted(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         //We are not scheduling any child requests. So this should never be called.
     }
 
     @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        final IRequest<?> cancelledRequest = manager.getRequestForToken(token);
-        if (cancelledRequest != null && cancelledRequest.hasParent())
-        {
-            final IRequest<?> parentRequest = manager.getRequestForToken(cancelledRequest.getParent());
-            if (parentRequest.getState() != RequestState.CANCELLED && parentRequest.getState() != RequestState.OVERRULED)
-            {
-                manager.updateRequestState(cancelledRequest.getParent(), RequestState.CANCELLED);
-            }
-        }
+        Log.getLogger().error("cancelled");
     }
 }

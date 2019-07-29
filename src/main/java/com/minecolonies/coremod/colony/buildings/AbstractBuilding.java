@@ -1174,12 +1174,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public IToken<?> getId()
     {
-        return this.getId();
-    }
-
-    @Override
-    public IToken<?> getId()
-    {
         return requester.getId();
     }
 
@@ -1221,9 +1215,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         return getRequester().getLocation();
     }
 
+    @NotNull
     @Override
-    public void onRequestedRequestCompleted(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
+        final IRequest<?> request = manager.getRequestForToken(token);
+
         final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
         getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
 
@@ -1248,9 +1245,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         markDirty();
     }
 
+    @NotNull
     @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
+        final IRequest<?> request = manager.getRequestForToken(token);
+
         final int citizenThatRequested = getCitizensByRequest().remove(request.getId());
         getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
 
@@ -1278,8 +1278,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
+        final IRequest<?> request = manager.getRequestForToken(token);
+
         if (!getCitizensByRequest().containsKey(request.getId()))
         {
             return new TextComponentString("<UNKNOWN>");

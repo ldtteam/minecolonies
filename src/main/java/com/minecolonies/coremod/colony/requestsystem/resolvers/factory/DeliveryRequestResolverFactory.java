@@ -49,7 +49,7 @@ public class DeliveryRequestResolverFactory implements IRequestResolverFactory<D
     {
         final NBTTagCompound compound = new NBTTagCompound();
         compound.setTag(NBT_TOKEN, controller.serialize(deliveryRequestResolver.getId()));
-        compound.setTag(NBT_LOCATION, controller.serialize(deliveryRequestResolver.getRequesterLocation()));
+        compound.setTag(NBT_LOCATION, controller.serialize(deliveryRequestResolver.getLocation()));
         return compound;
     }
 

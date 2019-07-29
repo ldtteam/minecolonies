@@ -481,18 +481,12 @@ public abstract class AbstractBuildingView implements IBuildingView
         return requesterId;
     }
 
-    /**
-     * Method called by the request system to notify this requester that a request is complete.
-     * Is also called by the request system, when a request has been overruled, and as such
-     * completed by the player, instead of the initially assigned resolver.
-     *
-     * @param manager The request manager that has completed the given request.
-     * @param request The request that has been completed.
-     */
     @NotNull
     @Override
-    public void onRequestedRequestCompleted(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
+        final IRequest<?> request = manager.getRequestForToken(token);
+
         final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
         getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
 
@@ -502,16 +496,12 @@ public abstract class AbstractBuildingView implements IBuildingView
         }
     }
 
-    /**
-     * Method called by the request system to notify this requester that a request has been cancelled.
-     *
-     * @param manager The request manager that has cancelled the given request.
-     * @param request The request that has been cancelled.
-     */
     @NotNull
     @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
+        final IRequest request = manager.getRequestForToken(token);
+
         final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
         getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
 
@@ -521,17 +511,12 @@ public abstract class AbstractBuildingView implements IBuildingView
         }
     }
 
-    /**
-     * Gets the display name of the requester that requested the request.
-     *
-     * @param manager The request manager that wants to know what the display name of the requester for a given request is.
-     * @param request The request for which the display name is being requested.
-     * @return The display name of the requester.
-     */
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
+    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
+        final IRequest request = manager.getRequestForToken(token);
+
         try
         {
             if (getColony() == null || !getCitizensByRequest().containsKey(request.getId()) || getColony().getCitizen(getCitizensByRequest().get(request.getId())) == null)

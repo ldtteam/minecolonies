@@ -3,16 +3,14 @@ package com.minecolonies.coremod.colony.jobs.registry;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.jobs.*;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Class taking care of registering the jobs.
@@ -52,36 +50,38 @@ public class JobRegistry
      * Map to resolve names to class.
      */
     @NotNull
-    private static final BiMap<String, Class<? extends IJob>> nameToClassMap = HashBiMap.create();
-    //fix for the annotation
+    private static final BiMap<String, Function<ICitizenData, IJob<?>>> nameToConstructorMap = HashBiMap.create();
+    @NotNull
+    private static final BiMap<Class<?>, String>        classToNameMap       = HashBiMap.create();
+
     static
     {
-        addMapping(MAPPING_PLACEHOLDER, JobPlaceholder.class);
-        addMapping(MAPPING_BUILDER, JobBuilder.class);
-        addMapping(MAPPING_DELIVERY, JobDeliveryman.class);
-        addMapping(MAPPING_MINER, JobMiner.class);
-        addMapping(MAPPING_LUMBERJACK, JobLumberjack.class);
-        addMapping(MAPPING_FARMER, JobFarmer.class);
-        addMapping(MAPPING_FISHERMAN, JobFisherman.class);
-        addMapping(MAPPING_BAKER, JobBaker.class);
-        addMapping(MAPPING_COOK, JobCook.class);
-        addMapping(MAPPING_SHEPHERD, JobShepherd.class);
-        addMapping(MAPPING_COWBOY, JobCowboy.class);
-        addMapping(MAPPING_SWINE_HERDER, JobSwineHerder.class);
-        addMapping(MAPPING_CHICKEN_HERDER, JobChickenHerder.class);
-        addMapping(MAPPING_SMELTER, JobSmelter.class);
-        addMapping(MAPPING_RANGER, JobRanger.class);
-        addMapping(MAPPING_KNIGHT, JobKnight.class);
-        addMapping(MAPPING_COMPOSTER, JobComposter.class);
-        addMapping(MAPPING_STUDENT, JobStudent.class);
-        addMapping(MAPPING_ARCHER, JobArcherTraining.class);
-        addMapping(MAPPING_COMBAT, JobCombatTraining.class);
-        addMapping(MAPPING_SAWMILL, JobSawmill.class);
-        addMapping(MAPPING_BLACKSMITH, JobBlacksmith.class);
-        addMapping(MAPPING_STONEMASON, JobStonemason.class);
-        addMapping(MAPPING_STONE_SMELTERY, JobStoneSmeltery.class);
-        addMapping(MAPPING_CRUSHER, JobCrusher.class);
-        addMapping(MAPPING_SIFTER, JobSifter.class);
+        addMapping(MAPPING_PLACEHOLDER, JobPlaceholder.class, JobPlaceholder::new);
+        addMapping(MAPPING_BUILDER, JobBuilder.class, JobBuilder::new);
+        addMapping(MAPPING_DELIVERY, JobDeliveryman.class, JobDeliveryman::new);
+        addMapping(MAPPING_MINER, JobMiner.class, JobMiner::new);
+        addMapping(MAPPING_LUMBERJACK, JobLumberjack.class, JobLumberjack::new);
+        addMapping(MAPPING_FARMER, JobFarmer.class, JobFarmer::new);
+        addMapping(MAPPING_FISHERMAN, JobFisherman.class, JobFisherman::new);
+        addMapping(MAPPING_BAKER, JobBaker.class, JobBaker::new);
+        addMapping(MAPPING_COOK, JobCook.class, JobCook::new);
+        addMapping(MAPPING_SHEPHERD, JobShepherd.class, JobShepherd::new);
+        addMapping(MAPPING_COWBOY, JobCowboy.class, JobCowboy::new);
+        addMapping(MAPPING_SWINE_HERDER, JobSwineHerder.class, JobSwineHerder::new);
+        addMapping(MAPPING_CHICKEN_HERDER, JobChickenHerder.class, JobChickenHerder::new);
+        addMapping(MAPPING_SMELTER, JobSmelter.class, JobSmelter::new);
+        addMapping(MAPPING_RANGER, JobRanger.class, JobRanger::new);
+        addMapping(MAPPING_KNIGHT, JobKnight.class, JobKnight::new);
+        addMapping(MAPPING_COMPOSTER, JobComposter.class, JobComposter::new);
+        addMapping(MAPPING_STUDENT, JobStudent.class, JobStudent::new);
+        addMapping(MAPPING_ARCHER, JobArcherTraining.class, JobArcherTraining::new);
+        addMapping(MAPPING_COMBAT, JobCombatTraining.class, JobCombatTraining::new);
+        addMapping(MAPPING_SAWMILL, JobSawmill.class, JobSawmill::new);
+        addMapping(MAPPING_BLACKSMITH, JobBlacksmith.class, JobBlacksmith::new);
+        addMapping(MAPPING_STONEMASON, JobStonemason.class, JobStonemason::new);
+        addMapping(MAPPING_STONE_SMELTERY, JobStoneSmeltery.class, JobStoneSmeltery::new);
+        addMapping(MAPPING_CRUSHER, JobCrusher.class, JobCrusher::new);
+        addMapping(MAPPING_SIFTER, JobSifter.class, JobSifter::new);
     }
 
     /**
@@ -98,26 +98,16 @@ public class JobRegistry
      * Add a given Job mapping.
      *
      * @param name     name of job class.
-     * @param jobClass class of job.
+     * @param jobFunction class of job.
      */
-    private static void addMapping(final String name, @NotNull final Class<? extends IJob> jobClass)
+    private static void addMapping(final String name, @NotNull final Class<?> jobClass, @NotNull final Function<ICitizenData, IJob<?>> jobFunction)
     {
-        if (nameToClassMap.containsKey(name))
+        if (nameToConstructorMap.containsKey(name))
         {
             throw new IllegalArgumentException("Duplicate type '" + name + "' when adding Job class mapping");
         }
-        try
-        {
-            if (jobClass.getDeclaredConstructor(CitizenData.class) != null)
-            {
-                nameToClassMap.put(name, jobClass);
-                nameToClassMap.inverse().put(jobClass, name);
-            }
-        }
-        catch (final NoSuchMethodException exception)
-        {
-            throw new IllegalArgumentException("Missing constructor for type '" + name + "' when adding Job class mapping", exception);
-        }
+        nameToConstructorMap.put(name, jobFunction);
+        classToNameMap.put(jobClass, name);
     }
 
     /**
@@ -128,50 +118,35 @@ public class JobRegistry
      * @return New Job created from the data, or null.
      */
     @Nullable
-    public static AbstractJob createFromNBT(final ICitizenData citizen, @NotNull final NBTTagCompound compound)
+    public static IJob createFromNBT(final ICitizenData citizen, @NotNull final NBTTagCompound compound)
     {
-        @Nullable AbstractJob job = null;
-        @Nullable Class<? extends IJob> oclass = null;
-
-        try
-        {
-            oclass = nameToClassMap.get(compound.getString(TAG_TYPE));
-
-            if (oclass != null)
-            {
-                final Constructor<?> constructor = oclass.getDeclaredConstructor(CitizenData.class);
-                job = (AbstractJob) constructor.newInstance(citizen);
-            }
-        }
-        catch (@NotNull NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e)
-        {
-            Log.getLogger().trace(e);
-        }
+        final String jobType = compound.hasKey(TAG_TYPE) ? compound.getString(TAG_TYPE) : MAPPING_PLACEHOLDER;
+        final IJob job = nameToConstructorMap.get(jobType).apply(citizen);
 
         if (job != null)
         {
             try
             {
-                job.readFromNBT(compound);
+                job.deserializeNBT(compound);
             }
             catch (final RuntimeException ex)
             {
-                Log.getLogger().error(String.format("A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                  compound.getString(TAG_TYPE), oclass.getName()), ex);
-                job = null;
+                Log.getLogger().error(String.format("A Job %s has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                  jobType), ex);
+                return null;
             }
         }
         else
         {
-            Log.getLogger().warn(String.format("Unknown Job type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+            Log.getLogger().warn(String.format("Unknown Job type '%s' or missing constructor of proper format.", jobType));
         }
 
         return job;
     }
 
     @NotNull
-    public static Map<Class<? extends IJob>, String> getClassToNameMap()
+    public static Map<Class<?>, String> getClassToNameMap()
     {
-        return nameToClassMap.inverse();
+        return classToNameMap;
     }
 }

@@ -82,7 +82,7 @@ public final class ColonyManager implements IColonyManager
      */
     private boolean loaded = false;
 
-    private ColonyManager()
+    public ColonyManager()
     {
         //Hides default constructor.
     }

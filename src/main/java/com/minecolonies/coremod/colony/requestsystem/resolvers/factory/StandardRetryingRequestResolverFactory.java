@@ -81,7 +81,7 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
         }).collect(NBTUtils.toNBTTagList()));
 
         compound.setTag(NBT_TOKEN, controller.serialize(standardRetryingRequestResolver.getId()));
-        compound.setTag(NBT_LOCATION, controller.serialize(standardRetryingRequestResolver.getRequesterLocation()));
+        compound.setTag(NBT_LOCATION, controller.serialize(standardRetryingRequestResolver.getLocation()));
 
         return compound;
     }

@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings.registry;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
@@ -257,7 +258,7 @@ public class BuildingRegistry
 
             if (oclass != null)
             {
-                final Constructor<?> constructor = oclass.getDeclaredConstructor(ColonyView.class, BlockPos.class);
+                final Constructor<?> constructor = oclass.getDeclaredConstructor(IColonyView.class, BlockPos.class);
                 view = (AbstractBuildingView) constructor.newInstance(colony, id);
             }
         }

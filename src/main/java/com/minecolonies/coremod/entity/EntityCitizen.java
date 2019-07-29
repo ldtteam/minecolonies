@@ -1238,7 +1238,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IEntityCitiz
      * @return the instance of the handler.
      */
     @Override
-    public CitizenColonyHandler getCitizenColonyHandler()
+    public ICitizenColonyHandler getCitizenColonyHandler()
     {
         return citizenColonyHandler;
     }
@@ -1249,7 +1249,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IEntityCitiz
      * @return the instance of the handler.
      */
     @Override
-    public CitizenJobHandler getCitizenJobHandler()
+    public ICitizenJobHandler getCitizenJobHandler()
     {
         return citizenJobHandler;
     }

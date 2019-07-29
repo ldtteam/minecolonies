@@ -288,31 +288,11 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     boolean overruleNextOpenRequestOfCitizenWithStack(@NotNull ICitizenData citizenData, @NotNull ItemStack stack);
 
     @Override
-    IToken<?> getId();
-
-    @Override
-    IToken<?> getId();
-
-    @Override
     ImmutableCollection<IRequestResolver<?>> getResolvers();
 
     ImmutableCollection<IRequestResolver<?>> createResolvers();
 
     IRequester getRequester();
-
-    @NotNull
-    @Override
-    ILocation getLocation();
-
-    @Override
-    void onRequestedRequestCompleted(@NotNull IRequestManager manager, @NotNull IRequest<?> request);
-
-    @Override
-    void onRequestedRequestCancelled(@NotNull IRequestManager manager, @NotNull IRequest<?> request);
-
-    @NotNull
-    @Override
-    ITextComponent getDisplayName(@NotNull IRequestManager manager, @NotNull IRequest<?> request);
 
     Optional<ICitizenData> getCitizenForRequest(@NotNull IToken token);
 }

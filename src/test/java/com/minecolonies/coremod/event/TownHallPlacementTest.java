@@ -66,8 +66,8 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
     @Test
     public void testNothingNearby()
     {
-        when(IColonyManager.getIColonyByOwner(world, player)).thenReturn(null);
-        when(IColonyManager.getClosestIColony(world, PLACE_POS)).thenReturn(null);
+        when(IColonyManager.getInstance().getIColonyByOwner(world, player)).thenReturn(null);
+        when(IColonyManager.getInstance().getClosestIColony(world, PLACE_POS)).thenReturn(null);
 
         Assert.assertTrue(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
@@ -78,22 +78,22 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
     @Test
     public void testReplaceAsOwner()
     {
-        when(IColonyManager.getIColonyByOwner(world, player)).thenReturn(colony);
+        when(IColonyManager.getInstance().getIColonyByOwner(world, player)).thenReturn(colony);
         when(colony.isCoordInColony(world, PLACE_POS)).thenReturn(true);
         when(colony.hasTownHall()).thenReturn(false);
-        when(IColonyManager.getIColony(world, PLACE_POS)).thenReturn(colony);
+        when(IColonyManager.getInstance().getIColony(world, PLACE_POS)).thenReturn(colony);
 
         Assert.assertTrue(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        IColonyManager.createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
+        IColonyManager.getInstance().createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
     }
 
     @Test
     public void testReplaceAsNonOwnerWithoutPermission()
     {
-        when(IColonyManager.getIColonyByOwner(world, player)).thenReturn(null);
-        when(IColonyManager.getClosestIColony(world, PLACE_POS)).thenReturn(colony);
+        when(IColonyManager.getInstance().getIColonyByOwner(world, player)).thenReturn(null);
+        when(IColonyManager.getInstance().getClosestIColony(world, PLACE_POS)).thenReturn(colony);
         when(colony.isCoordInColony(world, PLACE_POS)).thenReturn(true);
         when(colony.hasTownHall()).thenReturn(false);
         when(colony.getPermissions()).thenReturn(permissions);
@@ -103,14 +103,14 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
         Assert.assertFalse(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        IColonyManager.createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
+        IColonyManager.getInstance().createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
     }
 
     @Test
     public void testReplaceAsNonOwnerWithPermission()
     {
-        when(IColonyManager.getIColonyByOwner(world, player)).thenReturn(null);
-        when(IColonyManager.getClosestIColony(world, PLACE_POS)).thenReturn(colony);
+        when(IColonyManager.getInstance().getIColonyByOwner(world, player)).thenReturn(null);
+        when(IColonyManager.getInstance().getClosestIColony(world, PLACE_POS)).thenReturn(colony);
         when(colony.isCoordInColony(world, PLACE_POS)).thenReturn(true);
         when(colony.hasTownHall()).thenReturn(false);
         when(colony.getPermissions()).thenReturn(permissions);
@@ -120,14 +120,14 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
         Assert.assertTrue(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        IColonyManager.createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
+        IColonyManager.getInstance().createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
     }
 
     @Test
     public void testReplaceAsNonMember()
     {
-        when(IColonyManager.getIColonyByOwner(world, player)).thenReturn(null);
-        when(IColonyManager.getClosestIColony(world, PLACE_POS)).thenReturn(colony);
+        when(IColonyManager.getInstance().getIColonyByOwner(world, player)).thenReturn(null);
+        when(IColonyManager.getInstance().getClosestIColony(world, PLACE_POS)).thenReturn(colony);
         when(colony.isCoordInColony(world, PLACE_POS)).thenReturn(true);
         when(colony.hasTownHall()).thenReturn(false);
         when(colony.getPermissions()).thenReturn(permissions);
@@ -136,83 +136,83 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
         Assert.assertFalse(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        IColonyManager.createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
+        IColonyManager.getInstance().createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
     }
 
     @Test
     public void testAlreadyPlacedInOwnedColony()
     {
-        when(IColonyManager.getIColonyByOwner(world, player)).thenReturn(colony);
+        when(IColonyManager.getInstance().getIColonyByOwner(world, player)).thenReturn(colony);
         when(colony.isCoordInColony(world, PLACE_POS)).thenReturn(true);
         when(colony.hasTownHall()).thenReturn(true);
 
         Assert.assertFalse(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        IColonyManager.createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
+        IColonyManager.getInstance().createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
     }
 
     @Test
     public void testAlreadyPlacedInNonOwnedColony()
     {
-        when(IColonyManager.getIColonyByOwner(world, player)).thenReturn(colony);
+        when(IColonyManager.getInstance().getIColonyByOwner(world, player)).thenReturn(colony);
         when(colony.isCoordInColony(world, PLACE_POS)).thenReturn(false);
         when(colony.hasTownHall()).thenReturn(false);
         //Just need to return any other colony instance.
-        when(IColonyManager.getIColony(world, PLACE_POS)).thenReturn(null);
+        when(IColonyManager.getInstance().getIColony(world, PLACE_POS)).thenReturn(null);
 
         Assert.assertFalse(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        IColonyManager.createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
+        IColonyManager.getInstance().createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
     }
 
     @Test
     public void testAlreadyPlacedNotInColony()
     {
-        when(IColonyManager.getIColonyByOwner(world, player)).thenReturn(colony);
+        when(IColonyManager.getInstance().getIColonyByOwner(world, player)).thenReturn(colony);
         when(colony.isCoordInColony(world, PLACE_POS)).thenReturn(false);
 
         Assert.assertFalse(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        IColonyManager.createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
+        IColonyManager.getInstance().createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
     }
 
     @Test
     public void testTryPlaceInColony()
     {
-        when(IColonyManager.getIColonyByOwner(world, player)).thenReturn(null);
-        when(IColonyManager.getClosestIColony(world, PLACE_POS)).thenReturn(colony);
+        when(IColonyManager.getInstance().getIColonyByOwner(world, player)).thenReturn(null);
+        when(IColonyManager.getInstance().getClosestIColony(world, PLACE_POS)).thenReturn(colony);
         when(colony.isCoordInColony(world, PLACE_POS)).thenReturn(true);
         when(colony.hasTownHall()).thenReturn(true);
 
         Assert.assertFalse(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        IColonyManager.createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
+        IColonyManager.getInstance().createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
     }
 
     @Test
     public void testTryPlaceCloseToColony()
     {
-        when(IColonyManager.getIColonyByOwner(world, player)).thenReturn(null);
-        when(IColonyManager.getClosestIColony(world, PLACE_POS)).thenReturn(colony);
+        when(IColonyManager.getInstance().getIColonyByOwner(world, player)).thenReturn(null);
+        when(IColonyManager.getInstance().getClosestIColony(world, PLACE_POS)).thenReturn(colony);
         when(colony.isCoordInColony(world, PLACE_POS)).thenReturn(false);
         when(colony.getDistanceSquared(PLACE_POS)).thenReturn(0L);
-        when(IColonyManager.isTooCloseToColony(world, PLACE_POS)).thenReturn(true);
+        when(IColonyManager.getInstance().isTooCloseToColony(world, PLACE_POS)).thenReturn(true);
 
         Assert.assertFalse(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        IColonyManager.createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
+        IColonyManager.getInstance().createColony(world, PLACE_POS, player, Constants.DEFAULT_STYLE);
     }
 
     @Test
     public void testTryPlaceFarAway()
     {
-        when(IColonyManager.getIColonyByOwner(world, player)).thenReturn(null);
-        when(IColonyManager.getClosestIColony(world, PLACE_POS)).thenReturn(colony);
+        when(IColonyManager.getInstance().getIColonyByOwner(world, player)).thenReturn(null);
+        when(IColonyManager.getInstance().getClosestIColony(world, PLACE_POS)).thenReturn(colony);
         when(colony.isCoordInColony(world, PLACE_POS)).thenReturn(false);
         when(colony.getDistanceSquared(PLACE_POS)).thenReturn(Long.MAX_VALUE);
 

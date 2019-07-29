@@ -275,7 +275,7 @@ public final class RequestHandler
         @SuppressWarnings(RAWTYPES) final IRequest request = getRequest(manager, token);
         @SuppressWarnings(RAWTYPES) final IRequestResolver resolver = ResolverHandler.getResolverForRequest(manager, token);
 
-        request.getRequester().onRequestedRequestCompleted(manager, token);
+        request.getRequester().onRequestComplete(manager, token);
 
         //Retrieve a followup request.
         final List<IRequest<?>> followupRequests = resolver.getFollowupRequestForCompletion(manager, request);
@@ -368,7 +368,7 @@ public final class RequestHandler
 
         //Notify the requester.
         final IRequester requester = request.getRequester();
-        requester.onRequestedRequestCancelled(manager, request);
+        requester.onRequestCancelled(manager, token);
 
         cleanRequestData(manager, token);
     }
@@ -393,13 +393,12 @@ public final class RequestHandler
         if (request.hasChildren())
         {
             final ImmutableCollection<IToken<?>> currentChildren = request.getChildren();
-            request.removeChildren(currentChildren);
             currentChildren.forEach(t -> onRequestCancelled(manager, t));
         }
 
         //Now lets get ourselfs a clean up.
         final IRequestResolver<?> targetResolver = ResolverHandler.getResolverForRequest(manager, request);
-        processParentReplacement(manager, request, targetResolver.onRequestedRequestCancelled(manager, request));
+        processParentReplacement(manager, request, targetResolver.onRequestCancelled(manager, request));
 
         manager.updateRequestState(token, RequestState.FINALIZING);
     }

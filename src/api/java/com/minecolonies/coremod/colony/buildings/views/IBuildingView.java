@@ -174,9 +174,6 @@ public interface IBuildingView extends IRequester
       Class<R> requestType,
       Predicate<IRequest<? extends R>> filter);
 
-    @Override
-    IToken<?> getId();
-
     /**
      * Get the delivery priority of the building.
      *

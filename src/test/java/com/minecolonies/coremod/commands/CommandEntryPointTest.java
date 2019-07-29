@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.ICitizenData;
 import org.assertj.core.api.Fail;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +57,7 @@ public class CommandEntryPointTest
         final Colony colony2 = mock(Colony.class);
         when(colony2.getID()).thenReturn(2);
         @SuppressWarnings("unchecked")
-        final List<Colony> colonyList = Arrays.asList(new Colony[] {colony1, colony2});
+        final List<IColony> colonyList = Arrays.asList(new Colony[] {colony1, colony2});
 
         final ICitizenManager citizenManager1 = mock(ICitizenManager.class);
         when(colony1.getCitizenManager()).thenReturn(citizenManager1);
@@ -797,7 +798,7 @@ public class CommandEntryPointTest
                 assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.COLONY);
                 assertThat(actionArgumentList.get(0).getActionArgumentList()).extracting("name").containsExactly("citizen");
                 assertThat(actionArgumentList.get(0).getActionArgumentList()).extracting("type").containsOnly(ActionArgumentType.CITIZEN);
-                final Colony colony = actionMenuState.getColonyForArgument("colony");
+                final IColony colony = actionMenuState.getColonyForArgument("colony");
                 final ICitizenData citizenData = actionMenuState.getCitizenForArgument("citizen");
                 assertThat(colony.getID()).isEqualTo(2);
                 assertThat(citizenData.getName()).isEqualTo("Sally");
@@ -836,7 +837,7 @@ public class CommandEntryPointTest
                 assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.COLONY);
                 assertThat(actionArgumentList.get(0).getActionArgumentList()).extracting("name").containsExactly("citizen");
                 assertThat(actionArgumentList.get(0).getActionArgumentList()).extracting("type").containsOnly(ActionArgumentType.CITIZEN);
-                final Colony colony = actionMenuState.getColonyForArgument("colony");
+                final IColony colony = actionMenuState.getColonyForArgument("colony");
                 final ICitizenData citizenData = actionMenuState.getCitizenForArgument("citizen");
                 assertThat(citizenData).as("citizen.getName()").isNotNull();
                 assertThat(colony.getID()).isEqualTo(2);
@@ -874,7 +875,7 @@ public class CommandEntryPointTest
                 assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.COLONY);
                 assertThat(actionArgumentList.get(0).getActionArgumentList()).extracting("name").containsExactly("citizen");
                 assertThat(actionArgumentList.get(0).getActionArgumentList()).extracting("type").containsOnly(ActionArgumentType.CITIZEN);
-                final Colony colony = actionMenuState.getColonyForArgument("colony");
+                final IColony colony = actionMenuState.getColonyForArgument("colony");
                 final ICitizenData citizenData = actionMenuState.getCitizenForArgument("citizen");
                 assertThat(citizenData).as("citizen.getName()").isNotNull();
                 assertThat(colony.getID()).isEqualTo(2);
@@ -1016,7 +1017,7 @@ public class CommandEntryPointTest
                 assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.COLONY);
                 assertThat(actionArgumentList.get(0).getActionArgumentList()).extracting("name").containsExactly("citizen");
                 assertThat(actionArgumentList.get(0).getActionArgumentList()).extracting("type").containsOnly(ActionArgumentType.CITIZEN);
-                final Colony colony = actionMenuState.getColonyForArgument("colony");
+                final IColony colony = actionMenuState.getColonyForArgument("colony");
                 final ICitizenData citizenData = actionMenuState.getCitizenForArgument("citizen");
                 assertThat(colony.getID()).isEqualTo(1);
                 assertThat(citizenData.getName()).isEqualTo("John S. Smith");
@@ -1188,7 +1189,7 @@ public class CommandEntryPointTest
                 assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("player", "colony");
                 assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.PLAYER, ActionArgumentType.COLONY);
                 final EntityPlayerMP player = actionMenuState.getPlayerForArgument("player");
-                final Colony colony = actionMenuState.getColonyForArgument("colony");
+                final IColony colony = actionMenuState.getColonyForArgument("colony");
                 assertThat(player.getName()).isEqualTo("Bob");
                 assertThat(colony.getID()).isEqualTo(1);
             }
@@ -1222,7 +1223,7 @@ public class CommandEntryPointTest
                 assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("player", "colony");
                 assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.PLAYER, ActionArgumentType.COLONY);
                 final EntityPlayerMP player = actionMenuState.getPlayerForArgument("player");
-                final Colony colony = actionMenuState.getColonyForArgument("colony");
+                final IColony colony = actionMenuState.getColonyForArgument("colony");
                 assertThat(player.getName()).isEqualTo("Bob");
                 assertThat(colony.getID()).isEqualTo(1);
             }
@@ -1530,7 +1531,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("colony", "canDestroy", "confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN, ActionArgumentType.COLONY);
-                final Colony colony = actionMenuState.getColonyForArgument("colony");
+                final IColony colony = actionMenuState.getColonyForArgument("colony");
                 assertThat(colony).as("colony").isNotNull();
                 assertThat(colony.getID()).as("colony.getID()").isEqualTo(1);
                 final Boolean canDestroyBoolean = (Boolean) actionMenuState.getBooleanForArgument("canDestroy");
@@ -1571,7 +1572,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("colony", "canDestroy", "confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN, ActionArgumentType.COLONY);
-                final Colony colony = actionMenuState.getColonyForArgument("colony");
+                final IColony colony = actionMenuState.getColonyForArgument("colony");
                 assertThat(colony.getID()).as("colony.getID()").isEqualTo(1);
                 final Boolean canDestroyBoolean = (Boolean) actionMenuState.getBooleanForArgument("canDestroy");
                 assertThat(canDestroyBoolean).as("canDestroyBoolean").isNull();
@@ -2029,7 +2030,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("colony", "canDestroy", "confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.COLONY, ActionArgumentType.BOOLEAN);
-                final Colony colony = actionMenuState.getColonyForArgument("colony");
+                final IColony colony = actionMenuState.getColonyForArgument("colony");
                 assertThat(colony).as("colony").isNotNull();
                 final Boolean canDestroy = actionMenuState.getBooleanForArgument("canDestroy");
                 final Boolean confirmDelete = actionMenuState.getBooleanForArgument("confirmDelete");
@@ -2055,7 +2056,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("colony", "canDestroy", "confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.COLONY, ActionArgumentType.BOOLEAN);
-                final Colony colony = actionMenuState.getColonyForArgument("colony");
+                final IColony colony = actionMenuState.getColonyForArgument("colony");
                 final Boolean canDestroy = actionMenuState.getBooleanForArgument("canDestroy");
                 final Boolean confirmDelete = actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(colony.getID()).isEqualTo(1);
@@ -2091,7 +2092,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("colony", "canDestroy", "confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.COLONY, ActionArgumentType.BOOLEAN);
-                final Colony colony = actionMenuState.getColonyForArgument("colony");
+                final IColony colony = actionMenuState.getColonyForArgument("colony");
                 final Boolean canDestroy = actionMenuState.getBooleanForArgument("canDestroy");
                 final Boolean confirmDelete = actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(colony.getID()).isEqualTo(1);
