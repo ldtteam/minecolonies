@@ -159,7 +159,7 @@ public class ContainerMinecoloniesBuildingInventory extends Container
         }
         else
         {
-            slot.onSlotChanged();
+            slot.putStack(stackCopy);
         }
 
         return stackCopy;

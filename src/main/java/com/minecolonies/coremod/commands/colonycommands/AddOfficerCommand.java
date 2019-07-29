@@ -87,7 +87,7 @@ public class AddOfficerCommand extends AbstractSingleCommand implements IActionC
             colonyId = colony.getID();
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(0));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, sender.getEntityWorld());
 
         if (colony == null)
         {

@@ -30,7 +30,8 @@ import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.*;
@@ -324,6 +325,13 @@ public class TileEntityRack extends TileEntity
                     typeNeighbor = null;
                 }
             }
+
+            // This here avoids that two racks can be main at the same time.
+            if (this.isMain() && getOtherChest() != null && getOtherChest().isMain())
+            {
+                getOtherChest().setMain(false);
+            }
+
             world.setBlockState(pos, typeHere);
             if (typeNeighbor != null)
             {
@@ -349,6 +357,7 @@ public class TileEntityRack extends TileEntity
             ((TileEntityRack) tileEntity).setNeighbor(this.getPos());
             return (TileEntityRack) tileEntity;
         }
+
         single = true;
         relativeNeighbor = null;
         return null;
@@ -594,6 +603,7 @@ public class TileEntityRack extends TileEntity
                     else
                     {
                         this.main = true;
+
                         if (combinedHandler == null)
                         {
                             combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().inventory);

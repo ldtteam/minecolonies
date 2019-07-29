@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Interface for all compatabilityManagers.
@@ -43,13 +44,6 @@ public interface ICompatibilityManager
     void discover();
 
     /**
-     * Gets the leave matching a sapling.
-     * @param stack the sapling.
-     * @return the leave block.
-     */
-    IBlockState getLeafForSapling(final ItemStack stack);
-
-    /**
      * Gets the sapling matching a leave.
      * @param block the leave.
      * @return the sapling stack.
@@ -61,6 +55,31 @@ public interface ICompatibilityManager
      * @return the list of saplings.
      */
     List<ItemStorage> getCopyOfSaplings();
+
+    /**
+     * Get a set of all fuel items.
+     * @return an immutable set.
+     */
+    Set<ItemStorage> getFuel();
+
+    /**
+     * Get a set of all food items.
+     * @return an immutable set.
+     */
+    Set<ItemStorage> getFood();
+
+    /**
+     * Get a set of all smeltable ores.
+     * @return an immutable set.
+     */
+    Set<ItemStorage> getSmeltableOres();
+
+    /**
+     * Check if a stack belongs to a minable ore.
+     * @param stack the stack to test.
+     * @return true if so.
+     */
+    boolean isMineableOre(@NotNull ItemStack stack);
 
     /**
      * Get a copy of the list of compostable items.

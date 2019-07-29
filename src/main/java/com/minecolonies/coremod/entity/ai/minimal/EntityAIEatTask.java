@@ -10,6 +10,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
 import com.minecolonies.coremod.network.messages.ItemParticleEffectMessage;
@@ -27,6 +28,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
+import static com.minecolonies.api.util.constant.CitizenConstants.HIGH_SATURATION;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
@@ -75,6 +77,7 @@ public class EntityAIEatTask extends EntityAIBase
     {
         IDLE,
         CHECK_FOR_FOOD,
+        GO_TO_HUT,
         SEARCH_RESTAURANT,
         GO_TO_RESTAURANT,
         WAIT_FOR_FOOD,
@@ -134,7 +137,7 @@ public class EntityAIEatTask extends EntityAIBase
         }
 
         final ICitizenData citizenData = citizen.getCitizenData();
-        if (citizenData == null || citizen.getCitizenData().getSaturation() >= CitizenConstants.HIGH_SATURATION || (!citizen.isOkayToEat()
+        if (citizenData == null || citizen.getCitizenData().getSaturation() >= HIGH_SATURATION || (!citizen.isOkayToEat()
                                                                                                                       && citizen.getCitizenData().getSaturation() > 0))
         {
             return false;
@@ -147,7 +150,7 @@ public class EntityAIEatTask extends EntityAIBase
                      || citizenData.getJob() == null;
         }
 
-        return false;
+        return (citizenData.getSaturation() <= HIGH_SATURATION && citizenData.getJob() instanceof AbstractJobGuard && checkForFood(citizenData) == EAT && citizen.isOkayToEat());
     }
 
     @Override
@@ -168,6 +171,9 @@ public class EntityAIEatTask extends EntityAIBase
         {
             case CHECK_FOR_FOOD:
                 currentState = checkForFood(citizenData);
+                return;
+            case GO_TO_HUT:
+                currentState = goToHut(citizenData);
                 return;
             case SEARCH_RESTAURANT:
                 currentState = searchRestaurant(citizenData);
@@ -203,13 +209,13 @@ public class EntityAIEatTask extends EntityAIBase
     {
         if (foodSlot == -1)
         {
-            return WAIT_FOR_FOOD;
+            return CHECK_FOR_FOOD;
         }
 
         final ItemStack stack = citizenData.getInventory().getStackInSlot(foodSlot);
         if (!CAN_EAT.test(stack))
         {
-            return WAIT_FOR_FOOD;
+            return CHECK_FOR_FOOD;
         }
 
         citizen.setHeldItem(EnumHand.MAIN_HAND, stack);
@@ -355,6 +361,36 @@ public class EntityAIEatTask extends EntityAIBase
     }
 
     /**
+     * Go to the hut to try to get food there first.
+     *
+     * @return the next state to go to.
+     */
+    private STATE goToHut(final CitizenData data)
+    {
+        final AbstractBuildingWorker buildingWorker = data.getWorkBuilding();
+        if (buildingWorker == null)
+        {
+            return SEARCH_RESTAURANT;
+        }
+
+        if (citizen.isWorkerAtSiteWithMove(buildingWorker.getLocation(), MIN_DISTANCE_TO_RESTAURANT))
+        {
+            final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(buildingWorker, CAN_EAT);
+            if (slot != -1)
+            {
+                InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
+                  buildingWorker.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
+                  CAN_EAT,
+                  buildingWorker.getBuildingLevel() * AMOUNT_OF_FOOD_TO_SERVE,
+                  new InvWrapper(citizen.getInventoryCitizen()));
+                return CHECK_FOR_FOOD;
+            }
+            return SEARCH_RESTAURANT;
+        }
+        return GO_TO_HUT;
+    }
+
+    /**
      * Go to the previously found placeToPath to get some food.
      *
      * @return the next state to go to.
@@ -421,9 +457,9 @@ public class EntityAIEatTask extends EntityAIBase
         if (slot == -1)
         {
             citizenData.getCitizenHappinessHandler().setFoodModifier(false);
-            if ((citizenData.getSaturation() < CitizenConstants.LOW_SATURATION || citizen.isIdlingAtJob()) && citizenData.getSaturation() < CitizenConstants.HIGH_SATURATION)
+            if ((citizenData.getSaturation() < CitizenConstants.LOW_SATURATION || citizen.isIdlingAtJob()) && citizenData.getSaturation() < HIGH_SATURATION)
             {
-                return SEARCH_RESTAURANT;
+                return GO_TO_HUT;
             }
 
             reset();

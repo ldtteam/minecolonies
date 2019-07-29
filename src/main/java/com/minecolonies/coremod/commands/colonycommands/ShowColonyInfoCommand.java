@@ -86,7 +86,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
                         sender.sendMessage(new TextComponentString(NOT_PERMITTED));
                         return;
                     }
-                    colony = IColonyManager.getInstance().getColonyByWorld(iColony.getID(), server.getWorld(0));
+                    colony = IColonyManager.getInstance().getColonyByWorld(iColony.getID(), server.getWorld(sender.getEntityWorld().provider.getDimension()));
                 }
             }
         }
@@ -106,7 +106,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
                         sender.sendMessage(new TextComponentString(NOT_PERMITTED));
                         return;
                     }
-                    colony = IColonyManager.getInstance().getColonyByWorld(iColony.getID(), server.getWorld(0));
+                    colony = IColonyManager.getInstance().getColonyByWorld(iColony.getID(), server.getWorld(sender.getEntityWorld().provider.getDimension()));
                 }
             }
         }
@@ -131,7 +131,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         int colonyId = getIthArgument(args, 0, -1);
-        IColony tempColony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(0));
+        IColony tempColony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
 
         if (colonyId == -1 && args.length >= 1)
         {
@@ -178,7 +178,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
             return;
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(tempColony.getID(), server.getWorld(0));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(tempColony.getID(), server.getWorld(sender.getEntityWorld().provider.getDimension()));
         if (colony == null)
         {
             if (colonyId == -1 && args.length != 0)

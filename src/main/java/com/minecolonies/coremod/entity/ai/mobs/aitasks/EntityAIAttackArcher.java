@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.ai.mobs.aitasks;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -16,14 +15,18 @@ import net.minecraft.util.math.MathHelper;
  */
 public class EntityAIAttackArcher extends EntityAIBase
 {
-    private static final int    CYCLES_TO_WAIT                 = 200;
-    private static final double PITCH_MULTIPLIER               = 0.4;
-    private static final double HALF_ROTATION                  = 180;
-    private static final double ATTACK_SPEED                   = 1.3;
-    private static final int    MUTEX_BITS                     = 3;
-    private static final double AIM_HEIGHT                     = 3.0D;
-    private static final double ARROW_SPEED                    = 1.6D;
-    private static final double HIT_CHANCE                     = 10.0D;
+    /**
+     * Max delay between attacks is 4s, aka 80 ticks.
+     */
+    private static final int MAX_ATTACK_DELAY = 80;
+
+    private static final double    PITCH_MULTIPLIER            = 0.4;
+    private static final double    HALF_ROTATION               = 180;
+    private static final double    ATTACK_SPEED                = 1.3;
+    private static final int       MUTEX_BITS                  = 3;
+    private static final double    AIM_HEIGHT                  = 3.0D;
+    private static final double    ARROW_SPEED                 = 1.6D;
+    private static final double    HIT_CHANCE                  = 10.0D;
     private static final double AIM_SLIGHTLY_HIGHER_MULTIPLIER = 0.20000000298023224D;
     private static final double BASE_PITCH                     = 0.8D;
     private static final double PITCH_DIVIDER                  = 1.0D;
@@ -64,7 +67,8 @@ public class EntityAIAttackArcher extends EntityAIBase
     @Override
     public boolean shouldContinueExecuting()
     {
-        if (target.isEntityAlive() && entity.isEntityAlive())
+        target = entity.getAttackTarget();
+        if (target != null && target.isEntityAlive() && entity.isEntityAlive())
         {
             attack(target);
             return true;
@@ -142,7 +146,7 @@ public class EntityAIAttackArcher extends EntityAIBase
      */
     protected int getAttackDelay()
     {
-        return CYCLES_TO_WAIT / Math.max(1, (int) ((Constants.MAX_BARBARIAN_DIFFICULTY - Configurations.gameplay.barbarianHordeDifficulty) * 0.1));
+        return MAX_ATTACK_DELAY - Configurations.gameplay.barbarianHordeDifficulty * 4;
     }
 
     /**

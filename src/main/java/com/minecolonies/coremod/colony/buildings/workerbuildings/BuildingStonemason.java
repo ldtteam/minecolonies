@@ -91,8 +91,8 @@ public class BuildingStonemason extends AbstractBuildingCrafter
             return false;
         }
 
-        int amountOfValidBlocks = 0;
-        int blocks = 0;
+        double amountOfValidBlocks = 0;
+        double blocks = 0;
 
 
         if (storage.getPrimaryOutput().getItem() instanceof ItemBlock)
@@ -123,21 +123,23 @@ public class BuildingStonemason extends AbstractBuildingCrafter
             if(!ItemStackUtils.isEmpty(stack))
             {
                 blocks++;
+                if (stack.getItem() instanceof ItemBlock)
+                {
+                    final Block block = ((ItemBlock) stack.getItem()).getBlock();
+                    if (block == Blocks.STONEBRICK || block == Blocks.STONE_BRICK_STAIRS || block == Blocks.STONE_SLAB || block == Blocks.STONE_SLAB2)
+                    {
+                        amountOfValidBlocks++;
+                        continue;
+                    }
+                }
+
                 for(final int id: OreDictionary.getOreIDs(stack))
                 {
-                    if (stack.getItem() instanceof ItemBlock)
-                    {
-                        final Block block = ((ItemBlock) stack.getItem()).getBlock();
-                        if (block == Blocks.STONEBRICK || block == Blocks.STONE_BRICK_STAIRS || block == Blocks.STONE_SLAB || block == Blocks.STONE_SLAB2)
-                        {
-                            amountOfValidBlocks++;
-                            continue;
-                        }
-                    }
                     final String name = OreDictionary.getOreName(id);
                     if(name.contains("stone"))
                     {
                         amountOfValidBlocks++;
+                        break;
                     }
                     else if(name.contains("stick") || name.contains("wood") || name.toLowerCase(Locale.US).contains("redstone") || name.contains("string") || name.contains("gunpowder"))
                     {
@@ -147,7 +149,7 @@ public class BuildingStonemason extends AbstractBuildingCrafter
             }
         }
 
-        return amountOfValidBlocks > 0 && blocks/amountOfValidBlocks > MIN_PERCENTAGE_TO_CRAFT;
+        return amountOfValidBlocks > 0 && amountOfValidBlocks/blocks > MIN_PERCENTAGE_TO_CRAFT;
     }
 
     /**

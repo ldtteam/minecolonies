@@ -87,13 +87,6 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     }
 
     @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-        getColony().getCitizenManager().calculateMaxCitizens();
-    }
-
-    @Override
     public boolean assignCitizen(final ICitizenData citizen)
     {
         final boolean assignalResult = super.assignCitizen(citizen);

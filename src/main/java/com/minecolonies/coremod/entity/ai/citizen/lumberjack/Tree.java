@@ -14,7 +14,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -35,6 +34,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import static com.minecolonies.api.compatibility.CompatibilityManager.DYN_PROP_HYDRO;
 import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -117,12 +117,6 @@ public class Tree
      * If the tree is a Dynamic Tree
      */
     private boolean dynamicTree = false;
-
-    /**
-     * Properties used by DynamicTree's leaves
-     */
-    private static final PropertyInteger DYN_PROP_HYDRO = PropertyInteger.create("hydro", 1, 4);
-    private static final PropertyInteger DYN_PROP_TREE  = PropertyInteger.create("tree", 0, 3);
 
     /**
      * Private constructor of the tree.
@@ -247,7 +241,7 @@ public class Tree
             if (Compatibility.isDynamicLeaf(block))
             {
                 list = (Compatibility.getDropsForDynamicLeaf(world, pos, blockState, A_LOT_OF_LUCK, block));
-                blockState = blockState.withProperty(DYN_PROP_HYDRO, 1).withProperty(DYN_PROP_TREE, 1);
+                blockState = blockState.withProperty(DYN_PROP_HYDRO, 1);
             }
             else
             {
@@ -318,7 +312,8 @@ public class Tree
 
         // Only harvest nearly fully grown dynamic trees(8 max)
         if (Compatibility.isDynamicBlock(block)
-              && (int) state.getValue(BlockStateUtils.getPropertyByNameFromState(state, DYNAMICTREERADIUS)) < Configurations.compatibility.dynamicTreeHarvestSize)
+              && BlockStateUtils.getPropertyByNameFromState(state, DYNAMICTREERADIUS) != null
+              && ((int) state.getValue(BlockStateUtils.getPropertyByNameFromState(state, DYNAMICTREERADIUS)) < Configurations.compatibility.dynamicTreeHarvestSize))
         {
             return false;
         }
@@ -444,6 +439,13 @@ public class Tree
      */
     private static boolean supposedToCut(final IBlockAccess world, final List<ItemStorage> treesToNotCut, final BlockPos leafPos)
     {
+        final ItemStack sap = ColonyManager.getCompatibilityManager().getSaplingForLeaf(world.getBlockState(leafPos));
+
+        if (sap == null)
+        {
+            return true;
+        }
+
         for (final ItemStorage stack : treesToNotCut)
         {
             IBlockState bState = world.getBlockState(leafPos);
@@ -453,6 +455,7 @@ public class Tree
             }
             final ItemStack sap = IColonyManager.getInstance().getCompatibilityManager().getSaplingForLeaf(bState);
             if (sap != null && sap.isItemEqual(stack.getItemStack()))
+            if (ItemStackUtils.compareItemStacksIgnoreStackSize(sap, stack.getItemStack()))
             {
                 return false;
             }

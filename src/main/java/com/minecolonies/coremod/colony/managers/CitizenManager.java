@@ -261,7 +261,7 @@ public class CitizenManager implements ICitizenManager
                 {
                     newMaxCitizens += b.getMaxInhabitants();
                 }
-                else if (b instanceof BuildingBarracksTower)
+                else if (b instanceof AbstractBuildingGuards)
                 {
                     newMaxCitizens += b.getAssignedCitizen().size();
                 }

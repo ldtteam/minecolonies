@@ -34,9 +34,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.Constants.FUEL_SLOT;
-import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
-import static com.minecolonies.api.util.constant.Constants.SMELTABLE_SLOT;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
 /**
@@ -101,7 +99,7 @@ public final class ItemStackUtils
     /**
      * Predicate describing cookables.
      */
-    public static final Predicate<ItemStack> ISCOOKABLE = ISFOOD.and(IS_SMELTABLE);
+    public static final Predicate<ItemStack> ISCOOKABLE = itemStack -> ISFOOD.test(FurnaceRecipes.instance().getSmeltingResult(itemStack));
 
     /**
      * Private constructor to hide the implicit one.

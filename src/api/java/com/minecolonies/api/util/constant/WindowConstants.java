@@ -66,6 +66,11 @@ public final class WindowConstants
     public static final String BUTTON_RENAME = "rename";
 
     /**
+     * Id of the mercenary button in the GUI.
+     */
+    public static final String BUTTON_MERCENARY = "mercenaries";
+
+    /**
      * Id of the add player button in the GUI.
      */
     public static final String BUTTON_ADD_PLAYER = "addPlayer";

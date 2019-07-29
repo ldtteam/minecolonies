@@ -106,7 +106,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
             }
         }
 
-        colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(0));
+        colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
 
         if (colony == null)
         {

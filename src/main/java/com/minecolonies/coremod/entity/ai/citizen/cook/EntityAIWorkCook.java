@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.cook;
 
+import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.util.InventoryUtils;
@@ -48,7 +49,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     private static final int INTELLIGENCE_MULTIPLIER = 1;
 
     /**
-     * The amount of food which should be served to the woker.
+     * The amount of food which should be served to the worker.
      */
     public static final int AMOUNT_OF_FOOD_TO_SERVE = 2;
 
@@ -124,6 +125,15 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     protected boolean reachedMaxToKeep()
     {
         return InventoryUtils.getItemCountInProvider(getOwnBuilding(), ItemStackUtils.ISFOOD) > Math.max(1, getOwnBuilding().getBuildingLevel() * getOwnBuilding().getBuildingLevel()) * SLOT_PER_LINE;
+    }
+
+    @Override
+    public void requestSmeltable()
+    {
+        if (!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(getSmeltAbleClass().getClass())))
+        {
+            worker.getCitizenData().createRequestAsync(getSmeltAbleClass());
+        }
     }
 
     /**

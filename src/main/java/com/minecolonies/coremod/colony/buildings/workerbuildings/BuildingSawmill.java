@@ -89,8 +89,14 @@ public class BuildingSawmill extends AbstractBuildingCrafter
             return false;
         }
 
-        int amountOfValidBlocks = 0;
-        int blocks = 0;
+        final Item item = storage.getPrimaryOutput().getItem();
+        if (item instanceof ItemBlock && (((ItemBlock) item).getBlock() instanceof BlockShingle || ((ItemBlock) item).getBlock() instanceof BlockShingleSlab))
+        {
+            return true;
+        }
+
+        double amountOfValidBlocks = 0;
+        double blocks = 0;
         for(final ItemStack stack : storage.getInput())
         {
             if(!ItemStackUtils.isEmpty(stack))
@@ -101,6 +107,7 @@ public class BuildingSawmill extends AbstractBuildingCrafter
                     if(name.contains("Wood"))
                     {
                         amountOfValidBlocks++;
+                        break;
                     }
                     else if(name.contains("ingot") || name.contains("stone") || name.contains("redstone") || name.contains("string"))
                     {
@@ -111,13 +118,7 @@ public class BuildingSawmill extends AbstractBuildingCrafter
             }
         }
 
-        final Item item = storage.getPrimaryOutput().getItem();
-        if (item instanceof ItemBlock && (((ItemBlock) item).getBlock() instanceof BlockShingle || ((ItemBlock) item).getBlock() instanceof BlockShingleSlab))
-        {
-            return true;
-        }
-
-        return amountOfValidBlocks > 0 && blocks/amountOfValidBlocks > MIN_PERCENTAGE_TO_CRAFT;
+        return amountOfValidBlocks > 0 && amountOfValidBlocks/blocks > MIN_PERCENTAGE_TO_CRAFT;
     }
 
     /**

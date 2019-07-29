@@ -10,7 +10,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
-import com.minecolonies.coremod.colony.buildings.views.FilterableListView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
@@ -30,7 +30,6 @@ import java.util.List;
 
 public class BuildingComposter extends AbstractFilterableListBuilding
 {
-
     /**
      * Description of the job for this building
      */
@@ -75,7 +74,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     public BuildingComposter(@NotNull final Colony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put((stack) -> isAllowedItem(new ItemStorage(stack)), new Tuple<>(Integer.MAX_VALUE, true));
+        keepX.put((stack) -> isAllowedItem("compostables", new ItemStorage(stack)), new Tuple<>(Integer.MAX_VALUE, true));
     }
 
     /**
@@ -185,7 +184,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     /**
      * The client side representation of the building.
      */
-    public static class View extends FilterableListView
+    public static class View extends AbstractFilterableListsView
     {
         /**
          * If the composter should retrieve dirt from his compost bin.

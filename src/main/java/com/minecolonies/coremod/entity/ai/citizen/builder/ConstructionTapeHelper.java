@@ -170,10 +170,13 @@ public final class ConstructionTapeHelper
      */
     public static void removeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final World world)
     {
-        final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-          = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world,
-          new Structure(world, workOrder.getStructureName(), new PlacementSettings()), workOrder.getRotation(world), workOrder.isMirrored());
-        removeConstructionTape(corners, world);
+        final Structure structure = new Structure(world, workOrder.getStructureName(), new PlacementSettings());
+        if (!structure.isBluePrintMissing())
+        {
+            final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = ColonyUtils.calculateCorners(workOrder.getBuildingLocation(), world,
+              structure, workOrder.getRotation(world), workOrder.isMirrored());
+            removeConstructionTape(corners, world);
+        }
     }
 
     /**

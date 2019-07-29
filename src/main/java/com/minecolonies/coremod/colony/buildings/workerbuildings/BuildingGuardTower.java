@@ -59,9 +59,9 @@ public class BuildingGuardTower extends AbstractBuildingGuards
     }
 
     @Override
-    public int getClaimRadius()
+    public int getClaimRadius(final int newLevel)
     {
-        return Math.max(0, getBuildingLevel() - 1);
+        return Math.max(0, newLevel - 1);
     }
 
     /**
