@@ -1,18 +1,21 @@
 package com.minecolonies.coremod.entity.ai.mobs;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.IColonyRelatedEntity;
+import com.minecolonies.coremod.colony.IColonyRelated;
 import com.minecolonies.coremod.entity.ai.statemachine.basestatemachine.IStateMachine;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.ITickingTransition;
 import com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.TickingTransition;
+import com.minecolonies.coremod.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
-import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
+import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
 import net.minecraft.block.Block;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
@@ -47,28 +50,28 @@ import static com.minecolonies.api.util.constant.RaiderConstants.FOLLOW_RANGE;
 /**
  * Class for Mercenary entities, which can be spawned to protect the colony
  */
-public class EntityMercenary extends EntityCreature implements INpc, IColonyRelatedEntity
+public class EntityMercenary extends EntityCreature implements INpc, IColonyRelated
 {
     /**
      * The minimum time inbetween, in ticks.
      */
-    private static final int                      SLAP_INTERVAL = 100;
+    private static final int                          SLAP_INTERVAL = 100;
     /**
      * Reference to the colony the mercenary spawned in.
      */
-    private              Colony                   colony;
+    private              IColony                       colony;
     /**
      * This entities minecolonies-Navigator.
      */
-    private              PathNavigate             newNavigator;
+    private              AbstractAdvancedPathNavigate newNavigator;
     /**
      * Proxy for cheaper pathing.
      */
-    private              GeneralEntityWalkToProxy proxy;
+    private              GeneralEntityWalkToProxy     proxy;
     /**
      * The timer used to check if it is ready again.
      */
-    private              int                      slapTimer     = 0;
+    private              int                          slapTimer     = 0;
 
     /**
      * Random instance for rolls
@@ -103,7 +106,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
     /**
      * This entities state machine
      */
-    private IStateMachine<TickingTransition> stateMachine;
+    private IStateMachine<ITickingTransition> stateMachine;
 
     /**
      * The entities name.
@@ -120,7 +123,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
      *
      * @param world the world.
      */
-    public EntityMercenary(final World world, final Colony colony)
+    public EntityMercenary(final World world, final IColony colony)
     {
         super(world);
         this.colony = colony;
@@ -297,7 +300,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
             final int colonyId = compound.getInteger(TAG_COLONY_ID);
             if (colonyId != 0)
             {
-                setColony(ColonyManager.getColonyByWorld(colonyId, world));
+                setColony(IColonyManager.getInstance().getColonyByWorld(colonyId, world));
             }
         }
         super.readFromNBT(compound);
@@ -315,7 +318,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
     }
 
     @Override
-    public Colony getColony()
+    public IColony getColony()
     {
         return colony;
     }
@@ -325,7 +328,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
      *
      * @param colony the colony to set.
      */
-    public void setColony(final Colony colony)
+    public void setColony(final IColony colony)
     {
         if (colony != null)
         {
@@ -392,11 +395,11 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
 
     @NotNull
     @Override
-    public PathNavigate getNavigator()
+    public AbstractAdvancedPathNavigate getNavigator()
     {
         if (this.newNavigator == null)
         {
-            this.newNavigator = new PathNavigate(this, world);
+            this.newNavigator = new MinecoloniesAdvancedPathNavigate(this, world);
             this.navigator = newNavigator;
             this.newNavigator.setCanSwim(true);
             this.newNavigator.setEnterDoors(true);
@@ -430,7 +433,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
      *
      * @param colony given colony
      */
-    public static void spawnMercenariesInColony(@NotNull final Colony colony)
+    public static void spawnMercenariesInColony(@NotNull final IColony colony)
     {
         final World world = colony.getWorld();
 
@@ -471,7 +474,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
      * @param amountOfMercenaries amount of spawns
      * @return spawn position
      */
-    private static BlockPos findMercenarySpawnPos(final Colony colony, final int amountOfMercenaries)
+    private static BlockPos findMercenarySpawnPos(final IColony colony, final int amountOfMercenaries)
     {
         final AxisAlignedBB buildingArea = colony.getBuildingManager().getTownHall().getTargetableArea(colony.getWorld());
         BlockPos spawn = new BlockPos((buildingArea.maxX + buildingArea.minX) / 2, 0, buildingArea.minZ);

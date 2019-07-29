@@ -309,4 +309,10 @@ public interface IColony
     int getBoughtCitizenCost();
 
     void increaseBoughtCitizenCost();
+
+    boolean isManualHiring();
+
+    boolean isManualHousing();
+
+    boolean canMoveIn();
 }

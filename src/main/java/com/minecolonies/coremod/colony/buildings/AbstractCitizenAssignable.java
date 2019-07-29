@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.Lists;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ICitizenData;
@@ -26,7 +27,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      * The colony the building belongs to.
      */
     @NotNull
-    protected final Colony colony;
+    protected final IColony colony;
 
     /**
      * List of worker assosiated to the building.
@@ -58,7 +59,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      */
     @Override
     @NotNull
-    public Colony getColony()
+    public IColony getColony()
     {
         return colony;
     }

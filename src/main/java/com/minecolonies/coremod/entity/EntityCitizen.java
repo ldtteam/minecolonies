@@ -22,6 +22,7 @@ import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
+import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.ai.mobs.IBaseMinecoloniesMob;
 import com.minecolonies.coremod.entity.citizenhandlers.*;
@@ -437,9 +438,9 @@ public class EntityCitizen extends AbstractEntityCitizen implements IEntityCitiz
         callForHelpCooldown = CALL_HELP_CD;
 
         long guardDistance = guardHelpRange;
-        EntityCitizen guard = null;
+        IEntityCitizen guard = null;
 
-        for (final CitizenData entry : getCitizenColonyHandler().getColony().getCitizenManager().getCitizens())
+        for (final ICitizenData entry : getCitizenColonyHandler().getColony().getCitizenManager().getCitizens())
         {
             if (entry.getCitizenEntity().isPresent())
             {

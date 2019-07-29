@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -172,7 +173,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         if (Configurations.gameplay.enableDynamicColonySizes)
         {
-            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), getPosition(), colony.getDimension(), getClaimRadius());
+            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), getPosition(), colony.getDimension(), getClaimRadius(getBuildingLevel()));
         }
     }
 

@@ -317,7 +317,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         // Check if we're ready to attack the target
         if (worker.getEntitySenses().canSee(target) && isWithinPersecutionDistance(target.getPosition()))
         {
-            target.setRevengeTarget(worker);
+            target.setRevengeTarget((EntityLivingBase) worker);
             return getAttackState();
         }
 
@@ -467,7 +467,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             }
         }
 
-        final IColony colony = worker.getCitizenColonyHandler().getColony();
         if (colony != null)
         {
             if (!colony.getRaiderManager().getHorde((WorldServer) worker.getEntityWorld()).isEmpty() || colony.isColonyUnderAttack())

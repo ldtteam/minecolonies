@@ -193,7 +193,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return GATHERING;
         }
 
-        final Colony colony = getOwnBuilding().getColony();
+        final IColony colony = getOwnBuilding().getColony();
         if (colony != null)
         {
             final IBuilding building = colony.getBuildingManager().getBuilding(gatherTarget);

@@ -8,6 +8,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockStateUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.IBuilding;
 import net.minecraft.block.Block;
@@ -439,7 +440,7 @@ public class Tree
      */
     private static boolean supposedToCut(final IBlockAccess world, final List<ItemStorage> treesToNotCut, final BlockPos leafPos)
     {
-        final ItemStack sap = ColonyManager.getCompatibilityManager().getSaplingForLeaf(world.getBlockState(leafPos));
+        final ItemStack sap = IColonyManager.getInstance().getCompatibilityManager().getSaplingForLeaf(world.getBlockState(leafPos));
 
         if (sap == null)
         {
@@ -448,13 +449,6 @@ public class Tree
 
         for (final ItemStorage stack : treesToNotCut)
         {
-            IBlockState bState = world.getBlockState(leafPos);
-            if (Compatibility.isDynamicLeaf(bState.getBlock()))
-            {
-                bState = bState.withProperty(DYN_PROP_HYDRO, 1).withProperty(DYN_PROP_TREE, 1);
-            }
-            final ItemStack sap = IColonyManager.getInstance().getCompatibilityManager().getSaplingForLeaf(bState);
-            if (sap != null && sap.isItemEqual(stack.getItemStack()))
             if (ItemStackUtils.compareItemStacksIgnoreStackSize(sap, stack.getItemStack()))
             {
                 return false;

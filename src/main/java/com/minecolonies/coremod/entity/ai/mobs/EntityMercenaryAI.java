@@ -6,6 +6,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.TickingTransition;
@@ -157,7 +158,7 @@ public class EntityMercenaryAI extends EntityAIBase
             if (currentPatrolPos != null && movingToBuilding)
             {
                 // Attempt to steal!
-                final AbstractBuilding building = entity.getColony().getBuildingManager().getBuilding(currentPatrolPos);
+                final IBuilding building = entity.getColony().getBuildingManager().getBuilding(currentPatrolPos);
 
                 if (building != null)
                 {

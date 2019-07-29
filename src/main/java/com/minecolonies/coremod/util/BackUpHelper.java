@@ -7,6 +7,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -218,9 +219,9 @@ public final class BackUpHelper
 
             if (Configurations.gameplay.enableDynamicColonySizes)
             {
-                for (final AbstractBuilding building : colony.getBuildingManager().getBuildings().values())
+                for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
                 {
-                    ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), building.getLocation(), colony.getDimension(), building.getClaimRadius(building.getBuildingLevel()));
+                    ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), building.getPosition(), colony.getDimension(), building.getClaimRadius(building.getBuildingLevel()));
                 }
             }
             else
