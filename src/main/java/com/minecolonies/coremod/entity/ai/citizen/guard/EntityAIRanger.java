@@ -136,7 +136,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
 
         if (target != null)
         {
-            attackDist += worker.posY - target.posY;
+            attackDist += worker.getPosY() - target.posY;
         }
 
         return attackDist > MAX_DISTANCE_FOR_RANGED_ATTACK ? MAX_DISTANCE_FOR_RANGED_ATTACK : attackDist;

@@ -344,7 +344,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
             if (allowedItems.containsKey(ORE_LIST) && allowedItems.get(ORE_LIST).size() > 0)
             {
                 worker.getCitizenData().createRequestAsync(
-                  new StackList(ColonyManager.getCompatibilityManager().getSmeltableOres().stream()
+                  new StackList(IColonyManager.getInstance().getCompatibilityManager().getSmeltableOres().stream()
                                   .filter(storage -> !allowedItems.get(ORE_LIST).contains(storage))
                                   .map(ItemStorage::getItemStack)
                                   .collect(Collectors.toList()), COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE));

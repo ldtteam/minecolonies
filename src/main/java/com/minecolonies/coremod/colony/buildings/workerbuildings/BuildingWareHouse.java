@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -145,7 +146,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         final List<Vec3d> registeredDeliverymenCopy = new ArrayList<>(registeredDeliverymen);
         for (final Vec3d pos : registeredDeliverymenCopy)
         {
-            final Colony colony = getColony();
+            final IColony colony = getColony();
             if (colony != null && colony.getWorld() != null
                   && (!(colony.getWorld().getBlockState(new BlockPos(pos)) instanceof BlockHutDeliveryman) || colony.isCoordInColony(colony.getWorld(), new BlockPos(pos))))
             {

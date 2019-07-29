@@ -382,7 +382,7 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
     @Override
     public BlockPos getPosition()
     {
-        return this.location;
+        return this.pos;
     }
 
     /**

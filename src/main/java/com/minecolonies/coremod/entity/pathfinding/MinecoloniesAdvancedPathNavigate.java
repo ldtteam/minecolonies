@@ -11,6 +11,7 @@ import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.mobs.pirates.AbstractEntityPirate;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.pathfinding.*;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;

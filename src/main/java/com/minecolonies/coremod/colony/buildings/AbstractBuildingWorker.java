@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
@@ -281,7 +282,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     @Override
     public List<IItemHandler> getHandlers()
     {
-        final Colony colony = getColony();
+        final IColony colony = getColony();
         if(this.getAssignedEntities().isEmpty() || colony == null || colony.getWorld() == null)
         {
             return Collections.emptyList();

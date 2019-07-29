@@ -1,11 +1,11 @@
-package com.minecolonies.coremod.entity;
+package com.minecolonies.coremod.colony;
 
-import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.api.colony.IColony;
 
 /**
  * Interface type for entities belonging to a colony
  */
-public interface IColonyRelatedEntity
+public interface IColonyRelated
 {
     /**
      * Register the entity with the related colony
@@ -15,12 +15,12 @@ public interface IColonyRelatedEntity
     /**
      * Gets the colony this entity belongs to
      */
-    Colony getColony();
+    IColony getColony();
 
     /**
      * Set the colony.
      *
      * @param colony the colony to set.
      */
-    void setColony(final Colony colony);
+    void setColony(final IColony colony);
 }

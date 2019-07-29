@@ -8,7 +8,9 @@ import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.IBuilding;
+import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -365,15 +367,15 @@ public class EntityAIEatTask extends EntityAIBase
      *
      * @return the next state to go to.
      */
-    private STATE goToHut(final CitizenData data)
+    private EatingState goToHut(final ICitizenData data)
     {
-        final AbstractBuildingWorker buildingWorker = data.getWorkBuilding();
+        final IBuildingWorker buildingWorker = data.getWorkBuilding();
         if (buildingWorker == null)
         {
             return SEARCH_RESTAURANT;
         }
 
-        if (citizen.isWorkerAtSiteWithMove(buildingWorker.getLocation(), MIN_DISTANCE_TO_RESTAURANT))
+        if (citizen.isWorkerAtSiteWithMove(buildingWorker.getPosition(), MIN_DISTANCE_TO_RESTAURANT))
         {
             final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(buildingWorker, CAN_EAT);
             if (slot != -1)
