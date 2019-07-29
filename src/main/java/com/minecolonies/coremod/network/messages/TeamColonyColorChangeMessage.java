@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.TextFormatting;
@@ -45,7 +46,7 @@ public class TeamColonyColorChangeMessage extends AbstractMessage<TeamColonyColo
      * @param colorOrdinal the color to set.
      * @param building  view of the building to read data from
      */
-    public TeamColonyColorChangeMessage(final int colorOrdinal, @NotNull final AbstractBuildingView building)
+    public TeamColonyColorChangeMessage(final int colorOrdinal, @NotNull final IBuildingView building)
     {
         super();
         this.colonyId = building.getColony().getID();
