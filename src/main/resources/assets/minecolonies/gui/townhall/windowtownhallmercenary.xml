@@ -1,0 +1,17 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
+        lightbox="true"
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+
+    <image source="minecolonies:textures/gui/citizen/colonist_papper_sketch.png" pos="150 0" size="152 145"/>
+    <image size="82 16" source="minecolonies:textures/gui/citizen/colonist_text_decor_down.png" pos="190 9"/>
+    <image source="minecolonies:textures/gui/citizen/colonist_wax_male.png" pos="160 110" size="30 30"/>
+    <image source="minecolonies:textures/items/moneygold.png" pos="170 60" size="20 20"/>
+    <image source="minecolonies:textures/items/moneygold.png" pos="170 90" size="20 20"/>
+    <image source="minecraft:textures/items/diamond_sword.png" pos="200 60" size="40 40"/>
+
+    <button id="done" size="200 20" pos="110 170" label="$(com.minecolonies.coremod.gui.townHall.mercenaryHire)"/>
+    <button id="cancel" size="200 20" pos="110 194" label="$(gui.cancel)"/>
+
+    <text id="text" size="145 90" pos="10 55" color="white"/>
+
+</window>

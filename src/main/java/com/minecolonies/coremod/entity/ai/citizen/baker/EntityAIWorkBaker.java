@@ -300,7 +300,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             currentRecipe = 0;
         }
 
-        final ItemStorage itemStorage = building.getCopyOfAllowedItems().get(currentRecipe);
+        final ItemStorage itemStorage = building.getCopyOfAllowedItems().get("recipes").get(currentRecipe);
         IRecipeStorage recipeStorage = BakerRecipes.getRecipes().stream().filter(recipe -> recipe.getPrimaryOutput().isItemEqual(itemStorage.getItemStack())).findFirst().orElse(null);
         if (recipeStorage == null)
         {

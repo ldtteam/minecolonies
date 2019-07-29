@@ -43,7 +43,7 @@ public class EntityAICitizenWander extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        if (isTooOld() || checkForRandom() || citizen.getDesiredActivity() == DesiredActivity.SLEEP)
+        if (isTooOld() || checkForRandom() || citizen.getDesiredActivity() == DesiredActivity.SLEEP || !citizen.getNavigator().noPath())
         {
             return false;
         }

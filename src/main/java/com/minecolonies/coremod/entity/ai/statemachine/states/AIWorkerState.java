@@ -207,6 +207,11 @@ public enum AIWorkerState implements IAIState
      */
     GUARD_REGEN(true),
 
+    /**
+     * Helping out a citizen in danger
+     */
+    HELP_CITIZEN(false),
+
     /*
 ###Deliveryman###
     */
@@ -458,7 +463,20 @@ public enum AIWorkerState implements IAIState
     /**
      * Let the sifter sieve blocks.
      */
-    SIFT(true);
+    SIFT(true),
+
+            /*
+### Avoid-AI ###
+     */
+
+    /**
+     * Checking it the Avoid AI should start.
+     */
+    SAFE(true),
+
+    NEED_RUN(true),
+
+    RUNNING(true);
 
     /**
      * Is it okay to eat.

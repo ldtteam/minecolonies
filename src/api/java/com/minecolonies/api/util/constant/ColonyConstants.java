@@ -79,6 +79,7 @@ public final class ColonyConstants
      * Barbarian Constants.
      */
     public static final ResourceLocation BARBARIAN                    = new ResourceLocation(Constants.MOD_ID, "Barbarian");
+    public static final ResourceLocation MERCENARY                    = new ResourceLocation(Constants.MOD_ID, "Mercenary");
     public static final ResourceLocation ARCHER                       = new ResourceLocation(Constants.MOD_ID, "ArcherBarbarian");
     public static final ResourceLocation CHIEF                        = new ResourceLocation(Constants.MOD_ID, "ChiefBarbarian");
     public static final double           ARCHER_BARBARIANS_MULTIPLIER = 0.30;

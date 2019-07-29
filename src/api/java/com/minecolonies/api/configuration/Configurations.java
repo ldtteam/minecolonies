@@ -64,7 +64,8 @@ public class Configurations
         @Config.Comment("Should there be at max 1 warehouse per colony?. [Default: true]")
         public boolean limitToOneWareHousePerColony = true;
 
-        @Config.Comment("Delay after each block placement (Increasing it, increases the delay). [Default: 15]")
+        @Config.Comment("Delay after each block placement (Increasing it, increases the delay) [Default: 15]")
+        @Config.RangeInt(min = 1, max = 500)
         public int builderBuildBlockDelay = 15;
 
         @Config.Comment("Delay modifier to mine a block (Decreasing it, decreases the delay) [Default: 500]")
@@ -113,6 +114,13 @@ public class Configurations
         @Config.Comment("The minimum number of nights between raids. [Default: 1]")
         public int minimumNumberOfNightsBetweenRaids = 1;
 
+        // TODO: change to true over time
+        @Config.Comment("Should Mobs attack citizens? [Default: false")
+        public boolean mobAttackCitizens = false;
+
+        @Config.Comment("Should Citizens call guards for help when attacked? default:true")
+        public boolean citizenCallForHelp = true;
+
         @Config.Comment("Should players be allowed to build their colonies over existing villages? [Default: false]")
         public boolean protectVillages         = false;
 
@@ -138,10 +146,10 @@ public class Configurations
 
         @Config.Comment("Sets the amount of hours until a colony will be deleted after not seeing it's mayor, set to zero to disable. [Default: 0]")
         public int     autoDeleteColoniesInHours = 0;
-        
+
         @Config.Comment("Sets weither or not Colony structures are destroyed automatically. [Default: true]")
         public boolean autoDestroyColonyBlocks   = true;
-        
+
         @Config.Comment("Should the player be allowed to use the '/mc rtp' command? [Default: true]")
         public boolean canPlayerUseRTPCommand    = true;
 
