@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.colony.ICitizenDataView;
+import com.minecolonies.coremod.colony.IColonyView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -166,7 +167,7 @@ public interface IBuildingView extends IRequester
      *
      * @return ColonyView, client side interpretations of Colony.
      */
-    IColony getColony();
+    IColonyView getColony();
 
     @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED, RAWTYPES})
     <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfTypeFiltered(

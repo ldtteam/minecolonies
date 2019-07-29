@@ -48,7 +48,7 @@ import static com.minecolonies.coremod.commands.colonycommands.ListColoniesComma
 /**
  * Window for the town hall.
  */
-public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View>
+public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 {
     /**
      * Black color.
@@ -63,7 +63,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * The view of the current building.
      */
-    private final BuildingTownHall.View townHall;
+    private final ITownHallView townHall;
 
     /**
      * List of added users.

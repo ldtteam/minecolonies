@@ -17,6 +17,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
@@ -64,7 +65,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     /**
      * The view of the current building.
      */
-    private final AbstractBuildingView building;
+    private final IBuildingView building;
 
     /**
      * Contains all resources needed for a certain build.
@@ -104,7 +105,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      * @param c          the colony view.
      * @param building the building.
      */
-    public WindowBuildBuilding(final IColonyView c, final AbstractBuildingView building)
+    public WindowBuildBuilding(final IColonyView c, final IBuildingView building)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.building = building;

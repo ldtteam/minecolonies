@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -56,7 +57,7 @@ public class WorkOrderChangeMessage extends AbstractMessage<WorkOrderChangeMessa
      * @param removeWorkOrder remove the workOrder?
      * @param priority        the new priority.
      */
-    public WorkOrderChangeMessage(@NotNull final AbstractBuildingView building, final int workOrderId, final boolean removeWorkOrder, final int priority)
+    public WorkOrderChangeMessage(@NotNull final IBuildingView building, final int workOrderId, final boolean removeWorkOrder, final int priority)
     {
         super();
         this.colonyId = building.getColony().getID();

@@ -12,6 +12,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
@@ -86,7 +87,7 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
       final BlockPos pos,
       final int rotation,
       final Mirror mirror,
-      final AbstractBuildingView building,
+      final IBuildingView building,
       final IBlockState state)
     {
         super();

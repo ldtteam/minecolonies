@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.test.AbstractMockStaticsTest;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -13,6 +14,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+
+import java.util.UUID;
 
 import static org.mockito.Mockito.never;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
@@ -45,6 +49,10 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
     {
         when(colony.getCenter()).thenReturn(PLACE_POS);
         when(world.getSpawnPoint()).thenReturn(SPAWN_POS);
+
+        final GameProfile playerProfile = Mockito.mock(GameProfile.class);
+        when(playerProfile.getId()).thenReturn(UUID.randomUUID());
+        when(player.getGameProfile()).thenReturn(playerProfile);
     }
 
     //first townhall

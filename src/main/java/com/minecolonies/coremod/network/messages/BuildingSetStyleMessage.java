@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -56,7 +57,7 @@ public class BuildingSetStyleMessage extends AbstractMessage<BuildingSetStyleMes
      * @param building View of the building to read data from.
      * @param style    style of the building.
      */
-    public BuildingSetStyleMessage(@NotNull final AbstractBuildingView building, final String style)
+    public BuildingSetStyleMessage(@NotNull final IBuildingView building, final String style)
     {
         super();
         this.colonyId = building.getColony().getID();

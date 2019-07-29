@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
@@ -57,7 +58,7 @@ public class RecallSingleCitizenMessage extends AbstractMessage<RecallSingleCiti
      * @param building View of the building the citizen should be teleported to.
      * @param citizenid the id of the citizen.
      */
-    public RecallSingleCitizenMessage(final AbstractBuildingView building, final int citizenid)
+    public RecallSingleCitizenMessage(final IBuildingView building, final int citizenid)
     {
         super();
         this.colonyId = building.getColony().getID();
