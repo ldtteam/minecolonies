@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
@@ -85,7 +86,7 @@ public class CitizenData implements ICitizenData
     /**
      * The colony the citizen belongs to.
      */
-    private final Colony colony;
+    private final IColony colony;
 
     /**
      * Inventory of the citizen.
@@ -217,7 +218,7 @@ public class CitizenData implements ICitizenData
      * @param id     ID of the Citizen.
      * @param colony Colony the Citizen belongs to.
      */
-    public CitizenData(final int id, final Colony colony)
+    public CitizenData(final int id, final IColony colony)
     {
         this.id = id;
         this.colony = colony;
@@ -440,7 +441,7 @@ public class CitizenData implements ICitizenData
      * @return colony of the citizen.
      */
     @Override
-    public Colony getColony()
+    public IColony getColony()
     {
         return colony;
     }

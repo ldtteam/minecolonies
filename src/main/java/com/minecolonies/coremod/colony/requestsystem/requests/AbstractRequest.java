@@ -74,6 +74,8 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         children = new ArrayList<>();
     }
 
+    
+
     /**
      * Used to determine which type of request this is.
      * Only RequestResolvers for this Type are then used to resolve the this.
@@ -362,7 +364,8 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     {
         if (!this.children.contains(child))
         {
-            return; //Happens during cancellation or overruling, to update the information properly children are detached from their parent.
+            //WHAT? log and return.
+            Log.getLogger().warn("The given child:" + child + " could not update the parent:" + getId() + " as it was not registered.");
         }
 
         try

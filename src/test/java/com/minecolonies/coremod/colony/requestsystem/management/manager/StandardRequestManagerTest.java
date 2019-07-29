@@ -444,21 +444,23 @@ public class StandardRequestManagerTest
 
         @NotNull
         @Override
-        public ILocation getRequesterLocation()
+        public ILocation getLocation()
         {
-            return TestRequester.INSTANCE.getRequesterLocation();
+            return TestRequester.INSTANCE.getLocation();
         }
 
+        @NotNull
         @Override
-        public void onRequestedRequestCompleted(@NotNull final IRequestManager manager,@NotNull final IToken<?> token)
+        public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
         {
-            //NOOP
+
         }
 
+        @NotNull
         @Override
-        public void onRequestedRequestCancelled(@NotNull final IRequestManager manager,@NotNull final IToken<?> token)
+        public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
         {
-            //NOOP
+
         }
 
         @NotNull
@@ -535,21 +537,23 @@ public class StandardRequestManagerTest
 
         @NotNull
         @Override
-        public ILocation getRequesterLocation()
+        public ILocation getLocation()
         {
             return null;
         }
 
+        @NotNull
         @Override
-        public void onRequestedRequestCompleted(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+        public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
         {
-            return;
+
         }
 
+        @NotNull
         @Override
-        public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+        public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
         {
-            return;
+
         }
 
         @NotNull

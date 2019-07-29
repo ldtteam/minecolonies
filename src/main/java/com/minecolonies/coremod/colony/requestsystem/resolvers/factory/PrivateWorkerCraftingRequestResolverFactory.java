@@ -48,7 +48,7 @@ public class PrivateWorkerCraftingRequestResolverFactory implements IRequestReso
     {
         final NBTTagCompound compound = new NBTTagCompound();
         compound.setTag(NBT_TOKEN, controller.serialize(privateWorkerCraftingRequestResolverFactory.getId()));
-        compound.setTag(NBT_LOCATION, controller.serialize(privateWorkerCraftingRequestResolverFactory.getRequesterLocation()));
+        compound.setTag(NBT_LOCATION, controller.serialize(privateWorkerCraftingRequestResolverFactory.getLocation()));
         return compound;
     }
 

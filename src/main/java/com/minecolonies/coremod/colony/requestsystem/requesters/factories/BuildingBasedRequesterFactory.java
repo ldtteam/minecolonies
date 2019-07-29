@@ -7,12 +7,11 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
-public class BuildingBasedRequesterFactory implements IFactory<IBuilding, BuildingBasedRequester>
+public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding, BuildingBasedRequester>
 {
     @NotNull
     @Override
@@ -23,14 +22,14 @@ public class BuildingBasedRequesterFactory implements IFactory<IBuilding, Buildi
 
     @NotNull
     @Override
-    public TypeToken<? extends IBuilding> getFactoryInputType()
+    public TypeToken<? extends AbstractBuilding> getFactoryInputType()
     {
         return TypeToken.of(AbstractBuilding.class);
     }
 
     @NotNull
     @Override
-    public BuildingBasedRequester getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final IBuilding building, @NotNull final Object... context)
+    public BuildingBasedRequester getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final AbstractBuilding building, @NotNull final Object... context)
       throws IllegalArgumentException
     {
         if (context.length != 0)

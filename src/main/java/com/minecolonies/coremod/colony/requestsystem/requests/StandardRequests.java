@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.requests;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCrafting;
@@ -12,6 +13,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.blockout.Log;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.util.text.NonSiblingFormattingTextComponent;

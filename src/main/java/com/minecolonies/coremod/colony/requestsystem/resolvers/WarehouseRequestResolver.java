@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -16,7 +17,6 @@ import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
-import com.minecolonies.coremod.tileentities.ITileEntityWareHouse;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -41,7 +41,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
                                      @NotNull final ILocation location,
                                      @NotNull final IToken<?> token)
     {
-        super(token, location,  TypeConstants.DELIVERABLE);
+        super(location, token);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         if (!manager.getColony().getWorld().isRemote)
         {
             final Colony colony = (Colony) manager.getColony();
-            final Set<ITileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
+            final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
             wareHouses.removeIf(Objects::isNull);
 
             try
@@ -87,13 +87,13 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         }
 
         final Colony colony = (Colony) manager.getColony();
-        final Set<ITileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
+        final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
 
         List<IToken<?>> deliveries = Lists.newArrayList();
         int remainingCount = request.getRequest().getCount();
 
         tileentities:
-        for (final ITileEntityWareHouse wareHouse : wareHouses)
+        for (final TileEntityWareHouse wareHouse : wareHouses)
         {
             final List<ItemStack> targetStacks = wareHouse.getMatchingItemStacksInWarehouse(itemStack -> request.getRequest().matches(itemStack));
             for (final ItemStack stack :
@@ -136,6 +136,23 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         manager.updateRequestState(request.getId(), RequestState.COMPLETED);
     }
 
+    @Nullable
+    @Override
+    public List<IRequest<?>> getFollowupRequestForCompletion(
+                                                     @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
+    {
+        //No followup needed.
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public IRequest<?> onRequestCancelled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    {
+        return null;
+    }
+
     @Override
     public void onRequestBeingOverruled(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
@@ -143,19 +160,37 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     }
 
-    private static Set<ITileEntityWareHouse> getWareHousesInColony(final Colony colony)
+    private static Set<TileEntityWareHouse> getWareHousesInColony(final Colony colony)
     {
         return colony.getBuildingManager().getBuildings().values().stream()
                  .filter(building -> building instanceof BuildingWareHouse)
-                 .map(building -> (ITileEntityWareHouse) building.getTileEntity())
+                 .map(building -> (TileEntityWareHouse) building.getTileEntity())
                  .collect(Collectors.toSet());
     }
 
+    @Override
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    {
+    }
 
+    @Override
+    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    {
+        //Somebody cancelled the delivery.
+        //reassign the parent request.
+        final IRequest request = manager.getRequestForToken(token);
+        if (request.hasParent())
+        {
+            final IRequest parent = manager.getRequestForToken(token);
+
+            if (parent.getState() != RequestState.CANCELLED && parent.getState() != RequestState.OVERRULED)
+                manager.reassignRequest(parent.getId(), ImmutableList.of());
+        }
+    }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest token)
+    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME);
     }
@@ -164,33 +199,5 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     public int getPriority()
     {
         return CONST_WAREHOUSE_RESOLVER_PRIORITY;
-    }
-
-    /**
-     * Method called by the request system to notify this requester that a request is complete.
-     * Is also called by the request system, when a request has been overruled, and as such
-     * completed by the player, instead of the initially assigned resolver.
-     *
-     * @param manager The request manager that has completed the given request.
-     * @param request The request that has been completed.
-     */
-    @NotNull
-    @Override
-    public void onRequestedRequestCompleted(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
-
-    }
-
-    /**
-     * Method called by the request system to notify this requester that a request has been cancelled.
-     *
-     * @param manager The request manager that has cancelled the given request.
-     * @param request The request that has been cancelled.
-     */
-    @NotNull
-    @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
-        //TODO: What todo when a delivery request gets cancelled?
     }
 }

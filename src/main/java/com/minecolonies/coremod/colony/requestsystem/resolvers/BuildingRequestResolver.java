@@ -10,9 +10,10 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractBuildingDependentRequestResolver;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +34,7 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
                                     @NotNull final ILocation location,
                                     @NotNull final IToken<?> token)
     {
-        super(token, location, TypeConstants.DELIVERABLE);
+        super(location, token);
     }
 
     @Override
@@ -51,10 +52,10 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
 
     @Override
     public boolean canResolveForBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final IBuilding building)
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        final List<TileEntity> tileEntities = new ArrayList<>();
-        tileEntities.add((TileEntity) building.getTileEntity());
+        final List<ICapabilityProvider> tileEntities = new ArrayList<>();
+        tileEntities.add(building.getTileEntity());
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
         tileEntities.removeIf(Objects::isNull);
 
@@ -71,16 +72,18 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     @Nullable
     @Override
     public List<IToken<?>> attemptResolveForBuilding(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final IBuilding building)
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
         return Lists.newArrayList();
     }
 
     @Override
-    public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final IBuilding building)
+    public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        final List<TileEntity> tileEntities = new ArrayList<>();
+        final List<ICapabilityProvider> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
+        tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
+        tileEntities.removeIf(Objects::isNull);
 
         final int total = request.getRequest().getCount();
         final AtomicInteger current = new AtomicInteger(0);
@@ -100,6 +103,8 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
 
         manager.updateRequestState(request.getId(), RequestState.COMPLETED);
     }
+
+
 
     @Nullable
     @Override
@@ -127,22 +132,14 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
 
 
     @Override
-    public void onRequestedRequestCompleted(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
 
     }
 
     @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager,@NotNull final IToken<?> token)
+    public void onRequestCancelled(@NotNull final IRequestManager manager,@NotNull final IToken<?> token)
     {
-        final IRequest<?> cancelledRequest = manager.getRequestForToken(token);
-        if (cancelledRequest != null && cancelledRequest.hasParent())
-        {
-            final IRequest<?> parentRequest = manager.getRequestForToken(cancelledRequest.getParent());
-            if (parentRequest.getState() != RequestState.CANCELLED && parentRequest.getState() != RequestState.OVERRULED)
-            {
-                manager.updateRequestState(cancelledRequest.getParent(), RequestState.CANCELLED);
-            }
-        }
+
     }
 }

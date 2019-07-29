@@ -3,79 +3,104 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
-import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.RSConstants.CONST_CRAFTING_RESOLVER_PRIORITY;
+
+/**
+ * A crafting resolver which takes care of 3x3 crafts which are crafted by a crafter worker.
+ */
 public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequestResolver
 {
-
-    public PublicWorkerCraftingRequestResolver(
-      @NotNull final IToken<?> token,
-      @NotNull final ILocation location)
+    /**
+     * Initializing constructor.
+     * @param location the location of the resolver.
+     * @param token its id.
+     */
+    public PublicWorkerCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
     {
-        super(token, location);
+        super(location, token, true);
+    }
+
+    @Nullable
+    @Override
+    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
+    {
+        //Noop. The production resolver already took care of that.
+        return null;
     }
 
     @Override
-    protected boolean isPublic()
+    public void onRequestBeingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        return true;
+        onRequestCancelled(manager, request);
     }
 
     @Override
-    public boolean canBuildingCraftStack(@NotNull final IBuildingWorker building, final Predicate<ItemStack> stackPredicate)
+    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        //Check if we even have a worker available
-        return building.getAssignedCitizen()
-                 .stream()
-                 .anyMatch(c -> c.getJob() instanceof AbstractJobCrafter) && building.getFirstRecipe(stackPredicate) != null;
+        /*
+         * Nothing to be done.
+         */
+    }
+
+    @Override
+    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    {
+        //NOOP
+    }
+
+    @Nullable
+    @Override
+    public IRequest<?> onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    {
+        IRequest<?> request = manager.getRequestForToken(token);
+
+        if (request == null)
+        {
+            return new TextComponentString("<UNKNOWN>");
+        }
+
+        return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_PUBLIC_CRAFTING_RESOLVER_NAME);
+    }
+
+    @Override
+    public int getPriority()
+    {
+        return CONST_CRAFTING_RESOLVER_PRIORITY;
+    }
+
+    @Override
+    public boolean canBuildingCraftStack(@NotNull final AbstractBuildingWorker building, final Predicate<ItemStack> stackPredicate)
+    {
+        return building.getFirstRecipe(stackPredicate) != null;
     }
 
     @Override
     protected IRequestable createNewRequestableForStack(final ItemStack stack, final int count)
     {
         return new PublicCrafting(stack, count);
-    }
-
-    @NotNull
-    @Override
-    public void onRequestedRequestCompleted(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
-        //This is a noop here.
-        //The manager will continue with the updating of the parent, once all childs have been completed.
-    }
-
-    @NotNull
-    @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
-        //Notify the manager, that because we failed, our parent will also fail, since we were a requirement for the parent.
-        //We will always have a parent, because a crafting request can not (or better should not) be made alone.
-        manager.updateRequestState(request.getParent(), RequestState.CANCELLED);
-    }
-
-    @NotNull
-    @Override
-    public ITextComponent getDisplayName(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
-    {
-        return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_PUBLIC_CRAFTING_RESOLVER_NAME)
-             .appendSibling( new TextComponentString("("))
-             .appendSibling(getBuilding(manager, request).map(requester -> requester.getDisplayName(manager, request)).orElse(new TextComponentString( "UNKNOWN")))
-             .appendSibling(new TextComponentString(")"));
     }
 }

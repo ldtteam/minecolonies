@@ -17,6 +17,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -96,7 +97,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                     ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getId()).isPresent() &&
                     ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getId()).get() instanceof AbstractBuilding)
             {
-                final IBuilding building = (IBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getId()).get();
+                final AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getId()).get();
                 final Optional<ICitizenData> citizenDataOptional = building.getCitizenForRequest(request.getId());
 
                 final List<ItemStack> resolvablestacks = request.getDisplayStacks();
@@ -116,12 +117,12 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                 }
             }
 
-            final List<EntityPlayer> players = new ArrayList<>(((Colony) colony).getMessageEntityPlayers());
+            final List<EntityPlayer> players = new ArrayList<>(colony.getMessageEntityPlayers());
             final EntityPlayer owner = ServerUtils.getPlayerFromUUID(colony.getWorld(), ((Colony) colony).getPermissions().getOwner());
             final TextComponentString colonyDescription = new TextComponentString(colony.getName() + ":");
 
-            final ILocation requester = request.getRequester().getRequesterLocation();
-            final IBuilding building = ((Colony) colony).getBuildingManager().getBuilding(requester.getInDimensionLocation());
+            final ILocation requester = request.getRequester().getLocation();
+            final IBuilding building = colony.getBuildingManager().getBuilding(requester.getInDimensionLocation());
 
             if (building == null || (building.getCitizenForRequest(request.getId()).isPresent() && !building.getCitizenForRequest(request.getId())
                                                                                                          .get()
@@ -136,13 +137,13 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                         LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
                           request.getRequester().getDisplayName(manager, request.getId()).getFormattedText(),
                           getRequestMessage(request).getFormattedText(),
-                          request.getRequester().getRequesterLocation().toString()
+                          request.getRequester().getLocation().toString()
                         );
                     }
                     LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
                       colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(manager, request.getId()).getFormattedText(),
                       getRequestMessage(request).getFormattedText(),
-                      request.getRequester().getRequesterLocation().toString());
+                      request.getRequester().getLocation().toString());
                 }
             }
 
@@ -201,13 +202,13 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
     @NotNull
     @Override
-    public ILocation getRequesterLocation()
+    public ILocation getLocation()
     {
         return location;
     }
 
     @Override
-    public void onRequestedRequestCompleted(@NotNull final IRequestManager manager,@NotNull final IToken token)
+    public void onRequestComplete(@NotNull final IRequestManager manager,@NotNull final IToken token)
     {
         /**
          * Nothing to do here right now.
@@ -215,17 +216,9 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager,@NotNull final IToken token)
+    public void onRequestCancelled(@NotNull final IRequestManager manager,@NotNull final IToken token)
     {
-        final IRequest<?> cancelledRequest = manager.getRequestForToken(token);
-        if (cancelledRequest != null && cancelledRequest.hasParent())
-        {
-            final IRequest<?> parentRequest = manager.getRequestForToken(cancelledRequest.getParent());
-            if (parentRequest.getState() != RequestState.CANCELLED && parentRequest.getState() != RequestState.OVERRULED)
-            {
-                manager.updateRequestState(cancelledRequest.getParent(), RequestState.CANCELLED);
-            }
-        }
+
     }
 
     @NotNull
