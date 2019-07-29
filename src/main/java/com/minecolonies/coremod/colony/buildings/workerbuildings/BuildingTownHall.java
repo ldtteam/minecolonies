@@ -111,13 +111,13 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     }
 
     @Override
-    public int getClaimRadius()
+    public int getClaimRadius(final int newLevel)
     {
-        if (getBuildingLevel() + 1 < Configurations.gameplay.minTownHallPadding)
+        if (newLevel + 1 < Configurations.gameplay.minTownHallPadding)
         {
             return Configurations.gameplay.minTownHallPadding;
         }
-        return getBuildingLevel() + 1;
+        return newLevel + 1;
     }
 
     @Override

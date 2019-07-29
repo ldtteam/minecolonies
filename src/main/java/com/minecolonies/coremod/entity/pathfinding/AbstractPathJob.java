@@ -975,7 +975,8 @@ public abstract class AbstractPathJob implements Callable<Path>
             {
                 return block.getBlock() instanceof BlockDoor
                          || block.getBlock() instanceof BlockFenceGate
-                         || block.getBlock() instanceof IBlockConstructionTape;
+                         || block.getBlock() instanceof IBlockConstructionTape
+                         || block.getBlock() instanceof BlockPressurePlate;
             }
             else if (block.getMaterial().isLiquid())
             {

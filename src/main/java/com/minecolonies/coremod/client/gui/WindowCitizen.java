@@ -19,6 +19,7 @@ import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
+import com.minecolonies.coremod.entity.citizenhandlers.CitizenChatHandler;
 import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsToCitizenRequestMessage;
@@ -29,6 +30,11 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,6 +44,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.coremod.commands.colonycommands.ListColoniesCommand.TELEPORT_COMMAND;
 
 /**
  * Window for the citizen.
@@ -439,8 +446,31 @@ public class WindowCitizen extends AbstractWindowRequestTree
             }
             else
             {
-                itemStack = inventory.getStackInSlot(InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(inventory), requestPredicate));
+                final List<Integer> slots = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(inventory), requestPredicate);
+                final int invSize = inventory.getSizeInventory() - 5; // 4 armour slots + 1 shield slot
+                int slot = -1;
+                for (final Integer possibleSlot : slots)
+                {
+                    if (possibleSlot < invSize)
+                    {
+                        slot = possibleSlot;
+                        break;
+                    }
+                }
+
+                if (slot == -1)
+                {
+                    final ITextComponent chatMessage = new TextComponentString("<" + citizen.getName() + "> " +
+                            LanguageHandler.format(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
+                            .setStyle(new Style().setBold(false).setColor(TextFormatting.WHITE)
+                            );
+                    Minecraft.getMinecraft().player.sendMessage(chatMessage);
+
+                    return; // We don't have one that isn't in our armour slot
+                }
+                itemStack = inventory.getStackInSlot(slot);
             }
+
 
             if (citizen.getWorkBuilding() != null)
             {

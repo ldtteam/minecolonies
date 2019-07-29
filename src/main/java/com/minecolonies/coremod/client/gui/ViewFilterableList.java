@@ -1,28 +1,21 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.ItemIcon;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.controls.TextField;
 import com.minecolonies.blockout.views.ScrollingList;
-import com.minecolonies.blockout.views.SwitchView;
-import com.minecolonies.coremod.colony.buildings.views.FilterableListView;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
+import com.minecolonies.blockout.views.View;
+import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON;
@@ -32,18 +25,8 @@ import static org.jline.utils.AttributedStyle.WHITE;
 /**
  * GUI window for filterable lists as a list of compostable items, burnables, etc.
  */
-public abstract class WindowFilterableList<B extends FilterableListView> extends AbstractWindowWorkerBuilding<B>
+public class ViewFilterableList
 {
-    /**
-     * Tag of the pages view.
-     */
-    private static final String VIEW_PAGES = "pages";
-
-    /**
-     * The GUI id.
-     */
-    private static final String WINDOW_FILTERABLE_LIST = ":gui/windowfilterablelist.xml";
-
     /**
      * The id of the "name" input field in the GUI.
      */
@@ -52,7 +35,7 @@ public abstract class WindowFilterableList<B extends FilterableListView> extends
     /**
      * Description label Id.
      */
-    public static final String DESC_LABEL = "desc";
+    private static final String DESC_LABEL = "desc";
 
     /**
      * Switch button Id.
@@ -70,26 +53,6 @@ public abstract class WindowFilterableList<B extends FilterableListView> extends
     private static final String OFF = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF);
 
     /**
-     * Button leading the player to the next page.
-     */
-    private static final String BUTTON_PREV_PAGE = "prevPage";
-
-    /**
-     * Button leading the player to the previous page.
-     */
-    private static final String BUTTON_NEXT_PAGE = "nextPage";
-
-    /**
-     * Button leading to the previous page.
-     */
-    private Button buttonPrevPage;
-
-    /**
-     * Button leading to the next page.
-     */
-    private Button buttonNextPage;
-
-    /**
      * List of all item stacks in the game.
      */
     private final List<ItemStorage> allItems = new ArrayList<>();
@@ -102,7 +65,12 @@ public abstract class WindowFilterableList<B extends FilterableListView> extends
     /**
      * The building this belongs to.
      */
-    protected final FilterableListView building;
+    protected final AbstractFilterableListsView building;
+
+    /**
+     * The parent window.
+     */
+    private final AbstractHutFilterableLists parent;
 
     /**
      * The filter for the resource list.
@@ -112,31 +80,49 @@ public abstract class WindowFilterableList<B extends FilterableListView> extends
     /**
      * Check for inversion of the list.
      */
-    protected boolean isInverted = false;
+    private final boolean isInverted;
 
     /**
-     * The filter predicate for the filterable list.
+     * The specific view of this filterable list.
      */
-    private Predicate<ItemStack> itemStackPredicate;
+    private final View window;
 
     /**
-     * Public constructor to instantiate this window.
+     * The id of this window.
+     */
+    private final String id;
+
+    /**
      *
-     * @param building  the building to unselect from.
-     * @param predicate the predicate to filter for.
-     * @param desc      the description of the list.
+     * @param window the view this belongs to.
+     * @param parent the parent window.
+     * @param building the building it belongs to.
+     * @param desc the description on the top of the page.
+     * @param id the id of this window (page order of filterable lists).
+     * @param isInverted if the list is inverted.
      */
-    public WindowFilterableList(final B building, final Predicate<ItemStack> predicate, final String desc)
+    public ViewFilterableList(final View window, final AbstractHutFilterableLists parent, final AbstractFilterableListsView building, final String desc, final String id, final boolean isInverted)
     {
-        super(building, Constants.MOD_ID + WINDOW_FILTERABLE_LIST);
-        resourceList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
-        this.itemStackPredicate = predicate;
-        findPaneOfTypeByID(DESC_LABEL, Label.class).setLabelText(desc);
-        this.building = building;
+        this.window = window;
+        this.id = id;
 
-        registerButton(BUTTON_PREV_PAGE, this::prevClicked);
-        registerButton(BUTTON_NEXT_PAGE, this::nextClicked);
-        registerButton(BUTTON_SWITCH, this::switchClicked);
+        resourceList = window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
+        window.findPaneOfTypeByID(DESC_LABEL, Label.class).setLabelText(desc);
+        this.building = building;
+        this.isInverted = isInverted;
+        this.parent = parent;
+    }
+
+    /**
+     * To be called by the owning window on button click.
+     * @param button the clicked button.
+     */
+    public void onButtonClick(final Button button)
+    {
+        if (Objects.equals(button.getID(), BUTTON_SWITCH))
+        {
+            switchClicked(button);
+        }
     }
 
     /**
@@ -147,17 +133,16 @@ public abstract class WindowFilterableList<B extends FilterableListView> extends
     private void switchClicked(@NotNull final Button button)
     {
         final int row = resourceList.getListElementIndexByPane(button);
-
         if (button.getLabel().equals(ON))
         {
             button.setLabel(OFF);
             if (isInverted)
             {
-                building.addItem(allItems.get(row));
+                building.addItem(id, allItems.get(row));
             }
             else
             {
-                building.removeItem(allItems.get(row));
+                building.removeItem(id, allItems.get(row));
             }
         }
         else
@@ -165,23 +150,21 @@ public abstract class WindowFilterableList<B extends FilterableListView> extends
             button.setLabel(ON);
             if (isInverted)
             {
-                building.removeItem(allItems.get(row));
+                building.removeItem(id, allItems.get(row));
             }
             else
             {
-                building.addItem(allItems.get(row));
+                building.addItem(id, allItems.get(row));
             }
         }
         resourceList.refreshElementPanes();
     }
 
-    @Override
+    /**
+     * On opened, supposed to be called by the window this belongs to.
+     */
     public void onOpened()
     {
-        super.onOpened();
-        findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class).setEnabled(false);
-        buttonPrevPage = findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class);
-        buttonNextPage = findPaneOfTypeByID(BUTTON_NEXT_PAGE, Button.class);
         updateResources();
     }
 
@@ -205,38 +188,26 @@ public abstract class WindowFilterableList<B extends FilterableListView> extends
      * @param filterPredicate the predicate to filter all blocks for.
      * @return an immutable list of blocks.
      */
-    public Collection<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate)
+    private Collection<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate)
     {
-        return ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
-            final NonNullList<ItemStack> stacks = NonNullList.create();
-            try
-            {
-                item.getSubItems(CreativeTabs.SEARCH, stacks);
-            }
-            catch (final Exception ex)
-            {
-                Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName(), ex);
-            }
-
-            return stacks.stream().filter(itemStackPredicate.and(filterPredicate)).map(ItemStorage::new);
-        }).collect(Collectors.toList()));
+        return parent.getBlockList(filterPredicate, id);
     }
 
     /**
      * Add exceptions which do not match the predicate after scanning.
      */
-    public List<ItemStorage> getExceptions()
+    private List<ItemStorage> getExceptions()
     {
         return Collections.emptyList();
     }
 
-    @Override
-    public boolean onKeyTyped(final char ch, final int key)
+    /**
+     * On key typed, supposed to be called by the owning window.
+     */
+    public void onKeyTyped()
     {
-        final boolean result = super.onKeyTyped(ch, key);
-        filter = findPaneOfTypeByID(INPUT_NAME, TextField.class).getText();
+        filter = window.findPaneOfTypeByID(INPUT_NAME, TextField.class).getText();
         updateResources();
-        return result;
     }
 
     /**
@@ -277,7 +248,7 @@ public abstract class WindowFilterableList<B extends FilterableListView> extends
 
                 final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
 
-                if ((isInverted && !building.isAllowedItem(new ItemStorage(resource))) || (!isInverted && building.isAllowedItem(new ItemStorage(resource))))
+                if ((isInverted && !building.isAllowedItem(id, new ItemStorage(resource))) || (!isInverted && building.isAllowedItem(id, new ItemStorage(resource))))
                 {
                     switchButton.setLabel(ON);
                 }
@@ -287,25 +258,5 @@ public abstract class WindowFilterableList<B extends FilterableListView> extends
                 }
             }
         });
-    }
-
-    /**
-     * Action performed when previous button is clicked.
-     */
-    private void prevClicked()
-    {
-        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
-        buttonPrevPage.setEnabled(false);
-        buttonNextPage.setEnabled(true);
-    }
-
-    /**
-     * Action performed when next button is clicked.
-     */
-    private void nextClicked()
-    {
-        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
-        buttonPrevPage.setEnabled(true);
-        buttonNextPage.setEnabled(false);
     }
 }

@@ -27,8 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-import static com.minecolonies.api.util.constant.RaiderConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
 /**
  * Abstract for all Barbarian entities.
@@ -327,6 +327,14 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob implements
         }
 
         return colony;
+    }
+
+    /**
+     * Registers the entity with the colony.
+     */
+    public void registerWithColony()
+    {
+        getColony();
     }
 
     @Override

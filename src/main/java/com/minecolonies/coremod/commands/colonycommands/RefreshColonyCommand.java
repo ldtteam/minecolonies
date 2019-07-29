@@ -81,7 +81,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
 
                 if (null != iColony)
                 {
-                    colony = IColonyManager.getInstance().getColonyByWorld(iColony.getID(), server.getWorld(0));
+                    colony = IColonyManager.getInstance().getColonyByWorld(iColony.getID(), server.getWorld(sender.getEntityWorld().provider.getDimension()));
                 }
             }
         }
@@ -100,7 +100,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
     {
         final int colonyId;
         colonyId = getIthArgument(args, 0, -1);
-        IColony tempColony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(0));
+        IColony tempColony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
 
         if (colonyId == -1 && args.length >= 1)
         {
@@ -139,7 +139,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
             return;
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(tempColony.getID(), server.getWorld(0));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(tempColony.getID(), server.getWorld(sender.getEntityWorld().provider.getDimension()));
         if (colony == null)
         {
             sender.sendMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE));

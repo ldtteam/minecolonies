@@ -19,7 +19,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import paulscode.sound.ICodec;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -462,7 +461,12 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         return (WaterPathResult) setPathJob(
-          new PathJobFindWater(CompatibilityUtils.getWorldFromEntity(ourEntity), start, ((IEntityCitizen) ourEntity).getCitizenColonyHandler().getWorkBuilding().getPosition(), range, ponds, ourEntity), null, speed);
+          new PathJobFindWater(CompatibilityUtils.getWorldFromEntity(ourEntity),
+            start,
+            ((IEntityCitizen) ourEntity).getCitizenColonyHandler().getWorkBuilding().getPosition(),
+            range,
+            ponds,
+            ourEntity), null, speed);
     }
 
     /**

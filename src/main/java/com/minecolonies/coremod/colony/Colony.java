@@ -133,7 +133,7 @@ public class Colony implements IColony
     /**
      * Colony permission event handler.
      */
-    private final ColonyPermissionEventHandler eventHandler;
+    private ColonyPermissionEventHandler eventHandler;
 
     /**
      * Whether or not this colony may be auto-deleted.
@@ -234,6 +234,11 @@ public class Colony implements IColony
     private int boughtCitizenCost = 0;
 
     /**
+     * The last time the mercenaries were used.
+     */
+    private long mercenaryLastUse = 0;
+
+    /**
      * Constructor for a newly created Colony.
      *
      * @param id The id of the colony to create.
@@ -266,10 +271,6 @@ public class Colony implements IColony
             checkOrCreateTeam();
         }
         this.permissions = new Permissions(this);
-
-        // Register a new event handler
-        eventHandler = new ColonyPermissionEventHandler(this);
-        MinecraftForge.EVENT_BUS.register(eventHandler);
 
         for (final String s : Configurations.gameplay.freeToInteractBlocks)
         {
@@ -380,6 +381,7 @@ public class Colony implements IColony
         }
 
         boughtCitizenCost = compound.getInteger(TAG_BOUGHT_CITIZENS);
+        mercenaryLastUse = compound.getLong(TAG_MERCENARY_TIME);
 
         // Permissions
         permissions.loadPermissions(compound);
@@ -537,6 +539,8 @@ public class Colony implements IColony
         // Bought citizen count
         compound.setInteger(TAG_BOUGHT_CITIZENS, boughtCitizenCost);
 
+        compound.setLong(TAG_MERCENARY_TIME, mercenaryLastUse);
+
         // Permissions
         permissions.savePermissions(compound);
 
@@ -632,6 +636,9 @@ public class Colony implements IColony
     public void onWorldLoad(@NotNull final World w)
     {
         this.world = w;
+        // Register a new event handler
+        eventHandler = new ColonyPermissionEventHandler(this);
+        MinecraftForge.EVENT_BUS.register(eventHandler);
     }
 
     /**
@@ -1556,4 +1563,24 @@ public class Colony implements IColony
         boughtCitizenCost = Math.min(1 + (int) Math.ceil(boughtCitizenCost * 1.5), STACKSIZE);
         markDirty();
     }
+
+    /**
+     * Save the time when mercenaries are used, to set a cooldown.
+     */
+    @Override
+    public void usedMercenaries()
+    {
+        mercenaryLastUse = world.getTotalWorldTime();
+        markDirty();
+    }
+
+    /**
+     * Get the last time mercenaries were used.
+     */
+    @Override
+    public long getMercenaryUseTime()
+    {
+        return mercenaryLastUse;
+    }
+
 }

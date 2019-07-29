@@ -5,7 +5,7 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutSmelter;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
-import com.minecolonies.coremod.colony.buildings.views.FilterableListView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
@@ -109,7 +109,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
     /**
      * Smelter building View.
      */
-    public static class View extends FilterableListView
+    public static class View extends AbstractFilterableListsView
     {
         /**
          * Instantiate the smeltery view.

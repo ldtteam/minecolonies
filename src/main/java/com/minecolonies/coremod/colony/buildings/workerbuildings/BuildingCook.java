@@ -9,7 +9,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
-import com.minecolonies.coremod.colony.buildings.views.FilterableListView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobCook;
@@ -132,7 +132,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     /**
      * BuildingCook View.
      */
-    public static class View extends FilterableListView
+    public static class View extends AbstractFilterableListsView
     {
         /**
          * Instantiate the cook view.

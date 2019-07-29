@@ -902,6 +902,8 @@ com.minecolonies.coremod.gui.shepherd.autoDye=Random sheep dyeing:
 com.minecolonies.coremod.general.onBig=On
 com.minecolonies.coremod.general.offBig=Off
 
+com.minecolonies.coremod.general.cantTakeEquipped=The only armour you have got is what you are wearing. Put it in your inventory if you want to give it to me.
+
 com.minecolonies.coremod.gui.workerHuts.sifterSettings=Daily limit
 tile.minecolonies.blockHutSifter.name=Sifter
 com.minecolonies.coremod.gui.workerHuts.Sifter=Sifter

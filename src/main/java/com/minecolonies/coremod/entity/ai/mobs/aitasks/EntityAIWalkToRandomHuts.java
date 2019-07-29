@@ -18,8 +18,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.minecolonies.api.util.constant.RaiderConstants.LADDERS_TO_PLACE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.RaiderConstants.LADDERS_TO_PLACE;
 
 /**
  * Raider Pathing Class
@@ -141,6 +141,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
         {
             targetBlock = getRandomBuilding();
         }
+        lastPos = entity.getPosition();
     }
 
     /**
@@ -160,7 +161,6 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
 
         if (passedTicks % TICKS_SECOND != 0)
         {
-            lastPos = entity.getPosition();
             return proxy.walkToBlock(site, range, true);
         }
         passedTicks = 0;
@@ -187,18 +187,20 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
             notStuckTime++;
         }
 
+        lastPos = entity.getPosition();
+
         if (notStuckTime > 1)
         {
             entity.setStuckCounter(0);
             entity.setLadderCounter(0);
             notStuckTime = 0;
+            stuckTime = 0;
             return true;
         }
 
-        if (stuckTime > 1)
+        if (stuckTime > 2)
         {
             entity.getNavigator().clearPath();
-            stuckTime = 0;
             entity.setStuckCounter(entity.getStuckCounter() + 1);
             final BlockPos front = entity.getPosition().down().offset(entity.getHorizontalFacing());
 
@@ -280,8 +282,6 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
             }
             return false;
         }
-
-        lastPos = entity.getPosition();
         return proxy.walkToBlock(site, range, true);
     }
 

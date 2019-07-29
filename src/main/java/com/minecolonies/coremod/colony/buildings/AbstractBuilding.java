@@ -19,10 +19,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.ReflectionUtils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ICitizenData;
@@ -167,6 +164,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
          */
     }
 
+    /**
+     * On setting down the building.
+     */
     @Override
     public void onPlacement()
     {
@@ -244,7 +244,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         if (Configurations.gameplay.enableDynamicColonySizes)
         {
-            ChunkDataHelper.claimColonyChunks(world, false, colony.getID(), this.getID(), colony.getDimension(), getClaimRadius());
+            ChunkDataHelper.claimColonyChunks(world, false, colony.getID(), this.getID(), colony.getDimension(), getClaimRadius(getBuildingLevel()));
         }
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
     }
@@ -261,7 +261,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     /**
      * Adds work orders to the {@link Colony#getWorkManager()}.
      *
-     * @param level Desired level.
+     * @param level   Desired level.
      * @param builder the assigned builder.
      */
     protected void requestWorkOrder(final int level, final BlockPos builder)
@@ -291,14 +291,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         
         if(getPosition().getY() + getHeight() >= 256)
         {
-        	LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
-        	  "entity.builder.messageBuildTooHigh");
+            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+              "entity.builder.messageBuildTooHigh");
             return;
         }
         else if(getPosition().getY() <= 1)
         {
-        	LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
-        	  "entity.builder.messageBuildTooLow");
+            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+              "entity.builder.messageBuildTooLow");
             return;
         }
 
@@ -402,12 +402,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     /**
      * Method to calculate the radius to be claimed by this building depending on the level.
+     *
+     * @param newLevel the new level of the building.
      * @return the radius.
      */
     @Override
-    public int getClaimRadius()
+    public int getClaimRadius(final int newLevel)
     {
-        switch(getBuildingLevel())
+        switch (newLevel)
         {
             case 3:
                 return 1;
@@ -442,7 +444,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         buf.writeInt(getRotation());
         buf.writeBoolean(isMirrored());
-        buf.writeInt(getClaimRadius());
+        buf.writeInt(getClaimRadius(getBuildingLevel()));
 
         final NBTTagCompound requestSystemCompound = new NBTTagCompound();
         writeRequestSystemToNBT(requestSystemCompound);
@@ -455,7 +457,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
         ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(getId()));
         ByteBufUtils.writeTag(buf, requestSystemCompound);
-
     }
 
     /**
@@ -575,7 +576,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         if (Configurations.gameplay.enableDynamicColonySizes)
         {
-            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), this.getID(), colony.getDimension(), getClaimRadius());
+            ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), this.getID(), colony.getDimension(), this.getClaimRadius(newLevel));
         }
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
         colony.getProgressManager().progressBuildBuilding(this,
@@ -595,7 +596,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         this.setHeight(wrapper.getHeight());
         this.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
         this.isBuilt = true;
+
+        if (newLevel > getBuildingLevel())
+        {
+            FireworkUtils.spawnFireworksAtAABBCorners(getTargetableArea(colony.getWorld()), colony.getWorld(), newLevel);
+        }
     }
+
+
     //------------------------- Starting Required Tools/Item handling -------------------------//
 
     /**
@@ -807,9 +815,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     /**
      * Create a request for the building.
      *
-     * @param requested   the request to create.
-     * @param async       if async or not.
-     * @param <R>         the type of the request.
+     * @param requested the request to create.
+     * @param async     if async or not.
+     * @param <R>       the type of the request.
      * @return the Token of the request.
      */
     @Override

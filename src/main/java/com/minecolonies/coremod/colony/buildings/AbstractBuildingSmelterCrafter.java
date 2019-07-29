@@ -36,6 +36,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
+import static com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser.FUEL_LIST;
 
 /**
  * Class of the crafter building.
@@ -178,7 +179,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
      */
     public List<ItemStack> getAllowedFuel()
     {
-        return getCopyOfAllowedItems().stream().map(ItemStorage::getItemStack).peek(stack -> stack.setCount(stack.getMaxStackSize())).collect(Collectors.toList());
+        return getCopyOfAllowedItems().get(FUEL_LIST).stream().map(ItemStorage::getItemStack).peek(stack -> stack.setCount(stack.getMaxStackSize())).collect(Collectors.toList());
     }
 
     @Override
@@ -196,7 +197,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
     /**
      * Crafter building View.
      */
-    public static class View extends FilterableListView
+    public static class View extends AbstractFilterableListsView
     {
         /**
          * Instantiate the crafter view.

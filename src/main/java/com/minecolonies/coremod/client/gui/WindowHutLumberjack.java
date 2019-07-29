@@ -4,27 +4,24 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.controls.Button;
-import com.minecolonies.blockout.controls.ButtonImage;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.network.messages.LumberjackReplantSaplingToggleMessage;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.coremod.client.gui.WindowTownHall.BLACK;
 
 /**
  * Window for the lumberjack hut.
  */
-public class WindowHutLumberjack extends WindowFilterableList<BuildingLumberjack.View>
+public class WindowHutLumberjack extends AbstractHutFilterableLists
 {
     /**
      * Id of the button to toggle replant of saplings
@@ -34,7 +31,12 @@ public class WindowHutLumberjack extends WindowFilterableList<BuildingLumberjack
     /**
      * View containing the list.
      */
-    private static final String PAGE_ITEMS_VIEW = "pageItems";
+    private static final String PAGE_ITEMS_VIEW = "saplings";
+
+    /**
+     * The resource string.
+     */
+    private static final String RESOURCE_STRING = ":gui/windowhutlumberjack.xml";
 
     /**
      * The building of the lumberjack (Client side representation).
@@ -48,32 +50,25 @@ public class WindowHutLumberjack extends WindowFilterableList<BuildingLumberjack
      */
     public WindowHutLumberjack(final BuildingLumberjack.View building)
     {
-        super(building, stack -> true, LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.saplingList"));
+        super(building, Constants.MOD_ID + RESOURCE_STRING);
+
+        final ViewFilterableList window = new ViewFilterableList(findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class),
+          this,
+          building,
+          LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.saplingList"),
+          PAGE_ITEMS_VIEW,
+          true);
+        views.put(PAGE_ITEMS_VIEW, window);
         this.ownBuilding = building;
+
+        setupReplantButton(findPaneOfTypeByID(BUTTON_TOGGLE_REPLANT, Button.class));
+        registerButton(BUTTON_TOGGLE_REPLANT, this::switchReplant);
     }
 
     @Override
-    public Collection<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate)
+    public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
     {
         return IColonyManager.getInstance().getCompatibilityManager().getCopyOfSaplings().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList());
-    }
-
-    @Override
-    public void onOpened()
-    {
-        super.onOpened();
-        final ButtonImage button = new ButtonImage();
-        button.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium.png"));
-        button.setPosition(50, 193);
-        button.setSize(86, 17);
-        button.setID(BUTTON_TOGGLE_REPLANT);
-        button.setTextColor(BLACK);
-        setupReplantButton(button);
-
-        findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class).addChild(button);
-        registerButton(BUTTON_TOGGLE_REPLANT, this::switchReplant);
-
-        this.isInverted = true;
     }
 
     /**
