@@ -91,6 +91,12 @@ public class BuildingSawmill extends AbstractBuildingCrafter
             return false;
         }
 
+        final Item item = storage.getPrimaryOutput().getItem();
+        if (item instanceof ItemBlock && (((ItemBlock) item).getBlock() instanceof BlockShingle || ((ItemBlock) item).getBlock() instanceof BlockShingleSlab))
+        {
+            return true;
+        }
+
         double amountOfValidBlocks = 0;
         double blocks = 0;
         for(final ItemStack stack : storage.getInput())
@@ -103,6 +109,7 @@ public class BuildingSawmill extends AbstractBuildingCrafter
                     if(name.contains("Wood"))
                     {
                         amountOfValidBlocks++;
+                        break;
                     }
                     else if(name.contains("ingot") || name.contains("stone") || name.contains("redstone") || name.contains("string"))
                     {
