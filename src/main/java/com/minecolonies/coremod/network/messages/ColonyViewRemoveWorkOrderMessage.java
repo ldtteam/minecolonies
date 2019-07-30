@@ -54,6 +54,6 @@ public class ColonyViewRemoveWorkOrderMessage implements IMessage
     @Override
     protected void messageOnClientThread(final ColonyViewRemoveWorkOrderMessage message, final MessageContext ctx)
     {
-        IColonyManager.getInstance().handleColonyViewRemoveWorkOrderMessage(message.colonyId, message.workOrderId, Minecraft.getMinecraft().world.provider.getDimension());
+        IColonyManager.getInstance().handleColonyViewRemoveWorkOrderMessage(message.colonyId, message.workOrderId, Minecraft.getInstance().world.provider.getDimension());
     }
 }

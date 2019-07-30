@@ -69,7 +69,7 @@ public class DirectPlaceMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         state = NBTUtil.readBlockState(ByteBufUtils.readTag(buf));
-        pos = BlockPosUtil.readFromByteBuf(buf);
+        pos = buf.readBlockPos();
         stack = buf.readItemStack();
     }
 
@@ -82,7 +82,7 @@ public class DirectPlaceMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new CompoundNBT(), state));
-        BlockPosUtil.writeToByteBuf(buf, pos);
+        buf.writeBlockPos(pos);
         buf.writeItemStack(stack);
     }
 

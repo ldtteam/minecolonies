@@ -352,12 +352,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 {
                     if (getAssignedCitizen().isEmpty() || ((ScarecrowTileEntity) scareCrow).getOwnerId() == getMainCitizen().getId())
                     {
-                        BlockPosUtil.writeToByteBuf(buf, field);
+                        buf.writeBlockPos(field);
                     }
                 }
                 else
                 {
-                    BlockPosUtil.writeToByteBuf(buf, field);
+                    buf.writeBlockPos(field);
                 }
             }
         }
@@ -585,7 +585,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             final int size = buf.readInt();
             for (int i = 1; i <= size; i++)
             {
-                @NotNull final BlockPos pos = BlockPosUtil.readFromByteBuf(buf);
+                @NotNull final BlockPos pos = buf.readBlockPos();
                 fields.add(pos);
             }
             amountOfFields = buf.readInt();

@@ -60,7 +60,7 @@ public class GuardScepterMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         this.taskId = buf.readInt();
-        this.buildingId = BlockPosUtil.readFromByteBuf(buf);
+        this.buildingId = buf.readBlockPos();
         this.colonyId = buf.readInt();
     }
 
@@ -68,7 +68,7 @@ public class GuardScepterMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(taskId);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeBlockPos(buildingId);
         buf.writeInt(colonyId);
     }
 

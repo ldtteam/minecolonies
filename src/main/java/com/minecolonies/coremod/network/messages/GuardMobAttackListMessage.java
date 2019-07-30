@@ -78,7 +78,7 @@ public class GuardMobAttackListMessage implements IMessage
     @Override
     protected void messageOnClientThread(final GuardMobAttackListMessage message, final MessageContext ctx)
     {
-        final IColonyView IColonyView = IColonyManager.getInstance().getColonyView(message.colonyId, Minecraft.getMinecraft().world.provider.getDimension());
+        final IColonyView IColonyView = IColonyManager.getInstance().getColonyView(message.colonyId, Minecraft.getInstance().world.provider.getDimension());
 
         if (IColonyView != null)
         {

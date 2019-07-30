@@ -50,13 +50,13 @@ public class CompostParticleMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        pos = BlockPosUtil.readFromByteBuf(buf);
+        pos = buf.readBlockPos();
     }
 
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        BlockPosUtil.writeToByteBuf(buf, pos);
+        buf.writeBlockPos(pos);
     }
 
     @Override

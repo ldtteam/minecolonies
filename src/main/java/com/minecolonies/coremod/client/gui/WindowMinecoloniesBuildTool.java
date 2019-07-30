@@ -104,20 +104,20 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     {
         if (WindowBuildTool.FreeMode.SUPPLYSHIP == Settings.instance.getFreeMode())
         {
-            if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
+            if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getInstance().world, Settings.instance.getPosition(),
               Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()), Settings.instance.getMirror())))
             {
                 super.pasteNice();
             }
             else
             {
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "item.supplyChestDeployer.invalid");
+                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "item.supplyChestDeployer.invalid");
             }
         }
         else if (WindowBuildTool.FreeMode.SUPPLYCAMP == Settings.instance.getFreeMode())
         {
             final List<PlacementError> placementErrorList = new ArrayList<>();
-            if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getMinecraft().world, Settings.instance.getPosition(),
+            if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getInstance().world, Settings.instance.getPosition(),
               Settings.instance.getActiveStructure().getSize(BlockUtils.getRotation(Settings.instance.getRotation()), Settings.instance.getMirror()), placementErrorList))
             {
                 super.pasteNice();
@@ -143,19 +143,19 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
                     {
                         case NOT_SOLID:
                             errorMessage = String.format(TranslationConstants.SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY, outputList);
-                            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage, outputList);
+                            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
                             break;
                         case NEEDS_AIR_ABOVE:
                             errorMessage = String.format(TranslationConstants.SUPPLY_CAMP_INVALID_NEEDS_AIR_ABOVE_MESSAGE_KEY, outputList);
-                            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage, outputList);
+                            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
                             break;
                         case INSIDE_COLONY:
                             errorMessage = TranslationConstants.SUPPLY_CAMP_INVALID_INSIDE_COLONY_MESSAGE_KEY;
-                            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage);
+                            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage);
                             break;
                         default:
                             errorMessage = TranslationConstants.SUPPLY_CAMP_INVALID;
-                            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, errorMessage);
+                            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage);
                             break;
                     }
                 }

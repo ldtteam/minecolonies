@@ -431,7 +431,7 @@ public class CitizenDataView implements ICitizenDataView
         this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInt(TAG_HELD_ITEM_SLOT));
         this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));
 
-        position = BlockPosUtil.readFromByteBuf(buf);
+        position = buf.readBlockPos();
     }
 
     /**

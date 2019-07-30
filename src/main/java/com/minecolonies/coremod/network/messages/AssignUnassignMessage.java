@@ -3,19 +3,19 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Message class which manages the messages assigning or unassigning of citizens.
@@ -43,7 +43,7 @@ public class AssignUnassignMessage implements IMessage
     private int citizenID;
 
     /**
-     * The dimension of the message.
+     * The dimension of the
      */
     private int dimension;
 
@@ -81,7 +81,7 @@ public class AssignUnassignMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
-        buildingId = BlockPosUtil.readFromByteBuf(buf);
+        buildingId = buf.readBlockPos();
         assign = buf.readBoolean();
         citizenID = buf.readInt();
         dimension = buf.readInt();
@@ -96,16 +96,24 @@ public class AssignUnassignMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeBlockPos(buildingId);
         buf.writeBoolean(assign);
         buf.writeInt(citizenID);
         buf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final AssignUnassignMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final ServerPlayerEntity player = ctxIn.getSender();
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
@@ -114,15 +122,15 @@ public class AssignUnassignMessage implements IMessage
                 return;
             }
 
-            final IBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
+            final IBuilding building = colony.getBuildingManager().getBuilding(buildingId);
 
             if (!(building instanceof BuildingHome))
             {
                 return;
             }
 
-            final ICitizenData citizen = colony.getCitizenManager().getCitizen(message.citizenID);
-            if (message.assign && !building.isFull() && !building.equals(citizen.getHomeBuilding()))
+            final ICitizenData citizen = colony.getCitizenManager().getCitizen(citizenID);
+            if (assign && !building.isFull() && !building.equals(citizen.getHomeBuilding()))
             {
                 if (citizen.getHomeBuilding() != null)
                 {

@@ -53,6 +53,6 @@ public class ColonyViewRemoveCitizenMessage implements IMessage
     @Override
     protected void messageOnClientThread(final ColonyViewRemoveCitizenMessage message, final MessageContext ctx)
     {
-        IColonyManager.getInstance().handleColonyViewRemoveCitizenMessage(message.colonyId, message.citizenId, Minecraft.getMinecraft().world.provider.getDimension());
+        IColonyManager.getInstance().handleColonyViewRemoveCitizenMessage(message.colonyId, message.citizenId, Minecraft.getInstance().world.provider.getDimension());
     }
 }

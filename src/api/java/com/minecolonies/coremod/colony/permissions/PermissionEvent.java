@@ -69,7 +69,7 @@ public class PermissionEvent
         }
         this.name = buf.readString();
         this.action = Action.valueOf(buf.readString());
-        this.position = BlockPosUtil.readFromByteBuf(buf);
+        this.position = buf.readBlockPos();
     }
 
     /**
@@ -125,7 +125,7 @@ public class PermissionEvent
         }
         buf.writeString(name);
         buf.writeString(action.toString());
-        BlockPosUtil.writeToByteBuf(buf, position);
+        buf.writeBlockPos(position);
     }
 
     @Override

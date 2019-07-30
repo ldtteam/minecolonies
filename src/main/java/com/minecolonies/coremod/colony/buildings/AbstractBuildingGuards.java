@@ -290,7 +290,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
 
         for (final BlockPos pos : patrolTargets)
         {
-            BlockPosUtil.writeToByteBuf(buf, pos);
+            buf.writeBlockPos(pos);
         }
 
         if (mobsToAttack.isEmpty())
@@ -304,7 +304,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             MobEntryView.writeToByteBuf(buf, entry);
         }
 
-        BlockPosUtil.writeToByteBuf(buf, guardPos);
+        buf.writeBlockPos(guardPos);
 
         buf.writeInt(this.getAssignedCitizen().size());
         for (final ICitizenData citizen : this.getAssignedCitizen())
@@ -944,7 +944,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
                 mobsToAttack.add(mobEntry);
             }
 
-            guardPos = BlockPosUtil.readFromByteBuf(buf);
+            guardPos = buf.readBlockPos();
 
             final int numResidents = buf.readInt();
             for (int i = 0; i < numResidents; ++i)

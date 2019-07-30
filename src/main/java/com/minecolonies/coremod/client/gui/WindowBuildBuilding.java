@@ -225,7 +225,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void updateResources()
     {
-        final World world = Minecraft.getMinecraft().world;
+        final World world = Minecraft.getInstance().world;
         resources.clear();
 
         final int nextLevel = building.getBuildingLevel() == building.getBuildingMaxLevel() ?
@@ -305,7 +305,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         {
             if (entityInfo != null)
             {
-                for (final ItemStorage stack : ItemStackUtils.getListOfStackForEntityInfo(entityInfo, world, Minecraft.getMinecraft().player))
+                for (final ItemStorage stack : ItemStackUtils.getListOfStackForEntityInfo(entityInfo, world, Minecraft.getInstance().player))
                 {
                     if (!ItemStackUtils.isEmpty(stack.getItemStack()))
                     {

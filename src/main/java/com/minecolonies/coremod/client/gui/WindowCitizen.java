@@ -111,7 +111,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
      */
     public WindowCitizen(final ICitizenDataView citizen)
     {
-        super(citizen.getWorkBuilding(),Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX, IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getMinecraft().world.provider.getDimension()));
+        super(citizen.getWorkBuilding(),Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX, IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().world.provider.getDimension()));
         this.citizen = citizen;
     }
 
@@ -462,7 +462,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
                             LanguageHandler.format(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
                             .setStyle(new Style().setBold(false).setColor(TextFormatting.WHITE)
                             );
-                    Minecraft.getMinecraft().player.sendMessage(chatMessage);
+                    Minecraft.getInstance().player.sendMessage(chatMessage);
 
                     return; // We don't have one that isn't in our armour slot
                 }

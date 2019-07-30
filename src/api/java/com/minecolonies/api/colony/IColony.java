@@ -7,11 +7,10 @@ import com.minecolonies.coremod.colony.HappinessData;
 import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.managers.interfaces.*;
 import com.minecolonies.coremod.colony.workorders.IWorkManager;
-import com.minecolonies.coremod.colony.workorders.IWorkOrder;
 import com.minecolonies.coremod.entity.IEntityCitizen;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -179,7 +178,7 @@ public interface IColony
     void removeVisitingPlayer(final PlayerEntity player);
 
     @NotNull
-    List<EntityPlayer> getMessageEntityPlayers();
+    List<PlayerEntity> getMessageEntityPlayers();
 
     void onBuildingUpgradeComplete(@Nullable IBuilding building, int level);
 
@@ -213,7 +212,7 @@ public interface IColony
 
     double getOverallHappiness();
 
-    Map<BlockPos, IBlockState> getWayPoints();
+    Map<BlockPos, BlockState> getWayPoints();
 
     String getStyle();
 
@@ -262,7 +261,7 @@ public interface IColony
     long getMercenaryUseTime();
 
 
-    NBTTagCompound getColonyTag();
+    CompoundNBT getColonyTag();
 
     int getNightsSinceLastRaid();
 
@@ -276,7 +275,7 @@ public interface IColony
 
     boolean isColonyUnderAttack();
 
-    boolean isValidAttackingPlayer(EntityPlayer entity);
+    boolean isValidAttackingPlayer(PlayerEntity entity);
 
     boolean isValidAttackingGuard(IEntityCitizen entity);
 
@@ -284,9 +283,9 @@ public interface IColony
 
     void setManualHousing(boolean manualHousing);
 
-    void addWayPoint(BlockPos pos, IBlockState newWayPointState);
+    void addWayPoint(BlockPos pos, BlockState newWayPointState);
 
-    void addGuardToAttackers(IEntityCitizen entityCitizen, EntityPlayer followPlayer);
+    void addGuardToAttackers(IEntityCitizen entityCitizen, PlayerEntity followPlayer);
 
     void addFreePosition(BlockPos pos);
 
@@ -300,9 +299,9 @@ public interface IColony
 
     void setManualHiring(boolean manualHiring);
 
-    NBTTagCompound writeToNBT(NBTTagCompound colonyCompound);
+    CompoundNBT writeToNBT(CompoundNBT colonyCompound);
 
-    void readFromNBT(NBTTagCompound compound);
+    void readFromNBT(CompoundNBT compound);
 
     void setMoveIn(boolean newMoveIn);
 

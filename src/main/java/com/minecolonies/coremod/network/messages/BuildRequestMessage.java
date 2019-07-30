@@ -86,20 +86,20 @@ public class BuildRequestMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
-        buildingId = BlockPosUtil.readFromByteBuf(buf);
+        buildingId = buf.readBlockPos();
         mode = buf.readInt();
         dimension = buf.readInt();
-        builder = BlockPosUtil.readFromByteBuf(buf);
+        builder = buf.readBlockPos();
     }
 
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeBlockPos(buildingId);
         buf.writeInt(mode);
         buf.writeInt(dimension);
-        BlockPosUtil.writeToByteBuf(buf, builder);
+        buf.writeBlockPos(builder);
     }
 
     @Override

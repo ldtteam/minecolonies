@@ -77,6 +77,6 @@ public class HappinessDataMessage implements IMessage
     @Override
     protected void messageOnClientThread(final HappinessDataMessage message, final MessageContext ctx)
     {
-        IColonyManager.getInstance().handleHappinessDataMessage(message.colonyId, message.happinessData, Minecraft.getMinecraft().world.provider.getDimension());
+        IColonyManager.getInstance().handleHappinessDataMessage(message.colonyId, message.happinessData, Minecraft.getInstance().world.provider.getDimension());
     }
 }

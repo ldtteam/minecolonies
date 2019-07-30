@@ -78,8 +78,8 @@ public class ClientEventHandler
         Pathfinding.debugDraw(event.getPartialTicks());
 
         final Structure structure = Settings.instance.getActiveStructure();
-        final WorldClient world = Minecraft.getMinecraft().world;
-        final PlayerEntity player = Minecraft.getMinecraft().player;
+        final WorldClient world = Minecraft.getInstance().world;
+        final PlayerEntity player = Minecraft.getInstance().player;
         if (structure != null)
         {
             final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));

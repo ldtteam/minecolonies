@@ -260,6 +260,6 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
 
     private static int getTint(final World world, final BlockState actualState, final BlockPos pos, final int alpha, final int tintIndex)
     {
-        return alpha | Minecraft.getMinecraft().getBlockColors().colorMultiplier(actualState, world, pos, tintIndex);
+        return alpha | Minecraft.getInstance().getBlockColors().colorMultiplier(actualState, world, pos, tintIndex);
     }
 }

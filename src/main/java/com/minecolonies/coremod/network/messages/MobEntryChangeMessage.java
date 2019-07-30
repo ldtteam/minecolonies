@@ -55,7 +55,7 @@ public class MobEntryChangeMessage implements IMessage
     public void toBytes(final ByteBuf buf)
     {
         buf.writeInt(this.colonyId);
-        BlockPosUtil.writeToByteBuf(buf, this.buildingId);
+        buf.writeBlockPos(this.buildingId);
 
         buf.writeInt(this.mobsToAttack.size());
         for (final MobEntryView entry : this.mobsToAttack)
@@ -69,7 +69,7 @@ public class MobEntryChangeMessage implements IMessage
     public void fromBytes(final ByteBuf buf)
     {
         this.colonyId = buf.readInt();
-        this.buildingId = BlockPosUtil.readFromByteBuf(buf);
+        this.buildingId = buf.readBlockPos();
 
         final int mobSize = buf.readInt();
         for (int i = 0; i < mobSize; i++)

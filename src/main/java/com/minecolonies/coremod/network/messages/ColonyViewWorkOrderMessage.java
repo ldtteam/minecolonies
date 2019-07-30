@@ -62,7 +62,7 @@ public class ColonyViewWorkOrderMessage implements IMessage
     @Override
     protected void messageOnClientThread(final ColonyViewWorkOrderMessage message, final MessageContext ctx)
     {
-        IColonyManager.getInstance().handleColonyViewWorkOrderMessage(message.colonyId, message.workOrderBuffer, Minecraft.getMinecraft().world.provider.getDimension());
+        IColonyManager.getInstance().handleColonyViewWorkOrderMessage(message.colonyId, message.workOrderBuffer, Minecraft.getInstance().world.provider.getDimension());
     }
 }
 

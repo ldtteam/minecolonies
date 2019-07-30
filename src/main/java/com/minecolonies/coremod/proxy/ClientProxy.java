@@ -270,7 +270,7 @@ public class ClientProxy extends CommonProxy
         {
             if (IColonyManager.getInstance().getServerUUID() != null)
             {
-                return new File(Minecraft.getMinecraft().gameDir, Constants.MOD_ID + "/" + IColonyManager.getInstance().getServerUUID());
+                return new File(Minecraft.getInstance().gameDir, Constants.MOD_ID + "/" + IColonyManager.getInstance().getServerUUID());
             }
             else
             {
@@ -286,7 +286,7 @@ public class ClientProxy extends CommonProxy
 
         if (!worldSchematicFolder.exists())
         {
-            return new File(Minecraft.getMinecraft().gameDir, Constants.MOD_ID);
+            return new File(Minecraft.getInstance().gameDir, Constants.MOD_ID);
         }
 
         return worldSchematicFolder.getParentFile();
@@ -307,7 +307,7 @@ public class ClientProxy extends CommonProxy
         {
             return super.getWorld(dimension);
         }
-        return Minecraft.getMinecraft().world;
+        return Minecraft.getInstance().world;
     }
 
     @NotNull

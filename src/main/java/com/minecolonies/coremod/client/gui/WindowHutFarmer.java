@@ -100,7 +100,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     /**
      * The world.
      */
-    private final WorldClient world = Minecraft.getMinecraft().world;
+    private final WorldClient world = Minecraft.getInstance().world;
 
     /**
      * Constructor for the window of the farmer.

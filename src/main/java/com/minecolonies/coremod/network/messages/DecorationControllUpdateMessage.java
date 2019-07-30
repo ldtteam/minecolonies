@@ -57,7 +57,7 @@ public class DecorationControllUpdateMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         this.name = buf.readString();
-        this.pos = BlockPosUtil.readFromByteBuf(buf);
+        this.pos = buf.readBlockPos();
         this.level = buf.readInt();
     }
 
@@ -65,7 +65,7 @@ public class DecorationControllUpdateMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeString(this.name);
-        BlockPosUtil.writeToByteBuf(buf, this.pos);
+        buf.writeBlockPos(this.pos);
         buf.writeInt(this.level);
     }
 

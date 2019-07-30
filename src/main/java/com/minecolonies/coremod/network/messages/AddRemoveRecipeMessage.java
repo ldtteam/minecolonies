@@ -131,7 +131,7 @@ public class AddRemoveRecipeMessage implements IMessage
         colonyId = buf.readInt();
         storage = StandardFactoryController.getInstance().readFromBuffer(buf);
         remove = buf.readBoolean();
-        building = BlockPosUtil.readFromByteBuf(buf);
+        building = buf.readBlockPos();
         dimension = buf.readInt();
     }
 
@@ -146,7 +146,7 @@ public class AddRemoveRecipeMessage implements IMessage
         buf.writeInt(colonyId);
         StandardFactoryController.getInstance().writeToBuffer(buf, storage);
         buf.writeBoolean(remove);
-        BlockPosUtil.writeToByteBuf(buf, building);
+        buf.writeBlockPos(building);
         buf.writeInt(dimension);
     }
 

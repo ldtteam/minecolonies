@@ -157,7 +157,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
     public void craftingClicked()
     {
         final BlockPos pos = building.getPosition();
-        Minecraft.getMinecraft().player.openGui(MineColonies.instance, 0, Minecraft.getMinecraft().world, pos.getX(), pos.getY(), pos.getZ());
+        Minecraft.getInstance().player.openGui(MineColonies.instance, 0, Minecraft.getInstance().world, pos.getX(), pos.getY(), pos.getZ());
         Network.getNetwork().sendToServer(new OpenCraftingGUIMessage(building, 2));
     }
 
@@ -172,7 +172,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
     {
         if (building.getBuildingLevel() == 0 && !BUILDER_HUT_NAME.equals(getBuildingName()))
         {
-            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.gui.workerHuts.level0");
+            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "com.minecolonies.coremod.gui.workerHuts.level0");
             return;
         }
 

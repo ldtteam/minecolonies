@@ -71,7 +71,7 @@ public class TransferItemsToCitizenRequestMessage implements IMessage
         this.citizenId = citizenDataView.getId();
         this.itemStack = itemStack;
         this.quantity = quantity;
-        this.dimension = Minecraft.getMinecraft().world.provider.getDimension();
+        this.dimension = Minecraft.getInstance().world.provider.getDimension();
     }
 
     @Override

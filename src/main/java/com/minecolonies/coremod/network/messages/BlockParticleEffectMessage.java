@@ -1,16 +1,16 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.util.BlockPosUtil;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.client.FMLClientHandler;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Handles the server telling nearby clients to render a particle effect.
@@ -23,12 +23,11 @@ public class BlockParticleEffectMessage implements IMessage
     public static final int BREAK_BLOCK = -1;
 
     private BlockPos pos;
-    private Block    block;
-    private int      metadata;
+    private BlockState    block;
     private int      side;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public BlockParticleEffectMessage()
     {
@@ -45,39 +44,43 @@ public class BlockParticleEffectMessage implements IMessage
     public BlockParticleEffectMessage(final BlockPos pos, @NotNull final BlockState state, final int side)
     {
         this.pos = pos;
-        this.block = state.getBlock();
-        this.metadata = state.getBlock().getMetaFromState(state);
+        this.block = state;
         this.side = side;
     }
 
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        pos = BlockPosUtil.readFromByteBuf(buf);
-        block = Block.getBlockById(buf.readInt());
-        metadata = buf.readInt();
+        pos = buf.readBlockPos();
+        block = Block.getStateById(buf.readInt());
         side = buf.readInt();
     }
 
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        BlockPosUtil.writeToByteBuf(buf, pos);
-        buf.writeInt(Block.getIdFromBlock(block));
-        buf.writeInt(metadata);
+        buf.writeBlockPos(pos);
+        buf.writeInt(Block.getStateId(block));
         buf.writeInt(side);
     }
 
+    @Nullable
     @Override
-    protected void messageOnClientThread(final BlockParticleEffectMessage message, final MessageContext ctx)
+    public LogicalSide getExecutionSide()
     {
-        if (message.side == BREAK_BLOCK)
+        return LogicalSide.CLIENT;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        if (side == BREAK_BLOCK)
         {
-            Minecraft.getMinecraft().effectRenderer.addBlockDestroyEffects(message.pos, message.block.getDefaultState());
+            Minecraft.getInstance().particles.addBlockDestroyEffects(pos, block);
         }
         else
         {
-            FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(message.pos, Direction.byIndex(message.side));
+            Minecraft.getInstance().particles.addBlockHitEffects(pos, Direction.byIndex(side));
         }
     }
 }

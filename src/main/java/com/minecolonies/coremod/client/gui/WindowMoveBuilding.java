@@ -135,7 +135,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
             final PlacementSettings settings = new PlacementSettings( Settings.instance.getMirror(), BlockUtils.getRotation(Settings.instance.getRotation()));
             final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, schematicName ,
                     building.getSchematicName() + building.getBuildingLevel());
-            final Structure structure = new Structure(Minecraft.getMinecraft().world, structureName.toString(), settings);
+            final Structure structure = new Structure(Minecraft.getInstance().world, structureName.toString(), settings);
 
             final String md5 = Structures.getMD5(structureName.toString());
             if (structure.isBluePrintMissing() || !structure.isCorrectMD5(md5))

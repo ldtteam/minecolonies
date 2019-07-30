@@ -144,7 +144,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
                 logo.setImage(request.getDisplayIcon());
             }
 
-            final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getMinecraft().world.provider.getDimension());
+            final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.provider.getDimension());
             rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getId()).getFormattedText());
 
             rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
@@ -159,7 +159,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     public ImmutableList<IRequest> getOpenRequests()
     {
         final ArrayList<IRequest<?>> requests = Lists.newArrayList();
-        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getMinecraft().world.provider.getDimension());
+        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.provider.getDimension());
 
         if (view == null)
         {
@@ -182,7 +182,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
         requests.addAll(requestTokens.stream().map(requestManager::getRequestForToken).filter(Objects::nonNull).collect(Collectors.toSet()));
 
-        final BlockPos playerPos = Minecraft.getMinecraft().player.getPosition();
+        final BlockPos playerPos = Minecraft.getInstance().player.getPosition();
         requests.sort(Comparator.comparing((IRequest request) -> request.getRequester().getLocation().getInDimensionLocation()
                 .getDistance(playerPos.getX(), playerPos.getY(), playerPos.getZ()))
                 .thenComparingInt((IRequest request) -> request.getId().hashCode()));
