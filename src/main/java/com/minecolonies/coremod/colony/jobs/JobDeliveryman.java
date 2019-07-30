@@ -9,8 +9,8 @@ import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.client.render.BipedModelType;
-import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.coremod.client.render.RenderBipedCitizen;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.sounds.DeliverymanSounds;
@@ -36,7 +36,7 @@ public class JobDeliveryman extends AbstractJob
      *
      * @param entity the citizen who becomes a deliveryman
      */
-    public JobDeliveryman(final ICitizenData entity)
+    public JobDeliveryman(final CitizenData entity)
     {
         super(entity);
         setupRsDataStore();
@@ -55,33 +55,10 @@ public class JobDeliveryman extends AbstractJob
                              .getId();
     }
 
-    @NotNull
     @Override
-    public String getName()
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        return "com.minecolonies.coremod.job.Deliveryman";
-    }
-
-    @NotNull
-    @Override
-    public BipedModelType getModel()
-    {
-        return BipedModelType.DELIVERYMAN;
-    }
-
-    @Override
-    public NBTTagCompound serializeNBT()
-    {
-        final NBTTagCompound compound = super.serializeNBT();
-        compound.setTag(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
-
-        return compound;
-    }
-
-    @Override
-    public void deserializeNBT(final NBTTagCompound compound)
-    {
-        super.deserializeNBT(compound);
+        super.readFromNBT(compound);
 
         if(compound.hasKey(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
         {
@@ -91,6 +68,27 @@ public class JobDeliveryman extends AbstractJob
         {
             setupRsDataStore();
         }
+    }
+
+    @NotNull
+    @Override
+    public String getName()
+    {
+        return "com.minecolonies.coremod.job.Deliveryman";
+    }
+
+    @NotNull
+    @Override
+    public RenderBipedCitizen.Model getModel()
+    {
+        return RenderBipedCitizen.Model.DELIVERYMAN;
+    }
+
+    @Override
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        compound.setTag(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
     }
 
     /**

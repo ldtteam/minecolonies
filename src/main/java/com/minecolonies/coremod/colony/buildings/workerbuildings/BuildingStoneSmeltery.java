@@ -4,10 +4,12 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutStoneSmelter;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobStoneSmeltery;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockGlazedTerracotta;
@@ -59,7 +61,7 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobStoneSmeltery(citizen);
     }
@@ -79,7 +81,7 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
             return false;
         }
 
-        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+        final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
         if (storage == null)
         {
             return false;
@@ -129,7 +131,7 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
          * @param c the colonyview to put it in
          * @param l the positon
          */
-        public View(final IColonyView c, final BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }

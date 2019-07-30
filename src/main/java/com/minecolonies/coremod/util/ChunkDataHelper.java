@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.colony.IChunkmanagerCapability;
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -9,7 +8,7 @@ import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import net.minecraft.nbt.NBTTagCompound;
@@ -279,7 +278,7 @@ public final class ChunkDataHelper
             return;
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, world);
+        final Colony colony = ColonyManager.getColonyByWorld(colonyId, world);
         if (colony == null)
         {
             return;

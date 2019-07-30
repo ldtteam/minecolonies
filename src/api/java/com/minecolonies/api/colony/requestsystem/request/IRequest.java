@@ -43,7 +43,7 @@ public interface IRequest<R extends IRequestable>
      * @param <T> generic token.
      * @return the token representing the request outside of the management system.
      */
-    <T extends IToken> T getId();
+    <T extends IToken> T getToken();
 
     /**
      * Used to determine which type of request this is.
@@ -52,7 +52,7 @@ public interface IRequest<R extends IRequestable>
      * @return The class that represents this Type of Request.
      */
     @NotNull
-    TypeToken<? extends R> getType();
+    TypeToken<? extends R> getRequestType();
 
     /**
      * Returns the current state of the request.

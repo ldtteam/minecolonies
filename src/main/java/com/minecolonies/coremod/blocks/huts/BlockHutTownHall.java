@@ -5,8 +5,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.tileentities.ITileEntityColonyBuilding;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -57,24 +56,24 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
 
         if (placer.getActiveHand().equals(EnumHand.MAIN_HAND) && placer instanceof EntityPlayer)
         {
-            final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, pos);
+            final Colony colony = ColonyManager.getClosestColony(worldIn, pos);
             String style = Constants.DEFAULT_STYLE;
             final TileEntity tileEntity = worldIn.getTileEntity(pos);
             if(tileEntity instanceof TileEntityColonyBuilding
-                    && !((ITileEntityColonyBuilding) tileEntity).getStyle().isEmpty())
+                    && !((TileEntityColonyBuilding) tileEntity).getStyle().isEmpty())
             {
-                style = ((ITileEntityColonyBuilding) tileEntity).getStyle();
+                style = ((TileEntityColonyBuilding) tileEntity).getStyle();
             }
 
-            if (colony == null || !IColonyManager.getInstance().isTooCloseToColony(worldIn, pos))
+            if (colony == null || !ColonyManager.isTooCloseToColony(worldIn, pos))
             {
                 if (Configurations.gameplay.enableDynamicColonySizes)
                 {
-                    IColony ownedColony = IColonyManager.getInstance().getIColonyByOwner(worldIn, (EntityPlayer) placer);
+                    IColony ownedColony = ColonyManager.getIColonyByOwner(worldIn, (EntityPlayer) placer);
 
                     if (ownedColony == null)
                     {
-                        IColonyManager.getInstance().createColony(worldIn, pos, (EntityPlayer) placer, style);
+                        ColonyManager.createColony(worldIn, pos, (EntityPlayer) placer, style);
                     }
                     else
                     {
@@ -83,7 +82,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
                 }
                 else
                 {
-                    IColonyManager.getInstance().createColony(worldIn, pos, (EntityPlayer) placer, style);
+                    ColonyManager.createColony(worldIn, pos, (EntityPlayer) placer, style);
                 }
             }
             else

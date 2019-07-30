@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.ai.citizen.trainingcamps;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
@@ -17,7 +16,7 @@ import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerSta
  * Abstract class for all training AIs.
  */
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public abstract class AbstractEntityAITraining<J extends AbstractJob> extends AbstractEntityAIBasic<J>
+public abstract class AbstractEntityAITraining<J extends AbstractJob> extends AbstractEntityAIBasic<AbstractJob>
 {
     /**
      * Percentual chance for target search being chosen as target job.
@@ -55,7 +54,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
      *
      * @param job the job to fulfill
      */
-    public AbstractEntityAITraining(@NotNull final J job)
+    public AbstractEntityAITraining(@NotNull final AbstractJob job)
     {
         //Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
         super(job);
@@ -139,7 +138,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
      */
     private BlockPos getWanderPosition()
     {
-        final BlockPos pos = BlockPosUtil.getRandomPosition(world, worker.getPosition(), getOwnBuilding().getPosition());
+        final BlockPos pos = BlockPosUtil.getRandomPosition(world, worker.getPosition(), getOwnBuilding().getLocation());
 
         if (range == null)
         {
@@ -151,7 +150,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
             return pos;
         }
 
-        return getOwnBuilding().getPosition();
+        return getOwnBuilding().getLocation();
     }
 
     /**

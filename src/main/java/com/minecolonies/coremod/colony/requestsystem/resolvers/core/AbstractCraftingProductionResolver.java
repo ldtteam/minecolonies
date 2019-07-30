@@ -59,7 +59,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     {
         if (!manager.getColony().getWorld().isRemote)
         {
-            return Optional.ofNullable(manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation()));
+            return Optional.ofNullable(manager.getColony().getRequesterBuildingForPosition(getRequesterLocation().getInDimensionLocation()));
         }
 
         return Optional.empty();
@@ -70,8 +70,8 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     {
         if (!manager.getColony().getWorld().isRemote)
         {
-            final ILocation requesterLocation = requestToCheck.getRequester().getLocation();
-            return requesterLocation.equals(getLocation());
+            final ILocation requesterLocation = requestToCheck.getRequester().getRequesterLocation();
+            return requesterLocation.equals(getRequesterLocation());
         }
 
         return false;
@@ -81,7 +81,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     @Override
     public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request)
     {
-        final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
+        final AbstractBuilding building = getBuilding(manager, request.getToken()).map(r -> (AbstractBuilding) r).get();
         return attemptResolveForBuilding(manager, request, building);
     }
 
@@ -157,7 +157,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     @Override
     public void onAssignedToThisResolver(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, final boolean simulation)
     {
-        final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
+        final AbstractBuilding building = getBuilding(manager, request.getToken()).map(r -> (AbstractBuilding) r).get();
         onAssignedToThisResolverForBuilding(manager, request, simulation, building);
     }
 
@@ -169,7 +169,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     @Override
     public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request)
     {
-        final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
+        final AbstractBuilding building = getBuilding(manager, request.getToken()).map(r -> (AbstractBuilding) r).get();
         resolveForBuilding(manager, request, building);
     }
 
@@ -196,6 +196,6 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
             buildingWorker.fullFillRecipe(storage);
         }
 
-        manager.updateRequestState(request.getId(), RequestState.COMPLETED);
+        manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
     }
 }

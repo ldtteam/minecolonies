@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.BipedModelType;
+import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.builder.EntityAIStructureBuilder;
 import com.minecolonies.coremod.sounds.BuilderSounds;
@@ -20,7 +19,7 @@ public class JobBuilder extends AbstractJobStructure
      *
      * @param entity citizen.
      */
-    public JobBuilder(final ICitizenData entity)
+    public JobBuilder(final CitizenData entity)
     {
         super(entity);
     }
@@ -34,9 +33,9 @@ public class JobBuilder extends AbstractJobStructure
 
     @NotNull
     @Override
-    public BipedModelType getModel()
+    public RenderBipedCitizen.Model getModel()
     {
-        return BipedModelType.BUILDER;
+        return RenderBipedCitizen.Model.BUILDER;
     }
 
 

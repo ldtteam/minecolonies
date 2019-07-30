@@ -74,8 +74,6 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         children = new ArrayList<>();
     }
 
-    
-
     /**
      * Used to determine which type of request this is.
      * Only RequestResolvers for this Type are then used to resolve the this.
@@ -85,7 +83,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     @NotNull
     @Override
     @SuppressWarnings("unchecked")
-    public TypeToken<? extends R> getType()
+    public TypeToken<? extends R> getRequestType()
     {
         return TypeToken.of((Class<? extends R>) getRequest().getClass());
     }
@@ -110,7 +108,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends IToken> T getId()
+    public <T extends IToken> T getToken()
     {
         return (T) token;
     }
@@ -139,13 +137,13 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     public void setState(@NotNull final IRequestManager manager, @NotNull final RequestState state)
     {
         this.state = state;
-        LogHandler.log("Updated state from: " + getId() + " to: " + state);
+        LogHandler.log("Updated state from: " + getToken() + " to: " + state);
 
         if (this.hasParent() && this.getParent() != null)
         {
             try
             {
-                manager.getRequestForToken(getParent()).childStateUpdated(manager, getId());
+                manager.getRequestForToken(getParent()).childStateUpdated(manager, getToken());
             }
             catch (final IllegalArgumentException ex)
             {
@@ -250,7 +248,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     public <T extends IToken> void addChild(@NotNull final T child)
     {
         this.children.add(child);
-        LogHandler.log("Added child:" + child + " to: " + getId());
+        LogHandler.log("Added child:" + child + " to: " + getToken());
     }
 
     /**
@@ -290,7 +288,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     public <T extends IToken> void removeChild(@NotNull final T child)
     {
         this.children.remove(child);
-        LogHandler.log("Removed child: " + child + " from: " + getId());
+        LogHandler.log("Removed child: " + child + " from: " + getToken());
     }
 
     /**
@@ -365,7 +363,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
         if (!this.children.contains(child))
         {
             //WHAT? log and return.
-            Log.getLogger().warn("The given child:" + child + " could not update the parent:" + getId() + " as it was not registered.");
+            Log.getLogger().warn("The given child:" + child + " could not update the parent:" + getToken() + " as it was not registered.");
         }
 
         try
@@ -374,7 +372,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
             if (childRequest.getState() == RequestState.IN_PROGRESS && getState().ordinal() < RequestState.IN_PROGRESS.ordinal())
             {
                 setState(manager, RequestState.IN_PROGRESS);
-                LogHandler.log("First child entering progression: " + child + " setting progression state for: " + getId());
+                LogHandler.log("First child entering progression: " + child + " setting progression state for: " + getToken());
             }
         }
         catch (final IllegalArgumentException ex)
@@ -486,7 +484,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
 
         final AbstractRequest<?> that = (AbstractRequest<?>) o;
 
-        if (!getId().equals(that.getId()))
+        if (!getToken().equals(that.getToken()))
         {
             return false;
         }
@@ -524,7 +522,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
     @Override
     public int hashCode()
     {
-        int result1 = getId().hashCode();
+        int result1 = getToken().hashCode();
         result1 = 31 * result1 + requested.hashCode();
         result1 = 31 * result1 + getChildren().hashCode();
         result1 = 31 * result1 + getRequester().hashCode();

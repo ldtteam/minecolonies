@@ -2,12 +2,10 @@ package com.minecolonies.coremod.entity.ai.mobs.util;
 
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.coremod.entity.ai.mobs.IBaseMinecoloniesMob;
 import net.minecraft.entity.Entity;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * A few utils used for barbarians.
@@ -31,9 +29,9 @@ public final class BarbarianUtils
      * @param distanceFromEntity The distance to check for
      * @return the barbarian (if any) that is nearest
      */
-    public static IBaseMinecoloniesMob getClosestRaiderToEntity(final Entity entity, final double distanceFromEntity)
+    public static AbstractEntityMinecoloniesMob getClosestRaiderToEntity(final Entity entity, final double distanceFromEntity)
     {
-        final Optional<IBaseMinecoloniesMob> barbarian = getBarbariansCloseToEntity(entity, distanceFromEntity).stream().findFirst();
+        final Optional<AbstractEntityMinecoloniesMob> barbarian = getBarbariansCloseToEntity(entity, distanceFromEntity).stream().findFirst();
         return barbarian.orElse(null);
     }
 
@@ -44,17 +42,14 @@ public final class BarbarianUtils
      * @param distanceFromEntity The distance to check for
      * @return the barbarians (if any) that is nearest
      */
-    public static List<IBaseMinecoloniesMob> getBarbariansCloseToEntity(final Entity entity, final double distanceFromEntity)
+    public static List<AbstractEntityMinecoloniesMob> getBarbariansCloseToEntity(final Entity entity, final double distanceFromEntity)
     {
-        return CompatibilityUtils.getWorldFromEntity(entity).getEntitiesWithinAABB(
+        return CompatibilityUtils.getWorld(entity).getEntitiesWithinAABB(
           AbstractEntityMinecoloniesMob.class,
           entity.getEntityBoundingBox().expand(
             distanceFromEntity,
             Y_DISTANCE_TO_CHECK_WITHIN,
             distanceFromEntity),
-          Entity::isEntityAlive)
-                 .stream()
-                 .map(abstractEntityMinecoloniesMob -> (IBaseMinecoloniesMob) abstractEntityMinecoloniesMob)
-                 .collect(Collectors.toList());
+          Entity::isEntityAlive);
     }
 }

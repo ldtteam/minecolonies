@@ -2,13 +2,13 @@ package com.minecolonies.coremod.entity;
 
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.client.render.BipedModelType;
+import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
+import net.minecraft.entity.INpc;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemShield;
@@ -33,14 +33,13 @@ import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 /**
  * The abstract citizen entity.
  */
-public abstract class AbstractEntityCitizen extends EntityAgeable implements IBaseEntityCitizen
+public abstract class AbstractEntityCitizen extends EntityAgeable implements INpc
 {
-
-    public static final DataParameter<Integer> DATA_LEVEL     = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
-    public static final DataParameter<Integer>     DATA_TEXTURE   = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
-    public static final DataParameter<Integer>     DATA_IS_FEMALE = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
-    public static final DataParameter<Integer>     DATA_COLONY_ID = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
-    public static final DataParameter<Integer>     DATA_CITIZEN_ID = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
+    public static final DataParameter<Integer>  DATA_LEVEL           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
+    public static final DataParameter<Integer>  DATA_TEXTURE         = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
+    public static final DataParameter<Integer>  DATA_IS_FEMALE       = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
+    public static final DataParameter<Integer>  DATA_COLONY_ID       = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
+    public static final DataParameter<Integer>  DATA_CITIZEN_ID      = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
     public static final DataParameter<String>   DATA_MODEL           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.STRING);
     public static final DataParameter<String>   DATA_RENDER_METADATA = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.STRING);
     public static final DataParameter<Boolean>  DATA_IS_ASLEEP       = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.BOOLEAN);
@@ -50,7 +49,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
     /**
      * The default model.
      */
-    private BipedModelType modelId = BipedModelType.SETTLER;
+    private RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
 
     /**
      * The texture id.
@@ -82,18 +81,6 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
         super(world);
     }
 
-    @Override
-    public EntityAITasks getTasks()
-    {
-        return tasks;
-    }
-
-    @Override
-    public int getTicksExisted()
-    {
-        return ticksExisted;
-    }
-
     /**
      * We override this method and execute no code to avoid citizens travelling
      * to the nether.
@@ -114,59 +101,11 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
         return new BlockPos(posX, posY, posZ);
     }
 
-    @Override
-    public void setCanCaptureDrops(final boolean b)
-    {
-        this.captureDrops = b;
-    }
-
-    @Override
-    public float getPreviousRotationPitch()
-    {
-        return prevRotationPitch;
-    }
-
-    @Override
-    public float getPreviousRotationYaw()
-    {
-        return prevRotationYaw;
-    }
-
-    @Override
-    public float getPreviousRenderYawOffset()
-    {
-        return prevRenderYawOffset;
-    }
-
-    @Override
-    public float getRenderYawOffset()
-    {
-        return renderYawOffset;
-    }
-
-    @Override
-    public double getPreviousPosX()
-    {
-        return prevPosX;
-    }
-
-    @Override
-    public double getPreviousPosY()
-    {
-        return prevPosY;
-    }
-
-    @Override
-    public double getPreviousPosZ()
-    {
-        return prevPosZ;
-    }
-
     @NotNull
     @Override
     public EnumActionResult applyPlayerInteraction(final EntityPlayer player, final Vec3d vec, final EnumHand hand)
     {
-        SoundUtils.playInteractionSoundAtCitizenWithChance(CompatibilityUtils.getWorldFromCitizen(this), this.getPosition(), ONE_HUNDRED_PERCENT, this);
+        SoundUtils.playInteractionSoundAtCitizenWithChance(CompatibilityUtils.getWorld(this), this.getPosition(), ONE_HUNDRED_PERCENT, this);
         return super.applyPlayerInteraction(player, vec, hand);
     }
 
@@ -183,8 +122,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
      * Get the model assigned to the citizen.
      * @return the model.
      */
-    @Override
-    public BipedModelType getModelID()
+    public RenderBipedCitizen.Model getModelID()
     {
         return modelId;
     }
@@ -194,7 +132,6 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
      *
      * @return location of the texture.
      */
-    @Override
     public ResourceLocation getTexture()
     {
         return texture;
@@ -204,15 +141,14 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
      * Sets the textures of all citizens and distinguishes between male and
      * female.
      */
-    @Override
     public void setTexture()
     {
-        if (!CompatibilityUtils.getWorldFromCitizen(this).isRemote)
+        if (!CompatibilityUtils.getWorld(this).isRemote)
         {
             return;
         }
 
-        final BipedModelType model = getModelID();
+        final RenderBipedCitizen.Model model = getModelID();
 
         final String textureBase = "textures/entity/" + model.textureBase + (female ? "Female" : "Male");
         final int moddedTextureId = (textureId % model.numTextures) + 1;
@@ -238,29 +174,11 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
         dataManager.register(DATA_TEXTURE, 0);
         dataManager.register(DATA_LEVEL, 0);
         dataManager.register(DATA_IS_FEMALE, 0);
-        dataManager.register(DATA_MODEL, BipedModelType.SETTLER.name());
+        dataManager.register(DATA_MODEL, RenderBipedCitizen.Model.SETTLER.name());
         dataManager.register(DATA_RENDER_METADATA, "");
         dataManager.register(DATA_IS_ASLEEP, false);
         dataManager.register(DATA_IS_CHILD, false);
         dataManager.register(DATA_BED_POS, new BlockPos(0, 0, 0));
-    }
-
-    @Override
-    public double getPosX()
-    {
-        return posX;
-    }
-
-    @Override
-    public double getPosY()
-    {
-        return posY;
-    }
-
-    @Override
-    public double getPosZ()
-    {
-        return posZ;
     }
 
     /**
@@ -268,7 +186,6 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
      *
      * @return true if female.
      */
-    @Override
     public boolean isFemale()
     {
         return female;
@@ -278,7 +195,6 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
      * Set the gender.
      * @param female true if female, false if male.
      */
-    @Override
     public void setFemale(final boolean female)
     {
         this.female = female;
@@ -288,7 +204,6 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
      * Set the texture id.
      * @param textureId the id of the texture.
      */
-    @Override
     public void setTextureId(final int textureId)
     {
         this.textureId = textureId;
@@ -298,7 +213,6 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
      * Set the render meta data.
      * @param renderMetadata the metadata to set.
      */
-    @Override
     public void setRenderMetadata(final String renderMetadata)
     {
         this.renderMetadata = renderMetadata;
@@ -308,7 +222,6 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
      * Getter for the render metadata.
      * @return the meta data.
      */
-    @Override
     public String getRenderMetadata()
     {
         return renderMetadata;
@@ -340,13 +253,11 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
      *
      * @return random object.
      */
-    @Override
     public Random getRandom()
     {
         return rand;
     }
 
-    @Override
     public int getOffsetTicks()
     {
         return this.ticksExisted + OFFSET_TICK_MULTIPLIER * this.getEntityId();
@@ -372,7 +283,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
             final int pz = MathHelper.floor(posZ);
 
             this.onGround =
-              CompatibilityUtils.getWorldFromCitizen(this).getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(world.getBlockState(
+              CompatibilityUtils.getWorld(this).getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(world.getBlockState(
                 new BlockPos(px, py, pz)), world, new BlockPos(px, py, pz), this);
         }
 
@@ -384,7 +295,6 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
      * @param yaw the rotation yaw.
      * @param pitch the rotation pitch.
      */
-    @Override
     public void setOwnRotation(final float yaw, final float pitch)
     {
         this.setRotation(yaw, pitch);
@@ -394,8 +304,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
      * Set the model id.
      * @param model the model.
      */
-    @Override
-    public void setModelId(final BipedModelType model)
+    public void setModelId(final RenderBipedCitizen.Model model)
     {
         this.modelId = model;
     }
@@ -403,7 +312,6 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
     /**
      * Update the armswing progress.
      */
-    @Override
     public void updateArmSwingProg()
     {
         this.updateArmSwingProgress();
@@ -413,7 +321,6 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
      * Getter for the texture id.
      * @return the texture id.
      */
-    @Override
     public int getTextureId()
     {
         return this.textureId;
@@ -423,7 +330,6 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
      * Check if recently hit.
      * @return the count of how often.
      */
-    @Override
     public int getRecentlyHit()
     {
         return recentlyHit;
@@ -433,7 +339,6 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements IBa
      * Check if can drop loot.
      * @return true if so.
      */
-    @Override
     public boolean checkCanDropLoot()
     {
         return canDropLoot();

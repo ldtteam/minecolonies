@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
@@ -14,9 +13,13 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
@@ -49,8 +52,12 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * The abstract class for each worker building.
  */
-public abstract class AbstractBuildingWorker extends AbstractBuilding implements IBuildingWorker
+public abstract class AbstractBuildingWorker extends AbstractBuilding
 {
+    /**
+     * Minimal level to ask for wood tools. (WOOD_HUT_LEVEL + 1 == stone)
+     */
+    public static final int WOOD_HUT_LEVEL = 0;
 
     /**
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
@@ -74,12 +81,20 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     /**
+     * The abstract method which creates a job for the building.
+     *
+     * @param citizen the citizen to take the job.
+     * @return the Job.
+     */
+    @NotNull
+    public abstract AbstractJob createJob(CitizenData citizen);
+
+    /**
      * Check if a certain ItemStack is in the request of a worker.
      *
      * @param stack the stack to chest.
      * @return true if so.
      */
-    @Override
     public boolean isItemStackInRequest(@Nullable final ItemStack stack)
     {
         if (stack == null || stack.getItem() == null)
@@ -87,7 +102,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             return false;
         }
 
-        for (final ICitizenData data : getAssignedCitizen())
+        for (final CitizenData data : getAssignedCitizen())
         {
             for (final IRequest<?> request : getOpenRequests(data))
             {
@@ -107,7 +122,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * Set a new hiring mode in the building.
      * @param hiringMode the mode to set.
      */
-    @Override
     public void setHiringMode(final HiringMode hiringMode)
     {
         this.hiringMode = hiringMode;
@@ -118,7 +132,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * Get the current hiring mode of this building.
      * @return the current mode.
      */
-    @Override
     public HiringMode getHiringMode()
     {
         return hiringMode;
@@ -143,13 +156,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * @param stack the stack to craft.
      * @return the recipe storage if so.
      */
-    @Override
     @Nullable
     public IRecipeStorage getFirstRecipe(final ItemStack stack)
     {
         for(final IToken token : recipes)
         {
-            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+            final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
             if (storage != null && storage.getPrimaryOutput().isItemEqual(stack))
             {
                 return storage;
@@ -163,13 +175,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * @param stackPredicate the predicate to check for fullfillment.
      * @return the recipe storage if so.
      */
-    @Override
     @Nullable
     public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
     {
         for(final IToken token : recipes)
         {
-            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+            final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
             if (storage != null && stackPredicate.test(storage.getPrimaryOutput()))
             {
                 return storage;
@@ -183,12 +194,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * @param tempStack the stack which should be crafted.
      * @return the recipe or null.
      */
-    @Override
     public IRecipeStorage getFirstFullFillableRecipe(final ItemStack tempStack)
     {
         for(final IToken token : recipes)
         {
-            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+            final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
             if(storage != null && storage.getPrimaryOutput().isItemEqual(tempStack))
             {
                 final List<IItemHandler> handlers = getHandlers();
@@ -206,12 +216,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * @param stackPredicate the predicate to check for fullfillment.
      * @return the recipe or null.
      */
-    @Override
     public IRecipeStorage getFirstFullFillableRecipe(final Predicate<ItemStack> stackPredicate)
     {
         for(final IToken token : recipes)
         {
-            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+            final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
             if(storage != null && stackPredicate.test(storage.getPrimaryOutput()))
             {
                 final List<IItemHandler> handlers = getHandlers();
@@ -229,7 +238,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * @param storage with the storage.
      * @return true if successful.
      */
-    @Override
     public boolean fullFillRecipe(final IRecipeStorage storage)
     {
         final List<IItemHandler> handlers = getHandlers();
@@ -241,7 +249,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * @param i the first index.
      * @param j the second index.
      */
-    @Override
     public void switchIndex(final int i, final int j)
     {
         if(i < recipes.size() && j < recipes.size() && i >= 0 && j >= 0)
@@ -259,17 +266,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * @param ignored the token of the recipe.
      * @return true if so.
      */
-    @Override
     public boolean canRecipeBeAdded(final IToken ignored)
     {
-        return IBuildingWorker.canBuildingCanLearnMoreRecipes (getBuildingLevel(), getRecipes().size());
+        return AbstractBuildingWorker.canBuildingCanLearnMoreRecipes (getBuildingLevel(), getRecipes().size());
     }
 
     /**
      * Get the list of all recipes the worker can learn.
      * @return a copy of the tokens of the recipes.
      */
-    @Override
     public List<IToken> getRecipes()
     {
         return new ArrayList<>(recipes);
@@ -279,17 +284,16 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * Get all handlers accociated with this building.
      * @return the handlers of the building + citizen.
      */
-    @Override
     public List<IItemHandler> getHandlers()
     {
-        final IColony colony = getColony();
+        final Colony colony = getColony();
         if(this.getAssignedEntities().isEmpty() || colony == null || colony.getWorld() == null)
         {
             return Collections.emptyList();
         }
 
         final List<IItemHandler> handlers = new ArrayList<>();
-        for(final ICitizenData workerEntity: this.getAssignedCitizen())
+        for(final CitizenData workerEntity: this.getAssignedCitizen())
         {
             handlers.add(new InvWrapper(workerEntity.getInventory()));
         }
@@ -307,7 +311,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     @Override
-    public boolean assignCitizen(final ICitizenData citizen)
+    public boolean assignCitizen(final CitizenData citizen)
     {
         if (!super.assignCitizen(citizen))
         {
@@ -325,9 +329,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        super.deserializeNBT(compound);
+        super.readFromNBT(compound);
 
         if (compound.hasKey(TAG_WORKER))
         {
@@ -336,7 +340,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 final NBTTagList workersTagList = compound.getTagList(TAG_WORKER, Constants.NBT.TAG_COMPOUND);
                 for (int i = 0; i < workersTagList.tagCount(); ++i)
                 {
-                    final ICitizenData data;
+                    final CitizenData data;
                     if (workersTagList.getCompoundTagAt(i).hasKey(TAG_ID))
                     {
                         data = getColony().getCitizenManager().getCitizen(workersTagList.getCompoundTagAt(i).getInteger(TAG_ID));
@@ -359,7 +363,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             catch (final Exception e)
             {
                 MineColonies.getLogger().warn("Warning: Updating data structures:", e);
-                final ICitizenData worker = getColony().getCitizenManager().getCitizen(compound.getInteger(TAG_WORKER));
+                final CitizenData worker = getColony().getCitizenManager().getCitizen(compound.getInteger(TAG_WORKER));
                 assignCitizen(worker);
             }
         }
@@ -369,16 +373,16 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         recipes.clear();
         final NBTTagList recipesTags = compound.getTagList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
         recipes.addAll(NBTUtils.streamCompound(recipesTags)
-                         .map(recipeCompound -> (IToken) StandardFactoryController.getInstance().deserialize(recipeCompound))
-                         .collect(Collectors.toList()));
+                .map(recipeCompound -> (IToken) StandardFactoryController.getInstance().deserialize(recipeCompound))
+                .collect(Collectors.toList()));
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        final NBTTagCompound compound = super.serializeNBT();
+        super.writeToNBT(compound);
         @NotNull final NBTTagList workersTagList = new NBTTagList();
-        for (@NotNull final ICitizenData data : getAssignedCitizen())
+        for (@NotNull final CitizenData data : getAssignedCitizen())
         {
             if (data != null)
             {
@@ -394,7 +398,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                                                      .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
                                                      .collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_RECIPES, recipesTagList);
-        return compound;
     }
 
     /**
@@ -410,7 +413,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * Add a recipe to the building.
      * @param token the id of the recipe.
      */
-    @Override
     public boolean addRecipe(final IToken token)
     {
         if(canRecipeBeAdded(token))
@@ -426,7 +428,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * Remove a recipe of the building.
      * @param token the id of the recipe.
      */
-    @Override
     public void removeRecipe(final IToken token)
     {
         recipes.remove(token);
@@ -453,7 +454,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         if (!isFull() && ((getBuildingLevel() > 0 && isBuilt()) || this instanceof BuildingBuilder)
         && (this.hiringMode == HiringMode.DEFAULT && !this.getColony().isManualHiring() || this.hiringMode == HiringMode.AUTO))
         {
-            final ICitizenData joblessCitizen = getColony().getCitizenManager().getJoblessCitizen();
+            final CitizenData joblessCitizen = getColony().getCitizenManager().getJoblessCitizen();
             if (joblessCitizen != null)
             {
                 assignCitizen(joblessCitizen);
@@ -462,7 +463,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     @Override
-    public void removeCitizen(final ICitizenData citizen)
+    public void removeCitizen(final CitizenData citizen)
     {
         if (isCitizenAssigned(citizen))
         {
@@ -472,20 +473,28 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         }
     }
 
+    /**
+     * The abstract method which returns the name of the job.
+     *
+     * @return the job name.
+     */
+    @NotNull
+    public abstract String getJobName();
+
     @Override
     public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
 
         buf.writeInt(getAssignedCitizen().size());
-        for (final ICitizenData data : getAssignedCitizen())
+        for (final CitizenData data : getAssignedCitizen())
         {
             buf.writeInt(data == null ? 0 : data.getId());
         }
         final List<IRecipeStorage> storages = new ArrayList<>();
         for(final IToken token: new ArrayList<>(recipes))
         {
-            final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+            final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
             if(storage == null)
             {
                 removeRecipe(token);
@@ -511,7 +520,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      *
      * @return the integer.
      */
-    @Override
     public int getMaxToolLevel()
     {
         if (getBuildingLevel() >= getMaxBuildingLevel())
@@ -529,21 +537,33 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * Method which defines if a worker should be allowed to work during the rain.
      * @return true if so.
      */
-    @Override
     public boolean canWorkDuringTheRain()
     {
         return getBuildingLevel() >= BONUS_BUILDING_LEVEL;
+    }
+
+    /**
+     * Available skills of the citizens.
+     */
+    public enum Skill
+    {
+        STRENGTH,
+        ENDURANCE,
+        CHARISMA,
+        INTELLIGENCE,
+        DEXTERITY,
+        PLACEHOLDER
     }
 
     @Override
     public ImmutableCollection<IRequestResolver<?>> createResolvers()
     {
         return ImmutableList.of(
-                new BuildingRequestResolver(getRequester().getLocation(), getColony().getRequestManager()
+                new BuildingRequestResolver(getRequester().getRequesterLocation(), getColony().getRequestManager()
                         .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
-                new PrivateWorkerCraftingRequestResolver(getRequester().getLocation(), getColony().getRequestManager()
+                new PrivateWorkerCraftingRequestResolver(getRequester().getRequesterLocation(), getColony().getRequestManager()
                         .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
-                new PrivateWorkerCraftingProductionResolver(getRequester().getLocation(), getColony().getRequestManager()
+                new PrivateWorkerCraftingProductionResolver(getRequester().getRequesterLocation(), getColony().getRequestManager()
                         .getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
     }
 
@@ -551,7 +571,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * Check if a building can craft complex recipes.
      * @return true if so.
      */
-    @Override
     public boolean canCraftComplexRecipes()
     {
         return false;
@@ -560,7 +579,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     /**
      * AbstractBuildingWorker View for clients.
      */
-    public static class View extends AbstractBuildingView implements IBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * List of the worker ids.
@@ -588,7 +607,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
          * @param c the colony.
          * @param l the location.
          */
-        public View(final IColonyView c, @NotNull final BlockPos l)
+        public View(final ColonyView c, @NotNull final BlockPos l)
         {
             super(c, l);
         }
@@ -598,7 +617,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
          *
          * @return 0 if there is no worker else the correct citizen id.
          */
-        @Override
         public List<Integer> getWorkerId()
         {
             return new ArrayList<>(workerIDs);
@@ -609,7 +627,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
          *
          * @param workerId the id to set.
          */
-        @Override
         public void addWorkerId(final int workerId)
         {
             workerIDs.add(workerId);
@@ -645,7 +662,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
          * Get the list of recipes.
          * @return copy of the list.
          */
-        @Override
         public List<IRecipeStorage> getRecipes()
         {
             return new ArrayList<>(recipes);
@@ -655,7 +671,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
          * Remove a recipe from the list.
          * @param i the index to remove.
          */
-        @Override
         public void removeRecipe(final int i)
         {
             if(i < recipes.size() && i >= 0)
@@ -669,7 +684,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
          * @param i the first.
          * @param j the second.
          */
-        @Override
         public void switchIndex(final int i, final int j)
         {
             if(i < recipes.size() && j < recipes.size() && i >= 0 && j >= 0)
@@ -680,14 +694,12 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             }
         }
 
-        @Override
         @NotNull
         public Skill getPrimarySkill()
         {
             return Skill.PLACEHOLDER;
         }
 
-        @Override
         @NotNull
         public Skill getSecondarySkill()
         {
@@ -699,7 +711,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
          *
          * @param id the id to remove.
          */
-        @Override
         public void removeWorkerId(final int id)
         {
             for (int i = 0; i < workerIDs.size(); i++)
@@ -717,7 +728,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
          *
          * @return true if so.
          */
-        @Override
         public boolean hasEnoughWorkers()
         {
             return !workerIDs.isEmpty();
@@ -727,7 +737,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
          * Check if a building can craft complex recipes.
          * @return true if so.
          */
-        @Override
         public boolean canCraftComplexRecipes()
         {
             return this.canCraftComplexRecipes;
@@ -737,17 +746,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
          * Check if an additional recipe can be added.
          * @return true if so.
          */
-        @Override
         public boolean canRecipeBeAdded()
         {
-            return IBuildingWorker.canBuildingCanLearnMoreRecipes(getBuildingLevel(), getRecipes().size());
+            return AbstractBuildingWorker.canBuildingCanLearnMoreRecipes (getBuildingLevel(), getRecipes().size());
         }
 
         /**
          * Get the hiring mode of the building.
          * @return the mode.
          */
-        @Override
         public HiringMode getHiringMode()
         {
             return hiringMode;
@@ -757,11 +764,21 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
          * Set the hiring mode and sync to the server.
          * @param hiringMode the mode to set.
          */
-        @Override
         public void setHiringMode(final HiringMode hiringMode)
         {
             this.hiringMode = hiringMode;
             MineColonies.getNetwork().sendToServer(new BuildingHiringModeMessage(this, hiringMode));
         }
+    }
+
+    /**
+     * Check if an additional recipe can be added.
+     * @param learnedRecipes the learned recipes.
+     * @param buildingLevel the building level.
+     * @return true if so.
+     */
+    public static boolean canBuildingCanLearnMoreRecipes(final int buildingLevel, final int learnedRecipes)
+    {
+        return Math.pow(2, buildingLevel) >= (learnedRecipes + 1);
     }
 }

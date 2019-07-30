@@ -1,16 +1,14 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -35,7 +33,7 @@ import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
 import static com.minecolonies.coremod.entity.ai.citizen.cook.EntityAIWorkCook.AMOUNT_OF_FOOD_TO_SERVE;
-import static com.minecolonies.coremod.entity.ai.minimal.EntityAIEatTask.EatingState.*;
+import static com.minecolonies.coremod.entity.ai.minimal.EntityAIEatTask.STATE.*;
 
 /**
  * The AI task for citizens to execute when they are supposed to eat.
@@ -75,7 +73,7 @@ public class EntityAIEatTask extends EntityAIBase
     /**
      * The different types of AIStates related to eating.
      */
-    public enum EatingState
+    public enum STATE
     {
         IDLE,
         CHECK_FOR_FOOD,
@@ -96,7 +94,7 @@ public class EntityAIEatTask extends EntityAIBase
     /**
      * The state the task is in currently.
      */
-    private EatingState currentState = IDLE;
+    private STATE currentState = IDLE;
 
     /**
      * Ticks since we're waiting for something.
@@ -138,7 +136,7 @@ public class EntityAIEatTask extends EntityAIBase
             return true;
         }
 
-        final ICitizenData citizenData = citizen.getCitizenData();
+        final CitizenData citizenData = citizen.getCitizenData();
         if (citizenData == null || citizen.getCitizenData().getSaturation() >= HIGH_SATURATION || (!citizen.isOkayToEat()
                                                                                                                       && citizen.getCitizenData().getSaturation() > 0))
         {
@@ -163,7 +161,7 @@ public class EntityAIEatTask extends EntityAIBase
             chatSpamFilter = new ChatSpamFilter(citizen.getCitizenData());
         }
 
-        final ICitizenData citizenData = citizen.getCitizenData();
+        final CitizenData citizenData = citizen.getCitizenData();
         if (citizenData == null)
         {
             return;
@@ -207,7 +205,7 @@ public class EntityAIEatTask extends EntityAIBase
      * @param citizenData the citizen.
      * @return the next state to go to, if successful idle.
      */
-    private EatingState eat(final ICitizenData citizenData)
+    private STATE eat(final CitizenData citizenData)
     {
         if (foodSlot == -1)
         {
@@ -261,13 +259,13 @@ public class EntityAIEatTask extends EntityAIBase
      *
      * @return the next state to go to.
      */
-    private EatingState getFoodYourself()
+    private STATE getFoodYourself()
     {
         if (placeToPath == null)
         {
             return SEARCH_RESTAURANT;
         }
-        final IColony colony = citizen.getCitizenColonyHandler().getColony();
+        final Colony colony = citizen.getCitizenColonyHandler().getColony();
         if (colony == null)
         {
             return IDLE;
@@ -279,7 +277,7 @@ public class EntityAIEatTask extends EntityAIBase
             return SEARCH_RESTAURANT;
         }
 
-        final IBuilding cookBuilding = colony.getBuildingManager().getBuilding(restaurant);
+        final AbstractBuilding cookBuilding = colony.getBuildingManager().getBuilding(restaurant);
         if (cookBuilding instanceof BuildingCook)
         {
             InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
@@ -298,7 +296,7 @@ public class EntityAIEatTask extends EntityAIBase
      *
      * @return the next state to go to.
      */
-    private EatingState findPlaceToEat()
+    private STATE findPlaceToEat()
     {
         if (placeToPath == null)
         {
@@ -326,9 +324,9 @@ public class EntityAIEatTask extends EntityAIBase
      * @param citizenData the citizen to check.
      * @return the next state to go to.
      */
-    private EatingState waitForFood(final ICitizenData citizenData)
+    private STATE waitForFood(final CitizenData citizenData)
     {
-        final IColony colony = citizenData.getColony();
+        final Colony colony = citizenData.getColony();
         placeToPath = colony.getBuildingManager().getBestRestaurant(citizen);
 
         if (placeToPath == null)
@@ -341,7 +339,7 @@ public class EntityAIEatTask extends EntityAIBase
             return GO_TO_RESTAURANT;
         }
 
-        final EatingState state = checkForFood(citizenData);
+        final STATE state = checkForFood(citizenData);
         if (state == EAT)
         {
             return FIND_PLACE_TO_EAT;
@@ -367,15 +365,15 @@ public class EntityAIEatTask extends EntityAIBase
      *
      * @return the next state to go to.
      */
-    private EatingState goToHut(final ICitizenData data)
+    private STATE goToHut(final CitizenData data)
     {
-        final IBuildingWorker buildingWorker = data.getWorkBuilding();
+        final AbstractBuildingWorker buildingWorker = data.getWorkBuilding();
         if (buildingWorker == null)
         {
             return SEARCH_RESTAURANT;
         }
 
-        if (citizen.isWorkerAtSiteWithMove(buildingWorker.getPosition(), MIN_DISTANCE_TO_RESTAURANT))
+        if (citizen.isWorkerAtSiteWithMove(buildingWorker.getLocation(), MIN_DISTANCE_TO_RESTAURANT))
         {
             final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(buildingWorker, CAN_EAT);
             if (slot != -1)
@@ -397,7 +395,7 @@ public class EntityAIEatTask extends EntityAIBase
      *
      * @return the next state to go to.
      */
-    private EatingState goToRestaurant()
+    private STATE goToRestaurant()
     {
         if (placeToPath == null)
         {
@@ -417,9 +415,9 @@ public class EntityAIEatTask extends EntityAIBase
      * @param citizenData the citizen.
      * @return the next state to go to.
      */
-    private EatingState searchRestaurant(final ICitizenData citizenData)
+    private STATE searchRestaurant(final CitizenData citizenData)
     {
-        final IColony colony = citizenData.getColony();
+        final Colony colony = citizenData.getColony();
         placeToPath = colony.getBuildingManager().getBestRestaurant(citizen);
 
         final int uncookedFood = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, ISCOOKABLE);
@@ -452,7 +450,7 @@ public class EntityAIEatTask extends EntityAIBase
      * @param citizenData the citizen to check.
      * @return the next state to go to.
      */
-    private EatingState checkForFood(final ICitizenData citizenData)
+    private STATE checkForFood(final CitizenData citizenData)
     {
         final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(citizen, CAN_EAT);
 

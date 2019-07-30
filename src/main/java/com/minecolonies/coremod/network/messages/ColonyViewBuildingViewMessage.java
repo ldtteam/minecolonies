@@ -1,10 +1,11 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -37,7 +38,7 @@ public class ColonyViewBuildingViewMessage extends AbstractMessage<ColonyViewBui
      *
      * @param building AbstractBuilding to add or update a view.
      */
-    public ColonyViewBuildingViewMessage(@NotNull final IBuilding building)
+    public ColonyViewBuildingViewMessage(@NotNull final AbstractBuilding building)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
@@ -68,6 +69,6 @@ public class ColonyViewBuildingViewMessage extends AbstractMessage<ColonyViewBui
     @Override
     protected void messageOnClientThread(final ColonyViewBuildingViewMessage message, final MessageContext ctx)
     {
-        IColonyManager.getInstance().handleColonyBuildingViewMessage(message.colonyId, message.buildingId, message.buildingData, message.dimension);
+        ColonyManager.handleColonyBuildingViewMessage(message.colonyId, message.buildingId, message.buildingData, message.dimension);
     }
 }

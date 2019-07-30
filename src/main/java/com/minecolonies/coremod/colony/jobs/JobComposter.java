@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.BipedModelType;
+import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.composter.EntityAIWorkComposter;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +14,7 @@ public class JobComposter extends AbstractJob
      *
      * @param entity the citizen data.
      */
-    public JobComposter(final ICitizenData entity)
+    public JobComposter(final CitizenData entity)
     {
         super(entity);
     }
@@ -33,13 +32,13 @@ public class JobComposter extends AbstractJob
      */
     @NotNull
     @Override
-    public BipedModelType getModel()
+    public RenderBipedCitizen.Model getModel()
     {
-        return BipedModelType.COMPOSTER;
+        return RenderBipedCitizen.Model.COMPOSTER;
     }
 
     @Override
-    public AbstractAISkeleton<? extends IJob> generateAI()
+    public AbstractAISkeleton<? extends AbstractJob> generateAI()
     {
         return new EntityAIWorkComposter(this);
     }

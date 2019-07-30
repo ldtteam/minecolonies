@@ -13,7 +13,7 @@ import static com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachi
 /**
  * Transition with tickrate logic, allows to define an intended tickrate at which this transition will be checked.
  */
-public class TickingTransition extends BasicTransition implements ITickingTransition
+public class TickingTransition extends BasicTransition
 {
     /**
      * The tickrate at which the Target should be called, e.g. tickRate = 20 means call function every 20 Ticks
@@ -96,7 +96,6 @@ public class TickingTransition extends BasicTransition implements ITickingTransi
      *
      * @return Tickrate
      */
-    @Override
     public int getTickRate()
     {
         return tickRate;
@@ -107,7 +106,6 @@ public class TickingTransition extends BasicTransition implements ITickingTransi
      *
      * @param tickRate rate at which the AITarget should tick
      */
-    @Override
     public void setTickRate(@NotNull final int tickRate)
     {
         this.tickRate = tickRate;
@@ -118,7 +116,6 @@ public class TickingTransition extends BasicTransition implements ITickingTransi
      *
      * @return random
      */
-    @Override
     public int getTickOffset()
     {
         return tickOffset;

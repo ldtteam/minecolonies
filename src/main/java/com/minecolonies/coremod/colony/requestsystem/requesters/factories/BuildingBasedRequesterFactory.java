@@ -37,7 +37,7 @@ public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding,
             throw new IllegalArgumentException("To many context elements. Only 0 supported.");
         }
 
-        final ILocation location = factoryController.getNewInstance(TypeConstants.ILOCATION, building.getPosition(), building.getColony().getDimension());
+        final ILocation location = factoryController.getNewInstance(TypeConstants.ILOCATION, building.getLocation(), building.getColony().getDimension());
         final IToken token = factoryController.getNewInstance(TypeConstants.ITOKEN);
 
         return new BuildingBasedRequester(location, token);

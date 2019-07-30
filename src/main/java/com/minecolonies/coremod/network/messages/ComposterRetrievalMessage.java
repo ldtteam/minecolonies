@@ -1,12 +1,10 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -87,7 +85,7 @@ public class ComposterRetrievalMessage extends AbstractMessage<ComposterRetrieva
     @Override
     public void messageOnServerThread(final ComposterRetrievalMessage message, final EntityPlayerMP player)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this hut's settings
@@ -96,7 +94,7 @@ public class ComposterRetrievalMessage extends AbstractMessage<ComposterRetrieva
                 return;
             }
 
-            @Nullable final IBuildingWorker building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingWorker.class);
+            @Nullable final AbstractBuildingWorker building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingWorker.class);
             if (building instanceof BuildingComposter)
             {
                 ((BuildingComposter) building).setShouldRetrieveDirtFromCompostBin(message.retrieveDirt);

@@ -1,13 +1,12 @@
 package com.minecolonies.coremod.tileentities;
 
-import com.minecolonies.api.colony.IColony;
 import com.ldtteam.structurize.blocks.ModBlocks;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.IColonyView;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockFenceGate;
@@ -38,7 +37,7 @@ import static net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND;
 /**
  * The scarecrow tile entity to store extra data.
  */
-public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
+public class ScarecrowTileEntity extends TileEntityChest
 {
     /**
      * The max width/length of a field.
@@ -105,7 +104,7 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      * The colony of the field.
      */
     @Nullable
-    private IColony colony;
+    private Colony colony;
 
     /**
      * Name of the scarecrow, string set in the GUI.
@@ -131,7 +130,6 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      *
      * @return the string.
      */
-    @Override
     public String getDesc()
     {
         return name;
@@ -142,7 +140,6 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      *
      * @param name string to set.
      */
-    @Override
     public void setName(final String name)
     {
         this.name = name;
@@ -168,7 +165,6 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      * @param position the start position.
      * @param world    the world the field is in.
      */
-    @Override
     public final void calculateSize(@NotNull final World world, @NotNull final BlockPos position)
     {
         //Calculate in all 4 directions
@@ -204,7 +200,6 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      * @param position the position.
      * @return true if it is.
      */
-    @Override
     public boolean isNoPartOfField(@NotNull final World world, @NotNull final BlockPos position)
     {
         return world.isAirBlock(position) ||  isValidDelimiter(world.getBlockState(position.up()).getBlock());
@@ -225,7 +220,6 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      *
      * @return {@link BlockPos} of the current object.
      */
-    @Override
     public BlockPos getID()
     {
         // Location doubles as ID
@@ -237,7 +231,6 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      *
      * @return true if the field is not free to use, false after releasing it.
      */
-    @Override
     public boolean isTaken()
     {
         return this.taken;
@@ -248,14 +241,12 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      *
      * @param taken is field free or not
      */
-    @Override
     public void setTaken(final boolean taken)
     {
         this.taken = taken;
         markDirty();
     }
 
-    @Override
     public void nextState()
     {
         if (getFieldStage().ordinal() + 1 >= FieldStage.values().length)
@@ -273,7 +264,6 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      *
      * @return true if there are crops planted.
      */
-    @Override
     public FieldStage getFieldStage()
     {
         return this.fieldStage;
@@ -284,7 +274,6 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      *
      * @param fieldStage true after planting, false after harvesting.
      */
-    @Override
     public void setFieldStage(final FieldStage fieldStage)
     {
         this.fieldStage = fieldStage;
@@ -296,7 +285,6 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      *
      * @return true if so.
      */
-    @Override
     public boolean needsWork()
     {
         return this.doesNeedWork;
@@ -307,7 +295,6 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      *
      * @param needsWork true if work needed, false after completing the job.
      */
-    @Override
     public void setNeedsWork(final boolean needsWork)
     {
         this.doesNeedWork = needsWork;
@@ -319,7 +306,6 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      *
      * @return the ItemSeed
      */
-    @Override
     @Nullable
     public ItemStack getSeed()
     {
@@ -335,7 +321,6 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      *
      * @return field length.
      */
-    @Override
     public int getLengthPlusX()
     {
         return lengthPlusX;
@@ -346,7 +331,6 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      *
      * @return field width.
      */
-    @Override
     public int getWidthPlusZ()
     {
         return widthPlusZ;
@@ -357,7 +341,6 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      *
      * @return field length.
      */
-    @Override
     public int getLengthMinusX()
     {
         return lengthMinusX;
@@ -368,21 +351,9 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      *
      * @return field width.
      */
-    @Override
     public int getWidthMinusZ()
     {
         return widthMinusZ;
-    }
-
-    /**
-     * Location getter.
-     *
-     * @return the location of the scarecrow of the field.
-     */
-    @Override
-    public BlockPos getPosition()
-    {
-        return this.pos;
     }
 
     /**
@@ -390,7 +361,6 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      *
      * @return the string description of the citizen.
      */
-    @Override
     @NotNull
     public String getOwner()
     {
@@ -401,7 +371,6 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      * Getter for the ownerId of the field.
      * @return the int id.
      */
-    @Override
     public int getOwnerId()
     {
         return ownerId;
@@ -412,7 +381,6 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      *
      * @param ownerId the id of the citizen.
      */
-    @Override
     public void setOwner(@NotNull final int ownerId)
     {
         this.ownerId = ownerId;
@@ -437,8 +405,7 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      * @param ownerId the name of the citizen.
      * @param tempColony the colony view.
      */
-    @Override
-    public void setOwner(final int ownerId, final IColonyView tempColony)
+    public void setOwner(final int ownerId, final ColonyView tempColony)
     {
         this.ownerId = ownerId;
         if(tempColony != null)
@@ -456,10 +423,20 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
     }
 
     /**
+     * Describes the stage the field is in.
+     * Like if it has been hoed, planted or is empty.
+     */
+    public enum FieldStage
+    {
+        EMPTY,
+        HOED,
+        PLANTED
+    }
+
+    /**
      * Get the inventory of the scarecrow.
      * @return the IItemHandler.
      */
-    @Override
     public IItemHandlerModifiable getInventory()
     {
         return inventory;
@@ -493,7 +470,7 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
         this.readFromNBT(compound);
         if(compound.hasKey(TAG_COLONY_ID))
         {
-            setOwner(ownerId, IColonyManager.getInstance().getColonyView(compound.getInteger(TAG_COLONY_ID), world.provider.getDimension()));
+            setOwner(ownerId, ColonyManager.getColonyView(compound.getInteger(TAG_COLONY_ID), world.provider.getDimension()));
         }
     }
 
@@ -505,7 +482,7 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
         super.onLoad();
         final World world = getWorld();
 
-        colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
+        colony = ColonyManager.getColonyByPosFromWorld(world, pos);
         if (colony != null && !colony.getBuildingManager().getFields().contains(pos))
         {
             @Nullable final Entity entity = EntityUtils.getEntityFromUUID(world, colony.getPermissions().getOwner());
@@ -588,7 +565,6 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      *
      * @return the enum type.
      */
-    @Override
     public ScareCrowType getType()
     {
         if (this.type == null)
@@ -596,5 +572,14 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
             this.type = ScareCrowType.values()[this.random.nextInt(2)];
         }
         return this.type;
+    }
+
+    /**
+     * Enum describing the different textures the scarecrow has.
+     */
+    public enum ScareCrowType
+    {
+        PUMPKINHEAD,
+        NORMAL
     }
 }

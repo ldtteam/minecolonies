@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -9,8 +8,7 @@ import com.minecolonies.api.util.BlockStateUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.material.Material;
@@ -263,7 +261,7 @@ public class Tree
                 {
                     if (OreDictionary.getOreName(oreId).equals(SAPLINGS))
                     {
-                        IColonyManager.getInstance().getCompatibilityManager().connectLeafToSapling(blockState, stack);
+                        ColonyManager.getCompatibilityManager().connectLeafToSapling(blockState, stack);
                         return stack;
                     }
                 }
@@ -440,7 +438,7 @@ public class Tree
      */
     private static boolean supposedToCut(final IBlockAccess world, final List<ItemStorage> treesToNotCut, final BlockPos leafPos)
     {
-        final ItemStack sap = IColonyManager.getInstance().getCompatibilityManager().getSaplingForLeaf(world.getBlockState(leafPos));
+        final ItemStack sap = ColonyManager.getCompatibilityManager().getSaplingForLeaf(world.getBlockState(leafPos));
 
         if (sap == null)
         {
@@ -852,7 +850,7 @@ public class Tree
      * @param colony the colony.
      * @return return false if not inside the colony or if inside a building.
      */
-    public static boolean checkIfInColonyAndNotInBuilding(final BlockPos pos, final IColony colony)
+    public static boolean checkIfInColonyAndNotInBuilding(final BlockPos pos, final Colony colony)
     {
         if (!colony.isCoordInColony(colony.getWorld(), pos))
         {
@@ -865,7 +863,7 @@ public class Tree
             return true;
         }
 
-        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        for (final AbstractBuilding building : colony.getBuildingManager().getBuildings().values())
         {
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = building.getCorners();
             final int x1 = corners.getFirst().getFirst();

@@ -1,13 +1,11 @@
 package com.minecolonies.coremod.util;
 
 import com.google.common.io.Files;
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -54,7 +52,7 @@ public final class BackUpHelper
 
             for (int dim = 0; dim < FMLCommonHandler.instance().getMinecraftServerInstance().worlds.length; dim++)
             {
-                for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
+                for (int i = 1; i <= ColonyManager.getTopColonyId() + 1; i++)
                 {
                     @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dim));
                     if (file.exists())
@@ -177,12 +175,12 @@ public final class BackUpHelper
     public static void saveColonies(final boolean isWorldUnload)
     {
         @NotNull final NBTTagCompound compound = new NBTTagCompound();
-        IColonyManager.getInstance().writeToNBT(compound);
+        ColonyManager.writeToNBT(compound);
 
         @NotNull final File file = getSaveLocation();
         saveNBTToPath(file, compound);
         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-        for (final IColony colony : IColonyManager.getInstance().getAllColonies())
+        for (final Colony colony : ColonyManager.getAllColonies())
         {
             final NBTTagCompound colonyCompound = new NBTTagCompound();
             colony.writeToNBT(colonyCompound);
@@ -205,7 +203,7 @@ public final class BackUpHelper
             return;
         }
 
-        IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
+        Colony colony = ColonyManager.getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
             colony.readFromNBT(compound);
@@ -219,9 +217,9 @@ public final class BackUpHelper
 
             if (Configurations.gameplay.enableDynamicColonySizes)
             {
-                for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+                for (final AbstractBuilding building : colony.getBuildingManager().getBuildings().values())
                 {
-                    ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), building.getPosition(), colony.getDimension(), building.getClaimRadius(building.getBuildingLevel()));
+                    ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), building.getLocation(), colony.getDimension(), building.getClaimRadius(building.getBuildingLevel()));
                 }
             }
             else

@@ -167,7 +167,7 @@ public class EntityAICitizenChild extends EntityAIBase
             return false;
         }
 
-        CompatibilityUtils.getWorldFromCitizen(child)
+        CompatibilityUtils.getWorld(child)
           // Search entities in radius
           .getEntitiesInAABBexcluding(
             child,

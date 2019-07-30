@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
@@ -58,7 +57,7 @@ public class DoRaidNowCommand extends AbstractSingleCommand implements IActionCo
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        final IColony colony = actionMenuState.getColonyForArgument("colony");
+        final Colony colony = actionMenuState.getColonyForArgument("colony");
         if (colony == null)
         {
             sender.sendMessage(NO_COLONY_FOUND_MESSAGE);
@@ -70,10 +69,10 @@ public class DoRaidNowCommand extends AbstractSingleCommand implements IActionCo
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        IColony colony = null;
+        Colony colony = null;
         if (args.length != 0)
         {
-            colony = IColonyManager.getInstance().getColonyByWorld(Integer.parseInt(args[0]), server.getWorld(sender.getEntityWorld().provider.getDimension()));
+            colony = ColonyManager.getColonyByWorld(Integer.parseInt(args[0]), server.getWorld(sender.getEntityWorld().provider.getDimension()));
             if (colony == null)
             {
                 sender.sendMessage(NO_COLONY_FOUND_MESSAGE);
@@ -89,7 +88,7 @@ public class DoRaidNowCommand extends AbstractSingleCommand implements IActionCo
         executeShared(server, sender, colony);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final IColony colony)
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final Colony colony)
     {
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
         {

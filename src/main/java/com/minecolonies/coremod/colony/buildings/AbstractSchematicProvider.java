@@ -11,10 +11,11 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
-public abstract class AbstractSchematicProvider implements ISchematicProvider
+public abstract class AbstractSchematicProvider
 {
     /**
      * The location of the building.
@@ -73,48 +74,16 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     @Override
     public boolean equals(final Object o)
     {
-        return o instanceof AbstractBuilding && ((IBuilding) o).getID().equals(this.getID());
+        return o instanceof AbstractBuilding && ((AbstractBuilding) o).getID().equals(this.getID());
     }
 
-    @Override
-    public NBTTagCompound serializeNBT()
-    {
-        final NBTTagCompound compound = new NBTTagCompound();
-        final String s = BuildingRegistry.getNameToClassMap().inverse().get(this.getClass());
-
-        if (s == null)
-        {
-            throw new IllegalStateException(this.getClass() + " is missing a mapping! This is a bug!");
-        }
-        else
-        {
-            compound.setString(TAG_BUILDING_TYPE, s);
-            BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
-            final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
-            if (Structures.hasMD5(structureName))
-            {
-                compound.setString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName.toString()));
-            }
-        }
-
-        compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
-        compound.setInteger(TAG_ROTATION, rotation);
-        compound.setString(TAG_STYLE, style);
-
-        compound.setBoolean(TAG_MIRROR, isBuildingMirrored);
-
-        compound.setInteger(TAG_CORNER1, this.cornerX1);
-        compound.setInteger(TAG_CORNER2, this.cornerX2);
-        compound.setInteger(TAG_CORNER3, this.cornerZ1);
-        compound.setInteger(TAG_CORNER4, this.cornerZ2);
-
-        compound.setInteger(TAG_HEIGHT, this.height);
-
-        return compound;
-    }
-
-    @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    /**
+     * Load data from NBT compound.
+     * Writes to {@link #buildingLevel}, {@link #rotation} and {@link #style}.
+     *
+     * @param compound {@link net.minecraft.nbt.NBTTagCompound} to read data from.
+     */
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         buildingLevel = compound.getInteger(TAG_BUILDING_LEVEL);
 
@@ -129,8 +98,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         {
             final StructureName newStructureName = Structures.getStructureNameByMD5(md5);
             if (newStructureName != null
-                  && newStructureName.getPrefix().equals(sn.getPrefix())
-                  && newStructureName.getSchematic().equals(sn.getSchematic()))
+                    && newStructureName.getPrefix().equals(sn.getPrefix())
+                    && newStructureName.getSchematic().equals(sn.getSchematic()))
             {
                 //We found the new location for the schematic, update the style accordingly
                 style = newStructureName.getStyle();
@@ -161,12 +130,50 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     }
 
     /**
+     * Save data to NBT compound.
+     * Writes the {@link #buildingLevel}, {@link #rotation}, {@link #style}, {@link #location}, and {@link #getClass()} value.
+     *
+     * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to.
+     */
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        final String s = BuildingRegistry.getNameToClassMap().inverse().get(this.getClass());
+
+        if (s == null)
+        {
+            throw new IllegalStateException(this.getClass() + " is missing a mapping! This is a bug!");
+        }
+        else
+        {
+            compound.setString(TAG_BUILDING_TYPE, s);
+            BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
+            final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
+            if (Structures.hasMD5(structureName))
+            {
+                compound.setString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName.toString()));
+            }
+        }
+
+        compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
+        compound.setInteger(TAG_ROTATION, rotation);
+        compound.setString(TAG_STYLE, style);
+
+        compound.setBoolean(TAG_MIRROR, isBuildingMirrored);
+
+        compound.setInteger(TAG_CORNER1, this.cornerX1);
+        compound.setInteger(TAG_CORNER2, this.cornerX2);
+        compound.setInteger(TAG_CORNER3, this.cornerZ1);
+        compound.setInteger(TAG_CORNER4, this.cornerZ2);
+
+        compound.setInteger(TAG_HEIGHT, this.height);
+    }
+
+    /**
      * Returns the {@link BlockPos} of the current object, also used as ID.
      *
      * @return {@link BlockPos} of the current object.
      */
-    @Override
-    public BlockPos getPosition()
+    public BlockPos getLocation()
     {
         return location;
     }
@@ -179,7 +186,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
      * @param z1 the first z corner.
      * @param z2 the second z corner.
      */
-    @Override
     public void setCorners(final int x1, final int x2, final int z1, final int z2)
     {
         this.cornerX1 = x1;
@@ -193,7 +199,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
      *
      * @param height the height to set.
      */
-    @Override
     public void setHeight(final int height)
     {
         this.height = height;
@@ -204,7 +209,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
      *
      * @return the corners.
      */
-    @Override
     public Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> getCorners()
     {
         return new Tuple<>(new Tuple<>(cornerX1, cornerX2), new Tuple<>(cornerZ1, cornerZ2));
@@ -215,7 +219,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
      *
      * @return {@link BlockPos} of the current object.
      */
-    @Override
     public BlockPos getID()
     {
         // Location doubles as ID.
@@ -228,7 +231,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
      * @param world the world.
      * @return the AxisAlignedBB.
      */
-    @Override
     public AxisAlignedBB getTargetableArea(final World world)
     {
         return BuildingUtils.getTargetAbleArea(world, this);
@@ -239,7 +241,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
      *
      * @return integer value of the rotation.
      */
-    @Override
     public int getRotation()
     {
         return rotation;
@@ -250,7 +251,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
      *
      * @param rotation integer value of the rotation.
      */
-    @Override
     public void setRotation(final int rotation)
     {
         this.rotation = rotation;
@@ -261,7 +261,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
      *
      * @return String representation of the current building-style
      */
-    @Override
     public String getStyle()
     {
         return style;
@@ -272,7 +271,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
      *
      * @param style String value of the style.
      */
-    @Override
     public void setStyle(final String style)
     {
         this.style = style;
@@ -284,7 +282,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
      *
      * @return the height..
      */
-    @Override
     public int getHeight()
     {
         return this.height;
@@ -295,7 +292,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
      *
      * @return Level of the current object.
      */
-    @Override
     public int getBuildingLevel()
     {
         return buildingLevel;
@@ -306,7 +302,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
      *
      * @param level Level of the building.
      */
-    @Override
     public void setBuildingLevel(final int level)
     {
         if (level > getMaxBuildingLevel())
@@ -323,7 +318,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
      *
      * @return true if dirty, false if not.
      */
-    @Override
     public final boolean isDirty()
     {
         return dirty;
@@ -332,7 +326,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     /**
      * Sets {@link #dirty} to false, meaning that the instance is up to date.
      */
-    @Override
     public final void clearDirty()
     {
         dirty = false;
@@ -341,7 +334,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     /**
      * Marks the instance and the building dirty.
      */
-    @Override
     public void markDirty()
     {
         dirty = true;
@@ -350,7 +342,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     /**
      * Sets the mirror of the current building.
      */
-    @Override
     public void invertMirror()
     {
         this.isBuildingMirrored = !isBuildingMirrored;
@@ -361,9 +352,22 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
      *
      * @return boolean value of the mirror.
      */
-    @Override
     public boolean isMirrored()
     {
         return isBuildingMirrored;
     }
+
+    /**
+     * Children must return the name of their structure.
+     *
+     * @return StructureProxy name.
+     */
+    public abstract String getSchematicName();
+
+    /**
+     * Children must return their max building level.
+     *
+     * @return Max building level.
+     */
+    public abstract int getMaxBuildingLevel();
 }

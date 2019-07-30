@@ -6,14 +6,13 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHay;
 import net.minecraft.init.Blocks;
@@ -71,7 +70,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobCombatTraining(citizen);
     }
@@ -87,9 +86,9 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        super.deserializeNBT(compound);
+        super.readFromNBT(compound);
 
         fightingPos.clear();
 
@@ -101,17 +100,15 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        final NBTTagCompound compound = super.serializeNBT();
+        super.writeToNBT(compound);
 
         final NBTTagList targetTagList = fightingPos.stream().map(target -> BlockPosUtil.writeToNBT(new NBTTagCompound(), TAG_TARGET, target)).collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_COMBAT_TARGET, targetTagList);
 
         final NBTTagList partnersTagList = trainingPartners.entrySet().stream().map(BuildingCombatAcademy::writePartnerTupleToNBT).collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_COMBAT_PARTNER, partnersTagList);
-
-        return compound;
     }
 
     /**
@@ -173,12 +170,12 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
      * @return the entityCitizen partner or null.
      * @param citizen the worker to get the partner for.
      */
-    public IEntityCitizen getRandomCombatPartner(final IEntityCitizen citizen)
+    public EntityCitizen getRandomCombatPartner(final EntityCitizen citizen)
     {
-        final ICitizenData citizenData = citizen.getCitizenData();
+        final CitizenData citizenData = citizen.getCitizenData();
         if (citizenData != null)
         {
-            final ICitizenData partner = getAssignedCitizen().stream()
+            final CitizenData partner = getAssignedCitizen().stream()
                                               .filter(data -> data.getId() != citizenData.getId())
                                               .filter(data -> !trainingPartners.containsKey(data.getId()))
                                               .filter(data -> !trainingPartners.containsValue(data.getId()))
@@ -199,9 +196,9 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
      * @param citizen the citizen.
      * @return the citizen or null.
      */
-    public IEntityCitizen getCombatPartner(final IEntityCitizen citizen)
+    public EntityCitizen getCombatPartner(final EntityCitizen citizen)
     {
-        final ICitizenData data = citizen.getCitizenData();
+        final CitizenData data = citizen.getCitizenData();
         if (data != null)
         {
             final int citizenId;
@@ -218,7 +215,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
                 return null;
             }
 
-            final ICitizenData citizenData = getAssignedCitizen().stream().filter(cit -> cit.getId() != data.getId()).filter(cit -> cit.getId() == citizenId).findFirst().orElse(null);
+            final CitizenData citizenData = getAssignedCitizen().stream().filter(cit -> cit.getId() != data.getId()).filter(cit -> cit.getId() == citizenId).findFirst().orElse(null);
             if (citizenData != null)
             {
                 return citizenData.getCitizenEntity().orElse(null);
@@ -232,7 +229,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
      * @param citizen the citizen to check for.
      * @return true if so.
      */
-    public boolean hasCombatPartner(final IEntityCitizen citizen)
+    public boolean hasCombatPartner(final EntityCitizen citizen)
     {
         return getCombatPartner(citizen) != null;
     }
@@ -241,9 +238,9 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
      * Reset the combat partner for a worker.
      * @param worker the worker to reset it for.
      */
-    public void resetPartner(final IEntityCitizen worker)
+    public void resetPartner(final EntityCitizen worker)
     {
-        final ICitizenData data = worker.getCitizenData();
+        final CitizenData data = worker.getCitizenData();
         if (data != null)
         {
             if (trainingPartners.containsKey(data.getId()))
@@ -268,7 +265,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
          * @param c the colony.
          * @param l the location.
          */
-        public View(final IColonyView c, @NotNull final BlockPos l)
+        public View(final ColonyView c, @NotNull final BlockPos l)
         {
             super(c, l);
         }

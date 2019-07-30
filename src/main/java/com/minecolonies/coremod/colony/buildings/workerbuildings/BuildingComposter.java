@@ -7,12 +7,10 @@ import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowHutComposter;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.IColonyView;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
@@ -89,7 +87,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobComposter(citizen);
     }
@@ -124,24 +122,9 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        super.deserializeNBT(compound);
-        final NBTTagList compostBinTagList = compound.getTagList(TAG_BARRELS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < compostBinTagList.tagCount(); ++i)
-        {
-            barrels.add(NBTUtil.getPosFromTag(compostBinTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
-        }
-        if (compound.hasKey(TAG_DIRT))
-        {
-            retrieveDirtFromCompostBin = compound.getBoolean(TAG_DIRT);
-        }
-    }
-
-    @Override
-    public NBTTagCompound serializeNBT()
-    {
-        final NBTTagCompound compound = super.serializeNBT();
+        super.writeToNBT(compound);
         @NotNull final NBTTagList compostBinTagList = new NBTTagList();
         for (@NotNull final BlockPos entry : barrels)
         {
@@ -151,8 +134,21 @@ public class BuildingComposter extends AbstractFilterableListBuilding
         }
         compound.setTag(TAG_BARRELS, compostBinTagList);
         compound.setBoolean(TAG_DIRT, retrieveDirtFromCompostBin);
+    }
 
-        return compound;
+    @Override
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        final NBTTagList compostBinTagList = compound.getTagList(TAG_BARRELS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < compostBinTagList.tagCount(); ++i)
+        {
+            barrels.add(NBTUtil.getPosFromTag(compostBinTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
+        }
+        if (compound.hasKey(TAG_DIRT))
+        {
+            retrieveDirtFromCompostBin = compound.getBoolean(TAG_DIRT);
+        }
     }
 
     @Override
@@ -197,7 +193,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
          * @param c the colonyView.
          * @param l the location of the block.
          */
-        public View(final IColonyView c, final BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }

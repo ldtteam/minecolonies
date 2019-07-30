@@ -78,12 +78,7 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
      * @throws IllegalArgumentException when either createRequest or assignRequest have thrown an IllegalArgumentException
      */
     @NotNull
-    default <T extends IRequestable> IToken<?> createAndAssignRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException
-    {
-        final IToken<?> token = createRequest(requester, object);
-        assignRequest(token);
-        return token;
-    }
+    <T extends IRequestable> IToken<?> createAndAssignRequest(@NotNull IRequester requester, @NotNull T object) throws IllegalArgumentException;
 
     /**
      * Method used to reassign a given request.
@@ -209,9 +204,4 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound>, ITick
      * @param isDirty true if so.
      */
     void setDirty(boolean isDirty);
-
-    /**
-     * Marks this manager dirty.
-     */
-    void markDirty();
 }

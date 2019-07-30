@@ -4,8 +4,7 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.IColonyView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.ITownHallView;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,12 +27,12 @@ import static org.mockito.Mockito.*;
 public class WindowTownHallTest {
 
     @Mock
-    private ITownHallView townHall;
+    private BuildingTownHall.View townHall;
     @Mock
-    private ITownHallView building;
+    private BuildingTownHall.View building;
 
     @Mock
-    private IColonyView colony;
+    private ColonyView colony;
 
     final private Map<Integer, CitizenDataView> citizensMap = new HashMap<>();
     final private List<CitizenDataView> citizensArray = new ArrayList<>();

@@ -8,7 +8,6 @@ import com.minecolonies.blockout.controls.TextField;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,14 +31,14 @@ public class WindowHutNameEntry extends Window implements ButtonHandler
     /**
      * The building associated to the GUI.
      */
-    private final IBuildingView building;
+    private final AbstractBuildingView building;
 
     /**
      * Constructor for a hut rename entry window.
      *
      * @param b {@link AbstractBuilding}
      */
-    public WindowHutNameEntry(final IBuildingView b)
+    public WindowHutNameEntry(final AbstractBuildingView b)
     {
         super(Constants.MOD_ID + HUT_NAME_RESOURCE_SUFFIX);
         this.building = b;

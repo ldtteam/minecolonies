@@ -1,12 +1,10 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -18,7 +16,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.util.Random;
 
 /**
@@ -115,7 +112,7 @@ public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessa
     @Override
     public void messageOnServerThread(final BuyCitizenMessage message, final EntityPlayerMP player)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
 
         if (colony == null)
         {
@@ -138,7 +135,7 @@ public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessa
                 // Create new citizen
                 colony.increaseBoughtCitizenCost();
 
-                final ICitizenData data = colony.getCitizenManager().createAndRegisterNewCitizenData();
+                final CitizenData data = colony.getCitizenManager().createAndRegisterNewCitizenData();
 
                 // Never roll max happiness for buying citizens, so library has to be used.
                 final double maxStat = colony.getOverallHappiness() - 1;

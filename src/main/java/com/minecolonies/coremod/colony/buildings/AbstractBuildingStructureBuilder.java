@@ -3,8 +3,8 @@ package com.minecolonies.coremod.colony.buildings;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
@@ -129,9 +129,9 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        super.deserializeNBT(compound);
+        super.readFromNBT(compound);
         final NBTTagList neededResTagList = compound.getTagList(TAG_RESOURCE_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < neededResTagList.tagCount(); ++i)
         {
@@ -150,10 +150,9 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        final NBTTagCompound compound = super.serializeNBT();
-
+        super.writeToNBT(compound);
         @NotNull final NBTTagList neededResTagList = new NBTTagList();
         for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
@@ -171,8 +170,6 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             BlockPosUtil.writeToNBT(compound, TAG_PROGRESS_POS, progressPos);
             compound.setInteger(TAG_PROGRESS_STAGE, progressStage.ordinal());
         }
-
-        return compound;
     }
 
     /**
@@ -196,7 +193,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             qty += resource.getAmount();
         }
 
-        final ICitizenData data = this.getMainCitizen();
+        final CitizenData data = this.getMainCitizen();
         if(data != null && data.getJob() instanceof AbstractJobStructure)
         {
             final AbstractJobStructure structureBuilderJob = (AbstractJobStructure) data.getJob();
@@ -209,13 +206,13 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 ByteBufUtils.writeUTF8String(buf, name);
 
                 final String desc;
-                if(pos.equals(getPosition()))
+                if(pos.equals(getLocation()))
                 {
                     desc = "here";
                 }
                 else
                 {
-                    final BlockPos relativePos = getPosition().subtract(pos);
+                    final BlockPos relativePos = getLocation().subtract(pos);
                     final EnumFacing facingX = EnumFacing.getFacingFromVector(relativePos.getX(), 0, 0);
                     final EnumFacing facingZ = EnumFacing.getFacingFromVector(0, 0, relativePos.getZ());
                     desc = relativePos.getX() + " " + facingX + " " + relativePos.getZ() + " " + facingZ;

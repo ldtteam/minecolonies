@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.colony.workorders;
 
-import com.minecolonies.api.colony.IColony;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
@@ -19,22 +18,22 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 /**
  * Handles work orders for a colony.
  */
-public class WorkManager implements IWorkManager
+public class WorkManager
 {
-    private static final String                   TAG_WORK_ORDERS = "workOrders";
+    private static final String                          TAG_WORK_ORDERS = "workOrders";
     //  Once a second
     //private static final int    WORK_ORDER_FULFILL_INCREMENT = 1 * 20;
     /**
      * The Colony the workManager takes part of.
      */
-    private final      Colony                   colony;
+    protected final      Colony                          colony;
     @NotNull
-    private final        Map<Integer, IWorkOrder> workOrders      = new LinkedHashMap<>();
-    private              int                      topWorkOrderId  = 0;
+    private final        Map<Integer, AbstractWorkOrder> workOrders      = new LinkedHashMap<>();
+    private              int                             topWorkOrderId  = 0;
     /**
      * Checks if there has been changes.
      */
-    private              boolean                  dirty           = false;
+    private              boolean                         dirty           = false;
 
     /**
      * Constructor, saves reference to the colony.
@@ -51,8 +50,7 @@ public class WorkManager implements IWorkManager
      *
      * @param order {@link AbstractWorkOrder} to remove.
      */
-    @Override
-    public void removeWorkOrder(@NotNull final IWorkOrder order)
+    public void removeWorkOrder(@NotNull final AbstractWorkOrder order)
     {
         removeWorkOrder(order.getID());
     }
@@ -62,10 +60,9 @@ public class WorkManager implements IWorkManager
      *
      * @param orderId ID of the order to remove
      */
-    @Override
     public void removeWorkOrder(final int orderId)
     {
-        final IWorkOrder workOrder = workOrders.get(orderId);
+        final AbstractWorkOrder workOrder = workOrders.get(orderId);
         if (workOrder != null)
         {
             workOrders.remove(orderId);
@@ -84,11 +81,10 @@ public class WorkManager implements IWorkManager
      * @return the work order of the specified id, or null if it was not found
      * or is of an incompatible type.
      */
-    @Override
     @Nullable
-    public <W extends IWorkOrder> W getWorkOrder(final int id, @NotNull final Class<W> type)
+    public <W extends AbstractWorkOrder> W getWorkOrder(final int id, @NotNull final Class<W> type)
     {
-        final IWorkOrder workOrder = getWorkOrder(id);
+        final AbstractWorkOrder workOrder = getWorkOrder(id);
         if (type.isInstance(workOrder))
         {
             return type.cast(workOrder);
@@ -103,8 +99,7 @@ public class WorkManager implements IWorkManager
      * @param id the id of the work order.
      * @return the work order of the specified id, or null.
      */
-    @Override
-    public IWorkOrder getWorkOrder(final int id)
+    public AbstractWorkOrder getWorkOrder(final int id)
     {
         return workOrders.get(id);
     }
@@ -117,11 +112,10 @@ public class WorkManager implements IWorkManager
      * @return an unclaimed work order of the given type, or null if no
      * unclaimed work order of the type was found.
      */
-    @Override
     @Nullable
-    public <W extends IWorkOrder> W getUnassignedWorkOrder(@NotNull final Class<W> type)
+    public <W extends AbstractWorkOrder> W getUnassignedWorkOrder(@NotNull final Class<W> type)
     {
-        for (@NotNull final IWorkOrder o : workOrders.values())
+        for (@NotNull final AbstractWorkOrder o : workOrders.values())
         {
             if (!o.isClaimed() && type.isInstance(o))
             {
@@ -139,8 +133,7 @@ public class WorkManager implements IWorkManager
      * @param <W>  the type of work order to return.
      * @return a list of all work orders of the given type.
      */
-    @Override
-    public <W extends IWorkOrder> List<W> getWorkOrdersOfType(@NotNull final Class<W> type)
+    public <W extends AbstractWorkOrder> List<W> getWorkOrdersOfType(@NotNull final Class<W> type)
     {
         return workOrders.values().stream().filter(type::isInstance).map(type::cast).collect(Collectors.toList());
     }
@@ -150,9 +143,8 @@ public class WorkManager implements IWorkManager
      *
      * @return a list of all work orders.
      */
-    @Override
     @NotNull
-    public Map<Integer, IWorkOrder> getWorkOrders()
+    public Map<Integer, AbstractWorkOrder> getWorkOrders()
     {
         return workOrders;
     }
@@ -163,11 +155,10 @@ public class WorkManager implements IWorkManager
      *
      * @param citizen Citizen to unclaim work for.
      */
-    @Override
-    public void clearWorkForCitizen(@NotNull final ICitizenData citizen)
+    public void clearWorkForCitizen(@NotNull final CitizenData citizen)
     {
         dirty = true;
-        workOrders.values().stream().filter(o -> o != null && o.isClaimedBy(citizen)).forEach(IWorkOrder::clearClaimedBy);
+        workOrders.values().stream().filter(o -> o != null && o.isClaimedBy(citizen)).forEach(AbstractWorkOrder::clearClaimedBy);
     }
 
     /**
@@ -175,12 +166,11 @@ public class WorkManager implements IWorkManager
      *
      * @param compound Compound to save to.
      */
-    @Override
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         //  Work Orders
         @NotNull final NBTTagList list = new NBTTagList();
-        for (@NotNull final IWorkOrder o : workOrders.values())
+        for (@NotNull final AbstractWorkOrder o : workOrders.values())
         {
             @NotNull final NBTTagCompound orderCompound = new NBTTagCompound();
             o.writeToNBT(orderCompound);
@@ -194,7 +184,6 @@ public class WorkManager implements IWorkManager
      *
      * @param compound Compound to read from.
      */
-    @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         //  Work Orders
@@ -226,8 +215,7 @@ public class WorkManager implements IWorkManager
      * @param order          Order to add.
      * @param readingFromNbt if being read from NBT.
      */
-    @Override
-    public void addWorkOrder(@NotNull final IWorkOrder order, final boolean readingFromNbt)
+    public void addWorkOrder(@NotNull final AbstractWorkOrder order, final boolean readingFromNbt)
     {
         dirty = true;
 
@@ -247,15 +235,14 @@ public class WorkManager implements IWorkManager
      *
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}.
      */
-    @Override
     public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
         if (event.phase == TickEvent.Phase.END && Colony.shallUpdate(event.world, TICKS_SECOND))
         {
-            @NotNull final Iterator<IWorkOrder> iter = workOrders.values().iterator();
+            @NotNull final Iterator<AbstractWorkOrder> iter = workOrders.values().iterator();
             while (iter.hasNext())
             {
-                final IWorkOrder o = iter.next();
+                final AbstractWorkOrder o = iter.next();
                 if (!o.isValid(colony))
                 {
                     iter.remove();
@@ -277,11 +264,10 @@ public class WorkManager implements IWorkManager
      * @param builder the builder wanting to claim it.
      * @return the list.
      */
-    @Override
-    public <W extends IWorkOrder> List<W> getOrderedList(@NotNull final Class<W> type, final BlockPos builder)
+    public <W extends AbstractWorkOrder> List<W> getOrderedList(@NotNull final Class<W> type, final BlockPos builder)
     {
         return workOrders.values().stream().filter(o -> (!o.isClaimed() || o.getClaimedBy().equals(builder)) && type.isInstance(o)).map(o -> (W) o)
-                .sorted(Comparator.comparingInt(IWorkOrder::getPriority).reversed())
+                .sorted(Comparator.comparingInt(AbstractWorkOrder::getPriority).reversed())
                 .collect(Collectors.toList());
     }
 
@@ -290,7 +276,6 @@ public class WorkManager implements IWorkManager
      *
      * @return true if so.
      */
-    @Override
     public boolean isDirty()
     {
         return dirty;
@@ -301,15 +286,8 @@ public class WorkManager implements IWorkManager
      *
      * @param dirty true if so. False to reset.
      */
-    @Override
     public void setDirty(final boolean dirty)
     {
         this.dirty = dirty;
-    }
-
-    @Override
-    public IColony getColony()
-    {
-        return colony;
     }
 }

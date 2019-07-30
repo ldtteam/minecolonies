@@ -1,11 +1,10 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -54,7 +53,7 @@ public class OpenCraftingGUIMessage extends AbstractMessage<OpenCraftingGUIMessa
     public OpenCraftingGUIMessage(@NotNull final AbstractBuildingView building, final int gridSize)
     {
         super();
-        this.buildingId = building.getPosition();
+        this.buildingId = building.getLocation();
         this.gridSize = gridSize;
         this.colonyId = building.getColony().getID();
         this.dimension = building.getColony().getDimension();
@@ -81,7 +80,7 @@ public class OpenCraftingGUIMessage extends AbstractMessage<OpenCraftingGUIMessa
     @Override
     public void messageOnServerThread(final OpenCraftingGUIMessage message, final EntityPlayerMP player)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null && checkPermissions(colony, player))
         {
             final BlockPos pos = message.buildingId;
@@ -89,7 +88,7 @@ public class OpenCraftingGUIMessage extends AbstractMessage<OpenCraftingGUIMessa
         }
     }
 
-    private static boolean checkPermissions(final IColony colony, final EntityPlayerMP player)
+    private static boolean checkPermissions(final Colony colony, final EntityPlayerMP player)
     {
         //Verify player has permission to change this huts settings
         return colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS);

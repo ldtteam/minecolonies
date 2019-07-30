@@ -5,9 +5,9 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.blocks.IBlockBarrel;
-import com.minecolonies.coremod.blocks.decorative.IBlockConstructionTape;
-import com.minecolonies.coremod.blocks.huts.IBlockHutField;
+import com.minecolonies.coremod.blocks.BlockBarrel;
+import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
+import com.minecolonies.coremod.blocks.huts.BlockHutField;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -197,7 +197,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         @NotNull final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(MathHelper.floor(entity.posX),
                                                                                     (int) entity.posY,
                                                                                     MathHelper.floor(entity.posZ));
-        IBlockState bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
+        IBlockState bs = CompatibilityUtils.getWorld(entity).getBlockState(pos);
         final Block b = bs.getBlock();
 
         if (entity.isInWater())
@@ -205,10 +205,10 @@ public abstract class AbstractPathJob implements Callable<Path>
             while (bs.getMaterial().isLiquid())
             {
                 pos.setPos(pos.getX(), pos.getY() + 1, pos.getZ());
-                bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
+                bs = CompatibilityUtils.getWorld(entity).getBlockState(pos);
             }
         }
-        else if (b instanceof BlockFence || b instanceof BlockWall || b instanceof IBlockHutField)
+        else if (b instanceof BlockFence || b instanceof BlockWall || b instanceof BlockHutField)
         {
             //Push away from fence
             final double dX = entity.posX - Math.floor(entity.posX);
@@ -975,7 +975,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             {
                 return block.getBlock() instanceof BlockDoor
                          || block.getBlock() instanceof BlockFenceGate
-                         || block.getBlock() instanceof IBlockConstructionTape
+                         || block.getBlock() instanceof BlockConstructionTape
                          || block.getBlock() instanceof BlockPressurePlate;
             }
             else if (block.getMaterial().isLiquid())
@@ -1011,15 +1011,15 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (block instanceof BlockFence
               || block instanceof BlockFenceGate
               || block instanceof BlockWall
-              || block instanceof IBlockHutField
-              || block instanceof IBlockBarrel
+              || block instanceof BlockHutField
+              || block instanceof BlockBarrel
               || (blockState.getCollisionBoundingBox(world, pos) != null
                    && blockState.getCollisionBoundingBox(world, pos).maxY > 1.0))
         {
             return SurfaceType.NOT_PASSABLE;
         }
 
-        if (block instanceof IBlockConstructionTape)
+        if (block instanceof BlockConstructionTape)
         {
             return SurfaceType.DROPABLE;
         }

@@ -5,7 +5,6 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -18,12 +17,12 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 /**
  * Handler taking care of citizens getting stuck.
  */
-public class CitizenStuckHandler implements ICitizenStuckHandler
+public class CitizenStuckHandler
 {
     /**
      * The citizen assigned to this manager.
      */
-    private final IEntityCitizen citizen;
+    private final EntityCitizen citizen;
 
     /**
      * Field to try moving away from a location in order to pass it.
@@ -47,14 +46,13 @@ public class CitizenStuckHandler implements ICitizenStuckHandler
     /**
      * Called in the citizen every few ticks to check if stuck.
      */
-    @Override
-    public void update()
+    public void onUpdate()
     {
-        if (citizen.getTicksExisted() % TICKS_20 == 0)
+        if (citizen.ticksExisted % TICKS_20 == 0)
         {
             checkIfStuck();
 
-            if (citizen.getTicksExisted() % (MAX_STUCK_TIME * TICKS_SECOND) == 0)
+            if (citizen.ticksExisted % (MAX_STUCK_TIME * TICKS_SECOND) == 0)
             {
                 movingAwayAttempts = 0;
             }
@@ -65,7 +63,6 @@ public class CitizenStuckHandler implements ICitizenStuckHandler
      * Let worker AIs check if the citizen is stuck to not track it on their own.
      * @return true if tried to move away already.
      */
-    @Override
     public boolean isStuck()
     {
         return stuckTime >= MIN_STUCK_TIME + citizen.getRandom().nextInt(MIN_STUCK_TIME) && movingAwayAttempts > MOVE_AWAY_RETRIES;
@@ -82,7 +79,7 @@ public class CitizenStuckHandler implements ICitizenStuckHandler
             return;
         }
 
-        if (citizen.getNavigator().getDestination() == null || citizen.getNavigator().getDestination().distanceSq(citizen.getPosition().getX(), citizen.getPosition().getY(), citizen.getPosition().getZ()) < MOVE_AWAY_RANGE)
+        if (citizen.getNavigator().getDestination() == null || citizen.getNavigator().getDestination().distanceSq(citizen.posX, citizen.posY, citizen.posZ) < MOVE_AWAY_RANGE)
         {
             stuckTime = 0;
             return;
@@ -108,8 +105,8 @@ public class CitizenStuckHandler implements ICitizenStuckHandler
 
         if (stuckTime >= MAX_STUCK_TIME)
         {
-            if (citizen.getNavigator().getDestination().distanceSq(citizen.getPosition().getX(), citizen.getPosition().getY(), citizen.getPosition().getZ()) < MOVE_AWAY_RANGE
-                  || (citizen.getNavigator().getDestination().getY() - citizen.getPosition().getY() > 2))
+            if (citizen.getNavigator().getDestination().distanceSq(citizen.posX, citizen.posY, citizen.posZ) < MOVE_AWAY_RANGE
+                  || (citizen.getNavigator().getDestination().getY() - citizen.posY > 2))
             {
                 stuckTime = 0;
                 return;
@@ -117,10 +114,10 @@ public class CitizenStuckHandler implements ICitizenStuckHandler
 
             movingAwayAttempts = 0;
 
-            final BlockPos destination = BlockPosUtil.getFloor(citizen.getNavigator().getDestination().up(), CompatibilityUtils.getWorldFromCitizen(citizen));
+            final BlockPos destination = BlockPosUtil.getFloor(citizen.getNavigator().getDestination().up(), CompatibilityUtils.getWorld(citizen));
             @Nullable final BlockPos spawnPoint =
               Utils.scanForBlockNearPoint
-                      (CompatibilityUtils.getWorldFromCitizen(citizen), destination, 1, 1, 1, 3,
+                      (CompatibilityUtils.getWorld(citizen), destination, 1, 1, 1, 3,
                         Blocks.AIR,
                         Blocks.SNOW_LAYER,
                         Blocks.TALLGRASS,

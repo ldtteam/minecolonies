@@ -4,11 +4,13 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowHutSifter;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobSifter;
 import com.minecolonies.coremod.network.messages.SifterSettingsMessage;
 import io.netty.buffer.ByteBuf;
@@ -84,14 +86,14 @@ public class BuildingSifter extends AbstractBuildingWorker
     {
         super(c, l);
 
-        if (!IColonyManager.getInstance().getCompatibilityManager().getSievableBlock().isEmpty())
+        if (!ColonyManager.getCompatibilityManager().getSievableBlock().isEmpty())
         {
-            this.sievableBlock = IColonyManager.getInstance().getCompatibilityManager().getSievableBlock().get(0);
+            this.sievableBlock = ColonyManager.getCompatibilityManager().getSievableBlock().get(0);
         }
 
-        if (!IColonyManager.getInstance().getCompatibilityManager().getMeshes().isEmpty())
+        if (!ColonyManager.getCompatibilityManager().getMeshes().isEmpty())
         {
-            this.sifterMesh = IColonyManager.getInstance().getCompatibilityManager().getMeshes().get(0);
+            this.sifterMesh = ColonyManager.getCompatibilityManager().getMeshes().get(0);
         }
     }
 
@@ -110,7 +112,7 @@ public class BuildingSifter extends AbstractBuildingWorker
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobSifter(citizen);
     }
@@ -184,9 +186,9 @@ public class BuildingSifter extends AbstractBuildingWorker
      */
     public void resetMesh()
     {
-        if (!IColonyManager.getInstance().getCompatibilityManager().getMeshes().isEmpty())
+        if (!ColonyManager.getCompatibilityManager().getMeshes().isEmpty())
         {
-            this.sifterMesh = IColonyManager.getInstance().getCompatibilityManager().getMeshes().get(0);
+            this.sifterMesh = ColonyManager.getCompatibilityManager().getMeshes().get(0);
         }
     }
 
@@ -199,7 +201,7 @@ public class BuildingSifter extends AbstractBuildingWorker
     public void setup(final ItemStorage block, final ItemStorage mesh, final int quantity)
     {
         this.sievableBlock = block;
-        for (final Tuple<ItemStorage, Double> tuple : IColonyManager.getInstance().getCompatibilityManager().getMeshes())
+        for (final Tuple<ItemStorage, Double> tuple : ColonyManager.getCompatibilityManager().getMeshes())
         {
             if (tuple.getFirst().equals(mesh))
             {
@@ -229,10 +231,9 @@ public class BuildingSifter extends AbstractBuildingWorker
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        super.deserializeNBT(compound);
-
+        super.readFromNBT(compound);
         this.dailyQuantity = compound.getInteger(TAG_DAILY);
         this.currentDailyQuantity = compound.getInteger(TAG_CURRENT_DAILY);
 
@@ -243,10 +244,9 @@ public class BuildingSifter extends AbstractBuildingWorker
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        final NBTTagCompound compound = super.serializeNBT();
-
+        super.writeToNBT(compound);
         compound.setInteger(TAG_DAILY, dailyQuantity);
         compound.setInteger(TAG_CURRENT_DAILY, currentDailyQuantity);
 
@@ -258,8 +258,6 @@ public class BuildingSifter extends AbstractBuildingWorker
         sifterMesh.getFirst().getItemStack().writeToNBT(meshTAG);
         compound.setTag(TAG_MESH, meshTAG);
         compound.setDouble(TAG_MESH_PROB, sifterMesh.getSecond());
-
-        return compound;
     }
 
     @Override
@@ -271,14 +269,14 @@ public class BuildingSifter extends AbstractBuildingWorker
         ByteBufUtils.writeItemStack(buf, sievableBlock.getItemStack());
         ByteBufUtils.writeItemStack(buf, sifterMesh.getFirst().getItemStack());
 
-        buf.writeInt(IColonyManager.getInstance().getCompatibilityManager().getSievableBlock().size());
-        for (final ItemStorage storage : IColonyManager.getInstance().getCompatibilityManager().getSievableBlock())
+        buf.writeInt(ColonyManager.getCompatibilityManager().getSievableBlock().size());
+        for (final ItemStorage storage : ColonyManager.getCompatibilityManager().getSievableBlock())
         {
             ByteBufUtils.writeItemStack(buf, storage.getItemStack());
         }
 
-        buf.writeInt(IColonyManager.getInstance().getCompatibilityManager().getMeshes().size());
-        for (final Tuple<ItemStorage, Double> storage : IColonyManager.getInstance().getCompatibilityManager().getMeshes())
+        buf.writeInt(ColonyManager.getCompatibilityManager().getMeshes().size());
+        for (final Tuple<ItemStorage, Double> storage : ColonyManager.getCompatibilityManager().getMeshes())
         {
             ByteBufUtils.writeItemStack(buf, storage.getFirst().getItemStack());
         }
@@ -320,7 +318,7 @@ public class BuildingSifter extends AbstractBuildingWorker
          * @param c the colonyview to put it in
          * @param l the positon
          */
-        public View(final IColonyView c, final BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }

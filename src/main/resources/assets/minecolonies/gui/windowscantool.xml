@@ -1,5 +1,5 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="420 240" pause="false"
-        lightbox="false" xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
+        lightbox="false" xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
 
     <label size="100% 11" pos="60 10" color="white" label="$(com.minecolonies.coremod.gui.scanTool.from)"/>
     <input id="pos1x" size="36 18" pos="90 5" maxlength="10"/>

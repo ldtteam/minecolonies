@@ -3,8 +3,7 @@ package com.minecolonies.coremod.entity.ai.minimal;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.coremod.entity.IEntityCitizen;
-import net.minecraft.entity.EntityCreature;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.util.math.Vec3d;
@@ -14,7 +13,7 @@ import net.minecraft.util.math.Vec3d;
  */
 public class EntityAICitizenWander extends EntityAIBase
 {
-    protected final IEntityCitizen citizen;
+    protected final EntityCitizen citizen;
     protected final double        speed;
     private         double        xPosition;
     private         double        yPosition;
@@ -27,7 +26,7 @@ public class EntityAICitizenWander extends EntityAIBase
      * @param citizen the citizen.
      * @param speed   the speed.
      */
-    public EntityAICitizenWander(final IEntityCitizen citizen, final double speed, final double randomModifier)
+    public EntityAICitizenWander(final EntityCitizen citizen, final double speed, final double randomModifier)
     {
         super();
         this.citizen = citizen;
@@ -52,14 +51,14 @@ public class EntityAICitizenWander extends EntityAIBase
         Vec3d vec3d = null;
         if(vec3d == null)
         {
-            vec3d = RandomPositionGenerator.getLandPos((EntityCreature) citizen, 10, 7);
+            vec3d = RandomPositionGenerator.getLandPos(citizen, 10, 7);
             if (vec3d == null)
             {
                 return false;
             }
         }
 
-        vec3d = new Vec3d(vec3d.x, BlockPosUtil.getValidHeight(vec3d, CompatibilityUtils.getWorldFromCitizen(citizen)), vec3d.z);
+        vec3d = new Vec3d(vec3d.x, BlockPosUtil.getValidHeight(vec3d, CompatibilityUtils.getWorld(citizen)), vec3d.z);
 
         this.xPosition = vec3d.x;
         this.yPosition = vec3d.y;

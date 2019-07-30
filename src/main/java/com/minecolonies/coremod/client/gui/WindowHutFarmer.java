@@ -197,8 +197,8 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final BlockPos field = fields.get(index);
-                @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field, building.getPosition())));
-                final String direction = BlockPosUtil.calcDirection(building.getPosition(), field);
+                @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field, building.getLocation())));
+                final String direction = BlockPosUtil.calcDirection(building.getLocation(), field);
                 final TileEntity entity = world.getTileEntity(field);
                 if(entity instanceof ScarecrowTileEntity)
                 {
