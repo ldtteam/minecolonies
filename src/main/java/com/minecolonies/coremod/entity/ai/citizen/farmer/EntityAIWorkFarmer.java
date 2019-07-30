@@ -638,7 +638,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
             if (InventoryUtils.shrinkItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), this::isCompost))
             {
-                MineColonies.getNetwork().sendToAllAround(new CompostParticleMessage(position.up()),
+                Network.getNetwork().sendToAllAround(new CompostParticleMessage(position.up()),
                   new NetworkRegistry.TargetPoint(world.provider.getDimension(), position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE));
                 crop.grow(world, position.up(), state);
                 state = world.getBlockState(position.up());

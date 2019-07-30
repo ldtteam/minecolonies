@@ -54,7 +54,7 @@ public class EntityLocation implements ILocation
         checkEntity();
         if (entity == null || entity.get() == null)
         {
-            return BlockPos.ORIGIN;
+            return BlockPos.ZERO;
         }
         else
         {

@@ -70,8 +70,8 @@ public class FMLEventHandler
     {
         if (event.player instanceof PlayerEntityMP)
         {
-            MineColonies.getNetwork().sendTo(new ServerUUIDMessage(), (PlayerEntityMP) event.player);
-            MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), (PlayerEntityMP) event.player);
+            Network.getNetwork().sendTo(new ServerUUIDMessage(), (PlayerEntityMP) event.player);
+            Network.getNetwork().sendTo(new ColonyStylesMessage(), (PlayerEntityMP) event.player);
 
             // This automatically reloads the owner of the colony if failed.
             IColonyManager.getInstance().getIColonyByOwner(((EntityPlayerMP) event.player).getServerWorld(), event.player);

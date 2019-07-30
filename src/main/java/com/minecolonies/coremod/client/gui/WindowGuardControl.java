@@ -223,7 +223,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
     private void sendChangesToServer()
     {
         final int ordinal = building.getJob() == null ? -1 : job.ordinal();
-        MineColonies.getNetwork().sendToServer(new GuardTaskMessage(building, ordinal, building.isAssignManually(), patrolManually, retrieveOnLowHealth, task.ordinal(), tightGrouping));
+        Network.getNetwork().sendToServer(new GuardTaskMessage(building, ordinal, building.isAssignManually(), patrolManually, retrieveOnLowHealth, task.ordinal(), tightGrouping));
     }
 
     /**
@@ -348,7 +348,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
      */
     private void recalculate()
     {
-        MineColonies.getNetwork().sendToServer(new GuardRecalculateMessage(building.getColony().getID(), building));
+        Network.getNetwork().sendToServer(new GuardRecalculateMessage(building.getColony().getID(), building));
         pullInfoFromHut();
     }
 
@@ -359,7 +359,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
      */
     private void givePlayerScepter(final GuardTask localTask)
     {
-        MineColonies.getNetwork().sendToServer(new GuardScepterMessage(localTask.ordinal(), building.getID(), building.getColony().getID()));
+        Network.getNetwork().sendToServer(new GuardScepterMessage(localTask.ordinal(), building.getID(), building.getColony().getID()));
     }
 
     /**

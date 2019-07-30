@@ -72,7 +72,7 @@ public class EntityAISleep extends EntityAIBase
         {
             this.wokeUp = !citizen.getCitizenData().isAsleep();
             this.usedBed = citizen.getCitizenData().getBedPos();
-            if (citizen.getCitizenData().getBedPos().equals(BlockPos.ORIGIN))
+            if (citizen.getCitizenData().getBedPos().equals(BlockPos.ZERO))
             {
                 this.usedBed = null;
             }

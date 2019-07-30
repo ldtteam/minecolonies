@@ -142,7 +142,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
         if (b1)
         {
             final TransferRecipeCrafingTeachingMessage message = new TransferRecipeCrafingTeachingMessage(guiIngredients, craftingGUIBuilding.isComplete());
-            MineColonies.getNetwork().sendToServer(message);
+            Network.getNetwork().sendToServer(message);
         }
 
         return null;

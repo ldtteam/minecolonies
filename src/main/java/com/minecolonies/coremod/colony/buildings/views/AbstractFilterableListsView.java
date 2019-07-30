@@ -44,7 +44,7 @@ public abstract class AbstractFilterableListsView extends AbstractBuildingWorker
      */
     public void addItem(final String id, final ItemStorage item)
     {
-        MineColonies.getNetwork().sendToServer(new AssignFilterableItemMessage(this, id, item, true));
+        Network.getNetwork().sendToServer(new AssignFilterableItemMessage(this, id, item, true));
         if(listsOfItems.containsKey(id))
         {
             if (!listsOfItems.get(id).contains(item))
@@ -80,7 +80,7 @@ public abstract class AbstractFilterableListsView extends AbstractBuildingWorker
      */
     public void removeItem(final String id, final ItemStorage item)
     {
-        MineColonies.getNetwork().sendToServer(new AssignFilterableItemMessage(this, id, item, false));
+        Network.getNetwork().sendToServer(new AssignFilterableItemMessage(this, id, item, false));
         if(listsOfItems.containsKey(id) && listsOfItems.get(id).contains(item))
         {
             final List<ItemStorage> list = listsOfItems.get(id);

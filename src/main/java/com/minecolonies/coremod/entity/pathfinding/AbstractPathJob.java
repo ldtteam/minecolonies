@@ -710,7 +710,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             return false;
         }
 
-        BlockPos yFix = BlockPos.ORIGIN;
+        BlockPos yFix = BlockPos.ZERO;
 
         if (pos.getY() != newY)
         {

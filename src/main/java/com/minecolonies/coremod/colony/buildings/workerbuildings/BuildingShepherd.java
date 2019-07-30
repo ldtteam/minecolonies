@@ -180,7 +180,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
         public void setDyeSheeps(final boolean dyeSheeps)
         {
             this.dyeSheeps = dyeSheeps;
-            MineColonies.getNetwork().sendToServer(new ShepherdSetDyeSheepsMessage(this));
+            Network.getNetwork().sendToServer(new ShepherdSetDyeSheepsMessage(this));
         }
 
         /**

@@ -186,7 +186,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
         {
             if (!CompatibilityUtils.getWorldFromCitizen(citizen).isRemote)
             {
-                MineColonies.getNetwork().sendToAllAround(
+                Network.getNetwork().sendToAllAround(
                   new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
                   new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorldFromCitizen(citizen).provider.getDimension(),
                     blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
@@ -208,7 +208,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
                 final BlockPos vector = blockPos.subtract(citizen.getPosition());
                 final Direction facing = Direction.getFacingFromVector(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
 
-                MineColonies.getNetwork().sendToAllAround(
+                Network.getNetwork().sendToAllAround(
                   new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), facing.ordinal()),
                   new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorldFromCitizen(citizen).provider.getDimension(), blockPos.getX(),
                     blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE));

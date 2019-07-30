@@ -1,19 +1,12 @@
 package com.minecolonies.coremod.entity;
 
 import com.minecolonies.coremod.client.render.BipedModelType;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityAgeable;
-import net.minecraft.entity.INpc;
-import net.minecraft.entity.ai.EntityAITasks;
+import net.minecraft.entity.INPC;
 import net.minecraft.entity.ai.EntitySenses;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -24,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 import java.util.UUID;
 
-public interface IBaseEntityCitizen extends ICommandSender, ICapabilitySerializable<NBTTagCompound>, INpc
+public interface IBaseEntityCitizen extends CommandSource, ICapabilitySerializable<CompoundNBT>, INPC
 {
 
     int getTicksExisted();

@@ -4,6 +4,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Label;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
@@ -66,11 +67,11 @@ public abstract class AbstractWindowBuilding<B extends IBuildingView> extends Ab
         if(buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.cancelBuild"))
                 || buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.cancelUpgrade")))
         {
-            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD, BlockPos.ORIGIN));
+            Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD, BlockPos.ZERO));
         }
         else if (buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.cancelRepair")))
         {
-            MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR, BlockPos.ORIGIN));
+            Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR, BlockPos.ZERO));
         }
         else
         {
@@ -84,7 +85,7 @@ public abstract class AbstractWindowBuilding<B extends IBuildingView> extends Ab
      */
     private void inventoryClicked()
     {
-        MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(building.getID()));
+        Network.getNetwork().sendToServer(new OpenInventoryMessage(building.getID()));
     }
 
     @Override

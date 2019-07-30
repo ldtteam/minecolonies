@@ -68,7 +68,7 @@ public class EntityAIGateInteract extends EntityAIBase
     public EntityAIGateInteract(@NotNull final LivingEntity entityIn)
     {
         super();
-        this.gatePosition = BlockPos.ORIGIN;
+        this.gatePosition = BlockPos.ZERO;
         this.theEntity = entityIn;
         if (!(entityIn.getNavigator() instanceof PathNavigateGround))
         {

@@ -347,7 +347,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
         {
             @NotNull final IRequest<?> request = getOpenRequestTreeOfBuilding().get(row).getRequest();
             building.onRequestCancelled(colony.getRequestManager(), request.getId());
-            MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(colony.getID(), request.getId(), RequestState.CANCELLED, null));
+            Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony.getID(), request.getId(), RequestState.CANCELLED, null));
         }
         updateRequests();
     }

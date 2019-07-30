@@ -140,7 +140,7 @@ public class WindowGuiCrafting extends GuiContainer
 
             if(!ItemStackUtils.isEmpty(primaryOutput))
             {
-                MineColonies.getNetwork().sendToServer(new AddRemoveRecipeMessage(input, completeCrafting ? 3 : 2, primaryOutput, building, false));
+                Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(input, completeCrafting ? 3 : 2, primaryOutput, building, false));
             }
         }
     }

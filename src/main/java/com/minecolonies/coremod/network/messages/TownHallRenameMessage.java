@@ -78,7 +78,7 @@ public class TownHallRenameMessage extends AbstractMessage<TownHallRenameMessage
             }
             message.name = (message.name.length() <= MAX_NAME_LENGTH) ? message.name : message.name.substring(0, SUBSTRING_LENGTH);
             colony.setName(message.name);
-            MineColonies.getNetwork().sendToAll(message);
+            Network.getNetwork().sendToAll(message);
         }
     }
 }

@@ -282,7 +282,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             return;
         }
 
-        if (workOrderBuildBuilding.tooFarFromAnyBuilder(colony, level) && builder.equals(BlockPos.ORIGIN))
+        if (workOrderBuildBuilding.tooFarFromAnyBuilder(colony, level) && builder.equals(BlockPos.ZERO))
         {
             LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
               "entity.builder.messageBuildersTooFar");
@@ -302,7 +302,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             return;
         }
 
-        if (!builder.equals(BlockPos.ORIGIN))
+        if (!builder.equals(BlockPos.ZERO))
         {
              final IBuilding building =  colony.getBuildingManager().getBuilding(builder);
              if (building instanceof AbstractBuildingStructureBuilder && (building.getBuildingLevel() >= level || canBeBuiltByBuilder(level)))

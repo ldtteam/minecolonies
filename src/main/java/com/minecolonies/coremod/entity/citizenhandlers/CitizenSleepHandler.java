@@ -157,7 +157,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         }
 
         final BlockPos spawn;
-        if (!getBedLocation().equals(BlockPos.ORIGIN) && citizen.world.getBlockState(getBedLocation()).getBlock() == Blocks.BED)
+        if (!getBedLocation().equals(BlockPos.ZERO) && citizen.world.getBlockState(getBedLocation()).getBlock() == Blocks.BED)
         {
             spawn = BlockBed.getSafeExitLocation(citizen.world, getBedLocation(), 0);
         }
@@ -166,7 +166,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             spawn = citizen.getPosition();
         }
 
-        if (spawn != null && !spawn.equals(BlockPos.ORIGIN))
+        if (spawn != null && !spawn.equals(BlockPos.ZERO))
         {
             citizen.setPosition(spawn.getX() + Constants.HALF_BLOCK, spawn.getY() + Constants.HALF_BLOCK, spawn.getZ() + Constants.HALF_BLOCK);
         }

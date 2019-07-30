@@ -76,16 +76,6 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void registerEvents()
-    {
-        super.registerEvents();
-
-        MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
-        MinecraftForge.EVENT_BUS.register(new DebugRendererChunkBorder());
-
-    }
-
-    @Override
     public void registerEntityRendering()
     {
         RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, RenderBipedCitizen::new);

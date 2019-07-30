@@ -643,7 +643,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
          */
         public void setAssignFieldManually(final boolean assignFieldManually)
         {
-            MineColonies.getNetwork().sendToServer(new AssignmentModeMessage(this, assignFieldManually));
+            Network.getNetwork().sendToServer(new AssignmentModeMessage(this, assignFieldManually));
             this.shouldAssignFieldManually = assignFieldManually;
         }
 
@@ -656,7 +656,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
          */
         public void changeFields(final BlockPos id, final boolean addNewField, final ScarecrowTileEntity scarecrowTileEntity)
         {
-            MineColonies.getNetwork().sendToServer(new AssignFieldMessage(this, addNewField, id));
+            Network.getNetwork().sendToServer(new AssignFieldMessage(this, addNewField, id));
             scarecrowTileEntity.setTaken(addNewField);
 
             if (addNewField && !getWorkerId().isEmpty())

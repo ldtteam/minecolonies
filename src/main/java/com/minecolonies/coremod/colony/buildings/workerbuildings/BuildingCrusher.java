@@ -333,7 +333,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         {
             this.crusherMode = crusherMode;
             this.dailyQuantity = dailyQuantity;
-            MineColonies.getNetwork().sendToServer(new CrusherSetModeMessage(this, crusherMode, dailyQuantity));
+            Network.getNetwork().sendToServer(new CrusherSetModeMessage(this, crusherMode, dailyQuantity));
         }
 
         /**

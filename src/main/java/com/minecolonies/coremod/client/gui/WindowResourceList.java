@@ -130,7 +130,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         });
 
         //Make sure we have a fresh view
-        MineColonies.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.builder));
+        Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.builder));
 
         findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Label.class).setLabelText(builder.getConstructionName());
     }

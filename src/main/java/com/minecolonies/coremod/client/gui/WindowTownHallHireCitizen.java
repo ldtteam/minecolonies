@@ -126,22 +126,22 @@ public class WindowTownHallHireCitizen extends Window implements ButtonHandler
             }
             case BUTTON_HAY_BALE:
             {
-                MineColonies.getNetwork().sendToServer(new BuyCitizenMessage(BuyCitizenMessage.BuyCitizenType.HAY_BALE, colony.getID(), colony.getDimension()));
+                Network.getNetwork().sendToServer(new BuyCitizenMessage(BuyCitizenMessage.BuyCitizenType.HAY_BALE, colony.getID(), colony.getDimension()));
                 break;
             }
             case BUTTON_BOOKS:
             {
-                MineColonies.getNetwork().sendToServer(new BuyCitizenMessage(BuyCitizenMessage.BuyCitizenType.BOOK, colony.getID(), colony.getDimension()));
+                Network.getNetwork().sendToServer(new BuyCitizenMessage(BuyCitizenMessage.BuyCitizenType.BOOK, colony.getID(), colony.getDimension()));
                 break;
             }
             case BUTTON_EMERALD:
             {
-                MineColonies.getNetwork().sendToServer(new BuyCitizenMessage(BuyCitizenMessage.BuyCitizenType.EMERALD, colony.getID(), colony.getDimension()));
+                Network.getNetwork().sendToServer(new BuyCitizenMessage(BuyCitizenMessage.BuyCitizenType.EMERALD, colony.getID(), colony.getDimension()));
                 break;
             }
             case BUTTON_DIAMOND:
             {
-                MineColonies.getNetwork().sendToServer(new BuyCitizenMessage(BuyCitizenMessage.BuyCitizenType.DIAMOND, colony.getID(), colony.getDimension()));
+                Network.getNetwork().sendToServer(new BuyCitizenMessage(BuyCitizenMessage.BuyCitizenType.DIAMOND, colony.getID(), colony.getDimension()));
                 break;
             }
         }

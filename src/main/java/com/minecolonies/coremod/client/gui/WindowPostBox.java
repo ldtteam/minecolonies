@@ -84,7 +84,7 @@ public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHa
         {
             final int requestSize = qty > stack.getMaxStackSize() ? stack.getMaxStackSize() : qty;
             qty -= requestSize;
-            MineColonies.getNetwork().sendToServer(new PostBoxRequestMessage(buildingView, stack.copy(), requestSize));
+            Network.getNetwork().sendToServer(new PostBoxRequestMessage(buildingView, stack.copy(), requestSize));
         }
     }
 
@@ -128,7 +128,7 @@ public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHa
      */
     private void inventoryClicked()
     {
-        MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(buildingView.getID()));
+        Network.getNetwork().sendToServer(new OpenInventoryMessage(buildingView.getID()));
     }
 
     /**

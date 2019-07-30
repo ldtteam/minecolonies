@@ -96,7 +96,7 @@ public class WindowHutComposter extends AbstractHutFilterableLists
         final BuildingComposter.View composter = ownBuilding;
         composter.retrieveDirtFromCompostBin = !composter.retrieveDirtFromCompostBin;
         setupRetrieveDirtButton(retrieve);
-        MineColonies.getNetwork().sendToServer(new ComposterRetrievalMessage(composter, composter.retrieveDirtFromCompostBin));
+        Network.getNetwork().sendToServer(new ComposterRetrievalMessage(composter, composter.retrieveDirtFromCompostBin));
     }
 
     @Override

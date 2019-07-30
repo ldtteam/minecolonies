@@ -28,21 +28,6 @@ public interface IProxy
     boolean isClient();
 
     /**
-     * Method to register Tile Entities in.
-     */
-    void registerTileEntities();
-
-    /**
-     * Method to register events in.
-     */
-    void registerEvents();
-
-    /**
-     * Method to register Entities in.
-     */
-    void registerEntities();
-
-    /**
      * Method to register entity rendering in.
      */
     void registerEntityRendering();

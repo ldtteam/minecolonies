@@ -169,7 +169,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
             try
             {
                 final int level = Integer.parseInt(levelString);
-                MineColonies.getNetwork().sendToServer(new DecorationControllUpdateMessage(controller.getPos(), name, level));
+                Network.getNetwork().sendToServer(new DecorationControllUpdateMessage(controller.getPos(), name, level));
                 controller.setSchematicName(name);
                 controller.setLevel(level);
                 close();
@@ -186,7 +186,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
      */
     private void confirmClicked()
     {
-        MineColonies.getNetwork()
+        Network.getNetwork()
           .sendToServer(new DecorationBuildRequestMessage(controller.getPos(), controller.getSchematicName(), controller.getLevel() + 1, world.provider.getDimension()));
         close();
     }
@@ -196,7 +196,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
      */
     private void repairClicked()
     {
-        MineColonies.getNetwork()
+        Network.getNetwork()
           .sendToServer(new DecorationBuildRequestMessage(controller.getPos(), controller.getSchematicName(), controller.getLevel(), world.provider.getDimension()));
         close();
     }

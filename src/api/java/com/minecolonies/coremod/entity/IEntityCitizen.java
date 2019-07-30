@@ -8,6 +8,7 @@ import com.minecolonies.coremod.entity.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.ICommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
@@ -18,6 +19,7 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.potion.PotionEffect;
@@ -38,7 +40,7 @@ import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
-public interface IEntityCitizen extends ICommandSender, ICapabilitySerializable<NBTTagCompound>, IBaseEntityCitizen
+public interface IEntityCitizen extends ICommandSource, ICapabilitySerializable<CompoundNBT>, IBaseEntityCitizen
 {
     /**
      * Set the metadata for rendering.

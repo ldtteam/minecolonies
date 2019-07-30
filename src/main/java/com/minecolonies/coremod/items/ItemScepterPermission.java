@@ -70,7 +70,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
           IColonyView,
                                                                                                block,
                                                                                                ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
-        MineColonies.getNetwork().sendToServer(message);
+        Network.getNetwork().sendToServer(message);
 
         return EnumActionResult.SUCCESS;
     }
@@ -83,7 +83,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
                                                        final IColonyView IColonyView)
     {
         final ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(IColonyView, pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
-        MineColonies.getNetwork().sendToServer(message);
+        Network.getNetwork().sendToServer(message);
 
         return EnumActionResult.SUCCESS;
     }

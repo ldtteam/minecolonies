@@ -401,7 +401,7 @@ public class BuildingSifter extends AbstractBuildingWorker
         {
             this.sifterBlock = sifterBlock;
             this.mesh = mesh;
-            MineColonies.getNetwork().sendToServer(new SifterSettingsMessage(this, sifterBlock, mesh, dailyQuantity, buy));
+            Network.getNetwork().sendToServer(new SifterSettingsMessage(this, sifterBlock, mesh, dailyQuantity, buy));
         }
 
         @NotNull

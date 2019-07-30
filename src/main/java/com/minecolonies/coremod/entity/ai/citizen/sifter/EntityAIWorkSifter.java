@@ -192,9 +192,9 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
         }
         if (check == SIFT)
         {
-            MineColonies.getNetwork()
+            Network.getNetwork()
               .sendToAllTracking(new LocalizedParticleEffectMessage(sifterBuilding.getMesh().getFirst().getItemStack().copy(), sifterBuilding.getID()), (Entity) worker);
-            MineColonies.getNetwork()
+            Network.getNetwork()
               .sendToAllTracking(new LocalizedParticleEffectMessage(sifterBuilding.getSievableBlock().getItemStack().copy(), sifterBuilding.getID().down()), (Entity) worker);
 
             SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.BLOCK_CLOTH_BREAK);

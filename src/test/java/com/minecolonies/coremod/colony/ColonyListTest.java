@@ -102,7 +102,7 @@ public class ColonyListTest
     @Test
     public void testCreate()
     {
-        final Colony colony = list.create(world, BlockPos.ORIGIN);
+        final Colony colony = list.create(world, BlockPos.ZERO);
 
         assertEquals(colony, list.get(colony.getID()));
     }
@@ -112,7 +112,7 @@ public class ColonyListTest
     {
         for (int i = 0; i < ColonyList.INITIAL_SIZE + 1; i++)
         {
-            final Colony colony = list.create(world, BlockPos.ORIGIN);
+            final Colony colony = list.create(world, BlockPos.ZERO);
             assertEquals(colony, list.get(colony.getID()));
         }
 
@@ -204,7 +204,7 @@ public class ColonyListTest
         list.add(colony1);
         list.remove(colony1);
 
-        final Colony colony = list.create(world, BlockPos.ORIGIN);
+        final Colony colony = list.create(world, BlockPos.ZERO);
 
         assertEquals(1, colony.getID());
     }

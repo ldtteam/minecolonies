@@ -135,7 +135,7 @@ public class CitizenData implements ICitizenData
     /**
      * The citizens current bedBos.
      */
-    private BlockPos bedPos = BlockPos.ORIGIN;
+    private BlockPos bedPos = BlockPos.ZERO;
 
     /**
      * The home building of the citizen.

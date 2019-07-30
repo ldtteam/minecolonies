@@ -133,7 +133,7 @@ public final class TeleportToColony
             final WorldServer worldServer = server.getWorld(colonyDimension);
 
             // Vanilla does that as well.
-            entityPlayerMP.connection.sendPacket(new SPacketEffect(SOUND_TYPE, BlockPos.ORIGIN, 0, false));
+            entityPlayerMP.connection.sendPacket(new SPacketEffect(SOUND_TYPE, BlockPos.ZERO, 0, false));
             entityPlayerMP.addExperience(0);
             entityPlayerMP.setPlayerHealthUpdated();
 
