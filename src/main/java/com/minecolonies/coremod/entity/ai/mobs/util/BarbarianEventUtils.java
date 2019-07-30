@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.mobs.util;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.Colony;
@@ -34,7 +35,7 @@ public final class BarbarianEventUtils
      * @param raidNumber the number of raiders.
      * @param horde the detailed horde.
      */
-    public static void barbarianEvent(final World world, final Colony colony, final BlockPos target, final int raidNumber, final MobEventsUtils.Horde horde)
+    public static void barbarianEvent(final World world, final IColony colony, final BlockPos target, final int raidNumber, final MobEventsUtils.Horde horde)
     {
         BlockPos targetSpawnPoint = target;
         if (BlockPosUtil.getFloor(targetSpawnPoint, 0, world) == null)

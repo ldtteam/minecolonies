@@ -46,31 +46,9 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
-        super.writeToNBT(compound);
-        @NotNull final NBTTagList filterableListCompound = new NBTTagList();
-        for(@NotNull final Map.Entry<String, List<ItemStorage>> entry : itemsAllowed.entrySet())
-        {
-            @NotNull final NBTTagCompound listCompound = new NBTTagCompound();
-            listCompound.setString(TAG_ID, entry.getKey());
-            @NotNull final NBTTagList filteredItems = new NBTTagList();
-            for(@NotNull final ItemStorage item : entry.getValue())
-            {
-                @NotNull final NBTTagCompound itemCompound = new NBTTagCompound();
-                item.getItemStack().writeToNBT(itemCompound);
-                filteredItems.appendTag(itemCompound);
-            }
-            listCompound.setTag(TAG_ITEMLIST, filteredItems);
-            filterableListCompound.appendTag(listCompound);
-        }
-        compound.setTag(TAG_ITEMLIST, filterableListCompound);
-    }
-
-    @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
+        super.deserializeNBT(compound);
         final NBTTagList filterableList = compound.getTagList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < filterableList.tagCount(); ++i)
         {
@@ -94,6 +72,29 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
                 Log.getLogger().info("Removing incompatible stack");
             }
         }
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT()
+    {
+        final NBTTagCompound compound = super.serializeNBT();
+        @NotNull final NBTTagList filterableListCompound = new NBTTagList();
+        for(@NotNull final Map.Entry<String, List<ItemStorage>> entry : itemsAllowed.entrySet())
+        {
+            @NotNull final NBTTagCompound listCompound = new NBTTagCompound();
+            listCompound.setString(TAG_ID, entry.getKey());
+            @NotNull final NBTTagList filteredItems = new NBTTagList();
+            for(@NotNull final ItemStorage item : entry.getValue())
+            {
+                @NotNull final NBTTagCompound itemCompound = new NBTTagCompound();
+                item.getItemStack().writeToNBT(itemCompound);
+                filteredItems.appendTag(itemCompound);
+            }
+            listCompound.setTag(TAG_ITEMLIST, filteredItems);
+            filterableListCompound.appendTag(listCompound);
+        }
+        compound.setTag(TAG_ITEMLIST, filterableListCompound);
+        return compound;
     }
 
     /**

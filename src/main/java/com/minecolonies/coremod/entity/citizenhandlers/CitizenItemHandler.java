@@ -38,7 +38,7 @@ import static com.minecolonies.api.util.constant.Constants.DEFAULT_VOLUME;
 /**
  * Handles the citizens interaction with an item with the world.
  */
-public class CitizenItemHandler
+public class CitizenItemHandler implements ICitizenItemHandler
 {
     /**
      * The citizen assigned to this manager.
@@ -59,9 +59,10 @@ public class CitizenItemHandler
      *
      * @param entityItem the item he wants to pickup.
      */
+    @Override
     public void tryPickupEntityItem(@NotNull final EntityItem entityItem)
     {
-        if (!CompatibilityUtils.getWorld(citizen).isRemote)
+        if (!CompatibilityUtils.getWorldFromCitizen(citizen).isRemote)
         {
             if (entityItem.cannotPickup())
             {
@@ -76,7 +77,7 @@ public class CitizenItemHandler
 
             if (ItemStackUtils.isEmpty(resultStack) || ItemStackUtils.getSize(resultStack) != ItemStackUtils.getSize(compareStack))
             {
-                CompatibilityUtils.getWorld(citizen).playSound((EntityPlayer) null,
+                CompatibilityUtils.getWorldFromCitizen(citizen).playSound((EntityPlayer) null,
                   citizen.getPosition(),
                   SoundEvents.ENTITY_ITEM_PICKUP,
                   SoundCategory.AMBIENT,
@@ -103,6 +104,7 @@ public class CitizenItemHandler
     /**
      * Removes the currently held item.
      */
+    @Override
     public void removeHeldItem()
     {
         citizen.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
@@ -114,6 +116,7 @@ public class CitizenItemHandler
      * @param hand what hand we're setting
      * @param slot from the inventory slot.
      */
+    @Override
     public void setHeldItem(final EnumHand hand, final int slot)
     {
         citizen.getCitizenData().getInventory().setHeldItem(hand, slot);
@@ -132,6 +135,7 @@ public class CitizenItemHandler
      *
      * @param slot from the inventory slot.
      */
+    @Override
     public void setMainHeldItem(final int slot)
     {
         citizen.getCitizenData().getInventory().setHeldItem(EnumHand.MAIN_HAND, slot);
@@ -145,6 +149,7 @@ public class CitizenItemHandler
      *
      * @param blockPos Block position.
      */
+    @Override
     public void hitBlockWithToolInHand(@Nullable final BlockPos blockPos)
     {
         if (blockPos == null)
@@ -163,6 +168,7 @@ public class CitizenItemHandler
      * @param blockPos   Block position.
      * @param breakBlock if we want to break this block.
      */
+    @Override
     public void hitBlockWithToolInHand(@Nullable final BlockPos blockPos, final boolean breakBlock)
     {
         if (blockPos == null)
@@ -174,45 +180,45 @@ public class CitizenItemHandler
 
         citizen.swingArm(citizen.getActiveHand());
 
-        final IBlockState blockState = CompatibilityUtils.getWorld(citizen).getBlockState(blockPos);
+        final IBlockState blockState = CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos);
         final Block block = blockState.getBlock();
         if (breakBlock)
         {
-            if (!CompatibilityUtils.getWorld(citizen).isRemote)
+            if (!CompatibilityUtils.getWorldFromCitizen(citizen).isRemote)
             {
                 MineColonies.getNetwork().sendToAllAround(
-                  new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorld(citizen).getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
-                  new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorld(citizen).provider.getDimension(),
+                  new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
+                  new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorldFromCitizen(citizen).provider.getDimension(),
                     blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
             }
-            CompatibilityUtils.getWorld(citizen).playSound(null,
+            CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
               blockPos,
-              block.getSoundType(blockState, CompatibilityUtils.getWorld(citizen), blockPos, citizen).getBreakSound(),
+              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getBreakSound(),
               SoundCategory.BLOCKS,
-              block.getSoundType(blockState, CompatibilityUtils.getWorld(citizen), blockPos, citizen).getVolume(),
-              block.getSoundType(blockState, CompatibilityUtils.getWorld(citizen), blockPos, citizen).getPitch());
-            CompatibilityUtils.getWorld(citizen).setBlockToAir(blockPos);
+              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getVolume(),
+              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getPitch());
+            CompatibilityUtils.getWorldFromCitizen(citizen).setBlockToAir(blockPos);
 
             damageItemInHand(citizen.getActiveHand(), 1);
         }
         else
         {
-            if (!CompatibilityUtils.getWorld(citizen).isRemote)
+            if (!CompatibilityUtils.getWorldFromCitizen(citizen).isRemote)
             {
                 final BlockPos vector = blockPos.subtract(citizen.getPosition());
                 final EnumFacing facing = EnumFacing.getFacingFromVector(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
 
                 MineColonies.getNetwork().sendToAllAround(
-                  new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorld(citizen).getBlockState(blockPos), facing.ordinal()),
-                  new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorld(citizen).provider.getDimension(), blockPos.getX(),
+                  new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), facing.ordinal()),
+                  new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorldFromCitizen(citizen).provider.getDimension(), blockPos.getX(),
                     blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE));
             }
-            CompatibilityUtils.getWorld(citizen).playSound((EntityPlayer) null,
+            CompatibilityUtils.getWorldFromCitizen(citizen).playSound((EntityPlayer) null,
               blockPos,
-              block.getSoundType(blockState, CompatibilityUtils.getWorld(citizen), blockPos, citizen).getBreakSound(),
+              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getBreakSound(),
               SoundCategory.BLOCKS,
-              block.getSoundType(blockState, CompatibilityUtils.getWorld(citizen), blockPos, citizen).getVolume(),
-              block.getSoundType(blockState, CompatibilityUtils.getWorld(citizen), blockPos, citizen).getPitch());
+              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getVolume(),
+              block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getPitch());
         }
     }
 
@@ -221,6 +227,7 @@ public class CitizenItemHandler
      *
      * @param damage amount of damage.
      */
+    @Override
     public void damageItemInHand(final EnumHand hand, final int damage)
     {
         final ItemStack heldItem = citizen.getCitizenData().getInventory().getHeldItem(hand);
@@ -242,12 +249,13 @@ public class CitizenItemHandler
     /**
      * Pick up all items in a range around the citizen.
      */
+    @Override
     public void pickupItems()
     {
         @NotNull final List<EntityItem> retList = new ArrayList<>();
         //I know streams look better but they are flawed in type erasure
         for (final Object o :
-          CompatibilityUtils.getWorld(citizen).
+          CompatibilityUtils.getWorldFromCitizen(citizen).
                                              getEntitiesWithinAABB(EntityItem.class,
                                                new AxisAlignedBB(citizen.getPosition()).expand(2.0F, 1.0F, 2.0F).expand(-2.0F, -1.0F, -2.0F)))
         {
@@ -272,6 +280,7 @@ public class CitizenItemHandler
      *
      * @param blockPos Block position.
      */
+    @Override
     public void breakBlockWithToolInHand(@Nullable final BlockPos blockPos)
     {
         if (blockPos == null)
@@ -287,6 +296,7 @@ public class CitizenItemHandler
      * @param itemstack to drop.
      * @return the dropped item.
      */
+    @Override
     public EntityItem entityDropItem(@NotNull final ItemStack itemstack)
     {
         return citizen.entityDropItem(itemstack, 0.0F);
@@ -297,6 +307,7 @@ public class CitizenItemHandler
      *
      * @param damage damage dealt.
      */
+    @Override
     public void updateArmorDamage(final double damage)
     {
         for (final ItemStack stack : citizen.getArmorInventoryList())

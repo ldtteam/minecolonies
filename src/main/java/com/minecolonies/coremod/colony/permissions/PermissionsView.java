@@ -6,10 +6,13 @@ import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.network.PacketUtils;
+import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -54,6 +57,18 @@ public class PermissionsView implements IPermissions
     public Map<UUID, Player> getPlayers()
     {
         return Collections.unmodifiableMap(players);
+    }
+
+    @Override
+    public boolean setPlayerRank(final UUID id, final Rank rank, final World world)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean addPlayer(@NotNull final GameProfile gameprofile, final Rank rank)
+    {
+        return false;
     }
 
     /**
@@ -141,6 +156,12 @@ public class PermissionsView implements IPermissions
         return false;
     }
 
+    @Override
+    public boolean removePlayer(final UUID playerID)
+    {
+        return false;
+    }
+
     /**
      * Toggle a permission flag.
      *
@@ -150,6 +171,26 @@ public class PermissionsView implements IPermissions
     public void togglePermission(final Rank rank, @NotNull final Action action)
     {
         permissions.put(rank, Utils.toggleFlag(permissions.get(rank), action.getFlag()));
+    }
+
+    @Nullable
+    @Override
+    public Map.Entry<UUID, Player> getOwnerEntry()
+    {
+        return null;
+    }
+
+    @Override
+    public boolean setOwner(final EntityPlayer player)
+    {
+        return false;
+    }
+
+    @NotNull
+    @Override
+    public UUID getOwner()
+    {
+        return null;
     }
 
     /**
@@ -196,6 +237,12 @@ public class PermissionsView implements IPermissions
         return getRank(player.getUniqueID());
     }
 
+    @Override
+    public void restoreOwnerIfNull()
+    {
+        //Noop happens on the server side.
+    }
+
     @NotNull
     @Override
     public Rank getRank(final UUID id)
@@ -208,6 +255,25 @@ public class PermissionsView implements IPermissions
     public boolean hasPermission(@NotNull final EntityPlayer player, @NotNull final Action action)
     {
         return hasPermission(getRank(player), action);
+    }
+
+    @Override
+    public boolean addPlayer(@NotNull final String player, final Rank rank, final World world)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean addPlayer(@NotNull final UUID id, final String name, final Rank rank)
+    {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public String getOwnerName()
+    {
+        return null;
     }
 
     @Override

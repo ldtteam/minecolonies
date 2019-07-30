@@ -2,7 +2,7 @@ package com.minecolonies.coremod.commands.colonycommands.requestsystem;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
@@ -57,7 +57,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        final Colony colony = actionMenuState.getColonyForArgument("colony");
+        final IColony colony = actionMenuState.getColonyForArgument("colony");
         if (colony == null)
         {
             sender.sendMessage(new TextComponentString(COLONY_NOT_FOUND));
@@ -81,7 +81,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
         int colonyId = getIthArgument(args, 0, -1);
         if (colonyId == -1 && senderEntity instanceof EntityPlayer)
         {
-            final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
+            final IColony colony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
             if (colony == null)
             {
                 sender.sendMessage(new TextComponentString(COLONY_NULL));
@@ -90,7 +90,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
             colonyId = colony.getID();
         }
 
-        final Colony colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
 
         if (colony == null)
         {
@@ -101,7 +101,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
         executeShared(server, sender, colony);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final Colony colony) throws CommandException
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final IColony colony) throws CommandException
     {
         final Entity senderEntity = sender.getCommandSenderEntity();
 

@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.mobs.aitasks;
 
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.PathResult;
@@ -297,14 +297,14 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
             return null;
         }
 
-        final Collection<AbstractBuilding> buildingList = entity.getColony().getBuildingManager().getBuildings().values();
+        final Collection<IBuilding> buildingList = entity.getColony().getBuildingManager().getBuildings().values();
         final Object[] buildingArray = buildingList.toArray();
         if (buildingArray.length != 0)
         {
             final int rand = random.nextInt(buildingArray.length);
-            final AbstractBuilding building = (AbstractBuilding) buildingArray[rand];
+            final IBuilding building = (IBuilding) buildingArray[rand];
 
-            return building.getLocation();
+            return building.getPosition();
         }
         else
         {

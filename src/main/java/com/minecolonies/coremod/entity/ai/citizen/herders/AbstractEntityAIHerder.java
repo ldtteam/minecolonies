@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.item.Item;
@@ -528,7 +529,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getHeldItemMainhand()))
         {
             worker.swingArm(EnumHand.MAIN_HAND);
-            animal.attackEntityFrom(new EntityDamageSource(worker.getName(), worker), (float) BUTCHERING_ATTACK_DAMAGE);
+            animal.attackEntityFrom(new EntityDamageSource(worker.getName(), (Entity) worker), (float) BUTCHERING_ATTACK_DAMAGE);
             worker.getHeldItemMainhand().damageItem(1, animal);
             worker.decreaseSaturationForAction();
         }

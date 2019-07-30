@@ -1,6 +1,6 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
         lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
     <switch id="pages" size="100% 100%">
         <view id="pageActions" size="100% 100%">
         	<layout source="minecolonies:gui/layouthuts/layouthutpageactions.xml"/>

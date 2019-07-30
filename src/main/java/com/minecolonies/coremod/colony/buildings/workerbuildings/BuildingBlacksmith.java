@@ -7,13 +7,12 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobBlacksmith;
 import net.minecraft.item.*;
 import net.minecraft.util.math.BlockPos;
@@ -58,7 +57,7 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
 
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return new JobBlacksmith(citizen);
     }
@@ -78,7 +77,7 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
             return false;
         }
 
-        final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
+        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
         if(storage == null)
         {
             return false;
@@ -117,7 +116,7 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
          * @param c the colonyView.
          * @param l the location of the block.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }
@@ -125,7 +124,7 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
         @NotNull
         public Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, BLACKSMITH);
+            return new WindowHutWorkerPlaceholder<>(this, BLACKSMITH);
         }
 
         @NotNull

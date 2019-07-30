@@ -4,6 +4,7 @@ import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.items.ItemScanTool;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
@@ -55,7 +56,7 @@ public final class PirateEventUtils
      * @param shipSize         the size of the ship.
      * @param raidNumber       the size of the raid.
      */
-    public static void pirateEvent(final BlockPos targetSpawnPoint, final World world, final Colony colony, final String shipSize, final int raidNumber)
+    public static void pirateEvent(final BlockPos targetSpawnPoint, final World world, final IColony colony, final String shipSize, final int raidNumber)
     {
         final Structure structure = new Structure(world, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, new PlacementSettings());
         structure.rotate(BlockPosUtil.getRotationFromRotations(0), world, targetSpawnPoint, Mirror.NONE);

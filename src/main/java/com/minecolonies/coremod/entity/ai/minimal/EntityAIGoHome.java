@@ -114,7 +114,7 @@ public class EntityAIGoHome extends EntityAIBase
 
         if (chance <= 1 && citizen.getCitizenColonyHandler().getWorkBuilding() != null && citizen.getCitizenJobHandler().getColonyJob() != null)
         {
-            SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorld(citizen), citizen.getPosition(), citizen.getCitizenJobHandler().getColonyJob().getBedTimeSound(), 1);
+            SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getPosition(), citizen.getCitizenJobHandler().getColonyJob().getBedTimeSound(), 1);
             //add further workers as soon as available.
         }
     }

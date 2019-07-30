@@ -21,7 +21,7 @@ public class StaticLocation implements ILocation
 
     private final int dimension;
 
-    StaticLocation(@NotNull final BlockPos pos, final int dimension)
+    public StaticLocation(@NotNull final BlockPos pos, final int dimension)
     {
         this.pos = pos;
         this.dimension = dimension;

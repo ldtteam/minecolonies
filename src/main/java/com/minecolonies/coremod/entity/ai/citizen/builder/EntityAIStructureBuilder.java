@@ -3,8 +3,8 @@ package com.minecolonies.coremod.entity.ai.citizen.builder;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
@@ -209,7 +209,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        final AbstractBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
+        final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
         if (building == null && wo instanceof WorkOrderBuild && !(wo instanceof WorkOrderBuildRemoval))
         {
             job.complete();
@@ -251,7 +251,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         if (getOwnBuilding().getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && job.getWorkOrder() instanceof WorkOrderBuildBuilding)
         {
             final BlockPos buildingPos = job.getWorkOrder().getBuildingLocation();
-            final AbstractBuilding building = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(buildingPos);
+            final IBuilding building = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(buildingPos);
             if (building != null)
             {
                 world.getEntitiesWithinAABB(EntityMob.class, building.getTargetableArea(world)).forEach(Entity::setDead);
@@ -332,7 +332,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     public void connectBlockToBuildingIfNecessary(@NotNull final IBlockState blockState, @NotNull final BlockPos pos)
     {
         final BlockPos buildingLocation = job.getWorkOrder().getBuildingLocation();
-        final AbstractBuilding building = this.getOwnBuilding().getColony().getBuildingManager().getBuilding(buildingLocation);
+        final IBuilding building = this.getOwnBuilding().getColony().getBuildingManager().getBuilding(buildingLocation);
 
         if (building != null)
         {

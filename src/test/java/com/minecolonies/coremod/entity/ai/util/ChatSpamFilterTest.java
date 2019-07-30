@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.entity.ai.util;
 
-import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.citizenhandlers.CitizenChatHandler;
-import com.minecolonies.coremod.entity.citizenhandlers.CitizenColonyHandler;
+import com.minecolonies.coremod.entity.citizenhandlers.ICitizenChatHandler;
+import com.minecolonies.coremod.entity.citizenhandlers.ICitizenColonyHandler;
 import com.minecolonies.coremod.test.AbstractMockStaticsTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,16 +18,16 @@ import static org.mockito.Mockito.*;
 
 public class ChatSpamFilterTest extends AbstractMockStaticsTest
 {
-    private static final String MESSAGE_1 = "Whatever";
-    private static final String MESSAGE_2 = "Whatever2";
+    private static final String                MESSAGE_1 = "Whatever";
+    private static final String                MESSAGE_2 = "Whatever2";
     @Mock
-    private EntityCitizen  citizen;
+    private              EntityCitizen         citizen;
     @Mock
-    private CitizenData data;
+    private              ICitizenData          data;
     @Mock
-    private CitizenColonyHandler citizenColonyHandler;
+    private              ICitizenColonyHandler ICitizenColonyHandler;
     @Mock
-    private CitizenChatHandler citizenChatHandler;
+    private              ICitizenChatHandler   ICitizenChatHandler;
 
     private ChatSpamFilter filter;
 
@@ -37,8 +37,8 @@ public class ChatSpamFilterTest extends AbstractMockStaticsTest
         when(citizen.getCitizenData()).thenReturn(data);
         when(data.getCitizenEntity()).thenReturn(Optional.of(citizen));
         when(citizen.getOffsetTicks()).thenReturn(0);
-        when(citizen.getCitizenChatHandler()).thenReturn(citizenChatHandler);
-        when(citizen.getCitizenColonyHandler()).thenReturn(citizenColonyHandler);
+        when(citizen.getCitizenChatHandler()).thenReturn(ICitizenChatHandler);
+        when(citizen.getCitizenColonyHandler()).thenReturn(ICitizenColonyHandler);
         filter = new ChatSpamFilter(citizen.getCitizenData());
     }
 

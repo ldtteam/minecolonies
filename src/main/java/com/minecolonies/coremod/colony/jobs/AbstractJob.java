@@ -1,14 +1,16 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.blockout.Log;
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
+import com.minecolonies.coremod.client.render.BipedModelType;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.jobs.registry.JobRegistry;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState;
 import net.minecraft.entity.ai.EntityAITasks;
@@ -36,7 +38,7 @@ import static com.minecolonies.coremod.colony.jobs.registry.JobRegistry.TAG_TYPE
  * We are only mapping classes and that is reasonable
  */
 @SuppressWarnings(CLASSES_SHOULD_NOT_ACCESS_STATIC_MEMBERS_OF_THEIR_OWN_SUBCLASSES_DURING_INITIALIZATION)
-public abstract class AbstractJob
+public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends AbstractJob<AI, J>> implements IJob<AI>
 {
     private static final String TAG_ASYNC_REQUESTS = "asyncRequests";
     private static final String TAG_ACTIONS_DONE   = "actionsDone";
@@ -54,7 +56,7 @@ public abstract class AbstractJob
     /**
      * Citizen connected with the job.
      */
-    private final CitizenData citizen;
+    private final ICitizenData citizen;
 
     /**
      * The name tag of the job.
@@ -74,30 +76,24 @@ public abstract class AbstractJob
     /**
      * The workerAI for this Job
      */
-    private WeakReference<AbstractAISkeleton> workerAI = new WeakReference<>(null);
+    private WeakReference<AI> workerAI = new WeakReference<>(null);
 
     /**
      * Initialize citizen data.
      *
      * @param entity the citizen data.
      */
-    public AbstractJob(final CitizenData entity)
+    public AbstractJob(final ICitizenData entity)
     {
         citizen = entity;
     }
-
-    /**
-     * Return a Localization textContent for the Job.
-     *
-     * @return localization textContent String.
-     */
-    public abstract String getName();
 
     /**
      * Getter for the job which will be associated with the experience.
      *
      * @return the getName() or the specialized class name.
      */
+    @Override
     public String getExperienceTag()
     {
         return getName();
@@ -108,9 +104,10 @@ public abstract class AbstractJob
      *
      * @return Model of the citizen.
      */
-    public RenderBipedCitizen.Model getModel()
+    @Override
+    public BipedModelType getModel()
     {
-        return RenderBipedCitizen.Model.CITIZEN;
+        return BipedModelType.CITIZEN;
     }
 
     /**
@@ -118,18 +115,17 @@ public abstract class AbstractJob
      *
      * @return {@link Colony} of the citizen.
      */
-    public Colony getColony()
+    @Override
+    public IColony getColony()
     {
         return citizen.getColony();
     }
 
-    /**
-     * Save the Job to an NBTTagCompound.
-     *
-     * @param compound NBTTagCompound to save the Job to.
-     */
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    @Override
+    public NBTTagCompound serializeNBT()
     {
+        final NBTTagCompound compound = new NBTTagCompound();
+
         final String s = JobRegistry.getClassToNameMap().get(this.getClass());
 
         if (s == null)
@@ -140,14 +136,12 @@ public abstract class AbstractJob
         compound.setString(TAG_TYPE, s);
         compound.setTag(TAG_ASYNC_REQUESTS, getAsyncRequests().stream().map(StandardFactoryController.getInstance()::serialize).collect(NBTUtils.toNBTTagList()));
         compound.setInteger(TAG_ACTIONS_DONE, actionsDone);
+
+        return compound;
     }
 
-    /**
-     * Restore the Job from an NBTTagCompound.
-     *
-     * @param compound NBTTagCompound containing saved Job data.
-     */
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    @Override
+    public void deserializeNBT(final NBTTagCompound compound)
     {
         this.asyncRequests.clear();
         if (compound.hasKey(TAG_ASYNC_REQUESTS))
@@ -164,10 +158,31 @@ public abstract class AbstractJob
     }
 
     /**
+     * Save the Job to an NBTTagCompound.
+     *
+     * @param compound NBTTagCompound to save the Job to.
+     */
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+
+    }
+
+    /**
+     * Restore the Job from an NBTTagCompound.
+     *
+     * @param compound NBTTagCompound containing saved Job data.
+     */
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+
+    }
+
+    /**
      * Get a set of async requests connected to this job.
      *
      * @return a set of ITokens.
      */
+    @Override
     public Set<IToken> getAsyncRequests()
     {
         return asyncRequests;
@@ -178,9 +193,10 @@ public abstract class AbstractJob
      *
      * @param tasks EntityAITasks list to add tasks to.
      */
+    @Override
     public void addWorkerAIToTaskList(@NotNull final EntityAITasks tasks)
     {
-        final AbstractAISkeleton tempAI = generateAI();
+        final AI tempAI = generateAI();
 
         if (tempAI == null)
         {
@@ -203,23 +219,11 @@ public abstract class AbstractJob
     }
 
     /**
-     * Generate your AI class to register.
-     * <p>
-     * Suppressing Sonar Rule squid:S1452
-     * This rule does "Generic wildcard types should not be used in return parameters"
-     * But in this case the rule does not apply because
-     * We are fine with all AbstractJob implementations and need generics only for java
-     *
-     * @return your personal AI instance.
-     */
-    @SuppressWarnings("squid:S1452")
-    public abstract AbstractAISkeleton<? extends AbstractJob> generateAI();
-
-    /**
      * Check if the citizen already checked for food in his chest today.
      *
      * @return true if so.
      */
+    @Override
     public boolean hasCheckedForFoodToday()
     {
         return searchedForFoodToday;
@@ -228,6 +232,7 @@ public abstract class AbstractJob
     /**
      * Sets that the citizen on this day already searched for food in his chest.
      */
+    @Override
     public void setCheckedForFood()
     {
         searchedForFoodToday = true;
@@ -239,6 +244,7 @@ public abstract class AbstractJob
      *
      * @return Small string to display info in name tag
      */
+    @Override
     public String getNameTagDescription()
     {
         return this.nameTag;
@@ -250,6 +256,7 @@ public abstract class AbstractJob
      *
      * @param nameTag The name tag to display.
      */
+    @Override
     public final void setNameTag(final String nameTag)
     {
         this.nameTag = nameTag;
@@ -260,6 +267,7 @@ public abstract class AbstractJob
      *
      * @return soundEvent to be played.
      */
+    @Override
     public SoundEvent getBedTimeSound()
     {
         return null;
@@ -270,6 +278,7 @@ public abstract class AbstractJob
      *
      * @return soundEvent to be played.
      */
+    @Override
     public SoundEvent getBadWeatherSound()
     {
         return null;
@@ -280,6 +289,7 @@ public abstract class AbstractJob
      *
      * @return soundEvent to be played.
      */
+    @Override
     public SoundEvent getMoveAwaySound()
     {
         return null;
@@ -291,7 +301,8 @@ public abstract class AbstractJob
      * @param source  of the death
      * @param citizen which just died
      */
-    public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
+    @Override
+    public void triggerDeathAchievement(final DamageSource source, final IEntityCitizen citizen)
     {
 
     }
@@ -302,6 +313,7 @@ public abstract class AbstractJob
      * @param pickedUpStack The stack that is being picked up.
      * @return true when the stack has been used to resolve a request, false when not.
      */
+    @Override
     public boolean onStackPickUp(@NotNull final ItemStack pickedUpStack)
     {
         if (getCitizen().getWorkBuilding() != null)
@@ -326,6 +338,7 @@ public abstract class AbstractJob
     /**
      * Levelup actions on citizen levelup, allows custom actions based on Jobs
      */
+    @Override
     public void onLevelUp(final int newLevel)
     {
         // Default does nothing
@@ -336,7 +349,8 @@ public abstract class AbstractJob
      *
      * @return CitizenData that owns this Job.
      */
-    public CitizenData getCitizen()
+    @Override
+    public ICitizenData getCitizen()
     {
         return citizen;
     }
@@ -344,6 +358,7 @@ public abstract class AbstractJob
     /**
      * Executed every time the colony woke up.
      */
+    @Override
     public void onWakeUp()
     {
         searchedForFoodToday = false;
@@ -354,6 +369,7 @@ public abstract class AbstractJob
      *
      * @return true if so.
      */
+    @Override
     public boolean isOkayToEat()
     {
         return (workerAI.get() != null && workerAI.get().getState().isOkayToEat());
@@ -364,6 +380,7 @@ public abstract class AbstractJob
      *
      * @return the quantity.
      */
+    @Override
     public int getActionsDone()
     {
         return actionsDone;
@@ -374,6 +391,7 @@ public abstract class AbstractJob
      * Used for example to detect
      * if and when the inventory has to be dumped.
      */
+    @Override
     public void incrementActionsDone()
     {
         actionsDone++;
@@ -383,6 +401,7 @@ public abstract class AbstractJob
      * Clear the actions done counter.
      * Call this when dumping into the chest.
      */
+    @Override
     public void clearActionsDone()
     {
         this.actionsDone = 0;
@@ -393,7 +412,8 @@ public abstract class AbstractJob
      *
      * @return worker AI
      */
-    public AbstractAISkeleton getWorkerAI()
+    @Override
+    public AI getWorkerAI()
     {
         return workerAI.get();
     }
@@ -403,6 +423,7 @@ public abstract class AbstractJob
      *
      * @return true if so.
      */
+    @Override
     public boolean isIdling()
     {
         return (workerAI.get() != null && workerAI.get().getState() == AIWorkerState.IDLE);
@@ -411,6 +432,7 @@ public abstract class AbstractJob
     /**
      * Reset the AI after eating at a restaurant
      */
+    @Override
     public void resetAIAfterEating()
     {
         if (workerAI.get() != null)

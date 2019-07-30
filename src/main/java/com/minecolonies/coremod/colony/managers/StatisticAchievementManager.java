@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.minecolonies.coremod.achievements.MineColoniesAchievement;
+import com.minecolonies.coremod.achievements.IMineColoniesAchievement;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.TriggerColonyAchievements;
 import com.minecolonies.coremod.colony.managers.interfaces.IStatisticAchievementManager;
@@ -271,7 +271,7 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
     }
     
     @Override
-    public void triggerAchievement(@NotNull final MineColoniesAchievement achievement)
+    public void triggerAchievement(@NotNull final IMineColoniesAchievement achievement)
     {
         /*if (this.colonyAchievements.contains(achievement))
         {

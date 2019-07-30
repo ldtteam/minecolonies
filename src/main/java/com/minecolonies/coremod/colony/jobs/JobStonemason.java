@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.stonemason.EntityAIWorkStonemason;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +16,7 @@ public class JobStonemason extends AbstractJobCrafter
      *
      * @param entity the citizen who becomes a Sawmill
      */
-    public JobStonemason(final CitizenData entity)
+    public JobStonemason(final ICitizenData entity)
     {
         super(entity);
     }

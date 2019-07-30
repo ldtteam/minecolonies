@@ -1,14 +1,16 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.IWareHouse;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -78,7 +80,7 @@ public class UpgradeWarehouseMessage extends AbstractMessage<UpgradeWarehouseMes
     @Override
     public void messageOnServerThread(final UpgradeWarehouseMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null)
         {
             Log.getLogger().warn("UpgradeWarehouseMessage colony is null");
@@ -90,14 +92,14 @@ public class UpgradeWarehouseMessage extends AbstractMessage<UpgradeWarehouseMes
             return;
         }
 
-        final AbstractBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
+        final IBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
         if (!(building instanceof BuildingWareHouse))
         {
             Log.getLogger().warn("UpgradeWarehouseMessage building is not a Warehouse");
             return;
         }
 
-        ((BuildingWareHouse) building).upgradeContainers(player.world);
+        ((IWareHouse) building).upgradeContainers(player.world);
 
         final boolean isCreative = player.capabilities.isCreativeMode;
         if (!isCreative)

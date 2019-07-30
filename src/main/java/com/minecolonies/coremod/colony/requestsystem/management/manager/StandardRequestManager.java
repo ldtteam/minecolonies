@@ -105,8 +105,8 @@ public class StandardRequestManager implements IStandardRequestManager
         ResolverHandler.registerResolver(this, playerRequestResolver);
         ResolverHandler.registerResolver(this, retryingRequestResolver);
 
-        this.playerRequestResolverId = playerRequestResolver.getRequesterId();
-        this.retryingRequestResolverId = retryingRequestResolver.getRequesterId();
+        this.playerRequestResolverId = playerRequestResolver.getId();
+        this.retryingRequestResolverId = retryingRequestResolver.getId();
     }
 
     private IToken<?> registerDataStore(TypeToken<? extends IDataStore> typeToken)
@@ -154,19 +154,16 @@ public class StandardRequestManager implements IStandardRequestManager
     {
         final IRequest<T> request = RequestHandler.createRequest(this, requester, object);
         markDirty();
-        return request.getToken();
+        return request.getId();
     }
 
     /**
      * Mark the request manager and colony as dirty.
      */
-    private void markDirty()
+    @Override
+    public void markDirty()
     {
-        dirty = true;
-        if (colony != null)
-        {
-            colony.markDirty();
-        }
+        this.setDirty(true);
     }
 
     /**
@@ -183,6 +180,14 @@ public class StandardRequestManager implements IStandardRequestManager
     public void setDirty(final boolean isDirty)
     {
         this.dirty = isDirty;
+
+        if (this.isDirty())
+        {
+            if (colony != null)
+            {
+                colony.markDirty();
+            }
+        }
     }
 
     /**
@@ -252,7 +257,7 @@ public class StandardRequestManager implements IStandardRequestManager
     {
         final IRequest<?> request = RequestHandler.getRequest(this, requestToken);
 
-        return getResolverForToken(ResolverHandler.getResolverForRequest(this, request).getRequesterId());
+        return getResolverForToken(ResolverHandler.getResolverForRequest(this, request).getId());
     }
 
     /**

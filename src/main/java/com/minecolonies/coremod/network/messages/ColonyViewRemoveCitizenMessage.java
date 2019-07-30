@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColonyManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -53,6 +53,6 @@ public class ColonyViewRemoveCitizenMessage extends AbstractMessage<ColonyViewRe
     @Override
     protected void messageOnClientThread(final ColonyViewRemoveCitizenMessage message, final MessageContext ctx)
     {
-        ColonyManager.handleColonyViewRemoveCitizenMessage(message.colonyId, message.citizenId, Minecraft.getMinecraft().world.provider.getDimension());
+        IColonyManager.getInstance().handleColonyViewRemoveCitizenMessage(message.colonyId, message.citizenId, Minecraft.getMinecraft().world.provider.getDimension());
     }
 }

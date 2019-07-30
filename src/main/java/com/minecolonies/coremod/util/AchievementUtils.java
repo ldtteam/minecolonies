@@ -26,7 +26,7 @@ public final class AchievementUtils
     public static void syncAchievements(@NotNull final Colony colony)
     {
         /**@NotNull final List<Player> players = PermissionUtils.getPlayersWithAtLeastRank(colony, Rank.OFFICER);
-        if (colony.getWorld() != null)
+        if (colony.getWorldFromEntity() != null)
         {
             for (final Advancement achievement : colony.getStatsManager().getAchievements())
             {
