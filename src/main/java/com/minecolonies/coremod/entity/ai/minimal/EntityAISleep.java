@@ -1,10 +1,9 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.block.BlockBed;
@@ -81,7 +80,7 @@ public class EntityAISleep extends EntityAIBase
         if (citizen.getDesiredActivity() == DesiredActivity.SLEEP)
         {
             wokeUp = false;
-            final IColony colony = citizen.getCitizenColonyHandler().getColony();
+            final Colony colony = citizen.getCitizenColonyHandler().getColony();
             if (colony == null || colony.getBuildingManager().getBuilding(citizen.getHomePosition()) == null)
             {
                 return true;
@@ -89,7 +88,7 @@ public class EntityAISleep extends EntityAIBase
 
             if (usedBed == null)
             {
-                final IBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
+                final AbstractBuilding hut = colony.getBuildingManager().getBuilding(citizen.getHomePosition());
                 if (hut instanceof BuildingHome)
                 {
                     for (final BlockPos pos : ((BuildingHome) hut).getBedList())

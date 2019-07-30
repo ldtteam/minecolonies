@@ -91,7 +91,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Override
     public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends IRetryable> requestToCheck)
     {
-        return getCurrentlyBeingReassignedRequest() == null || requestToCheck.getId() != getCurrentlyBeingReassignedRequest()
+        return getCurrentlyBeingReassignedRequest() == null || requestToCheck.getToken() != getCurrentlyBeingReassignedRequest()
                  || getCurrentReassignmentAttempt() < getMaximalTries();
     }
 
@@ -105,8 +105,8 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Override
     public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request) throws RuntimeException
     {
-        delays.put(request.getId(), getMaximalDelayBetweenRetriesInTicks());
-        assignedRequests.put(request.getId(), assignedRequests.containsKey(request.getId()) ? assignedRequests.get(request.getId()) + 1 : 1);
+        delays.put(request.getToken(), getMaximalDelayBetweenRetriesInTicks());
+        assignedRequests.put(request.getToken(), assignedRequests.containsKey(request.getToken()) ? assignedRequests.get(request.getToken()) + 1 : 1);
     }
 
     @SuppressWarnings(RAWTYPES)
@@ -122,10 +122,10 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Override
     public IRequest<?> onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRetryable> request)
     {
-        if (assignedRequests.containsKey(request.getId()))
+        if (assignedRequests.containsKey(request.getToken()))
         {
-            delays.remove(request.getId());
-            assignedRequests.remove(request.getId());
+            delays.remove(request.getToken());
+            assignedRequests.remove(request.getToken());
         }
 
         //No further processing needed.
@@ -180,7 +180,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
 
             assignedRequests.put(t, ++currentAttempt);
 
-            if (resultingResolver != null && !resultingResolver.equals(getId()))
+            if (resultingResolver != null && !resultingResolver.equals(getRequesterId()))
             {
                 assignedRequests.remove(t);
                 delays.remove(t);
@@ -215,14 +215,14 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
-    public IToken<?> getId()
+    public IToken<?> getRequesterId()
     {
         return id;
     }
 
     @NotNull
     @Override
-    public ILocation getLocation()
+    public ILocation getRequesterLocation()
     {
         return location;
     }
@@ -274,11 +274,11 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
                 .filter(Objects::nonNull)
                 .forEach(request ->
                 {
-                    final IToken newResolverToken = manager.reassignRequest(request.getId(), ImmutableList.of(getId()));
+                    final IToken newResolverToken = manager.reassignRequest(request.getToken(), ImmutableList.of(getRequesterId()));
 
-                    if (newResolverToken != getId())
+                    if (newResolverToken != getRequesterId())
                     {
-                        assignedRequests.remove(request.getId());
+                        assignedRequests.remove(request.getToken());
                     }
                 });
     }

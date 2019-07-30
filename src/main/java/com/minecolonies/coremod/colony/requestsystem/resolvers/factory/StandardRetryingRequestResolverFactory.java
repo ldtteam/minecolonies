@@ -80,8 +80,8 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
             return delayCompound;
         }).collect(NBTUtils.toNBTTagList()));
 
-        compound.setTag(NBT_TOKEN, controller.serialize(standardRetryingRequestResolver.getId()));
-        compound.setTag(NBT_LOCATION, controller.serialize(standardRetryingRequestResolver.getLocation()));
+        compound.setTag(NBT_TOKEN, controller.serialize(standardRetryingRequestResolver.getRequesterId()));
+        compound.setTag(NBT_LOCATION, controller.serialize(standardRetryingRequestResolver.getRequesterLocation()));
 
         return compound;
     }

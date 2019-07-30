@@ -9,7 +9,6 @@ import com.minecolonies.blockout.controls.ItemIcon;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.network.messages.BuyCitizenMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
@@ -42,14 +41,14 @@ public class WindowTownHallHireCitizen extends Window implements ButtonHandler
     /**
      * The client side colony data
      */
-    private final IColonyView colony;
+    private final ColonyView colony;
 
     /**
      * Constructor for a town hall rename entry window.
      *
      * @param c {@link ColonyView}
      */
-    public WindowTownHallHireCitizen(final IColonyView c)
+    public WindowTownHallHireCitizen(final ColonyView c)
     {
         super(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX);
         this.colony = c;

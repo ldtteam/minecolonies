@@ -1,16 +1,13 @@
 package com.minecolonies.coremod.blocks;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.tileentities.ITileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
 import net.minecraft.block.Block;
@@ -224,7 +221,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
          */
         if (worldIn.isRemote)
         {
-            @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.provider.getDimension(), pos);
+            @Nullable final AbstractBuildingView building = ColonyManager.getBuildingView(worldIn.provider.getDimension(), pos);
 
             if (building != null
                   && building.getColony() != null
@@ -283,7 +280,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         if (placer instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
         {
             @NotNull final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
-            @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, hut.getPosition());
+            @Nullable final Colony colony = ColonyManager.getColonyByPosFromWorld(worldIn, hut.getPosition());
 
             if (colony != null)
             {
@@ -338,8 +335,8 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
         if (tileEntity instanceof TileEntityColonyBuilding)
         {
-            ((ITileEntityColonyBuilding) tileEntity).setMirror(mirror);
-            ((ITileEntityColonyBuilding) tileEntity).setStyle(style);
+            ((TileEntityColonyBuilding) tileEntity).setMirror(mirror);
+            ((TileEntityColonyBuilding) tileEntity).setStyle(style);
         }
 
         onBlockPlacedBy(worldIn, pos, state, placer, stack);

@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.IColonyManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -52,21 +51,21 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
     {
         final NBTTagCompound compound = new NBTTagCompound();
 
-        compound.setTag(NBT_LOCATION, controller.serialize(getLocation()));
-        compound.setTag(NBT_ID, controller.serialize(getId()));
+        compound.setTag(NBT_LOCATION, controller.serialize(getRequesterLocation()));
+        compound.setTag(NBT_ID, controller.serialize(getRequesterId()));
 
         return compound;
     }
 
     @Override
-    public IToken<?> getId()
+    public IToken<?> getRequesterId()
     {
         return requesterId;
     }
 
     @NotNull
     @Override
-    public ILocation getLocation()
+    public ILocation getRequesterLocation()
     {
         return location;
     }
@@ -105,7 +104,7 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
         }
 
         final World world = MineColonies.proxy.getWorld(location.getDimension());
-        final IColony colony = IColonyManager.getInstance().getClosestIColony(world, location.getInDimensionLocation());
+        final IColony colony = ColonyManager.getClosestIColony(world, location.getInDimensionLocation());
 
         if (colony == null)
         {

@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
-import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 import static net.minecraft.util.EnumFacing.NORTH;
 import static net.minecraft.util.EnumFacing.fromAngle;
 
@@ -65,7 +64,6 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     }
 
     @Override
-    @SuppressWarnings(DEPRECATION)
     public IBlockState getStateFromMeta(final int meta)
     {
         EnumFacing enumfacing = EnumFacing.byIndex(meta);
@@ -81,25 +79,22 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     @Override
     public int getMetaFromState(final IBlockState state)
     {
-        return state.getValue(FACING).getIndex();
+        return ((EnumFacing) state.getValue(FACING)).getIndex();
     }
 
     @Override
-    @SuppressWarnings(DEPRECATION)
     public IBlockState withRotation(final IBlockState state, final Rotation rot)
     {
-        return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
+        return state.withProperty(FACING, rot.rotate((EnumFacing) state.getValue(FACING)));
     }
 
     @Override
-    @SuppressWarnings(DEPRECATION)
     public IBlockState withMirror(final IBlockState state, final Mirror mirrorIn)
     {
-        return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
+        return state.withRotation(mirrorIn.toRotation((EnumFacing) state.getValue(FACING)));
     }
 
     @Override
-    @SuppressWarnings(DEPRECATION)
     public boolean isFullCube(final IBlockState state)
     {
         return false;
@@ -112,7 +107,6 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     }
 
     @Override
-    @SuppressWarnings(DEPRECATION)
     public boolean isOpaqueCube(final IBlockState state)
     {
         return false;

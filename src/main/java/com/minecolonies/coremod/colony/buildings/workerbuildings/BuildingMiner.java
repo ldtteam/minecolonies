@@ -8,13 +8,11 @@ import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutMiner;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.IColonyView;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
@@ -195,15 +193,20 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      */
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobMiner(citizen);
     }
 
+    /**
+     * Reads the information from NBT from permanent storage.
+     *
+     * @param compound the compound key.
+     */
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        super.deserializeNBT(compound);
+        super.readFromNBT(compound);
 
         startingLevelShaft = compound.getInteger(TAG_STARTING_LEVEL);
         clearedShaft = compound.getBoolean(TAG_CLEARED);
@@ -238,10 +241,16 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         }
     }
 
+    /**
+     * Writes the information to NBT to store it permanently.
+     *
+     * @param compound the compound key.
+     */
     @Override
-    public NBTTagCompound serializeNBT()
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        final NBTTagCompound compound = super.serializeNBT();
+        super.writeToNBT(compound);
+
         compound.setInteger(TAG_STARTING_LEVEL, startingLevelShaft);
         compound.setBoolean(TAG_CLEARED, clearedShaft);
         compound.setInteger(TAG_VECTORX, vectorX);
@@ -282,7 +291,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             levelTagList.appendTag(levelCompound);
         }
         compound.setTag(TAG_LEVELS, levelTagList);
-        return compound;
     }
 
     /**
@@ -596,13 +604,13 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     @Override
     public void searchWorkOrder()
     {
-        final ICitizenData citizen = getMainCitizen();
+        final CitizenData citizen = getMainCitizen();
         if (citizen == null)
         {
             return;
         }
 
-        final List<WorkOrderBuildMiner> list = getColony().getWorkManager().getOrderedList(WorkOrderBuildMiner.class, getPosition());
+        final List<WorkOrderBuildMiner> list = getColony().getWorkManager().getOrderedList(WorkOrderBuildMiner.class, getLocation());
 
         for (final WorkOrderBuildMiner wo : list)
         {
@@ -635,7 +643,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
          * @param c the colony.
          * @param l the position.
          */
-        public View(final IColonyView c, final BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }

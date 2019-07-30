@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.commands.colonycommands.requestsystem;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
@@ -72,7 +71,7 @@ public class RSResetAllCommand extends AbstractSingleCommand implements IActionC
             }
         }
 
-        for (final IColony colony: IColonyManager.getInstance().getAllColonies())
+        for (final Colony colony: ColonyManager.getAllColonies())
         {
             colony.getRequestManager().reset();
         }

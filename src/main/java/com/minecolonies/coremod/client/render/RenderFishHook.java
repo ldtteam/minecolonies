@@ -4,7 +4,6 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.constant.Literals;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -69,13 +68,13 @@ public class RenderFishHook extends Render<EntityFishHook>
         GlStateManager.disableRescaleNormal();
         GlStateManager.popMatrix();
 
-        IEntityCitizen citizen = entity.getCitizen();
+        EntityCitizen citizen = entity.getCitizen();
 
         //If the citizen is null (Which he probably is) get the nearest citizen to the fishHook position.
         //Check if he is a fisherman -> Through his texture
         if (citizen == null)
         {
-            for (@NotNull final Object citizenX : CompatibilityUtils.getWorldFromEntity(entity).getEntitiesWithinAABB(EntityCitizen.class, entity.getEntityBoundingBox().expand(10, 10, 10)))
+            for (@NotNull final Object citizenX : CompatibilityUtils.getWorld(entity).getEntitiesWithinAABB(EntityCitizen.class, entity.getEntityBoundingBox().expand(10, 10, 10)))
             {
                 if (((EntityCitizen) citizenX).getModelID().textureBase.contains("Fisherman"))
                 {
@@ -91,19 +90,19 @@ public class RenderFishHook extends Render<EntityFishHook>
             final double finalOrientation = Math.sin(Math.sqrt(orientation) * Math.PI);
             @NotNull final Vec3d Vec3d = new Vec3d(-0.36D, 0.03D, 0.35D);
 
-            Vec3d.rotatePitch((float) (-((double) citizen.getPreviousRotationPitch() + ((double) citizen.getRotationPitch() - (double) citizen.getPreviousRotationPitch()) * partialTicks)
+            Vec3d.rotatePitch((float) (-((double) citizen.prevRotationPitch + ((double) citizen.rotationPitch - (double) citizen.prevRotationPitch) * partialTicks)
                                          * Math.PI / Literals.HALF_CIRCLE));
-            Vec3d.rotateYaw((float) (-((double) citizen.getPreviousRotationYaw() + ((double) citizen.getRotationYaw() - (double) citizen.getPreviousRotationYaw())
+            Vec3d.rotateYaw((float) (-((double) citizen.prevRotationYaw + ((double) citizen.rotationYaw - (double) citizen.prevRotationYaw)
                                                                             * partialTicks) * Math.PI / Literals.HALF_CIRCLE));
             Vec3d.rotateYaw((float) (finalOrientation * 0.5D));
             Vec3d.rotatePitch((float) (-finalOrientation * 0.7D));
 
-            final double thirdPersonOffset = (citizen.getPreviousRenderYawOffset() + ((double) citizen.getRenderYawOffset() - citizen.getPreviousRenderYawOffset()) * partialTicks)
+            final double thirdPersonOffset = (citizen.prevRenderYawOffset + ((double) citizen.renderYawOffset - citizen.prevRenderYawOffset) * partialTicks)
                                                * Math.PI / Literals.HALF_CIRCLE;
-            final double correctedPosX = citizen.getPreviousPosX() + (citizen.getPosX() - citizen.getPreviousPosX()) * (double) partialTicks - MathHelper.cos((float) thirdPersonOffset) * 0.35D
+            final double correctedPosX = citizen.prevPosX + (citizen.posX - citizen.prevPosX) * (double) partialTicks - MathHelper.cos((float) thirdPersonOffset) * 0.35D
                                            - MathHelper.sin((float) thirdPersonOffset) * 0.8D;
-            final double correctedPosY = citizen.getPreviousPosY() + citizen.getEyeHeight() + (citizen.getPosY() - citizen.getPreviousPosY()) * (double) partialTicks - 0.45D;
-            final double correctedPosZ = citizen.getPreviousPosZ() + (citizen.getPosZ() - citizen.getPreviousPosZ()) * (double) partialTicks - MathHelper.sin((float) thirdPersonOffset) * 0.35D
+            final double correctedPosY = citizen.prevPosY + citizen.getEyeHeight() + (citizen.posY - citizen.prevPosY) * (double) partialTicks - 0.45D;
+            final double correctedPosZ = citizen.prevPosZ + (citizen.posZ - citizen.prevPosZ) * (double) partialTicks - MathHelper.sin((float) thirdPersonOffset) * 0.35D
                                            + MathHelper.cos((float) thirdPersonOffset) * 0.8D;
             final double eyeHeight = citizen.isSneaking() ? -0.1875D : 0.0D;
 

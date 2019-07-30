@@ -1,14 +1,15 @@
 package com.minecolonies.coremod.blocks.huts;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.AbstractBlockMinecoloniesContainer;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -38,8 +39,44 @@ import static net.minecraft.util.EnumFacing.fromAngle;
 /**
  * The class handling the fieldBlocks, placement and activation.
  */
-public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutField> implements IBlockHutField<BlockHutField>
+public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutField>
 {
+    /**
+     * The position it faces.
+     */
+    public static final  PropertyDirection FACING           = BlockHorizontal.FACING;
+    /**
+     * Hardness of the block.
+     */
+    private static final float             HARDNESS         = 10F;
+    /**
+     * Resistance of the block.
+     */
+    private static final float             RESISTANCE       = 10F;
+    /**
+     * Start of the collision box at y.
+     */
+    private static final double            BOTTOM_COLLISION = 0.0;
+
+    /**
+     * Start of the collision box at x and z.
+     */
+    private static final double START_COLLISION = 0.1;
+
+    /**
+     * End of the collision box.
+     */
+    private static final double END_COLLISION = 0.9;
+
+    /**
+     * Height of the collision box.
+     */
+    private static final double HEIGHT_COLLISION = 2.5;
+
+    /**
+     * Registry name for this block.
+     */
+    private static final String REGISTRY_NAME = "blockHutField";
 
     /**
      * Constructor called on block placement.
@@ -68,7 +105,6 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
 
     @NotNull
     @Override
-    @SuppressWarnings(DEPRECATION)
     public EnumBlockRenderType getRenderType(final IBlockState state)
     {
         return EnumBlockRenderType.INVISIBLE;
@@ -139,7 +175,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
         //If the world is server, open the inventory of the field.
         if (!worldIn.isRemote)
         {
-            @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
+            @Nullable final Colony colony = ColonyManager.getColonyByPosFromWorld(worldIn, pos);
             if (colony != null)
             {
                 playerIn.openGui(MineColonies.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
@@ -181,7 +217,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
 
         if (placer instanceof EntityPlayer)
         {
-            @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
+            @Nullable final Colony colony = ColonyManager.getColonyByPosFromWorld(worldIn, pos);
 
             if (colony != null)
             {
@@ -222,7 +258,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutFi
      */
     private static void notifyColonyAboutDestruction(final World worldIn, final BlockPos pos)
     {
-        @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
+        @Nullable final Colony colony = ColonyManager.getColonyByPosFromWorld(worldIn, pos);
         if (colony != null)
         {
             colony.getBuildingManager().removeField(pos);

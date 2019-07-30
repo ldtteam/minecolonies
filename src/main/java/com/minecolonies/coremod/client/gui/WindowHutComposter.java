@@ -6,7 +6,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.network.messages.ComposterRetrievalMessage;
@@ -68,7 +68,7 @@ public class WindowHutComposter extends AbstractHutFilterableLists
     @Override
     public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
     {
-        return IColonyManager.getInstance().getCompatibilityManager().getCopyOfCompostableItems().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList());
+        return ColonyManager.getCompatibilityManager().getCopyOfCompostableItems().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList());
     }
 
     /**

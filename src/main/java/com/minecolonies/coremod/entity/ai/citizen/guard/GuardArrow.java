@@ -1,11 +1,9 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityTippedArrow;
@@ -17,8 +15,8 @@ import net.minecraft.world.World;
  */
 public class GuardArrow extends EntityTippedArrow
 {
-    private static final String  TAG_COLONY = "colony";
-    private              IColony colony;
+    private static final String TAG_COLONY = "colony";
+    private Colony colony;
 
     /**
      * Constructor for forge.
@@ -36,9 +34,9 @@ public class GuardArrow extends EntityTippedArrow
      * @param worldIn the world this is shot in.
      * @param shooter the guard shooting
      */
-    public GuardArrow(final World worldIn, final IEntityCitizen shooter)
+    public GuardArrow(final World worldIn, final EntityCitizen shooter)
     {
-        super(worldIn, (EntityLivingBase) shooter);
+        super(worldIn, shooter);
         this.colony = shooter.getCitizenColonyHandler().getColony();
     }
 
@@ -54,7 +52,7 @@ public class GuardArrow extends EntityTippedArrow
     {
         super.readEntityFromNBT(compound);
         final int colonyID = compound.getInteger(TAG_COLONY);
-        colony = IColonyManager.getInstance().getColonyByWorld(colonyID, world);
+        colony = ColonyManager.getColonyByWorld(colonyID, world);
     }
 
     @Override

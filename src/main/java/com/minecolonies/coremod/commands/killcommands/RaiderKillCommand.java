@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.commands.killcommands;
 
 import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.coremod.entity.ai.mobs.IBaseMinecoloniesMob;
 
 /**
  * Command for killing all Barbarians on map

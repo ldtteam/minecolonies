@@ -1,5 +1,5 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false" lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
     <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
     <label id="title"
            size="100% 11" pos="0 9"

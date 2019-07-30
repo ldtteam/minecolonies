@@ -10,10 +10,15 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
-import com.minecolonies.coremod.colony.jobs.*;
-import com.minecolonies.coremod.entity.IEntityCitizen;
+import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.colony.jobs.JobKnight;
+import com.minecolonies.coremod.colony.jobs.JobRanger;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.network.messages.GuardMobAttackListMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -78,7 +83,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             this.buttonName = buttonName;
         }
 
-        public AbstractJobGuard getGuardJob(final ICitizenData citizen)
+        public AbstractJobGuard getGuardJob(final CitizenData citizen)
         {
             if (this == RANGER)
             {
@@ -199,10 +204,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     //// ---- NBT Overrides ---- \\\\
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        super.deserializeNBT(compound);
-
+        super.readFromNBT(compound);
         task = GuardTask.values()[compound.getInteger(NBT_TASK)];
         final int jobId = compound.getInteger(NBT_JOB);
         job = jobId == -1 ? null : GuardJob.values()[jobId];
@@ -241,10 +245,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        final NBTTagCompound compound = super.serializeNBT();
-
+        super.writeToNBT(compound);
         compound.setInteger(NBT_TASK, task.ordinal());
         compound.setInteger(NBT_JOB, job == null ? -1 : job.ordinal());
         compound.setBoolean(NBT_ASSIGN, assignManually);
@@ -272,8 +275,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         compound.setTag(NBT_MOBS, mobsTagList);
 
         compound.setTag(NBT_GUARD, NBTUtil.createPosTag(guardPos));
-
-        return compound;
     }
 
     //// ---- NBT Overrides ---- \\\\
@@ -311,7 +312,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         BlockPosUtil.writeToByteBuf(buf, guardPos);
 
         buf.writeInt(this.getAssignedCitizen().size());
-        for (final ICitizenData citizen : this.getAssignedCitizen())
+        for (final CitizenData citizen : this.getAssignedCitizen())
         {
             buf.writeInt(citizen.getId());
         }
@@ -319,7 +320,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public AbstractJob createJob(final CitizenData citizen)
     {
         return getJob().getGuardJob(citizen);
     }
@@ -344,14 +345,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         {
             if (currentPatrolTarget == null)
             {
-                return getPosition();
+                return getLocation();
             }
             else
             {
-                final BlockPos pos = BlockPosUtil.getRandomPosition(getColony().getWorld(), currentPatrolTarget, getPosition());
-                if (BlockPosUtil.getDistance2D(pos, getPosition()) > getPatrolDistance())
+                final BlockPos pos = BlockPosUtil.getRandomPosition(getColony().getWorld(), currentPatrolTarget, getLocation());
+                if (BlockPosUtil.getDistance2D(pos, getLocation()) > getPatrolDistance())
                 {
-                    return getPosition();
+                    return getLocation();
                 }
                 return pos;
             }
@@ -393,7 +394,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
 
         if (getAssignedEntities() != null)
         {
-            for (final Optional<IEntityCitizen> optCitizen : getAssignedEntities())
+            for (final Optional<EntityCitizen> optCitizen : getAssignedEntities())
             {
                 if (optCitizen.isPresent())
                 {
@@ -418,11 +419,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     @Override
-    public void removeCitizen(final ICitizenData citizen)
+    public void removeCitizen(final CitizenData citizen)
     {
         if (citizen != null)
         {
-            final Optional<IEntityCitizen> optCitizen = citizen.getCitizenEntity();
+            final Optional<EntityCitizen> optCitizen = citizen.getCitizenEntity();
             if (optCitizen.isPresent())
             {
                 optCitizen.get().removeAllHealthModifiers();
@@ -439,12 +440,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     @Override
-    public boolean assignCitizen(final ICitizenData citizen)
+    public boolean assignCitizen(final CitizenData citizen)
     {
         // Only change HP values if assign successful
         if (super.assignCitizen(citizen) && citizen != null)
         {
-            final Optional<IEntityCitizen> optCitizen = citizen.getCitizenEntity();
+            final Optional<EntityCitizen> optCitizen = citizen.getCitizenEntity();
             if (optCitizen.isPresent())
             {
                 final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), 0);
@@ -520,7 +521,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     public void setJob(final GuardJob job)
     {
         this.job = job;
-        for (final ICitizenData citizen : getAssignedCitizen())
+        for (final CitizenData citizen : getAssignedCitizen())
         {
             citizen.setJob(createJob(citizen));
         }
@@ -698,7 +699,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         }
         task = GuardTask.GUARD;
         markDirty();
-        return this.getPosition();
+        return this.getLocation();
     }
 
     /**
@@ -819,9 +820,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      * @param player  the player.
      * @return false if in follow mode and following the player.
      */
-    public static boolean checkIfGuardShouldTakeDamage(final IEntityCitizen citizen, final EntityPlayer player)
+    public static boolean checkIfGuardShouldTakeDamage(final EntityCitizen citizen, final EntityPlayer player)
     {
-        final IBuildingWorker buildingWorker = citizen.getCitizenColonyHandler().getWorkBuilding();
+        final AbstractBuildingWorker buildingWorker = citizen.getCitizenColonyHandler().getWorkBuilding();
         return !(buildingWorker instanceof AbstractBuildingGuards) || ((AbstractBuildingGuards) buildingWorker).task != GuardTask.FOLLOW
                  || !player.equals(((AbstractBuildingGuards) buildingWorker).followPlayer);
     }
@@ -893,7 +894,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
          * @param c the colony.
          * @param l the location.
          */
-        public View(final IColonyView c, @NotNull final BlockPos l)
+        public View(final ColonyView c, @NotNull final BlockPos l)
         {
             super(c, l);
         }

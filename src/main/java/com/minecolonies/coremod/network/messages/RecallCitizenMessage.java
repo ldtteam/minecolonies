@@ -1,18 +1,14 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -23,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Recalls the citizen to the hut.
@@ -54,7 +49,7 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
      *
      * @param building View of the building the citizen is working in.
      */
-    public RecallCitizenMessage(@NotNull final com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View building)
+    public RecallCitizenMessage(@NotNull final AbstractBuildingWorker.View building)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -81,7 +76,7 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
     @Override
     public void messageOnServerThread(final RecallCitizenMessage message, final EntityPlayerMP player)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
@@ -90,13 +85,13 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                 return;
             }
 
-            @Nullable final IBuildingWorker building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingWorker.class);
+            @Nullable final AbstractBuildingWorker building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingWorker.class);
             if (building != null)
             {
                 for (int i = 0; i < building.getAssignedEntities().size(); i++)
                 {
-                    Optional<IEntityCitizen> optionalEntityCitizen = building.getAssignedEntities().get(i);
-                    final ICitizenData citizenData = building.getAssignedCitizen().get(i);
+                    Optional<EntityCitizen> optionalEntityCitizen = building.getAssignedEntities().get(i);
+                    final CitizenData citizenData = building.getAssignedCitizen().get(i);
                     if (!optionalEntityCitizen.isPresent())
                     {
                         if (citizenData != null)
@@ -111,15 +106,10 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                             return;
                         }
                     }
-                    else if (optionalEntityCitizen.get().getTicksExisted() == 0)
+                    else if (optionalEntityCitizen.get().ticksExisted == 0)
                     {
-                        final IEntityCitizen oldCitizen = optionalEntityCitizen.get();
-                        final List<IEntityCitizen> list = player.getServerWorld().getLoadedEntityList().stream()
-                          .filter(e -> e instanceof IEntityCitizen)
-                          .filter(e -> e.equals(oldCitizen))
-                          .map(e -> (IEntityCitizen) e)
-                          .collect(Collectors.toList());
-
+                        final EntityCitizen oldCitizen = optionalEntityCitizen.get();
+                        final List<EntityCitizen> list = player.getServerWorld().getEntities(EntityCitizen.class, e -> e.equals(oldCitizen));
                         if (list.isEmpty())
                         {
                             citizenData.setCitizenEntity(null);
@@ -132,7 +122,7 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                     }
 
 
-                    final BlockPos loc = building.getPosition();
+                    final BlockPos loc = building.getLocation();
                     if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), colony.getWorld(), loc))
                     {
                         LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.workerHuts.recallFail");

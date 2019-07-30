@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.entity.citizenhandlers;
 
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
-import com.minecolonies.coremod.entity.IEntityCitizen;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -10,18 +10,18 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 /**
  * Handles the inventory of the citizen.
  */
-public class CitizenInventoryHandler implements ICitizenInventoryHandler
+public class CitizenInventoryHandler
 {
     /**
      * The citizen assigned to this manager.
      */
-    private final IEntityCitizen citizen;
+    private final EntityCitizen citizen;
 
     /**
      * Constructor for the experience handler.
      * @param citizen the citizen owning the handler.
      */
-    public CitizenInventoryHandler(final IEntityCitizen citizen)
+    public CitizenInventoryHandler(final EntityCitizen citizen)
     {
         this.citizen = citizen;
     }
@@ -33,7 +33,6 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
      * @param itemDamage the damage value
      * @return the slot.
      */
-    @Override
     public int findFirstSlotInInventoryWith(final Item targetItem, final int itemDamage)
     {
         return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(citizen.getInventoryCitizen()), targetItem, itemDamage);
@@ -46,7 +45,6 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
      * @param itemDamage the damage value
      * @return the slot.
      */
-    @Override
     public int findFirstSlotInInventoryWith(final Block block, final int itemDamage)
     {
         return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(citizen.getInventoryCitizen()), block, itemDamage);
@@ -59,7 +57,6 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
      * @param itemDamage the damage value
      * @return the quantity.
      */
-    @Override
     public int getItemCountInInventory(final Block block, final int itemDamage)
     {
         return InventoryUtils.getItemCountInItemHandler(new InvWrapper(citizen.getInventoryCitizen()), block, itemDamage);
@@ -72,7 +69,6 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
      * @param itemDamage the damage value.
      * @return the quantity.
      */
-    @Override
     public int getItemCountInInventory(final Item targetItem, final int itemDamage)
     {
         return InventoryUtils.getItemCountInItemHandler(new InvWrapper(citizen.getInventoryCitizen()), targetItem, itemDamage);
@@ -85,7 +81,6 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
      * @param itemDamage the damage value
      * @return true if so.
      */
-    @Override
     public boolean hasItemInInventory(final Block block, final int itemDamage)
     {
         return InventoryUtils.hasItemInItemHandler(new InvWrapper(citizen.getInventoryCitizen()), block, itemDamage);
@@ -98,7 +93,6 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
      * @param itemDamage the damage value
      * @return true if so.
      */
-    @Override
     public boolean hasItemInInventory(final Item item, final int itemDamage)
     {
         return InventoryUtils.hasItemInItemHandler(new InvWrapper(citizen.getInventoryCitizen()), item, itemDamage);
@@ -107,12 +101,11 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
     /**
      * On Inventory change, mark the building dirty.
      */
-    @Override
     public void onInventoryChanged()
     {
         if (citizen.getCitizenData() != null)
         {
-            final IBuildingWorker building = citizen.getCitizenData().getWorkBuilding();
+            final AbstractBuildingWorker building = citizen.getCitizenData().getWorkBuilding();
             if (building != null)
             {
                 building.markDirty();
@@ -120,7 +113,6 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
         }
     }
 
-    @Override
     public boolean isInventoryFull()
     {
         return InventoryUtils.isProviderFull(citizen);

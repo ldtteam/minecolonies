@@ -1,11 +1,10 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -79,7 +78,7 @@ public class RestartCitizenMessage extends AbstractMessage<RestartCitizenMessage
     @Override
     public void messageOnServerThread(final RestartCitizenMessage message, final EntityPlayerMP player)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.colonyDim);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.colonyDim);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
@@ -88,7 +87,7 @@ public class RestartCitizenMessage extends AbstractMessage<RestartCitizenMessage
                 return;
             }
 
-            final ICitizenData citizen = colony.getCitizenManager().getCitizen(message.citizenID);
+            final CitizenData citizen = colony.getCitizenManager().getCitizen(message.citizenID);
 
             // Restart also worker building and AI
             citizen.scheduleRestart(player);

@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyView;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -75,7 +75,7 @@ public class BuildingGuardTower extends AbstractBuildingGuards
          * @param c the colony.
          * @param l the location.
          */
-        public View(final IColonyView c, @NotNull final BlockPos l)
+        public View(final ColonyView c, @NotNull final BlockPos l)
         {
             super(c, l);
         }

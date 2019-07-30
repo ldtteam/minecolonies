@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.entity.ai.mobs.EntityMercenary;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -28,7 +29,7 @@ public class HireMercenaryMessage extends AbstractMessage<HireMercenaryMessage, 
      */
     public HireMercenaryMessage() {super();}
 
-    public HireMercenaryMessage(final IColonyView colony)
+    public HireMercenaryMessage(final ColonyView colony)
     {
         super();
         this.colonyID = colony.getID();
@@ -52,7 +53,7 @@ public class HireMercenaryMessage extends AbstractMessage<HireMercenaryMessage, 
     @Override
     public void messageOnServerThread(final HireMercenaryMessage message, final EntityPlayerMP player)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyID, message.dimension);
 
         if (colony != null)
         {

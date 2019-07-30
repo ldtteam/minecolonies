@@ -10,12 +10,9 @@ import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutFarmer;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.IColonyView;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.network.messages.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.AssignmentModeMessage;
@@ -220,7 +217,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
     @NotNull
     @Override
-    public IJob createJob(@NotNull final ICitizenData citizen)
+    public AbstractJob createJob(@NotNull final CitizenData citizen)
     {
         if (!farmerFields.isEmpty())
         {
@@ -236,10 +233,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
         return new JobFarmer(citizen);
     }
 
+    //we have to update our field from the colony!
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        super.deserializeNBT(compound);
+        super.readFromNBT(compound);
         final NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < fieldTagList.tagCount(); ++i)
         {
@@ -257,9 +255,9 @@ public class BuildingFarmer extends AbstractBuildingWorker
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        final NBTTagCompound compound = super.serializeNBT();
+        super.writeToNBT(compound);
         @NotNull final NBTTagList fieldTagList = new NBTTagList();
         for (@NotNull final BlockPos f : farmerFields)
         {
@@ -274,8 +272,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
         {
             BlockPosUtil.writeToNBT(compound, LAST_FIELD_TAG, lastField);
         }
-
-        return compound;
     }
 
     @Override
@@ -564,7 +560,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
          * @param c the colony.
          * @param l the position.
          */
-        public View(final IColonyView c, final BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }

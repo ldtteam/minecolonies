@@ -19,9 +19,7 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.util.ServerUtils;
 import com.minecolonies.coremod.util.text.NonSiblingFormattingTextComponent;
@@ -94,11 +92,11 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
             if (Configurations.requestSystem.creativeResolve &&
                     request.getRequest() instanceof IDeliverable &&
                     request.getRequester() instanceof BuildingBasedRequester &&
-                    ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getId()).isPresent() &&
-                    ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getId()).get() instanceof AbstractBuilding)
+                    ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getToken()).isPresent() &&
+                    ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getToken()).get() instanceof AbstractBuilding)
             {
-                final AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getId()).get();
-                final Optional<ICitizenData> citizenDataOptional = building.getCitizenForRequest(request.getId());
+                final AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getToken()).get();
+                final Optional<CitizenData> citizenDataOptional = building.getCitizenForRequest(request.getToken());
 
                 final List<ItemStack> resolvablestacks = request.getDisplayStacks();
                 if (!resolvablestacks.isEmpty() && citizenDataOptional.isPresent())
@@ -111,22 +109,22 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
                     if (ItemStackUtils.isEmpty(remainingItemStack))
                     {
-                        manager.updateRequestState(request.getId(), RequestState.COMPLETED);
+                        manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
                         return;
                     }
                 }
             }
 
-            final List<EntityPlayer> players = new ArrayList<>(colony.getMessageEntityPlayers());
+            final List<EntityPlayer> players = new ArrayList<>(((Colony) colony).getMessageEntityPlayers());
             final EntityPlayer owner = ServerUtils.getPlayerFromUUID(colony.getWorld(), ((Colony) colony).getPermissions().getOwner());
             final TextComponentString colonyDescription = new TextComponentString(colony.getName() + ":");
 
-            final ILocation requester = request.getRequester().getLocation();
-            final IBuilding building = colony.getBuildingManager().getBuilding(requester.getInDimensionLocation());
+            final ILocation requester = request.getRequester().getRequesterLocation();
+            final AbstractBuilding building = ((Colony) colony).getBuildingManager().getBuilding(requester.getInDimensionLocation());
 
-            if (building == null || (building.getCitizenForRequest(request.getId()).isPresent() && !building.getCitizenForRequest(request.getId())
+            if (building == null || (building.getCitizenForRequest(request.getToken()).isPresent() && !building.getCitizenForRequest(request.getToken())
                                                                                                          .get()
-                                                                                                         .isRequestAsync(request.getId())))
+                                                                                                         .isRequestAsync(request.getToken())))
             {
                 if (manager.getColony().getWorld().isDaytime())
                 {
@@ -135,20 +133,20 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                         players.remove(owner);
 
                         LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
-                          request.getRequester().getDisplayName(manager, request.getId()).getFormattedText(),
+                          request.getRequester().getDisplayName(manager, request.getToken()).getFormattedText(),
                           getRequestMessage(request).getFormattedText(),
-                          request.getRequester().getLocation().toString()
+                          request.getRequester().getRequesterLocation().toString()
                         );
                     }
                     LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
-                      colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(manager, request.getId()).getFormattedText(),
+                      colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(manager, request.getToken()).getFormattedText(),
                       getRequestMessage(request).getFormattedText(),
-                      request.getRequester().getLocation().toString());
+                      request.getRequester().getRequesterLocation().toString());
                 }
             }
 
         }
-        assignedRequests.add(request.getId());
+        assignedRequests.add(request.getToken());
     }
 
     private ITextComponent getRequestMessage(@NotNull final IRequest request)
@@ -164,9 +162,9 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest completedRequest)
     {
         //This is not what this method is for, but this is the closest we are getting right now, so why not.
-        if (assignedRequests.contains(completedRequest.getId()))
+        if (assignedRequests.contains(completedRequest.getToken()))
         {
-            assignedRequests.remove(completedRequest.getId());
+            assignedRequests.remove(completedRequest.getToken());
         }
 
         return null;
@@ -195,14 +193,14 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public IToken getId()
+    public IToken getRequesterId()
     {
         return token;
     }
 
     @NotNull
     @Override
-    public ILocation getLocation()
+    public ILocation getRequesterLocation()
     {
         return location;
     }
@@ -249,11 +247,11 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                 .filter(Objects::nonNull)
                 .forEach(request ->
                 {
-                    final IToken newResolverToken = manager.reassignRequest(request.getId(), ImmutableList.of(token));
+                    final IToken newResolverToken = manager.reassignRequest(request.getToken(), ImmutableList.of(token));
 
                     if (newResolverToken != null && !newResolverToken.equals(token))
                     {
-                        assignedRequests.remove(request.getId());
+                        assignedRequests.remove(request.getToken());
                     }
                 });
     }

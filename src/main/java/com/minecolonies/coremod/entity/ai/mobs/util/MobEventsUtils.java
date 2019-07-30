@@ -1,15 +1,14 @@
 package com.minecolonies.coremod.entity.ai.mobs.util;
 
 import com.ldtteam.structurize.util.PlacementSettings;
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structures.helpers.Structure;
-import com.minecolonies.coremod.colony.ICitizenData;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
@@ -42,7 +41,7 @@ public final class MobEventsUtils
     {
     }
 
-    public static void raiderEvent(final World world, final IColony colony)
+    public static void raiderEvent(final World world, final Colony colony)
     {
         if (world == null || !colony.isCanHaveBarbEvents())
         {
@@ -176,7 +175,7 @@ public final class MobEventsUtils
      * @param colony The colony to get the RaidLevel from
      * @return the total horde strength.
      */
-    private static Horde numberOfSpawns(final IColony colony)
+    private static Horde numberOfSpawns(final Colony colony)
     {
         if (colony.getCitizenManager().getCitizens().size() < MIN_CITIZENS_FOR_RAID)
         {
@@ -199,7 +198,7 @@ public final class MobEventsUtils
      * @param colony the Colony to spawn the barbarians near.
      * @return Returns the random blockPos
      */
-    private static BlockPos calculateSpawnLocation(final World world, @NotNull final IColony colony)
+    private static BlockPos calculateSpawnLocation(final World world, @NotNull final Colony colony)
     {
         final Random random = new Random();
         final BlockPos pos = colony.getRaiderManager().getRandomOutsiderInDirection(
@@ -221,11 +220,11 @@ public final class MobEventsUtils
      * @param colony The colony to use
      * @return an int describing the raid level
      */
-    public static int getColonyRaidLevel(final IColony colony)
+    public static int getColonyRaidLevel(final Colony colony)
     {
         int levels = 0;
-        @NotNull final List<ICitizenData> citizensList = new ArrayList<>(colony.getCitizenManager().getCitizens());
-        for (@NotNull final ICitizenData citizen : citizensList)
+        @NotNull final List<CitizenData> citizensList = new ArrayList<>(colony.getCitizenManager().getCitizens());
+        for (@NotNull final CitizenData citizen : citizensList)
         {
             levels += citizen.getLevel();
         }
@@ -233,7 +232,7 @@ public final class MobEventsUtils
         return levels;
     }
 
-    public static boolean isItTimeToRaid(final World world, final IColony colony)
+    public static boolean isItTimeToRaid(final World world, final Colony colony)
     {
         if (colony.getCitizenManager().getCitizens().size() < NUMBER_OF_CITIZENS_NEEDED)
         {
@@ -282,7 +281,7 @@ public final class MobEventsUtils
      * @param world The world in which the raid is possibly happening (Used to get a random number easily)
      * @return Boolean value on whether to act this night
      */
-    private static boolean raidThisNight(final World world, final IColony colony)
+    private static boolean raidThisNight(final World world, final Colony colony)
     {
         return colony.getNightsSinceLastRaid() > Configurations.gameplay.minimumNumberOfNightsBetweenRaids
                  && world.rand.nextDouble() < 1.0 / Configurations.gameplay.averageNumberOfNightsBetweenRaids;

@@ -4,7 +4,6 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.tileentities.ITileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -72,10 +71,10 @@ public class ItemClipBoard extends AbstractItemMinecolonies
 
         if (entity instanceof TileEntityColonyBuilding)
         {
-            compound.setInteger(TAG_COLONY, ((ITileEntityColonyBuilding) entity).getColonyId());
+            compound.setInteger(TAG_COLONY, ((TileEntityColonyBuilding) entity).getColonyId());
             if (!worldIn.isRemote)
             {
-                LanguageHandler.sendPlayerMessage(playerIn, TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET, ((ITileEntityColonyBuilding) entity).getColonyId());
+                LanguageHandler.sendPlayerMessage(playerIn, TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET, ((TileEntityColonyBuilding) entity).getColonyId());
             }
         }
         else if (compound.hasKey(TAG_COLONY))

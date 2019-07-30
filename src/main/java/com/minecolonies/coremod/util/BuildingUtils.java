@@ -32,7 +32,7 @@ public final class BuildingUtils
      */
     public static AxisAlignedBB getTargetAbleArea(final World world, final AbstractSchematicProvider building)
     {
-        final BlockPos location = building.getPosition();
+        final BlockPos location = building.getLocation();
         final int x1;
         final int z1;
         final int x3;

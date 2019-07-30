@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.BipedModelType;
+import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.blacksmith.EntityAIWorkBlacksmith;
 import org.jetbrains.annotations.NotNull;
@@ -10,14 +9,14 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class of the Blacksmith job.
  */
-public class JobBlacksmith extends AbstractJobCrafter<EntityAIWorkBlacksmith, JobBlacksmith>
+public class JobBlacksmith extends AbstractJobCrafter
 {
     /**
      * Instantiates the job for the Blacksmith.
      *
      * @param entity the citizen who becomes a Sawmill
      */
-    public JobBlacksmith(final ICitizenData entity)
+    public JobBlacksmith(final CitizenData entity)
     {
         super(entity);
     }
@@ -31,9 +30,9 @@ public class JobBlacksmith extends AbstractJobCrafter<EntityAIWorkBlacksmith, Jo
 
     @NotNull
     @Override
-    public BipedModelType getModel()
+    public RenderBipedCitizen.Model getModel()
     {
-        return BipedModelType.BLACKSMITH;
+        return RenderBipedCitizen.Model.BLACKSMITH;
     }
 
     /**

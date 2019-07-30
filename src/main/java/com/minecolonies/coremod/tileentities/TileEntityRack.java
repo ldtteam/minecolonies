@@ -1,15 +1,13 @@
 package com.minecolonies.coremod.tileentities;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import com.minecolonies.coremod.blocks.IBlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.types.RackType;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -94,9 +92,9 @@ public class TileEntityRack extends TileEntity
         {
             super.setStackInSlot(slot, stack);
 
-            if (!ItemStackUtils.isEmpty(stack) && world != null && !world.isRemote && inWarehouse && IColonyManager.getInstance().isCoordinateInAnyColony(world, pos))
+            if (!ItemStackUtils.isEmpty(stack) && world != null && !world.isRemote && inWarehouse && ColonyManager.isCoordinateInAnyColony(world, pos))
             {
-                final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
+                final Colony colony = ColonyManager.getClosestColony(world, pos);
 
                 if (colony != null && colony.getRequestManager() != null)
                 {
@@ -301,13 +299,13 @@ public class TileEntityRack extends TileEntity
                 if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof BlockMinecoloniesRack)
                 {
 
-                    typeHere = world.getBlockState(pos).withProperty(IBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
-                    typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).withProperty(IBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE)
-                                     .withProperty(IBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
+                    typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
+                    typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).withProperty(BlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE)
+                                     .withProperty(BlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
                 }
                 else
                 {
-                    typeHere = world.getBlockState(pos).withProperty(IBlockMinecoloniesRack.VARIANT, RackType.DEFAULT);
+                    typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, RackType.DEFAULT);
                     typeNeighbor = null;
                 }
             }
@@ -315,13 +313,13 @@ public class TileEntityRack extends TileEntity
             {
                 if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof BlockMinecoloniesRack)
                 {
-                    typeHere = world.getBlockState(pos).withProperty(IBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
-                    typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).withProperty(IBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
-                                     .withProperty(IBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
+                    typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
+                    typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).withProperty(BlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
+                                     .withProperty(BlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
                 }
                 else
                 {
-                    typeHere = world.getBlockState(pos).withProperty(IBlockMinecoloniesRack.VARIANT, RackType.FULL);
+                    typeHere = world.getBlockState(pos).withProperty(BlockMinecoloniesRack.VARIANT, RackType.FULL);
                     typeNeighbor = null;
                 }
             }

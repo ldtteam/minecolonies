@@ -8,13 +8,11 @@ import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.client.gui.WindowHutBuilder;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.IColonyView;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.workorders.*;
 import net.minecraft.block.Block;
@@ -113,19 +111,17 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        super.deserializeNBT(compound);
-        this.purgedMobsToday = compound.getBoolean(TAG_PURGE_MOBS);
+        super.writeToNBT(compound);
+        compound.setBoolean(TAG_PURGE_MOBS, this.purgedMobsToday);
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        final NBTTagCompound compound = super.serializeNBT();
-        compound.setBoolean(TAG_PURGE_MOBS, this.purgedMobsToday);
-
-        return compound;
+        super.readFromNBT(compound);
+        this.purgedMobsToday = compound.getBoolean(TAG_PURGE_MOBS);
     }
 
     /**
@@ -154,7 +150,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
      */
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobBuilder(citizen);
     }
@@ -174,19 +170,19 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     @Override
     public void searchWorkOrder()
     {
-        final ICitizenData citizen = getMainCitizen();
+        final CitizenData citizen = getMainCitizen();
         if (citizen == null)
         {
             return;
         }
 
         final List<WorkOrderBuildDecoration> list = new ArrayList<>();
-        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildRemoval.class, getPosition()));
-        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildBuilding.class, getPosition()));
-        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildDecoration.class, getPosition()));
+        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildRemoval.class, getLocation()));
+        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildBuilding.class, getLocation()));
+        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildDecoration.class, getLocation()));
         list.removeIf(order -> order instanceof WorkOrderBuildMiner);
 
-        final WorkOrderBuildDecoration order = list.stream().filter(w -> w.getClaimedBy() != null && w.getClaimedBy().equals(getPosition())).findFirst().orElse(null);
+        final WorkOrderBuildDecoration order = list.stream().filter(w -> w.getClaimedBy() != null && w.getClaimedBy().equals(getLocation())).findFirst().orElse(null);
         if (order != null)
         {
             citizen.getJob(JobBuilder.class).setWorkOrder(order);
@@ -203,7 +199,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
                 continue;
             }
 
-            for (@NotNull final ICitizenData otherBuilder : getColony().getCitizenManager().getCitizens())
+            for (@NotNull final CitizenData otherBuilder : getColony().getCitizenManager().getCitizens())
             {
                 final JobBuilder job = otherBuilder.getJob(JobBuilder.class);
 
@@ -248,7 +244,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
          * @param c the colony.
          * @param l the position.
          */
-        public View(final IColonyView c, final BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }

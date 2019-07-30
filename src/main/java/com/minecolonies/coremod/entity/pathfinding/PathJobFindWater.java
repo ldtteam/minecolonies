@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
-import com.minecolonies.coremod.util.Pond;
+import com.minecolonies.coremod.entity.ai.citizen.fisherman.Pond;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -38,6 +38,22 @@ public class PathJobFindWater extends AbstractPathJob
         super(world, start, start, range, new WaterPathResult(), entity);
         this.ponds = new ArrayList<>(ponds);
         hutLocation = home;
+    }
+
+    /**
+     * Contains the result of the path job to find water.
+     */
+    public static class WaterPathResult extends PathResult
+    {
+        /**
+         * The position of the pond.
+         */
+        public BlockPos pond;
+
+        /**
+         * If the pond is empty.
+         */
+        public boolean isEmpty;
     }
 
     private static double squareDistance(@NotNull final BlockPos currentPond, @NotNull final BlockPos nextPond)

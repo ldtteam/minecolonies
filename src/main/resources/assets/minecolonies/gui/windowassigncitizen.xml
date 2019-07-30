@@ -1,6 +1,6 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
         lightbox="true"
-        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
 
     <label size="100% 11" pos="0 50" textalign="TOP_MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.assigning.description)"/>
     <list id="unassigned" size="70% 120" pos="60 70" align="TOP_MIDDLE">

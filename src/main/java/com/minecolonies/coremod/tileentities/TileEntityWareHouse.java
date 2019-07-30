@@ -26,7 +26,7 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
 /**
  * Class which handles the tileEntity of our colonyBuildings.
  */
-public class TileEntityWareHouse extends TileEntityColonyBuilding implements ITileEntityWareHouse
+public class TileEntityWareHouse extends TileEntityColonyBuilding
 {
 
     /**
@@ -35,7 +35,6 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding implements ITi
      * @param itemStackSelectionPredicate The predicate to check with.
      * @return True when the warehouse holds a stack, false when not.
      */
-    @Override
     public boolean hasMatchingItemStackInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate, int count)
     {
         final List<ItemStack> targetStacks = getMatchingItemStacksInWarehouse(itemStackSelectionPredicate);
@@ -48,7 +47,6 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding implements ITi
      * @param itemStackSelectionPredicate The predicate to select the ItemStack with.
      * @return The first matching ItemStack.
      */
-    @Override
     @NotNull
     public List<ItemStack> getMatchingItemStacksInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
@@ -98,7 +96,6 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding implements ITi
      *
      * @param inventoryCitizen the inventory of the citizen
      */
-    @Override
     public void dumpInventoryIntoWareHouse(@NotNull final InventoryCitizen inventoryCitizen)
     {
         for (int i = 0; i < new InvWrapper(inventoryCitizen).getSlots(); i++)

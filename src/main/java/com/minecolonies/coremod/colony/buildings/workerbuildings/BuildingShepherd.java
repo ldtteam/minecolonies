@@ -5,12 +5,9 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowHutShepherd;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.IColonyView;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobShepherd;
 import com.minecolonies.coremod.network.messages.ShepherdSetDyeSheepsMessage;
 
@@ -77,7 +74,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobShepherd(citizen);
     }
@@ -90,24 +87,21 @@ public class BuildingShepherd extends AbstractBuildingWorker
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        super.deserializeNBT(compound);
+        super.writeToNBT(compound);
+        compound.setBoolean(NBT_DYE_SHEEPS, this.dyeSheeps);
+    }
 
+    @Override
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
         this.dyeSheeps = compound.getBoolean(NBT_DYE_SHEEPS);
         if (!compound.hasKey(NBT_DYE_SHEEPS))
         {
             this.dyeSheeps = true;
         }
-    }
-
-    @Override
-    public NBTTagCompound serializeNBT()
-    {
-        final NBTTagCompound compound = super.serializeNBT();
-        compound.setBoolean(NBT_DYE_SHEEPS, this.dyeSheeps);
-
-        return compound;
     }
 
     /**
@@ -142,7 +136,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
          * @param c the colonyView.
          * @param l the location of the block.
          */
-        public View(final IColonyView c, final BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }

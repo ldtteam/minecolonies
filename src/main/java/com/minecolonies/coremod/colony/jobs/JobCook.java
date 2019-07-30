@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.BipedModelType;
+import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.cook.EntityAIWorkCook;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +16,7 @@ public class JobCook extends AbstractJob
      *
      * @param entity the lumberjack.
      */
-    public JobCook(final ICitizenData entity)
+    public JobCook(final CitizenData entity)
     {
         super(entity);
     }
@@ -41,9 +40,9 @@ public class JobCook extends AbstractJob
      */
     @NotNull
     @Override
-    public BipedModelType getModel()
+    public RenderBipedCitizen.Model getModel()
     {
-        return BipedModelType.COOK;
+        return RenderBipedCitizen.Model.COOK;
     }
 
     /**

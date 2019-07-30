@@ -1,15 +1,13 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.ITownHall;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.ITownHallView;
-import com.minecolonies.coremod.entity.IEntityCitizen;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -46,7 +44,7 @@ public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage
      *
      * @param townhall View of the townhall.
      */
-    public RecallTownhallMessage(@NotNull final ITownHallView townhall)
+    public RecallTownhallMessage(@NotNull final BuildingTownHall.View townhall)
     {
         super();
         this.colonyId = townhall.getColony().getID();
@@ -70,7 +68,7 @@ public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage
     @Override
     public void messageOnServerThread(final RecallTownhallMessage message, final EntityPlayerMP player)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
@@ -79,14 +77,14 @@ public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage
                 return;
             }
 
-            @Nullable final ITownHall building = colony.getBuildingManager().getTownHall();
+            @Nullable final BuildingTownHall building = colony.getBuildingManager().getTownHall();
             if (building != null)
             {
-                final BlockPos location = building.getPosition();
+                final BlockPos location = building.getLocation();
                 final World world = colony.getWorld();
-                for (final ICitizenData citizenData : colony.getCitizenManager().getCitizens())
+                for (final CitizenData citizenData : colony.getCitizenManager().getCitizens())
                 {
-                    Optional<IEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
+                    Optional<EntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
                     if (!optionalEntityCitizen.isPresent())
                     {
                         Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));

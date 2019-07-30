@@ -9,20 +9,15 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
-import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.managers.interfaces.IBuildingManager;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
-import com.minecolonies.coremod.entity.IEntityCitizen;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.network.messages.ColonyViewBuildingViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveBuildingMessage;
-import com.minecolonies.coremod.tileentities.IScarecrow;
-import com.minecolonies.coremod.tileentities.ITileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.ColonyUtils;
@@ -48,7 +43,7 @@ public class BuildingManager implements IBuildingManager
      * List of building in the colony.
      */
     @NotNull
-    private final Map<BlockPos, IBuilding> buildings = new HashMap<>();
+    private final Map<BlockPos, AbstractBuilding> buildings = new HashMap<>();
 
     /**
      * List of fields of the colony.
@@ -58,13 +53,13 @@ public class BuildingManager implements IBuildingManager
     /**
      * The warehouse building position. Initially null.
      */
-    private IWareHouse wareHouse = null;
+    private BuildingWareHouse wareHouse = null;
 
     /**
      * The townhall of the colony.
      */
     @Nullable
-    private ITownHall townHall;
+    private BuildingTownHall townHall;
 
     /**
      * Variable to check if the buildings needs to be synched.
@@ -103,7 +98,7 @@ public class BuildingManager implements IBuildingManager
         for (int i = 0; i < buildingTagList.tagCount(); ++i)
         {
             final NBTTagCompound buildingCompound = buildingTagList.getCompoundTagAt(i);
-            @Nullable final IBuilding b = BuildingRegistry.createFromNBT(colony, buildingCompound);
+            @Nullable final AbstractBuilding b = BuildingRegistry.createFromNBT(colony, buildingCompound);
             if (b != null)
             {
                 addBuilding(b);
@@ -126,9 +121,10 @@ public class BuildingManager implements IBuildingManager
     {
         //  Buildings
         @NotNull final NBTTagList buildingTagList = new NBTTagList();
-        for (@NotNull final IBuilding b : buildings.values())
+        for (@NotNull final AbstractBuilding b : buildings.values())
         {
-            @NotNull final NBTTagCompound buildingCompound = b.serializeNBT();
+            @NotNull final NBTTagCompound buildingCompound = new NBTTagCompound();
+            b.writeToNBT(buildingCompound);
             buildingTagList.appendTag(buildingCompound);
         }
         compound.setTag(TAG_BUILDINGS, buildingTagList);
@@ -147,7 +143,7 @@ public class BuildingManager implements IBuildingManager
     @Override
     public void tick(final TickEvent.ServerTickEvent event)
     {
-        for (@NotNull final IBuilding b : buildings.values())
+        for (@NotNull final AbstractBuilding b : buildings.values())
         {
             b.onServerTick(event);
         }
@@ -157,7 +153,7 @@ public class BuildingManager implements IBuildingManager
     public void clearDirty()
     {
         isBuildingsDirty = false;
-        buildings.values().forEach(IBuilding::clearDirty);
+        buildings.values().forEach(AbstractBuilding::clearDirty);
     }
 
     @Override
@@ -173,9 +169,9 @@ public class BuildingManager implements IBuildingManager
     public void onWorldTick(final TickEvent.WorldTickEvent event)
     {
         //  Tick Buildings
-        for (@NotNull final IBuilding building : buildings.values())
+        for (@NotNull final AbstractBuilding building : buildings.values())
         {
-            if (event.world.isBlockLoaded(building.getPosition()))
+            if (event.world.isBlockLoaded(building.getLocation()))
             {
                 if (tickCounter == 20)
                 {
@@ -202,14 +198,14 @@ public class BuildingManager implements IBuildingManager
     @Override
     public void cleanUpBuildings(@NotNull final TickEvent.WorldTickEvent event)
     {
-        @Nullable final List<IBuilding> removedBuildings = new ArrayList<>();
+        @Nullable final List<AbstractBuilding> removedBuildings = new ArrayList<>();
 
         //Need this list, we may enter here while we add a building in the real world.
-        final List<IBuilding> tempBuildings = new ArrayList<>(buildings.values());
+        final List<AbstractBuilding> tempBuildings = new ArrayList<>(buildings.values());
 
-        for (@NotNull final IBuilding building : tempBuildings)
+        for (@NotNull final AbstractBuilding building : tempBuildings)
         {
-            final BlockPos loc = building.getPosition();
+            final BlockPos loc = building.getLocation();
             if (event.world.isBlockLoaded(loc) && !building.isMatchingBlock(event.world.getBlockState(loc).getBlock()))
             {
                 //  Sanity cleanup
@@ -231,7 +227,7 @@ public class BuildingManager implements IBuildingManager
             }
         }
 
-        removedBuildings.forEach(IBuilding::destroy);
+        removedBuildings.forEach(AbstractBuilding::destroy);
     }
 
     /**
@@ -241,7 +237,7 @@ public class BuildingManager implements IBuildingManager
      * @return AbstractBuilding belonging to the given ID.
      */
     @Override
-    public IBuilding getBuilding(final BlockPos buildingId)
+    public AbstractBuilding getBuilding(final BlockPos buildingId)
     {
         if (buildingId != null)
         {
@@ -251,13 +247,13 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public Map<BlockPos, IBuilding> getBuildings()
+    public Map<BlockPos, AbstractBuilding> getBuildings()
     {
         return Collections.unmodifiableMap(buildings);
     }
 
     @Override
-    public ITownHall getTownHall()
+    public BuildingTownHall getTownHall()
     {
         return townHall;
     }
@@ -295,7 +291,7 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public <B extends IBuilding> B getBuilding(final BlockPos buildingId, @NotNull final Class<B> type)
+    public <B extends AbstractBuilding> B getBuilding(final BlockPos buildingId, @NotNull final Class<B> type)
     {
         try
         {
@@ -309,7 +305,7 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void addNewField(final IScarecrow tileEntity, final BlockPos pos, final World world)
+    public void addNewField(final ScarecrowTileEntity tileEntity, final BlockPos pos, final World world)
     {
         addField(pos);
         tileEntity.calculateSize(world, pos.down());
@@ -317,12 +313,12 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public IBuilding addNewBuilding(@NotNull final ITileEntityColonyBuilding tileEntity, final World world)
+    public AbstractBuilding addNewBuilding(@NotNull final TileEntityColonyBuilding tileEntity, final World world)
     {
         tileEntity.setColony(colony);
         if (!buildings.containsKey(tileEntity.getPosition()))
         {
-            @Nullable final IBuilding building = BuildingRegistry.create(colony, tileEntity);
+            @Nullable final AbstractBuilding building = BuildingRegistry.create(colony, tileEntity);
             if (building != null)
             {
                 addBuilding(building);
@@ -349,11 +345,11 @@ public class BuildingManager implements IBuildingManager
                 {
                     building.onPlacement();
 
-                    building.setRotation(BlockUtils.getRotationFromFacing(world.getBlockState(building.getPosition()).getValue(AbstractBlockHut.FACING)));
+                    building.setRotation(BlockUtils.getRotationFromFacing(world.getBlockState(building.getLocation()).getValue(AbstractBlockHut.FACING)));
                     final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
                     final Structure wrapper = new Structure(world, workOrder.getStructureName(), new PlacementSettings());
                     final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
-                      = ColonyUtils.calculateCorners(building.getPosition(),
+                      = ColonyUtils.calculateCorners(building.getLocation(),
                       world,
                       wrapper,
                       workOrder.getRotation(world),
@@ -362,10 +358,10 @@ public class BuildingManager implements IBuildingManager
                     building.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
                     building.setHeight(wrapper.getHeight());
 
-                    ConstructionTapeHelper.placeConstructionTape(building.getPosition(), corners, world);
+                    ConstructionTapeHelper.placeConstructionTape(building.getLocation(), corners, world);
                 }
 
-                ConstructionTapeHelper.placeConstructionTape(building.getPosition(), building.getCorners(), world);
+                ConstructionTapeHelper.placeConstructionTape(building.getLocation(), building.getCorners(), world);
                 colony.getRequestManager().onProviderAddedToColony(building);
             }
             else
@@ -383,7 +379,7 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void removeBuilding(@NotNull final IBuilding building, final Set<EntityPlayerMP> subscribers)
+    public void removeBuilding(@NotNull final AbstractBuilding building, final Set<EntityPlayerMP> subscribers)
     {
         if (buildings.remove(building.getID()) != null)
         {
@@ -410,7 +406,7 @@ public class BuildingManager implements IBuildingManager
         colony.getRequestManager().onProviderRemovedFromColony(building);
 
         //Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
-        for (@NotNull final ICitizenData citizen : colony.getCitizenManager().getCitizens())
+        for (@NotNull final CitizenData citizen : colony.getCitizenManager().getCitizens())
         {
             citizen.onRemoveBuilding(building);
         }
@@ -427,19 +423,19 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public BlockPos getBestRestaurant(final IEntityCitizen citizen)
+    public BlockPos getBestRestaurant(final EntityCitizen citizen)
     {
         double distance = Double.MAX_VALUE;
         BlockPos goodCook = null;
-        for (final IBuilding building : citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values())
+        for (final AbstractBuilding building : citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuildings().values())
         {
             if (building instanceof BuildingCook && building.getBuildingLevel() > 0)
             {
-                final double localDistance = building.getPosition().distanceSq(citizen.getPosition());
+                final double localDistance = building.getLocation().distanceSq(citizen.getPosition());
                 if (localDistance < distance)
                 {
                     distance = localDistance;
-                    goodCook = building.getPosition();
+                    goodCook = building.getLocation();
                 }
             }
         }
@@ -447,13 +443,13 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void setTownHall(@Nullable final ITownHall building)
+    public void setTownHall(@Nullable final BuildingTownHall building)
     {
         this.townHall = building;
     }
 
     @Override
-    public void setWareHouse(@Nullable final IWareHouse building)
+    public void setWareHouse(@Nullable final BuildingWareHouse building)
     {
         this.wareHouse = building;
     }
@@ -471,7 +467,7 @@ public class BuildingManager implements IBuildingManager
      *
      * @param building AbstractBuilding to add to the colony.
      */
-    private void addBuilding(@NotNull final IBuilding building)
+    private void addBuilding(@NotNull final AbstractBuilding building)
     {
         buildings.put(building.getID(), building);
         building.markDirty();
@@ -479,12 +475,12 @@ public class BuildingManager implements IBuildingManager
         //  Limit 1 town hall
         if (building instanceof BuildingTownHall && townHall == null)
         {
-            townHall = (ITownHall) building;
+            townHall = (BuildingTownHall) building;
         }
 
         if (building instanceof BuildingWareHouse && wareHouse == null)
         {
-            wareHouse = (IWareHouse) building;
+            wareHouse = (BuildingWareHouse) building;
         }
     }
 
@@ -500,7 +496,7 @@ public class BuildingManager implements IBuildingManager
     {
         if (isBuildingsDirty || hasNewSubscribers)
         {
-            for (@NotNull final IBuilding building : buildings.values())
+            for (@NotNull final AbstractBuilding building : buildings.values())
             {
                 if (building.isDirty() || hasNewSubscribers)
                 {
@@ -521,7 +517,7 @@ public class BuildingManager implements IBuildingManager
     {
         if (isFieldsDirty || hasNewSubscribers)
         {
-            for (final IBuilding building : buildings.values())
+            for (final AbstractBuilding building : buildings.values())
             {
                 if (building instanceof BuildingFarmer)
                 {

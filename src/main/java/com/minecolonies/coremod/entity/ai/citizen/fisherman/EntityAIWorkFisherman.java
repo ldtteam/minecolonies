@@ -9,11 +9,10 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFisherm
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.pathfinding.WaterPathResult;
+import com.minecolonies.coremod.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.coremod.sounds.FishermanSounds;
 import com.minecolonies.coremod.util.SoundUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
@@ -142,14 +141,14 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * The PathResult when the fisherman searches water.
      */
     @Nullable
-    private WaterPathResult pathResult;
+    private PathJobFindWater.WaterPathResult pathResult;
 
 
     /**
      * The Previous PathResult when the fisherman already found water.
      */
     @Nullable
-    private WaterPathResult lastPathResult;
+    private PathJobFindWater.WaterPathResult lastPathResult;
 
     /**
      * The fishingSkill which directly influences the fisherman's chance to throw his rod.
@@ -593,7 +592,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             return FISHERMAN_SEARCHING_WATER;
         }
         //If there is no close water, try to move closer
-        if (!Utils.isBlockInRange(world, Blocks.WATER, (int) worker.getPosX(), (int) worker.getPosY(), (int) worker.getPosZ(), MIN_DISTANCE_TO_WATER))
+        if (!Utils.isBlockInRange(world, Blocks.WATER, (int) worker.posX, (int) worker.posY, (int) worker.posZ, MIN_DISTANCE_TO_WATER))
         {
             return FISHERMAN_WALKING_TO_WATER;
         }
@@ -644,7 +643,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
 
         worker.setCanPickUpLoot(true);
-        worker.setCanCaptureDrops(true);
+        worker.captureDrops = true;
         retrieveRod();
         fishingSkill = worker.getCitizenExperienceHandler().getLevel();
         return true;
@@ -668,7 +667,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * @return citizen object.
      */
     @Nullable
-    public IEntityCitizen getCitizen()
+    public EntityCitizen getCitizen()
     {
         return worker;
     }
