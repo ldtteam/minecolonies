@@ -109,12 +109,6 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
         return new BlockStateContainer(this, IBlockBarrel.FACING, VARIANT);
     }
 
-    @Override
-    public TileEntity createTileEntity(@NotNull final World world, @NotNull final BlockState state)
-    {
-        return new TileEntityBarrel();
-    }
-
 
     @Override
     public boolean hasTileEntity(final BlockState state)

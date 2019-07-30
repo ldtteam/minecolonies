@@ -2,20 +2,18 @@ package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.coremod.colony.IColonyView;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.util.ITickable;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ILockableContainer;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.loot.ILootContainer;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface IScarecrow extends ICapabilitySerializable<NBTTagCompound>, ILockableContainer, ILootContainer, ITickable
+public interface IScarecrow extends ICapabilitySerializable<CompoundNBT>, ITickableTileEntity
 {
     /**
      * Getter of the name of the tileEntity.
@@ -179,25 +177,25 @@ public interface IScarecrow extends ICapabilitySerializable<NBTTagCompound>, ILo
      */
     IItemHandlerModifiable getInventory();
 
-    SPacketUpdateTileEntity getUpdatePacket();
+    SUpdateTileEntityPacket getUpdatePacket();
 
     @NotNull
-    NBTTagCompound getUpdateTag();
+    CompoundNBT getUpdateTag();
 
-    void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet);
+    void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet);
 
     void onLoad();
 
-    void readFromNBT(NBTTagCompound compound);
+    void read(CompoundNBT compound);
 
-    NBTTagCompound writeToNBT(NBTTagCompound compound);
+    CompoundNBT write(CompoundNBT compound);
 
     /**
      * Returns the type of the scarecrow (Important for the rendering).
      *
      * @return the enum type.
      */
-    ScareCrowType getType();
+    ScareCrowType getScarecrowType();
 
     /**
      * Describes the stage the field is in.

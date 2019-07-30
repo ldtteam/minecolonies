@@ -15,6 +15,7 @@ import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
@@ -42,7 +43,7 @@ import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
  * <p>
  * All AbstractBlockHut[something] should extend this class.
  */
-public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBlockMinecolonies<B> implements ITileEntityProvider, IBuilderUndestroyable, IAnchorBlock
+public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBlockMinecolonies<B> implements IBuilderUndestroyable, IAnchorBlock
 {
     /**
      * Hardness factor of the pvp mode.
@@ -97,6 +98,12 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * @return Name of the block.
      */
     public abstract String getName();
+
+    @Override
+    public boolean hasTileEntity(final BlockState state)
+    {
+        return true;
+    }
 
     @NotNull
     @Override

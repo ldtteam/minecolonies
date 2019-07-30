@@ -7,6 +7,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraftforge.registries.IForgeRegistry;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Class to create the modBlocks.
@@ -163,5 +166,40 @@ public final class ModBlocks
         blockBarrel.registerBlockItem(registry);
         blockPostBox.registerBlockItem(registry);
         blockDecorationPlacerholder.registerBlockItem(registry);
+    }
+
+    @NotNull
+    public static AbstractBlockHut[] getHuts()
+    {
+        return new AbstractBlockHut[] {
+          blockHutStoneSmeltery,
+          blockHutStonemason,
+          blockHutGuardTower,
+          blockHutArchery,
+          blockHutBaker,
+          blockHutBarracks,
+          blockHutBarracksTower,
+          blockHutBlacksmith,
+          blockHutBuilder,
+          blockHutChickenHerder,
+          blockHutCitizen,
+          blockHutCombatAcademy,
+          blockHutComposter,
+          blockHutCook,
+          blockHutCowboy,
+          blockHutCrusher,
+          blockHutArchery,
+          blockHutDeliveryman,
+          blockHutFarmer,
+          blockHutFisherman,
+          blockHutLibrary,
+          blockHutLumberjack,
+          blockHutMiner,
+          blockHutSawmill,
+          blockHutSifter,
+          blockHutShepherd,
+          blockHutSmeltery,
+          blockHutSwineHerder,
+          blockHutTownHall};
     }
 }

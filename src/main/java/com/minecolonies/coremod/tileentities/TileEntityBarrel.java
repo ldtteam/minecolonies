@@ -3,23 +3,25 @@ package com.minecolonies.coremod.tileentities;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.items.ModItems;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-public class TileEntityBarrel extends TileEntity implements ITileEntityBarrel
+public class TileEntityBarrel extends TileEntity implements ITileEntityBarrel, ITickableTileEntity
 {
     /**
      * True if the barrel has finished composting and the items are ready to harvest
@@ -42,15 +44,20 @@ public class TileEntityBarrel extends TileEntity implements ITileEntityBarrel
      */
     private static final int                        AVERAGE_TICKS  = 20;
 
+    public TileEntityBarrel(final TileEntityType<?> tileEntityTypeIn)
+    {
+        super(tileEntityTypeIn);
+    }
+
     /**
      * Update method to be called by Minecraft every tick
      */
     @Override
-    public void update( )
+    public void tick()
     {
         final World world = this.getWorld();
 
-        if (!world.isRemote && (world.getWorldTime() % (world.rand.nextInt(AVERAGE_TICKS * 2) + 1) == 0))
+        if (!world.isRemote && (world.getDayTime() % (world.rand.nextInt(AVERAGE_TICKS * 2) + 1) == 0))
         {
             this.updateTick(world, this.getPos(), world.getBlockState(this.getPos()), new Random());
         }
@@ -68,18 +75,18 @@ public class TileEntityBarrel extends TileEntity implements ITileEntityBarrel
     {
         if(getItems() == ITileEntityBarrel.MAX_ITEMS)
         {
-            doBarrelCompostTick(worldIn, pos, state);
+            doBarrelCompostTick(worldIn);
         }
         if(this.done)
         {
-            ((WorldServer)worldIn).spawnParticle(
-                    EnumParticleTypes.VILLAGER_HAPPY, this.getPos().getX()+0.5,
+            ((ServerWorld)worldIn).spawnParticle(
+                    ParticleTypes.HAPPY_VILLAGER, this.getPos().getX()+0.5,
                     this.getPos().getY()+1.5, this.getPos().getZ()+0.5,
                     1, 0.2, 0, 0.2, 0);
         }
     }
 
-    private void doBarrelCompostTick(final World worldIn, final BlockPos pos, final BlockState blockState)
+    private void doBarrelCompostTick(final World worldIn)
     {
         timer++;
         if (timer >= TIMER_END/AVERAGE_TICKS)
@@ -87,7 +94,7 @@ public class TileEntityBarrel extends TileEntity implements ITileEntityBarrel
             timer = 0;
             items = 0;
             done = true;
-            this.updateBlock(worldIn, blockState);
+            this.updateBlock(worldIn);
         }
     }
 
@@ -116,7 +123,7 @@ public class TileEntityBarrel extends TileEntity implements ITileEntityBarrel
 
         if (items == ITileEntityBarrel.MAX_ITEMS)
         {
-            playerIn.sendMessage(new TextComponentTranslation("entity.barrel.working"));
+            playerIn.sendMessage(new TranslationTextComponent("entity.barrel.working"));
             return false;
         }
         else
@@ -156,12 +163,10 @@ public class TileEntityBarrel extends TileEntity implements ITileEntityBarrel
     /**
      * Updates the block between the server and the client
      * @param worldIn the world
-     * @param state the state of the block
      */
-    public void updateBlock(final World worldIn, final BlockState state)
+    public void updateBlock(final World worldIn)
     {
-         world.notifyBlockUpdate(pos, state, state, 0x03);
-         world.markBlockRangeForRenderUpdate(pos,pos);
+        worldIn.markChunkDirty(pos,this);
          this.markDirty();
     }
 
@@ -178,20 +183,20 @@ public class TileEntityBarrel extends TileEntity implements ITileEntityBarrel
     }
 
     @Override
-    public void readFromNBT(final CompoundNBT compound)
+    public void read(final CompoundNBT compound)
     {
-        super.readFromNBT(compound);
+        super.read(compound);
         this.items = compound.getInt("items");
         this.timer = compound.getInt("timer");
         this.done = compound.getBoolean("done");
     }
 
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket()
+    public SUpdateTileEntityPacket getUpdatePacket()
     {
         final CompoundNBT compound = new CompoundNBT();
         this.write(compound);
-        return new SPacketUpdateTileEntity(this.pos, 0, compound);
+        return new SUpdateTileEntityPacket(this.pos, 0, compound);
     }
 
     @NotNull
@@ -202,11 +207,11 @@ public class TileEntityBarrel extends TileEntity implements ITileEntityBarrel
     }
 
     @Override
-    public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
+    public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
     {
         final CompoundNBT compound = packet.getNbtCompound();
-        this.readFromNBT(compound);
-        world.markBlockRangeForRenderUpdate(pos,pos);
+        this.read(compound);
+        world.markChunkDirty(pos, this);
     }
 
     @Override
@@ -260,7 +265,7 @@ public class TileEntityBarrel extends TileEntity implements ITileEntityBarrel
         if(checkCorrectItem(item) && this.items < this.MAX_ITEMS)
         {
             this.consumeNeededItems(item);
-            this.updateBlock(this.world, this.world.getBlockState(this.pos));
+            this.updateBlock(this.world);
             return true;
         }
         return false;
@@ -276,7 +281,7 @@ public class TileEntityBarrel extends TileEntity implements ITileEntityBarrel
         if(this.done)
         {
             this.done = false;
-            this.updateBlock(this.world, this.world.getBlockState(this.pos));
+            this.updateBlock(this.world);
             return new ItemStack(ModItems.compost, (int) (6*multiplier));
         }
         return ItemStack.EMPTY;

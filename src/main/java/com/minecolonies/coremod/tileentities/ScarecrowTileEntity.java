@@ -5,24 +5,20 @@ import com.ldtteam.structurize.blocks.ModBlocks;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.IColonyView;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockFence;
-import net.minecraft.block.BlockFenceGate;
-import net.minecraft.block.BlockWall;
+import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -38,7 +34,7 @@ import static net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND;
 /**
  * The scarecrow tile entity to store extra data.
  */
-public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
+public class ScarecrowTileEntity extends ChestTileEntity implements IScarecrow
 {
     /**
      * The max width/length of a field.
@@ -146,7 +142,7 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
     public void setName(final String name)
     {
         this.name = name;
-        setCustomName(name);
+        setCustomName(new StringTextComponent(name));
         markDirty();
     }
 
@@ -217,7 +213,7 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      */
     private static boolean isValidDelimiter(final Block block)
     {
-        return block instanceof BlockFence || block instanceof BlockFenceGate || block == ModBlocks.blockCactusFence || block == ModBlocks.blockCactusFenceGate || block instanceof BlockWall;
+        return block instanceof FenceBlock || block instanceof FenceGateBlock || block == ModBlocks.blockCactusFence || block == ModBlocks.blockCactusFenceGate || block instanceof WallBlock;
     }
 
     /**
@@ -468,7 +464,7 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
     ///////////---- Following methods are used to update the tileEntity between client and server ----///////////
 
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket()
+    public SUpdateTileEntityPacket getUpdatePacket()
     {
         final CompoundNBT compound = new CompoundNBT();
         this.write(compound);
@@ -476,7 +472,7 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
         {
             compound.putInt(TAG_COLONY_ID, colony.getID());
         }
-        return new SPacketUpdateTileEntity(this.pos, 0, compound);
+        return new SUpdateTileEntityPacket(this.pos, 0, compound);
     }
 
     @NotNull
@@ -487,13 +483,13 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
     }
 
     @Override
-    public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
+    public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket pkt)
     {
-        final CompoundNBT compound = packet.getNbtCompound();
-        this.readFromNBT(compound);
+        final CompoundNBT compound = pkt.getNbtCompound();
+        this.read(compound);
         if(compound.keySet().contains(TAG_COLONY_ID))
         {
-            setOwner(ownerId, IColonyManager.getInstance().getColonyView(compound.getInteger(TAG_COLONY_ID), world.provider.getDimension()));
+            setOwner(ownerId, IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY_ID), world.getDimension().getType().getId()));
         }
     }
 
@@ -518,13 +514,13 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
     }
 
     @Override
-    public void readFromNBT(final CompoundNBT compound)
+    public void read(final CompoundNBT compound)
     {
         final ListNBT inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
         for (int i = 0; i < inventoryTagList.size(); ++i)
         {
             final CompoundNBT inventoryCompound = inventoryTagList.getCompound(i);
-            final ItemStack stack = new ItemStack(inventoryCompound);
+            final ItemStack stack = ItemStack.read(inventoryCompound);
             if (ItemStackUtils.getSize(stack) <= 0)
             {
                 inventory.setStackInSlot(i, ItemStackUtils.EMPTY);
@@ -545,11 +541,12 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
         name = compound.getString(TAG_NAME);
         setOwner(ownerId);
 
-        super.readFromNBT(compound);
+        super.read(compound);
     }
 
+    @NotNull
     @Override
-    public CompoundNBT write(final CompoundNBT compound)
+    public CompoundNBT write(@NotNull final CompoundNBT compound)
     {
         @NotNull final ListNBT inventoryTagList = new ListNBT();
         for (int slot = 0; slot < inventory.getSlots(); slot++)
@@ -589,7 +586,7 @@ public class ScarecrowTileEntity extends TileEntityChest implements IScarecrow
      * @return the enum type.
      */
     @Override
-    public ScareCrowType getType()
+    public ScareCrowType getScarecrowType()
     {
         if (this.type == null)
         {

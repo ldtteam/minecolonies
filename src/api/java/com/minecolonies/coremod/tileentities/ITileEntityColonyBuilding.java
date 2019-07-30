@@ -4,28 +4,25 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.coremod.colony.buildings.IBuildingContainer;
 import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.ILockableContainer;
-import net.minecraft.world.storage.loot.ILootContainer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.util.function.Predicate;
 
-public interface ITileEntityColonyBuilding extends ICapabilitySerializable<NBTTagCompound>, ILockableContainer, ILootContainer, ITickable
+public interface ITileEntityColonyBuilding extends ICapabilitySerializable<CompoundNBT>, ITickableTileEntity
 {
     /**
      * Finds the first @see ItemStack the type of {@code is}.
@@ -79,15 +76,12 @@ public interface ITileEntityColonyBuilding extends ICapabilitySerializable<NBTTa
      */
     void setColony(IColony c);
 
-    @Override
-    void markDirty();
-
-    SPacketUpdateTileEntity getUpdatePacket();
+    SUpdateTileEntityPacket getUpdatePacket();
 
     @NotNull
-    NBTTagCompound getUpdateTag();
+    CompoundNBT getUpdateTag();
 
-    void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet);
+    void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet);
 
     void onChunkUnload();
 
@@ -105,9 +99,6 @@ public interface ITileEntityColonyBuilding extends ICapabilitySerializable<NBTTa
      */
     void setBuilding(IBuildingContainer b);
 
-    @Override
-    ITextComponent getDisplayName();
-
     /**
      * Returns the view of the building associated with the tile entity.
      *
@@ -115,16 +106,13 @@ public interface ITileEntityColonyBuilding extends ICapabilitySerializable<NBTTa
      */
     IBuildingView getBuildingView();
 
-    void readFromNBT(NBTTagCompound compound);
+    void read(CompoundNBT compound);
 
     @NotNull
-    NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound);
+    CompoundNBT write(@NotNull CompoundNBT compound);
 
     @Override
-    void update();
-
-    @Override
-    boolean isUsableByPlayer(EntityPlayer player);
+    void tick();
 
     /**
      * Checks if the player has permission to access the hut.
@@ -132,7 +120,7 @@ public interface ITileEntityColonyBuilding extends ICapabilitySerializable<NBTTa
      * @param player Player to check permission of.
      * @return True when player has access, or building doesn't exist, otherwise false.
      */
-    boolean hasAccessPermission(EntityPlayer player);
+    boolean hasAccessPermission(PlayerEntity player);
 
     /**
      * Set if the entity is mirrored.
@@ -162,13 +150,9 @@ public interface ITileEntityColonyBuilding extends ICapabilitySerializable<NBTTa
      */
     void setStyle(String style);
 
+    @Nonnull
     @Override
-    boolean hasCapability(@NotNull Capability<?> capability, EnumFacing facing);
-
-    @Override
-    <T> T getCapability(@NotNull Capability<T> capability, EnumFacing facing);
+    <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @javax.annotation.Nullable Direction side);
 
     boolean isInvalid();
-
-    Block getBlockType();
 }

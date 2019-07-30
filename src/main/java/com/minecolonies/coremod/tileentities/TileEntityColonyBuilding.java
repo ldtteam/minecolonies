@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.*;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingContainer;
@@ -15,9 +15,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -25,12 +25,15 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -43,7 +46,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.MIN_SLOTS_FOR
 /**
  * Class which handles the tileEntity of our colonyBuildings.
  */
-public class TileEntityColonyBuilding extends TileEntityChest implements ITileEntityColonyBuilding
+public class TileEntityColonyBuilding extends ChestTileEntity implements ITileEntityColonyBuilding
 {
     /**
      * NBTTag to store the colony id.
@@ -187,7 +190,7 @@ public class TileEntityColonyBuilding extends TileEntityChest implements ITileEn
                 final TileEntity entity = getWorld().getTileEntity(pos);
                 if ((entity instanceof TileEntityRack
                        && ((TileEntityRack) entity).hasItemStack(notEmptyPredicate))
-                      || (entity instanceof TileEntityChest
+                      || (entity instanceof ChestTileEntity
                             && ITileEntityColonyBuilding.isInTileEntity(entity, notEmptyPredicate)))
                 {
                     return pos;
@@ -221,11 +224,11 @@ public class TileEntityColonyBuilding extends TileEntityChest implements ITileEn
     }
 
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket()
+    public SUpdateTileEntityPacket getUpdatePacket()
     {
         final CompoundNBT compound = new CompoundNBT();
         compound.putInt(TAG_COLONY, colonyId);
-        return new SPacketUpdateTileEntity(this.getPosition(), 0, compound);
+        return new SUpdateTileEntityPacket(this.getPosition(), 0, compound);
     }
 
     @NotNull
@@ -236,7 +239,7 @@ public class TileEntityColonyBuilding extends TileEntityChest implements ITileEn
     }
 
     @Override
-    public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
+    public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
     {
         final CompoundNBT compound = packet.getNbtCompound();
         colonyId = compound.getInt(TAG_COLONY);
@@ -277,14 +280,15 @@ public class TileEntityColonyBuilding extends TileEntityChest implements ITileEn
         building = b;
     }
 
+    @NotNull
     @Override
     public ITextComponent getDisplayName()
     {
-        if (blockType == null)
+        if (getBlockState() == null)
         {
             return super.getDisplayName();
         }
-        return new StringTextComponent(LanguageHandler.format(blockType.getTranslationKey() + ".name"));
+        return new StringTextComponent(LanguageHandler.format(getBlockState().getBlock().getTranslationKey() + ".name"));
     }
 
     /**
@@ -295,14 +299,14 @@ public class TileEntityColonyBuilding extends TileEntityChest implements ITileEn
     @Override
     public IBuildingView getBuildingView()
     {
-        final IColonyView c = IColonyManager.getInstance().getColonyView(colonyId, world.provider.getDimension());
+        final IColonyView c = IColonyManager.getInstance().getColonyView(colonyId, world.getDimension().getType().getId());
         return c == null ? null : c.getBuilding(getPosition());
     }
 
     @Override
-    public void readFromNBT(final CompoundNBT compound)
+    public void read(final CompoundNBT compound)
     {
-        super.readFromNBT(compound);
+        super.read(compound);
         if (compound.keySet().contains(TAG_COLONY))
         {
             colonyId = compound.getInt(TAG_COLONY);
@@ -325,9 +329,9 @@ public class TileEntityColonyBuilding extends TileEntityChest implements ITileEn
     }
 
     @Override
-    public void update()
+    public void tick()
     {
-        super.update();
+        super.tick();
 
         if (!getWorld().isRemote && colonyId == 0)
         {
@@ -408,18 +412,9 @@ public class TileEntityColonyBuilding extends TileEntityChest implements ITileEn
         this.style = style;
     }
 
+    @Nonnull
     @Override
-    public boolean hasCapability(@NotNull final Capability<?> capability, final Direction facing)
-    {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-        {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
-    public <T> T getCapability(@NotNull final Capability<T> capability, final Direction facing)
+    public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> capability)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getBuilding() != null)
         {
@@ -440,12 +435,12 @@ public class TileEntityColonyBuilding extends TileEntityChest implements ITileEn
                 final List<IItemHandler> handlers = providers.stream()
                                                       .flatMap(provider -> InventoryUtils.getItemHandlersFromProvider(provider).stream())
                                                       .collect(Collectors.toList());
-                final T cap = super.getCapability(capability, facing);
+                final T cap = super.getCapability(capability).orElseGet(null);
                 if (cap instanceof IItemHandler)
                 {
                     handlers.add((IItemHandler) cap);
                 }
-                
+
                 this.combinedInv = new CombinedItemHandler(building.getSchematicName(), handlers.stream()
                                                                                           .map(handler -> (IItemHandlerModifiable) handler)
                                                                                           .distinct()
@@ -454,8 +449,8 @@ public class TileEntityColonyBuilding extends TileEntityChest implements ITileEn
                                                                                           .toArray(IItemHandlerModifiable[]::new));
             }
 
-            return (T) this.combinedInv;
+            return LazyOptional.of(new NonNullSupplier<T>(this.combinedInv));
         }
-        return super.getCapability(capability, facing);
+        return super.getCapability(capability);
     }
 }
