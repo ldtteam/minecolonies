@@ -110,7 +110,7 @@ dependencies {
     testCompile group: 'org.powermock', name: 'powermock-api-mockito', version: '1.6.5'
     testCompile group: 'org.powermock', name: 'powermock-module-junit4-rule-agent', version: '1.6.5'
 
-    testCompile 'org.assertj:assertj-core:3.9.0'
+    testCompile 'org.assertj:assertj-core:3.13.1'
 
     testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
 
