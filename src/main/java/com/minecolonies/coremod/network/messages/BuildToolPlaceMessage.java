@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
@@ -8,7 +9,6 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
@@ -22,21 +22,23 @@ import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.LogicalSide;
 
+import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,10 +51,10 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PASTEABLE;
  *
  * @author Colton
  */
-public class BuildToolPlaceMessagev
+public class BuildToolPlaceMessage implements IMessage
 {
     /**
-     * Language key for missing hut message.
+     * Language key for missing hut 
      */
     private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.coremod.gui.buildtool.nohutininventory";
 
@@ -69,7 +71,7 @@ public class BuildToolPlaceMessagev
     private boolean  mirror;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public BuildToolPlaceMessage()
     {
@@ -125,7 +127,7 @@ public class BuildToolPlaceMessagev
 
         mirror = buf.readBoolean();
 
-        state = NBTUtil.readBlockState(ByteBufUtils.readTag(buf));
+        state = Block.getStateById(buf.readInt());
 
     }
 
@@ -150,25 +152,33 @@ public class BuildToolPlaceMessagev
 
         buf.writeBoolean(mirror);
 
-        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new CompoundNBT(), state));
+        buf.writeInt(Block.getStateId(state));
+    }
+
+    @Nullable
+    @Override
+    public LogicalSide getExecutionSide()
+    {
+        return LogicalSide.SERVER;
     }
 
     @Override
-    public void messageOnServerThread(final BuildToolPlaceMessage message, final ServerPlayerEntity player)
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final StructureName sn = new StructureName(message.structureName);
+        final PlayerEntity player = ctxIn.getSender();
+        final StructureName sn = new StructureName(structureName);
         if (!Structures.hasMD5(sn))
         {
-            player.sendMessage(new StringTextComponent("Can not build " + message.workOrderName + ": schematic missing!"));
+            player.sendMessage(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!"));
             return;
         }
-        if (message.isHut)
+        if (isHut)
         {
-            handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, message.rotation, message.pos, message.mirror, message.state);
+            handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, state);
         }
         else
         {
-            handleDecoration(CompatibilityUtils.getWorldFromEntity(player), player, sn, message.workOrderName, message.rotation, message.pos, message.mirror);
+            handleDecoration(CompatibilityUtils.getWorldFromEntity(player), player, sn, workOrderName, rotation, pos, mirror);
         }
     }
 
@@ -192,7 +202,8 @@ public class BuildToolPlaceMessagev
       final BlockState state)
     {
         final String hut = sn.getSection();
-        final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
+        final Block block =  ForgeRegistries.BLOCKS.getValue(new ResourceLocation(Constants.MOD_ID, "blockHut" + hut));
+
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (tempColony != null
               && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
@@ -207,7 +218,7 @@ public class BuildToolPlaceMessagev
             if (EventHandler.onBlockHutPlaced(world, player, block, buildPos))
             {
                 world.destroyBlock(buildPos, true);
-                world.setBlockState(buildPos, state.withRotation(BlockPosUtil.getRotationFromRotations(rotation)));
+                world.setBlockState(buildPos, state.rotate(BlockPosUtil.getRotationFromRotations(rotation)));
                 ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
 
                 boolean complete = false;
@@ -233,14 +244,14 @@ public class BuildToolPlaceMessagev
                             complete = true;
                         }
                     }
-                    player.inventory.clearMatchingItems(Item.getItemFromBlock(block), -1, 1, null);
+                    player.inventory.clearMatchingItems(itemStack -> itemStack.isItemEqual(new ItemStack(block, 1)),-1);
                 }
                 setupBuilding(world, player, sn, rotation, buildPos, mirror, level, complete);
             }
         }
         else
         {
-            LanguageHandler.sendPlayerMessage(player, BuildToolPlaceMessage.NO_HUT_IN_INVENTORY);
+            LanguageHandler.sendPlayerMessage(player, NO_HUT_IN_INVENTORY);
         }
     }
 

@@ -2,18 +2,19 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Message to change priorities of recipes.
@@ -41,7 +42,7 @@ public class ChangeRecipePriorityMessage implements IMessage
     private boolean up;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
@@ -100,10 +101,18 @@ public class ChangeRecipePriorityMessage implements IMessage
         buf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final ChangeRecipePriorityMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final PlayerEntity player = ctxIn.getSender();
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             //Verify player has permission to change this huts settings
@@ -111,17 +120,17 @@ public class ChangeRecipePriorityMessage implements IMessage
             {
                 return;
             }
-            final IBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
+            final IBuilding building = colony.getBuildingManager().getBuilding(buildingId);
 
             if(building instanceof AbstractBuildingWorker)
             {
-                if (message.up)
+                if (up)
                 {
-                    ((IBuildingWorker) building).switchIndex(message.recipeLocation, message.recipeLocation + 1);
+                    ((IBuildingWorker) building).switchIndex(recipeLocation, recipeLocation + 1);
                 }
                 else
                 {
-                    ((IBuildingWorker) building).switchIndex(message.recipeLocation, message.recipeLocation - 1);
+                    ((IBuildingWorker) building).switchIndex(recipeLocation, recipeLocation - 1);
                 }
             }
         }

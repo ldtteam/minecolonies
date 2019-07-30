@@ -2,11 +2,13 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Add or Update a ColonyView on the client.
@@ -17,7 +19,7 @@ public class ColonyViewRemoveCitizenMessage implements IMessage
     private int citizenId;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public ColonyViewRemoveCitizenMessage()
     {
@@ -50,9 +52,16 @@ public class ColonyViewRemoveCitizenMessage implements IMessage
         buf.writeInt(citizenId);
     }
 
+    @Nullable
     @Override
-    protected void messageOnClientThread(final ColonyViewRemoveCitizenMessage message, final MessageContext ctx)
+    public LogicalSide getExecutionSide()
     {
-        IColonyManager.getInstance().handleColonyViewRemoveCitizenMessage(message.colonyId, message.citizenId, Minecraft.getInstance().world.provider.getDimension());
+        return LogicalSide.CLIENT;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        IColonyManager.getInstance().handleColonyViewRemoveCitizenMessage(colonyId, citizenId, Minecraft.getInstance().world.getDimension().getType().getId());
     }
 }

@@ -2,19 +2,20 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.IColonyView;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Message to execute the renaiming of the townHall.
@@ -26,22 +27,25 @@ public class ChangeFreeToInteractBlockMessage implements IMessage
      * The id of the colony.
      */
     private int colonyId;
+
     /**
      * The position of the free to interact block.
      */
-    private BlockPos pos   = new BlockPos(0, 0, 0);
+    private BlockPos pos = new BlockPos(0, 0, 0);
+
     /**
      * The blockState which can be freely interacted with.
      */
-    private Block    block = Blocks.DIRT;
+    private BlockState block = Blocks.DIRT.getDefaultState();
+
     /**
-     * The type of the message.
+     * The type of the 
      */
     private MessageType type;
     private MessageMode mode;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
@@ -58,14 +62,14 @@ public class ChangeFreeToInteractBlockMessage implements IMessage
      *
      * @param colony Colony the block can be interacted with in.
      * @param block  the blockState.
-     * @param type   the type of message.
+     * @param type   the type of 
      */
     public ChangeFreeToInteractBlockMessage(@NotNull final IColonyView colony, @NotNull final Block block, @NotNull final MessageType type)
     {
         super();
         this.colonyId = colony.getID();
         this.pos = new BlockPos(0, 0, 0);
-        this.block = block;
+        this.block = block.getDefaultState();
         this.type = type;
         this.mode = MessageMode.BLOCK;
         this.dimension = colony.getDimension();
@@ -76,14 +80,14 @@ public class ChangeFreeToInteractBlockMessage implements IMessage
      *
      * @param colony Colony the position can be interacted with in.
      * @param pos    the position.
-     * @param type   the type of message.
+     * @param type   the type of 
      */
     public ChangeFreeToInteractBlockMessage(@NotNull final IColonyView colony, @NotNull final BlockPos pos, @NotNull final MessageType type)
     {
         super();
         this.colonyId = colony.getID();
         this.pos = pos;
-        this.block = Blocks.DIRT;
+        this.block = Blocks.DIRT.getDefaultState();
         this.type = type;
         this.mode = MessageMode.LOCATION;
     }
@@ -92,7 +96,7 @@ public class ChangeFreeToInteractBlockMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
-        block = Block.getBlockFromName(buf.readString());
+        block = Block.getStateById(buf.readInt());
         pos = buf.readBlockPos();
         type = MessageType.values()[buf.readInt()];
         mode = MessageMode.values()[buf.readInt()];
@@ -103,19 +107,27 @@ public class ChangeFreeToInteractBlockMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
-        buf.writeString(block.getRegistryName().toString());
+        buf.writeInt(Block.getStateId(block));
         buf.writeBlockPos(pos);
         buf.writeInt(type.ordinal());
         buf.writeInt(mode.ordinal());
         buf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final ChangeFreeToInteractBlockMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
+            final PlayerEntity player = ctxIn.getSender();
             //Verify player has permission to change this huts settings
             if (!colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
             {
@@ -126,26 +138,26 @@ public class ChangeFreeToInteractBlockMessage implements IMessage
                 return;
             }
 
-            if (message.type == MessageType.ADD_BLOCK)
+            if (type == MessageType.ADD_BLOCK)
             {
-                switch (message.mode)
+                switch (mode)
                 {
                     case LOCATION:
-                        colony.addFreePosition(message.pos);
+                        colony.addFreePosition(pos);
                         LanguageHandler.sendPlayerMessage(
                           player,
                           "com.minecolonies.coremod.item.permissionscepter.addposition.success",
-                          message.pos.getX(),
-                          message.pos.getY(),
-                          message.pos.getZ()
+                          pos.getX(),
+                          pos.getY(),
+                          pos.getZ()
                         );
                         break;
                     case BLOCK:
-                        colony.addFreeBlock(message.block);
+                        colony.addFreeBlock(block.getBlock());
                         LanguageHandler.sendPlayerMessage(
                           player,
                           "com.minecolonies.coremod.item.permissionscepter.addblock.success",
-                          message.block.getRegistryName()
+                          block.getBlock().getRegistryName()
                         );
                         break;
                     default:
@@ -154,23 +166,23 @@ public class ChangeFreeToInteractBlockMessage implements IMessage
             }
             else
             {
-                switch (message.mode)
+                switch (mode)
                 {
                     case LOCATION:
-                        colony.removeFreePosition(message.pos);
+                        colony.removeFreePosition(pos);
                         LanguageHandler.sendPlayerMessage(
                           player,
                           "com.minecolonies.coremod.item.permissionscepter.removelocation.success",
-                          message.pos.getX(),
-                          message.pos.getY(),
-                          message.pos.getZ());
+                          pos.getX(),
+                          pos.getY(),
+                          pos.getZ());
                         break;
                     case BLOCK:
-                        colony.removeFreeBlock(message.block);
+                        colony.removeFreeBlock(block.getBlock());
                         LanguageHandler.sendPlayerMessage(
                           player,
                           "com.minecolonies.coremod.item.permissionscepter.removeblock.success",
-                          message.block.getRegistryName()
+                          block.getBlock().getRegistryName()
                         );
                         break;
                     default:
@@ -181,7 +193,7 @@ public class ChangeFreeToInteractBlockMessage implements IMessage
     }
 
     /**
-     * Enums for Message Type for the freeBlock message.
+     * Enums for Message Type for the freeBlock 
      * <p>
      * ADD_BLOCK       Add a block or pos.
      * REMOVE_BLOCK    Removing a block or pos.

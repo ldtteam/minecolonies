@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
@@ -23,24 +23,24 @@ import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockChest;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.ChestBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.stats.StatList;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,13 +72,7 @@ public class BuildToolPasteMessage implements IMessage
     private WindowBuildTool.FreeMode freeMode;
 
     /**
-     * Our guide Book.
-     */
-    @GameRegistry.ItemStackHolder(value = "gbook:guidebook", nbt = "{Book:\"minecolonies:book/minecolonies.xml\"}")
-    public static ItemStack guideBook;
-
-    /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public BuildToolPasteMessage()
     {
@@ -95,7 +89,7 @@ public class BuildToolPasteMessage implements IMessage
      * @param isHut         true if hut, false if decoration
      * @param mirror        the mirror of the building or decoration.
      * @param complete      paste it complete (with structure blocks) or without.
-     * @param state
+     * @param state the state.
      */
     public BuildToolPasteMessage(
       final String structureName,
@@ -143,7 +137,7 @@ public class BuildToolPasteMessage implements IMessage
             freeMode = WindowBuildTool.FreeMode.values()[modeId];
         }
 
-        state = NBTUtil.readBlockState(ByteBufUtils.readTag(buf));
+        state = Block.getStateById(buf.readInt());
     }
 
     /**
@@ -178,32 +172,40 @@ public class BuildToolPasteMessage implements IMessage
             buf.writeInt(freeMode.ordinal());
         }
 
-        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new CompoundNBT(), state));
+        buf.writeInt(Block.getStateId(state));
+    }
+
+    @Nullable
+    @Override
+    public LogicalSide getExecutionSide()
+    {
+        return LogicalSide.SERVER;
     }
 
     @Override
-    public void messageOnServerThread(final BuildToolPasteMessage message, final ServerPlayerEntity player)
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final StructureName sn = new StructureName(message.structureName);
+        final StructureName sn = new StructureName(structureName);
+        final ServerPlayerEntity player = ctxIn.getSender();
         if (!Structures.hasMD5(sn))
         {
-            player.sendMessage(new StringTextComponent("Can not build " + message.workOrderName + ": schematic missing!"));
+            player.sendMessage(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!"));
             return;
         }
 
-        if (player.capabilities.isCreativeMode)
+        if (player.isCreative())
         {
-            if (message.isHut)
+            if (isHut)
             {
-                handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, message.rotation, message.pos, message.mirror, message.state);
+                handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, state);
             }
 
-            InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, message.structureName,
-              message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
+            InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, structureName,
+              pos, rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete);
 
-            if (message.isHut)
+            if (isHut)
             {
-                @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(CompatibilityUtils.getWorldFromEntity(player), message.pos);
+                @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(CompatibilityUtils.getWorldFromEntity(player), pos);
                 if (building != null)
                 {
                     building.onUpgradeComplete(building.getBuildingLevel());
@@ -212,21 +214,21 @@ public class BuildToolPasteMessage implements IMessage
                 }
             }
         }
-        else if(message.freeMode !=  null )
+        else if(freeMode !=  null )
         {
-            if(player.getStatFile().readStat(StatList.getObjectUseStats(ModItems.supplyChest)) > 0 && !Configurations.gameplay.allowInfiniteSupplyChests)
+            if(player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getCommon().allowInfiniteSupplyChests.get())
             {
                 LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.error.supplyChestAlreadyPlaced");
                 return;
             }
             final List<ItemStack> stacks = new ArrayList<>();
             final int chestHeight;
-            if(message.freeMode == WindowBuildTool.FreeMode.SUPPLYSHIP)
+            if(freeMode == WindowBuildTool.FreeMode.SUPPLYSHIP)
             {
                 stacks.add(new ItemStack(ModItems.supplyChest));
                 chestHeight = SUPPLY_SHIP_CHEST_HEIGHT;
             }
-            else if(message.freeMode == WindowBuildTool.FreeMode.SUPPLYCAMP)
+            else if(freeMode == WindowBuildTool.FreeMode.SUPPLYCAMP)
             {
                 stacks.add(new ItemStack(ModItems.supplyCamp));
                 chestHeight = 1;
@@ -237,12 +239,12 @@ public class BuildToolPasteMessage implements IMessage
             }
 
             LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.progress.supplies_placed");
-            player.addStat(StatList.getObjectUseStats(ModItems.supplyChest));
+            player.addStat(Stats.ITEM_USED.get(ModItems.supplyChest), 1);
             if(InventoryUtils.removeStacksFromItemHandler(new InvWrapper(player.inventory), stacks))
             {
-                InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, message.structureName,
-                  message.pos, message.rotation, message.mirror ? Mirror.FRONT_BACK : Mirror.NONE, message.complete);
-                player.getServerWorld().setBlockState(message.pos.up(chestHeight), Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, player.getHorizontalFacing()));
+                InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, structureName,
+                  pos, rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete);
+                player.getEntityWorld().setBlockState(pos.up(chestHeight), Blocks.CHEST.getDefaultState().with(ChestBlock.FACING, player.getHorizontalFacing()));
             }
             else
             {
@@ -276,11 +278,12 @@ public class BuildToolPasteMessage implements IMessage
         }
 
         final String hut = sn.getSection();
-        final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
+
+        final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(Constants.MOD_ID, "blockHut" + hut));
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {
             world.destroyBlock(buildPos, true);
-            world.setBlockState(buildPos, state.withRotation(BlockPosUtil.getRotationFromRotations(rotation)));
+            world.setBlockState(buildPos, state.rotate(BlockPosUtil.getRotationFromRotations(rotation)));
             ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
             setupBuilding(world, player, sn, rotation, buildPos, mirror);
         }

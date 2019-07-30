@@ -3,17 +3,16 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.fml.LogicalSide;
 
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,7 +47,7 @@ public class CrusherSetModeMessage implements IMessage
     private ItemStack crusherMode;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public CrusherSetModeMessage()
     {
@@ -92,12 +91,20 @@ public class CrusherSetModeMessage implements IMessage
         buf.writeItemStack(crusherMode);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final CrusherSetModeMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
+            final PlayerEntity player = ctxIn.getSender();
 
             //Verify player has permission to change this huts settings
             if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
@@ -105,16 +112,16 @@ public class CrusherSetModeMessage implements IMessage
                 return;
             }
 
-            @Nullable final BuildingCrusher building = colony.getBuildingManager().getBuilding(message.buildingId, BuildingCrusher.class);
+            @Nullable final BuildingCrusher building = colony.getBuildingManager().getBuilding(buildingId, BuildingCrusher.class);
             if (building != null)
             {
-                int qty = message.quantity;
+                int qty = quantity;
                 if (qty > building.getMaxDailyQuantity())
                 {
                     qty = building.getMaxDailyQuantity();
-                    player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.crusher.toomuch", qty));
+                    player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.crusher.toomuch", qty));
                 }
-                building.setCrusherMode(new ItemStorage(message.crusherMode), qty);
+                building.setCrusherMode(new ItemStorage(crusherMode), qty);
             }
         }
     }

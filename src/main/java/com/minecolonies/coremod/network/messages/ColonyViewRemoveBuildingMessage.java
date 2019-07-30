@@ -1,14 +1,15 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Add or Update a ColonyView on the client.
@@ -19,7 +20,7 @@ public class ColonyViewRemoveBuildingMessage implements IMessage
     private BlockPos buildingId;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public ColonyViewRemoveBuildingMessage()
     {
@@ -27,7 +28,7 @@ public class ColonyViewRemoveBuildingMessage implements IMessage
     }
 
     /**
-     * Creates an object for the building remove message.
+     * Creates an object for the building remove 
      *
      * @param colony   Colony the building is in.
      * @param building AbstractBuilding that is removed.
@@ -52,9 +53,16 @@ public class ColonyViewRemoveBuildingMessage implements IMessage
         buf.writeBlockPos(buildingId);
     }
 
+    @Nullable
     @Override
-    protected void messageOnClientThread(final ColonyViewRemoveBuildingMessage message, final MessageContext ctx)
+    public LogicalSide getExecutionSide()
     {
-        IColonyManager.getInstance().handleColonyViewRemoveBuildingMessage(message.colonyId, message.buildingId, Minecraft.getInstance().world.provider.getDimension());
+        return LogicalSide.CLIENT;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        IColonyManager.getInstance().handleColonyViewRemoveBuildingMessage(colonyId, buildingId, Minecraft.getInstance().world.getDimension().getType().getId());
     }
 }

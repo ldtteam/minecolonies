@@ -2,11 +2,13 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Add or Update a ColonyView on the client.
@@ -18,7 +20,7 @@ public class ColonyViewRemoveWorkOrderMessage implements IMessage
     private int workOrderId;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public ColonyViewRemoveWorkOrderMessage()
     {
@@ -51,9 +53,16 @@ public class ColonyViewRemoveWorkOrderMessage implements IMessage
         buf.writeInt(workOrderId);
     }
 
+    @Nullable
     @Override
-    protected void messageOnClientThread(final ColonyViewRemoveWorkOrderMessage message, final MessageContext ctx)
+    public LogicalSide getExecutionSide()
     {
-        IColonyManager.getInstance().handleColonyViewRemoveWorkOrderMessage(message.colonyId, message.workOrderId, Minecraft.getInstance().world.provider.getDimension());
+        return LogicalSide.CLIENT;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        IColonyManager.getInstance().handleColonyViewRemoveWorkOrderMessage(colonyId, workOrderId, Minecraft.getInstance().world.getDimension().getType().getId());
     }
 }
