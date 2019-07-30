@@ -163,7 +163,7 @@ public class HappinessData
      * {@inheritDoc}
      * @param byteBuf
      */
-    public void fromBytes(final ByteBuf byteBuf)
+    public void fromBytes(final PacketBuffer byteBuf)
     {
         this.guards = byteBuf.readInt();
         this.housing = byteBuf.readInt();
@@ -188,7 +188,7 @@ public class HappinessData
      * {@inheritDoc}
      * @param byteBuf
      */
-    public void toBytes(final ByteBuf byteBuf)
+    public void toBytes(final PacketBuffer byteBuf)
     {
         byteBuf.writeInt(guards);
         byteBuf.writeInt(housing);

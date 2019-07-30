@@ -3,15 +3,14 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.sun.org.apache.bcel.internal.generic.ICONST;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
 public class GuardRecalculateMessage implements IMessage
@@ -53,7 +52,7 @@ public class GuardRecalculateMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(final ByteBuf byteBuf)
+    public void fromBytes(final PacketBuffer byteBuf)
     {
         this.colonyId = byteBuf.readInt();
         this.buildingId = BlockPosUtil.readFromByteBuf(byteBuf);
@@ -61,17 +60,24 @@ public class GuardRecalculateMessage implements IMessage
     }
 
     @Override
-    public void toBytes(final ByteBuf byteBuf)
+    public void toBytes(final PacketBuffer byteBuf)
     {
         byteBuf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(byteBuf, buildingId);
         byteBuf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final GuardRecalculateMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
@@ -80,7 +86,7 @@ public class GuardRecalculateMessage implements IMessage
                 return;
             }
 
-            @Nullable final AbstractBuildingGuards building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingGuards.class);
+            @Nullable final AbstractBuildingGuards building = colony.getBuildingManager().getBuilding(buildingId, AbstractBuildingGuards.class);
             if (building != null)
             {
                 building.setMobsToAttack(building.calculateMobs());

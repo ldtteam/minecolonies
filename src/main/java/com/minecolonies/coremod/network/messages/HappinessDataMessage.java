@@ -48,7 +48,7 @@ public class HappinessDataMessage implements IMessage
      * {@inheritDoc}
      */
     @Override
-    public void fromBytes(final ByteBuf byteBuf)
+    public void fromBytes(final PacketBuffer byteBuf)
     {
         colonyId = byteBuf.readInt();
         if (happinessData == null)
@@ -62,7 +62,7 @@ public class HappinessDataMessage implements IMessage
      * {@inheritDoc}
      */
     @Override
-    public void toBytes(final ByteBuf byteBuf)
+    public void toBytes(final PacketBuffer byteBuf)
     {
         byteBuf.writeInt(colonyId);
         happinessData.toBytes(byteBuf);
