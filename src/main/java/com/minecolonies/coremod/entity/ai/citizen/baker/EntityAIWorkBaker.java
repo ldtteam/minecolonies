@@ -6,7 +6,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
@@ -156,7 +156,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         worker.setHeldItem(EnumHand.MAIN_HAND, currentBakingProduct.getEndProduct());
 
         final ItemStack newItem = currentBakingProduct.getEndProduct();
-        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getLocation());
+        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
 
         if (progress >= getRequiredProgressForKneading())
         {
@@ -265,7 +265,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 	        }
 
 	        worker.setHeldItem(EnumHand.MAIN_HAND, storage.getInput().get(worker.getRandom().nextInt(storage.getInput().size())).copy());
-	        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getLocation());
+	        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
 
 	        if (progress >= getRequiredProgressForKneading())
 	        {
@@ -521,7 +521,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
      * @return citizen object.
      */
     @Nullable
-    public EntityCitizen getCitizen()
+    public IEntityCitizen getCitizen()
     {
         return worker;
     }

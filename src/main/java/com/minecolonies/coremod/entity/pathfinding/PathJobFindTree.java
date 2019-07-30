@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.colony.Colony;
@@ -37,7 +38,7 @@ public class PathJobFindTree extends AbstractPathJob
     /**
      * The Colony the tree is in.
      */
-    private final Colony colony;
+    private final IColony colony;
 
     /**
      * AbstractPathJob constructor.
@@ -55,24 +56,13 @@ public class PathJobFindTree extends AbstractPathJob
                             final BlockPos home,
                             final int range,
                             final List<ItemStorage> treesToCut,
-                            final Colony colony,
+                            final IColony colony,
                             final EntityLivingBase entity)
     {
         super(world, start, start, range, new TreePathResult(), entity);
         this.treesToNotCut = treesToCut;
         this.hutLocation = home;
         this.colony = colony;
-    }
-
-    /**
-     * Custom result of the class which contains the position of the tree.
-     */
-    public static class TreePathResult extends PathResult
-    {
-        /**
-         * Position of the found tree.
-         */
-        public BlockPos treeLocation;
     }
 
     @NotNull

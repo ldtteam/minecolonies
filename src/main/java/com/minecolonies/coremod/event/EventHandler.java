@@ -16,10 +16,7 @@ import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.blocks.huts.BlockHutField;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -106,15 +103,15 @@ public class EventHandler
             {
                 final WorldClient world = mc.world;
                 final EntityPlayerSP player = mc.player;
-                IColony colony = ColonyManager.getIColony(world, player.getPosition());
+                IColony colony = IColonyManager.getInstance().getIColony(world, player.getPosition());
                 if (colony == null)
                 {
-                    if (!ColonyManager.isTooCloseToColony(world, player.getPosition()))
+                    if (!IColonyManager.getInstance().isTooCloseToColony(world, player.getPosition()))
                     {
                         event.getLeft().add(LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.noCloseColony"));
                         return;
                     }
-                    colony = ColonyManager.getClosestIColony(world, player.getPosition());
+                    colony = IColonyManager.getInstance().getClosestIColony(world, player.getPosition());
 
                     if (colony == null)
                     {
@@ -122,7 +119,7 @@ public class EventHandler
                     }
 
                     event.getLeft().add(LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.nextColony",
-                      (int) Math.sqrt(colony.getDistanceSquared(player.getPosition())), ColonyManager.getMinimumDistanceBetweenTownHalls()));
+                      (int) Math.sqrt(colony.getDistanceSquared(player.getPosition())), IColonyManager.getInstance().getMinimumDistanceBetweenTownHalls()));
                     return;
                 }
 
@@ -197,7 +194,7 @@ public class EventHandler
             // Add new subscribers to colony.
             for (final int colonyId : newCloseColonies.getAllCloseColonies())
             {
-                final Colony colony = ColonyManager.getColonyByWorld(colonyId, ((EntityPlayerMP) entity).getServerWorld());
+                final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, ((EntityPlayerMP) entity).getServerWorld());
                 if (colony != null)
                 {
                     colony.getPackageManager().addSubscribers(player);
@@ -209,7 +206,7 @@ public class EventHandler
             {
                 if (!newCloseColonies.getAllCloseColonies().contains(colonyId))
                 {
-                    final Colony colony = ColonyManager.getColonyByWorld(colonyId, ((EntityPlayerMP) entity).getServerWorld());
+                    final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, ((EntityPlayerMP) entity).getServerWorld());
                     if (colony != null)
                     {
                         colony.getPackageManager().removeSubscriber(player);
@@ -221,7 +218,7 @@ public class EventHandler
             {
                 if (newCloseColonies.getOwningColony() == 0)
                 {
-                    final Colony colony = ColonyManager.getColonyByWorld(oldCloseColonies.getOwningColony(), ((EntityPlayerMP) entity).getServerWorld());
+                    final IColony colony = IColonyManager.getInstance().getColonyByWorld(oldCloseColonies.getOwningColony(), ((EntityPlayerMP) entity).getServerWorld());
                     if (colony != null)
                     {
                         colony.removeVisitingPlayer(player);
@@ -229,7 +226,7 @@ public class EventHandler
                     return;
                 }
 
-                final Colony colony = ColonyManager.getColonyByWorld(newCloseColonies.getOwningColony(), ((EntityPlayerMP) entity).getServerWorld());
+                final IColony colony = IColonyManager.getInstance().getColonyByWorld(newCloseColonies.getOwningColony(), ((EntityPlayerMP) entity).getServerWorld());
                 if (colony != null)
                 {
                     colony.addVisitingPlayer(player);
@@ -278,7 +275,7 @@ public class EventHandler
                 if (chunkCapability != null && chunkCapability.getOwningColony() != 0
                       && entityCitizen.getCitizenColonyHandler().getColonyId() != chunkCapability.getOwningColony())
                 {
-                    final Colony colony = ColonyManager.getColonyByWorld(chunkCapability.getOwningColony(), entityCitizen.world);
+                    final IColony colony = IColonyManager.getInstance().getColonyByWorld(chunkCapability.getOwningColony(), entityCitizen.world);
                     if (colony != null)
                     {
                         colony.addGuardToAttackers(entityCitizen, ((AbstractBuildingGuards) entityCitizen.getCitizenColonyHandler().getWorkBuilding()).getFollowPlayer());
@@ -335,7 +332,7 @@ public class EventHandler
             // and uses that return value, but I didn't want to call it twice
             if (playerRightClickInteract(player, world, event.getPos()) && world.getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut)
             {
-                final IColony colony = ColonyManager.getIColony(world, event.getPos());
+                final IColony colony = IColonyManager.getInstance().getIColony(world, event.getPos());
                 if (colony != null
                       && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
                 {
@@ -358,18 +355,18 @@ public class EventHandler
             if (world.getBlockState(event.getPos()).getBlock().isBed(world.getBlockState(event.getPos()), world, event.getPos(), player))
             {
 
-                final Colony colony = ColonyManager.getColonyByPosFromWorld(world, bedBlockPos);
+                final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, bedBlockPos);
                 //Checks to see if player tries to sleep in a bed belonging to a Citizen, ancels the event, and Notifies Player that bed is occuppied
                 if (colony != null && world.getBlockState(event.getPos()).getPropertyKeys().contains(BlockBed.PART))
                 {
-                    final List<CitizenData> citizenList = colony.getCitizenManager().getCitizens();
+                    final List<ICitizenData> citizenList = colony.getCitizenManager().getCitizens();
                     if (world.getBlockState(event.getPos()).getBlock().isBedFoot(world, event.getPos()))
                     {
                         bedBlockPos = bedBlockPos.offset(world.getBlockState(event.getPos()).getValue(BlockBed.FACING));
                     }
                     //Searches through the nearest Colony's Citizen and sees if the bed belongs to a Citizen, and if the Citizen is asleep
 
-                    for (final CitizenData citizen : citizenList)
+                    for (final ICitizenData citizen : citizenList)
                     {
                         if (citizen.getBedPos().equals(bedBlockPos) && citizen.isAsleep())
                         {
@@ -390,7 +387,7 @@ public class EventHandler
             {
                 if (event.getUseBlock() == Event.Result.DEFAULT && event.getFace() != null)
                 {
-                    final ColonyView view = ColonyManager.getClosestColonyView(event.getWorld(), event.getPos().offset(event.getFace()));
+                    final IColonyView view = IColonyManager.getInstance().getClosestColonyView(event.getWorld(), event.getPos().offset(event.getFace()));
                     if (view != null && Settings.instance.getStyle().isEmpty())
                     {
                         Settings.instance.setStyle(view.getStyle());
@@ -409,7 +406,7 @@ public class EventHandler
         final World world = event.getWorld();
         if (event.getPlacedBlock().getBlock() instanceof AbstractBlockHut && event.getPlacedBlock().getBlock() != ModBlocks.blockPostBox)
         {
-            final IColony colony = ColonyManager.getIColony(world, event.getPos());
+            final IColony colony = IColonyManager.getInstance().getIColony(world, event.getPos());
             if (colony != null && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
             {
                 event.setCanceled(true);
@@ -434,7 +431,7 @@ public class EventHandler
     {
         if (event.getHand() == EnumHand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote)
         {
-            final ColonyView view = ColonyManager.getClosestColonyView(event.getWorld(), event.getPos());
+            final IColonyView view = IColonyManager.getInstance().getClosestColonyView(event.getWorld(), event.getPos());
             if (view != null && Settings.instance.getStyle().isEmpty())
             {
                 Settings.instance.setStyle(view.getStyle());
@@ -514,7 +511,7 @@ public class EventHandler
 
     protected static boolean onTownHallPlaced(@NotNull final World world, @NotNull final EntityPlayer player, final BlockPos pos)
     {
-        IColony colony = ColonyManager.getIColonyByOwner(world, player);
+        IColony colony = IColonyManager.getInstance().getIColonyByOwner(world, player);
         if (colony != null)
         {
             return canOwnerPlaceTownHallHere(world, player, colony, pos);
@@ -541,7 +538,7 @@ public class EventHandler
             }
         }
 
-        colony = ColonyManager.getClosestIColony(world, pos);
+        colony = IColonyManager.getInstance().getClosestIColony(world, pos);
         if (colony == null)
         {
             return true;
@@ -555,7 +552,7 @@ public class EventHandler
     {
         if (onBlockHutPlaced(world, player, pos))
         {
-            final IColony colony = ColonyManager.getClosestIColony(world, pos);
+            final IColony colony = IColonyManager.getInstance().getClosestIColony(world, pos);
             if (colony != null && (!Configurations.gameplay.limitToOneWareHousePerColony || !colony.hasWarehouse()))
             {
                 return true;
@@ -567,12 +564,12 @@ public class EventHandler
 
     private static boolean onBlockHutPlaced(final World world, @NotNull final EntityPlayer player, final BlockPos pos)
     {
-        final IColony colony = ColonyManager.getIColony(world, pos);
+        final IColony colony = IColonyManager.getInstance().getIColony(world, pos);
 
         if (colony == null)
         {
             //  Not in a colony
-            if (ColonyManager.getIColonyByOwner(world, player) == null)
+            if (IColonyManager.getInstance().getIColonyByOwner(world, player) == null)
             {
                 LanguageHandler.sendPlayerMessage(player, "tile.blockHut.messageNoTownHall");
             }
@@ -596,7 +593,7 @@ public class EventHandler
 
     private static boolean canOwnerPlaceTownHallHere(final World world, @NotNull final EntityPlayer player, @NotNull final IColony colony, final BlockPos pos)
     {
-        final IColony currentColony = ColonyManager.getIColony(world, pos);
+        final IColony currentColony = IColonyManager.getInstance().getIColony(world, pos);
         if (currentColony != null && currentColony != colony)
         {
             if (!world.isRemote)
@@ -678,7 +675,7 @@ public class EventHandler
             return true;
         }
 
-        if (ColonyManager.isTooCloseToColony(world, pos))
+        if (IColonyManager.getInstance().isTooCloseToColony(world, pos))
         {
             Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
                                    + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
@@ -759,7 +756,7 @@ public class EventHandler
     @SubscribeEvent
     public void onWorldLoad(@NotNull final WorldEvent.Load event)
     {
-        ColonyManager.onWorldLoad(event.getWorld());
+        IColonyManager.getInstance().onWorldLoad(event.getWorld());
     }
 
     /**
@@ -771,6 +768,6 @@ public class EventHandler
     @SubscribeEvent
     public void onWorldUnload(@NotNull final WorldEvent.Unload event)
     {
-        ColonyManager.onWorldUnload(event.getWorld());
+        IColonyManager.getInstance().onWorldUnload(event.getWorld());
     }
 }

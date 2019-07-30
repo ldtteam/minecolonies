@@ -4,11 +4,12 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.colony.jobs.IJob;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
@@ -23,18 +24,17 @@ import java.util.Random;
  * Skeleton class for worker ai.
  * Here general target execution will be handled.
  * No utility on this level!
- * That's what {@link AbstractEntityAIInteract} is for.
  *
  * @param <J> the job this ai will have.
  */
-public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAIBase
+public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
 {
 
     private static final int            MUTEX_MASK = 3;
     @NotNull
     protected final      J              job;
     @NotNull
-    protected final      EntityCitizen  worker;
+    protected final      IEntityCitizen worker;
     protected final      World          world;
     @NotNull
     protected final      ChatSpamFilter chatSpamFilter;
@@ -43,7 +43,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      * The statemachine this AI uses
      */
     @NotNull
-    private final TickRateStateMachine stateMachine;
+    private final ITickRateStateMachine stateMachine;
 
     /**
      * Counter for updateTask ticks received
@@ -67,7 +67,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         setMutexBits(MUTEX_MASK);
         this.job = job;
         this.worker = this.job.getCitizen().getCitizenEntity().get();
-        this.world = CompatibilityUtils.getWorld(this.worker);
+        this.world = CompatibilityUtils.getWorldFromCitizen(this.worker);
         this.chatSpamFilter = new ChatSpamFilter(job.getCitizen());
         stateMachine = new TickRateStateMachine(AIWorkerState.INIT, this::onException);
 

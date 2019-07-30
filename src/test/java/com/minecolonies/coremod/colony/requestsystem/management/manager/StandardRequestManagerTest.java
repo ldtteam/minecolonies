@@ -142,7 +142,7 @@ public class StandardRequestManagerTest
         assertNotNull(request);
         assertEquals(requestable, request.getRequest());
 
-        requestManager.updateRequestState(request.getToken(), RequestState.RECEIVED);
+        requestManager.updateRequestState(request.getId(), RequestState.RECEIVED);
 
         requestManager.onProviderRemovedFromColony(provider);
     }
@@ -202,7 +202,7 @@ public class StandardRequestManagerTest
 
         @SuppressWarnings(RAWTYPES)
         @Override
-        public IToken getToken()
+        public IToken getId()
         {
             return token;
         }
@@ -402,7 +402,7 @@ public class StandardRequestManagerTest
         public void resolve(final IRequestManager manager, final IRequest<? extends StringRequestable> request) throws RuntimeException
         {
             System.out.println(request.getRequest().content);
-            manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
+            manager.updateRequestState(request.getId(), RequestState.COMPLETED);
         }
 
         @SuppressWarnings(RAWTYPES)
@@ -437,28 +437,30 @@ public class StandardRequestManagerTest
 
         @SuppressWarnings(RAWTYPES)
         @Override
-        public IToken getRequesterId()
+        public IToken getId()
         {
             return token;
         }
 
         @NotNull
         @Override
-        public ILocation getRequesterLocation()
+        public ILocation getLocation()
         {
-            return TestRequester.INSTANCE.getRequesterLocation();
+            return TestRequester.INSTANCE.getLocation();
         }
 
+        @NotNull
         @Override
-        public void onRequestComplete(@NotNull final IRequestManager manager,@NotNull final IToken<?> token)
+        public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
         {
-            //NOOP
+
         }
 
+        @NotNull
         @Override
-        public void onRequestCancelled(@NotNull final IRequestManager manager,@NotNull final IToken<?> token)
+        public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
         {
-            //NOOP
+
         }
 
         @NotNull
@@ -528,28 +530,30 @@ public class StandardRequestManagerTest
 
         @SuppressWarnings(RAWTYPES)
         @Override
-        public IToken getRequesterId()
+        public IToken getId()
         {
             return token;
         }
 
         @NotNull
         @Override
-        public ILocation getRequesterLocation()
+        public ILocation getLocation()
         {
             return null;
         }
 
+        @NotNull
         @Override
         public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
         {
-            return;
+
         }
 
+        @NotNull
         @Override
         public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
         {
-            return;
+
         }
 
         @NotNull

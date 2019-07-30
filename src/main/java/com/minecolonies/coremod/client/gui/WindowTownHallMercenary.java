@@ -9,6 +9,7 @@ import com.minecolonies.blockout.controls.Text;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.network.messages.HireMercenaryMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.SoundEvents;
@@ -29,14 +30,14 @@ public class WindowTownHallMercenary extends Window implements ButtonHandler
     /**
      * The client side colony data
      */
-    private final ColonyView colony;
+    private final IColonyView colony;
 
     /**
      * Constructor for a town hall rename entry window.
      *
      * @param c {@link ColonyView}
      */
-    public WindowTownHallMercenary(final ColonyView c)
+    public WindowTownHallMercenary(final IColonyView c)
     {
         super(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX);
         this.colony = c;

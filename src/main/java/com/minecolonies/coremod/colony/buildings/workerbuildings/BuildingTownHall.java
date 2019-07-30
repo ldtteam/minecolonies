@@ -5,11 +5,12 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowTownHall;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.permissions.PermissionEvent;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +23,7 @@ import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT
 /**
  * Class used to manage the townHall building block.
  */
-public class BuildingTownHall extends AbstractBuilding
+public class BuildingTownHall extends AbstractBuilding implements ITownHall
 {
     /**
      * Description of the block used to set this block.
@@ -83,6 +84,7 @@ public class BuildingTownHall extends AbstractBuilding
      * Reduce the list by one if bigger than a treshhold.
      * @param event the event to add.
      */
+    @Override
     public void addPermissionEvent(final PermissionEvent event)
     {
         if(getBuildingLevel() >= 1 && !permissionEvents.contains(event))
@@ -127,7 +129,7 @@ public class BuildingTownHall extends AbstractBuilding
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingView
+    public static class View extends AbstractBuildingView implements ITownHallView
     {
         /**
          * List of permission events of the colony.
@@ -140,7 +142,7 @@ public class BuildingTownHall extends AbstractBuilding
          * @param c the colonyView.
          * @param l the location of the block.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }
@@ -168,6 +170,7 @@ public class BuildingTownHall extends AbstractBuilding
          * Get a list of permission events.
          * @return a copy of the list of events.
          */
+        @Override
         public List<PermissionEvent> getPermissionEvents()
         {
             return new LinkedList<>(permissionEvents);

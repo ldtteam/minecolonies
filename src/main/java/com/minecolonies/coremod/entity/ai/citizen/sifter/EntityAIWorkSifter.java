@@ -5,7 +5,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;
 import com.minecolonies.coremod.colony.jobs.JobSifter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
@@ -14,6 +14,7 @@ import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.network.messages.LocalizedParticleEffectMessage;
 import com.minecolonies.coremod.util.SoundUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -135,7 +136,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
         {
             return getState();
         }
-        WorkerUtil.faceBlock(getOwnBuilding().getLocation(), worker);
+        WorkerUtil.faceBlock(getOwnBuilding().getPosition(), worker);
 
         setDelay(TICK_DELAY);
         progress++;
@@ -166,7 +167,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
                 }
 
                 final ItemStack result =
-                  ColonyManager.getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getFirst(), sifterBuilding.getSievableBlock());
+                  IColonyManager.getInstance().getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getFirst(), sifterBuilding.getSievableBlock());
                 if (!result.isEmpty())
                 {
                     InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), result);
@@ -192,9 +193,9 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
         if (check == SIFT)
         {
             MineColonies.getNetwork()
-              .sendToAllTracking(new LocalizedParticleEffectMessage(sifterBuilding.getMesh().getFirst().getItemStack().copy(), sifterBuilding.getID()), worker);
+              .sendToAllTracking(new LocalizedParticleEffectMessage(sifterBuilding.getMesh().getFirst().getItemStack().copy(), sifterBuilding.getID()), (Entity) worker);
             MineColonies.getNetwork()
-              .sendToAllTracking(new LocalizedParticleEffectMessage(sifterBuilding.getSievableBlock().getItemStack().copy(), sifterBuilding.getID().down()), worker);
+              .sendToAllTracking(new LocalizedParticleEffectMessage(sifterBuilding.getSievableBlock().getItemStack().copy(), sifterBuilding.getID().down()), (Entity) worker);
 
             SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.BLOCK_CLOTH_BREAK);
         }

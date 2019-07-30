@@ -1,11 +1,10 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.coremod.colony.IColonyManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +37,7 @@ public class ColonyViewCitizenViewMessage extends AbstractMessage<ColonyViewCiti
      * @param colony  Colony of the citizen
      * @param citizen Citizen data of the citizen to update view
      */
-    public ColonyViewCitizenViewMessage(@NotNull final Colony colony, @NotNull final CitizenData citizen)
+    public ColonyViewCitizenViewMessage(@NotNull final Colony colony, @NotNull final ICitizenData citizen)
     {
         this.colonyId = colony.getID();
         this.citizenId = citizen.getId();
@@ -68,6 +67,6 @@ public class ColonyViewCitizenViewMessage extends AbstractMessage<ColonyViewCiti
     @Override
     protected void messageOnClientThread(final ColonyViewCitizenViewMessage message, final MessageContext ctx)
     {
-        ColonyManager.handleColonyViewCitizensMessage(message.colonyId, message.citizenId, message.citizenBuffer, message.dimension);
+        IColonyManager.getInstance().handleColonyViewCitizensMessage(message.colonyId, message.citizenId, message.citizenBuffer, message.dimension);
     }
 }

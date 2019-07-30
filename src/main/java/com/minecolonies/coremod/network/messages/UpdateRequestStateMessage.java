@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColonyManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -98,7 +99,7 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
     @Override
     public void messageOnServerThread(final UpdateRequestStateMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony instanceof Colony)
         {
             if (message.state == RequestState.OVERRULED)

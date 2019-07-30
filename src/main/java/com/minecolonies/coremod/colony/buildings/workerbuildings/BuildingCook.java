@@ -6,10 +6,12 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutCook;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
@@ -69,7 +71,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
 
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return new JobCook(citizen);
     }
@@ -138,7 +140,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
          * @param c the colonyview to put it in
          * @param l the positon
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }

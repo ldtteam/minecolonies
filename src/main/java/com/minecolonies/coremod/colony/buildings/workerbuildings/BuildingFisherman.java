@@ -7,10 +7,13 @@ import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutFisherman;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -94,7 +97,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
      */
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return new JobFisherman(citizen);
     }
@@ -122,7 +125,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
          * @param c the colony.
          * @param l the position.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }

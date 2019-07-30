@@ -1,6 +1,6 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
         lightbox="true"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
 
     <buttonimage id="previousStyle" size="14 15"  pos="40 0" label="&lt;"
                  source="minecolonies:textures/gui/builderhut/builder_button_mini.png" textcolor="black"/>

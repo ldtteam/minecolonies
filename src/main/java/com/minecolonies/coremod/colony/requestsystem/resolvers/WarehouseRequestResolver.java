@@ -113,9 +113,9 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
                 final BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> ItemStack.areItemsEqual(itemStack, deliveryStack));
                 final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().provider.getDimension());
 
-                final Delivery delivery = new Delivery(itemStackLocation, request.getRequester().getRequesterLocation(), deliveryStack.copy());
+                final Delivery delivery = new Delivery(itemStackLocation, request.getRequester().getLocation(), deliveryStack.copy());
 
-                final IToken<?> requestToken = manager.createRequest(new WarehouseRequestResolver(request.getRequester().getRequesterLocation(), request.getToken()), delivery);
+                final IToken<?> requestToken = manager.createRequest(new WarehouseRequestResolver(request.getRequester().getLocation(), request.getId()), delivery);
 
                 deliveries.add(requestToken);
                 remainingCount -= ItemStackUtils.getSize(matchingStack);
@@ -133,7 +133,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     @Override
     public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
+        manager.updateRequestState(request.getId(), RequestState.COMPLETED);
     }
 
     @Nullable
@@ -184,7 +184,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
             final IRequest parent = manager.getRequestForToken(token);
 
             if (parent.getState() != RequestState.CANCELLED && parent.getState() != RequestState.OVERRULED)
-                manager.reassignRequest(parent.getToken(), ImmutableList.of());
+                manager.reassignRequest(parent.getId(), ImmutableList.of());
         }
     }
 

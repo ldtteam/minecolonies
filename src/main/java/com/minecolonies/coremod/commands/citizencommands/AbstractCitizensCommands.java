@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.commands.citizencommands;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
@@ -39,14 +39,14 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        final Colony colony = actionMenuState.getColonyForArgument("colony");
+        final IColony colony = actionMenuState.getColonyForArgument("colony");
         if (colony == null)
         {
             sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
         }
 
-        final CitizenData citizenData = actionMenuState.getCitizenForArgument("citizen");
+        final ICitizenData citizenData = actionMenuState.getCitizenForArgument("citizen");
         if (null == citizenData && requiresCitizen())
         {
             sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
@@ -84,7 +84,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
                 final EntityPlayer player = server.getEntityWorld().getPlayerEntityByName(args[0]);
                 if (player != null)
                 {
-                    final IColony tempColony = ColonyManager.getIColonyByOwner(server.getEntityWorld(), player);
+                    final IColony tempColony = IColonyManager.getInstance().getIColonyByOwner(server.getEntityWorld(), player);
                     if (tempColony != null)
                     {
                         colonyId = tempColony.getID();
@@ -95,10 +95,10 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
             }
         }
 
-        final Colony colony;
+        final IColony colony;
         if (sender instanceof EntityPlayer && colonyId == -1)
         {
-            final IColony tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
+            final IColony tempColony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
             if (tempColony != null)
             {
                 colonyId = tempColony.getID();
@@ -106,7 +106,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
             }
         }
 
-        colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
 
         if (colony == null)
         {
@@ -171,7 +171,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
      * @param args                  the arguments.
      * @return the valid id or -1 if not found.
      */
-    private static int getValidCitizenId(final Colony colony, final boolean firstArgumentColonyId, final String... args)
+    private static int getValidCitizenId(final IColony colony, final boolean firstArgumentColonyId, final String... args)
     {
         int offset = 0;
         if (firstArgumentColonyId)
@@ -216,5 +216,5 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
      * @param colonyId  the id for the colony
      * @param citizenId the id for the citizen
      */
-    public abstract void executeSpecializedCode(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final Colony colonyId, final int citizenId);
+    public abstract void executeSpecializedCode(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final IColony colonyId, final int citizenId);
 }

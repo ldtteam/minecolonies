@@ -3,13 +3,11 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutSmelter;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemSword;
@@ -55,7 +53,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
     public BuildingSmeltery(final Colony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(ColonyManager.getCompatibilityManager()::isOre, new Tuple<>(Integer.MAX_VALUE, true));
+        keepX.put(IColonyManager.getInstance().getCompatibilityManager()::isOre, new Tuple<>(Integer.MAX_VALUE, true));
         keepX.put(TileEntityFurnace::isItemFuel, new Tuple<>(Integer.MAX_VALUE, true));
         keepX.put(stack -> !ItemStackUtils.isEmpty(stack)
                 && (stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool || stack.getItem() instanceof ItemArmor)
@@ -77,7 +75,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
 
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return new JobSmelter(citizen);
     }
@@ -119,7 +117,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
          * @param c the colonyview to put it in
          * @param l the positon
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }

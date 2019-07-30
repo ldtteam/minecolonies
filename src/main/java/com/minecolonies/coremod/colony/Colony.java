@@ -12,14 +12,15 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.managers.*;
 import com.minecolonies.coremod.colony.managers.interfaces.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
+import com.minecolonies.coremod.colony.workorders.IWorkManager;
 import com.minecolonies.coremod.colony.workorders.WorkManager;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
@@ -631,6 +632,7 @@ public class Colony implements IColony
      *
      * @param w World object.
      */
+    @Override
     public void onWorldLoad(@NotNull final World w)
     {
         this.world = w;
@@ -644,6 +646,7 @@ public class Colony implements IColony
      *
      * @param w World object.
      */
+    @Override
     public void onWorldUnload(@NotNull final World w)
     {
         if (!w.equals(world))
@@ -663,6 +666,7 @@ public class Colony implements IColony
      *
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
+    @Override
     public void onServerTick(@NotNull final TickEvent.ServerTickEvent event)
     {
         packageManager.updateSubscribers();
@@ -695,8 +699,9 @@ public class Colony implements IColony
      *
      * @return WorkManager for the Colony.
      */
+    @Override
     @NotNull
-    public WorkManager getWorkManager()
+    public IWorkManager getWorkManager()
     {
         return workManager;
     }
@@ -770,6 +775,7 @@ public class Colony implements IColony
      *
      * @return An instance of {@link HappinessData} containing all the datas
      */
+    @Override
     public HappinessData getHappinessData()
     {
         return happinessData;
@@ -782,6 +788,7 @@ public class Colony implements IColony
      *
      * @param event {@link TickEvent.WorldTickEvent}
      */
+    @Override
     public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
         if (event.world != getWorld())
@@ -941,6 +948,7 @@ public class Colony implements IColony
      *
      * @param n new name.
      */
+    @Override
     public void setName(final String n)
     {
         name = n;
@@ -1060,6 +1068,7 @@ public class Colony implements IColony
         return buildingManager.getBuilding(pos);
     }
 
+    @Override
     @NotNull
     public List<EntityPlayer> getMessageEntityPlayers()
     {
@@ -1122,11 +1131,11 @@ public class Colony implements IColony
     /**
      * Setter to set the citizen moving in.
      *
-     * @param moveIn true if can move in, false if can't move in.
+     * @param newMoveIn true if can move in, false if can't move in.
      */
-    public void setMoveIn(final boolean moveIn)
+    public void setMoveIn(final boolean newMoveIn)
     {
-        this.moveIn = moveIn;
+        this.moveIn = newMoveIn;
         markDirty();
     }
 
@@ -1150,7 +1159,8 @@ public class Colony implements IColony
      * @param building The upgraded building.
      * @param level    The new level.
      */
-    public void onBuildingUpgradeComplete(@Nullable final AbstractBuilding building, final int level)
+    @Override
+    public void onBuildingUpgradeComplete(@Nullable final IBuilding building, final int level)
     {
         if (building != null)
         {
@@ -1172,45 +1182,11 @@ public class Colony implements IColony
     }
 
     /**
-     * Returns a list of all wayPoints of the colony.
-     *
-     * @param position start position.
-     * @param target   end position.
-     * @return list of wayPoints.
-     */
-    @NotNull
-    public List<BlockPos> getWayPoints(@NotNull final BlockPos position, @NotNull final BlockPos target)
-    {
-        final List<BlockPos> tempWayPoints = new ArrayList<>();
-        tempWayPoints.addAll(wayPoints.keySet());
-        tempWayPoints.addAll(buildingManager.getBuildings().keySet());
-
-        final double maxX = Math.max(position.getX(), target.getX());
-        final double maxZ = Math.max(position.getZ(), target.getZ());
-
-        final double minX = Math.min(position.getX(), target.getX());
-        final double minZ = Math.min(position.getZ(), target.getZ());
-
-        final Iterator<BlockPos> iterator = tempWayPoints.iterator();
-        while (iterator.hasNext())
-        {
-            final BlockPos p = iterator.next();
-            final int x = p.getX();
-            final int z = p.getZ();
-            if (x < minX || x > maxX || z < minZ || z > maxZ)
-            {
-                iterator.remove();
-            }
-        }
-
-        return tempWayPoints;
-    }
-
-    /**
      * Getter for overall happiness.
      *
      * @return the overall happiness.
      */
+    @Override
     public double getOverallHappiness()
     {
         if (citizenManager.getCitizens().size() <= 0)
@@ -1219,7 +1195,7 @@ public class Colony implements IColony
         }
 
         double happinesSum = 0;
-        for (final CitizenData citizen : citizenManager.getCitizens())
+        for (final ICitizenData citizen : citizenManager.getCitizens())
         {
             happinesSum += citizen.getCitizenHappinessHandler().getHappiness();
         }
@@ -1232,6 +1208,7 @@ public class Colony implements IColony
      *
      * @return copy of hashmap.
      */
+    @Override
     public Map<BlockPos, IBlockState> getWayPoints()
     {
         return new HashMap<>(wayPoints);
@@ -1242,7 +1219,7 @@ public class Colony implements IColony
      *
      * @param canBeDeleted whether the colony is able to be deleted automatically
      */
-    public void setCanBeAutoDeleted(final Boolean canBeDeleted)
+    public void setCanBeAutoDeleted(final boolean canBeDeleted)
     {
         this.canColonyBeAutoDeleted = canBeDeleted;
         this.markDirty();
@@ -1253,6 +1230,7 @@ public class Colony implements IColony
      *
      * @return the style string.
      */
+    @Override
     public String getStyle()
     {
         return style;
@@ -1263,6 +1241,7 @@ public class Colony implements IColony
      *
      * @param style the default string.
      */
+    @Override
     public void setStyle(final String style)
     {
         this.style = style;
@@ -1273,6 +1252,7 @@ public class Colony implements IColony
      *
      * @return the buildingManager.
      */
+    @Override
     public IBuildingManager getBuildingManager()
     {
         return buildingManager;
@@ -1283,6 +1263,7 @@ public class Colony implements IColony
      *
      * @return the citizenManager.
      */
+    @Override
     public ICitizenManager getCitizenManager()
     {
         return citizenManager;
@@ -1293,6 +1274,7 @@ public class Colony implements IColony
      *
      * @return the colony happiness manager.
      */
+    @Override
     public IColonyHappinessManager getColonyHappinessManager()
     {
         return colonyHappinessManager;
@@ -1303,6 +1285,7 @@ public class Colony implements IColony
      *
      * @return the statsManager.
      */
+    @Override
     public IStatisticAchievementManager getStatsManager()
     {
         return statsManager;
@@ -1313,6 +1296,7 @@ public class Colony implements IColony
      *
      * @return the barbManager.
      */
+    @Override
     public IRaiderManager getRaiderManager()
     {
         return raidManager;
@@ -1323,6 +1307,7 @@ public class Colony implements IColony
      *
      * @return the manager.
      */
+    @Override
     public IColonyPackageManager getPackageManager()
     {
         return packageManager;
@@ -1333,6 +1318,7 @@ public class Colony implements IColony
      *
      * @return the manager.
      */
+    @Override
     public IProgressManager getProgressManager()
     {
         return progressManager;
@@ -1376,6 +1362,7 @@ public class Colony implements IColony
      *
      * @return the tag of it.
      */
+    @Override
     public NBTTagCompound getColonyTag()
     {
         try
@@ -1397,6 +1384,7 @@ public class Colony implements IColony
      *
      * @return the number of nights.
      */
+    @Override
     public int getNightsSinceLastRaid()
     {
         return nightsSinceLastRaid;
@@ -1407,6 +1395,7 @@ public class Colony implements IColony
      *
      * @param nights the number of nights.
      */
+    @Override
     public void setNightsSinceLastRaid(final int nights)
     {
         this.nightsSinceLastRaid = nights;
@@ -1417,6 +1406,7 @@ public class Colony implements IColony
      *
      * @return a boolean indicating the colony needs to mourn
      */
+    @Override
     public boolean isNeedToMourn()
     {
         return needToMourn;
@@ -1428,6 +1418,7 @@ public class Colony implements IColony
      * @param needToMourn indicate if the colony needs to mourn
      * @param name        Name of citizen that died
      */
+    @Override
     public void setNeedToMourn(final boolean needToMourn, final String name)
     {
         this.needToMourn = needToMourn;
@@ -1442,6 +1433,7 @@ public class Colony implements IColony
      *
      * @return indicates if the colony is mourning
      */
+    @Override
     public boolean isMourning()
     {
         return mourning;
@@ -1450,9 +1442,9 @@ public class Colony implements IColony
     /**
      * Add a guard to the list of attacking guards.
      *
-     * @param entityCitizen the citizen to add.
+     * @param IEntityCitizen the citizen to add.
      */
-    public void addGuardToAttackers(final EntityCitizen entityCitizen, final EntityPlayer player)
+    public void addGuardToAttackers(final IEntityCitizen IEntityCitizen, final EntityPlayer player)
     {
         if (player == null)
         {
@@ -1463,7 +1455,7 @@ public class Colony implements IColony
         {
             if (attackingPlayer.getPlayer().equals(player))
             {
-                if (attackingPlayer.addGuard(entityCitizen))
+                if (attackingPlayer.addGuard(IEntityCitizen))
                 {
                     LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(),
                       "Beware, " + attackingPlayer.getPlayer().getName() + " has now: " + attackingPlayer.getGuards().size() + " guards!");
@@ -1477,7 +1469,7 @@ public class Colony implements IColony
             if (visitingPlayer.equals(player))
             {
                 final AttackingPlayer attackingPlayer = new AttackingPlayer(visitingPlayer);
-                attackingPlayer.addGuard(entityCitizen);
+                attackingPlayer.addGuard(IEntityCitizen);
                 attackingPlayers.add(attackingPlayer);
                 LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), "Beware, " + visitingPlayer.getName() + " is attacking you and he brought guards.");
             }
@@ -1513,7 +1505,7 @@ public class Colony implements IColony
      * @param entity the guard entity.
      * @return true if so.
      */
-    public boolean isValidAttackingGuard(final EntityCitizen entity)
+    public boolean isValidAttackingGuard(final IEntityCitizen entity)
     {
         if (packageManager.getLastContactInHours() > 1)
         {

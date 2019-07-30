@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.inventory;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -75,8 +76,8 @@ public class ContainerMinecoloniesBuildingInventory extends Container
                               super.putStack(stack);
                               if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !ItemStackUtils.isEmpty(stack))
                               {
-                                  final Colony colony = ColonyManager.getColonyByWorld(colonyId, world);
-                                  final AbstractBuilding building = colony.getBuildingManager().getBuilding(buildingId);
+                                  final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, world);
+                                  final IBuilding building = colony.getBuildingManager().getBuilding(buildingId);
                                   if (building != null)
                                   {
                                       building.overruleNextOpenRequestWithStack(stack);

@@ -1,11 +1,13 @@
 package com.minecolonies.api.util;
 
+import com.google.common.collect.Lists;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
-import net.minecraft.block.Block;
+import com.minecolonies.coremod.entity.IBaseEntityCitizen;
+import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityArmorStand;
@@ -197,6 +199,24 @@ public final class ItemStackUtils
             }
         }
         return Collections.emptyList();
+    }
+
+    /**
+     * Adds entities to the builder building if he needs it.
+     *
+     * @param entityData the entity info object.
+     * @param world      the world.
+     * @param placer     the entity placer.
+     * @return a list of stacks.
+     */
+    public static List<ItemStorage> getListOfStackForEntityInfo(final NBTTagCompound entityData, final World world, final IBaseEntityCitizen placer)
+    {
+        if (placer instanceof Entity)
+        {
+            return getListOfStackForEntityInfo(entityData, world, (Entity) placer);
+        }
+
+        return Lists.newArrayList();
     }
 
     /**
