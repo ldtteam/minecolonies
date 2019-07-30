@@ -1,8 +1,9 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.ai.pathfinding.AbstractWalkToProxy;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColonyManager;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +32,7 @@ public class GeneralEntityWalkToProxy extends AbstractWalkToProxy
     {
         final LivingEntity living = getEntity();
 
-        final Colony colony = ColonyManager.getClosestColony(living.getEntityWorld(), living.getPosition());
+        final IColony colony = IColonyManager.getInstance().getClosestColony(living.getEntityWorld(), living.getPosition());
 
         if (colony == null || !colony.isCoordInColony(living.getEntityWorld(), living.getPosition()))
         {

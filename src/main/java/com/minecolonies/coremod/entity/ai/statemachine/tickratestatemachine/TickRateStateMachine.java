@@ -14,7 +14,7 @@ import static com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachi
  * Statemachine with an added tickrate limiting of transitions, allowing transitions to be checked at a lower rate.
  * Default tickrate is 20 tps (Minecraft default).
  */
-public class TickRateStateMachine extends BasicStateMachine<TickingTransition>
+public class TickRateStateMachine extends BasicStateMachine<ITickingTransition> implements ITickRateStateMachine
 {
     /**
      * Counter keeping track of ticks
@@ -70,7 +70,7 @@ public class TickRateStateMachine extends BasicStateMachine<TickingTransition>
      * @return true if this target worked and we should stop executing this tick
      */
     @Override
-    public boolean checkTransition(@NotNull final TickingTransition transition)
+    public boolean checkTransition(@NotNull final ITickingTransition transition)
     {
         // Check if the target should be run this Tick
         if ((tickCounter % transition.getTickRate()) != transition.getTickOffset())

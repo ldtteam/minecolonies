@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
@@ -53,7 +54,7 @@ public class MakeNotAutoDeletableCommand extends AbstractSingleCommand implement
     }
 
     @Override
-    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final PlayerEntity player)
+    public boolean canRankUseCommand(@NotNull final IColony colony, @NotNull final EntityPlayer player)
     {
         return false;
     }
@@ -61,7 +62,7 @@ public class MakeNotAutoDeletableCommand extends AbstractSingleCommand implement
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        final Colony colony = actionMenuState.getColonyForArgument("colony");
+        final IColony colony = actionMenuState.getColonyForArgument("colony");
         final boolean canBeDeleted = actionMenuState.getBooleanValueForArgument("canBeDeleted", false);
         executeShared(server, sender, colony, canBeDeleted);
     }
@@ -77,7 +78,7 @@ public class MakeNotAutoDeletableCommand extends AbstractSingleCommand implement
 
         final int colonyId;
         colonyId = Integer.parseInt(args[0]);
-        final Colony colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
 
         if (colony == null)
         {
@@ -91,7 +92,7 @@ public class MakeNotAutoDeletableCommand extends AbstractSingleCommand implement
         executeShared(server, sender, colony, canBeDeleted);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final Colony colony, final boolean canBeDeleted)
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final IColony colony, final boolean canBeDeleted)
     {
         if (sender instanceof PlayerEntity && !isPlayerOpped(sender))
         {

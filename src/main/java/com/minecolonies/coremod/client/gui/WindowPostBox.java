@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.blockout.controls.*;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.Pane;
@@ -117,9 +118,9 @@ public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHa
     {
         if (filter.isEmpty())
         {
-            return ColonyManager.getCompatibilityManager().getBlockList();
+            return IColonyManager.getInstance().getCompatibilityManager().getBlockList();
         }
-        return ColonyManager.getCompatibilityManager().getBlockList().stream().filter(filterPredicate).collect(Collectors.toList());
+        return IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(filterPredicate).collect(Collectors.toList());
     }
 
     /**

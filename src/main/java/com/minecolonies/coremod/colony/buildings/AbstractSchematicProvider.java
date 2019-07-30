@@ -11,11 +11,10 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
-public abstract class AbstractSchematicProvider
+public abstract class AbstractSchematicProvider implements ISchematicProvider
 {
     /**
      * The location of the building.
@@ -74,7 +73,7 @@ public abstract class AbstractSchematicProvider
     @Override
     public boolean equals(final Object o)
     {
-        return o instanceof AbstractBuilding && ((AbstractBuilding) o).getID().equals(this.getID());
+        return o instanceof AbstractBuilding && ((IBuilding) o).getID().equals(this.getID());
     }
 
     /**
@@ -98,8 +97,8 @@ public abstract class AbstractSchematicProvider
         {
             final StructureName newStructureName = Structures.getStructureNameByMD5(md5);
             if (newStructureName != null
-                    && newStructureName.getPrefix().equals(sn.getPrefix())
-                    && newStructureName.getSchematic().equals(sn.getSchematic()))
+                  && newStructureName.getPrefix().equals(sn.getPrefix())
+                  && newStructureName.getSchematic().equals(sn.getSchematic()))
             {
                 //We found the new location for the schematic, update the style accordingly
                 style = newStructureName.getStyle();
@@ -173,7 +172,8 @@ public abstract class AbstractSchematicProvider
      *
      * @return {@link BlockPos} of the current object.
      */
-    public BlockPos getLocation()
+    @Override
+    public BlockPos getPosition()
     {
         return location;
     }
@@ -186,6 +186,7 @@ public abstract class AbstractSchematicProvider
      * @param z1 the first z corner.
      * @param z2 the second z corner.
      */
+    @Override
     public void setCorners(final int x1, final int x2, final int z1, final int z2)
     {
         this.cornerX1 = x1;
@@ -199,6 +200,7 @@ public abstract class AbstractSchematicProvider
      *
      * @param height the height to set.
      */
+    @Override
     public void setHeight(final int height)
     {
         this.height = height;
@@ -209,6 +211,7 @@ public abstract class AbstractSchematicProvider
      *
      * @return the corners.
      */
+    @Override
     public Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> getCorners()
     {
         return new Tuple<>(new Tuple<>(cornerX1, cornerX2), new Tuple<>(cornerZ1, cornerZ2));
@@ -219,6 +222,7 @@ public abstract class AbstractSchematicProvider
      *
      * @return {@link BlockPos} of the current object.
      */
+    @Override
     public BlockPos getID()
     {
         // Location doubles as ID.
@@ -231,6 +235,7 @@ public abstract class AbstractSchematicProvider
      * @param world the world.
      * @return the AxisAlignedBB.
      */
+    @Override
     public AxisAlignedBB getTargetableArea(final World world)
     {
         return BuildingUtils.getTargetAbleArea(world, this);
@@ -241,6 +246,7 @@ public abstract class AbstractSchematicProvider
      *
      * @return integer value of the rotation.
      */
+    @Override
     public int getRotation()
     {
         return rotation;
@@ -251,6 +257,7 @@ public abstract class AbstractSchematicProvider
      *
      * @param rotation integer value of the rotation.
      */
+    @Override
     public void setRotation(final int rotation)
     {
         this.rotation = rotation;
@@ -261,6 +268,7 @@ public abstract class AbstractSchematicProvider
      *
      * @return String representation of the current building-style
      */
+    @Override
     public String getStyle()
     {
         return style;
@@ -271,6 +279,7 @@ public abstract class AbstractSchematicProvider
      *
      * @param style String value of the style.
      */
+    @Override
     public void setStyle(final String style)
     {
         this.style = style;
@@ -282,6 +291,7 @@ public abstract class AbstractSchematicProvider
      *
      * @return the height..
      */
+    @Override
     public int getHeight()
     {
         return this.height;
@@ -292,6 +302,7 @@ public abstract class AbstractSchematicProvider
      *
      * @return Level of the current object.
      */
+    @Override
     public int getBuildingLevel()
     {
         return buildingLevel;
@@ -302,6 +313,7 @@ public abstract class AbstractSchematicProvider
      *
      * @param level Level of the building.
      */
+    @Override
     public void setBuildingLevel(final int level)
     {
         if (level > getMaxBuildingLevel())
@@ -318,6 +330,7 @@ public abstract class AbstractSchematicProvider
      *
      * @return true if dirty, false if not.
      */
+    @Override
     public final boolean isDirty()
     {
         return dirty;
@@ -326,6 +339,7 @@ public abstract class AbstractSchematicProvider
     /**
      * Sets {@link #dirty} to false, meaning that the instance is up to date.
      */
+    @Override
     public final void clearDirty()
     {
         dirty = false;
@@ -334,6 +348,7 @@ public abstract class AbstractSchematicProvider
     /**
      * Marks the instance and the building dirty.
      */
+    @Override
     public void markDirty()
     {
         dirty = true;
@@ -342,6 +357,7 @@ public abstract class AbstractSchematicProvider
     /**
      * Sets the mirror of the current building.
      */
+    @Override
     public void invertMirror()
     {
         this.isBuildingMirrored = !isBuildingMirrored;
@@ -352,22 +368,9 @@ public abstract class AbstractSchematicProvider
      *
      * @return boolean value of the mirror.
      */
+    @Override
     public boolean isMirrored()
     {
         return isBuildingMirrored;
     }
-
-    /**
-     * Children must return the name of their structure.
-     *
-     * @return StructureProxy name.
-     */
-    public abstract String getSchematicName();
-
-    /**
-     * Children must return their max building level.
-     *
-     * @return Max building level.
-     */
-    public abstract int getMaxBuildingLevel();
 }

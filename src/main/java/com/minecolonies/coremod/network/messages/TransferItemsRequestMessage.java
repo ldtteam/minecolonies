@@ -1,12 +1,13 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.PlayerEntityMP;
@@ -105,14 +106,14 @@ public class TransferItemsRequestMessage extends AbstractMessage<TransferItemsRe
     @Override
     public void messageOnServerThread(final TransferItemsRequestMessage message, final PlayerEntityMP player)
     {
-        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null)
         {
             Log.getLogger().warn("TransferItemsRequestMessage colony is null");
             return;
         }
 
-        final AbstractBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
+        final IBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
         if (building == null)
         {
             Log.getLogger().warn("TransferItemsRequestMessage building is null");

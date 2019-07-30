@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.entity.LivingEntityBase;
 import net.minecraft.entity.player.PlayerEntity;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
@@ -15,8 +17,8 @@ import net.minecraft.world.World;
  */
 public class GuardArrow extends EntityTippedArrow
 {
-    private static final String TAG_COLONY = "colony";
-    private Colony colony;
+    private static final String  TAG_COLONY = "colony";
+    private              IColony colony;
 
     /**
      * Constructor for forge.
@@ -34,9 +36,9 @@ public class GuardArrow extends EntityTippedArrow
      * @param worldIn the world this is shot in.
      * @param shooter the guard shooting
      */
-    public GuardArrow(final World worldIn, final EntityCitizen shooter)
+    public GuardArrow(final World worldIn, final IEntityCitizen shooter)
     {
-        super(worldIn, shooter);
+        super(worldIn, (EntityLivingBase) shooter);
         this.colony = shooter.getCitizenColonyHandler().getColony();
     }
 
@@ -51,8 +53,8 @@ public class GuardArrow extends EntityTippedArrow
     public void readEntityFromNBT(final CompoundNBT compound)
     {
         super.readEntityFromNBT(compound);
-        final int colonyID = compound.getInt(TAG_COLONY);
-        colony = ColonyManager.getColonyByWorld(colonyID, world);
+        final int colonyID = compound.getInteger(TAG_COLONY);
+        colony = IColonyManager.getInstance().getColonyByWorld(colonyID, world);
     }
 
     @Override

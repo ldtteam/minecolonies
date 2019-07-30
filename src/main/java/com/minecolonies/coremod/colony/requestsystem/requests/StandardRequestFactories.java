@@ -554,10 +554,10 @@ public final class StandardRequestFactories
     {
         final CompoundNBT compound = new CompoundNBT();
 
-        final CompoundNBT requesterCompound = controller.serialize(request.getRequester());
-        final CompoundNBT tokenCompound = controller.serialize(request.getToken());
-        final IntNBT stateCompound = request.getState().serializeNBT();
-        final CompoundNBT requestedCompound = typeSerialization.apply(controller, request.getRequest());
+        final NBTTagCompound requesterCompound = controller.serialize(request.getRequester());
+        final NBTTagCompound tokenCompound = controller.serialize(request.getId());
+        final NBTTagInt stateCompound = request.getState().serializeNBT();
+        final NBTTagCompound requestedCompound = typeSerialization.apply(controller, request.getRequest());
 
         final ListNBT childrenCompound = new ListNBT();
         for (final IToken token : request.getChildren())

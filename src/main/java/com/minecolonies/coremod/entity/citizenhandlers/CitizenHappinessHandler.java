@@ -4,10 +4,10 @@ import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.FieldDataModifier;
+import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundNBT;
@@ -28,7 +28,7 @@ import java.util.Optional;
  * @author kevin
  *
  */
-public class CitizenHappinessHandler
+public class CitizenHappinessHandler implements ICitizenHappinessHandler
 {
 
     @NotNull
@@ -97,7 +97,7 @@ public class CitizenHappinessHandler
     /**
      * The citizen assigned to this manager.
      */
-    private final CitizenData citizen;
+    private final ICitizenData citizen;
 
     /**
      * holds the base happiness value.
@@ -165,7 +165,7 @@ public class CitizenHappinessHandler
      * @param citizen
      *            the citizen owning the handler.
      */
-    public CitizenHappinessHandler(final CitizenData citizen)
+    public CitizenHappinessHandler(final ICitizenData citizen)
     {
         this.citizen = citizen;
         baseHappiness = BASE_HAPPINESS;
@@ -188,6 +188,7 @@ public class CitizenHappinessHandler
      *
      * @param eatFood true or false indicate citizen was unable to eat
      */
+    @Override
     public void setFoodModifier(final boolean eatFood)
     {
         if (!eatFood)
@@ -215,6 +216,7 @@ public class CitizenHappinessHandler
      * @param hasHouse  boolean if the citizen is assigned to a house
      * @param hasJob boolean to indicate if citizen has a job
      */
+    @Override
     public void processDailyHappiness(final boolean hasHouse, final boolean hasJob)
     {
         if (citizen.getColony().getColonyHappinessManager().getLockedHappinessModifier().isPresent())
@@ -309,6 +311,7 @@ public class CitizenHappinessHandler
      * this function applies adjust to happiness.
      * This would mean the citizen is full.
      */
+    @Override
     public void setSaturated()
     {
         foodModifier = FOOD_MODIFIER_POSITIVE;
@@ -318,9 +321,10 @@ public class CitizenHappinessHandler
      * set the Damage modifier on the citizens happiness
      * depending on how hurt they are.
      */
+    @Override
     public void setDamageModifier()
     {
-        final Optional<EntityCitizen> entityCitizen = citizen.getCitizenEntity();
+        final Optional<IEntityCitizen> entityCitizen = citizen.getCitizenEntity();
         if (entityCitizen.isPresent())
         {
             final double health = entityCitizen.get().getHealth() / entityCitizen.get().getMaxHealth();
@@ -349,6 +353,7 @@ public class CitizenHappinessHandler
      * @param canFarm
      *            boolean to indicate if the field can be farmed
      */
+    @Override
     public void setNoFieldForFarmerModifier(final BlockPos pos, final boolean canFarm)
     {
         FieldDataModifier field = fieldModifier.get(pos);
@@ -365,6 +370,7 @@ public class CitizenHappinessHandler
     /**
      * Indicates the farmer has not fields to farm.
      */
+    @Override
     public void setNoFieldsToFarm()
     {
         hasNoFields = true;
@@ -377,6 +383,7 @@ public class CitizenHappinessHandler
      * @param toolType Tooltype to indicate
      * @param needs indicate if the tool type is needed
      */
+    @Override
     public void setNeedsATool(@NotNull final IToolType toolType, final boolean needs)
     {
         if (needs)
@@ -397,6 +404,7 @@ public class CitizenHappinessHandler
      * @param hasHouse
      *            indicate the citizen has an assigned house
      */
+    @Override
     public void setHomeModifier(final boolean hasHouse)
     {
         if (hasHouse)
@@ -416,6 +424,7 @@ public class CitizenHappinessHandler
      * @param hasJob
      *            boolean to indicate if the citizen has a job
      */
+    @Override
     public void setJobModifier(final boolean hasJob)
     {
         if (hasJob)
@@ -432,6 +441,7 @@ public class CitizenHappinessHandler
     /**
      * @return current citizens overall happiness
      */
+    @Override
     public double getHappiness()
     {
         if (citizen.getColony().getColonyHappinessManager().getLockedHappinessModifier().isPresent())
@@ -453,6 +463,7 @@ public class CitizenHappinessHandler
     /**
      * @return current food modifier for happiness
      */
+    @Override
     public double getFoodModifier()
     {
         return foodModifier;
@@ -461,6 +472,7 @@ public class CitizenHappinessHandler
     /**
      * @return current damage modifier for happiness
      */
+    @Override
     public double getDamageModifier()
     {
         return damageModifier;
@@ -469,6 +481,7 @@ public class CitizenHappinessHandler
     /**
      * @return current house modifier for happiness
      */
+    @Override
     public double getHouseModifier()
     {
         return houseModifier;
@@ -479,6 +492,7 @@ public class CitizenHappinessHandler
      *
      * @param compound  compound to use.
      */
+    @Override
     public void write(final CompoundNBT compound)
     {
         @NotNull final CompoundNBT taskCompound = new CompoundNBT();
@@ -530,6 +544,7 @@ public class CitizenHappinessHandler
      *
      * @param compound pointer to NBT fields
      */
+    @Override
     public void readFromNBT(final CompoundNBT compound)
     {
         final CompoundNBT tagCompound = compound.getCompound(NbtTagConstants.TAG_HAPPINESS_NAME);
@@ -577,6 +592,7 @@ public class CitizenHappinessHandler
      * 
      * @param buf  buffer to witch values of the modifiers will be written to.
      */
+    @Override
     public void serializeViewNetworkData(@NotNull final ByteBuf buf)
     {
         buf.writeDouble(getFoodModifier());

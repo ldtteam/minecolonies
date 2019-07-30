@@ -4,8 +4,8 @@ import com.ldtteam.structurize.items.ModItems;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.IColonyView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -44,7 +43,7 @@ public class DebugRendererChunkBorder
         }
 
         final World world = Minecraft.getMinecraft().world;
-        final ColonyView view = ColonyManager.getClosestColonyView(world, entityplayer.getPosition());
+        final IColonyView view = IColonyManager.getInstance().getClosestColonyView(world, entityplayer.getPosition());
 
         if (view == null)
         {

@@ -1,13 +1,15 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.PlayerEntityMP;
@@ -56,7 +58,7 @@ public class RecallSingleCitizenMessage extends AbstractMessage<RecallSingleCiti
      * @param building View of the building the citizen should be teleported to.
      * @param citizenid the id of the citizen.
      */
-    public RecallSingleCitizenMessage(final AbstractBuildingView building, final int citizenid)
+    public RecallSingleCitizenMessage(final IBuildingView building, final int citizenid)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -86,7 +88,7 @@ public class RecallSingleCitizenMessage extends AbstractMessage<RecallSingleCiti
     @Override
     public void messageOnServerThread(final RecallSingleCitizenMessage message, final PlayerEntityMP player)
     {
-        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
@@ -95,15 +97,15 @@ public class RecallSingleCitizenMessage extends AbstractMessage<RecallSingleCiti
                 return;
             }
 
-            final CitizenData citizenData = colony.getCitizenManager().getCitizen(message.citizenId);
-            Optional<EntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
+            final ICitizenData citizenData = colony.getCitizenManager().getCitizen(message.citizenId);
+            Optional<IEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
             if (!optionalEntityCitizen.isPresent())
             {
                 citizenData.updateCitizenEntityIfNecessary();
                 optionalEntityCitizen = citizenData.getCitizenEntity();
             }
 
-            if (optionalEntityCitizen.isPresent() && optionalEntityCitizen.get().ticksExisted == 0)
+            if (optionalEntityCitizen.isPresent() && optionalEntityCitizen.get().getTicksExisted() == 0)
             {
                 citizenData.updateCitizenEntityIfNecessary();
             }

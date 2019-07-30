@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.IColonyView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -42,7 +43,7 @@ public class ToggleMoveInMessage extends AbstractMessage<ToggleMoveInMessage, IM
      * @param colony view of the colony to read data from.
      * @param toggle toggle the housing to manually or automatically.
      */
-    public ToggleMoveInMessage(@NotNull final ColonyView colony, final boolean toggle)
+    public ToggleMoveInMessage(@NotNull final IColonyView colony, final boolean toggle)
     {
         super();
         this.colonyId = colony.getID();
@@ -86,7 +87,7 @@ public class ToggleMoveInMessage extends AbstractMessage<ToggleMoveInMessage, IM
     @Override
     public void messageOnServerThread(final ToggleMoveInMessage message, final PlayerEntityMP player)
     {
-        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings

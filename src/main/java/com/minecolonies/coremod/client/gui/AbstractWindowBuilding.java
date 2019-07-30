@@ -4,8 +4,9 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Label;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import net.minecraft.util.math.BlockPos;
@@ -19,10 +20,10 @@ import static com.minecolonies.api.util.constant.TranslationConstants.CMC_GUI_TO
  *
  * @param <B> Class extending {@link AbstractBuildingView}.
  */
-public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> extends AbstractWindowSkeleton
+public abstract class AbstractWindowBuilding<B extends IBuildingView> extends AbstractWindowSkeleton
 {
     /**
-     * Type B is a class that extends {@link AbstractBuildingWorker.View}.
+     * Type B is a class that extends {@link com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View}.
      */
     protected final B          building;
     private final   Label      title;
@@ -93,7 +94,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
         // Check if we are on the default page
         if (switchView.getCurrentView().getID().equals(PAGE_ACTIONS))
         {
-            final AbstractBuildingView buildingView = building;
+            final IBuildingView buildingView = building;
             if (title != null && buildingView != null)
             {
                 final String name = building.getCustomName().isEmpty() ? LanguageHandler.format(getBuildingName()) : building.getCustomName();
@@ -123,7 +124,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingView> ext
     /**
      * Update the state and label for the Build button.
      */
-    private void updateButtonBuild(final AbstractBuildingView buildingView)
+    private void updateButtonBuild(final IBuildingView buildingView)
     {
         if (buttonBuild == null)
         {

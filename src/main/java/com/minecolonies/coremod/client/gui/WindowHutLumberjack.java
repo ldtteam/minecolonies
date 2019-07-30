@@ -6,7 +6,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.network.messages.LumberjackReplantSaplingToggleMessage;
 import net.minecraft.item.ItemStack;
@@ -68,7 +68,7 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
     @Override
     public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
     {
-        return ColonyManager.getCompatibilityManager().getCopyOfSaplings().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList());
+        return IColonyManager.getInstance().getCompatibilityManager().getCopyOfSaplings().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList());
     }
 
     /**

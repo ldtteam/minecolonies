@@ -9,10 +9,10 @@ import com.ldtteam.blockout.controls.ButtonHandler;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.controls.TextField;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
+import com.minecolonies.coremod.colony.workorders.WorkOrderType;
 import com.minecolonies.coremod.colony.workorders.WorkOrderView;
 import com.minecolonies.coremod.network.messages.DecorationBuildRequestMessage;
 import com.minecolonies.coremod.network.messages.DecorationControllUpdateMessage;
@@ -80,7 +80,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
         final TextField textFieldLevel = findPaneOfTypeByID(INPUT_LEVEL, TextField.class);
         textFieldLevel.setText(String.valueOf(controller.getLevel()));
 
-        final ColonyView view = ColonyManager.getClosestColonyView(world, controller.getPos());
+        final IColonyView view = IColonyManager.getInstance().getClosestColonyView(world, controller.getPos());
 
         final Button buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
 
@@ -90,7 +90,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
             if (wo.isPresent())
             {
 
-                if (wo.get().getType() == AbstractWorkOrder.WorkOrderType.BUILD)
+                if (wo.get().getType() == WorkOrderType.BUILD)
                 {
                     if (controller.getLevel() == 0)
                     {
@@ -102,7 +102,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
                     }
                     findPaneByID(BUTTON_REPAIR).hide();
                 }
-                else if (wo.get().getType() == AbstractWorkOrder.WorkOrderType.BUILD)
+                else if (wo.get().getType() == WorkOrderType.BUILD)
                 {
                     buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.cancelRepair"));
                     findPaneByID(BUTTON_REPAIR).hide();

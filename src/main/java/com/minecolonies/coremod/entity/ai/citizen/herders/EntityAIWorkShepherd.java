@@ -7,6 +7,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingShepher
 import com.minecolonies.coremod.colony.jobs.JobShepherd;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
 import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
@@ -141,13 +142,13 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
             }
             worker.swingArm(EnumHand.MAIN_HAND);
             final List<ItemStack> items = sheep.onSheared(worker.getHeldItemMainhand(),
-              worker.world,
+              worker.getEntityWorld(),
               worker.getPosition(),
               net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel(net.minecraft.init.Enchantments.FORTUNE, worker.getHeldItemMainhand()));
 
             dyeSheepChance(sheep);
 
-            worker.getHeldItemMainhand().damageItem(1, worker);
+            worker.getHeldItemMainhand().damageItem(1, (EntityLivingBase) worker);
 
             worker.getCitizenExperienceHandler().addExperience(EXP_PER_SHEEP);
 

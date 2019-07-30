@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.entity;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -15,18 +17,17 @@ import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.*;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
-import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.minimal.*;
-import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.coremod.entity.ai.mobs.IBaseMinecoloniesMob;
 import com.minecolonies.coremod.entity.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
-import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
+import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.PathResult;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.items.ModItems;
@@ -35,8 +36,9 @@ import com.minecolonies.coremod.util.PermissionUtils;
 import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.LivingEntityBase;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.MoverType;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIOpenDoor;
 import net.minecraft.entity.ai.EntityAISwimming;
@@ -85,12 +87,12 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * The Class used to represent the citizen entities.
  */
-public class EntityCitizen extends AbstractEntityCitizen
+public class EntityCitizen extends AbstractEntityCitizen implements IEntityCitizen
 {
     /**
      * The New PathNavigate navigator.
      */
-    private final PathNavigate newNavigator;
+    private final MinecoloniesAdvancedPathNavigate newNavigator;
 
     /**
      * The path-result of trying to move away
@@ -111,7 +113,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      * Reference to the data representation inside the colony.
      */
     @Nullable
-    private CitizenData citizenData;
+    private ICitizenData citizenData;
 
     /**
      * The entities current Position.
@@ -131,27 +133,27 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * The citizen experience handler.
      */
-    private final CitizenExperienceHandler citizenExperienceHandler;
+    private final ICitizenExperienceHandler ICitizenExperienceHandler;
 
     /**
      * The citizen chat handler.
      */
-    private final CitizenChatHandler citizenChatHandler;
+    private final ICitizenChatHandler ICitizenChatHandler;
 
     /**
      * The citizen status handler.
      */
-    private final CitizenStatusHandler citizenStatusHandler;
+    private final ICitizenStatusHandler ICitizenStatusHandler;
 
     /**
      * The citizen item handler.
      */
-    private final CitizenItemHandler citizenItemHandler;
+    private final ICitizenItemHandler ICitizenItemHandler;
 
     /**
      * The citizen inv handler.
      */
-    private final CitizenInventoryHandler citizenInventoryHandler;
+    private final ICitizenInventoryHandler ICitizenInventoryHandler;
 
     /**
      * The citizen colony handler.
@@ -166,12 +168,12 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * The citizen sleep handler.
      */
-    private final CitizenSleepHandler citizenSleepHandler;
+    private final ICitizenSleepHandler ICitizenSleepHandler;
 
     /**
      * The citizen stuck handler.
      */
-    private final CitizenStuckHandler citizenStuckHandler;
+    private final ICitizenStuckHandler ICitizenStuckHandler;
 
     /**
      * Indicate if the citizen is mourning or not.
@@ -216,22 +218,22 @@ public class EntityCitizen extends AbstractEntityCitizen
     public EntityCitizen(final World world)
     {
         super(world);
-        this.citizenExperienceHandler = new CitizenExperienceHandler(this);
-        this.citizenChatHandler = new CitizenChatHandler(this);
-        this.citizenStatusHandler = new CitizenStatusHandler(this);
-        this.citizenItemHandler = new CitizenItemHandler(this);
-        this.citizenInventoryHandler = new CitizenInventoryHandler(this);
+        this.ICitizenExperienceHandler = new CitizenExperienceHandler(this);
+        this.ICitizenChatHandler = new CitizenChatHandler(this);
+        this.ICitizenStatusHandler = new CitizenStatusHandler(this);
+        this.ICitizenItemHandler = new CitizenItemHandler(this);
+        this.ICitizenInventoryHandler = new CitizenInventoryHandler(this);
         this.citizenColonyHandler = new CitizenColonyHandler(this);
         this.citizenJobHandler = new CitizenJobHandler(this);
-        this.citizenSleepHandler = new CitizenSleepHandler(this);
-        this.citizenStuckHandler = new CitizenStuckHandler(this);
+        this.ICitizenSleepHandler = new CitizenSleepHandler(this);
+        this.ICitizenStuckHandler = new CitizenStuckHandler(this);
 
         setSize((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT);
         this.enablePersistence();
         this.setAlwaysRenderNameTag(Configurations.gameplay.alwaysRenderNameTag);
-        this.newNavigator = new PathNavigate(this, world);
+        this.newNavigator = new MinecoloniesAdvancedPathNavigate(this, world);
         this.navigator = newNavigator;
-        if (CompatibilityUtils.getWorld(this).isRemote)
+        if (CompatibilityUtils.getWorldFromCitizen(this).isRemote)
         {
             setRenderDistanceWeight(RENDER_DISTANCE_WEIGHT);
         }
@@ -286,7 +288,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             if (citizenJobHandler.getColonyJob() != null && Configurations.gameplay.enableInDevelopmentFeatures)
             {
-                setCustomNameTag(citizenData.getName() + " (" + citizenStatusHandler.getStatus() + ")[" + citizenJobHandler.getColonyJob().getNameTagDescription() + "]");
+                setCustomNameTag(citizenData.getName() + " (" + ICitizenStatusHandler.getStatus() + ")[" + citizenJobHandler.getColonyJob().getNameTagDescription() + "]");
             }
             else
             {
@@ -300,6 +302,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return an ILocation object which contains the dimension and is unique.
      */
+    @Override
     public ILocation getLocation()
     {
         return StandardFactoryController.getInstance().getNewInstance(TypeConstants.ILOCATION, this);
@@ -313,6 +316,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @param range Range to check in
      * @return True if worker is at site, otherwise false.
      */
+    @Override
     public boolean isWorkerAtSiteWithMove(@NotNull final BlockPos site, final int range)
     {
         if (proxy == null)
@@ -331,7 +335,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
     {
-        if (damageSource.getDamageType().equals(DamageSource.IN_WALL.getDamageType()) && citizenSleepHandler.isAsleep()
+        if (damageSource.getDamageType().equals(DamageSource.IN_WALL.getDamageType()) && ICitizenSleepHandler.isAsleep()
               || Compatibility.isDynTreePresent() && damageSource.damageType.equals(Compatibility.getDynamicTreeDamage()) || this.getIsInvulnerable())
         {
             return false;
@@ -345,10 +349,10 @@ public class EntityCitizen extends AbstractEntityCitizen
                 return false;
             }
 
-            final Colony attackerColony = ((EntityCitizen) sourceEntity).citizenColonyHandler.getColony();
+            final IColony attackerColony = ((EntityCitizen) sourceEntity).citizenColonyHandler.getColony();
             if (attackerColony != null && citizenColonyHandler.getColony() != null)
             {
-                final Permissions permission = attackerColony.getPermissions();
+                final IPermissions permission = attackerColony.getPermissions();
                 citizenColonyHandler.getColony().getPermissions().addPlayer(permission.getOwner(), permission.getOwnerName(), Rank.HOSTILE);
             }
         }
@@ -376,7 +380,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             return result;
         }
 
-        citizenItemHandler.updateArmorDamage(damageInc);
+        ICitizenItemHandler.updateArmorDamage(damageInc);
         if (citizenData != null)
         {
             getCitizenData().getCitizenHappinessHandler().setDamageModifier();
@@ -434,9 +438,9 @@ public class EntityCitizen extends AbstractEntityCitizen
         callForHelpCooldown = CALL_HELP_CD;
 
         long guardDistance = guardHelpRange;
-        EntityCitizen guard = null;
+        IEntityCitizen guard = null;
 
-        for (final CitizenData entry : getCitizenColonyHandler().getColony().getCitizenManager().getCitizens())
+        for (final ICitizenData entry : getCitizenColonyHandler().getColony().getCitizenManager().getCitizens())
         {
             if (entry.getCitizenEntity().isPresent())
             {
@@ -466,7 +470,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
-            final CitizenData data = getCitizenData();
+            final ICitizenData data = getCitizenData();
             if (data == null)
             {
                 return super.getCapability(capability, facing);
@@ -505,7 +509,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (getHeldItem(getActiveHand()).getItem() instanceof ShieldItem)
         {
-            citizenItemHandler.damageItemInHand(this.getActiveHand(), (int) damage);
+            ICitizenItemHandler.damageItemInHand(this.getActiveHand(), (int) damage);
         }
         super.damageShield(damage);
     }
@@ -525,7 +529,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             if (damageSource.getTrueSource() instanceof PlayerEntity && !world.isRemote)
             {
                 boolean isBarbarianClose = false;
-                for (final AbstractEntityMinecoloniesMob barbarian : this.getCitizenColonyHandler().getColony().getRaiderManager().getHorde((WorldServer) world))
+                for (final IBaseMinecoloniesMob barbarian : this.getCitizenColonyHandler().getColony().getRaiderManager().getHorde((WorldServer) world))
                 {
                     if (MathUtils.twoDimDistance(barbarian.getPosition(), this.getPosition()) < BARB_DISTANCE_FOR_FREE_DEATH)
                     {
@@ -543,11 +547,11 @@ public class EntityCitizen extends AbstractEntityCitizen
                 }
             }
 
-            citizenExperienceHandler.dropExperience();
+            ICitizenExperienceHandler.dropExperience();
             this.setDead();
             citizenColonyHandler.getColony().getHappinessData().setDeathModifier(penalty, citizenJobHandler.getColonyJob() instanceof AbstractJobGuard);
             triggerDeathAchievement(damageSource, citizenJobHandler.getColonyJob());
-            citizenChatHandler.notifyDeath(damageSource);
+            ICitizenChatHandler.notifyDeath(damageSource);
             if (!(citizenJobHandler.getColonyJob() instanceof AbstractJobGuard)
                   && (damageSource != DamageSource.IN_WALL))
             {
@@ -564,7 +568,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @param source The damage source.
      * @param job    The job of the citizen.
      */
-    private void triggerDeathAchievement(final DamageSource source, final AbstractJob job)
+    private void triggerDeathAchievement(final DamageSource source, final IJob job)
     {
         // If the job is null, then we can trigger jobless citizen achievement
         if (job != null)
@@ -579,12 +583,13 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return the data.
      */
+    @Override
     @Nullable
-    public CitizenData getCitizenData()
+    public ICitizenData getCitizenData()
     {
         if (citizenData == null && citizenColonyHandler != null && citizenColonyHandler.getColony() != null)
         {
-            final CitizenData data = citizenColonyHandler.getColony().getCitizenManager().getCitizen(citizenId);
+            final ICitizenData data = citizenColonyHandler.getColony().getCitizenManager().getCitizen(citizenId);
             if (data != null)
             {
                 citizenData = data;
@@ -602,8 +607,8 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public boolean processInteract(final PlayerEntity player, @NotNull final EnumHand hand)
     {
-        final ColonyView colonyView = ColonyManager.getColonyView(citizenColonyHandler.getColonyId(), player.world.provider.getDimension());
-        if (colonyView != null && !colonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
+        final IColonyView IColonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), player.world.provider.getDimension());
+        if (IColonyView != null && !IColonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             return false;
         }
@@ -613,7 +618,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             return super.processInteract(player, hand);
         }
 
-        if (CompatibilityUtils.getWorld(this).isRemote)
+        if (CompatibilityUtils.getWorldFromCitizen(this).isRemote)
         {
             if (player.isSneaking())
             {
@@ -621,7 +626,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             }
             else
             {
-                final CitizenDataView citizenDataView = getCitizenDataView();
+                final ICitizenDataView citizenDataView = getCitizenDataView();
                 if (citizenDataView != null)
                 {
                     MineColonies.proxy.showCitizenWindow(citizenDataView);
@@ -643,7 +648,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     public void writeEntityToNBT(final CompoundNBT compound)
     {
         super.writeEntityToNBT(compound);
-        compound.putInt(TAG_STATUS, citizenStatusHandler.getStatus().ordinal());
+        compound.setInteger(TAG_STATUS, ICitizenStatusHandler.getStatus().ordinal());
         if (citizenColonyHandler.getColony() != null && citizenData != null)
         {
             compound.putInt(TAG_COLONY_ID, citizenColonyHandler.getColony().getID());
@@ -660,9 +665,9 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         super.readEntityFromNBT(compound);
 
-        citizenStatusHandler.setStatus(Status.values()[compound.getInt(TAG_STATUS)]);
-        citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));
-        citizenId = compound.getInt(TAG_CITIZEN);
+        ICitizenStatusHandler.setStatus(Status.values()[compound.getInteger(TAG_STATUS)]);
+        citizenColonyHandler.setColonyId(compound.getInteger(TAG_COLONY_ID));
+        citizenId = compound.getInteger(TAG_CITIZEN);
 
         if (isServerWorld())
         {
@@ -702,7 +707,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             markDirty();
         }
-        if (CompatibilityUtils.getWorld(this).isRemote)
+        if (CompatibilityUtils.getWorldFromCitizen(this).isRemote)
         {
             citizenColonyHandler.updateColonyClient();
         }
@@ -726,8 +731,8 @@ public class EntityCitizen extends AbstractEntityCitizen
                 }
 
                 this.setAlwaysRenderNameTag(Configurations.gameplay.alwaysRenderNameTag);
-                citizenItemHandler.pickupItems();
-                citizenChatHandler.cleanupChatMessages();
+                ICitizenItemHandler.pickupItems();
+                ICitizenChatHandler.cleanupChatMessages();
                 citizenColonyHandler.updateColonyServer();
 
                 if (citizenData != null)
@@ -736,30 +741,30 @@ public class EntityCitizen extends AbstractEntityCitizen
                 }
             }
 
-            if (citizenJobHandler.getColonyJob() != null || !CompatibilityUtils.getWorld(this).isDaytime())
+            if (citizenJobHandler.getColonyJob() != null || !CompatibilityUtils.getWorldFromCitizen(this).isDaytime())
             {
-                citizenStuckHandler.onUpdate();
+                ICitizenStuckHandler.update();
             }
             else
             {
                 if (isMourning())
                 {
-                    citizenStatusHandler.setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_MOURN));
+                    ICitizenStatusHandler.setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_MOURN));
                 }
                 else
                 {
-                    citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waitingForWork"));
+                    ICitizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waitingForWork"));
                 }
             }
 
-            if (CompatibilityUtils.getWorld(this).isDaytime() && !CompatibilityUtils.getWorld(this).isRaining() && citizenData != null)
+            if (CompatibilityUtils.getWorldFromCitizen(this).isDaytime() && !CompatibilityUtils.getWorldFromCitizen(this).isRaining() && citizenData != null)
             {
-                SoundUtils.playRandomSound(CompatibilityUtils.getWorld(this), this, citizenData.getSaturation());
+                SoundUtils.playRandomSound(CompatibilityUtils.getWorldFromCitizen(this), this, citizenData.getSaturation());
             }
-            else if (citizenStatusHandler.getStatus() != Status.SLEEPING && CompatibilityUtils.getWorld(this).isRaining() && 1 >= rand.nextInt(RANT_ABOUT_WEATHER_CHANCE)
+            else if (ICitizenStatusHandler.getStatus() != Status.SLEEPING && CompatibilityUtils.getWorldFromCitizen(this).isRaining() && 1 >= rand.nextInt(RANT_ABOUT_WEATHER_CHANCE)
                        && citizenJobHandler.getColonyJob() != null)
             {
-                SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorld(this), this.getPosition(), citizenJobHandler.getColonyJob().getBadWeatherSound(), 1);
+                SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorldFromCitizen(this), this.getPosition(), citizenJobHandler.getColonyJob().getBadWeatherSound(), 1);
             }
         }
 
@@ -768,7 +773,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             moveAwayPath = getNavigator().moveAwayFromXYZ(this.getPosition(), MOVE_AWAY_RANGE, MOVE_AWAY_SPEED);
         }
 
-        citizenExperienceHandler.gatherXp();
+        ICitizenExperienceHandler.gatherXp();
         if (citizenData != null)
         {
             if (citizenData.getSaturation() <= 0)
@@ -828,7 +833,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
                 if (citizenColonyHandler.getColony() != null)
                 {
-                    for (final CitizenData citizen : citizenColonyHandler.getColony().getCitizenManager().getCitizens())
+                    for (final ICitizenData citizen : citizenColonyHandler.getColony().getCitizenManager().getCitizens())
                     {
                         if (citizen.getName().equals(name))
                         {
@@ -871,6 +876,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * Applies healthmodifiers for Guards based on level
      */
+    @Override
     public void increaseHPForGuards()
     {
         if (getCitizenData() != null)
@@ -888,6 +894,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * Remove all healthmodifiers from a citizen
      */
+    @Override
     public void removeAllHealthModifiers()
     {
         for (final AttributeModifier mod : getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getModifiers())
@@ -905,6 +912,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @param modifierName Name of the modifier to remove, see e.g. GUARD_HEALTH_MOD_LEVEL_NAME
      */
+    @Override
     public void removeHealthModifier(final String modifierName)
     {
         for (final AttributeModifier mod : getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getModifiers())
@@ -925,11 +933,11 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return the view.
      */
-    private CitizenDataView getCitizenDataView()
+    private ICitizenDataView getCitizenDataView()
     {
         if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0)
         {
-            final ColonyView colonyView = ColonyManager.getColonyView(citizenColonyHandler.getColonyId(), world.provider.getDimension());
+            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.provider.getDimension());
             if (colonyView != null)
             {
                 return colonyView.getCitizen(citizenId);
@@ -941,7 +949,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     @NotNull
     @Override
-    public PathNavigate getNavigator()
+    public MinecoloniesAdvancedPathNavigate getNavigator()
     {
         return newNavigator;
     }
@@ -958,7 +966,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             final ItemStack itemstack = getCitizenData().getInventory().getStackInSlot(i);
             if (ItemStackUtils.getSize(itemstack) > 0)
             {
-                citizenItemHandler.entityDropItem(itemstack);
+                ICitizenItemHandler.entityDropItem(itemstack);
             }
         }
     }
@@ -968,12 +976,14 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return the inventory this citizen has.
      */
+    @Override
     @NotNull
     public InventoryCitizen getInventoryCitizen()
     {
         return getCitizenData().getInventory();
     }
 
+    @Override
     @NotNull
     public IItemHandler getItemHandlerCitizen()
     {
@@ -989,14 +999,14 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public BlockPos getHomePosition()
     {
-        @Nullable final AbstractBuilding homeBuilding = citizenColonyHandler.getHomeBuilding();
+        @Nullable final IBuilding homeBuilding = citizenColonyHandler.getHomeBuilding();
         if (homeBuilding != null)
         {
-            return homeBuilding.getLocation();
+            return homeBuilding.getPosition();
         }
         else if (citizenColonyHandler.getColony() != null && citizenColonyHandler.getColony().getBuildingManager().getTownHall() != null)
         {
-            return citizenColonyHandler.getColony().getBuildingManager().getTownHall().getLocation();
+            return citizenColonyHandler.getColony().getBuildingManager().getTownHall().getPosition();
         }
 
         return super.getHomePosition();
@@ -1005,6 +1015,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * Mark the citizen dirty to synch the data with the client.
      */
+    @Override
     public void markDirty()
     {
         if (citizenData != null)
@@ -1013,6 +1024,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
     }
 
+    @Override
     @NotNull
     public DesiredActivity getDesiredActivity()
     {
@@ -1035,7 +1047,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         // Random delay of 60 seconds to detect a new day/night/rain/sun
         if (Colony.shallUpdate(world, TICKS_SECOND * SECONDS_A_MINUTE))
         {
-            if (!CompatibilityUtils.getWorld(this).isDaytime())
+            if (!CompatibilityUtils.getWorldFromCitizen(this).isDaytime())
             {
                 if (isDay && citizenData != null)
                 {
@@ -1045,22 +1057,22 @@ public class EntityCitizen extends AbstractEntityCitizen
                     citizenData.markDirty();
                 }
 
-                citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.sleeping"));
+                ICitizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.sleeping"));
                 return DesiredActivity.SLEEP;
             }
 
 
-            if (citizenSleepHandler.isAsleep())
+            if (ICitizenSleepHandler.isAsleep())
             {
-                citizenSleepHandler.onWakeUp();
+                ICitizenSleepHandler.onWakeUp();
             }
             isDay = true;
 
 
-            if (CompatibilityUtils.getWorld(this).isRaining() && !shouldWorkWhileRaining())
+            if (CompatibilityUtils.getWorldFromCitizen(this).isRaining() && !shouldWorkWhileRaining())
             {
                 hidingFromRain = true;
-                citizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"),
+                ICitizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"),
                   new TextComponentTranslation("com.minecolonies.coremod.status.rainStop"));
                 return DesiredActivity.IDLE;
             }
@@ -1094,6 +1106,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @param width  Width
      * @param height Height
      */
+    @Override
     public void setCitizensize(final @NotNull float width, final @NotNull float height)
     {
         this.width = width;
@@ -1111,6 +1124,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @param isChild boolean
      */
+    @Override
     public void setIsChild(final boolean isChild)
     {
         if (isChild && !this.isChild)
@@ -1130,11 +1144,12 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * Play move away sound when running from an entity.
      */
+    @Override
     public void playMoveAwaySound()
     {
         if (citizenJobHandler.getColonyJob() != null)
         {
-            SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorld(this), getPosition(),
+            SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorldFromCitizen(this), getPosition(),
               citizenJobHandler.getColonyJob().getMoveAwaySound(), 1);
         }
     }
@@ -1144,6 +1159,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return the proxy.
      */
+    @Override
     public IWalkToProxy getProxy()
     {
         return proxy;
@@ -1152,6 +1168,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * Decrease the saturation of the citizen for 1 action.
      */
+    @Override
     public void decreaseSaturationForAction()
     {
         if (citizenData != null)
@@ -1164,6 +1181,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * Decrease the saturation of the citizen for 1 action.
      */
+    @Override
     public void decreaseSaturationForContinuousAction()
     {
         if (citizenData != null)
@@ -1199,6 +1217,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return the id.
      */
+    @Override
     public int getCitizenId()
     {
         return citizenId;
@@ -1209,6 +1228,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @param id the id to set.
      */
+    @Override
     public void setCitizenId(final int id)
     {
         this.citizenId = id;
@@ -1219,7 +1239,8 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @param data the data to set.
      */
-    public void setCitizenData(@Nullable final CitizenData data)
+    @Override
+    public void setCitizenData(@Nullable final ICitizenData data)
     {
         this.citizenData = data;
     }
@@ -1230,6 +1251,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return the current position.
      */
+    @Override
     public BlockPos getCurrentPosition()
     {
         return currentPosition;
@@ -1240,6 +1262,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @param currentPosition the position to set.
      */
+    @Override
     public void setCurrentPosition(final BlockPos currentPosition)
     {
         this.currentPosition = currentPosition;
@@ -1248,6 +1271,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     /**
      * Spawn eating particles for the citizen.
      */
+    @Override
     public void spawnEatingParticle()
     {
         updateItemUse(getHeldItemMainhand(), EATING_PARTICLE_COUNT);
@@ -1260,9 +1284,10 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return the instance of the handler.
      */
-    public CitizenExperienceHandler getCitizenExperienceHandler()
+    @Override
+    public ICitizenExperienceHandler getCitizenExperienceHandler()
     {
-        return citizenExperienceHandler;
+        return ICitizenExperienceHandler;
     }
 
     /**
@@ -1270,9 +1295,10 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return the instance of the handler.
      */
-    public CitizenChatHandler getCitizenChatHandler()
+    @Override
+    public ICitizenChatHandler getCitizenChatHandler()
     {
-        return citizenChatHandler;
+        return ICitizenChatHandler;
     }
 
     /**
@@ -1280,9 +1306,10 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return the instance of the handler.
      */
-    public CitizenStatusHandler getCitizenStatusHandler()
+    @Override
+    public ICitizenStatusHandler getCitizenStatusHandler()
     {
-        return citizenStatusHandler;
+        return ICitizenStatusHandler;
     }
 
     /**
@@ -1290,9 +1317,10 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return the instance of the handler.
      */
-    public CitizenItemHandler getCitizenItemHandler()
+    @Override
+    public ICitizenItemHandler getCitizenItemHandler()
     {
-        return citizenItemHandler;
+        return ICitizenItemHandler;
     }
 
     /**
@@ -1300,9 +1328,10 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return the instance of the handler.
      */
-    public CitizenInventoryHandler getCitizenInventoryHandler()
+    @Override
+    public ICitizenInventoryHandler getCitizenInventoryHandler()
     {
-        return citizenInventoryHandler;
+        return ICitizenInventoryHandler;
     }
 
     /**
@@ -1310,7 +1339,8 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return the instance of the handler.
      */
-    public CitizenColonyHandler getCitizenColonyHandler()
+    @Override
+    public ICitizenColonyHandler getCitizenColonyHandler()
     {
         return citizenColonyHandler;
     }
@@ -1320,7 +1350,8 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return the instance of the handler.
      */
-    public CitizenJobHandler getCitizenJobHandler()
+    @Override
+    public ICitizenJobHandler getCitizenJobHandler()
     {
         return citizenJobHandler;
     }
@@ -1330,9 +1361,10 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return the instance of the handler.
      */
-    public CitizenSleepHandler getCitizenSleepHandler()
+    @Override
+    public ICitizenSleepHandler getCitizenSleepHandler()
     {
-        return citizenSleepHandler;
+        return ICitizenSleepHandler;
     }
 
     /**
@@ -1340,9 +1372,10 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return the instance of the handler.
      */
-    public CitizenStuckHandler getCitizenStuckHandler()
+    @Override
+    public ICitizenStuckHandler getCitizenStuckHandler()
     {
-        return citizenStuckHandler;
+        return ICitizenStuckHandler;
     }
 
     /**
@@ -1350,6 +1383,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return true if so.
      */
+    @Override
     public boolean isOkayToEat()
     {
         return !getCitizenSleepHandler().isAsleep() && getDesiredActivity() != DesiredActivity.SLEEP && (citizenJobHandler.getColonyJob() == null
@@ -1361,6 +1395,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return true if so.
      */
+    @Override
     public boolean shouldBeFed()
     {
         return this.getCitizenData() != null && this.getCitizenData().getSaturation() <= CitizenConstants.AVERAGE_SATURATION && !this.getCitizenData().justAte();
@@ -1371,6 +1406,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return true if so.
      */
+    @Override
     public boolean isIdlingAtJob()
     {
         return isOkayToEat() && (citizenJobHandler.getColonyJob() == null || citizenJobHandler.getColonyJob().isIdling());
@@ -1381,6 +1417,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @param mourning indicate if the citizen should mourn
      */
+    @Override
     public void setMourning(final boolean mourning)
     {
         this.mourning = mourning;
@@ -1391,9 +1428,28 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @return indicate if the citizen is mouring
      */
+    @Override
     public boolean isMourning()
     {
         return mourning;
+    }
+
+    @Override
+    public float getRotationYaw()
+    {
+        return this.rotationYaw;
+    }
+
+    @Override
+    public float getRotationPitch()
+    {
+        return this.rotationPitch;
+    }
+
+    @Override
+    public boolean isDead()
+    {
+        return isDead;
     }
 
     /**

@@ -115,7 +115,7 @@ public class EntityAIAttackArcher extends EntityAIBase
             if (lastAttack <= 0 && entity.canEntityBeSeen(target))
             {
 
-                final EntityTippedArrow arrowEntity = new EntityTippedArrow(CompatibilityUtils.getWorld(entity), entity);
+                final EntityTippedArrow arrowEntity = new EntityTippedArrow(CompatibilityUtils.getWorldFromEntity(entity), entity);
                 final double xVector = target.posX - entity.posX;
                 final double yVector = target.getEntityBoundingBox().minY + target.height / AIM_HEIGHT - arrowEntity.posY;
                 final double zVector = target.posZ - entity.posZ;

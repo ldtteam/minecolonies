@@ -1,15 +1,10 @@
 package com.minecolonies.coremod.blocks.decorative;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.blocks.AbstractBlockMinecolonies;
 import com.minecolonies.coremod.blocks.AbstractBlockMinecoloniesFalling;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import net.minecraft.block.BlockHorizontal;
-import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.LivingEntityBase;
@@ -36,17 +31,8 @@ import static net.minecraft.util.Direction.*;
  * This block is used as a border to show the size of the building.
  * It also shows that the building is in the progress of being built.
  */
-public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<BlockConstructionTape>
+public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<BlockConstructionTape> implements IBlockConstructionTape<BlockConstructionTape>
 {
-    /**
-     * The variants of the shingle slab.
-     */
-    public static final PropertyEnum<Type> VARIANT = PropertyEnum.create("variant", Type.class);
-
-    /**
-     * The position it faces.
-     */
-    public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
     /**
      * The hardness this block has.
@@ -275,7 +261,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<Bloc
     public AxisAlignedBB getBoundingBox(final BlockState stateIn, final IBlockAccess source, final BlockPos pos)
     {
         final BlockState state = getActualState(stateIn, source, pos);
-        if(state.getValue(VARIANT).equals(Type.CORNER))
+        if(state.getValue(VARIANT).equals(ConstructionTapeType.CORNER))
         {
             if (state.getValue(FACING).equals(NORTH))
             {
@@ -361,9 +347,9 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<Bloc
 
         if((connectors[0] && connectors[2]) || (connectors[0] && connectors[3]) || (connectors[1] && connectors[3]) || (connectors[1] && connectors[2]))
         {
-            return state.withProperty(VARIANT, Type.CORNER);
+            return state.withProperty(VARIANT, ConstructionTapeType.CORNER);
         }
-        return state.withProperty(VARIANT, Type.STRAIGHT);
+        return state.withProperty(VARIANT, ConstructionTapeType.STRAIGHT);
     }
 
     /**
@@ -443,84 +429,4 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<Bloc
     {
         return new BlockStateContainer(this, new IProperty[] {FACING, VARIANT});
     }
-
-    /**
-     * Types that the {@link BlockConstructionTape} supports
-     */
-    public enum Type implements IStringSerializable
-    {
-        STRAIGHT(0, "straight", MapColor.WOOD),
-        CORNER(1, "corner", MapColor.OBSIDIAN);
-
-        private static final Type[] META_LOOKUP = new Type[values().length];
-        static
-        {
-            for (final Type enumtype : values())
-            {
-                META_LOOKUP[enumtype.getMetadata()] = enumtype;
-            }
-        }
-        private final int      meta;
-        private final String   name;
-        private final String   unlocalizedName;
-        /**
-         * The color that represents this entry on a map.
-         */
-        private final MapColor mapColor;
-
-        Type(final int metaIn, final String nameIn, final MapColor mapColorIn)
-        {
-            this(metaIn, nameIn, nameIn, mapColorIn);
-        }
-
-        Type(final int metaIn, final String nameIn, final String unlocalizedNameIn, final MapColor mapColorIn)
-        {
-            this.meta = metaIn;
-            this.name = nameIn;
-            this.unlocalizedName = unlocalizedNameIn;
-            this.mapColor = mapColorIn;
-        }
-
-        public static Type byMetadata(final int meta)
-        {
-            int tempMeta = meta;
-            if (tempMeta < 0 || tempMeta >= META_LOOKUP.length)
-            {
-                tempMeta = 0;
-            }
-
-            return META_LOOKUP[tempMeta];
-        }
-
-        public int getMetadata()
-        {
-            return this.meta;
-        }
-
-        /**
-         * The color which represents this entry on a map.
-         */
-        public MapColor getMapColor()
-        {
-            return this.mapColor;
-        }
-
-        @Override
-        public String toString()
-        {
-            return this.name;
-        }
-
-        @NotNull
-        public String getName()
-        {
-            return this.name;
-        }
-
-        public String getTranslationKey()
-        {
-            return this.unlocalizedName;
-        }
-    }
-
 }

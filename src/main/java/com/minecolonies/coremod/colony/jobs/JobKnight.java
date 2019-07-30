@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
+import com.minecolonies.coremod.client.render.BipedModelType;
 import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIKnight;
 
@@ -22,7 +23,7 @@ public class JobKnight extends AbstractJobGuard
      *
      * @param entity the citizen data.
      */
-    public JobKnight(final CitizenData entity)
+    public JobKnight(final ICitizenData entity)
     {
         super(entity);
     }
@@ -50,13 +51,13 @@ public class JobKnight extends AbstractJobGuard
     }
 
     /**
-     * Gets the {@link RenderBipedCitizen.Model} to use for our ranger.
+     * Gets the {@link BipedModelType} to use for our ranger.
      *
      * @return The model to use.
      */
     @Override
-    public RenderBipedCitizen.Model getModel()
+    public BipedModelType getModel()
     {
-        return RenderBipedCitizen.Model.KNIGHT_GUARD;
+        return BipedModelType.KNIGHT_GUARD;
     }
 }

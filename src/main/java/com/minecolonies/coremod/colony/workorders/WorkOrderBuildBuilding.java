@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.workorders;
 
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,7 +23,7 @@ public class WorkOrderBuildBuilding extends WorkOrderBuild
      * @param building the building to build.
      * @param newLevel    the level it should have.
      */
-    public WorkOrderBuildBuilding(@NotNull final AbstractBuilding building, final int newLevel)
+    public WorkOrderBuildBuilding(@NotNull final IBuilding building, final int newLevel)
     {
         super(building, newLevel);
     }

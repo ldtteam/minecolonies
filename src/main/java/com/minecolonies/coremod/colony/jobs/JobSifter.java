@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
+import com.minecolonies.coremod.client.render.BipedModelType;
 import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.sifter.EntityAIWorkSifter;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +17,7 @@ public class JobSifter extends AbstractJobCrafter
      *
      * @param entity the lumberjack.
      */
-    public JobSifter(final CitizenData entity)
+    public JobSifter(final ICitizenData entity)
     {
         super(entity);
     }
@@ -40,9 +41,9 @@ public class JobSifter extends AbstractJobCrafter
      */
     @NotNull
     @Override
-    public RenderBipedCitizen.Model getModel()
+    public BipedModelType getModel()
     {
-        return RenderBipedCitizen.Model.SMELTER;
+        return BipedModelType.SMELTER;
     }
 
     /**

@@ -3,7 +3,7 @@ package com.minecolonies.coremod.colony.requestable;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColonyManager;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -61,7 +61,7 @@ public class SmeltableOre implements IDeliverable
     public boolean matches(@NotNull final ItemStack stack)
     {
         return ItemStackUtils.IS_SMELTABLE.and(
-            itemStack -> ColonyManager.getCompatibilityManager().isOre(itemStack)).test(stack);
+            itemStack -> IColonyManager.getInstance().getCompatibilityManager().isOre(itemStack)).test(stack);
     }
 
     @Override

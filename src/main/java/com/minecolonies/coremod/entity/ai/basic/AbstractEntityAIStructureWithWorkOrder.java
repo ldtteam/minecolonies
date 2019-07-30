@@ -11,8 +11,8 @@ import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
@@ -97,7 +97,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
             if (wo instanceof WorkOrderBuildBuilding)
             {
-                final AbstractBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
+                final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
                 if (building == null)
                 {
                     Log.getLogger().error(
@@ -351,7 +351,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             final WorkOrderBuildBuilding woh = (wo instanceof WorkOrderBuildBuilding) ? (WorkOrderBuildBuilding) wo : null;
             if (woh != null)
             {
-                final AbstractBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
+                final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
                 if (building == null)
                 {
                     Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",

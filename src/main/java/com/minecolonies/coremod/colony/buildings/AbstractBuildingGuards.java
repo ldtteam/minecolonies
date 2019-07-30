@@ -10,15 +10,10 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.colony.jobs.JobKnight;
-import com.minecolonies.coremod.colony.jobs.JobRanger;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.colony.jobs.*;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.network.messages.GuardMobAttackListMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -83,7 +78,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             this.buttonName = buttonName;
         }
 
-        public AbstractJobGuard getGuardJob(final CitizenData citizen)
+        public AbstractJobGuard getGuardJob(final ICitizenData citizen)
         {
             if (this == RANGER)
             {
@@ -312,7 +307,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         BlockPosUtil.writeToByteBuf(buf, guardPos);
 
         buf.writeInt(this.getAssignedCitizen().size());
-        for (final CitizenData citizen : this.getAssignedCitizen())
+        for (final ICitizenData citizen : this.getAssignedCitizen())
         {
             buf.writeInt(citizen.getId());
         }
@@ -320,7 +315,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
 
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return getJob().getGuardJob(citizen);
     }
@@ -345,14 +340,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         {
             if (currentPatrolTarget == null)
             {
-                return getLocation();
+                return getPosition();
             }
             else
             {
-                final BlockPos pos = BlockPosUtil.getRandomPosition(getColony().getWorld(), currentPatrolTarget, getLocation());
-                if (BlockPosUtil.getDistance2D(pos, getLocation()) > getPatrolDistance())
+                final BlockPos pos = BlockPosUtil.getRandomPosition(getColony().getWorld(), currentPatrolTarget, getPosition());
+                if (BlockPosUtil.getDistance2D(pos, getPosition()) > getPatrolDistance())
                 {
-                    return getLocation();
+                    return getPosition();
                 }
                 return pos;
             }
@@ -394,7 +389,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
 
         if (getAssignedEntities() != null)
         {
-            for (final Optional<EntityCitizen> optCitizen : getAssignedEntities())
+            for (final Optional<IEntityCitizen> optCitizen : getAssignedEntities())
             {
                 if (optCitizen.isPresent())
                 {
@@ -419,11 +414,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     @Override
-    public void removeCitizen(final CitizenData citizen)
+    public void removeCitizen(final ICitizenData citizen)
     {
         if (citizen != null)
         {
-            final Optional<EntityCitizen> optCitizen = citizen.getCitizenEntity();
+            final Optional<IEntityCitizen> optCitizen = citizen.getCitizenEntity();
             if (optCitizen.isPresent())
             {
                 optCitizen.get().removeAllHealthModifiers();
@@ -440,12 +435,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     @Override
-    public boolean assignCitizen(final CitizenData citizen)
+    public boolean assignCitizen(final ICitizenData citizen)
     {
         // Only change HP values if assign successful
         if (super.assignCitizen(citizen) && citizen != null)
         {
-            final Optional<EntityCitizen> optCitizen = citizen.getCitizenEntity();
+            final Optional<IEntityCitizen> optCitizen = citizen.getCitizenEntity();
             if (optCitizen.isPresent())
             {
                 final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), 0);
@@ -521,7 +516,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     public void setJob(final GuardJob job)
     {
         this.job = job;
-        for (final CitizenData citizen : getAssignedCitizen())
+        for (final ICitizenData citizen : getAssignedCitizen())
         {
             citizen.setJob(createJob(citizen));
         }
@@ -699,7 +694,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         }
         task = GuardTask.GUARD;
         markDirty();
-        return this.getLocation();
+        return this.getPosition();
     }
 
     /**
@@ -822,7 +817,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      */
     public static boolean checkIfGuardShouldTakeDamage(final EntityCitizen citizen, final PlayerEntity player)
     {
-        final AbstractBuildingWorker buildingWorker = citizen.getCitizenColonyHandler().getWorkBuilding();
+        final IBuildingWorker buildingWorker = citizen.getCitizenColonyHandler().getWorkBuilding();
         return !(buildingWorker instanceof AbstractBuildingGuards) || ((AbstractBuildingGuards) buildingWorker).task != GuardTask.FOLLOW
                  || !player.equals(((AbstractBuildingGuards) buildingWorker).followPlayer);
     }
@@ -894,7 +889,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
          * @param c the colony.
          * @param l the location.
          */
-        public View(final ColonyView c, @NotNull final BlockPos l)
+        public View(final IColonyView c, @NotNull final BlockPos l)
         {
             super(c, l);
         }

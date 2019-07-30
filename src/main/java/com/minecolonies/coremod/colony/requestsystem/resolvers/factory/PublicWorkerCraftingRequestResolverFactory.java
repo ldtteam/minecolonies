@@ -45,9 +45,9 @@ public class PublicWorkerCraftingRequestResolverFactory implements IRequestResol
     @Override
     public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final PublicWorkerCraftingRequestResolver publicWorkerCraftingRequestResolverFactory)
     {
-        final CompoundNBT compound = new CompoundNBT();
-        compound.put(NBT_TOKEN, controller.serialize(publicWorkerCraftingRequestResolverFactory.getRequesterId()));
-        compound.put(NBT_LOCATION, controller.serialize(publicWorkerCraftingRequestResolverFactory.getRequesterLocation()));
+        final NBTTagCompound compound = new NBTTagCompound();
+        compound.setTag(NBT_TOKEN, controller.serialize(publicWorkerCraftingRequestResolverFactory.getId()));
+        compound.setTag(NBT_LOCATION, controller.serialize(publicWorkerCraftingRequestResolverFactory.getLocation()));
         return compound;
     }
 

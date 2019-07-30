@@ -1,13 +1,11 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntityMP;
@@ -66,7 +64,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
      * @param quantity        of item needed to be transfered
      * @param colonyId        the colony id
      */
-    public TransferItemsToCitizenRequestMessage(@NotNull final CitizenDataView citizenDataView, final ItemStack itemStack, final int quantity, final int colonyId)
+    public TransferItemsToCitizenRequestMessage(@NotNull final ICitizenDataView citizenDataView, final ItemStack itemStack, final int quantity, final int colonyId)
     {
         super();
         this.colonyId = colonyId;
@@ -99,21 +97,21 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
     @Override
     public void messageOnServerThread(final TransferItemsToCitizenRequestMessage message, final PlayerEntityMP player)
     {
-        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null)
         {
             Log.getLogger().warn("TransferItemsRequestMessage colony is null");
             return;
         }
 
-        final CitizenData citizenData = colony.getCitizenManager().getCitizen(message.citizenId);
+        final ICitizenData citizenData = colony.getCitizenManager().getCitizen(message.citizenId);
         if (citizenData == null)
         {
             Log.getLogger().warn("TransferItemsRequestMessage citizenData is null");
             return;
         }
 
-        final Optional<EntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
+        final Optional<IEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
         if (!optionalEntityCitizen.isPresent())
         {
             Log.getLogger().warn("TransferItemsRequestMessage entity citizen is null");
@@ -140,7 +138,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
 
         final ItemStack itemStackToTake = message.itemStack.copy();
         ItemStackUtils.setSize(itemStackToTake, message.quantity);
-        final EntityCitizen citizen = optionalEntityCitizen.get();
+        final IEntityCitizen citizen = optionalEntityCitizen.get();
         final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(citizen.getInventoryCitizen()), itemStackToTake);
         if (!isCreative)
         {

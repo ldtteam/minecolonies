@@ -3,8 +3,8 @@ package com.minecolonies.coremod.colony.buildings;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
@@ -170,6 +170,8 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             BlockPosUtil.write(compound, TAG_PROGRESS_POS, progressPos);
             compound.putInt(TAG_PROGRESS_STAGE, progressStage.ordinal());
         }
+
+        return compound;
     }
 
     /**
@@ -193,7 +195,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             qty += resource.getAmount();
         }
 
-        final CitizenData data = this.getMainCitizen();
+        final ICitizenData data = this.getMainCitizen();
         if(data != null && data.getJob() instanceof AbstractJobStructure)
         {
             final AbstractJobStructure structureBuilderJob = (AbstractJobStructure) data.getJob();
@@ -206,7 +208,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 ByteBufUtils.writeUTF8String(buf, name);
 
                 final String desc;
-                if(pos.equals(getLocation()))
+                if(pos.equals(getPosition()))
                 {
                     desc = "here";
                 }

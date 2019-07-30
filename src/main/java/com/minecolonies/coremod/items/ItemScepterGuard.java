@@ -1,16 +1,15 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.client.gui.WindowGuardControl;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -101,13 +100,13 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             {
                 return ActionResult.newResult(EnumActionResult.FAIL, stack);
             }
-            final ColonyView colony = ColonyManager.getColonyView(compound.getInt(TAG_ID), Minecraft.getMinecraft().world.provider.getDimension());
+            final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInteger(TAG_ID), Minecraft.getMinecraft().world.provider.getDimension());
             if (colony == null)
             {
                 return ActionResult.newResult(EnumActionResult.FAIL, stack);
             }
             final BlockPos guardTower = BlockPosUtil.readFromNBT(compound, TAG_POS);
-            final AbstractBuildingView hut = colony.getBuilding(guardTower);
+            final IBuildingView hut = colony.getBuilding(guardTower);
 
             if (hut instanceof AbstractBuildingGuards.View && playerIn.isSneaking())
             {
@@ -135,14 +134,14 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         {
             return EnumActionResult.FAIL;
         }
-        final Colony colony = ColonyManager.getColonyByWorld(compound.getInt(TAG_ID), worldIn);
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(compound.getInteger(TAG_ID), worldIn);
         if (colony == null)
         {
             return EnumActionResult.FAIL;
         }
 
         final BlockPos guardTower = BlockPosUtil.readFromNBT(compound, TAG_POS);
-        final AbstractBuilding hut = colony.getBuildingManager().getBuilding(guardTower);
+        final IBuilding hut = colony.getBuildingManager().getBuilding(guardTower);
         if (!(hut instanceof AbstractBuildingGuards))
         {
             return EnumActionResult.FAIL;
@@ -155,8 +154,8 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             return EnumActionResult.FAIL;
         }
 
-        final GuardTask task = GuardTask.values()[compound.getInt("task")];
-        final CitizenData citizen = tower.getMainCitizen();
+        final GuardTask task = GuardTask.values()[compound.getInteger("task")];
+        final ICitizenData citizen = tower.getMainCitizen();
 
         String name = "";
         if (citizen != null)

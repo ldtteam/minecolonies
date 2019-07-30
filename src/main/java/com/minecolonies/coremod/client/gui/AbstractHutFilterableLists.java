@@ -5,6 +5,7 @@ import com.ldtteam.blockout.controls.Button;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.ldtteam.blockout.views.View;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
@@ -58,7 +59,7 @@ public abstract class AbstractHutFilterableLists extends AbstractWindowWorkerBui
         {
             return Collections.emptyList();
         }
-        return ImmutableList.copyOf(ColonyManager.getCompatibilityManager().getBlockList().stream().filter(filterPredicate.and(itemStackPredicate.get(id))).map(ItemStorage::new).collect(Collectors.toList()));
+        return ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(filterPredicate.and(itemStackPredicate.get(id))).map(ItemStorage::new).collect(Collectors.toList()));
     }
 
     @Override

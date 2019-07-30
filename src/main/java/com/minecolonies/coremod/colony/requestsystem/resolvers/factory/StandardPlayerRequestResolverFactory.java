@@ -68,10 +68,10 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
     @Override
     public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StandardPlayerRequestResolver playerRequestResolver)
     {
-        final CompoundNBT compound = new CompoundNBT();
-        compound.put(NBT_TOKEN, controller.serialize(playerRequestResolver.getRequesterId()));
-        compound.put(NBT_LOCATION, controller.serialize(playerRequestResolver.getRequesterLocation()));
-        compound.put(NBT_ASSIGNED_REQUESTS, playerRequestResolver.getAllAssignedRequests().stream().map(controller::serialize).collect(NBTUtils.toListNBT()));
+        final NBTTagCompound compound = new NBTTagCompound();
+        compound.setTag(NBT_TOKEN, controller.serialize(playerRequestResolver.getId()));
+        compound.setTag(NBT_LOCATION, controller.serialize(playerRequestResolver.getLocation()));
+        compound.setTag(NBT_ASSIGNED_REQUESTS, playerRequestResolver.getAllAssignedRequests().stream().map(controller::serialize).collect(NBTUtils.toNBTTagList()));
         return compound;
     }
 

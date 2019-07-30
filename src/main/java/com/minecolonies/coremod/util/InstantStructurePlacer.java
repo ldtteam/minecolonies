@@ -2,14 +2,15 @@ package com.minecolonies.coremod.util;
 
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
 import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
+import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.Entity;
@@ -175,10 +176,10 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
                 {
                     final BlockState blockState = (BlockState) result;
 
-                    final Colony colony = ColonyManager.getColonyByPosFromWorld(world, pos);
+                    final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
                     if (colony != null)
                     {
-                        final AbstractBuilding building = colony.getBuildingManager().getBuilding(structure.getPosition());
+                        final IBuilding building = colony.getBuildingManager().getBuilding(structure.getPosition());
 
                         if (building != null)
                         {

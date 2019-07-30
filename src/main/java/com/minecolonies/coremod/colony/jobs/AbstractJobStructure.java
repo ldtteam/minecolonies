@@ -2,10 +2,12 @@ package com.minecolonies.coremod.colony.jobs;
 
 import com.ldtteam.structures.helpers.Structure;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +36,7 @@ public abstract class AbstractJobStructure extends AbstractJob
      *
      * @param entity the citizen data.
      */
-    public AbstractJobStructure(final CitizenData entity)
+    public AbstractJobStructure(final ICitizenData entity)
     {
         super(entity);
     }
@@ -92,22 +94,24 @@ public abstract class AbstractJobStructure extends AbstractJob
     }
 
     @Override
-    public void readFromNBT(@NotNull final CompoundNBT compound)
+    public NBTTagCompound serializeNBT()
     {
-        super.readFromNBT(compound);
-        if (compound.keySet().contains(TAG_WORK_ORDER))
+        final NBTTagCompound compound = super.serializeNBT();
+        if (workOrderId != 0)
         {
-            workOrderId = compound.getInt(TAG_WORK_ORDER);
+            compound.setInteger(TAG_WORK_ORDER, workOrderId);
         }
+
+        return compound;
     }
 
     @Override
-    public void write(@NotNull final CompoundNBT compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
-        super.write(compound);
-        if (workOrderId != 0)
+        super.deserializeNBT(compound);
+        if (compound.hasKey(TAG_WORK_ORDER))
         {
-            compound.putInt(TAG_WORK_ORDER, workOrderId);
+            workOrderId = compound.getInteger(TAG_WORK_ORDER);
         }
     }
 
@@ -139,7 +143,7 @@ public abstract class AbstractJobStructure extends AbstractJob
      */
     private void resetNeededItems()
     {
-        final AbstractBuilding workerBuilding = this.getCitizen().getWorkBuilding();
+        final IBuilding workerBuilding = this.getCitizen().getWorkBuilding();
         if (workerBuilding instanceof BuildingBuilder)
         {
             ((BuildingBuilder) workerBuilding).resetNeededResources();

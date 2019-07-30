@@ -23,6 +23,9 @@ import java.util.Locale;
 
 import static net.minecraft.util.Direction.NORTH;
 import static net.minecraft.util.Direction.fromAngle;
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
+import static net.minecraft.util.EnumFacing.NORTH;
+import static net.minecraft.util.EnumFacing.fromAngle;
 
 /**
  * Class for the minecolonies info Poster.
@@ -64,7 +67,8 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     }
 
     @Override
-    public BlockState getStateFromMeta(final int meta)
+    @SuppressWarnings(DEPRECATION)
+    public IBlockState getStateFromMeta(final int meta)
     {
         Direction enumfacing = Direction.byIndex(meta);
 
@@ -80,22 +84,26 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     public int getMetaFromState(final BlockState state)
     {
         return ((Direction) state.getValue(FACING)).getIndex();
+        return state.getValue(FACING).getIndex();
     }
 
     @Override
-    public BlockState withRotation(final BlockState state, final Rotation rot)
+    @SuppressWarnings(DEPRECATION)
+    public IBlockState withRotation(final IBlockState state, final Rotation rot)
     {
-        return state.withProperty(FACING, rot.rotate((Direction) state.getValue(FACING)));
+        return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
     }
 
     @Override
-    public BlockState withMirror(final BlockState state, final Mirror mirrorIn)
+    @SuppressWarnings(DEPRECATION)
+    public IBlockState withMirror(final IBlockState state, final Mirror mirrorIn)
     {
-        return state.withRotation(mirrorIn.toRotation((Direction) state.getValue(FACING)));
+        return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
     }
 
     @Override
-    public boolean isFullCube(final BlockState state)
+    @SuppressWarnings(DEPRECATION)
+    public boolean isFullCube(final IBlockState state)
     {
         return false;
     }
@@ -107,7 +115,8 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     }
 
     @Override
-    public boolean isOpaqueCube(final BlockState state)
+    @SuppressWarnings(DEPRECATION)
+    public boolean isOpaqueCube(final IBlockState state)
     {
         return false;
     }

@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowPostBox;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.util.math.BlockPos;
@@ -64,7 +65,7 @@ public class PostBox extends AbstractBuilding
          * @param c the colonyView.
          * @param l the location of the block.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }
@@ -78,7 +79,7 @@ public class PostBox extends AbstractBuilding
 
         @NotNull
         @Override
-        public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+        public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken request)
         {
             return new TextComponentTranslation("tile.minecolonies.blockpostbox.name");
         }

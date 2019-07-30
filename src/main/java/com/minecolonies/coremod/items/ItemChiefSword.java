@@ -2,7 +2,7 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.coremod.entity.ai.mobs.IBaseMinecoloniesMob;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
 import net.minecraft.entity.Entity;
@@ -43,7 +43,7 @@ public class ItemChiefSword extends SwordItem
 
         if (entityIn instanceof PlayerEntity && isSelected)
         {
-            final Stream<AbstractEntityMinecoloniesMob> barbarians = BarbarianUtils.getBarbariansCloseToEntity(entityIn, GLOW_EFFECT_DISTANCE).stream();
+            final Stream<IBaseMinecoloniesMob> barbarians = BarbarianUtils.getBarbariansCloseToEntity(entityIn, GLOW_EFFECT_DISTANCE).stream();
             barbarians.forEach(entity -> entity.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER)));
         }
     }

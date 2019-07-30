@@ -96,6 +96,29 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
         }
     }
 
+    @Override
+    public NBTTagCompound serializeNBT()
+    {
+        final NBTTagCompound compound = super.serializeNBT();
+        @NotNull final NBTTagList filterableListCompound = new NBTTagList();
+        for(@NotNull final Map.Entry<String, List<ItemStorage>> entry : itemsAllowed.entrySet())
+        {
+            @NotNull final NBTTagCompound listCompound = new NBTTagCompound();
+            listCompound.setString(TAG_ID, entry.getKey());
+            @NotNull final NBTTagList filteredItems = new NBTTagList();
+            for(@NotNull final ItemStorage item : entry.getValue())
+            {
+                @NotNull final NBTTagCompound itemCompound = new NBTTagCompound();
+                item.getItemStack().writeToNBT(itemCompound);
+                filteredItems.appendTag(itemCompound);
+            }
+            listCompound.setTag(TAG_ITEMLIST, filteredItems);
+            filterableListCompound.appendTag(listCompound);
+        }
+        compound.setTag(TAG_ITEMLIST, filterableListCompound);
+        return compound;
+    }
+
     /**
      * Add a compostable item to the list.
      * @param item the item to add.

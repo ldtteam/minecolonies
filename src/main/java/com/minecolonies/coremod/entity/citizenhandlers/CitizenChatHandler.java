@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.citizenhandlers;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,7 +18,7 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 
-public class CitizenChatHandler
+public class CitizenChatHandler implements ICitizenChatHandler
 {
     /**
      * The citizen assigned to this manager.
@@ -48,6 +48,7 @@ public class CitizenChatHandler
      * @param key  the key to retrieve the string.
      * @param args additional arguments.
      */
+    @Override
     public void sendLocalizedChat(final String key, final Object... args)
     {
         sendChat(key, args);
@@ -81,9 +82,9 @@ public class CitizenChatHandler
         citizenDescription.appendText(citizen.getCustomNameTag()).appendText(": ");
         if (citizen.getCitizenColonyHandler().getColony() != null)
         {
-            final StringTextComponent colonyDescription = new StringTextComponent(" at " + citizen.getCitizenColonyHandler().getColony().getName() + ":");
-            final List<PlayerEntity> players = new ArrayList<>(citizen.getCitizenColonyHandler().getColony().getMessagePlayerEntitys());
-            final PlayerEntity owner = ServerUtils.getPlayerFromUUID(CompatibilityUtils.getWorld(citizen), citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
+            final TextComponentString colonyDescription = new TextComponentString(" at " + citizen.getCitizenColonyHandler().getColony().getName() + ":");
+            final List<EntityPlayer> players = new ArrayList<>(citizen.getCitizenColonyHandler().getColony().getMessageEntityPlayers());
+            final EntityPlayer owner = ServerUtils.getPlayerFromUUID(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
 
             if (owner != null)
             {
@@ -97,6 +98,7 @@ public class CitizenChatHandler
         }
     }
 
+    @Override
     public void cleanupChatMessages()
     {
         //Only check if there are messages and once a second
@@ -110,11 +112,12 @@ public class CitizenChatHandler
      * Notify about death of citizen.
      * @param damageSource the damage source.
      */
+    @Override
     public void notifyDeath(final DamageSource damageSource)
     {
         if (citizen.getCitizenColonyHandler().getColony() != null && citizen.getCitizenData() != null)
         {
-            final AbstractJob job = citizen.getCitizenJobHandler().getColonyJob();
+            final IJob job = citizen.getCitizenJobHandler().getColonyJob();
             if (job != null)
             {
                 final ITextComponent component = new TextComponentTranslation("tile.blockHutTownHall.messageWorkerDead", new TextComponentTranslation(job.getName()), citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY, (int) citizen.posZ, damageSource.damageType);

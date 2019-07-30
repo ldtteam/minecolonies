@@ -9,9 +9,9 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
@@ -87,10 +87,8 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
         final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
 
         builder.addAll(supers);
-        builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getRequesterLocation(),
-          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
-        builder.add(new PublicWorkerCraftingProductionResolver(getRequester().getRequesterLocation(),
-          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+        builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+        builder.add(new PublicWorkerCraftingProductionResolver(getRequester().getLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
     }
@@ -99,11 +97,12 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<ItemStorage, Tuple<Integer, Boolean>> recipeOutputs = new HashMap<>();
-        for (final CitizenData citizen : getAssignedCitizen())
+        for (final ICitizenData citizen : getAssignedCitizen())
         {
             if (citizen.getJob() instanceof AbstractJobCrafter)
             {
-                for (final IToken<?> taskToken : ((AbstractJobCrafter) citizen.getJob()).getAssignedTasksFromDataStore())
+                final List<IToken<?>> assignedTaskIds = ((AbstractJobCrafter) citizen.getJob()).getAssignedTasksFromDataStore();
+                for (final IToken<?> taskToken : assignedTaskIds)
                 {
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
                     final IRecipeStorage recipeStorage = getFirstFullFillableRecipe(request.getRequest().getStack());
@@ -202,7 +201,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
          * @param c the colonyview to put it in
          * @param l the positon
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }

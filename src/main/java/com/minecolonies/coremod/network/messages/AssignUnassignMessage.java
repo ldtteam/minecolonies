@@ -1,11 +1,14 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
+import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
@@ -59,7 +62,7 @@ public class AssignUnassignMessage extends AbstractMessage<AssignUnassignMessage
      * @param assign    assign or unassigning the citizens
      * @param citizenID the id of the citizen to fill the job.
      */
-    public AssignUnassignMessage(@NotNull final AbstractBuildingView building, final boolean assign, final int citizenID)
+    public AssignUnassignMessage(@NotNull final IBuildingView building, final boolean assign, final int citizenID)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -102,7 +105,7 @@ public class AssignUnassignMessage extends AbstractMessage<AssignUnassignMessage
     @Override
     public void messageOnServerThread(final AssignUnassignMessage message, final PlayerEntityMP player)
     {
-        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
@@ -111,14 +114,14 @@ public class AssignUnassignMessage extends AbstractMessage<AssignUnassignMessage
                 return;
             }
 
-            final AbstractBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
+            final IBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
 
             if (!(building instanceof BuildingHome))
             {
                 return;
             }
 
-            final CitizenData citizen = colony.getCitizenManager().getCitizen(message.citizenID);
+            final ICitizenData citizen = colony.getCitizenManager().getCitizen(message.citizenID);
             if (message.assign && !building.isFull() && !building.equals(citizen.getHomeBuilding()))
             {
                 if (citizen.getHomeBuilding() != null)

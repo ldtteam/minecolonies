@@ -1,8 +1,9 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
@@ -49,7 +50,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand implements
     }
 
     @Override
-    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final PlayerEntity player)
+    public boolean canRankUseCommand(@NotNull final IColony colony, @NotNull final EntityPlayer player)
     {
         return false;
     }
@@ -89,13 +90,13 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand implements
             return;
         }
 
-        final List<Colony> colonies = ColonyManager.getAllColonies();
+        final List<IColony> colonies = IColonyManager.getInstance().getAllColonies();
 
-        final List<Colony> coloniesToDelete = new ArrayList<>();
+        final List<IColony> coloniesToDelete = new ArrayList<>();
 
         for (int index = 0; colonies.size() - 1 >= index; index++)
         {
-            final Colony colony = colonies.get(index);
+            final IColony colony = colonies.get(index);
 
             if (colony.canBeAutoDeleted() && Configurations.gameplay.autoDeleteColoniesInHours != 0
                   && colony.getLastContactInHours() >= Configurations.gameplay.autoDeleteColoniesInHours)
@@ -106,10 +107,10 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand implements
 
         if (confirmDelete)
         {
-            sender.sendMessage(new StringTextComponent("Successful"));
-            for (final Colony col : coloniesToDelete)
+            sender.sendMessage(new TextComponentString("Successful"));
+            for (final IColony col : coloniesToDelete)
             {
-                server.addScheduledTask(() -> ColonyManager.deleteColonyByWorld(col.getID(), Configurations.gameplay.autoDestroyColonyBlocks, col.getWorld()));
+                server.addScheduledTask(() -> IColonyManager.getInstance().deleteColonyByWorld(col.getID(), Configurations.gameplay.autoDestroyColonyBlocks, col.getWorld()));
             }
         }
         else

@@ -15,7 +15,8 @@ import com.minecolonies.coremod.client.render.mobs.pirates.RendererArcherPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
 import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ICitizenDataView;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
 import com.minecolonies.coremod.entity.ai.mobs.EntityMercenary;
@@ -107,7 +108,7 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void showCitizenWindow(final CitizenDataView citizen)
+    public void showCitizenWindow(final ICitizenDataView citizen)
     {
         @NotNull final WindowCitizen window = new WindowCitizen(citizen);
         window.open();
@@ -277,9 +278,9 @@ public class ClientProxy extends CommonProxy
     {
         if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
-            if (ColonyManager.getServerUUID() != null)
+            if (IColonyManager.getInstance().getServerUUID() != null)
             {
-                return new File(Minecraft.getMinecraft().gameDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID());
+                return new File(Minecraft.getMinecraft().gameDir, Constants.MOD_ID + "/" + IColonyManager.getInstance().getServerUUID());
             }
             else
             {

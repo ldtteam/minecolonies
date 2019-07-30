@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.citizenhandlers;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockHorizontal;
@@ -20,7 +20,7 @@ import static com.minecolonies.coremod.entity.AbstractEntityCitizen.DATA_IS_ASLE
 /**
  * Handles the sleep of the citizen.
  */
-public class CitizenSleepHandler
+public class CitizenSleepHandler implements ICitizenSleepHandler
 {
     /**
      * The citizen assigned to this manager.
@@ -41,6 +41,7 @@ public class CitizenSleepHandler
      *
      * @return true when a sleep.
      */
+    @Override
     public boolean isAsleep()
     {
         return citizen.getDataManager().get(DATA_IS_ASLEEP);
@@ -64,6 +65,7 @@ public class CitizenSleepHandler
     /**
      * Returns the orientation of the bed in degrees.
      */
+    @Override
     @SideOnly(Side.CLIENT)
     public float getBedOrientationInDegrees()
     {
@@ -95,6 +97,7 @@ public class CitizenSleepHandler
      *
      * @param bedLocation The possible location to sleep.
      */
+    @Override
     public void trySleep(final BlockPos bedLocation)
     {
         final BlockState state = citizen.world.isBlockLoaded(bedLocation) ? citizen.world.getBlockState(bedLocation) : null;
@@ -128,6 +131,7 @@ public class CitizenSleepHandler
     /**
      * Called when the citizen wakes up.
      */
+    @Override
     public void onWakeUp()
     {
         if (citizen.getCitizenColonyHandler().getWorkBuilding() != null)
@@ -140,7 +144,7 @@ public class CitizenSleepHandler
             citizen.getCitizenJobHandler().getColonyJob().onWakeUp();
         }
 
-        final AbstractBuilding homeBuilding = citizen.getCitizenColonyHandler().getHomeBuilding();
+        final IBuilding homeBuilding = citizen.getCitizenColonyHandler().getHomeBuilding();
         if (homeBuilding != null)
         {
             homeBuilding.onWakeUp();
@@ -179,6 +183,7 @@ public class CitizenSleepHandler
      * Get the bed location of the citizen.
      * @return the bed location.
      */
+    @Override
     public BlockPos getBedLocation()
     {
         return citizen.getDataManager().get(DATA_BED_POS);
@@ -188,6 +193,7 @@ public class CitizenSleepHandler
      * Get the X render offset.
      * @return the offset.
      */
+    @Override
     public float getRenderOffsetX()
     {
         if (!isAsleep())
@@ -211,6 +217,7 @@ public class CitizenSleepHandler
      * Get the z render offset.
      * @return the offset.
      */
+    @Override
     public float getRenderOffsetZ()
     {
         if (!isAsleep())

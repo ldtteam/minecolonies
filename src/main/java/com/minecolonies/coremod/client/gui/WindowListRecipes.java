@@ -10,8 +10,10 @@ import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.AddRemoveRecipeMessage;
 import com.minecolonies.coremod.network.messages.ChangeRecipePriorityMessage;
 import net.minecraft.util.math.BlockPos;
@@ -73,7 +75,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
      * @param c          the colony view.
      * @param buildingId the building position.
      */
-    public WindowListRecipes(final ColonyView c, final BlockPos buildingId)
+    public WindowListRecipes(final IColonyView c, final BlockPos buildingId)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.building = (AbstractBuildingWorker.View) c.getBuilding(buildingId);

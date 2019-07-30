@@ -14,9 +14,10 @@ import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.DropDownList;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
@@ -64,7 +65,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     /**
      * The view of the current building.
      */
-    private final AbstractBuildingView building;
+    private final IBuildingView building;
 
     /**
      * Contains all resources needed for a certain build.
@@ -104,7 +105,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      * @param c          the colony view.
      * @param building the building.
      */
-    public WindowBuildBuilding(final ColonyView c, final AbstractBuildingView building)
+    public WindowBuildBuilding(final IColonyView c, final IBuildingView building)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.building = building;
@@ -136,7 +137,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void moveBuildingClicked()
     {
-        final WindowMoveBuilding window = new WindowMoveBuilding(building.getLocation(), building, styles.get(stylesDropDownList.getSelectedIndex()));
+        final WindowMoveBuilding window = new WindowMoveBuilding(building.getPosition(), building, styles.get(stylesDropDownList.getSelectedIndex()));
         window.open();
     }
 
@@ -185,8 +186,9 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         builders.add(new Tuple<>(LanguageHandler.format("com.minecolonies.coremod.job.Builder") + ":", BlockPos.ORIGIN));
         builders.addAll(building.getColony().getBuildings().stream()
                           .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty() && !(build instanceof BuildingMiner.View))
-                          .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getLocation()))
+                          .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
                           .collect(Collectors.toList()));
+
         initBuilderNavigation();
     }
 
@@ -255,8 +257,8 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             }
         }
 
-        structure.setPosition(building.getLocation());
-        structure.rotate(BlockPosUtil.getRotationFromRotations(building.getRotation()), world, building.getLocation(), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
+        structure.setPosition(building.getPosition());
+        structure.rotate(BlockPosUtil.getRotationFromRotations(building.getRotation()), world, building.getPosition(), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE);
         while (structure.findNextBlock())
         {
             @Nullable final BlockInfo blockInfo = structure.getBlockInfo();

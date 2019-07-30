@@ -2,13 +2,11 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.ldtteam.blockout.Log;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.items.ModItems;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

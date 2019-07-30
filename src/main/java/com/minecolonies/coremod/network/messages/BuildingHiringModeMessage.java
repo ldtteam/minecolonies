@@ -1,11 +1,14 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.HiringMode;
+import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.IBuildingWorkerView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.PlayerEntityMP;
 import net.minecraft.util.math.BlockPos;
@@ -52,7 +55,7 @@ public class BuildingHiringModeMessage extends AbstractMessage<BuildingHiringMod
      * @param building View of the building to read data from.
      * @param mode  the hiring mode.
      */
-    public BuildingHiringModeMessage(@NotNull final AbstractBuildingWorker.View building, final HiringMode mode)
+    public BuildingHiringModeMessage(@NotNull final IBuildingWorkerView building, final HiringMode mode)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -82,7 +85,7 @@ public class BuildingHiringModeMessage extends AbstractMessage<BuildingHiringMod
     @Override
     public void messageOnServerThread(final BuildingHiringModeMessage message, final PlayerEntityMP player)
     {
-        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
         {
             @Nullable final AbstractBuildingWorker building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingWorker.class);

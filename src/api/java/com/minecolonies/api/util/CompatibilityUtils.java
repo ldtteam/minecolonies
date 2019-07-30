@@ -1,5 +1,6 @@
 package com.minecolonies.api.util;
 
+import com.minecolonies.coremod.entity.IBaseEntityCitizen;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
@@ -24,9 +25,14 @@ public final class CompatibilityUtils
      * @param entity to which we get the wolrd from
      * @return the world
      */
-    public static World getWorld(final Entity entity)
+    public static World getWorldFromEntity(final Entity entity)
     {
         return entity.world;
+    }
+
+    public static World getWorldFromCitizen(final IBaseEntityCitizen baseEntityCitizen)
+    {
+        return getWorldFromEntity((Entity) baseEntityCitizen);
     }
 
     /**

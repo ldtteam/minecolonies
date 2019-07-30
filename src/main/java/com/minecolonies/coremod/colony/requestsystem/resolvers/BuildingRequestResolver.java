@@ -13,6 +13,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractBuildingDependentRequestResolver;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,12 +54,12 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     public boolean canResolveForBuilding(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        final List<TileEntity> tileEntities = new ArrayList<>();
+        final List<ICapabilityProvider> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
         tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
         tileEntities.removeIf(Objects::isNull);
 
-        if (building.getCitizenForRequest(request.getToken()).isPresent() && building.getCitizenForRequest(request.getToken()).get().isRequestAsync(request.getToken()))
+        if (building.getCitizenForRequest(request.getId()).isPresent() && building.getCitizenForRequest(request.getId()).get().isRequestAsync(request.getId()))
         {
             return false;
         }
@@ -79,8 +80,10 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     @Override
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        final List<TileEntity> tileEntities = new ArrayList<>();
+        final List<ICapabilityProvider> tileEntities = new ArrayList<>();
         tileEntities.add(building.getTileEntity());
+        tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
+        tileEntities.removeIf(Objects::isNull);
 
         final int total = request.getRequest().getCount();
         final AtomicInteger current = new AtomicInteger(0);
@@ -98,8 +101,10 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
               }
           });
 
-        manager.updateRequestState(request.getToken(), RequestState.COMPLETED);
+        manager.updateRequestState(request.getId(), RequestState.COMPLETED);
     }
+
+
 
     @Nullable
     @Override

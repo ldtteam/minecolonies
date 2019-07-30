@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
@@ -58,7 +58,7 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
     }
 
     @Override
-    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final PlayerEntity player)
+    public boolean canRankUseCommand(@NotNull final IColony colony, @NotNull final EntityPlayer player)
     {
         return colony.getPermissions().getRank(player).equals(Rank.OWNER);
     }
@@ -66,7 +66,7 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        final Colony colony = actionMenuState.getColonyForArgument("colony");
+        final IColony colony = actionMenuState.getColonyForArgument("colony");
         final Optional<Double> level = Optional.ofNullable(actionMenuState.getDoubleForArgument("level"));
 
         if (colony == null)
@@ -89,7 +89,7 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
             IColony colony = null;
             if (sender instanceof PlayerEntity)
             {
-                colony = ColonyManager.getIColonyByOwner(CompatibilityUtils.getWorld((PlayerEntity) sender), (PlayerEntity) sender);
+                colony = IColonyManager.getInstance().getIColonyByOwner(CompatibilityUtils.getWorldFromEntity((EntityPlayer) sender), (EntityPlayer) sender);
             }
 
             if (colony == null)
@@ -108,7 +108,7 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
             }
         }
 
-        final Colony colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
         if (colony == null)
         {
             final String noColonyFoundMessage = String.format(COLONY_X_NULL, colonyId);
@@ -120,7 +120,7 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
     }
 
     private void executeShared(
-            @NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final Colony colony, final Optional<Double> level) throws CommandException
+            @NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final IColony colony, final Optional<Double> level) throws CommandException
     {
         colony.getColonyHappinessManager().setLockedHappinessModifier(level);
     }

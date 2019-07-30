@@ -46,9 +46,9 @@ public class PrivateWorkerCraftingProductionResolverFactory implements IRequestR
     public CompoundNBT serialize(
       @NotNull final IFactoryController controller, @NotNull final PrivateWorkerCraftingProductionResolver privateWorkerCraftingProductionResolverFactory)
     {
-        final CompoundNBT compound = new CompoundNBT();
-        compound.put(NBT_TOKEN, controller.serialize(privateWorkerCraftingProductionResolverFactory.getRequesterId()));
-        compound.put(NBT_LOCATION, controller.serialize(privateWorkerCraftingProductionResolverFactory.getRequesterLocation()));
+        final NBTTagCompound compound = new NBTTagCompound();
+        compound.setTag(NBT_TOKEN, controller.serialize(privateWorkerCraftingProductionResolverFactory.getId()));
+        compound.setTag(NBT_LOCATION, controller.serialize(privateWorkerCraftingProductionResolverFactory.getLocation()));
         return compound;
     }
 

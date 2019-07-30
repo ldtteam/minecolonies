@@ -6,8 +6,6 @@ import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.LivingEntityBase;
@@ -29,10 +27,9 @@ import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
-public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel> implements ITileEntityProvider
+public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel> implements IBlockBarrel<BlockBarrel>
 {
 
-    public static final PropertyEnum<BarrelType> VARIANT        = PropertyEnum.create("variant", BarrelType.class);
     /**
      * The hardness this block has.
      */
@@ -47,11 +44,6 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
     private static final float                      RESISTANCE     = 1F;
 
     /**
-     * The position it faces.
-     */
-    public static final PropertyDirection FACING = BlockHorizontal.FACING;
-
-    /**
      * BoundingBox of the block
      * 0.0625 -> factor of the offset in pixels (1/16)
      */
@@ -60,7 +52,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
     public BlockBarrel()
     {
         super(Material.WOOD);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, Direction.NORTH).withProperty(VARIANT, BarrelType.ZERO));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(IBlockBarrel.FACING, EnumFacing.NORTH).withProperty(VARIANT, BarrelType.ZERO));
         initBlock();
     }
 
@@ -114,7 +106,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, FACING, VARIANT);
+        return new BlockStateContainer(this, IBlockBarrel.FACING, VARIANT);
     }
 
     @Override
@@ -139,7 +131,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
             final BlockPos pos,
             final BlockState state,
             final PlayerEntity playerIn,
-            final EnumHand hand,
+            final Direction hand,
             final Direction facing,
             final float hitX,
             final float hitY,
@@ -161,10 +153,11 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
      * Convert the given metadata into a BlockState for this Block
      */
     @Override
-    public BlockState getStateFromMeta(final int meta)
+    @SuppressWarnings(DEPRECATION)
+    public IBlockState getStateFromMeta(final int meta)
     {
-        return this.getDefaultState().withProperty(FACING,
-                Direction.byHorizontalIndex(meta));
+        return this.getDefaultState().withProperty(IBlockBarrel.FACING,
+                EnumFacing.byHorizontalIndex(meta));
     }
 
     /**
@@ -197,19 +190,21 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
     @Override
     public int getMetaFromState(final BlockState state)
     {
-        return state.getValue(FACING).getHorizontalIndex();
+        return state.getValue(IBlockBarrel.FACING).getHorizontalIndex();
     }
 
     @NotNull
     @Override
-    public AxisAlignedBB getBoundingBox(final BlockState state, final IBlockAccess source, final BlockPos pos)
+    @SuppressWarnings(DEPRECATION)
+    public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
     {
         return BOUNDING_BOX;
     }
 
     @Nullable
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(final BlockState blockState, final IBlockAccess worldIn, final BlockPos pos)
+    @SuppressWarnings(DEPRECATION)
+    public AxisAlignedBB getCollisionBoundingBox(final IBlockState blockState, final IBlockAccess worldIn, final BlockPos pos)
     {
         return BOUNDING_BOX;
     }
@@ -224,7 +219,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
     @Deprecated
     public BlockState withRotation(@NotNull final BlockState state, final Rotation rot)
     {
-        return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
+        return state.withProperty(IBlockBarrel.FACING, rot.rotate(state.getValue(IBlockBarrel.FACING)));
     }
 
     /**
@@ -235,7 +230,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
     @Deprecated
     public BlockState withMirror(@NotNull final BlockState state, final Mirror mirrorIn)
     {
-        return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
+        return state.withRotation(mirrorIn.toRotation(state.getValue(IBlockBarrel.FACING)));
     }
 
     @NotNull
@@ -244,7 +239,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
       @NotNull final World world, @NotNull final BlockPos pos, @NotNull final Direction facing, final float hitX, final float hitY,
                                             final float hitZ, final int meta, @NotNull final LivingEntityBase placer, final EnumHand hand)
     {
-        return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(FACING, placer.getHorizontalFacing());
+        return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(IBlockBarrel.FACING, placer.getHorizontalFacing());
     }
 
     /**
@@ -261,43 +256,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
             return super.getActualState(state, worldIn, pos);
         }
 
-        return changeStateOverFullness((TileEntityBarrel) entity, worldIn, state, pos);
-    }
-
-
-    public static BlockState changeStateOverFullness(final TileEntityBarrel entity, final IBlockAccess worldIn,
-                                                      final BlockState blockState, final BlockPos pos)
-    {
-
-        final TileEntityBarrel te = entity;
-
-        /**
-         * 12.8 -> the number of items needed to go up on a state (having 6 filling states)
-         * So items/12.8 -> meta of the state we should get
-         */
-        BarrelType type = BarrelType.byMetadata((int) Math.round(te.getItems()/12.8));
-
-        /**
-         * We check if the barrel is marked as empty but it have items inside. If so, means that it
-         * does not have all the items needed to go on TWENTY state, but we need to mark it so the player
-         * knows it have some items inside
-         */
-
-        if(type.equals(BarrelType.ZERO) && te.getItems() > 0)
-        {
-            type = BarrelType.TWENTY;
-        }
-        else if (te.getItems() == TileEntityBarrel.MAX_ITEMS)
-        {
-            type = BarrelType.WORKING;
-        }
-        if(te.isDone())
-        {
-            type = BarrelType.DONE;
-        }
-
-        return blockState.withProperty(BlockBarrel.VARIANT,
-          type).withProperty(BlockBarrel.FACING, blockState.getValue(BlockBarrel.FACING));
+        return IBlockBarrel.changeStateOverFullness((TileEntityBarrel) entity, state);
     }
 
     @Nullable
@@ -315,7 +274,8 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
     }
 
     @Override
-    public void neighborChanged(final BlockState state, final World worldIn, final BlockPos pos, final Block blockIn, final BlockPos fromPos)
+    @SuppressWarnings(DEPRECATION)
+    public void neighborChanged(final IBlockState state, final World worldIn, final BlockPos pos, final Block blockIn, final BlockPos fromPos)
     {
         if(worldIn.isAirBlock(pos.down()) || worldIn.getBlockState(pos.down()).getBlock() == ModBlocks.blockBarrel)
         {
@@ -331,7 +291,8 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
     }
 
     @Override
-    public boolean isFullCube(final BlockState state)
+    @SuppressWarnings(DEPRECATION)
+    public boolean isFullCube(final IBlockState state)
     {
         return false;
     }

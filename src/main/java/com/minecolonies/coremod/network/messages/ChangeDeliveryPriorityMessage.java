@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.PlayerEntityMP;
@@ -53,7 +54,7 @@ public class ChangeDeliveryPriorityMessage extends AbstractMessage<ChangeDeliver
     {
         super();
         this.colonyId = building.getColony().getID();
-        this.buildingId = building.getLocation();
+        this.buildingId = building.getPosition();
         this.up = up;
         this.dimension = building.getColony().getDimension();
     }
@@ -89,7 +90,7 @@ public class ChangeDeliveryPriorityMessage extends AbstractMessage<ChangeDeliver
     @Override
     public void messageOnServerThread(final ChangeDeliveryPriorityMessage message, final PlayerEntityMP player)
     {
-        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             //Verify player has permission to change this huts settings
@@ -97,7 +98,7 @@ public class ChangeDeliveryPriorityMessage extends AbstractMessage<ChangeDeliver
             {
                 return;
             }
-            final AbstractBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
+            final IBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
 
             if (building instanceof AbstractBuildingWorker)
             {

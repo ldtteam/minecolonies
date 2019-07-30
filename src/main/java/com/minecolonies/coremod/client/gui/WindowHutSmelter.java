@@ -5,7 +5,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.views.View;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSmeltery;
 import net.minecraft.item.ItemStack;
 
@@ -72,11 +72,11 @@ public class WindowHutSmelter extends AbstractHutFilterableLists
     {
         if (id.equals(PAGE_ITEMS_VIEW))
         {
-            return ImmutableList.copyOf(ColonyManager.getCompatibilityManager().getFuel().stream().filter(item -> filterPredicate.test(item.getItemStack())).collect(Collectors.toList()));
+            return ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getFuel().stream().filter(item -> filterPredicate.test(item.getItemStack())).collect(Collectors.toList()));
         }
         else if (id.equals(PAGE_ITEMS_VIEW2))
         {
-            return ImmutableList.copyOf(ColonyManager.getCompatibilityManager().getSmeltableOres().stream().filter(item -> filterPredicate.test(item.getItemStack())).collect(Collectors.toList()));
+            return ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getSmeltableOres().stream().filter(item -> filterPredicate.test(item.getItemStack())).collect(Collectors.toList()));
 
         }
         else

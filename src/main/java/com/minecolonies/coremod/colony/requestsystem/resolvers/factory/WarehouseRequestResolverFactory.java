@@ -47,9 +47,9 @@ public class WarehouseRequestResolverFactory implements IRequestResolverFactory<
     public CompoundNBT serialize(
                                      @NotNull final IFactoryController controller, @NotNull final WarehouseRequestResolver warehouseRequestResolver)
     {
-        final CompoundNBT compound = new CompoundNBT();
-        compound.put(NBT_TOKEN, controller.serialize(warehouseRequestResolver.getRequesterId()));
-        compound.put(NBT_LOCATION, controller.serialize(warehouseRequestResolver.getRequesterLocation()));
+        final NBTTagCompound compound = new NBTTagCompound();
+        compound.setTag(NBT_TOKEN, controller.serialize(warehouseRequestResolver.getId()));
+        compound.setTag(NBT_LOCATION, controller.serialize(warehouseRequestResolver.getLocation()));
         return compound;
     }
 

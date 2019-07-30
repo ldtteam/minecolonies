@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
+import com.minecolonies.coremod.client.render.BipedModelType;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
@@ -29,7 +30,7 @@ public class JobLumberjack extends AbstractJob
      *
      * @param entity the lumberjack.
      */
-    public JobLumberjack(final CitizenData entity)
+    public JobLumberjack(final ICitizenData entity)
     {
         super(entity);
     }
@@ -69,9 +70,9 @@ public class JobLumberjack extends AbstractJob
      */
     @NotNull
     @Override
-    public RenderBipedCitizen.Model getModel()
+    public BipedModelType getModel()
     {
-        return RenderBipedCitizen.Model.LUMBERJACK;
+        return BipedModelType.LUMBERJACK;
     }
 
     /**
@@ -105,7 +106,7 @@ public class JobLumberjack extends AbstractJob
     }
 
     @Override
-    public void triggerDeathAchievement(final DamageSource source, final EntityCitizen citizen)
+    public void triggerDeathAchievement(final DamageSource source, final IEntityCitizen citizen)
     {
         super.triggerDeathAchievement(source, citizen);
         if (source == DamageSource.IN_WALL)

@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
+import com.minecolonies.coremod.client.render.BipedModelType;
 import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.EntityAIWorkFarmer;
 import com.minecolonies.coremod.sounds.FarmerSounds;
@@ -19,7 +20,7 @@ public class JobFarmer extends AbstractJob
      *
      * @param entity the entity to assign to the job.
      */
-    public JobFarmer(final CitizenData entity)
+    public JobFarmer(final ICitizenData entity)
     {
         super(entity);
     }
@@ -33,9 +34,9 @@ public class JobFarmer extends AbstractJob
 
     @NotNull
     @Override
-    public RenderBipedCitizen.Model getModel()
+    public BipedModelType getModel()
     {
-        return RenderBipedCitizen.Model.FARMER;
+        return BipedModelType.FARMER;
     }
 
     /**

@@ -2,6 +2,7 @@ package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
+import com.minecolonies.coremod.colony.ICitizenDataView;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -56,7 +57,7 @@ public interface IProxy
      *
      * @param citizen {@link CitizenDataView}
      */
-    void showCitizenWindow(CitizenDataView citizen);
+    void showCitizenWindow(ICitizenDataView citizen);
 
     /**
      * Opens a build tool window.

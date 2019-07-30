@@ -136,7 +136,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
 
         if (target != null)
         {
-            attackDist += worker.posY - target.posY;
+            attackDist += worker.getPosY() - target.posY;
         }
 
         return attackDist > MAX_DISTANCE_FOR_RANGED_ATTACK ? MAX_DISTANCE_FOR_RANGED_ATTACK : attackDist;
@@ -315,9 +315,9 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 worker.swingArm(EnumHand.MAIN_HAND);
 
                 final EntityTippedArrow arrow = new GuardArrow(world, worker);
-                final double xVector = target.posX - worker.posX;
+                final double xVector = target.posX - worker.getPosX();
                 final double yVector = target.getEntityBoundingBox().minY + target.height / getAimHeight() - arrow.posY;
-                final double zVector = target.posZ - worker.posZ;
+                final double zVector = target.posZ - worker.getPosZ();
                 final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
                 double damage = getRangedAttackDamage();
 
@@ -345,16 +345,16 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
 
                 arrow.setDamage(damage);
                 worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-                worker.world.addEntity(arrow);
+                worker.getEntityWorld().spawnEntity(arrow);
 
-                final double xDiff = target.posX - worker.posX;
-                final double zDiff = target.posZ - worker.posZ;
+                final double xDiff = target.posX - worker.getPosX();
+                final double zDiff = target.posZ - worker.getPosZ();
                 final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
                 final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
                 worker.move(MoverType.SELF, goToX, 0, goToZ);
 
                 timeCanSee = 0;
-                target.setRevengeTarget(worker);
+                target.setRevengeTarget((EntityLivingBase) worker);
                 currentAttackDelay = getAttackDelay();
                 worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
                 worker.resetActiveHand();
@@ -366,7 +366,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                  * It is possible the object is higher than guard and guard can't get there.
                  * Guard will try to back up to get some distance to be able to shoot target.
                  */
-                if (target.posY > worker.posY + Y_VISION + Y_VISION)
+                if (target.posY > worker.getPosY() + Y_VISION + Y_VISION)
                 {
                     fleePath = worker.getNavigator().moveAwayFromLivingEntity(target, 10, getCombatMovementSpeed());
                     fleeing = true;

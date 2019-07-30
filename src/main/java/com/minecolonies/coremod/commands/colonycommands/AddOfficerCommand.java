@@ -3,7 +3,7 @@ package com.minecolonies.coremod.commands.colonycommands;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
@@ -58,8 +58,8 @@ public class AddOfficerCommand extends AbstractSingleCommand implements IActionC
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        final Colony colony = actionMenuState.getColonyForArgument("colony");
-        final PlayerEntity player = actionMenuState.getPlayerForArgument("player");
+        final IColony colony = actionMenuState.getColonyForArgument("colony");
+        final EntityPlayer player = actionMenuState.getPlayerForArgument("player");
 
         executeShared(server, sender, colony, player.getName());
     }
@@ -78,7 +78,7 @@ public class AddOfficerCommand extends AbstractSingleCommand implements IActionC
         int colonyId = getIthArgument(args, 0, -1);
         if (colonyId == -1 && senderEntity instanceof PlayerEntity)
         {
-            final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), ((PlayerEntity) sender).getUniqueID());
+            final IColony colony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
             if (colony == null)
             {
                 sender.sendMessage(new StringTextComponent(COLONY_X_NULL));
@@ -87,7 +87,7 @@ public class AddOfficerCommand extends AbstractSingleCommand implements IActionC
             colonyId = colony.getID();
         }
 
-        final Colony colony = ColonyManager.getColonyByWorld(colonyId, sender.getEntityWorld());
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, sender.getEntityWorld());
 
         if (colony == null)
         {
@@ -109,7 +109,7 @@ public class AddOfficerCommand extends AbstractSingleCommand implements IActionC
         executeShared(server, sender, colony, playerName);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final Colony colony, final String playerName)
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final IColony colony, final String playerName)
             throws CommandException
     {
         final Entity senderEntity = sender.getCommandSenderEntity();

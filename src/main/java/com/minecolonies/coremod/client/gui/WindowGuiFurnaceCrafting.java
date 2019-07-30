@@ -5,6 +5,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.inventory.ContainerGUICraftingFurnace;
 import com.minecolonies.coremod.network.messages.AddRemoveRecipeMessage;
 import net.minecraft.client.gui.GuiButton;

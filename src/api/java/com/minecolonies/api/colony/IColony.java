@@ -3,11 +3,27 @@ package com.minecolonies.api.colony;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
+import com.minecolonies.coremod.colony.HappinessData;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
+import com.minecolonies.coremod.colony.managers.interfaces.*;
+import com.minecolonies.coremod.colony.workorders.IWorkManager;
+import com.minecolonies.coremod.colony.workorders.IWorkOrder;
+import com.minecolonies.coremod.entity.IEntityCitizen;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Interface of the Colony and ColonyView which will have to implement the
@@ -15,6 +31,19 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface IColony
 {
+
+    void onWorldLoad(@NotNull World w);
+
+    void onWorldUnload(@NotNull World w);
+
+    void onServerTick(@NotNull TickEvent.ServerTickEvent event);
+
+    @NotNull
+    IWorkManager getWorkManager();
+
+    HappinessData getHappinessData();
+
+    void onWorldTick(@NotNull TickEvent.WorldTickEvent event);
 
     /**
      * Returns the position of the colony.
@@ -29,6 +58,8 @@ public interface IColony
      * @return Name of the colony.
      */
     String getName();
+
+    void setName(String n);
 
     /**
      * Returns the permissions of the colony.
@@ -147,6 +178,61 @@ public interface IColony
      */
     void removeVisitingPlayer(final PlayerEntity player);
 
+    @NotNull
+    List<EntityPlayer> getMessageEntityPlayers();
+
+    void onBuildingUpgradeComplete(@Nullable IBuilding building, int level);
+
+    @NotNull
+    default List<BlockPos> getWayPoints(@NotNull BlockPos position, @NotNull BlockPos target)
+    {
+        final List<BlockPos> tempWayPoints = new ArrayList<>();
+        tempWayPoints.addAll(getWayPoints().keySet());
+        tempWayPoints.addAll(getBuildingManager().getBuildings().keySet());
+
+        final double maxX = Math.max(position.getX(), target.getX());
+        final double maxZ = Math.max(position.getZ(), target.getZ());
+
+        final double minX = Math.min(position.getX(), target.getX());
+        final double minZ = Math.min(position.getZ(), target.getZ());
+
+        final Iterator<BlockPos> iterator = tempWayPoints.iterator();
+        while (iterator.hasNext())
+        {
+            final BlockPos p = iterator.next();
+            final int x = p.getX();
+            final int z = p.getZ();
+            if (x < minX || x > maxX || z < minZ || z > maxZ)
+            {
+                iterator.remove();
+            }
+        }
+
+        return tempWayPoints;
+    }
+
+    double getOverallHappiness();
+
+    Map<BlockPos, IBlockState> getWayPoints();
+
+    String getStyle();
+
+    void setStyle(String style);
+
+    IBuildingManager getBuildingManager();
+
+    ICitizenManager getCitizenManager();
+
+    IColonyHappinessManager getColonyHappinessManager();
+
+    IStatisticAchievementManager getStatsManager();
+
+    IRaiderManager getRaiderManager();
+
+    IColonyPackageManager getPackageManager();
+
+    IProgressManager getProgressManager();
+
     /**
      * Add a visiting player.
      * @param player the player.
@@ -175,4 +261,58 @@ public interface IColony
      */
     long getMercenaryUseTime();
 
+
+    NBTTagCompound getColonyTag();
+
+    int getNightsSinceLastRaid();
+
+    void setNightsSinceLastRaid(int nights);
+
+    boolean isNeedToMourn();
+
+    void setNeedToMourn(boolean needToMourn, String name);
+
+    boolean isMourning();
+
+    boolean isColonyUnderAttack();
+
+    boolean isValidAttackingPlayer(EntityPlayer entity);
+
+    boolean isValidAttackingGuard(IEntityCitizen entity);
+
+    void setColonyColor(TextFormatting color);
+
+    void setManualHousing(boolean manualHousing);
+
+    void addWayPoint(BlockPos pos, IBlockState newWayPointState);
+
+    void addGuardToAttackers(IEntityCitizen entityCitizen, EntityPlayer followPlayer);
+
+    void addFreePosition(BlockPos pos);
+
+    void addFreeBlock(Block block);
+
+    void removeFreePosition(BlockPos pos);
+
+    void removeFreeBlock(Block block);
+
+    void setCanBeAutoDeleted(boolean canBeDeleted);
+
+    void setManualHiring(boolean manualHiring);
+
+    NBTTagCompound writeToNBT(NBTTagCompound colonyCompound);
+
+    void readFromNBT(NBTTagCompound compound);
+
+    void setMoveIn(boolean newMoveIn);
+
+    int getBoughtCitizenCost();
+
+    void increaseBoughtCitizenCost();
+
+    boolean isManualHiring();
+
+    boolean isManualHousing();
+
+    boolean canMoveIn();
 }
