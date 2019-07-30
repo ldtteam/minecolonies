@@ -10,7 +10,7 @@ import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message to set the style of a building.
  */
-public class BuildingSetStyleMessage extends AbstractMessage<BuildingSetStyleMessage, IMessage>
+public class BuildingSetStyleMessage implements IMessage
 {
     /**
      * The colony id.
@@ -85,7 +85,7 @@ public class BuildingSetStyleMessage extends AbstractMessage<BuildingSetStyleMes
     }
 
     @Override
-    public void messageOnServerThread(final BuildingSetStyleMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final BuildingSetStyleMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.items.ModItems;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -16,7 +16,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 /**
  * Message to set the guard scepter in the player inventory.
  */
-public class GuardScepterMessage extends AbstractMessage<GuardScepterMessage, IMessage>
+public class GuardScepterMessage implements IMessage
 {
     /**
      * The id of the task.
@@ -73,7 +73,7 @@ public class GuardScepterMessage extends AbstractMessage<GuardScepterMessage, IM
     }
 
     @Override
-    public void messageOnServerThread(final GuardScepterMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final GuardScepterMessage message, final ServerPlayerEntity player)
     {
         final ItemStack scepter;
         boolean giveToPlayer = true;

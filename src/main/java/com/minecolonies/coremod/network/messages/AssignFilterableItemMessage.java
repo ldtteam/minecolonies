@@ -9,7 +9,7 @@ import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message which handles the assignment of items to filterable item lists.
  */
-public class AssignFilterableItemMessage extends AbstractMessage<AssignFilterableItemMessage, IMessage>
+public class AssignFilterableItemMessage implements IMessage
 {
     /**
      * The id of the colony.
@@ -101,7 +101,7 @@ public class AssignFilterableItemMessage extends AbstractMessage<AssignFilterabl
     }
 
     @Override
-    public void messageOnServerThread(final AssignFilterableItemMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final AssignFilterableItemMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

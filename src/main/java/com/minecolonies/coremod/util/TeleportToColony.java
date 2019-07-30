@@ -9,7 +9,7 @@ import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.play.server.SPacketEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -124,7 +124,7 @@ public final class TeleportToColony
             return;
         }
 
-        final PlayerEntityMP entityPlayerMP = (PlayerEntityMP) sender;
+        final ServerPlayerEntity entityPlayerMP = (ServerPlayerEntity) sender;
         if (dimension != colonyDimension)
         {
             playerToTeleport.sendMessage(new StringTextComponent("We got places to go, kid..."));

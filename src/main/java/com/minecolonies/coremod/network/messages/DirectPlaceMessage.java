@@ -7,7 +7,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.BlockState;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Place a building directly without buildtool.
  */
-public class DirectPlaceMessage extends AbstractMessage<DirectPlaceMessage, IMessage>
+public class DirectPlaceMessage implements IMessage
 {
     /**
      * The state to be placed..
@@ -87,7 +87,7 @@ public class DirectPlaceMessage extends AbstractMessage<DirectPlaceMessage, IMes
     }
 
     @Override
-    public void messageOnServerThread(final DirectPlaceMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final DirectPlaceMessage message, final ServerPlayerEntity player)
     {
         final World world = player.getServerWorld();
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, message.pos);

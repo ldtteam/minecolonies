@@ -8,14 +8,14 @@ import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Message class which manages the messages hiring or firing of citizens.
  */
-public class RestartCitizenMessage extends AbstractMessage<RestartCitizenMessage, IMessage>
+public class RestartCitizenMessage implements IMessage
 {
     /**
      * The Colony ID.
@@ -77,7 +77,7 @@ public class RestartCitizenMessage extends AbstractMessage<RestartCitizenMessage
     }
 
     @Override
-    public void messageOnServerThread(final RestartCitizenMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final RestartCitizenMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.colonyDim);
         if (colony != null)

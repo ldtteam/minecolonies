@@ -7,7 +7,7 @@ import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message class which manages changing the team color of the colony.
  */
-public class TeamColonyColorChangeMessage extends AbstractMessage<TeamColonyColorChangeMessage, IMessage>
+public class TeamColonyColorChangeMessage implements IMessage
 {
     /**
      * The Colony ID.
@@ -81,7 +81,7 @@ public class TeamColonyColorChangeMessage extends AbstractMessage<TeamColonyColo
     }
 
     @Override
-    public void messageOnServerThread(final TeamColonyColorChangeMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final TeamColonyColorChangeMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

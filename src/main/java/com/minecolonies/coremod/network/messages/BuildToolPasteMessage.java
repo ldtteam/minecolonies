@@ -26,7 +26,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -50,7 +50,7 @@ import java.util.List;
 /**
  * Send build tool data to the server. Verify the data on the server side and then place the building.
  */
-public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage, IMessage>
+public class BuildToolPasteMessage implements IMessage
 {
     /**
      * Height of the chest in the supplyship to be placed.
@@ -182,7 +182,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
     }
 
     @Override
-    public void messageOnServerThread(final BuildToolPasteMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final BuildToolPasteMessage message, final ServerPlayerEntity player)
     {
         final StructureName sn = new StructureName(message.structureName);
         if (!Structures.hasMD5(sn))

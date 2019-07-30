@@ -12,7 +12,7 @@ import java.util.UUID;
 /**
  * Class handling the Server UUID Message.
  */
-public class ServerUUIDMessage extends AbstractMessage<ServerUUIDMessage, IMessage>
+public class ServerUUIDMessage implements IMessage
 {
     private UUID serverUUID;
 

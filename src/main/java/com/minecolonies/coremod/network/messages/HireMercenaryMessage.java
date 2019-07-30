@@ -4,14 +4,14 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.entity.ai.mobs.EntityMercenary;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.init.SoundEvents;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 /**
  * The message sent when activating mercenaries
  */
-public class HireMercenaryMessage extends AbstractMessage<HireMercenaryMessage, IMessage>
+public class HireMercenaryMessage implements IMessage
 {
     /**
      * Colony id for the mercenary event
@@ -50,7 +50,7 @@ public class HireMercenaryMessage extends AbstractMessage<HireMercenaryMessage, 
     }
 
     @Override
-    public void messageOnServerThread(final HireMercenaryMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final HireMercenaryMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
 

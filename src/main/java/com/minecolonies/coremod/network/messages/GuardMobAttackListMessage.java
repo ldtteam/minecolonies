@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuardMobAttackListMessage extends AbstractMessage<GuardMobAttackListMessage, IMessage>
+public class GuardMobAttackListMessage implements IMessage
 {
     /**
      * The position of the building.

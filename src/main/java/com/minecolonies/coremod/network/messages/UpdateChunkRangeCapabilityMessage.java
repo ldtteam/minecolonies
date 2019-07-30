@@ -20,7 +20,7 @@ import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 /**
  * Update the ChunkCapability with a colony.
  */
-public class UpdateChunkRangeCapabilityMessage extends AbstractMessage<UpdateChunkRangeCapabilityMessage, IMessage>
+public class UpdateChunkRangeCapabilityMessage implements IMessage
 {
     /**
      * The colonies tags to send over.

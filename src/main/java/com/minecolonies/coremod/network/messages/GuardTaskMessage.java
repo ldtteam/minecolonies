@@ -8,7 +8,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message to change the behavior of the guards..
  */
-public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage>
+public class GuardTaskMessage implements IMessage
 {
     private int      colonyId;
     private BlockPos buildingId;
@@ -106,7 +106,7 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
     }
 
     @Override
-    public void messageOnServerThread(final GuardTaskMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final GuardTaskMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

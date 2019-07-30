@@ -8,7 +8,7 @@ import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
@@ -43,7 +43,7 @@ public class ClaimChunksCommand implements IActionCommand
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
         //See if the player is opped.
-        if (sender instanceof PlayerEntityMP && isPlayerOpped(sender))
+        if (sender instanceof ServerPlayerEntity && isPlayerOpped(sender))
         {
             final int colonyId = actionMenuState.getIntForArgument("colony");
             final int dimId = actionMenuState.getIntForArgument("dimension");

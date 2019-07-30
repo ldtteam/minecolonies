@@ -12,7 +12,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHou
 import com.minecolonies.coremod.inventory.api.CombinedItemHandler;
 import com.minecolonies.coremod.util.SortingUtils;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Sort the warehouse if level bigger than 3.
  */
-public class SortWarehouseMessage extends AbstractMessage<SortWarehouseMessage, IMessage>
+public class SortWarehouseMessage implements IMessage
 {
     /**
      * The required level to sort a warehouse.
@@ -81,7 +81,7 @@ public class SortWarehouseMessage extends AbstractMessage<SortWarehouseMessage, 
     }
 
     @Override
-    public void messageOnServerThread(final SortWarehouseMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final SortWarehouseMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null)

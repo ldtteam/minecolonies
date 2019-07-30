@@ -12,7 +12,7 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.network.PacketUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -45,7 +45,7 @@ public class PermissionsMessage
     /**
      * Client side presentation of the message.
      */
-    public static class View extends AbstractMessage<View, IMessage>
+    public static class View implements IMessage
     {
         private int     colonyID;
         private ByteBuf data;
@@ -104,7 +104,7 @@ public class PermissionsMessage
     /**
      * Permission message class.
      */
-    public static class Permission extends AbstractMessage<Permission, IMessage>
+    public static class Permission implements IMessage
     {
         private int         colonyID;
         private MessageType type;
@@ -143,7 +143,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void messageOnServerThread(final Permission message, final PlayerEntityMP player)
+        public void messageOnServerThread(final Permission message, final ServerPlayerEntity player)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
             if (colony == null)
@@ -198,7 +198,7 @@ public class PermissionsMessage
     /**
      * Message class for adding a player to a permission set.
      */
-    public static class AddPlayer extends AbstractMessage<AddPlayer, IMessage>
+    public static class AddPlayer implements IMessage
     {
         private int    colonyID;
         private String playerName;
@@ -247,7 +247,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void messageOnServerThread(final AddPlayer message, final PlayerEntityMP player)
+        public void messageOnServerThread(final AddPlayer message, final ServerPlayerEntity player)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
 
@@ -265,7 +265,7 @@ public class PermissionsMessage
     /**
      * Message class for adding a player or fakePlayer to a permission set.
      */
-    public static class AddPlayerOrFakePlayer extends AbstractMessage<AddPlayerOrFakePlayer, IMessage>
+    public static class AddPlayerOrFakePlayer implements IMessage
     {
         private int    colonyID;
         private String playerName;
@@ -319,7 +319,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void messageOnServerThread(final AddPlayerOrFakePlayer message, final PlayerEntityMP player)
+        public void messageOnServerThread(final AddPlayerOrFakePlayer message, final ServerPlayerEntity player)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
 
@@ -337,7 +337,7 @@ public class PermissionsMessage
     /**
      * Message class for setting a player rank in the permissions.
      */
-    public static class ChangePlayerRank extends AbstractMessage<ChangePlayerRank, IMessage>
+    public static class ChangePlayerRank implements IMessage
     {
         private int  colonyID;
         private UUID playerID;
@@ -400,7 +400,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void messageOnServerThread(final ChangePlayerRank message, final PlayerEntityMP player)
+        public void messageOnServerThread(final ChangePlayerRank message, final ServerPlayerEntity player)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
 
@@ -429,7 +429,7 @@ public class PermissionsMessage
     /**
      * Message class for removing a player from a permission set.
      */
-    public static class RemovePlayer extends AbstractMessage<RemovePlayer, IMessage>
+    public static class RemovePlayer implements IMessage
     {
         private int  colonyID;
         private UUID playerID;
@@ -478,7 +478,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void messageOnServerThread(final RemovePlayer message, final PlayerEntityMP player)
+        public void messageOnServerThread(final RemovePlayer message, final ServerPlayerEntity player)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
 

@@ -22,7 +22,7 @@ import com.minecolonies.coremod.util.TownHallRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -245,7 +245,7 @@ public abstract class CommonProxy implements IProxy
     @Override
     public RecipeBook getRecipeBookFromPlayer(@NotNull final PlayerEntity player)
     {
-        return ((PlayerEntityMP) player).getRecipeBook();
+        return ((ServerPlayerEntity) player).getRecipeBook();
     }
 
     @Override

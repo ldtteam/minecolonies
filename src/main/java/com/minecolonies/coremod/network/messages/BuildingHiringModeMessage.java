@@ -10,7 +10,7 @@ import com.minecolonies.coremod.colony.buildings.HiringMode;
 import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.IBuildingWorkerView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message to set the hiring mode of a building.
  */
-public class BuildingHiringModeMessage extends AbstractMessage<BuildingHiringModeMessage, IMessage>
+public class BuildingHiringModeMessage implements IMessage
 {
     /**
      * The colony id.
@@ -83,7 +83,7 @@ public class BuildingHiringModeMessage extends AbstractMessage<BuildingHiringMod
     }
 
     @Override
-    public void messageOnServerThread(final BuildingHiringModeMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final BuildingHiringModeMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))

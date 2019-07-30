@@ -6,7 +6,7 @@ import com.ldtteam.structurize.items.ItemScanTool;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.CommandBlockBaseLogic;
 import net.minecraft.tileentity.TileEntityCommandBlock;
@@ -77,7 +77,7 @@ public class ScanCommand implements IActionCommand
                 }
                 else if (sender instanceof PlayerEntity)
                 {
-                    player = (PlayerEntityMP) sender;
+                    player = (ServerPlayerEntity) sender;
                 }
                 else
                 {

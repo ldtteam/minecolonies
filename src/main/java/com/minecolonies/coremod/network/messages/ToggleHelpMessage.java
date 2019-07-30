@@ -6,14 +6,14 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.IColonyView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Message class which manages the message to toggle the help messages.
  */
-public class ToggleHelpMessage extends AbstractMessage<ToggleHelpMessage, IMessage>
+public class ToggleHelpMessage implements IMessage
 {
     /**
      * The Colony ID.
@@ -77,7 +77,7 @@ public class ToggleHelpMessage extends AbstractMessage<ToggleHelpMessage, IMessa
      * @param player  the player associated.
      */
     @Override
-    public void messageOnServerThread(final ToggleHelpMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final ToggleHelpMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

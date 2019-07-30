@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Message to remove an entity from the world.
  */
-public class RemoveEntityMessage extends AbstractMessage<RemoveEntityMessage, IMessage>
+public class RemoveEntityMessage implements IMessage
 {
     /**
      * Position to scan from.
@@ -72,7 +72,7 @@ public class RemoveEntityMessage extends AbstractMessage<RemoveEntityMessage, IM
     }
 
     @Override
-    public void messageOnServerThread(final RemoveEntityMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final RemoveEntityMessage message, final ServerPlayerEntity player)
     {
         if (!player.capabilities.isCreativeMode)
         {

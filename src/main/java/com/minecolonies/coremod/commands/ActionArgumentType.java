@@ -10,7 +10,7 @@ import com.minecolonies.coremod.commands.CommandEntryPointNew.MineColonyDataProv
 import com.mojang.authlib.GameProfile;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.BlockPos;
@@ -75,9 +75,9 @@ public enum ActionArgumentType
     private static List<String> getAllPlayerNames(@NotNull final MinecraftServer server)
     {
         final PlayerList playerList = server.getPlayerList();
-        final List<PlayerEntityMP> allPlayersList = playerList.getPlayers();
+        final List<ServerPlayerEntity> allPlayersList = playerList.getPlayers();
         final List<String> playerNames = new ArrayList<>(allPlayersList.size());
-        for (final PlayerEntityMP entityPlayerMP : allPlayersList)
+        for (final ServerPlayerEntity entityPlayerMP : allPlayersList)
         {
             final String playerName = entityPlayerMP.getName();
             if (!playerNames.contains(playerName))
@@ -422,7 +422,7 @@ public enum ActionArgumentType
     }
 
     @Nullable
-    private PlayerEntityMP parseOnlinePlayerValue(@NotNull final MinecraftServer server, final String potentialArgumentValue)
+    private ServerPlayerEntity parseOnlinePlayerValue(@NotNull final MinecraftServer server, final String potentialArgumentValue)
     {
         final List<String> playerNameStrings = getOnlinePlayerNames(server);
         if (playerNameStrings.contains(potentialArgumentValue))
@@ -440,7 +440,7 @@ public enum ActionArgumentType
     }
 
     @Nullable
-    private PlayerEntityMP parseAnyPlayerValue(@NotNull final MinecraftServer server, final String potentialArgumentValue)
+    private ServerPlayerEntity parseAnyPlayerValue(@NotNull final MinecraftServer server, final String potentialArgumentValue)
     {
         final List<String> playerNameStrings = getAllPlayerNames(server);
         if (playerNameStrings.contains(potentialArgumentValue))

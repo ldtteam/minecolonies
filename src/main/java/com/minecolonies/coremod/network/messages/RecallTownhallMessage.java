@@ -12,7 +12,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -24,7 +24,7 @@ import java.util.Optional;
 /**
  * Used to handle citizen recalls to the townhall.
  */
-public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage, IMessage>
+public class RecallTownhallMessage implements IMessage
 {
     private int colonyId;
 
@@ -68,7 +68,7 @@ public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage
     }
 
     @Override
-    public void messageOnServerThread(final RecallTownhallMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final RecallTownhallMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

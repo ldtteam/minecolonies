@@ -7,7 +7,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message to change the assignmentMode of the fields of the farmer.
  */
-public class AssignmentModeMessage extends AbstractMessage<AssignmentModeMessage, IMessage>
+public class AssignmentModeMessage implements IMessage
 {
 
     private int      colonyId;
@@ -70,7 +70,7 @@ public class AssignmentModeMessage extends AbstractMessage<AssignmentModeMessage
     }
 
     @Override
-    public void messageOnServerThread(final AssignmentModeMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final AssignmentModeMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

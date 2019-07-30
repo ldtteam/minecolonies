@@ -20,7 +20,7 @@ import com.ldtteam.structurize.management.Structures;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,13 +42,13 @@ public class ColonyPackageManager implements IColonyPackageManager
      * List of players subscribing to the colony already known for a long time.
      */
     @NotNull
-    private Set<PlayerEntityMP> oldSubscribers = new HashSet<>();
+    private Set<ServerPlayerEntity> oldSubscribers = new HashSet<>();
 
     /**
      * List of players subscribing to the colony.
      */
     @NotNull
-    private Set<PlayerEntityMP> subscribers   = new HashSet<>();
+    private Set<ServerPlayerEntity> subscribers   = new HashSet<>();
 
     /**
      * Variables taking care of updating the views.
@@ -92,9 +92,9 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public Set<PlayerEntityMP> getSubscribers()
+    public Set<ServerPlayerEntity> getSubscribers()
     {
-        final Set<PlayerEntityMP> set = new HashSet<>(oldSubscribers);
+        final Set<ServerPlayerEntity> set = new HashSet<>(oldSubscribers);
         set.addAll(subscribers);
         return set;
     }
@@ -118,9 +118,9 @@ public class ColonyPackageManager implements IColonyPackageManager
         //  Add nearby players
         for (final PlayerEntity o : world.playerEntities)
         {
-            if (o instanceof PlayerEntityMP)
+            if (o instanceof ServerPlayerEntity)
             {
-                @NotNull final PlayerEntityMP player = (PlayerEntityMP) o;
+                @NotNull final ServerPlayerEntity player = (ServerPlayerEntity) o;
 
                 if (player.connection.networkTickCount < 5)
                 {
@@ -204,13 +204,13 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public void sendColonyViewPackets(@NotNull final Set<PlayerEntityMP> oldSubscribers, final boolean hasNewSubscribers)
+    public void sendColonyViewPackets(@NotNull final Set<ServerPlayerEntity> oldSubscribers, final boolean hasNewSubscribers)
     {
         if (isDirty || hasNewSubscribers)
         {
             final ByteBuf colonyByteBuf = Unpooled.buffer();
             ColonyView.serializeNetworkData(colony, colonyByteBuf, hasNewSubscribers);
-            for (final PlayerEntityMP player : subscribers)
+            for (final ServerPlayerEntity player : subscribers)
             {
                 final boolean isNewSubscriber = !oldSubscribers.contains(player);
                 if (isDirty || isNewSubscriber)
@@ -223,7 +223,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public void sendPermissionsPackets(@NotNull final Set<PlayerEntityMP> oldSubscribers, final boolean hasNewSubscribers)
+    public void sendPermissionsPackets(@NotNull final Set<ServerPlayerEntity> oldSubscribers, final boolean hasNewSubscribers)
     {
         final Permissions permissions = colony.getPermissions();
         if (permissions.isDirty() || hasNewSubscribers || colony.getWorld().rand.nextInt(CHANCE_TO_UPDATE) <= 1)
@@ -239,7 +239,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public void sendWorkOrderPackets(@NotNull final Set<PlayerEntityMP> oldSubscribers, final boolean hasNewSubscribers)
+    public void sendWorkOrderPackets(@NotNull final Set<ServerPlayerEntity> oldSubscribers, final boolean hasNewSubscribers)
     {
         final IWorkManager workManager = colony.getWorkManager();
         if (workManager.isDirty() || hasNewSubscribers)
@@ -274,7 +274,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public void addSubscribers(@NotNull final PlayerEntityMP subscriber)
+    public void addSubscribers(@NotNull final ServerPlayerEntity subscriber)
     {
         if(!subscribers.contains(subscriber))
         {
@@ -283,7 +283,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     }
 
     @Override
-    public void removeSubscriber(@NotNull final PlayerEntityMP player)
+    public void removeSubscriber(@NotNull final ServerPlayerEntity player)
     {
         if(!colony.getMessagePlayerEntitys().contains(player))
         {

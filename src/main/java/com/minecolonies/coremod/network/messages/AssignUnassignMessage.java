@@ -12,7 +12,7 @@ import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message class which manages the messages assigning or unassigning of citizens.
  */
-public class AssignUnassignMessage extends AbstractMessage<AssignUnassignMessage, IMessage>
+public class AssignUnassignMessage implements IMessage
 {
     /**
      * The Colony ID.
@@ -103,7 +103,7 @@ public class AssignUnassignMessage extends AbstractMessage<AssignUnassignMessage
     }
 
     @Override
-    public void messageOnServerThread(final AssignUnassignMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final AssignUnassignMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

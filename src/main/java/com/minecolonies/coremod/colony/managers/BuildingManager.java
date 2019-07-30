@@ -26,7 +26,7 @@ import com.minecolonies.coremod.tileentities.ITileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.ColonyUtils;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -161,7 +161,7 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void sendPackets(final Set<PlayerEntityMP> oldSubscribers, final boolean hasNewSubscribers, final Set<PlayerEntityMP> subscribers)
+    public void sendPackets(final Set<ServerPlayerEntity> oldSubscribers, final boolean hasNewSubscribers, final Set<ServerPlayerEntity> subscribers)
     {
         sendBuildingPackets(oldSubscribers, hasNewSubscribers, subscribers);
         sendFieldPackets(hasNewSubscribers, subscribers);
@@ -387,7 +387,7 @@ public class BuildingManager implements IBuildingManager
     {
         if (buildings.remove(building.getID()) != null)
         {
-            for (final PlayerEntityMP player : subscribers)
+            for (final ServerPlayerEntity player : subscribers)
             {
                 Network.getNetwork().sendTo(new ColonyViewRemoveBuildingMessage(colony, building.getID()), player);
             }
@@ -496,7 +496,7 @@ public class BuildingManager implements IBuildingManager
      * @param oldSubscribers    the existing subscribers.
      * @param hasNewSubscribers the new subscribers.
      */
-    private void sendBuildingPackets(@NotNull final Set<PlayerEntityMP> oldSubscribers, final boolean hasNewSubscribers, final Set<PlayerEntityMP> subscribers)
+    private void sendBuildingPackets(@NotNull final Set<ServerPlayerEntity> oldSubscribers, final boolean hasNewSubscribers, final Set<ServerPlayerEntity> subscribers)
     {
         if (isBuildingsDirty || hasNewSubscribers)
         {
@@ -517,7 +517,7 @@ public class BuildingManager implements IBuildingManager
      *
      * @param hasNewSubscribers the new subscribers.
      */
-    private void sendFieldPackets(final boolean hasNewSubscribers, final Set<PlayerEntityMP> subscribers)
+    private void sendFieldPackets(final boolean hasNewSubscribers, final Set<ServerPlayerEntity> subscribers)
     {
         if (isFieldsDirty || hasNewSubscribers)
         {

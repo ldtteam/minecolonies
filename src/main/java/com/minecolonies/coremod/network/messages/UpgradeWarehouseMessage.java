@@ -12,7 +12,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHou
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.IWareHouse;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Issues the upgrade of the warehouse pos level 5.
  */
-public class UpgradeWarehouseMessage extends AbstractMessage<UpgradeWarehouseMessage, IMessage>
+public class UpgradeWarehouseMessage implements IMessage
 {
     /**
      * The id of the building.
@@ -78,7 +78,7 @@ public class UpgradeWarehouseMessage extends AbstractMessage<UpgradeWarehouseMes
     }
 
     @Override
-    public void messageOnServerThread(final UpgradeWarehouseMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final UpgradeWarehouseMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null)

@@ -24,7 +24,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -49,7 +49,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PASTEABLE;
  *
  * @author Colton
  */
-public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage, IMessage>
+public class BuildToolPlaceMessagev
 {
     /**
      * Language key for missing hut message.
@@ -154,7 +154,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
     }
 
     @Override
-    public void messageOnServerThread(final BuildToolPlaceMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final BuildToolPlaceMessage message, final ServerPlayerEntity player)
     {
         final StructureName sn = new StructureName(message.structureName);
         if (!Structures.hasMD5(sn))

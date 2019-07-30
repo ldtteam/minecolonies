@@ -8,7 +8,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.IColonyManager;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -24,7 +24,7 @@ import java.util.Random;
 /**
  * Message for the hire citizen action
  */
-public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessage>
+public class BuyCitizenMessage implements IMessage
 {
     /**
      * ID of the colony
@@ -113,7 +113,7 @@ public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessa
     }
 
     @Override
-    public void messageOnServerThread(final BuyCitizenMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final BuyCitizenMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
 

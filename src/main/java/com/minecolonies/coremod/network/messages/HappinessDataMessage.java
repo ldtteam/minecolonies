@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class handling the messages about updating happiness
  */
-public class HappinessDataMessage extends AbstractMessage<HappinessDataMessage, IMessage>
+public class HappinessDataMessage implements IMessage
 {
     /**
      * The id of the colony talking of

@@ -7,14 +7,14 @@ import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Creates the WorkOrderChangeMessage which is responsible for changes in priority or removal of workOrders.
  */
-public class WorkOrderChangeMessage extends AbstractMessage<WorkOrderChangeMessage, IMessage>
+public class WorkOrderChangeMessage implements IMessage
 {
     /**
      * The Colony ID.
@@ -98,7 +98,7 @@ public class WorkOrderChangeMessage extends AbstractMessage<WorkOrderChangeMessa
     }
 
     @Override
-    public void messageOnServerThread(final WorkOrderChangeMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final WorkOrderChangeMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))

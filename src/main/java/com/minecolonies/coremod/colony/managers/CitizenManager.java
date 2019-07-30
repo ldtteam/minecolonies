@@ -17,7 +17,7 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveCitizenMessage;
 import com.minecolonies.coremod.network.messages.HappinessDataMessage;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
@@ -103,9 +103,9 @@ public class CitizenManager implements ICitizenManager
 
     @Override
     public void sendPackets(
-      @NotNull final Set<PlayerEntityMP> oldSubscribers,
+      @NotNull final Set<ServerPlayerEntity> oldSubscribers,
       final boolean hasNewSubscribers,
-      @NotNull final Set<PlayerEntityMP> subscribers)
+      @NotNull final Set<ServerPlayerEntity> subscribers)
     {
         if (isCitizensDirty || hasNewSubscribers)
         {
@@ -226,7 +226,7 @@ public class CitizenManager implements ICitizenManager
         colony.getWorkManager().clearWorkForCitizen(citizen);
 
         //  Inform Subscribers of removed citizen
-        for (final PlayerEntityMP player : colony.getPackageManager().getSubscribers())
+        for (final ServerPlayerEntity player : colony.getPackageManager().getSubscribers())
         {
             Network.getNetwork().sendTo(new ColonyViewRemoveCitizenMessage(colony, citizen.getId()), player);
         }

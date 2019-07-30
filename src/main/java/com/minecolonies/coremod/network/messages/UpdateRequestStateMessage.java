@@ -8,7 +8,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Updates the request state of a request.
  */
-public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStateMessage, IMessage>
+public class UpdateRequestStateMessage implements IMessage
 {
     /**
      * The id of the colony.
@@ -97,7 +97,7 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
     }
 
     @Override
-    public void messageOnServerThread(final UpdateRequestStateMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final UpdateRequestStateMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony instanceof Colony)

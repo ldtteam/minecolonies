@@ -25,7 +25,7 @@ import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.EnumHand;
@@ -120,7 +120,7 @@ public class CitizenData implements ICitizenData
     /**
      * Report end message to:
      */
-    private PlayerEntityMP originPlayerRestart;
+    private ServerPlayerEntity originPlayerRestart;
 
     /**
      * The id of the citizens texture.
@@ -1383,7 +1383,7 @@ public class CitizenData implements ICitizenData
      * Schedule restart and cleanup
      */
     @Override
-    public void scheduleRestart(final PlayerEntityMP player)
+    public void scheduleRestart(final ServerPlayerEntity player)
     {
         originPlayerRestart = player;
         restartScheduled = true;

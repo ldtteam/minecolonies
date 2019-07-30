@@ -8,7 +8,7 @@ import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author xavierh
  */
-public class MarkBuildingDirtyMessage extends AbstractMessage<MarkBuildingDirtyMessage, IMessage>
+public class MarkBuildingDirtyMessage implements IMessage
 {
     /**
      * The id of the building.
@@ -73,7 +73,7 @@ public class MarkBuildingDirtyMessage extends AbstractMessage<MarkBuildingDirtyM
     }
 
     @Override
-    public void messageOnServerThread(final MarkBuildingDirtyMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final MarkBuildingDirtyMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null)

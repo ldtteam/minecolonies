@@ -12,7 +12,7 @@ import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +22,7 @@ import java.util.Optional;
 /**
  * Recalls the citizen to the location.
  */
-public class RecallSingleCitizenMessage extends AbstractMessage<RecallSingleCitizenMessage, IMessage>
+public class RecallSingleCitizenMessage implements IMessage
 {
     /**
      * The colony id.
@@ -86,7 +86,7 @@ public class RecallSingleCitizenMessage extends AbstractMessage<RecallSingleCiti
     }
 
     @Override
-    public void messageOnServerThread(final RecallSingleCitizenMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final RecallSingleCitizenMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

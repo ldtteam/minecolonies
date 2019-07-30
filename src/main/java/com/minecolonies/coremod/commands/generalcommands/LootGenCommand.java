@@ -6,7 +6,7 @@ import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -78,11 +78,11 @@ public class LootGenCommand extends AbstractSingleCommand implements IActionComm
                 nameCompound.putString(TAG_STRING_NAME, nameString.toString());
                 compound.put(TAG_DISPLAY, nameCompound);
 
-                if (sender instanceof PlayerEntityMP && item != null)
+                if (sender instanceof ServerPlayerEntity && item != null)
                 {
                     final ItemStack stack = new ItemStack(item, 1);
                     stack.put(compound);
-                    ((PlayerEntityMP) sender).inventory.addItemStackToInventory(stack);
+                    ((ServerPlayerEntity) sender).inventory.addItemStackToInventory(stack);
                 }
             });
         }

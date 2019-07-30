@@ -11,7 +11,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.inventory.GuiHandler;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message sent to open an inventory.
  */
-public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, IMessage>
+public class OpenInventoryMessage implements IMessage
 {
     /***
      * The inventory name.
@@ -135,7 +135,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     }
 
     @Override
-    public void messageOnServerThread(final OpenInventoryMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final OpenInventoryMessage message, final ServerPlayerEntity player)
     {
         switch (message.inventoryType)
         {
@@ -153,7 +153,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
         }
     }
 
-    private static void doCitizenInventory(final OpenInventoryMessage message, final PlayerEntityMP player)
+    private static void doCitizenInventory(final OpenInventoryMessage message, final ServerPlayerEntity player)
     {
         @Nullable final IEntityCitizen citizen = (IEntityCitizen) CompatibilityUtils.getWorldFromEntity(player).getEntityByID(message.entityID);
         if (citizen != null && checkPermissions(citizen.getCitizenColonyHandler().getColony(), player))
@@ -167,7 +167,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
         }
     }
 
-    private static void doHutInventory(final OpenInventoryMessage message, final PlayerEntityMP player)
+    private static void doHutInventory(final OpenInventoryMessage message, final ServerPlayerEntity player)
     {
         if (checkPermissions(IColonyManager.getInstance().getClosestColony(player.getEntityWorld(), message.tePos), player))
         {
@@ -181,7 +181,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
         }
     }
 
-    private static void doFieldInventory(final OpenInventoryMessage message, final PlayerEntityMP player)
+    private static void doFieldInventory(final OpenInventoryMessage message, final ServerPlayerEntity player)
     {
         if (checkPermissions(IColonyManager.getInstance().getClosestColony(player.getEntityWorld(), message.tePos), player))
         {

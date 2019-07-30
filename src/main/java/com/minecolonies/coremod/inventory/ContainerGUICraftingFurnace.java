@@ -2,7 +2,7 @@ package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
@@ -142,7 +142,7 @@ public class ContainerGUICraftingFurnace extends Container
 
         if (!worldObj.isRemote)
         {
-            final PlayerEntityMP entityPlayerMP = (PlayerEntityMP) player;
+            final ServerPlayerEntity entityPlayerMP = (ServerPlayerEntity) player;
             final ItemStack result = FurnaceRecipes.instance().getSmeltingResult(furnaceInventory.getStackInSlot(0)).copy();
 
             this.furnaceInventory.setInventorySlotContents(1, result);

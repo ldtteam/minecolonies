@@ -8,7 +8,7 @@ import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingShepherd;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Transfer the current state of automatical sheep dyeing (true = enabled)
  */
-public class ShepherdSetDyeSheepsMessage extends AbstractMessage<ShepherdSetDyeSheepsMessage, IMessage>
+public class ShepherdSetDyeSheepsMessage implements IMessage
 {
     private int      colonyId;
     private BlockPos buildingId;
@@ -65,7 +65,7 @@ public class ShepherdSetDyeSheepsMessage extends AbstractMessage<ShepherdSetDyeS
     }
 
     @Override
-    public void messageOnServerThread(final ShepherdSetDyeSheepsMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final ShepherdSetDyeSheepsMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

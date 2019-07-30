@@ -11,7 +11,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.BlockState;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -25,7 +25,7 @@ import java.util.Optional;
 /**
  * Adds a entry to the builderRequired map.
  */
-public class DecorationBuildRequestMessage extends AbstractMessage<DecorationBuildRequestMessage, IMessage>
+public class DecorationBuildRequestMessage implements IMessage
 {
     /**
      * The id of the building.
@@ -89,7 +89,7 @@ public class DecorationBuildRequestMessage extends AbstractMessage<DecorationBui
     }
 
     @Override
-    public void messageOnServerThread(final DecorationBuildRequestMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final DecorationBuildRequestMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromDim(message.dimension, message.pos);
         if (colony == null)

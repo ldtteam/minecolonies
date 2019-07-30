@@ -3,7 +3,7 @@ package com.minecolonies.coremod.commands;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ICitizenData;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -102,7 +102,7 @@ public class ActionMenuState
         return null;
     }
 
-    public PlayerEntityMP getPlayerForArgument(@NotNull final String argumentName)
+    public ServerPlayerEntity getPlayerForArgument(@NotNull final String argumentName)
     {
         for (final ActionArgument actionArgument : getAllArgumentsList())
         {
@@ -110,14 +110,14 @@ public class ActionMenuState
             {
                 if (ActionArgumentType.ONLINE_PLAYER == actionArgument.getType() || ActionArgumentType.PLAYER == actionArgument.getType())
                 {
-                    return (PlayerEntityMP) getValue(actionArgument);
+                    return (ServerPlayerEntity) getValue(actionArgument);
                 }
             }
         }
         return null;
     }
 
-    public PlayerEntityMP getOnlinePlayerForArgument(@NotNull final String argumentName)
+    public ServerPlayerEntity getOnlinePlayerForArgument(@NotNull final String argumentName)
     {
         for (final ActionArgument actionArgument : getAllArgumentsList())
         {
@@ -125,7 +125,7 @@ public class ActionMenuState
             {
                 if (ActionArgumentType.ONLINE_PLAYER == actionArgument.getType())
                 {
-                    return (PlayerEntityMP) getValue(actionArgument);
+                    return (ServerPlayerEntity) getValue(actionArgument);
                 }
             }
         }

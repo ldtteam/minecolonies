@@ -15,12 +15,17 @@ import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -29,7 +34,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.UNABLE_TO_
 /**
  * Message class to add and remove recipes.
  */
-public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessage, IMessage>
+public class AddRemoveRecipeMessage implements IMessage
 {
     /**
      * The Colony ID.
@@ -125,7 +130,7 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
      * @param buf the used byteBuffer.
      */
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
         storage = StandardFactoryController.getInstance().readFromBuffer(buf);
@@ -140,13 +145,20 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
      * @param buf the used byteBuffer.
      */
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
         StandardFactoryController.getInstance().writeToBuffer(buf, storage);
         buf.writeBoolean(remove);
         BlockPosUtil.writeToByteBuf(buf, building);
         buf.writeInt(dimension);
+    }
+
+    @Nullable
+    @Override
+    public LogicalSide getExecutionSide()
+    {
+        return LogicalSide.SERVER;
     }
 
     /**
@@ -157,7 +169,7 @@ public class AddRemoveRecipeMessage extends AbstractMessage<AddRemoveRecipeMessa
      * @param player  the player associated.
      */
     @Override
-    public void messageOnServerThread(final AddRemoveRecipeMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final AddRemoveRecipeMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null || !colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))

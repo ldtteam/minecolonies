@@ -8,7 +8,7 @@ import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.entity.IEntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -21,7 +21,7 @@ import java.util.Optional;
 /**
  * Transfer some items from the player inventory to the Workers's Inventory.
  */
-public class TransferItemsToCitizenRequestMessage extends AbstractMessage<TransferItemsToCitizenRequestMessage, IMessage>
+public class TransferItemsToCitizenRequestMessage implements IMessage
 {
     /**
      * The id of the building.
@@ -95,7 +95,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
     }
 
     @Override
-    public void messageOnServerThread(final TransferItemsToCitizenRequestMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final TransferItemsToCitizenRequestMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null)

@@ -11,7 +11,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message class which manages the messages hiring or firing of citizens.
  */
-public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
+public class HireFireMessage implements IMessage
 {
     /**
      * The Colony ID.
@@ -102,7 +102,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
     }
 
     @Override
-    public void messageOnServerThread(final HireFireMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final HireFireMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

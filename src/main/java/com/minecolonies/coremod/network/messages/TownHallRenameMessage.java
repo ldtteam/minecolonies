@@ -7,7 +7,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.IColonyView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to execute the renaiming of the townHall.
  */
-public class TownHallRenameMessage extends AbstractMessage<TownHallRenameMessage, IMessage>
+public class TownHallRenameMessage implements IMessage
 {
     private static final int MAX_NAME_LENGTH  = 25;
     private static final int SUBSTRING_LENGTH = MAX_NAME_LENGTH - 1;
@@ -66,7 +66,7 @@ public class TownHallRenameMessage extends AbstractMessage<TownHallRenameMessage
     }
 
     @Override
-    public void messageOnServerThread(final TownHallRenameMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final TownHallRenameMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

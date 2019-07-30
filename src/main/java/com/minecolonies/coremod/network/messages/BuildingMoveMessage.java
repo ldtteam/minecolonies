@@ -25,7 +25,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Mirror;
@@ -43,7 +43,7 @@ import java.util.Map;
 /**
  * Move a building to another location.
  */
-public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IMessage>
+public class BuildingMoveMessage implements IMessage
 {
     /**
      * Position of building.
@@ -135,7 +135,7 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
     }
 
     @Override
-    public void messageOnServerThread(final BuildingMoveMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final BuildingMoveMessage message, final ServerPlayerEntity player)
     {
         final StructureName sn = new StructureName(message.structureName);
         if (!Structures.hasMD5(sn))

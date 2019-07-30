@@ -33,7 +33,7 @@ import com.minecolonies.coremod.commands.generalcommands.ScanCommand;
 
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.BlockPos;
@@ -134,20 +134,20 @@ public class CommandEntryPointTest
         citizenDataList2.add(citizenRAYCOMS);
         when(citizenManager2.getCitizen(205)).thenReturn(citizenRAYCOMS);
 
-        final PlayerEntityMP playerBob = mock(PlayerEntityMP.class);
+        final ServerPlayerEntity playerBob = mock(ServerPlayerEntity.class);
         when(playerBob.getName()).thenReturn("Bob");
-        final PlayerEntityMP playerSally = mock(PlayerEntityMP.class);
+        final ServerPlayerEntity playerSally = mock(ServerPlayerEntity.class);
         when(playerSally.getName()).thenReturn("Sally");
 
         final PlayerList serverPlayerList = mock(PlayerList.class);
         when(serverPlayerList.getPlayerByUsername("Bob")).thenReturn(playerBob);
         when(serverPlayerList.getPlayerByUsername("Sally")).thenReturn(playerSally);
 
-        final List<PlayerEntityMP> allPlayerEntityMPList = new ArrayList<>();
-        allPlayerEntityMPList.add(playerBob);
-        allPlayerEntityMPList.add(playerSally);
+        final List<ServerPlayerEntity> allServerPlayerEntityList = new ArrayList<>();
+        allServerPlayerEntityList.add(playerBob);
+        allServerPlayerEntityList.add(playerSally);
 
-        when(serverPlayerList.getPlayers()).thenReturn(allPlayerEntityMPList);
+        when(serverPlayerList.getPlayers()).thenReturn(allServerPlayerEntityList);
 
         server = mock(MinecraftServer.class);
         when(server.getOnlinePlayerNames()).thenReturn(new String[] {"Bob", "Sally"});
@@ -1188,7 +1188,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("player", "colony");
                 assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.PLAYER, ActionArgumentType.COLONY);
-                final PlayerEntityMP player = actionMenuState.getPlayerForArgument("player");
+                final ServerPlayerEntity player = actionMenuState.getPlayerForArgument("player");
                 final IColony colony = actionMenuState.getColonyForArgument("colony");
                 assertThat(player.getName()).isEqualTo("Bob");
                 assertThat(colony.getID()).isEqualTo(1);
@@ -1222,7 +1222,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).extracting("name").containsExactlyInAnyOrder("player", "colony");
                 assertThat(actionArgumentList).extracting("type").containsOnly(ActionArgumentType.PLAYER, ActionArgumentType.COLONY);
-                final PlayerEntityMP player = actionMenuState.getPlayerForArgument("player");
+                final ServerPlayerEntity player = actionMenuState.getPlayerForArgument("player");
                 final IColony colony = actionMenuState.getColonyForArgument("colony");
                 assertThat(player.getName()).isEqualTo("Bob");
                 assertThat(colony.getID()).isEqualTo(1);
@@ -1464,7 +1464,7 @@ public class CommandEntryPointTest
 //
 //        // Sender is a player
 //        // TODO: make this playerSender the owner of a colony
-//        final PlayerEntityMP playerSender = mock(PlayerEntityMP.class);
+//        final ServerPlayerEntity playerSender = mock(ServerPlayerEntity.class);
 //
 //        // DO:
 //

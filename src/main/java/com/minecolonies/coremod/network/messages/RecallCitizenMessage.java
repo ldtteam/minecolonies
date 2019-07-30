@@ -15,7 +15,7 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  *
  * @author Colton
  */
-public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, IMessage>
+public class RecallCitizenMessage implements IMessage
 {
     private int      colonyId;
     private BlockPos buildingId;
@@ -79,7 +79,7 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
     }
 
     @Override
-    public void messageOnServerThread(final RecallCitizenMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final RecallCitizenMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

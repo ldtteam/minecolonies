@@ -2,7 +2,7 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.colony.permissions.Player;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -141,8 +141,8 @@ public final class ServerUtils
         {
             return null;
         }
-        final List<PlayerEntityMP> allPlayers = world.getMinecraftServer().getPlayerList().getPlayers();
-        for (@NotNull final PlayerEntityMP player : allPlayers)
+        final List<ServerPlayerEntity> allPlayers = world.getMinecraftServer().getPlayerList().getPlayers();
+        for (@NotNull final ServerPlayerEntity player : allPlayers)
         {
             if (player.getUniqueID().equals(uuid))
             {

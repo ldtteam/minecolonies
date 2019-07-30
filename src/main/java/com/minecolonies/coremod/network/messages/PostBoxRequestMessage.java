@@ -9,7 +9,7 @@ import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.PlayerEntityMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Creates a request from the postbox.
  */
-public class PostBoxRequestMessage extends AbstractMessage<PostBoxRequestMessage, IMessage>
+public class PostBoxRequestMessage implements IMessage
 {
     /**
      * The id of the building.
@@ -85,7 +85,7 @@ public class PostBoxRequestMessage extends AbstractMessage<PostBoxRequestMessage
     }
 
     @Override
-    public void messageOnServerThread(final PostBoxRequestMessage message, final PlayerEntityMP player)
+    public void messageOnServerThread(final PostBoxRequestMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null)

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Add or Update a ColonyView on the client.
  */
-public class ColonyViewCitizenViewMessage extends AbstractMessage<ColonyViewCitizenViewMessage, IMessage>
+public class ColonyViewCitizenViewMessage implements IMessage
 {
     private int     colonyId;
     private int     citizenId;
