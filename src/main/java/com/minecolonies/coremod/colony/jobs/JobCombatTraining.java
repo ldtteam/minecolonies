@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.BipedModelType;
+import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.trainingcamps.EntityAICombatTraining;
 
@@ -16,7 +15,7 @@ public class JobCombatTraining extends AbstractJob
      *
      * @param entity the citizen data.
      */
-    public JobCombatTraining(final ICitizenData entity)
+    public JobCombatTraining(final CitizenData entity)
     {
         super(entity);
     }
@@ -34,13 +33,13 @@ public class JobCombatTraining extends AbstractJob
     }
 
     @Override
-    public BipedModelType getModel()
+    public RenderBipedCitizen.Model getModel()
     {
-        return BipedModelType.KNIGHT_GUARD;
+        return RenderBipedCitizen.Model.KNIGHT_GUARD;
     }
 
     @Override
-    public AbstractAISkeleton<? extends IJob> generateAI()
+    public AbstractAISkeleton<? extends AbstractJob> generateAI()
     {
         return new EntityAICombatTraining(this);
     }

@@ -7,14 +7,14 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
-import com.minecolonies.coremod.entity.IEntityCitizen;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,7 +29,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_
 /**
  * Class of the warehouse building.
  */
-public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuildingDeliveryman
+public class BuildingDeliveryman extends AbstractBuildingWorker
 {
 
     private static final String DELIVERYMAN = "Deliveryman";
@@ -55,7 +55,6 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
      *
      * @return the building.
      */
-    @Override
     public ILocation getBuildingToDeliver()
     {
         return this.buildingToDeliver;
@@ -66,7 +65,6 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
      *
      * @param building building to deliver to.
      */
-    @Override
     public void setBuildingToDeliver(final ILocation building)
     {
         this.buildingToDeliver = building;
@@ -92,7 +90,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
         final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
 
         builder.addAll(supers);
-        builder.add(new DeliveryRequestResolver(getRequester().getLocation(),
+        builder.add(new DeliveryRequestResolver(getRequester().getRequesterLocation(),
                                                  getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
@@ -100,9 +98,21 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
 
     @NotNull
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobDeliveryman(citizen);
+    }
+
+    @Override
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+    }
+
+    @Override
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
     }
 
     @NotNull
@@ -119,11 +129,11 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
     }
 
     @Override
-    public void removeCitizen(final ICitizenData citizen)
+    public void removeCitizen(final CitizenData citizen)
     {
         if (citizen != null)
         {
-            final Optional<IEntityCitizen> optCitizen = citizen.getCitizenEntity();
+            final Optional<EntityCitizen> optCitizen = citizen.getCitizenEntity();
             optCitizen.ifPresent(entityCitizen -> entityCitizen.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
                                                     .setBaseValue(BASE_MOVEMENT_SPEED));
         }
@@ -142,7 +152,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
          * @param c the colonyview to put it in
          * @param l the positon
          */
-        public View(final IColonyView c, final BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }

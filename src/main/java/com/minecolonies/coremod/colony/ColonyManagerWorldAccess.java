@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony;
 
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -84,7 +83,7 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
     {
         if (entity instanceof EntityCitizen)
         {
-            ((IEntityCitizen) entity).getCitizenColonyHandler().updateColonyServer();
+            ((EntityCitizen) entity).getCitizenColonyHandler().updateColonyServer();
         }
     }
 
@@ -93,10 +92,10 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
     {
         if (entity instanceof EntityCitizen)
         {
-            final ICitizenData citizen = ((IEntityCitizen) entity).getCitizenData();
+            final CitizenData citizen = ((EntityCitizen) entity).getCitizenData();
             if (citizen != null)
             {
-                citizen.setLastPosition(((IEntityCitizen) entity).getCurrentPosition());
+                citizen.setLastPosition(((EntityCitizen) entity).getCurrentPosition());
                 citizen.setCitizenEntity(null);
             }
         }

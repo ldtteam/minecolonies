@@ -4,11 +4,12 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutCitizen;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.entity.IEntityCitizen;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.state.IBlockState;
@@ -90,16 +91,16 @@ public class BuildingHome extends AbstractBuilding
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        super.deserializeNBT(compound);
+        super.readFromNBT(compound);
 
         if (compound.hasKey(TAG_RESIDENTS))
         {
             final int[] residentIds = compound.getIntArray(TAG_RESIDENTS);
             for (final int citizenId : residentIds)
             {
-                final ICitizenData citizen = getColony().getCitizenManager().getCitizen(citizenId);
+                final CitizenData citizen = getColony().getCitizenManager().getCitizen(citizenId);
                 if (citizen != null)
                 {
                     // Bypass assignCitizen (which marks dirty)
@@ -118,32 +119,6 @@ public class BuildingHome extends AbstractBuilding
                 bedList.add(bedPos);
             }
         }
-    }
-
-    @Override
-    public NBTTagCompound serializeNBT()
-    {
-        final NBTTagCompound compound = super.serializeNBT();
-        if (hasAssignedCitizen())
-        {
-            @NotNull final int[] residentIds = new int[getAssignedCitizen().size()];
-            for (int i = 0; i < getAssignedCitizen().size(); ++i)
-            {
-                residentIds[i] = getAssignedCitizen().get(i).getId();
-            }
-            compound.setIntArray(TAG_RESIDENTS, residentIds);
-        }
-        if (!bedList.isEmpty())
-        {
-            @NotNull final NBTTagList bedTagList = new NBTTagList();
-            for (@NotNull final BlockPos pos : bedList)
-            {
-                bedTagList.appendTag(NBTUtil.createPosTag(pos));
-            }
-            compound.setTag(TAG_BEDS, bedTagList);
-        }
-
-        return compound;
     }
 
     @Override
@@ -176,6 +151,31 @@ public class BuildingHome extends AbstractBuilding
     }
 
     @Override
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+
+        if (hasAssignedCitizen())
+        {
+            @NotNull final int[] residentIds = new int[getAssignedCitizen().size()];
+            for (int i = 0; i < getAssignedCitizen().size(); ++i)
+            {
+                residentIds[i] = getAssignedCitizen().get(i).getId();
+            }
+            compound.setIntArray(TAG_RESIDENTS, residentIds);
+        }
+        if (!bedList.isEmpty())
+        {
+            @NotNull final NBTTagList bedTagList = new NBTTagList();
+            for (@NotNull final BlockPos pos : bedList)
+            {
+                bedTagList.appendTag(NBTUtil.createPosTag(pos));
+            }
+            compound.setTag(TAG_BEDS, bedTagList);
+        }
+    }
+
+    @Override
     public void registerBlockPosition(@NotNull final IBlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
     {
         super.registerBlockPosition(blockState, pos, world);
@@ -205,7 +205,7 @@ public class BuildingHome extends AbstractBuilding
     }
 
     @Override
-    public void removeCitizen(@NotNull final ICitizenData citizen)
+    public void removeCitizen(@NotNull final CitizenData citizen)
     {
         if (isCitizenAssigned(citizen))
         {
@@ -215,7 +215,7 @@ public class BuildingHome extends AbstractBuilding
             femalePresent = false;
             malePresent = false;
 
-            for (final ICitizenData citizenData : getAssignedCitizen())
+            for (final CitizenData citizenData : getAssignedCitizen())
             {
                 if (citizenData.isFemale())
                 {
@@ -275,10 +275,10 @@ public class BuildingHome extends AbstractBuilding
         // Spawn a child when adults are present
         if (colony.canMoveIn() && femalePresent && malePresent && colony.getCitizenManager().getCurrentCitizenCount() < colony.getCitizenManager().getMaxCitizens())
         {
-            ICitizenData mom = null;
-            ICitizenData dad = null;
+            CitizenData mom = null;
+            CitizenData dad = null;
 
-            for (final ICitizenData data : getAssignedCitizen())
+            for (final CitizenData data : getAssignedCitizen())
             {
                 if (data.isFemale() && !data.isChild())
                 {
@@ -300,7 +300,7 @@ public class BuildingHome extends AbstractBuilding
                 return;
             }
 
-            final ICitizenData newCitizen = colony.getCitizenManager().createAndRegisterNewCitizenData();
+            final CitizenData newCitizen = colony.getCitizenManager().createAndRegisterNewCitizenData();
 
             final Random rand = new Random();
 
@@ -333,7 +333,7 @@ public class BuildingHome extends AbstractBuilding
             else
             {
                 // Assign to a different citizen hut and adopt
-                for (final IBuilding build : colony.getBuildingManager().getBuildings().values())
+                for (final AbstractBuilding build : colony.getBuildingManager().getBuildings().values())
                 {
                     if (!(build instanceof BuildingHome))
                     {
@@ -344,7 +344,7 @@ public class BuildingHome extends AbstractBuilding
                     if (build.assignCitizen(newCitizen))
                     {
                         // Get Parent Name
-                        for (final ICitizenData data : build.getAssignedCitizen())
+                        for (final CitizenData data : build.getAssignedCitizen())
                         {
                             // Exclude child itself
                             if (data.getId() != newCitizen.getId())
@@ -358,7 +358,7 @@ public class BuildingHome extends AbstractBuilding
                 }
             }
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.progress.newChild");
-            colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), this.getPosition());
+            colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), this.getLocation());
         }
     }
 
@@ -368,7 +368,7 @@ public class BuildingHome extends AbstractBuilding
      * @param child      The child who inherits the name
      * @param parentName the parents name to inherit
      */
-    private void inheritLastName(@NotNull final ICitizenData child, final String parentName)
+    private void inheritLastName(@NotNull final CitizenData child, final String parentName)
     {
         if (parentName == null || parentName.split(" ").length < 2 || child.getName().split(" ").length < 2)
         {
@@ -395,12 +395,12 @@ public class BuildingHome extends AbstractBuilding
 
     /**
      * Looks for a homeless citizen to add to the current building Calls.
-     * {@link #assignCitizen(ICitizenData)}
+     * {@link #assignCitizen(CitizenData)}
      */
     private void addHomelessCitizens()
     {
         // Priotize missing genders for assigning
-        for (@NotNull final ICitizenData citizen : getColony().getCitizenManager().getCitizens())
+        for (@NotNull final CitizenData citizen : getColony().getCitizenManager().getCitizens())
         {
             if (isFull())
             {
@@ -417,7 +417,7 @@ public class BuildingHome extends AbstractBuilding
             moveCitizenToHut(citizen);
         }
 
-        for (@NotNull final ICitizenData citizen : getColony().getCitizenManager().getCitizens())
+        for (@NotNull final CitizenData citizen : getColony().getCitizenManager().getCitizens())
         {
             if (isFull())
             {
@@ -430,7 +430,7 @@ public class BuildingHome extends AbstractBuilding
     /**
      * Moves the citizen into his new hut
      */
-    private void moveCitizenToHut(final ICitizenData citizen)
+    private void moveCitizenToHut(final CitizenData citizen)
     {
         // Move the citizen to a better hut
         if (citizen.getHomeBuilding() instanceof BuildingHome && citizen.getHomeBuilding().getBuildingLevel() < this.getBuildingLevel())
@@ -444,7 +444,7 @@ public class BuildingHome extends AbstractBuilding
     }
 
     @Override
-    public boolean assignCitizen(final ICitizenData citizen)
+    public boolean assignCitizen(final CitizenData citizen)
     {
         if (!super.assignCitizen(citizen))
         {
@@ -485,7 +485,7 @@ public class BuildingHome extends AbstractBuilding
             this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeColonistMax);
         }
 
-        for (final Optional<IEntityCitizen> entityCitizen : getAssignedEntities())
+        for (final Optional<EntityCitizen> entityCitizen : getAssignedEntities())
         {
             if (entityCitizen.isPresent() && entityCitizen.get().getCitizenJobHandler().getColonyJob() == null)
             {
@@ -500,7 +500,7 @@ public class BuildingHome extends AbstractBuilding
         super.serializeToView(buf);
 
         buf.writeInt(this.getAssignedCitizen().size());
-        for (@NotNull final ICitizenData citizen : this.getAssignedCitizen())
+        for (@NotNull final CitizenData citizen : this.getAssignedCitizen())
         {
             buf.writeInt(citizen.getId());
         }
@@ -549,7 +549,7 @@ public class BuildingHome extends AbstractBuilding
          * @param c the colonyView.
          * @param l the position the hut is at.
          */
-        public View(final IColonyView c, final BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }

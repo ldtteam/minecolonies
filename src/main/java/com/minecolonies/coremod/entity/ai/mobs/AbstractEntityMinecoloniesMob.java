@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.entity.ai.mobs;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.entity.IColonyRelatedEntity;
 import com.minecolonies.coremod.entity.ai.mobs.util.BarbarianUtils;
 import com.minecolonies.coremod.entity.ai.mobs.util.MobSpawnUtils;
-import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
+import com.minecolonies.coremod.entity.pathfinding.PathNavigate;
 import com.minecolonies.coremod.items.ItemChiefSword;
 import com.minecolonies.coremod.sounds.BarbarianSounds;
 import net.minecraft.entity.Entity;
@@ -33,17 +33,17 @@ import static com.minecolonies.api.util.constant.RaiderConstants.*;
 /**
  * Abstract for all Barbarian entities.
  */
-public abstract class AbstractEntityMinecoloniesMob extends EntityMob implements IBaseMinecoloniesMob
+public abstract class AbstractEntityMinecoloniesMob extends EntityMob implements IColonyRelatedEntity
 {
     /**
      * The New PathNavigate navigator.
      */
-    private MinecoloniesAdvancedPathNavigate newNavigator;
+    private PathNavigate newNavigator;
 
     /**
      * Sets the barbarians target colony on spawn Thus it never changes.
      */
-    private IColony colony;
+    private Colony colony;
 
     /**
      * Random object.
@@ -204,7 +204,6 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob implements
      * Get the stack counter.
      * @return the amount it got stuck already.
      */
-    @Override
     public int getStuckCounter()
     {
         return stuckCounter;
@@ -214,7 +213,6 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob implements
      * Set the stack counter.
      * @param stuckCounter the amount.
      */
-    @Override
     public void setStuckCounter(final int stuckCounter)
     {
         this.stuckCounter = stuckCounter;
@@ -224,7 +222,6 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob implements
      * Get the ladder counter.
      * @return the amount it got stuck and placed a ladder already.
      */
-    @Override
     public int getLadderCounter()
     {
         return ladderCounter;
@@ -234,7 +231,6 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob implements
      * Set the ladder counter.
      * @param ladderCounter the amount.
      */
-    @Override
     public void setLadderCounter(final int ladderCounter)
     {
         this.ladderCounter = ladderCounter;
@@ -274,7 +270,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob implements
             final int colonyId = compound.getInteger(TAG_COLONY_ID);
             if (colonyId != 0)
             {
-                setColony(IColonyManager.getInstance().getColonyByWorld(colonyId, world));
+                setColony(ColonyManager.getColonyByWorld(colonyId, world));
             }
         }
         super.readFromNBT(compound);
@@ -282,11 +278,11 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob implements
 
     @NotNull
     @Override
-    public MinecoloniesAdvancedPathNavigate getNavigator()
+    public PathNavigate getNavigator()
     {
         if (this.newNavigator == null)
         {
-            this.newNavigator = new MinecoloniesAdvancedPathNavigate(this, world);
+            this.newNavigator = new PathNavigate(this, world);
             this.navigator = newNavigator;
             this.newNavigator.setCanSwim(true);
             this.newNavigator.setEnterDoors(false);
@@ -319,11 +315,11 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob implements
      * @return the colony the barbarian is assigned to attack.e
      */
     @Override
-    public IColony getColony()
+    public Colony getColony()
     {
         if (!world.isRemote && colony == null)
         {
-            this.setColony(IColonyManager.getInstance().getClosestColony(CompatibilityUtils.getWorldFromEntity(this), this.getPosition()));
+            this.setColony(ColonyManager.getClosestColony(CompatibilityUtils.getWorld(this), this.getPosition()));
         }
 
         return colony;
@@ -351,8 +347,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob implements
      * Set the colony to raid.
      * @param colony the colony to set.
      */
-    @Override
-    public void setColony(final IColony colony)
+    public void setColony(final Colony colony)
     {
         if (colony != null)
         {

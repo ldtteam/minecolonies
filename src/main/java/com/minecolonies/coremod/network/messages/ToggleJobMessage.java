@@ -1,10 +1,9 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.IColonyView;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -43,7 +42,7 @@ public class ToggleJobMessage extends AbstractMessage<ToggleJobMessage, IMessage
      * @param colony view of the colony to read data from.
      * @param toggle toggle the job to manually or automatically.
      */
-    public ToggleJobMessage(@NotNull final IColonyView colony, final boolean toggle)
+    public ToggleJobMessage(@NotNull final ColonyView colony, final boolean toggle)
     {
         super();
         this.colonyId = colony.getID();
@@ -87,7 +86,7 @@ public class ToggleJobMessage extends AbstractMessage<ToggleJobMessage, IMessage
     @Override
     public void messageOnServerThread(final ToggleJobMessage message, final EntityPlayerMP player)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
 

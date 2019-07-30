@@ -1,11 +1,9 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.TextFormatting;
@@ -46,7 +44,7 @@ public class TeamColonyColorChangeMessage extends AbstractMessage<TeamColonyColo
      * @param colorOrdinal the color to set.
      * @param building  view of the building to read data from
      */
-    public TeamColonyColorChangeMessage(final int colorOrdinal, @NotNull final IBuildingView building)
+    public TeamColonyColorChangeMessage(final int colorOrdinal, @NotNull final AbstractBuildingView building)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -83,7 +81,7 @@ public class TeamColonyColorChangeMessage extends AbstractMessage<TeamColonyColo
     @Override
     public void messageOnServerThread(final TeamColonyColorChangeMessage message, final EntityPlayerMP player)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings

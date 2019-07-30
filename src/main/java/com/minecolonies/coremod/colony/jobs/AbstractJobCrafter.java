@@ -9,11 +9,8 @@ import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCraf
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.client.render.BipedModelType;
+import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +22,7 @@ import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 /**
  * Class of the crafter job.
  */
-public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>, J extends AbstractJobCrafter<AI, J>> extends AbstractJob
+public abstract class AbstractJobCrafter extends AbstractJob
 {
     /**
      * The Token of the data store which belongs to this job.
@@ -37,7 +34,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
      *
      * @param entity the citizen who becomes a Sawmill
      */
-    public AbstractJobCrafter(final ICitizenData entity)
+    public AbstractJobCrafter(final CitizenData entity)
     {
         super(entity);
         setupRsDataStore();
@@ -59,26 +56,10 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
                              .getId();
     }
 
-    @NotNull
     @Override
-    public BipedModelType getModel()
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        return BipedModelType.CRAFTER;
-    }
-
-    @Override
-    public NBTTagCompound serializeNBT()
-    {
-        final NBTTagCompound compound = super.serializeNBT();
-        compound.setTag(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
-
-        return compound;
-    }
-
-    @Override
-    public void deserializeNBT(final NBTTagCompound compound)
-    {
-        super.deserializeNBT(compound);
+        super.readFromNBT(compound);
 
         if(compound.hasKey(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE))
         {
@@ -88,6 +69,20 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
         {
             setupRsDataStore();
         }
+    }
+
+    @NotNull
+    @Override
+    public RenderBipedCitizen.Model getModel()
+    {
+        return RenderBipedCitizen.Model.CRAFTER;
+    }
+
+    @Override
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        compound.setTag(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
     }
 
     /**
@@ -129,14 +124,14 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
      * @return {@link IRequest} of the current Task.
      */
     @SuppressWarnings(UNCHECKED)
-    public <R extends PublicCrafting> IRequest<R> getCurrentTask()
+    public IRequest<? extends PublicCrafting>  getCurrentTask()
     {
         if (getTaskQueueFromDataStore().isEmpty())
         {
             return null;
         }
 
-        return (IRequest<R>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
+        return (IRequest<? extends PublicCrafting>) getColony().getRequestManager().getRequestForToken(getTaskQueueFromDataStore().peekFirst());
     }
 
     /**

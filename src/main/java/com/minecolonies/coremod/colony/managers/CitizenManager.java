@@ -5,11 +5,12 @@ import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.HappinessData;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.managers.interfaces.ICitizenManager;
@@ -42,7 +43,7 @@ public class CitizenManager implements ICitizenManager
      * Map of citizens with ID,CitizenData
      */
     @NotNull
-    private final Map<Integer, ICitizenData> citizens = new HashMap<>();
+    private final Map<Integer, CitizenData> citizens = new HashMap<>();
 
     /**
      * Variables to determine if citizens have to be updated on the client side.
@@ -82,12 +83,12 @@ public class CitizenManager implements ICitizenManager
         //  Citizens before Buildings, because Buildings track the Citizens
         citizens.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_CITIZENS, Constants.NBT.TAG_COMPOUND))
                           .map(this::deserializeCitizen)
-                          .collect(Collectors.toMap(ICitizenData::getId, Function.identity())));
+                          .collect(Collectors.toMap(CitizenData::getId, Function.identity())));
     }
 
-    private ICitizenData deserializeCitizen(@NotNull final NBTTagCompound compound)
+    private CitizenData deserializeCitizen(@NotNull final NBTTagCompound compound)
     {
-        final ICitizenData data = ICitizenDataManager.getInstance().createFromNBT(compound, colony);
+        final CitizenData data = CitizenData.createFromNBT(compound, colony);
         topCitizenId = Math.max(topCitizenId, data.getId());
         return data;
     }
@@ -109,7 +110,7 @@ public class CitizenManager implements ICitizenManager
     {
         if (isCitizensDirty || hasNewSubscribers)
         {
-            for (@NotNull final ICitizenData citizen : citizens.values())
+            for (@NotNull final CitizenData citizen : citizens.values())
             {
                 if (citizen.getCitizenEntity().isPresent())
                 {
@@ -129,14 +130,14 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public ICitizenData spawnOrCreateCitizen(@Nullable final ICitizenData data, @Nullable final World world, final BlockPos spawnPos, final boolean force)
+    public CitizenData spawnOrCreateCitizen(@Nullable final CitizenData data, @Nullable final World world, final BlockPos spawnPos, final boolean force)
     {
         if (!colony.getBuildingManager().hasTownHall() || (!colony.canMoveIn() && !force))
         {
             return data;
         }
 
-        final BlockPos spawnLocation = spawnPos != null ? spawnPos : colony.getBuildingManager().getTownHall().getPosition();
+        final BlockPos spawnLocation = spawnPos != null ? spawnPos : colony.getBuildingManager().getTownHall().getLocation();
         if (!world.isBlockLoaded(spawnLocation))
         {
             //  Chunk with TownHall Block is not loaded
@@ -148,7 +149,7 @@ public class CitizenManager implements ICitizenManager
         if (spawnPoint != null)
         {
 
-            ICitizenData citizenData = data;
+            CitizenData citizenData = data;
             if (citizenData == null)
             {
                 citizenData = createAndRegisterNewCitizenData();
@@ -203,7 +204,7 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void removeCitizen(@NotNull final ICitizenData citizen)
+    public void removeCitizen(@NotNull final CitizenData citizen)
     {
         //Remove the Citizen
         citizens.remove(citizen.getId());
@@ -218,7 +219,7 @@ public class CitizenManager implements ICitizenManager
             citizen.getHomeBuilding().cancelAllRequestsOfCitizen(citizen);
         }
 
-        for (@NotNull final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        for (@NotNull final AbstractBuilding building : colony.getBuildingManager().getBuildings().values())
         {
             building.removeCitizen(citizen);
         }
@@ -235,9 +236,9 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public ICitizenData getJoblessCitizen()
+    public CitizenData getJoblessCitizen()
     {
-        for (@NotNull final ICitizenData citizen : citizens.values())
+        for (@NotNull final CitizenData citizen : citizens.values())
         {
             if (citizen.getWorkBuilding() == null && !citizen.isChild())
             {
@@ -253,7 +254,7 @@ public class CitizenManager implements ICitizenManager
     {
         int newMaxCitizens = 0;
 
-        for (final IBuilding b : colony.getBuildingManager().getBuildings().values())
+        for (final AbstractBuilding b : colony.getBuildingManager().getBuildings().values())
         {
             if (b.getBuildingLevel() > 0)
             {
@@ -284,7 +285,7 @@ public class CitizenManager implements ICitizenManager
 
     @NotNull
     @Override
-    public Map<Integer, ICitizenData> getCitizenMap()
+    public Map<Integer, CitizenData> getCitizenMap()
     {
         return Collections.unmodifiableMap(citizens);
     }
@@ -297,7 +298,7 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public ICitizenData getCitizen(final int citizenId)
+    public CitizenData getCitizen(final int citizenId)
     {
         return citizens.get(citizenId);
     }
@@ -306,11 +307,11 @@ public class CitizenManager implements ICitizenManager
     public void clearDirty()
     {
         isCitizensDirty = false;
-        citizens.values().forEach(ICitizenData::clearDirty);
+        citizens.values().forEach(CitizenData::clearDirty);
     }
 
     @Override
-    public List<ICitizenData> getCitizens()
+    public List<CitizenData> getCitizens()
     {
         return new ArrayList<>(citizens.values());
     }
@@ -347,11 +348,11 @@ public class CitizenManager implements ICitizenManager
         boolean hasJob = false; 
         boolean hasHouse = false;
         double saturation = 0;
-        for (final ICitizenData citizen : getCitizens())
+        for (final CitizenData citizen : getCitizens())
         {
             hasJob = false; 
             hasHouse = false; 
-            final IBuildingWorker buildingWorker = citizen.getWorkBuilding();
+            final AbstractBuildingWorker buildingWorker = citizen.getWorkBuilding();
             if (buildingWorker != null)
             {
                 hasJob = true;
@@ -365,7 +366,7 @@ public class CitizenManager implements ICitizenManager
                 }
             }
 
-            final IBuilding home = citizen.getHomeBuilding();
+            final AbstractBuilding home = citizen.getHomeBuilding();
             if (home != null)
             {
                 hasHouse = true;
@@ -435,7 +436,7 @@ public class CitizenManager implements ICitizenManager
         {
             //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
             //  If we don't have any references to them, destroy the citizen
-            getCitizens().stream().filter(Objects::nonNull).forEach(ICitizenData::updateCitizenEntityIfNecessary);
+            getCitizens().stream().filter(Objects::nonNull).forEach(CitizenData::updateCitizenEntityIfNecessary);
         }
 
         //  Spawn initial Citizens
@@ -467,7 +468,7 @@ public class CitizenManager implements ICitizenManager
     @Override
     public void updateCitizenMourn(final boolean mourn)
     {
-        for (final ICitizenData citizen : getCitizens())
+        for (final CitizenData citizen : getCitizens())
         {
             if (citizen.getCitizenEntity().isPresent() && !(citizen.getJob() instanceof AbstractJobGuard))
             {

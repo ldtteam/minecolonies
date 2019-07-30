@@ -115,7 +115,7 @@ public class EntityAIAttackArcher extends EntityAIBase
             if (lastAttack <= 0 && entity.canEntityBeSeen(target))
             {
 
-                final EntityTippedArrow arrowEntity = new EntityTippedArrow(CompatibilityUtils.getWorldFromEntity(entity), entity);
+                final EntityTippedArrow arrowEntity = new EntityTippedArrow(CompatibilityUtils.getWorld(entity), entity);
                 final double xVector = target.posX - entity.posX;
                 final double yVector = target.getEntityBoundingBox().minY + target.height / AIM_HEIGHT - arrowEntity.posY;
                 final double zVector = target.posZ - entity.posZ;
@@ -127,7 +127,7 @@ public class EntityAIAttackArcher extends EntityAIBase
                 entity.faceEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
                 entity.getLookHelper().setLookPositionWithEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
 
-                CompatibilityUtils.spawnEntity(CompatibilityUtils.getWorldFromEntity(entity), arrowEntity);
+                CompatibilityUtils.spawnEntity(CompatibilityUtils.getWorld(entity), arrowEntity);
                 entity.swingArm(EnumHand.MAIN_HAND);
                 entity.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) 1.0D, (float) getRandomPitch());
                 lastAttack = getAttackDelay();

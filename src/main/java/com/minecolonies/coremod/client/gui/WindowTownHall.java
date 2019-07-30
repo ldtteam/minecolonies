@@ -16,12 +16,13 @@ import com.minecolonies.blockout.views.DropDownList;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.CitizenDataView;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.HappinessData;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.coremod.colony.permissions.PermissionEvent;
 import com.minecolonies.coremod.colony.workorders.WorkOrderView;
 import com.minecolonies.coremod.network.messages.*;
@@ -48,7 +49,7 @@ import static com.minecolonies.coremod.commands.colonycommands.ListColoniesComma
 /**
  * Window for the town hall.
  */
-public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
+public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View>
 {
     /**
      * Black color.
@@ -63,7 +64,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     /**
      * The view of the current building.
      */
-    private final ITownHallView townHall;
+    private final BuildingTownHall.View townHall;
 
     /**
      * List of added users.
@@ -75,19 +76,19 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      * List of citizens.
      */
     @NotNull
-    private final List<IColonyView> allies = new ArrayList<>();
+    private final List<ColonyView> allies = new ArrayList<>();
 
     /**
      * List of citizens.
      */
     @NotNull
-    private final List<IColonyView> feuds = new ArrayList<>();
+    private final List<ColonyView> feuds = new ArrayList<>();
 
     /**
      * List of citizens.
      */
     @NotNull
-    private final List<ICitizenDataView> citizens = new ArrayList<>();
+    private final List<CitizenDataView> citizens = new ArrayList<>();
 
     /**
      * Map of the pages.
@@ -273,18 +274,17 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     private void updateAllies()
     {
         allies.clear();
-        final IColony colony = building.getColony();
-
+        final ColonyView colony = building.getColony();
         for (final Player player : colony.getPermissions().getPlayersByRank(Rank.OFFICER))
         {
-            final IColony col = IColonyManager.getInstance().getIColonyByOwner(Minecraft.getMinecraft().world, player.getID());
+            final IColony col = ColonyManager.getIColonyByOwner(Minecraft.getMinecraft().world, player.getID());
             if (col instanceof ColonyView)
             {
                 for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
                 {
                     if (col.getPermissions().getRank(owner.getID()) == Rank.OFFICER)
                     {
-                        allies.add((IColonyView) col);
+                        allies.add((ColonyView) col);
                     }
                 }
             }
@@ -297,17 +297,17 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     private void updateFeuds()
     {
         feuds.clear();
-        final IColony colony = building.getColony();
+        final ColonyView colony = building.getColony();
         for (final Player player : colony.getPermissions().getPlayersByRank(Rank.HOSTILE))
         {
-            final IColony col = IColonyManager.getInstance().getIColonyByOwner(Minecraft.getMinecraft().world, player.getID());
+            final IColony col = ColonyManager.getIColonyByOwner(Minecraft.getMinecraft().world, player.getID());
             if (col instanceof ColonyView)
             {
                 for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
                 {
                     if (col.getPermissions().getRank(owner.getID()) == Rank.HOSTILE)
                     {
-                        feuds.add((IColonyView) col);
+                        feuds.add((ColonyView) col);
                     }
                 }
             }
@@ -322,7 +322,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     private void teleportToColony(@NotNull final Button button)
     {
         final int row = alliesList.getListElementIndexByPane(button);
-        final IColonyView ally = allies.get(row);
+        final ColonyView ally = allies.get(row);
         final ITextComponent teleport = new TextComponentString(LanguageHandler.format(DO_REALLY_WANNA_TP, ally.getName()))
                                           .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
                                             new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + ally.getID())
@@ -622,7 +622,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final int citizensSize = townHall.getColony().getCitizens().size();
 
         final Map<String, Integer> jobCountMap = new HashMap<>();
-        for (@NotNull final ICitizenDataView citizen : citizens)
+        for (@NotNull final CitizenDataView citizen : citizens)
         {
             if (citizen.isChild())
             {
@@ -742,9 +742,9 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final IColonyView IColonyView = allies.get(index);
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(IColonyView.getName());
-                final long distance = BlockPosUtil.getDistance2D(IColonyView.getCenter(), building.getPosition());
+                final ColonyView colonyView = allies.get(index);
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(colonyView.getName());
+                final long distance = BlockPosUtil.getDistance2D(colonyView.getCenter(), building.getLocation());
                 rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText((int) distance + "b");
                 final Button button = rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class);
                 if (townHall.getBuildingLevel() < Configurations.gameplay.minThLevelToTeleport || !Configurations.gameplay.canPlayerUseColonyTPCommand)
@@ -770,9 +770,9 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final IColonyView IColonyView = feuds.get(index);
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(IColonyView.getName());
-                final long distance = BlockPosUtil.getDistance2D(IColonyView.getCenter(), building.getPosition());
+                final ColonyView colonyView = feuds.get(index);
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(colonyView.getName());
+                final long distance = BlockPosUtil.getDistance2D(colonyView.getCenter(), building.getLocation());
                 rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText(String.valueOf((int) distance));
             }
         });
@@ -912,7 +912,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final int row = citizenList.getListElementIndexByPane(button);
         findPaneByID(CITIZEN_INFO).show();
         button.disable();
-        final ICitizenDataView view = citizens.get(row);
+        final CitizenDataView view = citizens.get(row);
         WindowCitizen.createXpBar(view, this);
         WindowCitizen.createHappinessBar(view, this); 
         WindowCitizen.createSkillContent(view, this);
@@ -950,7 +950,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final ICitizenDataView citizen = citizens.get(index);
+                final CitizenDataView citizen = citizens.get(index);
 
                 rowPane.findPaneOfTypeByID(NAME_LABEL, ButtonImage.class).setLabel(citizen.getName());
             }
@@ -1001,7 +1001,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 }
 
                 //Searches citizen of id x
-                for (@NotNull final IBuildingView buildingView : building.getColony().getBuildings())
+                for (@NotNull final AbstractBuildingView buildingView : building.getColony().getBuildings())
                 {
                     if (buildingView.getLocation().equals(workOrder.getClaimedBy()) && buildingView instanceof AbstractBuildingBuilderView)
                     {

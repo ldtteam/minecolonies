@@ -2,8 +2,8 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.IColonyView;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.network.messages.ChangeFreeToInteractBlockMessage;
 import net.minecraft.block.Block;
@@ -61,13 +61,13 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
                                                         final EntityPlayer playerIn,
                                                         final World worldIn,
                                                         final BlockPos pos,
-                                                        final IColonyView IColonyView)
+                                                        final ColonyView colonyView)
     {
         final IBlockState blockState = worldIn.getBlockState(pos);
         final Block block = blockState.getBlock();
 
         final ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(
-          IColonyView,
+                                                                                               colonyView,
                                                                                                block,
                                                                                                ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
         MineColonies.getNetwork().sendToServer(message);
@@ -80,9 +80,9 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
                                                        final EntityPlayer playerIn,
                                                        final World worldIn,
                                                        final BlockPos pos,
-                                                       final IColonyView IColonyView)
+                                                       final ColonyView colonyView)
     {
-        final ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(IColonyView, pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
+        final ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(colonyView, pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
         MineColonies.getNetwork().sendToServer(message);
 
         return EnumActionResult.SUCCESS;
@@ -123,13 +123,13 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
             scepter.setTagCompound(new NBTTagCompound());
         }
 
-        final IColonyView IColonyView = IColonyManager.getInstance().getClosestColonyView(worldIn, pos);
-        if (IColonyView == null)
+        final ColonyView colonyView = ColonyManager.getClosestColonyView(worldIn, pos);
+        if (colonyView == null)
         {
             return EnumActionResult.FAIL;
         }
         final NBTTagCompound compound = scepter.getTagCompound();
-        return handleItemAction(compound, playerIn, worldIn, pos, IColonyView);
+        return handleItemAction(compound, playerIn, worldIn, pos, colonyView);
     }
 
     /**
@@ -189,19 +189,19 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
                                                final EntityPlayer playerIn,
                                                final World worldIn,
                                                final BlockPos pos,
-                                               final IColonyView IColonyView)
+                                               final ColonyView colonyView)
     {
         final String tagItemMode = compound.getString(TAG_ITEM_MODE);
 
         switch (tagItemMode)
         {
             case TAG_VALUE_MODE_BLOCK:
-                return handleAddBlockType(playerIn, worldIn, pos, IColonyView);
+                return handleAddBlockType(playerIn, worldIn, pos, colonyView);
             case TAG_VALUE_MODE_LOCATION:
-                return handleAddLocation(playerIn, worldIn, pos, IColonyView);
+                return handleAddLocation(playerIn, worldIn, pos, colonyView);
             default:
                 toggleItemMode(playerIn, compound);
-                return handleItemAction(compound, playerIn, worldIn, pos, IColonyView);
+                return handleItemAction(compound, playerIn, worldIn, pos, colonyView);
         }
     }
 }

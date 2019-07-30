@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.mobs.util;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
@@ -56,7 +55,7 @@ public final class MobSpawnUtils
      * @param mob The mob to set the attributes on.
      * @param colony    The colony that the mob is attacking.
      */
-    public static void setMobAttributes(final EntityLiving mob, final IColony colony)
+    public static void setMobAttributes(final EntityLiving mob, final Colony colony)
     {
         mob.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
         mob.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
@@ -82,7 +81,7 @@ public final class MobSpawnUtils
      *
      * @return returns the health in the form of a double
      */
-    private static double getHealthBasedOnRaidLevel(final IColony colony)
+    private static double getHealthBasedOnRaidLevel(final Colony colony)
     {
         if (colony != null)
         {
@@ -128,7 +127,7 @@ public final class MobSpawnUtils
       final int numberOfSpawns,
       final BlockPos spawnLocation,
       final World world,
-      final IColony colony)
+      final Colony colony)
     {
         if (spawnLocation != null && entityToSpawn != null && world != null)
         {

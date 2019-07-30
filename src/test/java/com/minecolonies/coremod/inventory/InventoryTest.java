@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.ITownHall;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -17,7 +17,7 @@ public class InventoryTest
     private IInventory inventory;
 
     @InjectMocks
-    private ITownHall building;
+    private BuildingTownHall building;
 
     @Before
     public void setupInventories()

@@ -13,9 +13,8 @@ import com.minecolonies.blockout.controls.*;
 import com.minecolonies.blockout.views.Box;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.IColonyView;
-import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
-import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
+import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
 import net.minecraft.client.gui.GuiScreen;
@@ -38,7 +37,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     /**
      * The colony of the citizen.
      */
-    protected final IColonyView colony;
+    protected final ColonyView colony;
 
     /**
      * Scrollinglist of the resources.
@@ -63,14 +62,14 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     /**
      * The building position.
      */
-    private final IBuildingView building;
+    private final AbstractBuildingView building;
 
     /**
      * Constructor to initiate the window request tree windows.
      *
      * @param building citizen to bind the window to.
      */
-    public AbstractWindowRequestTree(final BlockPos building, final String pane, final IColonyView colony)
+    public AbstractWindowRequestTree(final BlockPos building, final String pane, final ColonyView colony)
     {
         super(pane);
         this.colony = colony;
@@ -166,7 +165,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                 }
 
                 rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-                  .setLabelText(request.getRequester().getDisplayName(colony.getRequestManager(), request.getId()).getFormattedText());
+                  .setLabelText(request.getRequester().getDisplayName(colony.getRequestManager(), request.getToken()).getFormattedText());
                 rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
                   .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
 
@@ -186,9 +185,9 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                         if (!(request.getRequester() instanceof IBuildingBasedRequester)
                               || !((IBuildingBasedRequester) request.getRequester())
                                     .getBuilding(colony.getRequestManager(),
-                                      request.getId()).map(
-                            iRequester -> iRequester.getLocation()
-                                            .equals(building.getLocation())).isPresent())
+                                      request.getToken()).map(
+                            iRequester -> iRequester.getRequesterLocation()
+                                            .equals(building.getRequesterLocation())).isPresent())
                         {
                             rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
                         }
@@ -260,7 +259,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      * @param currentDepth the current depth.
      */
     private void constructTreeFromRequest(
-      @NotNull final IBuildingView buildingView,
+      @NotNull final AbstractBuildingView buildingView,
       @NotNull final IRequestManager manager,
       @NotNull final IRequest<?> request,
       @NotNull final List<RequestWrapper> list,
@@ -291,7 +290,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      * @param building the building to get them from.
      * @return the requests.
      */
-    public ImmutableList<IRequest> getOpenRequestsFromBuilding(final IBuildingView building)
+    public ImmutableList<IRequest> getOpenRequestsFromBuilding(final AbstractBuildingView building)
     {
         return building.getOpenRequestsOfBuilding();
     }
@@ -346,8 +345,8 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
         if (getOpenRequestTreeOfBuilding().size() > row && row >= 0)
         {
             @NotNull final IRequest<?> request = getOpenRequestTreeOfBuilding().get(row).getRequest();
-            building.onRequestCancelled(colony.getRequestManager(), request.getId());
-            MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(colony.getID(), request.getId(), RequestState.CANCELLED, null));
+            building.onRequestCancelled(colony.getRequestManager(), request.getToken());
+            MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(colony.getID(), request.getToken(), RequestState.CANCELLED, null));
         }
         updateRequests();
     }
@@ -379,13 +378,13 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
          * @param depth        the depth.
          * @param buildingView the building it belongs to.
          */
-        public RequestWrapper(@NotNull final IRequest request, final int depth, @NotNull final IBuildingView buildingView)
+        public RequestWrapper(@NotNull final IRequest request, final int depth, @NotNull final AbstractBuildingView buildingView)
         {
             this.request = request;
             this.depth = depth;
-            this.overruleable = request.getRequester().getId().equals(buildingView.getId())
-                                  || buildingView.getResolverIds().contains(request.getRequester().getId())
-                                  || buildingView.getLocation().equals(request.getRequester().getLocation().getInDimensionLocation());
+            this.overruleable = request.getRequester().getRequesterId().equals(buildingView.getRequesterId())
+                                  || buildingView.getResolverIds().contains(request.getRequester().getRequesterId())
+                                  || buildingView.getLocation().equals(request.getRequester().getRequesterLocation().getInDimensionLocation());
         }
 
         /**

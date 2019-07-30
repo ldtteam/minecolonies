@@ -1,14 +1,11 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -104,7 +101,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
     @Override
     public void messageOnServerThread(final HireFireMessage message, final EntityPlayerMP player)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
@@ -113,7 +110,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
                 return;
             }
 
-            final ICitizenData citizen = colony.getCitizenManager().getCitizen(message.citizenID);
+            final CitizenData citizen = colony.getCitizenManager().getCitizen(message.citizenID);
             citizen.setPaused(false);
             if (message.hire)
             {
@@ -122,7 +119,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
             }
             else
             {
-                ((IBuildingWorker) colony.getBuildingManager().getBuilding(message.buildingId)).removeCitizen(citizen);
+                ((AbstractBuildingWorker) colony.getBuildingManager().getBuilding(message.buildingId)).removeCitizen(citizen);
             }
         }
     }

@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.BipedModelType;
+import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.herders.EntityAIWorkSwineHerder;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +17,7 @@ public class JobSwineHerder extends AbstractJob
      *
      * @param entity the entity.
      */
-    public JobSwineHerder(final ICitizenData entity)
+    public JobSwineHerder(final CitizenData entity)
     {
         super(entity);
     }
@@ -49,8 +48,8 @@ public class JobSwineHerder extends AbstractJob
      */
     @NotNull
     @Override
-    public BipedModelType getModel()
+    public RenderBipedCitizen.Model getModel()
     {
-        return BipedModelType.PIG_FARMER;
+        return RenderBipedCitizen.Model.PIG_FARMER;
     }
 }

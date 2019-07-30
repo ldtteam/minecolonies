@@ -1,16 +1,14 @@
 package com.minecolonies.coremod.entity.citizenhandlers;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.client.render.BipedModelType;
+import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -28,7 +26,7 @@ import static com.minecolonies.coremod.entity.AbstractEntityCitizen.*;
 /**
  * Handles all colony related methods for the citizen.
  */
-public class CitizenColonyHandler implements ICitizenColonyHandler
+public class CitizenColonyHandler
 {
     /**
      * The citizen assigned to this manager.
@@ -44,7 +42,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
      * The colony reference.
      */
     @Nullable
-    private IColony colony;
+    private Colony colony;
 
     /**
      * Constructor for the experience handler.
@@ -60,9 +58,8 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
      *
      * @return the building or null if none present.
      */
-    @Override
     @Nullable
-    public IBuildingWorker getWorkBuilding()
+    public AbstractBuildingWorker getWorkBuilding()
     {
         return (citizen.getCitizenData() == null) ? null : citizen.getCitizenData().getWorkBuilding();
     }
@@ -73,8 +70,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
      * @param c    the colony.
      * @param data the data of the new citizen.
      */
-    @Override
-    public void initEntityCitizenValues(@Nullable final IColony c, @Nullable final ICitizenData data)
+    public void initEntityCitizenValues(@Nullable final Colony c, @Nullable final CitizenData data)
     {
         if (c == null)
         {
@@ -116,9 +112,8 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         citizen.getCitizenJobHandler().onJobChanged(citizen.getCitizenJobHandler().getColonyJob());
     }
 
-    @Override
     @Nullable
-    public IBuilding getHomeBuilding()
+    public AbstractBuilding getHomeBuilding()
     {
         return (citizen.getCitizenData() == null) ? null : citizen.getCitizenData().getHomeBuilding();
     }
@@ -126,12 +121,11 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     /**
      * Server-specific update for the EntityCitizen.
      */
-    @Override
     public void updateColonyServer()
     {
         if (colonyId == 0)
         {
-            final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(citizen.getEntityWorld(), citizen.getPosition());
+            final Colony colony = ColonyManager.getColonyByPosFromWorld(citizen.getEntityWorld(), citizen.getPosition());
             if (colony == null)
             {
                 citizen.setDead();
@@ -155,7 +149,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
      */
     private void handleNullColony()
     {
-        final IColony c = IColonyManager.getInstance().getColonyByWorld(colonyId, citizen.world);
+        final Colony c = ColonyManager.getColonyByWorld(colonyId, citizen.world);
 
         if (c == null)
         {
@@ -164,7 +158,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
             return;
         }
 
-        final ICitizenData data = c.getCitizenManager().getCitizen(citizen.getCitizenId());
+        final CitizenData data = c.getCitizenManager().getCitizen(citizen.getCitizenId());
         if (data == null)
         {
             //  Citizen does not exist in the Colony
@@ -176,14 +170,14 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
             return;
         }
 
-        final Optional<IEntityCitizen> entityCitizenOptional = data.getCitizenEntity();
+        final Optional<EntityCitizen> entityCitizenOptional = data.getCitizenEntity();
         entityCitizenOptional.filter(entityCitizen -> !citizen.getUniqueID().equals(entityCitizen.getUniqueID()))
           .ifPresent(entityCitizen -> handleExistingCitizen(data, entityCitizen));
 
         initEntityCitizenValues(c, data);
     }
 
-    private void handleExistingCitizen(@NotNull final ICitizenData data, @NotNull final IEntityCitizen existingCitizen)
+    private void handleExistingCitizen(@NotNull final CitizenData data, @NotNull final EntityCitizen existingCitizen)
     {
         Log.getLogger().warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen #%d, but already have a citizen ('%s')",
           citizen.getUniqueID(),
@@ -203,7 +197,6 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     /**
      * Update the client side of the citizen entity.
      */
-    @Override
     public void updateColonyClient()
     {
         if (citizen.getDataManager().isDirty())
@@ -221,7 +214,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
             citizen.setFemale(citizen.getDataManager().get(DATA_IS_FEMALE) != 0);
             citizen.setIsChild(citizen.getDataManager().get(DATA_IS_CHILD));
             citizen.getCitizenExperienceHandler().setLevel(citizen.getDataManager().get(DATA_LEVEL));
-            citizen.setModelId(BipedModelType.valueOf(citizen.getDataManager().get(DATA_MODEL)));
+            citizen.setModelId(RenderBipedCitizen.Model.valueOf(citizen.getDataManager().get(DATA_MODEL)));
             citizen.setTextureId(citizen.getDataManager().get(DATA_TEXTURE));
             citizen.setRenderMetadata(citizen.getDataManager().get(DATA_RENDER_METADATA));
             citizen.setTexture();
@@ -234,7 +227,6 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
      * Get the amount the worker should decrease its saturation by each action done or x blocks traveled.
      * @return the double describing it.
      */
-    @Override
     public double getPerBuildingFoodCost()
     {
         return getWorkBuilding() == null || getWorkBuilding().getBuildingLevel() == 0 ? 1
@@ -245,9 +237,8 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
      * Getter for the colony.
      * @return the colony of the citizen or null.
      */
-    @Override
     @Nullable
-    public IColony getColony()
+    public Colony getColony()
     {
         return colony;
     }
@@ -256,7 +247,6 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
      * Getter for the colonz id.
      * @return the colony id.
      */
-    @Override
     public int getColonyId()
     {
         return colonyId;
@@ -266,7 +256,6 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
      * Setter for the colony id.
      * @param colonyId the new colonyId.
      */
-    @Override
     public void setColonyId(final int colonyId)
     {
         this.colonyId = colonyId;
@@ -275,7 +264,6 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
     /**
      * Clears the colony of the citizen.
      */
-    @Override
     public void clearColony()
     {
         initEntityCitizenValues(null, null);
@@ -285,10 +273,9 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
      * Check if a citizen is at home.
      * @return true if so.
      */
-    @Override
     public boolean isAtHome()
     {
-        @Nullable final IBuilding homeBuilding = getHomeBuilding();
+        @Nullable final AbstractBuilding homeBuilding = getHomeBuilding();
 
         if (homeBuilding instanceof BuildingHome)
         {

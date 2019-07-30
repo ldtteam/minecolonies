@@ -1,12 +1,9 @@
 package com.minecolonies.coremod.entity.citizenhandlers;
 
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.client.render.BipedModelType;
-import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.entity.ai.EntityAITasks;
 import org.jetbrains.annotations.NotNull;
@@ -17,18 +14,18 @@ import static com.minecolonies.coremod.entity.AbstractEntityCitizen.DATA_MODEL;
 /**
  * Handles the citizen job methods.
  */
-public class CitizenJobHandler implements ICitizenJobHandler
+public class CitizenJobHandler
 {
     /**
      * The citizen assigned to this manager.
      */
-    private final IEntityCitizen citizen;
+    private final EntityCitizen citizen;
 
     /**
      * Constructor for the experience handler.
      * @param citizen the citizen owning the handler.
      */
-    public CitizenJobHandler(final IEntityCitizen citizen)
+    public CitizenJobHandler(final EntityCitizen citizen)
     {
         this.citizen = citizen;
     }
@@ -37,8 +34,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
      * Set Model depending on job.
      * @param job the new job.
      */
-    @Override
-    public void setModelDependingOnJob(@Nullable final IJob job)
+    public void setModelDependingOnJob(@Nullable final AbstractJob job)
     {
         if (job == null)
         {
@@ -47,22 +43,22 @@ public class CitizenJobHandler implements ICitizenJobHandler
                 switch (citizen.getCitizenColonyHandler().getHomeBuilding().getBuildingLevel())
                 {
                     case 3:
-                        citizen.setModelId(BipedModelType.CITIZEN);
+                        citizen.setModelId(RenderBipedCitizen.Model.CITIZEN);
                         break;
                     case 4:
-                        citizen.setModelId(BipedModelType.NOBLE);
+                        citizen.setModelId(RenderBipedCitizen.Model.NOBLE);
                         break;
                     case 5:
-                        citizen.setModelId(BipedModelType.ARISTOCRAT);
+                        citizen.setModelId(RenderBipedCitizen.Model.ARISTOCRAT);
                         break;
                     default:
-                        citizen.setModelId(BipedModelType.SETTLER);
+                        citizen.setModelId(RenderBipedCitizen.Model.SETTLER);
                         break;
                 }
             }
             else
             {
-                citizen.setModelId(BipedModelType.SETTLER);
+                citizen.setModelId(RenderBipedCitizen.Model.SETTLER);
             }
         }
         else
@@ -79,28 +75,27 @@ public class CitizenJobHandler implements ICitizenJobHandler
      *
      * @param job the set job.
      */
-    @Override
-    public void onJobChanged(@Nullable final IJob job)
+    public void onJobChanged(@Nullable final AbstractJob job)
     {
         //  Model
         setModelDependingOnJob(job);
 
         //  AI Tasks
-        @NotNull final Object[] currentTasks = citizen.getTasks().taskEntries.toArray();
+        @NotNull final Object[] currentTasks = citizen.tasks.taskEntries.toArray();
         for (@NotNull final Object task : currentTasks)
         {
             if (((EntityAITasks.EntityAITaskEntry) task).action instanceof AbstractEntityAIInteract)
             {
-                citizen.getTasks().removeTask(((EntityAITasks.EntityAITaskEntry) task).action);
+                citizen.tasks.removeTask(((EntityAITasks.EntityAITaskEntry) task).action);
             }
         }
 
         if (job != null)
         {
-            job.addWorkerAIToTaskList(citizen.getTasks());
-            if (citizen.getTicksExisted() > 0 && citizen.getCitizenColonyHandler().getWorkBuilding() != null)
+            job.addWorkerAIToTaskList(citizen.tasks);
+            if (citizen.ticksExisted > 0 && citizen.getCitizenColonyHandler().getWorkBuilding() != null)
             {
-                BlockPosUtil.tryMoveBaseCitizenEntityToXYZ(citizen, citizen.getCitizenColonyHandler().getWorkBuilding().getPosition());
+                BlockPosUtil.tryMoveLivingToXYZ(citizen, citizen.getCitizenColonyHandler().getWorkBuilding().getLocation());
             }
         }
     }
@@ -112,9 +107,8 @@ public class CitizenJobHandler implements ICitizenJobHandler
      * @param <J>  wildcard.
      * @return the job.
      */
-    @Override
     @Nullable
-    public <J extends IJob> J getColonyJob(@NotNull final Class<J> type)
+    public <J extends AbstractJob> J getColonyJob(@NotNull final Class<J> type)
     {
         return citizen.getCitizenData() == null ? null : citizen.getCitizenData().getJob(type);
     }
@@ -123,9 +117,8 @@ public class CitizenJobHandler implements ICitizenJobHandler
      * Gets the job of the entity.
      * @return the job or els enull.
      */
-    @Override
     @Nullable
-    public IJob getColonyJob()
+    public AbstractJob getColonyJob()
     {
         return citizen.getCitizenData() == null ? null : citizen.getCitizenData().getJob();
     }

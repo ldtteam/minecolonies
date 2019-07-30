@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.workorders.IWorkOrder;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import io.netty.buffer.ByteBuf;
@@ -91,7 +91,7 @@ public class DecorationBuildRequestMessage extends AbstractMessage<DecorationBui
     @Override
     public void messageOnServerThread(final DecorationBuildRequestMessage message, final EntityPlayerMP player)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByPosFromDim(message.dimension, message.pos);
+        final Colony colony = ColonyManager.getColonyByPosFromDim(message.dimension, message.pos);
         if (colony == null)
         {
             return;
@@ -106,7 +106,7 @@ public class DecorationBuildRequestMessage extends AbstractMessage<DecorationBui
         final TileEntity entity = player.getServerWorld().getTileEntity(message.pos);
         if (entity instanceof TileEntityDecorationController)
         {
-            final Optional<Map.Entry<Integer, IWorkOrder>> wo = colony.getWorkManager().getWorkOrders().entrySet().stream()
+            final Optional<Map.Entry<Integer, AbstractWorkOrder>> wo = colony.getWorkManager().getWorkOrders().entrySet().stream()
                   .filter(entry -> entry.getValue() instanceof WorkOrderBuildDecoration)
                   .filter(entry -> ((WorkOrderBuildDecoration) entry.getValue()).getBuildingLocation().equals(message.pos)).findFirst();
 

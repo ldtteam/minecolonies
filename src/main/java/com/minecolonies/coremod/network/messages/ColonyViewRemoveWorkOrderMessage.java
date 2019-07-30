@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -54,6 +54,6 @@ public class ColonyViewRemoveWorkOrderMessage extends AbstractMessage<ColonyView
     @Override
     protected void messageOnClientThread(final ColonyViewRemoveWorkOrderMessage message, final MessageContext ctx)
     {
-        IColonyManager.getInstance().handleColonyViewRemoveWorkOrderMessage(message.colonyId, message.workOrderId, Minecraft.getMinecraft().world.provider.getDimension());
+        ColonyManager.handleColonyViewRemoveWorkOrderMessage(message.colonyId, message.workOrderId, Minecraft.getMinecraft().world.provider.getDimension());
     }
 }

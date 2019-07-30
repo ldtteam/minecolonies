@@ -1,11 +1,9 @@
 package com.minecolonies.coremod.commands.citizencommands;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -56,10 +54,10 @@ public class RespawnCitizenCommand extends AbstractCitizensCommands
     }
 
     @Override
-    public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final IColony colony, final int citizenId)
+    public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
     {
-        final ICitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
-        final Optional<IEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
+        final CitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
+        final Optional<EntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
 
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
         if (!optionalEntityCitizen.isPresent())
@@ -67,7 +65,7 @@ public class RespawnCitizenCommand extends AbstractCitizensCommands
             citizenData.updateCitizenEntityIfNecessary();
         }
 
-        final IEntityCitizen entityCitizen = citizenData.getCitizenEntity().get();
+        final EntityCitizen entityCitizen = citizenData.getCitizenEntity().get();
 
         final BlockPos position = entityCitizen.getPosition();
         sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));

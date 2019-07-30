@@ -1,9 +1,8 @@
 package com.minecolonies.coremod.commands.citizencommands;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -56,7 +55,7 @@ public class SpawnCitizenCommand extends AbstractCitizensCommands implements IAc
     }
 
     @Override
-    public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final IColony colony, final int citizenId)
+    public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
     {
         if (isPlayerOpped(sender))
         {
@@ -103,6 +102,6 @@ public class SpawnCitizenCommand extends AbstractCitizensCommands implements IAc
     {
         final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0);
         return super.canPlayerUseCommand(player, theCommand, colonyId)
-                 && IColonyManager.getInstance().getColonyByWorld(colonyId, world) != null && IColonyManager.getInstance().getColonyByWorld(colonyId, world).getPermissions().getRank(player).equals(Rank.OWNER);
+                 && ColonyManager.getColonyByWorld(colonyId, world) != null && ColonyManager.getColonyByWorld(colonyId, world).getPermissions().getRank(player).equals(Rank.OWNER);
     }
 }

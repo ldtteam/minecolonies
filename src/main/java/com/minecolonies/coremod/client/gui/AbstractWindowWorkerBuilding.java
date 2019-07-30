@@ -7,8 +7,7 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.colony.ICitizenDataView;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.ChangeDeliveryPriorityMessage;
 import com.minecolonies.coremod.network.messages.ChangeDeliveryPriorityStateMessage;
 import com.minecolonies.coremod.network.messages.OpenCraftingGUIMessage;
@@ -20,9 +19,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Abstract class for window for worker building.
  *
- * @param <B> Class extending {@link com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View}
+ * @param <B> Class extending {@link AbstractBuildingWorker.View}
  */
-public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View> extends AbstractWindowBuilding<B>
+public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWorker.View> extends AbstractWindowBuilding<B>
 
 {
     /**
@@ -99,7 +98,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
     /**
      * Constructor for the window of the worker building.
      *
-     * @param building class extending {@link com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View}.
+     * @param building class extending {@link AbstractBuildingWorker.View}.
      * @param resource Resource of the window.
      */
     AbstractWindowWorkerBuilding(final B building, final String resource)
@@ -147,7 +146,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
 
     private void recipeListClicked()
     {
-        @NotNull final WindowListRecipes window = new WindowListRecipes(building.getColony(), building.getPosition());
+        @NotNull final WindowListRecipes window = new WindowListRecipes(building.getColony(), building.getLocation());
         window.open();
     }
 
@@ -156,7 +155,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
      */
     public void craftingClicked()
     {
-        final BlockPos pos = building.getPosition();
+        final BlockPos pos = building.getLocation();
         Minecraft.getMinecraft().player.openGui(MineColonies.instance, 0, Minecraft.getMinecraft().world, pos.getX(), pos.getY(), pos.getZ());
         MineColonies.getNetwork().sendToServer(new OpenCraftingGUIMessage(building, 2));
     }
@@ -176,7 +175,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
             return;
         }
 
-        @NotNull final WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getPosition());
+        @NotNull final WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getLocation());
         window.open();
     }
 
@@ -212,7 +211,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
                 {
                     if (!building.getWorkerId().isEmpty())
                     {
-                        final ICitizenDataView worker = building.getColony().getCitizen(building.getWorkerId().get(index));
+                        final CitizenDataView worker = building.getColony().getCitizen(building.getWorkerId().get(index));
                         if (worker != null)
                         {
                             rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabelText(worker.getName());

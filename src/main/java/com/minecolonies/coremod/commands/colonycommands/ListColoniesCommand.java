@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
-import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
@@ -106,14 +105,14 @@ public class ListColoniesCommand extends AbstractSingleCommand implements IActio
             abandonedSinceTimeInHours = 0;
         }
 
-        final List<IColony> colonies;
+        final List<Colony> colonies;
         if (abandonedSinceTimeInHours > 0)
         {
-            colonies = IColonyManager.getInstance().getColoniesAbandonedSince(abandonedSinceTimeInHours);
+            colonies = ColonyManager.getColoniesAbandonedSince(abandonedSinceTimeInHours);
         }
         else
         {
-            colonies = IColonyManager.getInstance().getAllColonies();
+            colonies = ColonyManager.getAllColonies();
         }
 
         final int colonyCount = colonies.size();
@@ -133,7 +132,7 @@ public class ListColoniesCommand extends AbstractSingleCommand implements IActio
         final int prevPage = Math.max(0, page - 1);
         final int nextPage = Math.min(page + 1, (colonyCount / COLONIES_ON_PAGE) + halfPage);
 
-        final List<IColony> coloniesPage;
+        final List<Colony> coloniesPage;
 
         if (pageStartIndex < 0 || pageStartIndex >= colonyCount)
         {
@@ -147,7 +146,7 @@ public class ListColoniesCommand extends AbstractSingleCommand implements IActio
         final ITextComponent headerLine = new TextComponentString(PAGE_TOP_LEFT + page + PAGE_TOP_MIDDLE + pageCount + PAGE_TOP_RIGHT);
         sender.sendMessage(headerLine);
 
-        for (final IColony colony : coloniesPage)
+        for (final Colony colony : coloniesPage)
         {
             sender.sendMessage(new TextComponentString(String.format(
               ID_AND_NAME_TEXT, colony.getID(), colony.getName())).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
