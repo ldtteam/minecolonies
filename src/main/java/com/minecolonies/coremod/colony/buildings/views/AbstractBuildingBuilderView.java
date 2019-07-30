@@ -65,17 +65,17 @@ public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorker
 
         for (int i = 0; i < size; i++)
         {
-            final ItemStack itemStack = ByteBufUtils.readItemStack(buf);
+            final ItemStack itemStack = buf.readItemStack();
             final int amountAvailable = buf.readInt();
             final int amountNeeded = buf.readInt();
             final BuildingBuilderResource resource = new BuildingBuilderResource(itemStack, amountNeeded, amountAvailable);
             resources.put(itemStack.getDisplayName() + ":" + itemStack.getItemDamage(), resource);
         }
 
-        constructionName = ByteBufUtils.readUTF8String(buf);
-        constructionPos = ByteBufUtils.readUTF8String(buf);
+        constructionName = buf.readString();
+        constructionPos = buf.readString();
         progress = buf.readDouble();
-        workerName = ByteBufUtils.readUTF8String(buf);
+        workerName = buf.readString();
     }
 
     /**

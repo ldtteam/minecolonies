@@ -7,7 +7,7 @@ import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.IColonyView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -57,7 +57,7 @@ public class ToggleHousingMessage implements IMessage
      * @param buf the used byteBuffer.
      */
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
         toggle = buf.readBoolean();
@@ -70,7 +70,7 @@ public class ToggleHousingMessage implements IMessage
      * @param buf the used byteBuffer.
      */
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
         buf.writeBoolean(toggle);

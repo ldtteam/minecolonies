@@ -7,7 +7,7 @@ import net.minecraft.block.state.BlockState;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,13 +48,13 @@ public class CompostParticleMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         pos = BlockPosUtil.readFromByteBuf(buf);
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         BlockPosUtil.writeToByteBuf(buf, pos);
     }

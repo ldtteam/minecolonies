@@ -262,14 +262,14 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         else
         {
             buf.writeBoolean(true);
-            ByteBufUtils.writeItemStack(buf, crusherMode.getItemStack());
+            buf.writeItemStack(crusherMode.getItemStack());
         }
         buf.writeInt(dailyQuantity);
 
         buf.writeInt(crusherRecipes.size());
         for (final ItemStorage storage : crusherRecipes.keySet())
         {
-            ByteBufUtils.writeItemStack(buf, storage.getItemStack());
+            buf.writeItemStack(storage.getItemStack());
         }
     }
 
@@ -311,7 +311,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
 
             if (buf.readBoolean())
             {
-                crusherMode = new ItemStorage(ByteBufUtils.readItemStack(buf));
+                crusherMode = new ItemStorage(buf.readItemStack());
             }
             dailyQuantity = buf.readInt();
             crusherModes.clear();
@@ -319,7 +319,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
             final int size = buf.readInt();
             for (int i = 0; i < size; i++)
             {
-                crusherModes.add(new ItemStorage(ByteBufUtils.readItemStack(buf)));
+                crusherModes.add(new ItemStorage(buf.readItemStack()));
             }
         }
 

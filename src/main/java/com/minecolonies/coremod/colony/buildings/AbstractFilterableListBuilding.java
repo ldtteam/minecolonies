@@ -184,11 +184,11 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
         buf.writeInt(itemsAllowed.size());
         for (final Map.Entry<String, List<ItemStorage>> entry : itemsAllowed.entrySet())
         {
-            ByteBufUtils.writeUTF8String(buf, entry.getKey());
+            buf.writeString(entry.getKey());
             buf.writeInt(entry.getValue().size());
             for (final ItemStorage item : entry.getValue())
             {
-                ByteBufUtils.writeItemStack(buf, item.getItemStack());
+                buf.writeItemStack(item.getItemStack());
             }
         }
     }

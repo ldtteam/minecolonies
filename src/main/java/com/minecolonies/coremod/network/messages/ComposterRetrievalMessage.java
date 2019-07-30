@@ -11,7 +11,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCompost
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,7 +67,7 @@ public class ComposterRetrievalMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
@@ -76,7 +76,7 @@ public class ComposterRetrievalMessage implements IMessage
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);

@@ -9,7 +9,7 @@ import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -60,7 +60,7 @@ public class TeamColonyColorChangeMessage implements IMessage
      * @param buf the used byteBuffer.
      */
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
         colorOrdinal = buf.readInt();
@@ -73,7 +73,7 @@ public class TeamColonyColorChangeMessage implements IMessage
      * @param buf the used byteBuffer.
      */
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
         buf.writeInt(colorOrdinal);

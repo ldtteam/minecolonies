@@ -6,7 +6,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +52,7 @@ public class TransferRecipeCrafingTeachingMessage implements IMessage
         final int count = buf.readInt();
         for (int i = 0; i < count; i++)
         {
-            itemStacks.put(buf.readInt(), ByteBufUtils.readItemStack(buf));
+            itemStacks.put(buf.readInt(), buf.readItemStack());
         }
         complete = buf.readBoolean();
     }
@@ -64,7 +64,7 @@ public class TransferRecipeCrafingTeachingMessage implements IMessage
         itemStacks.forEach((slot, stack) ->
         {
             buf.writeInt(slot);
-            ByteBufUtils.writeItemStack(buf, stack);
+            buf.writeItemStack(stack);
         });
         buf.writeBoolean(complete);
     }

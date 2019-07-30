@@ -14,7 +14,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,11 +66,11 @@ public class DirectPlaceMessage implements IMessage
      * @param buf The buffer begin read from.
      */
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         state = NBTUtil.readBlockState(ByteBufUtils.readTag(buf));
         pos = BlockPosUtil.readFromByteBuf(buf);
-        stack = ByteBufUtils.readItemStack(buf);
+        stack = buf.readItemStack();
     }
 
     /**
@@ -79,11 +79,11 @@ public class DirectPlaceMessage implements IMessage
      * @param buf The buffer being written to.
      */
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new CompoundNBT(), state));
         BlockPosUtil.writeToByteBuf(buf, pos);
-        ByteBufUtils.writeItemStack(buf, stack);
+        buf.writeItemStack(stack);
     }
 
     @Override

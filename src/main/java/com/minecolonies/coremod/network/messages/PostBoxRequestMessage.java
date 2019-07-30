@@ -13,7 +13,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -67,20 +67,20 @@ public class PostBoxRequestMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
-        itemStack = ByteBufUtils.readItemStack(buf);
+        itemStack = buf.readItemStack();
         dimension = buf.readInt();
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
-        ByteBufUtils.writeItemStack(buf, itemStack);
+        buf.writeItemStack(itemStack);
         buf.writeInt(dimension);
     }
 

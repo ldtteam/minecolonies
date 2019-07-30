@@ -7,7 +7,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,7 +64,7 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         final int size = buf.readInt();
         for (int i = 0; i < size; i++)
@@ -74,7 +74,7 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonies.size());
         for (final Tuple<Tuple<Integer, Integer>, Integer> c : colonies)

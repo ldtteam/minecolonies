@@ -48,7 +48,7 @@ public class MobEntryView
      */
     public static void writeToByteBuf(@NotNull final ByteBuf buf, @NotNull final MobEntryView entry)
     {
-        ByteBufUtils.writeUTF8String(buf, entry.getLocation().toString());
+        buf.writeString(entry.getLocation().toString());
         buf.writeBoolean(entry.hasAttack());
         buf.writeInt(entry.getPriority());
     }
@@ -62,7 +62,7 @@ public class MobEntryView
     @NotNull
     public static MobEntryView readFromByteBuf(@NotNull final ByteBuf buf)
     {
-        final ResourceLocation location = new ResourceLocation(ByteBufUtils.readUTF8String(buf));
+        final ResourceLocation location = new ResourceLocation(buf.readString());
         final Boolean attack = buf.readBoolean();
         final Integer priority = buf.readInt();
 

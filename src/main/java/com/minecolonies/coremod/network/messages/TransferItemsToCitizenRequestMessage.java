@@ -12,7 +12,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -75,21 +75,21 @@ public class TransferItemsToCitizenRequestMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
         citizenId = buf.readInt();
-        itemStack = ByteBufUtils.readItemStack(buf);
+        itemStack = buf.readItemStack();
         quantity = buf.readInt();
         dimension = buf.readInt();
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
         buf.writeInt(citizenId);
-        ByteBufUtils.writeItemStack(buf, itemStack);
+        buf.writeItemStack(itemStack);
         buf.writeInt(quantity);
         buf.writeInt(dimension);
     }

@@ -13,7 +13,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -89,10 +89,10 @@ public class ChangeFreeToInteractBlockMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
-        block = Block.getBlockFromName(ByteBufUtils.readUTF8String(buf));
+        block = Block.getBlockFromName(buf.readString());
         pos = BlockPosUtil.readFromByteBuf(buf);
         type = MessageType.values()[buf.readInt()];
         mode = MessageMode.values()[buf.readInt()];
@@ -100,10 +100,10 @@ public class ChangeFreeToInteractBlockMessage implements IMessage
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
-        ByteBufUtils.writeUTF8String(buf, block.getRegistryName().toString());
+        buf.writeString(block.getRegistryName().toString());
         BlockPosUtil.writeToByteBuf(buf, pos);
         buf.writeInt(type.ordinal());
         buf.writeInt(mode.ordinal());

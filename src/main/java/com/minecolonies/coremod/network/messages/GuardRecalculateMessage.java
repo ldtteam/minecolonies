@@ -11,7 +11,7 @@ import com.sun.org.apache.bcel.internal.generic.ICONST;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import org.jetbrains.annotations.Nullable;
 
 public class GuardRecalculateMessage implements IMessage

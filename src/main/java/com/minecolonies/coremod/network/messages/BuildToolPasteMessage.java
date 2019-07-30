@@ -38,7 +38,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -122,10 +122,10 @@ public class BuildToolPasteMessage implements IMessage
      * @param buf The buffer begin read from.
      */
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        structureName = ByteBufUtils.readUTF8String(buf);
-        workOrderName = ByteBufUtils.readUTF8String(buf);
+        structureName = buf.readString();
+        workOrderName = buf.readString();
 
         pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
 
@@ -152,10 +152,10 @@ public class BuildToolPasteMessage implements IMessage
      * @param buf The buffer being written to.
      */
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
-        ByteBufUtils.writeUTF8String(buf, structureName);
-        ByteBufUtils.writeUTF8String(buf, workOrderName);
+        buf.writeString(structureName);
+        buf.writeString(workOrderName);
 
         buf.writeInt(pos.getX());
         buf.writeInt(pos.getY());

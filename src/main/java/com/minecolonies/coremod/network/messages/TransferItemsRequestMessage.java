@@ -17,7 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -82,22 +82,22 @@ public class TransferItemsRequestMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
-        itemStack = ByteBufUtils.readItemStack(buf);
+        itemStack = buf.readItemStack();
         quantity = buf.readInt();
         attemptResolve = buf.readBoolean();
         dimension = buf.readInt();
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
-        ByteBufUtils.writeItemStack(buf, itemStack);
+        buf.writeItemStack(itemStack);
         buf.writeInt(quantity);
         buf.writeBoolean(attemptResolve);
         buf.writeInt(dimension);

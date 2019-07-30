@@ -37,7 +37,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -202,7 +202,7 @@ public final class ColonyView implements IColonyView
     public static void serializeNetworkData(@NotNull Colony colony, @NotNull ByteBuf buf, boolean hasNewSubscribers)
     {
         //  General Attributes
-        ByteBufUtils.writeUTF8String(buf, colony.getName());
+        buf.writeString(colony.getName());
         buf.writeInt(colony.getDimension());
         BlockPosUtil.writeToByteBuf(buf, colony.getCenter());
         buf.writeBoolean(colony.isManualHiring());
@@ -216,7 +216,7 @@ public final class ColonyView implements IColonyView
         buf.writeInt(freeBlocks.size());
         for (final Block block : freeBlocks)
         {
-            ByteBufUtils.writeUTF8String(buf, block.getRegistryName().toString());
+            buf.writeString(block.getRegistryName().toString());
         }
 
         buf.writeInt(freePos.size());
@@ -272,7 +272,7 @@ public final class ColonyView implements IColonyView
         buf.writeInt(colony.getBoughtCitizenCost());
         buf.writeLong(colony.getMercenaryUseTime());
 
-        ByteBufUtils.writeUTF8String(buf, colony.getStyle());
+        buf.writeString(colony.getStyle());
         buf.writeInt(colony.getRaiderManager().getHorde(colony.getWorld().getMinecraftServer().getWorld(colony.getDimension())).size());
     }
 
@@ -604,7 +604,7 @@ public final class ColonyView implements IColonyView
     {
         this.world = world;
         //  General Attributes
-        name = ByteBufUtils.readUTF8String(buf);
+        name = buf.readString();
         dimensionId = buf.readInt();
         center = BlockPosUtil.readFromByteBuf(buf);
         manualHiring = buf.readBoolean();
@@ -626,7 +626,7 @@ public final class ColonyView implements IColonyView
         final int blockListSize = buf.readInt();
         for (int i = 0; i < blockListSize; i++)
         {
-            freeBlocks.add(Block.getBlockFromName(ByteBufUtils.readUTF8String(buf)));
+            freeBlocks.add(Block.getBlockFromName(buf.readString()));
         }
 
         final int posListSize = buf.readInt();
@@ -668,7 +668,7 @@ public final class ColonyView implements IColonyView
 
         this.mercenaryLastUseTime = buf.readLong();
 
-        this.style = ByteBufUtils.readUTF8String(buf);
+        this.style = buf.readString();
         this.horde = buf.readInt();
         return null;
     }

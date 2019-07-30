@@ -8,7 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,7 +51,7 @@ public class BlockParticleEffectMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         pos = BlockPosUtil.readFromByteBuf(buf);
         block = Block.getBlockById(buf.readInt());
@@ -60,7 +60,7 @@ public class BlockParticleEffectMessage implements IMessage
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         BlockPosUtil.writeToByteBuf(buf, pos);
         buf.writeInt(Block.getIdFromBlock(block));

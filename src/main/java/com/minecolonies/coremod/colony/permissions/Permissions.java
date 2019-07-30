@@ -867,22 +867,22 @@ public class Permissions implements IPermissions
      */
     public void serializeViewNetworkData(@NotNull final ByteBuf buf, @NotNull final Rank viewerRank)
     {
-        ByteBufUtils.writeUTF8String(buf, viewerRank.name());
+        buf.writeString(viewerRank.name());
 
         //  Owners
         buf.writeInt(players.size());
         for (@NotNull final Map.Entry<UUID, Player> player : players.entrySet())
         {
             PacketUtils.writeUUID(buf, player.getKey());
-            ByteBufUtils.writeUTF8String(buf, player.getValue().getName());
-            ByteBufUtils.writeUTF8String(buf, player.getValue().getRank().name());
+            buf.writeString(player.getValue().getName());
+            buf.writeString(player.getValue().getRank().name());
         }
 
         // Permissions
         buf.writeInt(permissionMap.size());
         for (@NotNull final Map.Entry<Rank, Integer> entry : permissionMap.entrySet())
         {
-            ByteBufUtils.writeUTF8String(buf, entry.getKey().name());
+            buf.writeString(entry.getKey().name());
             buf.writeInt(entry.getValue());
         }
     }
