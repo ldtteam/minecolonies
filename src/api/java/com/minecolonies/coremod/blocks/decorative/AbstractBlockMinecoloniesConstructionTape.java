@@ -1,26 +1,33 @@
 package com.minecolonies.coremod.blocks.decorative;
 
+import com.minecolonies.coremod.blocks.AbstractBlockMinecoloniesFalling;
 import com.minecolonies.coremod.blocks.interfaces.IBlockMinecolonies;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.MapColor;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.util.IStringSerializable;
 import org.jetbrains.annotations.NotNull;
 
-public interface IBlockConstructionTape<B extends IBlockConstructionTape<B>> extends IBlockMinecolonies<B>
+public abstract class AbstractBlockMinecoloniesConstructionTape<B extends AbstractBlockMinecoloniesConstructionTape<B>> extends AbstractBlockMinecoloniesFalling<B> implements IBlockMinecolonies<B>
 {
     /**
      * The variants of the shingle slab.
      */
-    PropertyEnum<ConstructionTapeType> VARIANT = PropertyEnum.create("variant", ConstructionTapeType.class);
+    public static final PropertyEnum<ConstructionTapeType> VARIANT = PropertyEnum.create("variant", ConstructionTapeType.class);
     /**
      * The position it faces.
      */
-    PropertyDirection                  FACING  = BlockHorizontal.FACING;
+    public static final PropertyDirection                  FACING  = BlockHorizontal.FACING;
+
+    public AbstractBlockMinecoloniesConstructionTape(final Material materialIn)
+    {
+        super(materialIn);
+    }
 
     /**
-     * Types that the {@link IBlockConstructionTape} supports
+     * Types that the {@link AbstractBlockMinecoloniesConstructionTape} supports
      */
     public enum ConstructionTapeType implements IStringSerializable
     {

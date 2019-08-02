@@ -32,13 +32,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
+import static com.minecolonies.coremod.blocks.huts.AbstractBlockMinecoloniesBlockHutField.*;
 import static net.minecraft.util.EnumFacing.NORTH;
 import static net.minecraft.util.EnumFacing.fromAngle;
 
 /**
  * The class handling the fieldBlocks, placement and activation.
  */
-public class BlockHutField extends AbstractBlockMinecoloniesContainer<BlockHutField> implements IBlockHutField<BlockHutField>
+public class BlockHutField extends AbstractBlockMinecoloniesBlockHutField<BlockHutField>
 {
 
     /**
