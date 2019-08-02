@@ -103,7 +103,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
                 final TileEntity entity = getColony().getWorld().getTileEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
-                    ((TileEntityRack) entity).setInWarehouse(true);
+                    ((AbstractTileEntityRack) entity).setInWarehouse(true);
                 }
             }
         }
@@ -255,7 +255,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             }
             if (entity instanceof TileEntityRack)
             {
-                ((TileEntityRack) entity).setInWarehouse(true);
+                ((AbstractTileEntityRack) entity).setInWarehouse(true);
             }
             addContainerPosition(pos);
         }
@@ -286,12 +286,12 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         final TileEntity entity = world.getTileEntity(pos);
         if (entity instanceof TileEntityRack)
         {
-            ((TileEntityRack) entity).setInWarehouse(true);
+            ((AbstractTileEntityRack) entity).setInWarehouse(true);
             for (final ItemStack stack : inventory)
             {
                 if (!ItemStackUtils.isEmpty(stack))
                 {
-                    InventoryUtils.addItemStackToItemHandler(((TileEntityRack) entity).getInventory(), stack);
+                    InventoryUtils.addItemStackToItemHandler(((AbstractTileEntityRack) entity).getInventory(), stack);
                 }
             }
         }
@@ -325,7 +325,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
-                    ((TileEntityRack) entity).upgradeItemStorage();
+                    ((AbstractTileEntityRack) entity).upgradeItemStorage();
                 }
             }
             storageUpgrade++;

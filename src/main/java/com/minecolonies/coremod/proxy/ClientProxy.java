@@ -14,7 +14,6 @@ import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarba
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererArcherPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
-import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ICitizenDataView;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -225,7 +224,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockRack);
         createCustomModel(ModBlocks.blockWayPoint);
         createCustomModel(ModBlocks.blockPostBox);
-        createCustomModel(ModBlocks.blockDecorationPlacerholder);
+        createCustomModel(ModBlocks.blockDecorationPlaceholder);
 
         createCustomModel(ModItems.clipboard);
         createCustomModel(ModItems.caliper);

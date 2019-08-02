@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.tileentities.TileEntityRack;
+import com.minecolonies.coremod.tileentities.AbstractTileEntityRack;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
@@ -27,12 +27,12 @@ public class ContainerRack extends net.minecraft.inventory.Container
     /**
      * The tileEntity.
      */
-    private final TileEntityRack rack;
+    private final AbstractTileEntityRack rack;
 
     /**
      * The tileEntity.
      */
-    private final TileEntityRack neighborRack;
+    private final AbstractTileEntityRack neighborRack;
 
     /**
      * Amount of rows.
@@ -42,32 +42,32 @@ public class ContainerRack extends net.minecraft.inventory.Container
     /**
      * Creates an instance of our field container, this may be serve to open the GUI.
      *
-     * @param tileEntityRack  the tileEntity of the field containing the inventory.
+     * @param abstractTileEntityRack  the tileEntity of the field containing the inventory.
      * @param neighborRack    the neighboring rack.
      * @param playerInventory the player inventory.
      */
     public ContainerRack(
-                          @NotNull final TileEntityRack tileEntityRack, @Nullable final TileEntityRack neighborRack,
+                          @NotNull final AbstractTileEntityRack abstractTileEntityRack, @Nullable final AbstractTileEntityRack neighborRack,
                           final InventoryPlayer playerInventory)
     {
         super();
         if (neighborRack != null)
         {
-            if (tileEntityRack.isMain())
+            if (abstractTileEntityRack.isMain())
             {
-                this.inventory = new CombinedInvWrapper(tileEntityRack.getInventory(), neighborRack.getInventory());
+                this.inventory = new CombinedInvWrapper(abstractTileEntityRack.getInventory(), neighborRack.getInventory());
             }
             else
             {
-                this.inventory = new CombinedInvWrapper(neighborRack.getInventory(), tileEntityRack.getInventory());
+                this.inventory = new CombinedInvWrapper(neighborRack.getInventory(), abstractTileEntityRack.getInventory());
             }
         }
         else
         {
-            this.inventory = tileEntityRack.getInventory();
+            this.inventory = abstractTileEntityRack.getInventory();
         }
 
-        this.rack = tileEntityRack;
+        this.rack = abstractTileEntityRack;
         this.neighborRack = neighborRack;
         this.inventorySize = this.inventory.getSlots() / INVENTORY_COLUMNS;
         final int size = this.inventory.getSlots();

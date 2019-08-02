@@ -2,9 +2,8 @@ package com.minecolonies.coremod.proxy;
 
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.apiimp.initializer.ModBlockInitializer;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ICitizenDataView;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
@@ -102,7 +101,7 @@ public abstract class CommonProxy implements IProxy
     @SubscribeEvent
     public static void registerBlocks(@NotNull final RegistryEvent.Register<Block> event)
     {
-        ModBlocks.init(event.getRegistry());
+        ModBlockInitializer.init(event.getRegistry());
     }
 
     /**
@@ -125,7 +124,7 @@ public abstract class CommonProxy implements IProxy
     public static void registerItems(@NotNull final RegistryEvent.Register<Item> event)
     {
         ModItems.init(event.getRegistry());
-        ModBlocks.registerItemBlock(event.getRegistry());
+        ModBlockInitializer.registerItemBlock(event.getRegistry());
     }
 
     @Override

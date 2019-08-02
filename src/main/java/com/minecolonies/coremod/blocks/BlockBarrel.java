@@ -27,7 +27,7 @@ import java.util.Random;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
-public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel> implements IBlockBarrel<BlockBarrel>
+public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
 {
 
     /**
@@ -52,7 +52,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
     public BlockBarrel()
     {
         super(Material.WOOD);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(IBlockBarrel.FACING, EnumFacing.NORTH).withProperty(VARIANT, BarrelType.ZERO));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(AbstractBlockBarrel.FACING, EnumFacing.NORTH).withProperty(VARIANT, BarrelType.ZERO));
         initBlock();
     }
 
@@ -106,7 +106,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, IBlockBarrel.FACING, VARIANT);
+        return new BlockStateContainer(this, AbstractBlockBarrel.FACING, VARIANT);
     }
 
     @Override
@@ -156,7 +156,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
     @SuppressWarnings(DEPRECATION)
     public IBlockState getStateFromMeta(final int meta)
     {
-        return this.getDefaultState().withProperty(IBlockBarrel.FACING,
+        return this.getDefaultState().withProperty(AbstractBlockBarrel.FACING,
                 EnumFacing.byHorizontalIndex(meta));
     }
 
@@ -190,7 +190,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
     @Override
     public int getMetaFromState(final IBlockState state)
     {
-        return state.getValue(IBlockBarrel.FACING).getHorizontalIndex();
+        return state.getValue(AbstractBlockBarrel.FACING).getHorizontalIndex();
     }
 
     @NotNull
@@ -219,7 +219,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
     @Deprecated
     public IBlockState withRotation(@NotNull final IBlockState state, final Rotation rot)
     {
-        return state.withProperty(IBlockBarrel.FACING, rot.rotate(state.getValue(IBlockBarrel.FACING)));
+        return state.withProperty(AbstractBlockBarrel.FACING, rot.rotate(state.getValue(AbstractBlockBarrel.FACING)));
     }
 
     /**
@@ -230,7 +230,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
     @Deprecated
     public IBlockState withMirror(@NotNull final IBlockState state, final Mirror mirrorIn)
     {
-        return state.withRotation(mirrorIn.toRotation(state.getValue(IBlockBarrel.FACING)));
+        return state.withRotation(mirrorIn.toRotation(state.getValue(AbstractBlockBarrel.FACING)));
     }
 
     @NotNull
@@ -239,7 +239,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
       @NotNull final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing facing, final float hitX, final float hitY,
                                             final float hitZ, final int meta, @NotNull final EntityLivingBase placer, final EnumHand hand)
     {
-        return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(IBlockBarrel.FACING, placer.getHorizontalFacing());
+        return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(AbstractBlockBarrel.FACING, placer.getHorizontalFacing());
     }
 
     /**
@@ -256,7 +256,7 @@ public class BlockBarrel extends AbstractBlockMinecoloniesHorizontal<BlockBarrel
             return super.getActualState(state, worldIn, pos);
         }
 
-        return IBlockBarrel.changeStateOverFullness((TileEntityBarrel) entity, state);
+        return AbstractBlockBarrel.changeStateOverFullness((TileEntityBarrel) entity, state);
     }
 
     @Nullable

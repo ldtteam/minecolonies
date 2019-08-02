@@ -5,12 +5,8 @@ import com.minecolonies.coremod.client.gui.WindowGuiCrafting;
 import com.minecolonies.coremod.client.gui.WindowGuiFurnaceCrafting;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.*;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
-import com.minecolonies.coremod.tileentities.ITileEntityColonyBuilding;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.tileentities.TileEntityRack;
+import com.minecolonies.coremod.tileentities.*;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -37,7 +33,7 @@ public class GuiHandler implements IGuiHandler
             }
             else if (tileEntity instanceof TileEntityRack)
             {
-                return new ContainerRack((TileEntityRack) tileEntity, ((TileEntityRack) tileEntity).getOtherChest(), player.inventory);
+                return new ContainerRack((AbstractTileEntityRack) tileEntity, ((AbstractTileEntityRack) tileEntity).getOtherChest(), player.inventory);
             }
             else
             {
@@ -92,7 +88,7 @@ public class GuiHandler implements IGuiHandler
             }
             else if (tileEntity instanceof TileEntityRack)
             {
-                return new GuiRack(player.inventory, (TileEntityRack) tileEntity, ((TileEntityRack) tileEntity).getOtherChest(), world, pos);
+                return new GuiRack(player.inventory, (AbstractTileEntityRack) tileEntity, ((AbstractTileEntityRack) tileEntity).getOtherChest(), world, pos);
             }
             else
             {

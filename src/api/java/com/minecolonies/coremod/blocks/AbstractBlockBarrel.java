@@ -5,19 +5,25 @@ import com.minecolonies.coremod.blocks.types.BarrelType;
 import com.minecolonies.coremod.tileentities.ITileEntityBarrel;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 
-public interface IBlockBarrel<B extends IBlockBarrel<B>> extends IBlockMinecolonies<B>, ITileEntityProvider
+public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> extends AbstractBlockMinecoloniesHorizontal<B> implements IBlockMinecolonies<B>, ITileEntityProvider
 {
-    PropertyEnum<BarrelType> VARIANT = PropertyEnum.create("variant", BarrelType.class);
+    public static final PropertyEnum<BarrelType> VARIANT = PropertyEnum.create("variant", BarrelType.class);
     /**
      * The position it faces.
      */
-    PropertyDirection        FACING  = BlockHorizontal.FACING;
+    public static final PropertyDirection        FACING  = BlockHorizontal.FACING;
 
-    static IBlockState changeStateOverFullness(
+    public AbstractBlockBarrel(final Material blockMaterialIn)
+    {
+        super(blockMaterialIn);
+    }
+
+    public static IBlockState changeStateOverFullness(
       ITileEntityBarrel entity,
       IBlockState blockState
     )
@@ -50,7 +56,7 @@ public interface IBlockBarrel<B extends IBlockBarrel<B>> extends IBlockMinecolon
             type = BarrelType.DONE;
         }
 
-        return blockState.withProperty(IBlockBarrel.VARIANT,
-          type).withProperty(IBlockBarrel.FACING, blockState.getValue(IBlockBarrel.FACING));
+        return blockState.withProperty(AbstractBlockBarrel.VARIANT,
+          type).withProperty(AbstractBlockBarrel.FACING, blockState.getValue(AbstractBlockBarrel.FACING));
     }
 }
