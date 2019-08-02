@@ -5,7 +5,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.blocks.IBlockBarrel;
+import com.minecolonies.coremod.blocks.AbstractBlockBarrel;
 import com.minecolonies.coremod.blocks.decorative.IBlockConstructionTape;
 import com.minecolonies.coremod.blocks.huts.IBlockHutField;
 import net.minecraft.block.*;
@@ -1012,7 +1012,7 @@ public abstract class AbstractPathJob implements Callable<Path>
               || block instanceof BlockFenceGate
               || block instanceof BlockWall
               || block instanceof IBlockHutField
-              || block instanceof IBlockBarrel
+              || block instanceof AbstractBlockBarrel
               || (blockState.getCollisionBoundingBox(world, pos) != null
                    && blockState.getCollisionBoundingBox(world, pos).maxY > 1.0))
         {

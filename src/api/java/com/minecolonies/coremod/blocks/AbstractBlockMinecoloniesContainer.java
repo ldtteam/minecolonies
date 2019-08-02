@@ -4,13 +4,15 @@ import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.blocks.interfaces.IBlockMinecolonies;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.registries.IForgeRegistry;
 
-public abstract class AbstractBlockMinecoloniesContainer<B extends AbstractBlockMinecoloniesContainer<B>> extends BlockContainer  implements IBlockMinecolonies<B>
+public abstract class AbstractBlockMinecoloniesContainer<B extends AbstractBlockMinecoloniesContainer<B>> extends AbstractBlockMinecolonies<B> implements IBlockMinecolonies<B>,
+                                                                                                                                                            ITileEntityProvider
 {
     public AbstractBlockMinecoloniesContainer(final Material blockMaterialIn, final MapColor blockMapColorIn)
     {

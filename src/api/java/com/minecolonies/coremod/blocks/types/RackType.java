@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.blocks.types;
 
+import com.minecolonies.coremod.blocks.AbstractBlockMinecoloniesRack;
 import net.minecraft.util.IStringSerializable;
 
 /**
- * Defines the types of Racks that the {@link com.minecolonies.coremod.blocks.IBlockMinecoloniesRack} supports.
+ * Defines the types of Racks that the {@link AbstractBlockMinecoloniesRack} supports.
  */
 public enum RackType implements IStringSerializable
 {

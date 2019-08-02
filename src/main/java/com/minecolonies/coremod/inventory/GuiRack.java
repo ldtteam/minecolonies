@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.tileentities.TileEntityRack;
+import com.minecolonies.coremod.tileentities.AbstractTileEntityRack;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -86,7 +86,7 @@ public class GuiRack extends GuiContainer
      */
     private final int inventoryRows;
 
-    public GuiRack(final InventoryPlayer parInventoryPlayer, final TileEntityRack tileEntity, final TileEntityRack neighborRack, final World world, final BlockPos location)
+    public GuiRack(final InventoryPlayer parInventoryPlayer, final AbstractTileEntityRack tileEntity, final AbstractTileEntityRack neighborRack, final World world, final BlockPos location)
     {
         super(new ContainerRack(tileEntity, neighborRack, parInventoryPlayer));
 

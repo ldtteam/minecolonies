@@ -5,7 +5,7 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.coremod.blocks.IBlockMinecoloniesRack;
+import com.minecolonies.coremod.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.coremod.colony.IColonyManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
@@ -157,7 +157,7 @@ public class StructureIterator
             }
             else if ((structureBlock instanceof BlockStairs && structureBlockState.equals(worldBlockState))
                        || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState)
-                       || (worldBlock instanceof IBlockMinecoloniesRack && IBlockMinecoloniesRack.shouldBlockBeReplacedWithRack(structureBlock)))
+                       || (worldBlock instanceof AbstractBlockMinecoloniesRack && AbstractBlockMinecoloniesRack.shouldBlockBeReplacedWithRack(structureBlock)))
             {
                 return true;
             }

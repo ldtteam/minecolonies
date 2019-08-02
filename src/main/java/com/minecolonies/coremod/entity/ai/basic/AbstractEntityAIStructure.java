@@ -687,7 +687,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                  || block.equals(Blocks.LEAVES)
                  || block.equals(Blocks.LEAVES2)
                  || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08))
-                 || block == ModBlocks.blockDecorationPlacerholder;
+                 || block == ModBlocks.blockDecorationPlaceholder;
     }
 
     /*

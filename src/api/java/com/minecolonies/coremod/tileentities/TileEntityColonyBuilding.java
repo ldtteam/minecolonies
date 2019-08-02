@@ -3,12 +3,9 @@ package com.minecolonies.coremod.tileentities;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.*;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.IColonyView;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingContainer;
 import com.minecolonies.coremod.colony.buildings.IBuildingContainer;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.inventory.api.CombinedItemHandler;
 import net.minecraft.entity.player.EntityPlayer;
@@ -185,8 +182,8 @@ public class TileEntityColonyBuilding extends TileEntityChest implements ITileEn
             for (final BlockPos pos : theBuilding.getAdditionalCountainers())
             {
                 final TileEntity entity = getWorld().getTileEntity(pos);
-                if ((entity instanceof TileEntityRack
-                       && ((TileEntityRack) entity).hasItemStack(notEmptyPredicate))
+                if ((entity instanceof AbstractTileEntityRack
+                       && ((AbstractTileEntityRack) entity).hasItemStack(notEmptyPredicate))
                       || (entity instanceof TileEntityChest
                             && ITileEntityColonyBuilding.isInTileEntity(entity, notEmptyPredicate)))
                 {
@@ -254,7 +251,7 @@ public class TileEntityColonyBuilding extends TileEntityChest implements ITileEn
     /**
      * Returns the building associated with the tile entity.
      *
-     * @return {@link AbstractBuildingContainer} associated with the tile entity.
+     * @return {@link IBuildingContainer} associated with the tile entity.
      */
     @Override
     public IBuildingContainer getBuilding()
@@ -269,7 +266,7 @@ public class TileEntityColonyBuilding extends TileEntityChest implements ITileEn
     /**
      * Sets the building associated with the tile entity.
      *
-     * @param b {@link AbstractBuildingContainer} to associate with the tile entity.
+     * @param b {@link IBuildingContainer} to associate with the tile entity.
      */
     @Override
     public void setBuilding(final IBuildingContainer b)
@@ -290,7 +287,7 @@ public class TileEntityColonyBuilding extends TileEntityChest implements ITileEn
     /**
      * Returns the view of the building associated with the tile entity.
      *
-     * @return {@link AbstractBuildingView} the tile entity is associated with.
+     * @return {@link IBuildingView} the tile entity is associated with.
      */
     @Override
     public IBuildingView getBuildingView()

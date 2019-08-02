@@ -159,7 +159,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding implements ITi
      */
     private static boolean isInRack(final ItemStack stack, final TileEntity entity, final boolean ignoreDamageValue)
     {
-        return entity instanceof TileEntityRack && !((TileEntityRack) entity).isEmpty() && ((TileEntityRack) entity).hasItemStack(stack, ignoreDamageValue)
+        return entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty() && ((AbstractTileEntityRack) entity).hasItemStack(stack, ignoreDamageValue)
                  && InventoryUtils.findSlotInItemHandlerNotFullWithItem(entity.getCapability(ITEM_HANDLER_CAPABILITY, null), stack);
     }
 
@@ -218,12 +218,12 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding implements ITi
             final int tempFreeSlots;
             if (entity instanceof TileEntityRack)
             {
-                if (((TileEntityRack) entity).isEmpty())
+                if (((AbstractTileEntityRack) entity).isEmpty())
                 {
                     return entity;
                 }
 
-                tempFreeSlots = ((TileEntityRack) entity).getFreeSlots();
+                tempFreeSlots = ((AbstractTileEntityRack) entity).getFreeSlots();
                 if (freeSlots < tempFreeSlots)
                 {
                     freeSlots = tempFreeSlots;
