@@ -6,8 +6,8 @@ import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockBarrel;
-import com.minecolonies.coremod.blocks.decorative.IBlockConstructionTape;
-import com.minecolonies.coremod.blocks.huts.IBlockHutField;
+import com.minecolonies.coremod.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
+import com.minecolonies.coremod.blocks.huts.AbstractBlockMinecoloniesBlockHutField;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -208,7 +208,7 @@ public abstract class AbstractPathJob implements Callable<Path>
                 bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
             }
         }
-        else if (b instanceof BlockFence || b instanceof BlockWall || b instanceof IBlockHutField)
+        else if (b instanceof BlockFence || b instanceof BlockWall || b instanceof AbstractBlockMinecoloniesBlockHutField)
         {
             //Push away from fence
             final double dX = entity.posX - Math.floor(entity.posX);
@@ -975,7 +975,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             {
                 return block.getBlock() instanceof BlockDoor
                          || block.getBlock() instanceof BlockFenceGate
-                         || block.getBlock() instanceof IBlockConstructionTape
+                         || block.getBlock() instanceof AbstractBlockMinecoloniesConstructionTape
                          || block.getBlock() instanceof BlockPressurePlate;
             }
             else if (block.getMaterial().isLiquid())
@@ -1011,7 +1011,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (block instanceof BlockFence
               || block instanceof BlockFenceGate
               || block instanceof BlockWall
-              || block instanceof IBlockHutField
+              || block instanceof AbstractBlockMinecoloniesBlockHutField
               || block instanceof AbstractBlockBarrel
               || (blockState.getCollisionBoundingBox(world, pos) != null
                    && blockState.getCollisionBoundingBox(world, pos).maxY > 1.0))
@@ -1019,7 +1019,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             return SurfaceType.NOT_PASSABLE;
         }
 
-        if (block instanceof IBlockConstructionTape)
+        if (block instanceof AbstractBlockMinecoloniesConstructionTape)
         {
             return SurfaceType.DROPABLE;
         }
