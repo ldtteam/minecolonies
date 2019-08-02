@@ -189,7 +189,7 @@ public final class StandardRequests
     }
 
 	/**
-	 * An abstract implementation for crafting requests
+	 * An abstract initializer for crafting requests
 	 */
     public abstract static class AbstractCraftingRequest<C extends AbstractCrafting> extends AbstractRequest<C>
     {

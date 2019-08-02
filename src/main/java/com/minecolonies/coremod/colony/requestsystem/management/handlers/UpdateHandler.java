@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.management.handlers;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.IUpdateStep;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.implementation.CraftingUpdate;
@@ -12,11 +13,12 @@ import java.util.List;
 
 public class UpdateHandler
 {
-    private static final List<IUpdateStep> steps = new ArrayList<>();
+    @VisibleForTesting
+    public static final List<IUpdateStep> UPDATE_STEPS = new ArrayList<>();
 
     static {
-        steps.add(new InitialUpdate());
-        steps.add(new CraftingUpdate());
+        UPDATE_STEPS.add(new InitialUpdate());
+        UPDATE_STEPS.add(new CraftingUpdate());
     }
 
     public static void handleUpdate(@NotNull final IStandardRequestManager manager)
@@ -26,7 +28,7 @@ public class UpdateHandler
             return;
         }
 
-        steps.stream()
+        UPDATE_STEPS.stream()
           .filter(s -> s.updatesToVersion() > manager.getCurrentVersion())
           .sorted(Comparator.comparing(IUpdateStep::updatesToVersion))
           .forEachOrdered(s ->
@@ -38,6 +40,6 @@ public class UpdateHandler
 
     public static int getCurrentVersion()
     {
-        return steps.stream().max(Comparator.comparing(IUpdateStep::updatesToVersion)).get().updatesToVersion();
+        return UPDATE_STEPS.stream().max(Comparator.comparing(IUpdateStep::updatesToVersion)).get().updatesToVersion();
     }
 }

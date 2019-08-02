@@ -34,8 +34,8 @@ public abstract class AbstractMockStaticsTest
     @Mock
     private Logger logger;
 
-    protected IColonyManager colonyManagerToMock;
-    protected ICitizenDataManager citizenDataManagerToMock;
+    private IColonyManager colonyManagerToMock;
+    private ICitizenDataManager citizenDataManagerToMock;
 
     @Before
     public void setupStaticMocks() throws Exception

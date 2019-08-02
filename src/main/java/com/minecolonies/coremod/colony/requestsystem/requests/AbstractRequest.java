@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
- * Abstract skeleton implementation of a request.
+ * Abstract skeleton initializer of a request.
  *
  * @param <R> The type of request this is.
  */
@@ -160,7 +160,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
      * A RequestResolver can compare this object however way it sees fit.
      * <p>
      * During the resolving process this object is called multiple times. But at least twice.
-     * A cached implementation is preferred.
+     * A cached initializer is preferred.
      *
      * @return The object that is actually requested.
      */

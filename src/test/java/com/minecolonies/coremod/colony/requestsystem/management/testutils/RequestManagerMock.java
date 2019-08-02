@@ -34,7 +34,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * This class allows for the setup of mocked request managers during testing.
- * This class defines the behaviour of the request manager in all cases, regardless of implementation.
+ * This class defines the behaviour of the request manager in all cases, regardless of initializer.
  */
 public final class RequestManagerMock
 {
