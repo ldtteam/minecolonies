@@ -1,18 +1,20 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.ldtteam.blockout.Log;
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
-import com.ldtteam.blockout.Log;
-import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
-import com.minecolonies.coremod.colony.jobs.*;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.colony.jobs.JobKnight;
+import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.network.messages.GuardMobAttackListMessage;
 import io.netty.buffer.ByteBuf;
@@ -459,6 +461,15 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
                   .setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue() + getDefenceBonus());
             }
             colony.getCitizenManager().calculateMaxCitizens();
+
+            // Set new home, since guards are housed at their workerbuilding.
+            final AbstractBuilding building = citizen.getHomeBuilding();
+            if (building != null && !(building instanceof AbstractBuildingGuards))
+            {
+                building.removeCitizen(citizen);
+            }
+            citizen.setHomeBuilding(this);
+
             return true;
         }
         return false;
