@@ -467,7 +467,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
 
             // Set new home, since guards are housed at their workerbuilding.
             final AbstractBuilding building = citizen.getHomeBuilding();
-            if (building != null && !(building instanceof AbstractBuildingGuards))
+            if (building != null && !building.getID().equals(this.getID()))
             {
                 building.removeCitizen(citizen);
             }
