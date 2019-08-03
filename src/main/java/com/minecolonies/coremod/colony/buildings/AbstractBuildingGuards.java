@@ -464,6 +464,16 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
                   .setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue() + getDefenceBonus());
             }
             colony.getCitizenManager().calculateMaxCitizens();
+
+            // Set new home, since guards are housed at their workerbuilding.
+            final AbstractBuilding building = citizen.getHomeBuilding();
+            if (building != null && !(building instanceof AbstractBuildingGuards))
+            {
+                building.removeCitizen(citizen);
+            }
+            citizen.setHomeBuilding(this);
+            citizen.setWorkBuilding(this);
+
             return true;
         }
         return false;
