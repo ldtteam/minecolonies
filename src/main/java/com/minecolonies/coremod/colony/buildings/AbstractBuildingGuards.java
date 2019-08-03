@@ -472,7 +472,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
                 building.removeCitizen(citizen);
             }
             citizen.setHomeBuilding(this);
-            citizen.setWorkBuilding(this);
 
             return true;
         }
