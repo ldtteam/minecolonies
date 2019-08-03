@@ -101,6 +101,7 @@ public class BuildingTownHall extends AbstractBuilding
     {
         super.serializeToView(buf);
 
+        buf.writeBoolean(Configurations.gameplay.canPlayerUseColonyTPCommand);
         buf.writeInt(permissionEvents.size());
         for(final PermissionEvent event: permissionEvents)
         {
@@ -135,6 +136,11 @@ public class BuildingTownHall extends AbstractBuilding
         private final List<PermissionEvent> permissionEvents = new LinkedList();
 
         /**
+         * If the player is allowed to do townHall teleport.
+         */
+        private boolean canPlayerUseTP = false;
+
+        /**
          * Instantiates the view of the building.
          *
          * @param c the colonyView.
@@ -157,6 +163,7 @@ public class BuildingTownHall extends AbstractBuilding
         {
             super.deserialize(buf);
 
+            canPlayerUseTP = buf.readBoolean();
             final int size = buf.readInt();
             for(int i = 0; i < size; i++)
             {
@@ -171,6 +178,15 @@ public class BuildingTownHall extends AbstractBuilding
         public List<PermissionEvent> getPermissionEvents()
         {
             return new LinkedList<>(permissionEvents);
+        }
+
+        /**
+         * Check if the player can use the teleport command.
+         * @return true if so.
+         */
+        public boolean canCanPlayerUseTP()
+        {
+            return canPlayerUseTP;
         }
     }
 }
