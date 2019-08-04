@@ -138,9 +138,9 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
     {
         super.deserializeNBT(compound);
         final ListNBT furnaceTagList = compound.getTagList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < furnaceTagList.tagCount(); ++i)
+        for (int i = 0; i < furnaceTagList.size(); ++i)
         {
-            furnaces.add(NBTUtil.getPosFromTag(furnaceTagList.getCompoundTagAt(i).getCompound(TAG_POS)));
+            furnaces.add(NBTUtil.getPosFromTag(furnaceTagList.getCompound(i).getCompound(TAG_POS)));
         }
     }
 

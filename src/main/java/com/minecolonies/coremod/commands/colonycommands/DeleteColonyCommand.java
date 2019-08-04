@@ -74,7 +74,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
         if (colony == null)
         {
             final String noColonyFoundMessage = String.format(NO_COLONY_MESSAGE);
-            sender.sendMessage(new TextComponentString(noColonyFoundMessage));
+            sender.sendMessage(new StringTextComponent(noColonyFoundMessage));
             return;
         }
 
@@ -97,7 +97,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
 
             if (colony == null)
             {
-                sender.sendMessage(new TextComponentString(NO_COLONY_MESSAGE));
+                sender.sendMessage(new StringTextComponent(NO_COLONY_MESSAGE));
                 return;
             }
             colonyId = colony.getID();
@@ -120,7 +120,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
         if (colony == null)
         {
             final String noColonyFoundMessage = String.format(COLONY_X_NULL, colonyId);
-            sender.sendMessage(new TextComponentString(noColonyFoundMessage));
+            sender.sendMessage(new StringTextComponent(noColonyFoundMessage));
             return;
         }
 
@@ -140,7 +140,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
                                     String.format(DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED,
                                             colony.getID(), canDestroy ? "true" : "false")
                             )));
-            sender.sendMessage(new TextComponentString("Click [DELETE] to confirm the deletion of colony: " + colony.getID()));
+            sender.sendMessage(new StringTextComponent("Click [DELETE] to confirm the deletion of colony: " + colony.getID()));
             sender.sendMessage(deleteButton);
             return;
         }
@@ -153,14 +153,14 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
             final PlayerEntity player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, DELETECOLONY, colony.getID()))
             {
-                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new StringTextComponent(NOT_PERMITTED));
                 return;
             }
         }
         final boolean shouldDestroy = canDestroy;
         // TODO: pass in sender and notify when the delete task finishes.
         server.addScheduledTask(() -> IColonyManager.getInstance().deleteColonyByWorld(colony.getID(), shouldDestroy, sender.getEntityWorld()));
-        sender.sendMessage(new TextComponentString(DELETE_COLONY_TASK_SCHEDULED));
+        sender.sendMessage(new StringTextComponent(DELETE_COLONY_TASK_SCHEDULED));
     }
 
     @NotNull

@@ -27,7 +27,7 @@ import com.minecolonies.coremod.util.text.NonSiblingFormattingTextComponent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -118,7 +118,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
             final List<EntityPlayer> players = new ArrayList<>(colony.getMessageEntityPlayers());
             final PlayerEntity owner = ServerUtils.getPlayerFromUUID(colony.getWorld(), ((Colony) colony).getPermissions().getOwner());
-            final TextComponentString colonyDescription = new TextComponentString(colony.getName() + ":");
+            final StringTextComponent colonyDescription = new StringTextComponent(colony.getName() + ":");
 
             final ILocation requester = request.getRequester().getLocation();
             final IBuilding building = colony.getBuildingManager().getBuilding(requester.getInDimensionLocation());
@@ -221,7 +221,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     @Override
     public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken token)
     {
-        return new TextComponentString("Player");
+        return new StringTextComponent("Player");
     }
 
     @Override

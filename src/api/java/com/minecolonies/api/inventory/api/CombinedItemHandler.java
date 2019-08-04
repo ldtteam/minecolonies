@@ -2,10 +2,10 @@ package com.minecolonies.api.inventory.api;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.IntNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IWorldNameable;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -80,7 +80,7 @@ public class CombinedItemHandler
             {
                 final INBTSerializable serializable = (INBTSerializable) handlerModifiable;
                 handlerList.add(serializable.serializeNBT());
-                indexList.add(new NBTTagInt(index));
+                indexList.add(new IntNBT(index));
             }
 
             index++;
@@ -103,11 +103,11 @@ public class CombinedItemHandler
         final ListNBT handlerList = nbt.getTagList(NBT_KEY_NAME, Constants.NBT.TAG_COMPOUND);
         final ListNBT indexList = nbt.getTagList(NBT_KEY_HANDLERS_INDEXLIST, Constants.NBT.TAG_INT);
 
-        if (handlerList.tagCount() == handlers.length)
+        if (handlerList.size() == handlers.length)
         {
-            for (int i = 0; i < handlerList.tagCount(); i++)
+            for (int i = 0; i < handlerList.size(); i++)
             {
-                final CompoundNBT handlerCompound = handlerList.getCompoundTagAt(i);
+                final CompoundNBT handlerCompound = handlerList.getCompound(i);
                 final IItemHandlerModifiable modifiable = handlers[indexList.getIntAt(i)];
                 if (modifiable instanceof INBTSerializable)
                 {
@@ -342,6 +342,6 @@ public class CombinedItemHandler
     @Override
     public ITextComponent getDisplayName()
     {
-        return new TextComponentString(getName());
+        return new StringTextComponent(getName());
     }
 }

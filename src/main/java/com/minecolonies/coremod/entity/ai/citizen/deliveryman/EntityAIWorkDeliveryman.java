@@ -34,7 +34,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -550,7 +550,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     else if (buildingToDeliver instanceof TileEntityColonyBuilding)
                     {
                         chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_CHESTFULL,
-                          new TextComponentString(" :" + building.getSchematicName()));
+                          new StringTextComponent(" :" + building.getSchematicName()));
                     }
                 }
 

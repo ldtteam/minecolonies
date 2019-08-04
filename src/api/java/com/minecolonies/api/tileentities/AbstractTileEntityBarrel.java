@@ -2,7 +2,7 @@ package com.minecolonies.api.tileentities;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ITickable;
+import net.minecraft.client.renderer.texture.ITickable;
 
 public abstract class AbstractTileEntityBarrel extends TileEntity implements ITickable
 {

@@ -11,7 +11,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -143,17 +143,17 @@ public class ListColoniesCommand extends AbstractSingleCommand implements IActio
             coloniesPage = colonies.subList(pageStartIndex, pageStopIndex);
         }
 
-        final ITextComponent headerLine = new TextComponentString(PAGE_TOP_LEFT + page + PAGE_TOP_MIDDLE + pageCount + PAGE_TOP_RIGHT);
+        final ITextComponent headerLine = new StringTextComponent(PAGE_TOP_LEFT + page + PAGE_TOP_MIDDLE + pageCount + PAGE_TOP_RIGHT);
         sender.sendMessage(headerLine);
 
         for (final IColony colony : coloniesPage)
         {
-            sender.sendMessage(new TextComponentString(String.format(
+            sender.sendMessage(new StringTextComponent(String.format(
               ID_AND_NAME_TEXT, colony.getID(), colony.getName())).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                                                                                                       String.format(COMMAND_COLONY_INFO, colony.getID())))));
             final BlockPos center = colony.getCenter();
 
-            final ITextComponent teleport = new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ()));
+            final ITextComponent teleport = new StringTextComponent(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ()));
             if(isPlayerOpped(sender))
             {
                 teleport.setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
@@ -163,16 +163,16 @@ public class ListColoniesCommand extends AbstractSingleCommand implements IActio
             sender.sendMessage(teleport);
         }
 
-        final ITextComponent prevButton = new TextComponentString(PREV_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+        final ITextComponent prevButton = new StringTextComponent(PREV_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
           new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + prevPage)
         ));
-        final ITextComponent nextButton = new TextComponentString(NEXT_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+        final ITextComponent nextButton = new StringTextComponent(NEXT_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
           new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + nextPage)
         ));
 
-        final ITextComponent beginLine = new TextComponentString(PAGE_LINE);
-        final ITextComponent endLine = new TextComponentString(PAGE_LINE);
-        sender.sendMessage(beginLine.appendSibling(prevButton).appendSibling(new TextComponentString(PAGE_LINE_DIVIDER)).appendSibling(nextButton).appendSibling(endLine));
+        final ITextComponent beginLine = new StringTextComponent(PAGE_LINE);
+        final ITextComponent endLine = new StringTextComponent(PAGE_LINE);
+        sender.sendMessage(beginLine.appendSibling(prevButton).appendSibling(new StringTextComponent(PAGE_LINE_DIVIDER)).appendSibling(nextButton).appendSibling(endLine));
     }
 
     @NotNull

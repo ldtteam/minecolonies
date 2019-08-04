@@ -152,9 +152,9 @@ public class Level
         }
 
         final ListNBT nodeTagList = compound.getTagList(TAG_NODES, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < nodeTagList.tagCount(); i++)
+        for (int i = 0; i < nodeTagList.size(); i++)
         {
-            @NotNull final Node node = Node.createFromNBT(nodeTagList.getCompoundTagAt(i));
+            @NotNull final Node node = Node.createFromNBT(nodeTagList.getCompound(i));
             this.nodes.put(new Vec2i(node.getX(), node.getZ()), node);
         }
 
@@ -177,9 +177,9 @@ public class Level
 
 
         final ListNBT openNodeTagList = compound.getTagList(TAG_OPEN_NODES, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < openNodeTagList.tagCount(); i++)
+        for (int i = 0; i < openNodeTagList.size(); i++)
         {
-            @NotNull final Node node = Node.createFromNBT(openNodeTagList.getCompoundTagAt(i));
+            @NotNull final Node node = Node.createFromNBT(openNodeTagList.getCompound(i));
             this.openNodes.add(node);
         }
     }

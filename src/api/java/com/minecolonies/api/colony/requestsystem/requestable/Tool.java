@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Class used to represent tools inside the request system.
@@ -127,7 +128,7 @@ public class Tool implements IDeliverable
         final IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
         final Integer minLevel = nbt.getInt(NBT_MIN_LEVEL);
         final Integer maxLevel = nbt.getInt(NBT_MAX_LEVEL);
-        final ItemStack result = new ItemStack(nbt.getCompound(NBT_RESULT));
+        final ItemStack result = ItemStack.read(nbt.getCompound(NBT_RESULT));
 
         return new Tool(type, minLevel, maxLevel, result);
     }
@@ -146,7 +147,7 @@ public class Tool implements IDeliverable
 
         if (!toolTypeResult)
         {
-            return stack.getItem() instanceof ItemHoe && toolClass.equals(ToolType.HOE) || stack.getItem() instanceof ItemShield && toolClass.equals(ToolType.SHIELD);
+            return stack.getItem() instanceof HoeItem && toolClass.equals(ToolType.HOE) || stack.getItem() instanceof ShieldItem && toolClass.equals(ToolType.SHIELD);
         }
 
         return toolTypeResult;
@@ -161,33 +162,33 @@ public class Tool implements IDeliverable
             return set;
         }
 
-        set.addAll(stack.getItem().getToolClasses(stack));
+        set.addAll(stack.getItem().getToolTypes(stack).stream().map(net.minecraftforge.common.ToolType::getName).collect(Collectors.toList()));
 
-        if(stack.getItem() instanceof ItemBow)
+        if(stack.getItem() instanceof BowItem)
         {
             set.add("bow");
         }
-        else if(stack.getItem() instanceof ItemSword || Compatibility.isTinkersWeapon(stack))
+        else if(stack.getItem() instanceof SwordItem || Compatibility.isTinkersWeapon(stack))
         {
             set.add("weapon");
         }
-        else if(stack.getItem() instanceof ItemHoe)
+        else if(stack.getItem() instanceof HoeItem)
         {
             set.add("hoe");
         }
-        else if(stack.getItem() instanceof ItemFishingRod)
+        else if(stack.getItem() instanceof FishingRodItem)
         {
             set.add("rod");
         }
-        else if(stack.getItem() instanceof  ItemShears)
+        else if(stack.getItem() instanceof  ShearsItem)
         {
             set.add("shears");
         }
-        else if(stack.getItem() instanceof  ItemShield)
+        else if(stack.getItem() instanceof  ShieldItem)
         {
             set.add("shield");
         }
-        else if(stack.getItem() instanceof ItemArmor)
+        else if(stack.getItem() instanceof ArmorItem)
         {
             /*
              * There is no armor class for each type of armor.
@@ -195,20 +196,20 @@ public class Tool implements IDeliverable
              * armor to send back what type of armor this if for the request
              * system.
              */
-            final ItemArmor armor = (ItemArmor) stack.getItem();
-            if (armor.armorType == EquipmentSlotType.CHEST)
+            final ArmorItem armor = (ArmorItem) stack.getItem();
+            if (armor.getEquipmentSlot() == EquipmentSlotType.CHEST)
             {
                 set.add("chestplate");
             }
-            else if (armor.armorType == EquipmentSlotType.FEET)
+            else if (armor.getEquipmentSlot() == EquipmentSlotType.FEET)
             {
                 set.add("boots");
             }
-            else if (armor.armorType == EquipmentSlotType.HEAD)
+            else if (armor.getEquipmentSlot() == EquipmentSlotType.HEAD)
             {
                 set.add("helmet");
             }
-            else if (armor.armorType == EquipmentSlotType.LEGS)
+            else if (armor.getEquipmentSlot() == EquipmentSlotType.LEGS)
             {
                 set.add("leggings");
             }

@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -86,7 +86,7 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
     @Override
     public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        return getBuilding(manager, token).map(requester -> requester.getDisplayName(manager, token)).orElseGet(() -> new TextComponentString("<UNKNOWN>"));
+        return getBuilding(manager, token).map(requester -> requester.getDisplayName(manager, token)).orElseGet(() -> new StringTextComponent("<UNKNOWN>"));
     }
 
     @Override

@@ -7,7 +7,7 @@ import com.minecolonies.api.util.Log;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -59,7 +59,7 @@ public class RespawnCitizenCommand extends AbstractCitizensCommands
         final ICitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
         final Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
 
-        sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
+        sender.sendMessage(new StringTextComponent(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
         if (!optionalEntityCitizen.isPresent())
         {
             citizenData.updateCitizenEntityIfNecessary();
@@ -68,8 +68,8 @@ public class RespawnCitizenCommand extends AbstractCitizensCommands
         final AbstractEntityCitizen entityCitizen = citizenData.getCitizenEntity().get();
 
         final BlockPos position = entityCitizen.getPosition();
-        sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
-        sender.sendMessage(new TextComponentString(REMOVED_MESSAGE));
+        sender.sendMessage(new StringTextComponent(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+        sender.sendMessage(new StringTextComponent(REMOVED_MESSAGE));
         Log.getLogger().info("client? " + sender.getEntityWorld().isRemote);
         server.addScheduledTask(entityCitizen::setDead);
     }

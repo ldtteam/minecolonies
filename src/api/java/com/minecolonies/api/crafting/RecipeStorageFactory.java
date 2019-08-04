@@ -84,9 +84,9 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
     {
         final List<ItemStack> input = new ArrayList<>();
         final ListNBT inputTagList = nbt.getTagList(INPUT_TAG, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < inputTagList.tagCount(); ++i)
+        for (int i = 0; i < inputTagList.size(); ++i)
         {
-            final CompoundNBT inputTag = inputTagList.getCompoundTagAt(i);
+            final CompoundNBT inputTag = inputTagList.getCompound(i);
             input.add(new ItemStack(inputTag));
         }
 

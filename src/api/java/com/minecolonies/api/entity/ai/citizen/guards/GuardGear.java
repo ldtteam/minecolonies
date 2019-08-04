@@ -3,8 +3,8 @@ package com.minecolonies.api.entity.ai.citizen.guards;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemShield;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ShieldItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 
@@ -149,7 +149,7 @@ public class GuardGear implements Predicate<ItemStack>
     public boolean test(final ItemStack stack)
     {
         return
-          (ItemStackUtils.hasToolLevel(stack, itemNeeded, minArmorLevel, maxArmorLevel) && stack.getItem() instanceof ItemArmor && ((ItemArmor) stack.getItem()).armorType == getType())
-            || (stack.getItem() instanceof ItemShield && getType() == EquipmentSlotType.MAINHAND);
+          (ItemStackUtils.hasToolLevel(stack, itemNeeded, minArmorLevel, maxArmorLevel) && stack.getItem() instanceof ArmorItem && ((ArmorItem) stack.getItem()).getEquipmentSlot() == getType())
+            || (stack.getItem() instanceof ShieldItem && getType() == EquipmentSlotType.MAINHAND);
     }
 }

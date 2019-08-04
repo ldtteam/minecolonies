@@ -11,7 +11,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -41,14 +41,14 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
         final IColony colony = actionMenuState.getColonyForArgument("colony");
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.sendMessage(new StringTextComponent(NO_ARGUMENTS));
             return;
         }
 
         final ICitizenData citizenData = actionMenuState.getCitizenForArgument("citizen");
         if (null == citizenData && requiresCitizen())
         {
-            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.sendMessage(new StringTextComponent(NO_ARGUMENTS));
             return;
         }
 
@@ -69,7 +69,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
     {
         if (args.length == 0)
         {
-            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.sendMessage(new StringTextComponent(NO_ARGUMENTS));
             return;
         }
 
@@ -109,7 +109,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
 
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.sendMessage(new StringTextComponent(NO_ARGUMENTS));
             return;
         }
 
@@ -118,7 +118,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
             final PlayerEntity player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, getCommand(), colonyId))
             {
-                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new StringTextComponent(NOT_PERMITTED));
                 return;
             }
         }
@@ -130,7 +130,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
 
             if ((citizenId == -1 || colony.getCitizenManager().getCitizen(citizenId) == null) && requiresCitizen())
             {
-                sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+                sender.sendMessage(new StringTextComponent(NO_ARGUMENTS));
                 return;
             }
         }

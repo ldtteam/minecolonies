@@ -258,9 +258,9 @@ public class CitizenData implements ICitizenData
         if (compound.keySet().contains(TAG_LEVEL_MAP))
         {
             final ListNBT levelTagList = compound.getTagList(TAG_LEVEL_MAP, Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < levelTagList.tagCount(); ++i)
+            for (int i = 0; i < levelTagList.size(); ++i)
             {
-                final CompoundNBT levelExperienceAtJob = levelTagList.getCompoundTagAt(i);
+                final CompoundNBT levelExperienceAtJob = levelTagList.getCompound(i);
                 levelExperienceMap.put(levelExperienceAtJob.getString(TAG_NAME),
                   new Tuple<>(Math.min(levelExperienceAtJob.getInt(TAG_LEVEL), MAX_CITIZEN_LEVEL), levelExperienceAtJob.getDouble(TAG_EXPERIENCE)));
             }

@@ -14,7 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -81,7 +81,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand implements
     {
         if (sender instanceof PlayerEntity && !isPlayerOpped(sender))
         {
-            sender.sendMessage(new TextComponentString("Must be OP to use command"));
+            sender.sendMessage(new StringTextComponent("Must be OP to use command"));
             return;
         }
         else if (sender instanceof TileEntity)
@@ -106,7 +106,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand implements
 
         if (confirmDelete)
         {
-            sender.sendMessage(new TextComponentString("Successful"));
+            sender.sendMessage(new StringTextComponent("Successful"));
             for (final IColony col : coloniesToDelete)
             {
                 server.addScheduledTask(() -> IColonyManager.getInstance().deleteColonyByWorld(col.getID(), Configurations.gameplay.autoDestroyColonyBlocks, col.getWorld()));
@@ -114,11 +114,11 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand implements
         }
         else
         {
-            final ITextComponent deleteButton = new TextComponentString("[DELETE]").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+            final ITextComponent deleteButton = new StringTextComponent("[DELETE]").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
               new ClickEvent(ClickEvent.Action.RUN_COMMAND, COMMAND_CHECK_FOR_AUTODELETES)
             ));
-            sender.sendMessage(new TextComponentString("There are: " + coloniesToDelete.size() + " of a total of " + colonies.size() + " to delete."));
-            sender.sendMessage(new TextComponentString("Click [DELETE] to confirm"));
+            sender.sendMessage(new StringTextComponent("There are: " + coloniesToDelete.size() + " of a total of " + colonies.size() + " to delete."));
+            sender.sendMessage(new StringTextComponent("Click [DELETE] to confirm"));
             sender.sendMessage(deleteButton);
         }
     }

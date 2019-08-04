@@ -33,7 +33,7 @@ import net.minecraft.stats.StatList;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -185,7 +185,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
         final StructureName sn = new StructureName(message.structureName);
         if (!Structures.hasMD5(sn))
         {
-            player.sendMessage(new TextComponentString("Can not build " + message.workOrderName + ": schematic missing!"));
+            player.sendMessage(new StringTextComponent("Can not build " + message.workOrderName + ": schematic missing!"));
             return;
         }
 

@@ -11,7 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -71,7 +71,7 @@ public class MakeNotAutoDeletableCommand extends AbstractSingleCommand implement
     {
         if (args.length < NUMBER_OR_ARGS_REQUIRED)
         {
-            sender.sendMessage(new TextComponentString(NOT_ENOUGH_ARGUMENTS));
+            sender.sendMessage(new StringTextComponent(NOT_ENOUGH_ARGUMENTS));
             return;
         }
 
@@ -81,7 +81,7 @@ public class MakeNotAutoDeletableCommand extends AbstractSingleCommand implement
 
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
+            sender.sendMessage(new StringTextComponent(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
             return;
         }
 
@@ -95,7 +95,7 @@ public class MakeNotAutoDeletableCommand extends AbstractSingleCommand implement
     {
         if (sender instanceof PlayerEntity && !isPlayerOpped(sender))
         {
-            sender.sendMessage(new TextComponentString("Must be OP to use command"));
+            sender.sendMessage(new StringTextComponent("Must be OP to use command"));
             return;
         }
         else if (sender instanceof TileEntity)
@@ -103,7 +103,7 @@ public class MakeNotAutoDeletableCommand extends AbstractSingleCommand implement
             return;
         }
 
-        sender.sendMessage(new TextComponentString(MARKED));
+        sender.sendMessage(new StringTextComponent(MARKED));
         colony.setCanBeAutoDeleted(canBeDeleted);
     }
 

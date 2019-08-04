@@ -158,7 +158,7 @@ public final class BlockPosUtil
     @NotNull
     public static BlockPos readFromListNBT(@NotNull final ListNBT tagList, final int index)
     {
-        final CompoundNBT coordsCompound = tagList.getCompoundTagAt(index);
+        final CompoundNBT coordsCompound = tagList.getCompound(index);
         final int x = coordsCompound.getInt("x");
         final int y = coordsCompound.getInt("y");
         final int z = coordsCompound.getInt("z");

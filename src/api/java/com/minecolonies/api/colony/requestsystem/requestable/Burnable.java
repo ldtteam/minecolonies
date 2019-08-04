@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.tileentity.FurnaceTileEntity;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -55,7 +55,7 @@ public class Burnable implements IDeliverable
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        return TileEntityFurnace.isItemFuel(stack);
+        return FurnaceTileEntity.isFuel(stack);
     }
 
     @Override

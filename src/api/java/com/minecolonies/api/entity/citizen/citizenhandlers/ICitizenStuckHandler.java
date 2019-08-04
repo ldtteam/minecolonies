@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
-import net.minecraft.util.ITickable;
+import net.minecraft.client.renderer.texture.ITickable;
 
 public interface ICitizenStuckHandler extends ITickable
 {

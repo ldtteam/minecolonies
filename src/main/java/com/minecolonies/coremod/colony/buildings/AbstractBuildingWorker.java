@@ -340,16 +340,16 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             try
             {
                 final ListNBT workersTagList = compound.getTagList(TAG_WORKER, Constants.NBT.TAG_COMPOUND);
-                for (int i = 0; i < workersTagList.tagCount(); ++i)
+                for (int i = 0; i < workersTagList.size(); ++i)
                 {
                     final ICitizenData data;
-                    if (workersTagList.getCompoundTagAt(i).hasKey(TAG_ID))
+                    if (workersTagList.getCompound(i).hasKey(TAG_ID))
                     {
-                        data = getColony().getCitizenManager().getCitizen(workersTagList.getCompoundTagAt(i).getInt(TAG_ID));
+                        data = getColony().getCitizenManager().getCitizen(workersTagList.getCompound(i).getInt(TAG_ID));
                     }
-                    else if (workersTagList.getCompoundTagAt(i).hasKey(TAG_WORKER_ID))
+                    else if (workersTagList.getCompound(i).hasKey(TAG_WORKER_ID))
                     {
-                        data = getColony().getCitizenManager().getCitizen(workersTagList.getCompoundTagAt(i).getInt(TAG_WORKER_ID));
+                        data = getColony().getCitizenManager().getCitizen(workersTagList.getCompound(i).getInt(TAG_WORKER_ID));
                     }
                     else
                     {

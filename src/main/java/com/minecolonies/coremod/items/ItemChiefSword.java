@@ -9,7 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
+import net.minecraft.item.SwordItem;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ import static com.minecolonies.api.util.constant.Constants.*;
 /**
  * Class handling the Chief Sword item.
  */
-public class ItemChiefSword extends ItemSword implements IChiefSwordItem
+public class ItemChiefSword extends SwordItem implements IChiefSwordItem
 {
     private static final int LEVITATION_EFFECT_DURATION   = 20*10;
     private static final int LEVITATION_EFFECT_MULTIPLIER = 3;

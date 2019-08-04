@@ -74,7 +74,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
     {
         if (args.length < 2)
         {
-            sender.sendMessage(new TextComponentString(NO_COLONY_OR_PLAYER));
+            sender.sendMessage(new StringTextComponent(NO_COLONY_OR_PLAYER));
             return;
         }
 
@@ -88,14 +88,14 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
 
             if (senderEntity == null)
             {
-                sender.sendMessage(new TextComponentString(NO_COLONY_OR_PLAYER));
+                sender.sendMessage(new StringTextComponent(NO_COLONY_OR_PLAYER));
                 return;
             }
             else
             {
                 if (playerName == null || playerName.isEmpty() || player == null)
                 {
-                    sender.sendMessage(new TextComponentString(NO_PLAYER));
+                    sender.sendMessage(new StringTextComponent(NO_PLAYER));
                     return;
                 }
                 final IColony colony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), player.getUniqueID());
@@ -118,13 +118,13 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
         final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(String.format(COLONY_X_NULL, colonyId)));
+            sender.sendMessage(new StringTextComponent(String.format(COLONY_X_NULL, colonyId)));
             return;
         }
 
         if (playerName == null || playerName.isEmpty())
         {
-            sender.sendMessage(new TextComponentString(NO_PLAYER));
+            sender.sendMessage(new StringTextComponent(NO_PLAYER));
             return;
         }
 
@@ -137,7 +137,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
     {
         if (player == null)
         {
-            sender.sendMessage(new TextComponentString(NO_PLAYER));
+            sender.sendMessage(new StringTextComponent(NO_PLAYER));
             return;
         }
 
@@ -148,13 +148,13 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
 
         if (IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), player) != null)
         {
-            sender.sendMessage(new TextComponentString(String.format(HAS_A_COLONY, player.getName())));
+            sender.sendMessage(new StringTextComponent(String.format(HAS_A_COLONY, player.getName())));
             return;
         }
 
         colony.getPermissions().setOwner(player);
 
-        sender.sendMessage(new TextComponentString(String.format(SUCCESS_MESSAGE_OWNERCHANGE, player.getName(), colony.getID())));
+        sender.sendMessage(new StringTextComponent(String.format(SUCCESS_MESSAGE_OWNERCHANGE, player.getName(), colony.getID())));
 
         if (player.getName().equals("[abandoned]"))
         {

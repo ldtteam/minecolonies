@@ -12,7 +12,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -71,7 +71,7 @@ public class LoadColonyBackupCommand extends AbstractSingleCommand implements IA
     {
         if (!isPlayerOpped(sender))
         {
-            sender.sendMessage(new TextComponentString(NOT_PERMITTED));
+            sender.sendMessage(new StringTextComponent(NOT_PERMITTED));
             return;
         }
 

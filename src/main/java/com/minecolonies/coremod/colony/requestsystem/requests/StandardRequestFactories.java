@@ -17,7 +17,7 @@ import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.IntNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -556,7 +556,7 @@ public final class StandardRequestFactories
 
         final CompoundNBT requesterCompound = controller.serialize(request.getRequester());
         final CompoundNBT tokenCompound = controller.serialize(request.getId());
-        final NBTTagInt stateCompound = request.getState().serializeNBT();
+        final IntNBT stateCompound = request.getState().serializeNBT();
         final CompoundNBT requestedCompound = typeSerialization.apply(controller, request.getRequest());
 
         final ListNBT childrenCompound = new ListNBT();
@@ -596,14 +596,14 @@ public final class StandardRequestFactories
     {
         final IRequester requester = controller.deserialize(compound.getCompound(NBT_REQUESTER));
         final IToken token = controller.deserialize(compound.getCompound(NBT_TOKEN));
-        final RequestState state = RequestState.deserializeNBT((NBTTagInt) compound.getTag(NBT_STATE));
+        final RequestState state = RequestState.deserializeNBT((IntNBT) compound.getTag(NBT_STATE));
         final T requested = typeDeserialization.apply(controller, compound.getCompound(NBT_REQUESTED));
 
         final List<IToken> childTokens = new ArrayList<>();
         final ListNBT childCompound = compound.getTagList(NBT_CHILDREN, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < childCompound.tagCount(); i++)
+        for (int i = 0; i < childCompound.size(); i++)
         {
-            childTokens.add(controller.deserialize(childCompound.getCompoundTagAt(i)));
+            childTokens.add(controller.deserialize(childCompound.getCompound(i)));
         }
 
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE) final R request = objectConstructor.construct(requested, token, requester, state);

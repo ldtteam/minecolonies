@@ -212,7 +212,7 @@ public class HappinessData
     public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         final ListNBT happinessTagList = compound.getTagList(TAG_TASKS, NBT.TAG_COMPOUND);
-        final CompoundNBT tagCompound = happinessTagList.getCompoundTagAt(0);
+        final CompoundNBT tagCompound = happinessTagList.getCompound(0);
 
         guards = tagCompound.getInt(TAG_GUARDS);
         housing = tagCompound.getInt(TAG_HOUSING);
@@ -223,7 +223,7 @@ public class HappinessData
         final ListNBT deathTagList = tagCompound.getTagList(TAG_DEATH_MODIFIER, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < numDeaths; ++i)
         {
-            final CompoundNBT deathCompound = deathTagList.getCompoundTagAt(i);
+            final CompoundNBT deathCompound = deathTagList.getCompound(i);
             final int numDays = deathCompound.getInt(TAG_DEATH_NUMOFDAYS);
             final double value = deathCompound.getDouble(TAG_DEATH_MODIFIER_VALUE);
             final int numDaysLast = deathCompound.getInt(TAG_DEATH_NUMOFDAYS_LAST);

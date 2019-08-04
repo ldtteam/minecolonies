@@ -24,7 +24,7 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
@@ -498,7 +498,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (fuel.isEmpty())
         {
-            fuel.addAll(ImmutableList.copyOf(allBlocks.stream().filter(TileEntityFurnace::isItemFuel).map(ItemStorage::new).collect(Collectors.toList())));
+            fuel.addAll(ImmutableList.copyOf(allBlocks.stream().filter(FurnaceTileEntity::isFuel).map(ItemStorage::new).collect(Collectors.toList())));
         }
         Log.getLogger().info("Finished discovering fuel");
     }

@@ -11,7 +11,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -59,7 +59,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
         final IColony colony = actionMenuState.getColonyForArgument("colony");
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(COLONY_NOT_FOUND));
+            sender.sendMessage(new StringTextComponent(COLONY_NOT_FOUND));
             return;
         }
 
@@ -71,7 +71,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
     {
         if (args.length == 0)
         {
-            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.sendMessage(new StringTextComponent(NO_ARGUMENTS));
             return;
         }
 
@@ -83,7 +83,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
             final IColony colony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
             if (colony == null)
             {
-                sender.sendMessage(new TextComponentString(COLONY_NULL));
+                sender.sendMessage(new StringTextComponent(COLONY_NULL));
                 return;
             }
             colonyId = colony.getID();
@@ -93,7 +93,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
 
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
+            sender.sendMessage(new StringTextComponent(String.format(COLONY_NULL, colonyId)));
             return;
         }
 
@@ -109,13 +109,13 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
             final PlayerEntity player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, RSRESET, colony.getID()))
             {
-                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new StringTextComponent(NOT_PERMITTED));
                 return;
             }
         }
 
         colony.getRequestManager().reset();
-        sender.sendMessage(new TextComponentString(String.format(SUCCESS_MESSAGE, colony.getID())));
+        sender.sendMessage(new StringTextComponent(String.format(SUCCESS_MESSAGE, colony.getID())));
     }
 
     @NotNull

@@ -201,9 +201,9 @@ public class WorkManager implements IWorkManager
     {
         //  Work Orders
         final ListNBT list = compound.getTagList(TAG_WORK_ORDERS, NBT.TAG_COMPOUND);
-        for (int i = 0; i < list.tagCount(); ++i)
+        for (int i = 0; i < list.size(); ++i)
         {
-            final CompoundNBT orderCompound = list.getCompoundTagAt(i);
+            final CompoundNBT orderCompound = list.getCompound(i);
             @Nullable final AbstractWorkOrder o = AbstractWorkOrder.createFromNBT(orderCompound, this);
             if (o != null)
             {

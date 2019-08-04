@@ -12,7 +12,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -72,7 +72,7 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
         if (colony == null)
         {
             final String noColonyFoundMessage = String.format(NO_COLONY_MESSAGE);
-            sender.sendMessage(new TextComponentString(noColonyFoundMessage));
+            sender.sendMessage(new StringTextComponent(noColonyFoundMessage));
             return;
         }
 
@@ -94,7 +94,7 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
 
             if (colony == null)
             {
-                sender.sendMessage(new TextComponentString(NO_COLONY_MESSAGE));
+                sender.sendMessage(new StringTextComponent(NO_COLONY_MESSAGE));
                 return;
             }
             colonyId = colony.getID();
@@ -112,7 +112,7 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
         if (colony == null)
         {
             final String noColonyFoundMessage = String.format(COLONY_X_NULL, colonyId);
-            sender.sendMessage(new TextComponentString(noColonyFoundMessage));
+            sender.sendMessage(new StringTextComponent(noColonyFoundMessage));
             return;
         }
 

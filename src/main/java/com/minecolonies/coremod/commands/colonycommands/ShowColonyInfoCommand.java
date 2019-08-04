@@ -11,7 +11,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -82,7 +82,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
                 {
                     if (!canPlayerUseCommand(player, SHOWCOLONYINFO, iColony.getID()))
                     {
-                        sender.sendMessage(new TextComponentString(NOT_PERMITTED));
+                        sender.sendMessage(new StringTextComponent(NOT_PERMITTED));
                         return;
                     }
                     colony = IColonyManager.getInstance().getColonyByWorld(iColony.getID(), server.getWorld(sender.getEntityWorld().provider.getDimension()));
@@ -102,7 +102,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
                 {
                     if (!canPlayerUseCommand(player, SHOWCOLONYINFO, iColony.getID()))
                     {
-                        sender.sendMessage(new TextComponentString(NOT_PERMITTED));
+                        sender.sendMessage(new StringTextComponent(NOT_PERMITTED));
                         return;
                     }
                     colony = IColonyManager.getInstance().getColonyByWorld(iColony.getID(), server.getWorld(sender.getEntityWorld().provider.getDimension()));
@@ -114,11 +114,11 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
         {
             if (null != player)
             {
-                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOR_PLAYER_FOUND_MESSAGE, player.getName())));
+                sender.sendMessage(new StringTextComponent(String.format(NO_COLONY_FOR_PLAYER_FOUND_MESSAGE, player.getName())));
             }
             else
             {
-                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE)));
+                sender.sendMessage(new StringTextComponent(String.format(NO_COLONY_FOUND_MESSAGE)));
             }
             return;
         }
@@ -159,7 +159,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
 
             if (!canPlayerUseCommand(player, SHOWCOLONYINFO, colonyId))
             {
-                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new StringTextComponent(NOT_PERMITTED));
                 return;
             }
         }
@@ -168,11 +168,11 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
         {
             if (colonyId == -1 && args.length != 0)
             {
-                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOR_PLAYER_FOUND_MESSAGE, args[0])));
+                sender.sendMessage(new StringTextComponent(String.format(NO_COLONY_FOR_PLAYER_FOUND_MESSAGE, args[0])));
             }
             else
             {
-                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_WITH_ID_FOUND_MESSAGE, colonyId)));
+                sender.sendMessage(new StringTextComponent(String.format(NO_COLONY_WITH_ID_FOUND_MESSAGE, colonyId)));
             }
             return;
         }
@@ -182,11 +182,11 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
         {
             if (colonyId == -1 && args.length != 0)
             {
-                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOR_PLAYER_FOUND_MESSAGE, args[0])));
+                sender.sendMessage(new StringTextComponent(String.format(NO_COLONY_FOR_PLAYER_FOUND_MESSAGE, args[0])));
             }
             else
             {
-                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_WITH_ID_FOUND_MESSAGE, colonyId)));
+                sender.sendMessage(new StringTextComponent(String.format(NO_COLONY_WITH_ID_FOUND_MESSAGE, colonyId)));
             }
             return;
         }
@@ -197,17 +197,17 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
     private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final IColony colony) throws CommandException
     {
         final BlockPos position = colony.getCenter();
-        sender.sendMessage(new TextComponentString(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()));
+        sender.sendMessage(new StringTextComponent(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()));
         final String mayor = colony.getPermissions().getOwnerName();
-        sender.sendMessage(new TextComponentString(MAYOR_TEXT + mayor));
-        sender.sendMessage(new TextComponentString(CITIZENS + colony.getCitizenManager().getCitizens().size() + "/" + colony.getCitizenManager().getMaxCitizens()));
-        sender.sendMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
-        sender.sendMessage(new TextComponentString(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())));
-        sender.sendMessage(new TextComponentString(IS_DELETABLE + !colony.canBeAutoDeleted()));
+        sender.sendMessage(new StringTextComponent(MAYOR_TEXT + mayor));
+        sender.sendMessage(new StringTextComponent(CITIZENS + colony.getCitizenManager().getCitizens().size() + "/" + colony.getCitizenManager().getMaxCitizens()));
+        sender.sendMessage(new StringTextComponent(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+        sender.sendMessage(new StringTextComponent(String.format(LAST_CONTACT_TEXT, colony.getLastContactInHours())));
+        sender.sendMessage(new StringTextComponent(IS_DELETABLE + !colony.canBeAutoDeleted()));
 
         if (!colony.isCanHaveBarbEvents())
         {
-            sender.sendMessage(new TextComponentString(CANNOT_BE_RAIDED));
+            sender.sendMessage(new StringTextComponent(CANNOT_BE_RAIDED));
         }
     }
 
