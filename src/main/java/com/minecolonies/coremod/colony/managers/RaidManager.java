@@ -12,9 +12,9 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -120,7 +120,7 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public BlockPos getRandomOutsiderInDirection(final EnumFacing directionX, final EnumFacing directionZ)
+    public BlockPos getRandomOutsiderInDirection(final Direction directionX, final Direction directionZ)
     {
         final BlockPos center = colony.getCenter();
         final World world = colony.getWorld();
@@ -154,7 +154,7 @@ public class RaidManager implements IRaiderManager
         {
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = theBuilding.getCorners();
             minDistance
-                    = Math.max(corners.getFirst().getFirst() - corners.getFirst().getSecond(), corners.getSecond().getFirst() - corners.getSecond().getSecond());
+                    = Math.max(corners.getA().getA() - corners.getA().getB(), corners.getB().getA() - corners.getB().getB());
         }
 
         if (thePos.equals(center))
@@ -231,13 +231,13 @@ public class RaidManager implements IRaiderManager
                 {
                     schematicMap.remove(entry.getKey());
                 }
-                else if (entry.getValue().getSecond() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * Configurations.gameplay.daysUntilPirateshipsDespawn < world.getWorldTime())
+                else if (entry.getValue().getB() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * Configurations.gameplay.daysUntilPirateshipsDespawn < world.getWorldTime())
                 {
                     // Load the backup from before spawning
                     try
                     {
                         InstantStructurePlacer.loadAndPlaceStructureWithRotation(world,
-                          new StructureName("cache", "backup", entry.getValue().getFirst()).toString() + colony.getID() + colony.getDimension() + entry.getKey(),
+                          new StructureName("cache", "backup", entry.getValue().getA()).toString() + colony.getID() + colony.getDimension() + entry.getKey(),
                           entry.getKey(),
                           0,
                           Mirror.NONE,
@@ -266,9 +266,9 @@ public class RaidManager implements IRaiderManager
      * @param vector     the vector.
      * @return true if so.
      */
-    private static boolean isInDirection(final EnumFacing directionX, final EnumFacing directionZ, final BlockPos vector)
+    private static boolean isInDirection(final Direction directionX, final Direction directionZ, final BlockPos vector)
     {
-        return EnumFacing.getFacingFromVector(vector.getX(), 0, 0) == directionX && EnumFacing.getFacingFromVector(0, 0, vector.getZ()) == directionZ;
+        return Direction.getFacingFromVector(vector.getX(), 0, 0) == directionX && Direction.getFacingFromVector(0, 0, vector.getZ()) == directionZ;
     }
 
     @Override
@@ -299,40 +299,40 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
-        if (compound.hasKey(TAG_RAID_MANAGER))
+        if (compound.keySet().contains(TAG_RAID_MANAGER))
         {
-            final NBTTagCompound raiderCompound = compound.getCompoundTag(TAG_RAID_MANAGER);
-            final NBTTagList raiderTags = raiderCompound.getTagList(TAG_SCHEMATIC_LIST, Constants.NBT.TAG_COMPOUND);
+            final CompoundNBT raiderCompound = compound.getCompound(TAG_RAID_MANAGER);
+            final ListNBT raiderTags = raiderCompound.getTagList(TAG_SCHEMATIC_LIST, Constants.NBT.TAG_COMPOUND);
             schematicMap.putAll(NBTUtils.streamCompound(raiderTags)
                                       .collect(Collectors.toMap(raiderTagCompound -> BlockPosUtil.readFromNBT(raiderTagCompound, TAG_POS), raiderTagCompound ->  new Tuple<>(raiderTagCompound.getString(TAG_NAME), raiderTagCompound.getLong(TAG_TIME)))));
         }
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
-        final NBTTagCompound raiderCompound = new NBTTagCompound();
-        @NotNull final NBTTagList raiderTagList = schematicMap.entrySet().stream()
+        final CompoundNBT raiderCompound = new CompoundNBT();
+        @NotNull final ListNBT raiderTagList = schematicMap.entrySet().stream()
                                                       .map(this::writeMapEntryToNBT)
-                                                      .collect(NBTUtils.toNBTTagList());
+                                                      .collect(NBTUtils.toListNBT());
 
-        raiderCompound.setTag(TAG_SCHEMATIC_LIST, raiderTagList);
-        compound.setTag(TAG_RAID_MANAGER, raiderCompound);
+        raiderCompound.put(TAG_SCHEMATIC_LIST, raiderTagList);
+        compound.put(TAG_RAID_MANAGER, raiderCompound);
     }
 
     /**
      * Writes the map entry to NBT of the schematic map.
      * @param entry the entry to write to NBT.
-     * @return an NBTTAGCompound
+     * @return an CompoundNBT
      */
-    private NBTTagCompound writeMapEntryToNBT(final Map.Entry<BlockPos, Tuple<String, Long>> entry)
+    private CompoundNBT writeMapEntryToNBT(final Map.Entry<BlockPos, Tuple<String, Long>> entry)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
+        final CompoundNBT compound = new CompoundNBT();
         BlockPosUtil.writeToNBT(compound, TAG_POS, entry.getKey());
-        compound.setString(TAG_NAME, entry.getValue().getFirst());
-        compound.setLong(TAG_TIME, entry.getValue().getSecond());
+        compound.putString(TAG_NAME, entry.getValue().getA());
+        compound.setLong(TAG_TIME, entry.getValue().getB());
 
         return compound;
     }

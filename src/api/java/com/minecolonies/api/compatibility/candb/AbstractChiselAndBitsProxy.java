@@ -1,6 +1,6 @@
 package com.minecolonies.api.compatibility.candb;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import org.jetbrains.annotations.NotNull;
@@ -16,10 +16,10 @@ public abstract class AbstractChiselAndBitsProxy
     /**
      * This is the fallback for when candb is not present!
      *
-     * @param blockState the IBlockState.
+     * @param blockState the BlockState.
      * @return if the blockState is a candb blockState.
      */
-    public boolean checkForChiselAndBitsBlock(@NotNull final IBlockState blockState)
+    public boolean checkForChiselAndBitsBlock(@NotNull final BlockState blockState)
     {
         return false;
     }

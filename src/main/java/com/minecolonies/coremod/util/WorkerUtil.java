@@ -13,10 +13,10 @@ import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.MoverType;
-import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.Blocks;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
@@ -228,7 +228,7 @@ public final class WorkerUtil
                     final BlockInfo te = structure.getBlockInfo(localPos);
                     if (te != null)
                     {
-                        final NBTTagCompound teData = te.getTileEntityData();
+                        final CompoundNBT teData = te.getTileEntityData();
                         if (teData != null && teData.getString(LEVEL_SIGN_FIRST_ROW).equals(LEVEL_SIGN_TEXT))
                         {
                             // try to make an anchor in 0,0,0 instead of the middle of the structure
@@ -260,7 +260,7 @@ public final class WorkerUtil
 
             if (te instanceof TileEntitySign)
             {
-                final IBlockState iblockstate = world.getBlockState(levelSignPos);
+                final BlockState BlockState = world.getBlockState(levelSignPos);
                 final TileEntitySign teLevelSign = (TileEntitySign) te;
 
                 teLevelSign.signText[0] = new TextComponentString(TextFormatting.getTextWithoutFormattingCodes(
@@ -270,7 +270,7 @@ public final class WorkerUtil
                 teLevelSign.signText[3] = new TextComponentString(TextFormatting.getTextWithoutFormattingCodes(""));
 
                 teLevelSign.markDirty();
-                world.notifyBlockUpdate(levelSignPos, iblockstate, iblockstate, 3);
+                world.notifyBlockUpdate(levelSignPos, BlockState, BlockState, 3);
             }
         }
     }

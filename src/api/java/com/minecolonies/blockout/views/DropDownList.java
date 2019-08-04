@@ -76,7 +76,7 @@ public class DropDownList extends View implements ButtonHandler
         dropDownWidth = dropDownSize == null ? width : dropDownSize.getX();
         //When unknown, we use the same height as it is wide.
         dropDownHeight = dropDownSize == null ? width : dropDownSize.getY();
-        dropDownFixX = params.getIntegerAttribute("dropfixx", dropDownFixX);
+        dropDownFixX = params.getIntAttribute("dropfixx", dropDownFixX);
 
         if(params.getStringAttribute("source", "").isEmpty())
         {

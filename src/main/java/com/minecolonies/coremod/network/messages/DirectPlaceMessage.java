@@ -6,10 +6,10 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -26,7 +26,7 @@ public class DirectPlaceMessage extends AbstractMessage<DirectPlaceMessage, IMes
     /**
      * The state to be placed..
      */
-    private IBlockState state;
+    private BlockState state;
 
     /**
      * The position to place it at.
@@ -52,7 +52,7 @@ public class DirectPlaceMessage extends AbstractMessage<DirectPlaceMessage, IMes
      * @param pos the pos to place it at.
      * @param stack the stack in the hand.
      */
-    public DirectPlaceMessage(final IBlockState state, final BlockPos pos, final ItemStack stack)
+    public DirectPlaceMessage(final BlockState state, final BlockPos pos, final ItemStack stack)
     {
         super();
         this.state = state;
@@ -81,7 +81,7 @@ public class DirectPlaceMessage extends AbstractMessage<DirectPlaceMessage, IMes
     @Override
     public void toBytes(@NotNull final ByteBuf buf)
     {
-        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new NBTTagCompound(), state));
+        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new CompoundNBT(), state));
         BlockPosUtil.writeToByteBuf(buf, pos);
         ByteBufUtils.writeItemStack(buf, stack);
     }

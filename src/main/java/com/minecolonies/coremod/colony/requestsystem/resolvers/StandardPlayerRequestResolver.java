@@ -117,7 +117,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
             }
 
             final List<EntityPlayer> players = new ArrayList<>(colony.getMessageEntityPlayers());
-            final EntityPlayer owner = ServerUtils.getPlayerFromUUID(colony.getWorld(), ((Colony) colony).getPermissions().getOwner());
+            final PlayerEntity owner = ServerUtils.getPlayerFromUUID(colony.getWorld(), ((Colony) colony).getPermissions().getOwner());
             final TextComponentString colonyDescription = new TextComponentString(colony.getName() + ":");
 
             final ILocation requester = request.getRequester().getLocation();

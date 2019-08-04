@@ -19,11 +19,11 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
@@ -115,10 +115,10 @@ public class ColonyPermissionEventHandler
      * @return true if canceled
      */
     private boolean checkBlockEventDenied(
-                                           final World worldIn, final BlockPos posIn, final EntityPlayer playerIn, final IBlockState blockState,
+                                           final World worldIn, final BlockPos posIn, final PlayerEntity playerIn, final BlockState blockState,
                                            final Action action)
     {
-        @NotNull final EntityPlayer player = EntityUtils.getPlayerOfFakePlayer(playerIn, worldIn);
+        @NotNull final PlayerEntity player = EntityUtils.getPlayerOfFakePlayer(playerIn, worldIn);
 
         if (colony.isCoordInColony(worldIn, posIn))
         {
@@ -151,7 +151,7 @@ public class ColonyPermissionEventHandler
      * @param action the action which was denied
      * @param pos the location of the action which was denied
      */
-    private void cancelEvent(final Event event, @Nullable final EntityPlayer player, final Colony colony, final Action action, final BlockPos pos)
+    private void cancelEvent(final Event event, @Nullable final PlayerEntity player, final Colony colony, final Action action, final BlockPos pos)
     {
         event.setResult(Event.Result.DENY);
         if (event.isCancelable())
@@ -461,10 +461,10 @@ public class ColonyPermissionEventHandler
      * @param pos      the position.  Can be null if no target was provided to the event.
      * @return true if canceled.
      */
-    private boolean checkEventCancelation(final Action action, @NotNull final EntityPlayer playerIn, @NotNull final World world, @NotNull final Event event,
+    private boolean checkEventCancelation(final Action action, @NotNull final PlayerEntity playerIn, @NotNull final World world, @NotNull final Event event,
             @Nullable final BlockPos pos)
     {
-        @NotNull final EntityPlayer player = EntityUtils.getPlayerOfFakePlayer(playerIn, world);
+        @NotNull final PlayerEntity player = EntityUtils.getPlayerOfFakePlayer(playerIn, world);
 
         BlockPos positionToCheck = pos;
         if (null == positionToCheck)
@@ -602,7 +602,7 @@ public class ColonyPermissionEventHandler
             return;
         }
 
-        @NotNull final EntityPlayer player = EntityUtils.getPlayerOfFakePlayer(event.getEntityPlayer(), event.getEntityPlayer().getEntityWorld());
+        @NotNull final PlayerEntity player = EntityUtils.getPlayerOfFakePlayer(event.getEntityPlayer(), event.getEntityPlayer().getEntityWorld());
 
         if (Configurations.gameplay.enableColonyProtection
               && colony.isCoordInColony(player.getEntityWorld(), player.getPosition()))

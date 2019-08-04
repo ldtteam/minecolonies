@@ -6,9 +6,9 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockHorizontal;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -70,12 +70,12 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     @SideOnly(Side.CLIENT)
     public float getBedOrientationInDegrees()
     {
-        final IBlockState state = getBedLocation() == null ? null : citizen.world.getBlockState(getBedLocation());
+        final BlockState state = getBedLocation() == null ? null : citizen.world.getBlockState(getBedLocation());
         if (state != null && state.getBlock().isBed(state, citizen.world, getBedLocation(), citizen))
         {
-            final EnumFacing enumfacing = state.getBlock().getBedDirection(state, citizen.world, getBedLocation());
+            final Direction Direction = state.getBlock().getBedDirection(state, citizen.world, getBedLocation());
 
-            switch (enumfacing)
+            switch (Direction)
             {
                 case SOUTH:
                     return NINETY_DEGREE;
@@ -101,7 +101,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     @Override
     public void trySleep(final BlockPos bedLocation)
     {
-        final IBlockState state = citizen.world.isBlockLoaded(bedLocation) ? citizen.world.getBlockState(bedLocation) : null;
+        final BlockState state = citizen.world.isBlockLoaded(bedLocation) ? citizen.world.getBlockState(bedLocation) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, bedLocation, citizen);
 
         if (!isBed)
@@ -202,16 +202,16 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             return 0;
         }
 
-        final IBlockState state = citizen.world.isBlockLoaded(getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
+        final BlockState state = citizen.world.isBlockLoaded(getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, getBedLocation(), citizen);
-        final EnumFacing enumfacing = isBed && state.getBlock() instanceof BlockHorizontal ? state.getValue(BlockHorizontal.FACING) : null;
+        final Direction Direction = isBed && state.getBlock() instanceof BlockHorizontal ? state.getValue(BlockHorizontal.FACING) : null;
 
-        if (enumfacing == null)
+        if (Direction == null)
         {
             return 0;
         }
 
-        return SLEEPING_RENDER_OFFSET * (float) enumfacing.getXOffset();
+        return SLEEPING_RENDER_OFFSET * (float) Direction.getXOffset();
     }
 
     /**
@@ -226,15 +226,15 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             return 0;
         }
 
-        final IBlockState state = citizen.world.isBlockLoaded(getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
+        final BlockState state = citizen.world.isBlockLoaded(getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, getBedLocation(), citizen);
-        final EnumFacing enumfacing = isBed && state.getBlock() instanceof BlockHorizontal ? state.getValue(BlockHorizontal.FACING) : null;
+        final Direction Direction = isBed && state.getBlock() instanceof BlockHorizontal ? state.getValue(BlockHorizontal.FACING) : null;
 
-        if (enumfacing == null)
+        if (Direction == null)
         {
             return 0;
         }
 
-        return SLEEPING_RENDER_OFFSET * (float) enumfacing.getZOffset();
+        return SLEEPING_RENDER_OFFSET * (float) Direction.getZOffset();
     }
 }

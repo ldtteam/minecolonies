@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 public class GuiHandler implements IGuiHandler
 {
     @Override
-    public Object getServerGuiElement(final int id, final EntityPlayer player, final World world, final int x, final int y, final int z)
+    public Object getServerGuiElement(final int id, final PlayerEntity player, final World world, final int x, final int y, final int z)
     {
         if (id == ID.DEFAULT.ordinal())
         {
@@ -82,7 +82,7 @@ public class GuiHandler implements IGuiHandler
     }
 
     @Override
-    public Object getClientGuiElement(final int id, final EntityPlayer player, final World world, final int x, final int y, final int z)
+    public Object getClientGuiElement(final int id, final PlayerEntity player, final World world, final int x, final int y, final int z)
     {
         if (id == ID.DEFAULT.ordinal())
         {

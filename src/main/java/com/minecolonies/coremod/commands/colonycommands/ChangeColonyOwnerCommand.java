@@ -65,7 +65,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
         final IColony colony = actionMenuState.getColonyForArgument("colony");
-        final EntityPlayer player = actionMenuState.getPlayerForArgument("player");
+        final PlayerEntity player = actionMenuState.getPlayerForArgument("player");
         executeShared(server, sender, colony, player);
     }
 
@@ -82,7 +82,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
         if (colonyId == -1)
         {
             final String playerName = args[0];
-            final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
+            final PlayerEntity player = sender.getEntityWorld().getPlayerEntityByName(playerName);
 
             final Entity senderEntity = sender.getCommandSenderEntity();
 
@@ -128,12 +128,12 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
             return;
         }
 
-        final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
+        final PlayerEntity player = sender.getEntityWorld().getPlayerEntityByName(playerName);
 
         executeShared(server, sender, colony, player);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final IColony colony, final EntityPlayer player) throws CommandException
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final IColony colony, final PlayerEntity player) throws CommandException
     {
         if (player == null)
         {

@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -113,27 +113,27 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
 
         @NotNull
         @Override
-        public NBTTagCompound serialize(
+        public CompoundNBT serialize(
           @NotNull final IFactoryController controller, @NotNull final StandardRequestSystemCrafterJobDataStore standardRequestSystemCrafterJobDataStore)
         {
-            final NBTTagCompound compound = new NBTTagCompound();
+            final CompoundNBT compound = new CompoundNBT();
 
-            compound.setTag(TAG_TOKEN, controller.serialize(standardRequestSystemCrafterJobDataStore.id));
-            compound.setTag(TAG_LIST, standardRequestSystemCrafterJobDataStore.queue.stream().map(controller::serialize).collect(NBTUtils.toNBTTagList()));
+            compound.put(TAG_TOKEN, controller.serialize(standardRequestSystemCrafterJobDataStore.id));
+            compound.put(TAG_LIST, standardRequestSystemCrafterJobDataStore.queue.stream().map(controller::serialize).collect(NBTUtils.toListNBT()));
 
             return compound;
         }
 
         @NotNull
         @Override
-        public StandardRequestSystemCrafterJobDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt) throws Throwable
+        public StandardRequestSystemCrafterJobDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt) throws Throwable
         {
-            final IToken<?> token = controller.deserialize(nbt.getCompoundTag(TAG_TOKEN));
+            final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
             final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getTagList(TAG_LIST, Constants.NBT.TAG_COMPOUND))
-                                                  .map(nbtTagCompound -> (IToken<?>) controller.deserialize(nbtTagCompound))
+                                                  .map(CompoundNBT -> (IToken<?>) controller.deserialize(CompoundNBT))
                                                   .collect(Collectors.toCollection(LinkedList::new));
             final List<IToken<?>> taskList = NBTUtils.streamCompound(nbt.getTagList(TAG_ASSIGNED_LIST, Constants.NBT.TAG_COMPOUND))
-              .map(nbtTagCompound -> (IToken<?>) controller.deserialize(nbtTagCompound))
+              .map(CompoundNBT -> (IToken<?>) controller.deserialize(CompoundNBT))
               .collect(Collectors.toList());
 
             return new StandardRequestSystemCrafterJobDataStore(token, queue, taskList);

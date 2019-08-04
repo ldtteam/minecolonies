@@ -8,9 +8,9 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -174,7 +174,7 @@ public interface IColony
      * Remove a visiting player.
      * @param player the player.
      */
-    void removeVisitingPlayer(final EntityPlayer player);
+    void removeVisitingPlayer(final PlayerEntity player);
 
     @NotNull
     List<EntityPlayer> getMessageEntityPlayers();
@@ -211,7 +211,7 @@ public interface IColony
 
     double getOverallHappiness();
 
-    Map<BlockPos, IBlockState> getWayPoints();
+    Map<BlockPos, BlockState> getWayPoints();
 
     String getStyle();
 
@@ -235,7 +235,7 @@ public interface IColony
      * Add a visiting player.
      * @param player the player.
      */
-    void addVisitingPlayer(final EntityPlayer player);
+    void addVisitingPlayer(final PlayerEntity player);
 
     /**
      * Get the colony dimension.
@@ -260,7 +260,7 @@ public interface IColony
     long getMercenaryUseTime();
 
 
-    NBTTagCompound getColonyTag();
+    CompoundNBT getColonyTag();
 
     int getNightsSinceLastRaid();
 
@@ -274,7 +274,7 @@ public interface IColony
 
     boolean isColonyUnderAttack();
 
-    boolean isValidAttackingPlayer(EntityPlayer entity);
+    boolean isValidAttackingPlayer(PlayerEntity entity);
 
     boolean isValidAttackingGuard(AbstractEntityCitizen entity);
 
@@ -282,9 +282,9 @@ public interface IColony
 
     void setManualHousing(boolean manualHousing);
 
-    void addWayPoint(BlockPos pos, IBlockState newWayPointState);
+    void addWayPoint(BlockPos pos, BlockState newWayPointState);
 
-    void addGuardToAttackers(AbstractEntityCitizen entityCitizen, EntityPlayer followPlayer);
+    void addGuardToAttackers(AbstractEntityCitizen entityCitizen, PlayerEntity followPlayer);
 
     void addFreePosition(BlockPos pos);
 
@@ -298,9 +298,9 @@ public interface IColony
 
     void setManualHiring(boolean manualHiring);
 
-    NBTTagCompound writeToNBT(NBTTagCompound colonyCompound);
+    CompoundNBT writeToNBT(CompoundNBT colonyCompound);
 
-    void readFromNBT(NBTTagCompound compound);
+    void readFromNBT(CompoundNBT compound);
 
     void setMoveIn(boolean newMoveIn);
 

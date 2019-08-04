@@ -7,7 +7,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -55,14 +55,14 @@ public final class EntityUtils
      *
      * @param player the incoming player.
      * @param world  the world.
-     * @return the EntityPlayer owner in the best case.
+     * @return the PlayerEntity owner in the best case.
      */
     @NotNull
-    public static EntityPlayer getPlayerOfFakePlayer(@NotNull final EntityPlayer player, @NotNull final World world)
+    public static PlayerEntity getPlayerOfFakePlayer(@NotNull final PlayerEntity player, @NotNull final World world)
     {
         if (player instanceof FakePlayer)
         {
-            final EntityPlayer tempPlayer = world.getPlayerEntityByUUID(player.getUniqueID());
+            final PlayerEntity tempPlayer = world.getPlayerEntityByUUID(player.getUniqueID());
             if (tempPlayer != null)
             {
                 return tempPlayer;

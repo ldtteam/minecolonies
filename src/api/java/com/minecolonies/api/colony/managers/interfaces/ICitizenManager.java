@@ -2,7 +2,7 @@ package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -19,13 +19,13 @@ public interface ICitizenManager
      * Read the citizens from nbt.
      * @param compound the compound to read it from.
      */
-    void readFromNBT(@NotNull final NBTTagCompound compound);
+    void readFromNBT(@NotNull final CompoundNBT compound);
 
     /**
      * Write the citizens to nbt.
      * @param citizenCompound the compound to write it to.
      */
-    void writeToNBT(@NotNull final NBTTagCompound citizenCompound);
+    void writeToNBT(@NotNull final CompoundNBT citizenCompound);
 
     /**
      * Sends packages to update the citizens.

@@ -12,8 +12,8 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -89,37 +89,37 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
 
         @NotNull
         @Override
-        public NBTTagCompound serialize(
+        public CompoundNBT serialize(
           @NotNull final IFactoryController controller, @NotNull final StandardRequestResolversIdentitiesDataStore standardRequestIdentitiesDataStore)
         {
-            final NBTTagCompound systemCompound = new NBTTagCompound();
+            final CompoundNBT systemCompound = new CompoundNBT();
 
-            systemCompound.setTag(TAG_TOKEN, controller.serialize(standardRequestIdentitiesDataStore.getId()));
-            systemCompound.setTag(TAG_LIST, standardRequestIdentitiesDataStore.getIdentities().keySet().stream().map(token -> {
-                final NBTTagCompound mapCompound = new NBTTagCompound();
+            systemCompound.put(TAG_TOKEN, controller.serialize(standardRequestIdentitiesDataStore.getId()));
+            systemCompound.put(TAG_LIST, standardRequestIdentitiesDataStore.getIdentities().keySet().stream().map(token -> {
+                final CompoundNBT mapCompound = new CompoundNBT();
 
-                mapCompound.setTag(TAG_TOKEN, controller.serialize(token));
-                mapCompound.setTag(TAG_RESOLVER, controller.serialize(standardRequestIdentitiesDataStore.getIdentities().get(token)));
+                mapCompound.put(TAG_TOKEN, controller.serialize(token));
+                mapCompound.put(TAG_RESOLVER, controller.serialize(standardRequestIdentitiesDataStore.getIdentities().get(token)));
 
                 return mapCompound;
-            }).collect(NBTUtils.toNBTTagList()));
+            }).collect(NBTUtils.toListNBT()));
 
             return systemCompound;
         }
 
         @NotNull
         @Override
-        public StandardRequestResolversIdentitiesDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+        public StandardRequestResolversIdentitiesDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
         {
-            final IToken<?> token = controller.deserialize(nbt.getCompoundTag(TAG_TOKEN));
-            final NBTTagList list = nbt.getTagList(TAG_LIST, Constants.NBT.TAG_COMPOUND);
+            final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
+            final ListNBT list = nbt.getTagList(TAG_LIST, Constants.NBT.TAG_COMPOUND);
 
-            final Map<IToken<?>, IRequestResolver<?>> map = NBTUtils.streamCompound(list).map(nbtTagCompound -> {
-                final IToken<?> id = controller.deserialize(nbtTagCompound.getCompoundTag(TAG_TOKEN));
-                final IRequestResolver<?> resolver = controller.deserialize(nbtTagCompound.getCompoundTag(TAG_RESOLVER));
+            final Map<IToken<?>, IRequestResolver<?>> map = NBTUtils.streamCompound(list).map(CompoundNBT -> {
+                final IToken<?> id = controller.deserialize(CompoundNBT.getCompound(TAG_TOKEN));
+                final IRequestResolver<?> resolver = controller.deserialize(CompoundNBT.getCompound(TAG_RESOLVER));
 
                 return new Tuple<IToken<?>, IRequestResolver<?>>(id, resolver);
-            }).collect(Collectors.toMap((Tuple<IToken<?>, IRequestResolver<?>> t) -> t.getFirst(), (Tuple<IToken<?>, IRequestResolver<?>> t) -> t.getSecond()));
+            }).collect(Collectors.toMap((Tuple<IToken<?>, IRequestResolver<?>> t) -> t.getA(), (Tuple<IToken<?>, IRequestResolver<?>> t) -> t.getB()));
 
             final BiMap<IToken<?>, IRequestResolver<?>> biMap = HashBiMap.create(map);
 

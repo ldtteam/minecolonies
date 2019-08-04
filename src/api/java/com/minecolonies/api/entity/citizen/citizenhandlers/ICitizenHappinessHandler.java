@@ -2,7 +2,7 @@ package com.minecolonies.api.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.util.constant.IToolType;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -100,14 +100,14 @@ public interface ICitizenHappinessHandler
      *
      * @param compound  compound to use.
      */
-    void writeToNBT(NBTTagCompound compound);
+    void writeToNBT(CompoundNBT compound);
 
     /**
      * Reads in Happiness data from the NBT file.
      *
      * @param compound pointer to NBT fields
      */
-    void readFromNBT(NBTTagCompound compound);
+    void readFromNBT(CompoundNBT compound);
 
     /**
      * Write to the incoming variable all the related data to modifiers.

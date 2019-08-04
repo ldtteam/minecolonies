@@ -15,10 +15,10 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -51,11 +51,11 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
     @NotNull
     @Override
     public EnumActionResult onItemUse(
-      final EntityPlayer playerIn,
+      final PlayerEntity playerIn,
       final World worldIn,
       final BlockPos pos,
       final EnumHand hand,
-      final EnumFacing facing,
+      final Direction facing,
       final float hitX,
       final float hitY,
       final float hitZ)
@@ -69,11 +69,11 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         final ItemStack scepter = playerIn.getHeldItem(hand);
         if (!scepter.hasTagCompound())
         {
-            scepter.setTagCompound(new NBTTagCompound());
+            scepter.putCompound(new CompoundNBT());
         }
-        final NBTTagCompound compound = scepter.getTagCompound();
+        final CompoundNBT compound = scepter.getTagCompound();
 
-        if (compound.hasKey(TAG_LAST_POS))
+        if (compound.keySet().contains(TAG_LAST_POS))
         {
             final BlockPos lastPos = BlockPosUtil.readFromNBT(compound, TAG_LAST_POS);
             if (lastPos.equals(pos))
@@ -88,22 +88,22 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
 
     @NotNull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(final World worldIn, final EntityPlayer playerIn, @NotNull final EnumHand hand)
+    public ActionResult<ItemStack> onItemRightClick(final World worldIn, final PlayerEntity playerIn, @NotNull final EnumHand hand)
     {
         final ItemStack stack = playerIn.getHeldItem(hand);
         if (!stack.hasTagCompound())
         {
-            stack.setTagCompound(new NBTTagCompound());
+            stack.putCompound(new CompoundNBT());
         }
-        final NBTTagCompound compound = stack.getTagCompound();
+        final CompoundNBT compound = stack.getTagCompound();
 
         if (worldIn.isRemote && compound != null)
         {
-            if (!compound.hasKey(TAG_ID))
+            if (!compound.keySet().contains(TAG_ID))
             {
                 return ActionResult.newResult(EnumActionResult.FAIL, stack);
             }
-            final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInteger(TAG_ID), Minecraft.getMinecraft().world.provider.getDimension());
+            final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), Minecraft.getMinecraft().world.provider.getDimension());
             if (colony == null)
             {
                 return ActionResult.newResult(EnumActionResult.FAIL, stack);
@@ -131,13 +131,13 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
      * @return if it has been successful.
      */
     @NotNull
-    private static EnumActionResult handleItemUsage(final World worldIn, final BlockPos pos, final NBTTagCompound compound, final EntityPlayer playerIn)
+    private static EnumActionResult handleItemUsage(final World worldIn, final BlockPos pos, final CompoundNBT compound, final PlayerEntity playerIn)
     {
-        if (!compound.hasKey(TAG_ID))
+        if (!compound.keySet().contains(TAG_ID))
         {
             return EnumActionResult.FAIL;
         }
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(compound.getInteger(TAG_ID), worldIn);
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(compound.getInt(TAG_ID), worldIn);
         if (colony == null)
         {
             return EnumActionResult.FAIL;
@@ -157,7 +157,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             return EnumActionResult.FAIL;
         }
 
-        final GuardTask task = GuardTask.values()[compound.getInteger("task")];
+        final GuardTask task = GuardTask.values()[compound.getInt("task")];
         final ICitizenData citizen = tower.getMainCitizen();
 
         String name = "";
@@ -174,7 +174,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         }
         else
         {
-            if (!compound.hasKey(TAG_LAST_POS))
+            if (!compound.keySet().contains(TAG_LAST_POS))
             {
                 tower.resetPatrolTargets();
             }

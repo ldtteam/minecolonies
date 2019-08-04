@@ -26,9 +26,9 @@ import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -50,7 +50,7 @@ import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 public final class ColonyView implements IColonyView
 {
     /**
-     * Max allowed NBTTagCompound in bytes 
+     * Max allowed CompoundNBT in bytes
      */
     private static final int MAX_BYTES_NBTCOMPOUND = (int) 1e6;
 
@@ -121,7 +121,7 @@ public final class ColonyView implements IColonyView
     /**
      * The Set of waypoints.
      */
-    private final Map<BlockPos, IBlockState> wayPoints = new HashMap<>();
+    private final Map<BlockPos, BlockState> wayPoints = new HashMap<>();
 
     /**
      * The overall happiness of the colony.
@@ -179,7 +179,7 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Create a ColonyView given a UUID and NBTTagCompound.
+     * Create a ColonyView given a UUID and CompoundNBT.
      *
      * @param id Id of the colony view.
      * @return the new colony view.
@@ -209,7 +209,7 @@ public final class ColonyView implements IColonyView
 
         final Set<Block> freeBlocks = colony.getFreeBlocks();
         final Set<BlockPos> freePos = colony.getFreePositions();
-        final Map<BlockPos, IBlockState> waypoints = colony.getWayPoints();
+        final Map<BlockPos, BlockState> waypoints = colony.getWayPoints();
 
         buf.writeInt(freeBlocks.size());
         for (final Block block : freeBlocks)
@@ -226,10 +226,10 @@ public final class ColonyView implements IColonyView
         buf.writeBoolean(colony.hasWarehouse());
 
         buf.writeInt(waypoints.size());
-        for (final Map.Entry<BlockPos, IBlockState> block : waypoints.entrySet())
+        for (final Map.Entry<BlockPos, BlockState> block : waypoints.entrySet())
         {
             BlockPosUtil.writeToByteBuf(buf, block.getKey());
-            ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new NBTTagCompound(), block.getValue()));
+            ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new CompoundNBT(), block.getValue()));
         }
 
         buf.writeInt(colony.getLastContactInHours());
@@ -380,13 +380,13 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public NBTTagCompound writeToNBT(final NBTTagCompound colonyCompound)
+    public CompoundNBT writeToNBT(final CompoundNBT colonyCompound)
     {
-        return new NBTTagCompound();
+        return new CompoundNBT();
     }
 
     @Override
-    public void readFromNBT(final NBTTagCompound compound)
+    public void readFromNBT(final CompoundNBT compound)
     {
         //Noop
     }
@@ -414,7 +414,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void addWayPoint(final BlockPos pos, final IBlockState newWayPointState)
+    public void addWayPoint(final BlockPos pos, final BlockState newWayPointState)
     {
 
     }
@@ -646,7 +646,7 @@ public final class ColonyView implements IColonyView
 
         if (buf.readBoolean())
         {
-            final NBTTagCompound compound = ByteBufUtils.readTag(buf);
+            final CompoundNBT compound = ByteBufUtils.readTag(buf);
             this.requestManager = new StandardRequestManager(this);
             this.requestManager.deserializeNBT(compound);
         }
@@ -986,7 +986,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void removeVisitingPlayer(final EntityPlayer player)
+    public void removeVisitingPlayer(final PlayerEntity player)
     {
         /*
          * Intentionally left empty.
@@ -1007,7 +1007,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void addVisitingPlayer(final EntityPlayer player)
+    public void addVisitingPlayer(final PlayerEntity player)
     {
         /*
          * Intentionally left empty.
@@ -1057,7 +1057,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public Map<BlockPos, IBlockState> getWayPoints()
+    public Map<BlockPos, BlockState> getWayPoints()
     {
         return wayPoints;
     }
@@ -1090,7 +1090,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public NBTTagCompound getColonyTag()
+    public CompoundNBT getColonyTag()
     {
         return null;
     }
@@ -1132,13 +1132,13 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public boolean isValidAttackingPlayer(final EntityPlayer entity)
+    public boolean isValidAttackingPlayer(final PlayerEntity entity)
     {
         return false;
     }
 
     @Override
-    public void addGuardToAttackers(final AbstractEntityCitizen entityCitizen, final EntityPlayer followPlayer)
+    public void addGuardToAttackers(final AbstractEntityCitizen entityCitizen, final PlayerEntity followPlayer)
     {
 
     }

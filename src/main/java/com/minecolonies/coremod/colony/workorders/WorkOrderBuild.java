@@ -11,7 +11,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -85,29 +85,29 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
 
 
     /**
-     * Read the WorkOrder data from the NBTTagCompound.
+     * Read the WorkOrder data from the CompoundNBT.
      *  @param compound NBT Tag compound.
      * @param manager
      */
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound, final IWorkManager manager)
+    public void readFromNBT(@NotNull final CompoundNBT compound, final IWorkManager manager)
     {
         super.readFromNBT(compound, manager);
-        upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
+        upgradeLevel = compound.getInt(TAG_UPGRADE_LEVEL);
         upgradeName = compound.getString(TAG_UPGRADE_NAME);
     }
 
     /**
-     * Save the Work Order to an NBTTagCompound.
+     * Save the Work Order to an CompoundNBT.
      *
      * @param compound NBT tag compound.
      */
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         super.writeToNBT(compound);
-        compound.setInteger(TAG_UPGRADE_LEVEL, upgradeLevel);
-        compound.setString(TAG_UPGRADE_NAME, upgradeName);
+        compound.putInt(TAG_UPGRADE_LEVEL, upgradeLevel);
+        compound.putString(TAG_UPGRADE_NAME, upgradeName);
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.minecolonies.api.colony.workorders;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,11 +13,11 @@ import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAM
 public interface IWorkOrder
 {
     /**
-     * Read the WorkOrder data from the NBTTagCompound.
+     * Read the WorkOrder data from the CompoundNBT.
      *  @param compound NBT Tag compound
      * @param manager the workManager calling this method.
      */
-    void readFromNBT(@NotNull NBTTagCompound compound, IWorkManager manager);
+    void readFromNBT(@NotNull CompoundNBT compound, IWorkManager manager);
 
     /**
      * Getter for the priority.
@@ -95,11 +95,11 @@ public interface IWorkOrder
     void clearClaimedBy();
 
     /**
-     * Save the Work Order to an NBTTagCompound.
+     * Save the Work Order to an CompoundNBT.
      *
      * @param compound NBT tag compount
      */
-    void writeToNBT(@NotNull NBTTagCompound compound);
+    void writeToNBT(@NotNull CompoundNBT compound);
 
     /**
      * Is this WorkOrder still valid?  If not, it will be deleted.

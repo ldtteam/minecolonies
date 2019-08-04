@@ -75,8 +75,8 @@ public class Image extends Pane
     private void loadMapDimensions()
     {
         final Tuple<Integer, Integer> dimensions = getImageDimensions(resourceLocation);
-        mapWidth = dimensions.getFirst();
-        mapHeight = dimensions.getSecond();
+        mapWidth = dimensions.getA();
+        mapHeight = dimensions.getB();
     }
 
     /**

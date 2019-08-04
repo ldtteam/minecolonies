@@ -53,7 +53,7 @@ public class MakeNotAutoDeletableCommand extends AbstractSingleCommand implement
     }
 
     @Override
-    public boolean canRankUseCommand(@NotNull final IColony colony, @NotNull final EntityPlayer player)
+    public boolean canRankUseCommand(@NotNull final IColony colony, @NotNull final PlayerEntity player)
     {
         return false;
     }
@@ -93,7 +93,7 @@ public class MakeNotAutoDeletableCommand extends AbstractSingleCommand implement
 
     private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final IColony colony, final boolean canBeDeleted)
     {
-        if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
+        if (sender instanceof PlayerEntity && !isPlayerOpped(sender))
         {
             sender.sendMessage(new TextComponentString("Must be OP to use command"));
             return;

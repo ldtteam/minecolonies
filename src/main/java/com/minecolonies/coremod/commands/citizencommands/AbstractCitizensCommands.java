@@ -80,7 +80,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
             colonyId = getIthArgument(args, 0, -1);
             if (colonyId == -1)
             {
-                final EntityPlayer player = server.getEntityWorld().getPlayerEntityByName(args[0]);
+                final PlayerEntity player = server.getEntityWorld().getPlayerEntityByName(args[0]);
                 if (player != null)
                 {
                     final IColony tempColony = IColonyManager.getInstance().getIColonyByOwner(server.getEntityWorld(), player);
@@ -95,7 +95,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
         }
 
         final IColony colony;
-        if (sender instanceof EntityPlayer && colonyId == -1)
+        if (sender instanceof PlayerEntity && colonyId == -1)
         {
             final IColony tempColony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
             if (tempColony != null)
@@ -115,7 +115,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
 
         if (sender instanceof EntityPlayer)
         {
-            final EntityPlayer player = (EntityPlayer) sender;
+            final PlayerEntity player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, getCommand(), colonyId))
             {
                 sender.sendMessage(new TextComponentString(NOT_PERMITTED));

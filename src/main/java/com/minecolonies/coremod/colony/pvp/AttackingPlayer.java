@@ -20,7 +20,7 @@ public class AttackingPlayer
     /**
      * The player which is attacking.
      */
-    private final EntityPlayer player;
+    private final PlayerEntity player;
 
     /**
      * The guards coming with him.
@@ -31,7 +31,7 @@ public class AttackingPlayer
      * Creates a new Attacking player.
      * @param player the attacking player.
      */
-    public AttackingPlayer(final EntityPlayer player)
+    public AttackingPlayer(final PlayerEntity player)
     {
         this.player = player;
     }
@@ -40,7 +40,7 @@ public class AttackingPlayer
      * Get the attacking player.
      * @return the EntityPlayer.
      */
-    public EntityPlayer getPlayer()
+    public PlayerEntity getPlayer()
     {
         return player;
     }

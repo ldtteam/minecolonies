@@ -19,7 +19,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumHand;
@@ -184,10 +184,10 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
 
             final ItemStack stack = new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, 1, false);
             final Tuple<ItemStack, Integer> materialTuple = getMaterialAndAmount(stack);
-            final ItemStack material = materialTuple.getFirst();
+            final ItemStack material = materialTuple.getA();
             if (!ItemStackUtils.isEmpty(material))
             {
-                material.setCount(materialTuple.getSecond());
+                material.setCount(materialTuple.getB());
                 material.setItemDamage(0);
                 new InvWrapper(worker.getInventoryCitizen()).setStackInSlot(slot, material);
                 if (getOwnBuilding().getBuildingLevel() > 0 && stack.isItemEnchanted() &&
@@ -237,20 +237,20 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
         else if (stack.getItem() instanceof ItemArmor)
         {
             material = ((ItemArmor) stack.getItem()).getArmorMaterial().getRepairItemStack();
-            final EntityEquipmentSlot eq = ((ItemArmor) stack.getItem()).armorType;
-            if (eq == EntityEquipmentSlot.CHEST)
+            final EquipmentSlotType eq = ((ItemArmor) stack.getItem()).armorType;
+            if (eq == EquipmentSlotType.CHEST)
             {
                 amount = CHEST_MAT_AMOUNT;
             }
-            else if (eq == EntityEquipmentSlot.LEGS)
+            else if (eq == EquipmentSlotType.LEGS)
             {
                 amount = LEGS_MAT_AMOUNT;
             }
-            else if (eq == EntityEquipmentSlot.HEAD)
+            else if (eq == EquipmentSlotType.HEAD)
             {
                 amount = HEAD_MAT_AMOUNT;
             }
-            else if (eq == EntityEquipmentSlot.FEET)
+            else if (eq == EquipmentSlotType.FEET)
             {
                 amount = FEET_MAT_AMOUNT;
             }

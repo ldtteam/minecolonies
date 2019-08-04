@@ -12,7 +12,7 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
@@ -21,7 +21,7 @@ import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemShield;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -45,7 +45,7 @@ import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 /**
  * The abstract citizen entity.
  */
-public abstract class AbstractEntityCitizen extends EntityAgeable implements ICommandSender, ICapabilitySerializable<NBTTagCompound>
+public abstract class AbstractEntityCitizen extends EntityAgeable implements ICommandSender, ICapabilitySerializable<CompoundNBT>
 {
 
     public static final DataParameter<Integer>  DATA_LEVEL           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
@@ -168,7 +168,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements ICo
 
     @NotNull
     @Override
-    public EnumActionResult applyPlayerInteraction(final EntityPlayer player, final Vec3d vec, final EnumHand hand)
+    public EnumActionResult applyPlayerInteraction(final PlayerEntity player, final Vec3d vec, final EnumHand hand)
     {
         SoundUtils.playInteractionSoundAtCitizenWithChance(CompatibilityUtils.getWorldFromCitizen(this), this.getPosition(), ONE_HUNDRED_PERCENT, this);
         return super.applyPlayerInteraction(player, vec, hand);
@@ -415,7 +415,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements ICo
      * logic.
      */
     @Override
-    protected void updateFallState(final double y, final boolean onGroundIn, @NotNull final IBlockState state, @NotNull final BlockPos pos)
+    protected void updateFallState(final double y, final boolean onGroundIn, @NotNull final BlockState state, @NotNull final BlockPos pos)
     {
         if (!onGround)
         {

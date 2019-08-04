@@ -63,7 +63,7 @@ public class RSResetAllCommand extends AbstractSingleCommand implements IActionC
     {
         if (sender instanceof EntityPlayer)
         {
-            final EntityPlayer player = (EntityPlayer) sender;
+            final PlayerEntity player = (EntityPlayer) sender;
             if (!isPlayerOpped(player))
             {
                 sender.sendMessage(new TextComponentString(NOT_PERMITTED));

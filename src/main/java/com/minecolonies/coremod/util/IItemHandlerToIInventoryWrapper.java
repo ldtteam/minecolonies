@@ -116,19 +116,19 @@ public class IItemHandlerToIInventoryWrapper implements IInventory
      * Container
      */
     @Override
-    public boolean isUsableByPlayer(final EntityPlayer player)
+    public boolean isUsableByPlayer(final PlayerEntity player)
     {
         return true;
     }
 
     @Override
-    public void openInventory(final EntityPlayer player)
+    public void openInventory(final PlayerEntity player)
     {
         //IItemHandlers do not track which player opens or closes it as they are targeted at automating
     }
 
     @Override
-    public void closeInventory(final EntityPlayer player)
+    public void closeInventory(final PlayerEntity player)
     {
         //IItemHandlers do not track which player opens or closes it as they are targeted at automating
     }

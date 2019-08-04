@@ -3,9 +3,9 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.MineColonies;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -21,7 +21,7 @@ public class OpenSuggestionWindowMessage extends AbstractMessage<OpenSuggestionW
     /**
      * The state to be placed..
      */
-    private IBlockState state;
+    private BlockState state;
 
     /**
      * The position to place it at.
@@ -47,7 +47,7 @@ public class OpenSuggestionWindowMessage extends AbstractMessage<OpenSuggestionW
      * @param pos the pos to place it at.
      * @param stack the stack in the hand.
      */
-    public OpenSuggestionWindowMessage(final IBlockState state, final BlockPos pos, final ItemStack stack)
+    public OpenSuggestionWindowMessage(final BlockState state, final BlockPos pos, final ItemStack stack)
     {
         super();
         this.state = state;
@@ -76,7 +76,7 @@ public class OpenSuggestionWindowMessage extends AbstractMessage<OpenSuggestionW
     @Override
     public void toBytes(@NotNull final ByteBuf buf)
     {
-        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new NBTTagCompound(), state));
+        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new CompoundNBT(), state));
         BlockPosUtil.writeToByteBuf(buf, pos);
         ByteBufUtils.writeItemStack(buf, stack);
     }

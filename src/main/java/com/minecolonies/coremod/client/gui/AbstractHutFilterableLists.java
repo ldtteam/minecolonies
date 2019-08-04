@@ -45,7 +45,7 @@ public abstract class AbstractHutFilterableLists extends AbstractWindowWorkerBui
         super(building, res);
         for (final Tuple<String, Predicate<ItemStack>> tuple : predicates)
         {
-            this.itemStackPredicate.put(tuple.getFirst(), tuple.getSecond());
+            this.itemStackPredicate.put(tuple.getA(), tuple.getB());
         }
     }
 

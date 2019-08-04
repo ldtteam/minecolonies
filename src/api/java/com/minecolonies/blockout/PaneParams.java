@@ -191,9 +191,9 @@ public class PaneParams
      * @param name the name.
      * @return the integer.
      */
-    public int getIntegerAttribute(final String name)
+    public int getIntAttribute(final String name)
     {
-        return getIntegerAttribute(name, 0);
+        return getIntAttribute(name, 0);
     }
 
     /**
@@ -203,7 +203,7 @@ public class PaneParams
      * @param def  the definition.
      * @return the int.
      */
-    public int getIntegerAttribute(final String name, final int def)
+    public int getIntAttribute(final String name, final int def)
     {
         final String attr = getStringAttribute(name, null);
         if (attr != null)

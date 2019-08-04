@@ -485,7 +485,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                         {
                             return entity;
                         }
-                        else if (entity instanceof EntityPlayer && worker.canEntityBeSeen(entity))
+                        else if (entity instanceof PlayerEntity && worker.canEntityBeSeen(entity))
                         {
                             colony.isValidAttackingPlayer((EntityPlayer) entity);
                         }
@@ -506,7 +506,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             {
                 if (worker.canEntityBeSeen(entity) && isWithinPersecutionDistance(entity.getPosition()))
                 {
-                    if (entity instanceof EntityPlayer && (colony.getPermissions().hasPermission((EntityPlayer) entity, Action.GUARDS_ATTACK)
+                    if (entity instanceof PlayerEntity && (colony.getPermissions().hasPermission((EntityPlayer) entity, Action.GUARDS_ATTACK)
                                                              || colony.isValidAttackingPlayer((EntityPlayer) entity)))
                     {
                         return entity;

@@ -99,7 +99,7 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand impleme
             throws CommandException
     {
 
-        if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
+        if (sender instanceof PlayerEntity && !isPlayerOpped(sender))
         {
             sender.sendMessage(new TextComponentString("Must be OP to use this command"));
             return;

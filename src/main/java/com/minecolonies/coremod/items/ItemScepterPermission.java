@@ -7,13 +7,13 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.ChangeFreeToInteractBlockMessage;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -58,12 +58,12 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
 
     @NotNull
     private static EnumActionResult handleAddBlockType(
-                                                        final EntityPlayer playerIn,
+                                                        final PlayerEntity playerIn,
                                                         final World worldIn,
                                                         final BlockPos pos,
                                                         final IColonyView IColonyView)
     {
-        final IBlockState blockState = worldIn.getBlockState(pos);
+        final BlockState blockState = worldIn.getBlockState(pos);
         final Block block = blockState.getBlock();
 
         final ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(
@@ -77,7 +77,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
 
     @NotNull
     private static EnumActionResult handleAddLocation(
-                                                       final EntityPlayer playerIn,
+                                                       final PlayerEntity playerIn,
                                                        final World worldIn,
                                                        final BlockPos pos,
                                                        final IColonyView IColonyView)
@@ -104,11 +104,11 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     @Override
     @NotNull
     public EnumActionResult onItemUse(
-                                       final EntityPlayer playerIn,
+                                       final PlayerEntity playerIn,
                                        final World worldIn,
                                        final BlockPos pos,
                                        final EnumHand hand,
-                                       final EnumFacing facing,
+                                       final Direction facing,
                                        final float hitX,
                                        final float hitY,
                                        final float hitZ)
@@ -120,7 +120,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
         final ItemStack scepter = playerIn.getHeldItem(hand);
         if (!scepter.hasTagCompound())
         {
-            scepter.setTagCompound(new NBTTagCompound());
+            scepter.putCompound(new CompoundNBT());
         }
 
         final IColonyView IColonyView = IColonyManager.getInstance().getClosestColonyView(worldIn, pos);
@@ -128,7 +128,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
         {
             return EnumActionResult.FAIL;
         }
-        final NBTTagCompound compound = scepter.getTagCompound();
+        final CompoundNBT compound = scepter.getTagCompound();
         return handleItemAction(compound, playerIn, worldIn, pos, IColonyView);
     }
 
@@ -144,7 +144,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     @NotNull
     public ActionResult<ItemStack> onItemRightClick(
                                                      final World worldIn,
-                                                     final EntityPlayer playerIn,
+                                                     final PlayerEntity playerIn,
                                                      final EnumHand hand)
     {
         final ItemStack scepter = playerIn.getHeldItem(hand);
@@ -154,29 +154,29 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
         }
         if (!scepter.hasTagCompound())
         {
-            scepter.setTagCompound(new NBTTagCompound());
+            scepter.putCompound(new CompoundNBT());
         }
-        final NBTTagCompound compound = scepter.getTagCompound();
+        final CompoundNBT compound = scepter.getTagCompound();
 
         toggleItemMode(playerIn, compound);
 
         return new ActionResult<>(EnumActionResult.SUCCESS, scepter);
     }
 
-    private static void toggleItemMode(final EntityPlayer playerIn, final NBTTagCompound compound)
+    private static void toggleItemMode(final PlayerEntity playerIn, final CompoundNBT compound)
     {
         final String itemMode = compound.getString(TAG_ITEM_MODE);
 
         switch (itemMode)
         {
             case TAG_VALUE_MODE_BLOCK:
-                compound.setString(TAG_ITEM_MODE, TAG_VALUE_MODE_LOCATION);
+                compound.putString(TAG_ITEM_MODE, TAG_VALUE_MODE_LOCATION);
                 LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.item.permissionscepter.setmode", "location");
                 break;
 
             case TAG_VALUE_MODE_LOCATION:
             default:
-                compound.setString(TAG_ITEM_MODE, TAG_VALUE_MODE_BLOCK);
+                compound.putString(TAG_ITEM_MODE, TAG_VALUE_MODE_BLOCK);
                 LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.item.permissionscepter.setmode", "block");
 
                 break;
@@ -185,8 +185,8 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
 
     @NotNull
     private static EnumActionResult handleItemAction(
-                                               final NBTTagCompound compound,
-                                               final EntityPlayer playerIn,
+                                               final CompoundNBT compound,
+                                               final PlayerEntity playerIn,
                                                final World worldIn,
                                                final BlockPos pos,
                                                final IColonyView IColonyView)

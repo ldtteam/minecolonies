@@ -4,7 +4,7 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFenceGate;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.pathfinding.Path;
@@ -138,7 +138,7 @@ public class EntityAIGateInteract extends EntityAIBase
      */
     private BlockFenceGate getBlockFence(@NotNull final BlockPos pos)
     {
-        final IBlockState blockState = CompatibilityUtils.getWorldFromEntity(this.theEntity).getBlockState(pos);
+        final BlockState blockState = CompatibilityUtils.getWorldFromEntity(this.theEntity).getBlockState(pos);
         Block block = blockState.getBlock();
         if (!(block instanceof BlockFenceGate && blockState.getMaterial() == Material.WOOD))
         {

@@ -39,7 +39,7 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -298,13 +298,13 @@ public class EventHandler
             final ItemStack itemstack = event.getPlayer().getHeldItem(EnumHand.MAIN_HAND);
             if (!itemstack.hasTagCompound())
             {
-                itemstack.setTagCompound(new NBTTagCompound());
+                itemstack.putCompound(new CompoundNBT());
             }
-            final NBTTagCompound compound = itemstack.getTagCompound();
+            final CompoundNBT compound = itemstack.getTagCompound();
 
             BlockPosUtil.writeToNBT(compound, FIRST_POS_STRING, event.getPos());
             LanguageHandler.sendPlayerMessage(event.getPlayer(), "item.scepterSteel.point", event.getPos().getX(), event.getPos().getY(), event.getPos().getZ());
-            itemstack.setTagCompound(compound);
+            itemstack.putCompound(compound);
 
             event.setCanceled(true);
         }
@@ -320,7 +320,7 @@ public class EventHandler
     @SubscribeEvent
     public void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickBlock event)
     {
-        final EntityPlayer player = event.getEntityPlayer();
+        final PlayerEntity player = event.getEntityPlayer();
         final World world = event.getWorld();
         BlockPos bedBlockPos = event.getPos();
 
@@ -401,7 +401,7 @@ public class EventHandler
     @SubscribeEvent
     public void onBlockPlaced(@NotNull final BlockEvent.PlaceEvent event)
     {
-        final EntityPlayer player = event.getPlayer();
+        final PlayerEntity player = event.getPlayer();
         final World world = event.getWorld();
         if (event.getPlacedBlock().getBlock() instanceof AbstractBlockHut && event.getPlacedBlock().getBlock() != ModBlocks.blockPostBox)
         {
@@ -448,7 +448,7 @@ public class EventHandler
      * @param pos    the position.
      * @return if should be executed.
      */
-    private static boolean playerRightClickInteract(@NotNull final EntityPlayer player, final World world, final BlockPos pos)
+    private static boolean playerRightClickInteract(@NotNull final PlayerEntity player, final World world, final BlockPos pos)
     {
         return !player.isSneaking() || player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null
                  || player.getHeldItemMainhand().getItem().doesSneakBypassUse(player.getHeldItemMainhand(), world, pos, player);
@@ -460,7 +460,7 @@ public class EventHandler
      * @param event  the event.
      * @param player the player causing it.
      */
-    private static void handleEventCancellation(@NotNull final PlayerInteractEvent event, @NotNull final EntityPlayer player)
+    private static void handleEventCancellation(@NotNull final PlayerInteractEvent event, @NotNull final PlayerEntity player)
     {
         final Block heldBlock = Block.getBlockFromItem(player.getHeldItemMainhand().getItem());
         if (heldBlock instanceof AbstractBlockHut || heldBlock instanceof BlockHutField)
@@ -486,7 +486,7 @@ public class EventHandler
      * @param pos    The location of the block
      * @return false to cancel the event
      */
-    public static boolean onBlockHutPlaced(@NotNull final World world, @NotNull final EntityPlayer player, final Block block, final BlockPos pos)
+    public static boolean onBlockHutPlaced(@NotNull final World world, @NotNull final PlayerEntity player, final Block block, final BlockPos pos)
     {
         if (!Configurations.gameplay.allowOtherDimColonies && world.provider.getDimension() != 0)
         {
@@ -508,7 +508,7 @@ public class EventHandler
         }
     }
 
-    protected static boolean onTownHallPlaced(@NotNull final World world, @NotNull final EntityPlayer player, final BlockPos pos)
+    protected static boolean onTownHallPlaced(@NotNull final World world, @NotNull final PlayerEntity player, final BlockPos pos)
     {
         IColony colony = IColonyManager.getInstance().getIColonyByOwner(world, player);
         if (colony != null)
@@ -547,7 +547,7 @@ public class EventHandler
         return canPlayerPlaceTownHallHere(world, player, pos, colony);
     }
 
-    private static boolean onWareHousePlaced(final World world, final EntityPlayer player, final BlockPos pos)
+    private static boolean onWareHousePlaced(final World world, final PlayerEntity player, final BlockPos pos)
     {
         if (onBlockHutPlaced(world, player, pos))
         {
@@ -561,7 +561,7 @@ public class EventHandler
         return false;
     }
 
-    private static boolean onBlockHutPlaced(final World world, @NotNull final EntityPlayer player, final BlockPos pos)
+    private static boolean onBlockHutPlaced(final World world, @NotNull final PlayerEntity player, final BlockPos pos)
     {
         final IColony colony = IColonyManager.getInstance().getIColony(world, pos);
 
@@ -590,7 +590,7 @@ public class EventHandler
         }
     }
 
-    private static boolean canOwnerPlaceTownHallHere(final World world, @NotNull final EntityPlayer player, @NotNull final IColony colony, final BlockPos pos)
+    private static boolean canOwnerPlaceTownHallHere(final World world, @NotNull final PlayerEntity player, @NotNull final IColony colony, final BlockPos pos)
     {
         final IColony currentColony = IColonyManager.getInstance().getIColony(world, pos);
         if (currentColony != null && currentColony != colony)
@@ -644,7 +644,7 @@ public class EventHandler
         return true;
     }
 
-    private static boolean canPlayerPlaceTownHallHere(@NotNull final World world, @NotNull final EntityPlayer player, final BlockPos pos, @NotNull final IColony closestColony)
+    private static boolean canPlayerPlaceTownHallHere(@NotNull final World world, @NotNull final PlayerEntity player, final BlockPos pos, @NotNull final IColony closestColony)
     {
         // Is the player trying to place a town hall in a colony
         if (closestColony.isCoordInColony(world, pos))
@@ -707,7 +707,7 @@ public class EventHandler
     {
         if (event.getEntity() instanceof EntityPlayer)
         {
-            @NotNull EntityPlayer player = (EntityPlayer) event.getEntity();
+            @NotNull PlayerEntity player = (EntityPlayer) event.getEntity();
             if (PlayerProperties.get(player) == null)
             {
                 PlayerProperties.register(player);

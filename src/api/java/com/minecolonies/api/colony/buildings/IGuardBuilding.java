@@ -24,7 +24,7 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
      * @param player  the player.
      * @return false if in follow mode and following the player.
      */
-    static boolean checkIfGuardShouldTakeDamage(AbstractEntityCitizen citizen, EntityPlayer player)
+    static boolean checkIfGuardShouldTakeDamage(AbstractEntityCitizen citizen, PlayerEntity player)
     {
         final IBuildingWorker buildingWorker = citizen.getCitizenColonyHandler().getWorkBuilding();
         return !(buildingWorker instanceof IGuardBuilding) || ((IGuardBuilding) buildingWorker).getTask() != GuardTask.FOLLOW
@@ -48,9 +48,9 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
     /**
      * Entity of player to follow.
      *
-     * @return the entityPlayer reference.
+     * @return the PlayerEntity reference.
      */
-    EntityPlayer getFollowPlayer();
+    PlayerEntity getFollowPlayer();
 
     /**
      * Returns a patrolTarget to patrol to.
@@ -194,7 +194,7 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
      *
      * @param player the player to follow.
      */
-    void setPlayerToFollow(EntityPlayer player);
+    void setPlayerToFollow(PlayerEntity player);
 
     /**
      * Adds new patrolTargets.

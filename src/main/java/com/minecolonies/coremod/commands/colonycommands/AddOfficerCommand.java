@@ -58,7 +58,7 @@ public class AddOfficerCommand extends AbstractSingleCommand implements IActionC
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
         final IColony colony = actionMenuState.getColonyForArgument("colony");
-        final EntityPlayer player = actionMenuState.getPlayerForArgument("player");
+        final PlayerEntity player = actionMenuState.getPlayerForArgument("player");
 
         executeShared(server, sender, colony, player.getName());
     }
@@ -114,7 +114,7 @@ public class AddOfficerCommand extends AbstractSingleCommand implements IActionC
         final Entity senderEntity = sender.getCommandSenderEntity();
         if (senderEntity instanceof EntityPlayer)
         {
-            final EntityPlayer senderPlayer = (EntityPlayer) sender;
+            final PlayerEntity senderPlayer = (EntityPlayer) sender;
             if (!canPlayerUseCommand(senderPlayer, ADDOFFICER, colony.getID()))
             {
                 sender.sendMessage(new TextComponentString(NOT_PERMITTED));

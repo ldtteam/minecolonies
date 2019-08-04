@@ -61,7 +61,7 @@ public class LoadColonyBackupCommand extends AbstractSingleCommand implements IA
     }
 
     @Override
-    public boolean canRankUseCommand(@NotNull final IColony colony, @NotNull final EntityPlayer player)
+    public boolean canRankUseCommand(@NotNull final IColony colony, @NotNull final PlayerEntity player)
     {
         return colony.getPermissions().getRank(player).equals(Rank.OWNER);
     }
@@ -75,8 +75,8 @@ public class LoadColonyBackupCommand extends AbstractSingleCommand implements IA
             return;
         }
 
-        final int colonyId = actionMenuState.getIntegerForArgument("colony");
-        final int dimension = actionMenuState.getIntegerForArgument("dimension");
+        final int colonyId = actionMenuState.getIntForArgument("colony");
+        final int dimension = actionMenuState.getIntForArgument("dimension");
         server.addScheduledTask(() -> BackUpHelper.loadColonyBackup(colonyId, dimension));
     }
 

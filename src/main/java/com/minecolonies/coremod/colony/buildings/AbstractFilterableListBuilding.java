@@ -5,8 +5,8 @@ import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -46,17 +46,17 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        final NBTTagList filterableList = compound.getTagList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
+        final ListNBT filterableList = compound.getTagList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < filterableList.tagCount(); ++i)
         {
             try
             {
-                final NBTTagCompound listItem = filterableList.getCompoundTagAt(i);
+                final CompoundNBT listItem = filterableList.getCompoundTagAt(i);
                 final String id = listItem.getString(TAG_ID);
-                final NBTTagList filterableItems = listItem.getTagList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
+                final ListNBT filterableItems = listItem.getTagList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
                 final List<ItemStorage> items = new ArrayList<>();
                 for (int j = 0; j < filterableItems.tagCount(); ++j)
                 {
@@ -75,25 +75,25 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = super.serializeNBT();
-        @NotNull final NBTTagList filterableListCompound = new NBTTagList();
+        final CompoundNBT compound = super.serializeNBT();
+        @NotNull final ListNBT filterableListCompound = new ListNBT();
         for(@NotNull final Map.Entry<String, List<ItemStorage>> entry : itemsAllowed.entrySet())
         {
-            @NotNull final NBTTagCompound listCompound = new NBTTagCompound();
-            listCompound.setString(TAG_ID, entry.getKey());
-            @NotNull final NBTTagList filteredItems = new NBTTagList();
+            @NotNull final CompoundNBT listCompound = new CompoundNBT();
+            listCompound.putString(TAG_ID, entry.getKey());
+            @NotNull final ListNBT filteredItems = new ListNBT();
             for(@NotNull final ItemStorage item : entry.getValue())
             {
-                @NotNull final NBTTagCompound itemCompound = new NBTTagCompound();
+                @NotNull final CompoundNBT itemCompound = new CompoundNBT();
                 item.getItemStack().writeToNBT(itemCompound);
-                filteredItems.appendTag(itemCompound);
+                filteredItems.add(itemCompound);
             }
-            listCompound.setTag(TAG_ITEMLIST, filteredItems);
-            filterableListCompound.appendTag(listCompound);
+            listCompound.put(TAG_ITEMLIST, filteredItems);
+            filterableListCompound.add(listCompound);
         }
-        compound.setTag(TAG_ITEMLIST, filterableListCompound);
+        compound.put(TAG_ITEMLIST, filterableListCompound);
         return compound;
     }
 

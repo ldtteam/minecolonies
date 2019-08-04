@@ -8,7 +8,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.JobConstants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.colony.jobs.*;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,17 +76,17 @@ public class JobRegistry implements IJobRegistry
     }
 
     /**
-     * Create a Job from saved NBTTagCompound data.
+     * Create a Job from saved CompoundNBT data.
      *
      * @param citizen  The citizen that owns the Job.
-     * @param compound The NBTTagCompound containing the saved Job data.
+     * @param compound The CompoundNBT containing the saved Job data.
      * @return New Job created from the data, or null.
      */
     @Override
     @Nullable
-    public IJob createFromNBT(final ICitizenData citizen, @NotNull final NBTTagCompound compound)
+    public IJob createFromNBT(final ICitizenData citizen, @NotNull final CompoundNBT compound)
     {
-        final String jobType = compound.hasKey(NbtTagConstants.TAG_JOB_TYPE) ? compound.getString(NbtTagConstants.TAG_JOB_TYPE) : JobConstants.MAPPING_PLACEHOLDER;
+        final String jobType = compound.keySet().contains(NbtTagConstants.TAG_JOB_TYPE) ? compound.getString(NbtTagConstants.TAG_JOB_TYPE) : JobConstants.MAPPING_PLACEHOLDER;
         final IJob job = nameToConstructorMap.get(jobType).apply(citizen);
 
         if (job != null)

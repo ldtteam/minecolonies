@@ -8,7 +8,7 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 
 public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> extends AbstractBlockMinecoloniesHorizontal<B> implements IBlockMinecolonies<B>, ITileEntityProvider
 {
@@ -23,9 +23,9 @@ public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> exte
         super(blockMaterialIn);
     }
 
-    public static IBlockState changeStateOverFullness(
+    public static BlockState changeStateOverFullness(
       AbstractTileEntityBarrel entity,
-      IBlockState blockState
+      BlockState blockState
     )
     {
 

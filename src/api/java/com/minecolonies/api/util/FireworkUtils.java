@@ -4,8 +4,8 @@ import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 
@@ -58,16 +58,16 @@ public final class FireworkUtils
     {
         final Random rand = new Random();
         final ItemStack fireworkItem = new ItemStack(Items.FIREWORKS);
-        final NBTTagCompound itemStackCompound = fireworkItem.getTagCompound() != null ? fireworkItem.getTagCompound() : new NBTTagCompound();
-        final NBTTagCompound fireworksCompound = new NBTTagCompound();
-        final NBTTagList explosionsTagList = new NBTTagList();
+        final CompoundNBT itemStackCompound = fireworkItem.getTagCompound() != null ? fireworkItem.getTagCompound() : new CompoundNBT();
+        final CompoundNBT fireworksCompound = new CompoundNBT();
+        final ListNBT explosionsTagList = new ListNBT();
         for (int i = 0; i < explosionAmount; i++)
         {
-            final NBTTagCompound explosionTag = new NBTTagCompound();
+            final CompoundNBT explosionTag = new CompoundNBT();
 
-            explosionTag.setBoolean(TAG_FLICKER, rand.nextInt(2) == 0);
-            explosionTag.setBoolean(TAG_TRAIL, rand.nextInt(2) == 0);
-            explosionTag.setInteger(TAG_TYPE, rand.nextInt(5));
+            explosionTag.putBoolean(TAG_FLICKER, rand.nextInt(2) == 0);
+            explosionTag.putBoolean(TAG_TRAIL, rand.nextInt(2) == 0);
+            explosionTag.putInt(TAG_TYPE, rand.nextInt(5));
 
             final int numberOfColours = rand.nextInt(3) + 1;
             final int[] colors = new int[numberOfColours];
@@ -77,11 +77,11 @@ public final class FireworkUtils
                 colors[ia] = ItemDye.DYE_COLORS[rand.nextInt(15)];
             }
             explosionTag.setIntArray(TAG_COLORS, colors);
-            explosionsTagList.appendTag(explosionTag);
+            explosionsTagList.add(explosionTag);
         }
-        fireworksCompound.setTag(TAG_EXPLOSIONS, explosionsTagList);
-        itemStackCompound.setTag(TAG_FIREWORKS, fireworksCompound);
-        fireworkItem.setTagCompound(itemStackCompound);
+        fireworksCompound.put(TAG_EXPLOSIONS, explosionsTagList);
+        itemStackCompound.put(TAG_FIREWORKS, fireworksCompound);
+        fireworkItem.putCompound(itemStackCompound);
         return fireworkItem;
     }
 }

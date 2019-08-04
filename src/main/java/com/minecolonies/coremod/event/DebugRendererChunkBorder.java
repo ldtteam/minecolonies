@@ -35,7 +35,7 @@ public class DebugRendererChunkBorder
     public void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
     {
         final double partialTicks = event.getPartialTicks();
-        final EntityPlayer entityplayer = Minecraft.getMinecraft().player;
+        final PlayerEntity PlayerEntity = Minecraft.getMinecraft().player;
 
         if (entityplayer.getHeldItem(EnumHand.MAIN_HAND).getItem() != ModItems.buildTool)
         {
@@ -90,8 +90,8 @@ public class DebugRendererChunkBorder
 
         for (final Map.Entry<Tuple<Integer, Integer>, Integer> c : colonies.entrySet())
         {
-            final int x = c.getKey().getFirst();
-            final int z = c.getKey().getSecond();
+            final int x = c.getKey().getA();
+            final int z = c.getKey().getB();
             final int incX = x * 16;
             final int incZ = z * 16;
 

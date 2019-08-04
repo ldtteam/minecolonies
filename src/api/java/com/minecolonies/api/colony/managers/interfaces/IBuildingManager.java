@@ -7,7 +7,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -27,13 +27,13 @@ public interface IBuildingManager
      * Read the buildings from NBT.
      * @param compound the compound.
      */
-    void readFromNBT(@NotNull final NBTTagCompound compound);
+    void readFromNBT(@NotNull final CompoundNBT compound);
 
     /**
      * Write the buildings to NBT.
      * @param compound the compound.
      */
-    void writeToNBT(@NotNull final NBTTagCompound compound);
+    void writeToNBT(@NotNull final CompoundNBT compound);
 
     /**
      * Tick the buildings on server tick.

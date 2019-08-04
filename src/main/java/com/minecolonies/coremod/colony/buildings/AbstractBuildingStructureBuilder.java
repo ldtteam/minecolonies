@@ -13,9 +13,9 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -129,47 +129,47 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        final NBTTagList neededResTagList = compound.getTagList(TAG_RESOURCE_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+        final ListNBT neededResTagList = compound.getTagList(TAG_RESOURCE_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < neededResTagList.tagCount(); ++i)
         {
-            final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
+            final CompoundNBT neededRes = neededResTagList.getCompoundTagAt(i);
             final ItemStack stack = new ItemStack(neededRes);
             final BuildingBuilderResource resource = new BuildingBuilderResource(stack, ItemStackUtils.getSize(stack));
             final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
             neededResources.put(stack.getTranslationKey() + ":" + stack.getItemDamage() + "-" + hashCode, resource);
         }
 
-        if (compound.hasKey(TAG_PROGRESS_POS))
+        if (compound.keySet().contains(TAG_PROGRESS_POS))
         {
             progressPos = BlockPosUtil.readFromNBT(compound, TAG_PROGRESS_POS);
-            progressStage = StructureIterator.Stage.values()[compound.getInteger(TAG_PROGRESS_STAGE)];
+            progressStage = StructureIterator.Stage.values()[compound.getInt(TAG_PROGRESS_STAGE)];
         }
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = super.serializeNBT();
+        final CompoundNBT compound = super.serializeNBT();
 
-        @NotNull final NBTTagList neededResTagList = new NBTTagList();
+        @NotNull final ListNBT neededResTagList = new ListNBT();
         for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
-            @NotNull final NBTTagCompound neededRes = new NBTTagCompound();
+            @NotNull final CompoundNBT neededRes = new CompoundNBT();
             final ItemStack itemStack = new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
-            itemStack.setTagCompound(resource.getItemStack().getTagCompound());
+            itemStack.putCompound(resource.getItemStack().getTagCompound());
             itemStack.writeToNBT(neededRes);
 
-            neededResTagList.appendTag(neededRes);
+            neededResTagList.add(neededRes);
         }
 
-        compound.setTag(TAG_RESOURCE_LIST, neededResTagList);
+        compound.put(TAG_RESOURCE_LIST, neededResTagList);
         if (progressPos != null)
         {
             BlockPosUtil.writeToNBT(compound, TAG_PROGRESS_POS, progressPos);
-            compound.setInteger(TAG_PROGRESS_STAGE, progressStage.ordinal());
+            compound.putInt(TAG_PROGRESS_STAGE, progressStage.ordinal());
         }
 
         return compound;
@@ -216,8 +216,8 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 else
                 {
                     final BlockPos relativePos = getPosition().subtract(pos);
-                    final EnumFacing facingX = EnumFacing.getFacingFromVector(relativePos.getX(), 0, 0);
-                    final EnumFacing facingZ = EnumFacing.getFacingFromVector(0, 0, relativePos.getZ());
+                    final Direction facingX = Direction.getFacingFromVector(relativePos.getX(), 0, 0);
+                    final Direction facingZ = Direction.getFacingFromVector(0, 0, relativePos.getZ());
                     desc = relativePos.getX() + " " + facingX + " " + relativePos.getZ() + " " + facingZ;
                 }
 

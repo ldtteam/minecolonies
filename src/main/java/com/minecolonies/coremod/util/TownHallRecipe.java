@@ -6,7 +6,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -70,7 +70,7 @@ public class TownHallRecipe extends ShapedRecipes
                 if (playerField.isPresent())
                 {
                     playerField.get().setAccessible(true);
-                    final EntityPlayer player = (EntityPlayer) playerField.get().get(inventoryCrafting.eventHandler);
+                    final PlayerEntity player = (EntityPlayer) playerField.get().get(inventoryCrafting.eventHandler);
                     if (player instanceof EntityPlayerMP)
                     {
                         return ((EntityPlayerMP) player).getStatFile().readStat(Objects.requireNonNull(StatList.getObjectUseStats(ModItems.supplyChest))) > 0

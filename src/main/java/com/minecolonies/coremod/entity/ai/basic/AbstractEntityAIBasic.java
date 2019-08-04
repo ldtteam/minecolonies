@@ -30,11 +30,11 @@ import com.minecolonies.coremod.entity.ai.minimal.EntityAIStatePausedHandler;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -1303,10 +1303,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return targetPos;
         }
 
-        @NotNull final EnumFacing[] directions = {EnumFacing.EAST, EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.SOUTH};
+        @NotNull final Direction[] directions = {Direction.EAST, Direction.WEST, Direction.NORTH, Direction.SOUTH};
 
         //then get a solid place with two air spaces above it in any direction.
-        for (final EnumFacing direction : directions)
+        for (final Direction direction : directions)
         {
             @NotNull final BlockPos positionInDirection = getPositionInDirection(direction, distance + offset, targetPos);
             if (EntityUtils.checkForFreeSpace(world, positionInDirection)
@@ -1329,7 +1329,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @return a BlockPos position.
      */
     @NotNull
-    private BlockPos getPositionInDirection(final EnumFacing facing, final int distance, final BlockPos targetPos)
+    private BlockPos getPositionInDirection(final Direction facing, final int distance, final BlockPos targetPos)
     {
         return BlockPosUtil.getFloor(targetPos.offset(facing, distance), world);
     }

@@ -3,11 +3,11 @@ package com.minecolonies.api.util;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import net.minecraft.block.*;
 import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.*;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -32,18 +32,18 @@ public final class BlockUtils
      * Predicated to determine if a block is free to place.
      */
     @NotNull
-    private static final List<BiPredicate<Block, IBlockState>> freeToPlaceBlocks =
+    private static final List<BiPredicate<Block, BlockState>> freeToPlaceBlocks =
       Arrays.asList(
-        (block, iBlockState) -> block.equals(Blocks.AIR),
-        (block, iBlockState) -> iBlockState.getMaterial().isLiquid(),
-        (block, iBlockState) -> BlockUtils.isWater(block.getDefaultState()),
-        (block, iBlockState) -> block.equals(Blocks.LEAVES),
-        (block, iBlockState) -> block.equals(Blocks.LEAVES2),
-        (block, iBlockState) -> block.equals(Blocks.DOUBLE_PLANT),
-        (block, iBlockState) -> block.equals(Blocks.GRASS),
-        (block, iBlockState) -> block instanceof BlockDoor
-                                  && iBlockState != null
-                                  && iBlockState.getValue(PropertyBool.create("upper"))
+        (block, BlockState) -> block.equals(Blocks.AIR),
+        (block, BlockState) -> BlockState.getMaterial().isLiquid(),
+        (block, BlockState) -> BlockUtils.isWater(block.getDefaultState()),
+        (block, BlockState) -> block.equals(Blocks.LEAVES),
+        (block, BlockState) -> block.equals(Blocks.LEAVES2),
+        (block, BlockState) -> block.equals(Blocks.DOUBLE_PLANT),
+        (block, BlockState) -> block.equals(Blocks.GRASS),
+        (block, BlockState) -> block instanceof DoorBlock
+                                  && BlockState != null
+                                  && BlockState.getValue(PropertyBool.create("upper"))
 
       );
 
@@ -82,11 +82,11 @@ public final class BlockUtils
      *
      * @param world    the world the block is in.
      * @param location the location it is at.
-     * @return the IBlockState of the filler block.
+     * @return the BlockState of the filler block.
      */
-    public static IBlockState getSubstitutionBlockAtWorld(@NotNull final World world, @NotNull final BlockPos location)
+    public static BlockState getSubstitutionBlockAtWorld(@NotNull final World world, @NotNull final BlockPos location)
     {
-        final IBlockState filler = world.getBiome(location).fillerBlock;
+        final BlockState filler = world.getBiome(location).fillerBlock;
         if (filler.getBlock() == Blocks.SAND)
         {
             return Blocks.SANDSTONE.getDefaultState();
@@ -118,7 +118,7 @@ public final class BlockUtils
      * @param facing the block facing.
      * @return the int rotation.
      */
-    public static int getRotationFromFacing(final EnumFacing facing)
+    public static int getRotationFromFacing(final Direction facing)
     {
         switch (facing)
         {
@@ -155,13 +155,13 @@ public final class BlockUtils
      * @param blockState the state this block has.
      * @return true if we can just place it.
      */
-    public static boolean freeToPlace(@Nullable final Block block, final IBlockState blockState)
+    public static boolean freeToPlace(@Nullable final Block block, final BlockState blockState)
     {
         if (block == null)
         {
             return true;
         }
-        for (@NotNull final BiPredicate<Block, IBlockState> predicate : freeToPlaceBlocks)
+        for (@NotNull final BiPredicate<Block, BlockState> predicate : freeToPlaceBlocks)
         {
             if (predicate.test(block, blockState))
             {
@@ -174,13 +174,13 @@ public final class BlockUtils
     /**
      * Checks if the block is water.
      *
-     * @param iBlockState block state to be checked.
+     * @param BlockState block state to be checked.
      * @return true if is water.
      */
-    public static boolean isWater(final IBlockState iBlockState)
+    public static boolean isWater(final BlockState BlockState)
     {
-        return Objects.equals(iBlockState, Blocks.WATER.getDefaultState())
-                 || Objects.equals(iBlockState, Blocks.FLOWING_WATER.getDefaultState());
+        return Objects.equals(BlockState, Blocks.WATER.getDefaultState())
+                 || Objects.equals(BlockState, Blocks.FLOWING_WATER.getDefaultState());
     }
 
     /**
@@ -195,7 +195,7 @@ public final class BlockUtils
         return BlockUtils.getItem(world.getBlockState(pos.up())) instanceof ItemSeeds;
     }
 
-    private static Item getItem(@NotNull final IBlockState blockState)
+    private static Item getItem(@NotNull final BlockState blockState)
     {
         if (blockState.getBlock().equals(Blocks.LAVA))
         {
@@ -239,7 +239,7 @@ public final class BlockUtils
         {
             return Item.getItemFromBlock(Blocks.DAYLIGHT_DETECTOR);
         }
-        else if (blockState.getBlock() instanceof BlockDoor)
+        else if (blockState.getBlock() instanceof DoorBlock)
         {
             final Item item = blockState.getBlock() == Blocks.IRON_DOOR ? Items.IRON_DOOR
                                 : (blockState.getBlock() == Blocks.SPRUCE_DOOR ? Items.SPRUCE_DOOR
@@ -359,7 +359,7 @@ public final class BlockUtils
      * @param blockState the block and state we are creating an ItemStack for.
      * @return ItemStack fromt the BlockState.
      */
-    public static ItemStack getItemStackFromBlockState(@NotNull final IBlockState blockState)
+    public static ItemStack getItemStackFromBlockState(@NotNull final BlockState blockState)
     {
         if(blockState.getBlock() instanceof IFluidBlock)
         {
@@ -390,7 +390,7 @@ public final class BlockUtils
      * @param blockState the state.
      * @return the int damage value.
      */
-    private static int getDamageValue(final Block block, @NotNull final IBlockState blockState)
+    private static int getDamageValue(final Block block, @NotNull final BlockState blockState)
     {
         if (block instanceof BlockFarmland || blockState.getBlock() instanceof BlockFarmland)
         {
@@ -449,7 +449,7 @@ public final class BlockUtils
      */
     public static boolean isGrassOrDirt(
                                          @NotNull final Block structureBlock, @NotNull final Block worldBlock,
-                                         @NotNull final IBlockState structureMetaData, @NotNull final IBlockState worldMetadata)
+                                         @NotNull final BlockState structureMetaData, @NotNull final BlockState worldMetadata)
     {
         if ((structureBlock == Blocks.DIRT || structureBlock == Blocks.GRASS) && (worldBlock == Blocks.DIRT || worldBlock == Blocks.GRASS))
         {

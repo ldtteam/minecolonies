@@ -5,7 +5,7 @@ import com.minecolonies.api.compatibility.tinkers.SlimeTreeCheck;
 import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.api.compatibility.tinkers.ToolBrokenCheck;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -92,7 +92,7 @@ public final class Compatibility
      * @param leaf the leaf.
      * @return the variant.
      */
-    public static int getLeafVariant(@NotNull final IBlockState leaf)
+    public static int getLeafVariant(@NotNull final BlockState leaf)
     {
         return SlimeTreeCheck.getLeafVariant(leaf);
     }
@@ -194,7 +194,7 @@ public final class Compatibility
      * @param fortune    amount of fortune to use
      * @param leaf       The leaf to check
      */
-    public static NonNullList<ItemStack> getDropsForDynamicLeaf(final IBlockAccess world, final BlockPos pos, final IBlockState blockState, final int fortune, final Block leaf)
+    public static NonNullList<ItemStack> getDropsForDynamicLeaf(final IBlockAccess world, final BlockPos pos, final BlockState blockState, final int fortune, final Block leaf)
     {
         return DynamicTreeCompat.getDropsForLeafCompat(world, pos, blockState, fortune, leaf);
     }

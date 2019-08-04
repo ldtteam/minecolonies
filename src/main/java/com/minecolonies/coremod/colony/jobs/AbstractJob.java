@@ -15,7 +15,7 @@ import com.minecolonies.coremod.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.util.Constants;
@@ -122,9 +122,9 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = new NBTTagCompound();
+        final CompoundNBT compound = new CompoundNBT();
 
         final String s = IJobRegistry.getInstance().getClassToNameMap().get(this.getClass());
 
@@ -133,46 +133,46 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
             throw new IllegalStateException(this.getClass() + " is missing a mapping! This is a bug!");
         }
 
-        compound.setString(TAG_JOB_TYPE, s);
-        compound.setTag(TAG_ASYNC_REQUESTS, getAsyncRequests().stream().map(StandardFactoryController.getInstance()::serialize).collect(NBTUtils.toNBTTagList()));
-        compound.setInteger(TAG_ACTIONS_DONE, actionsDone);
+        compound.putString(TAG_JOB_TYPE, s);
+        compound.put(TAG_ASYNC_REQUESTS, getAsyncRequests().stream().map(StandardFactoryController.getInstance()::serialize).collect(NBTUtils.toListNBT()));
+        compound.putInt(TAG_ACTIONS_DONE, actionsDone);
 
         return compound;
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         this.asyncRequests.clear();
-        if (compound.hasKey(TAG_ASYNC_REQUESTS))
+        if (compound.keySet().contains(TAG_ASYNC_REQUESTS))
         {
             this.asyncRequests.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_ASYNC_REQUESTS, Constants.NBT.TAG_COMPOUND))
                                         .map(StandardFactoryController.getInstance()::deserialize)
                                         .map(o -> (IToken) o)
                                         .collect(Collectors.toSet()));
         }
-        if (compound.hasKey(TAG_ACTIONS_DONE))
+        if (compound.keySet().contains(TAG_ACTIONS_DONE))
         {
-            actionsDone = compound.getInteger(TAG_ACTIONS_DONE);
+            actionsDone = compound.getInt(TAG_ACTIONS_DONE);
         }
     }
 
     /**
-     * Save the Job to an NBTTagCompound.
+     * Save the Job to an CompoundNBT.
      *
-     * @param compound NBTTagCompound to save the Job to.
+     * @param compound CompoundNBT to save the Job to.
      */
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
 
     }
 
     /**
-     * Restore the Job from an NBTTagCompound.
+     * Restore the Job from an CompoundNBT.
      *
-     * @param compound NBTTagCompound containing saved Job data.
+     * @param compound CompoundNBT containing saved Job data.
      */
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
 
     }

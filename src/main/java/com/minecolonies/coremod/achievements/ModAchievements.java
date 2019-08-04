@@ -4,7 +4,7 @@ import com.minecolonies.api.achievements.IMineColoniesAchievement;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.init.Items;
 
 /**

@@ -15,7 +15,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsVi
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -162,11 +162,11 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
 
-        if (compound.hasKey(TAG_REPLANT))
+        if (compound.keySet().contains(TAG_REPLANT))
         {
             replant = compound.getBoolean(TAG_REPLANT);
         }
@@ -177,11 +177,11 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = super.serializeNBT();
+        final CompoundNBT compound = super.serializeNBT();
 
-        compound.setBoolean(TAG_REPLANT, replant);
+        compound.putBoolean(TAG_REPLANT, replant);
 
         return compound;
     }

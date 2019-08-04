@@ -3,7 +3,7 @@ package com.minecolonies.api.colony.requestsystem.factory;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.util.constant.Suppression;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -121,7 +121,7 @@ public interface IFactoryController
      *
      * @throws IllegalArgumentException is thrown when the output type is unknown to this controller.
      */
-    <Output extends Object> NBTTagCompound serialize(@NotNull final Output object) throws IllegalArgumentException;
+    <Output extends Object> CompoundNBT serialize(@NotNull final Output object) throws IllegalArgumentException;
 
     /**
      * Method used to quickly deserialize a object if it is known to this controller.
@@ -132,7 +132,7 @@ public interface IFactoryController
      *
      * @throws IllegalArgumentException is thrown when the type stored in the data is unknown to this controller.
      */
-    <Output> Output deserialize(@NotNull final NBTTagCompound compound) throws IllegalArgumentException;
+    <Output> Output deserialize(@NotNull final CompoundNBT compound) throws IllegalArgumentException;
 
     /**
      * Method used to quickly write an object into the given {@link ByteBuf}.

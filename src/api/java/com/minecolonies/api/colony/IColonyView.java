@@ -395,10 +395,10 @@ public interface IColonyView extends IColony
     IRequester getRequesterBuildingForPosition(@NotNull BlockPos pos);
 
     @Override
-    void removeVisitingPlayer(EntityPlayer player);
+    void removeVisitingPlayer(PlayerEntity player);
 
     @Override
-    void addVisitingPlayer(EntityPlayer player);
+    void addVisitingPlayer(PlayerEntity player);
 
     /**
      * Get all the data indices about happiness

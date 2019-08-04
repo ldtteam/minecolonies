@@ -3,7 +3,7 @@ package com.minecolonies.coremod.items;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemArmor;
 
 import net.minecraftforge.common.util.EnumHelper;
@@ -27,7 +27,7 @@ public class ItemPirateGear extends ItemArmor
       @NotNull final CreativeTabs tab,
       @NotNull final ArmorMaterial materialIn,
       final int renderIndexIn,
-      @NotNull final EntityEquipmentSlot equipmentSlotIn)
+      @NotNull final EquipmentSlotType equipmentSlotIn)
     {
         super(materialIn, renderIndexIn, equipmentSlotIn);
         setTranslationKey(name);

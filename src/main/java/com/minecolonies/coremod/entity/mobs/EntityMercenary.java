@@ -24,9 +24,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumHand;
@@ -133,21 +133,21 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
 
         final ItemStack mainhand = new ItemStack(Items.GOLDEN_SWORD, 1);
         mainhand.addEnchantment(Enchantments.FIRE_ASPECT, 1);
-        this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, mainhand);
+        this.setItemStackToSlot(EquipmentSlotType.MAINHAND, mainhand);
 
         final ItemStack helmet = new ItemStack(Items.DIAMOND_HELMET, 1);
         helmet.addEnchantment(Enchantments.PROTECTION, 4);
-        this.setItemStackToSlot(EntityEquipmentSlot.HEAD, helmet);
+        this.setItemStackToSlot(EquipmentSlotType.HEAD, helmet);
 
         final ItemStack chest = new ItemStack(Items.GOLDEN_CHESTPLATE, 1);
         chest.addEnchantment(Enchantments.PROTECTION, 4);
-        this.setItemStackToSlot(EntityEquipmentSlot.CHEST, chest);
+        this.setItemStackToSlot(EquipmentSlotType.CHEST, chest);
 
         final ItemStack legs = new ItemStack(Items.CHAINMAIL_LEGGINGS, 1);
-        this.setItemStackToSlot(EntityEquipmentSlot.LEGS, legs);
+        this.setItemStackToSlot(EquipmentSlotType.LEGS, legs);
 
         final ItemStack boots = new ItemStack(Items.CHAINMAIL_BOOTS, 1);
-        this.setItemStackToSlot(EntityEquipmentSlot.FEET, boots);
+        this.setItemStackToSlot(EquipmentSlotType.FEET, boots);
 
         this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
         this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.3);
@@ -283,20 +283,20 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
     }
 
     @Override
-    public NBTTagCompound writeToNBT(final NBTTagCompound compound)
+    public CompoundNBT writeToNBT(final CompoundNBT compound)
     {
         compound.setLong(TAG_TIME, worldTimeAtSpawn);
-        compound.setInteger(TAG_COLONY_ID, this.colony == null ? 0 : colony.getID());
+        compound.putInt(TAG_COLONY_ID, this.colony == null ? 0 : colony.getID());
         return super.writeToNBT(compound);
     }
 
     @Override
-    public void readFromNBT(final NBTTagCompound compound)
+    public void readFromNBT(final CompoundNBT compound)
     {
         worldTimeAtSpawn = compound.getLong(TAG_TIME);
-        if (compound.hasKey(TAG_COLONY_ID))
+        if (compound.keySet().contains(TAG_COLONY_ID))
         {
-            final int colonyId = compound.getInteger(TAG_COLONY_ID);
+            final int colonyId = compound.getInt(TAG_COLONY_ID);
             if (colonyId != 0)
             {
                 setColony(IColonyManager.getInstance().getColonyByWorld(colonyId, world));

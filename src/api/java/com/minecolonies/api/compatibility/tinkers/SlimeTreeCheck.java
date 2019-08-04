@@ -1,7 +1,7 @@
 package com.minecolonies.api.compatibility.tinkers;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
 import slimeknights.tconstruct.shared.TinkerCommons;
@@ -86,7 +86,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      */
     @Override
     @Optional.Method(modid = TCONSTRUCT)
-    public int getTinkersLeafVariant(@NotNull final IBlockState leaf)
+    public int getTinkersLeafVariant(@NotNull final BlockState leaf)
     {
         return leaf.getValue(BlockSlimeGrass.FOLIAGE).getMeta();
     }
@@ -130,7 +130,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @param leaf the leaf.
      * @return the variant.
      */
-    public static int getLeafVariant(@NotNull final IBlockState leaf)
+    public static int getLeafVariant(@NotNull final BlockState leaf)
     {
         return new SlimeTreeCheck().getTinkersLeafVariant(leaf);
     }

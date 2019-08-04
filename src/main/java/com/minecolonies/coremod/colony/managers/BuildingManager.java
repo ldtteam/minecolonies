@@ -25,8 +25,8 @@ import com.minecolonies.coremod.network.messages.ColonyViewRemoveBuildingMessage
 import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
 import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -94,13 +94,13 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         //  Buildings
-        final NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT buildingTagList = compound.getTagList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < buildingTagList.tagCount(); ++i)
         {
-            final NBTTagCompound buildingCompound = buildingTagList.getCompoundTagAt(i);
+            final CompoundNBT buildingCompound = buildingTagList.getCompoundTagAt(i);
             @Nullable final IBuilding b = BuildingRegistry.createFromNBT(colony, buildingCompound);
             if (b != null)
             {
@@ -108,10 +108,10 @@ public class BuildingManager implements IBuildingManager
             }
         }
 
-        if(compound.hasKey(TAG_NEW_FIELDS))
+        if(compound.keySet().contains(TAG_NEW_FIELDS))
         {
             // Fields before Buildings, because the Farmer needs them.
-            final NBTTagList fieldTagList = compound.getTagList(TAG_NEW_FIELDS, Constants.NBT.TAG_COMPOUND);
+            final ListNBT fieldTagList = compound.getTagList(TAG_NEW_FIELDS, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < fieldTagList.tagCount(); ++i)
             {
                 addField(BlockPosUtil.readFromNBT(fieldTagList.getCompoundTagAt(i), TAG_POS));
@@ -120,26 +120,26 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         //  Buildings
-        @NotNull final NBTTagList buildingTagList = new NBTTagList();
+        @NotNull final ListNBT buildingTagList = new ListNBT();
         for (@NotNull final IBuilding b : buildings.values())
         {
-            @NotNull final NBTTagCompound buildingCompound = b.serializeNBT();
-            buildingTagList.appendTag(buildingCompound);
+            @NotNull final CompoundNBT buildingCompound = b.serializeNBT();
+            buildingTagList.add(buildingCompound);
         }
-        compound.setTag(TAG_BUILDINGS, buildingTagList);
+        compound.put(TAG_BUILDINGS, buildingTagList);
 
         // Fields
-        @NotNull final NBTTagList fieldTagList = new NBTTagList();
+        @NotNull final ListNBT fieldTagList = new ListNBT();
         for (@NotNull final BlockPos pos : fields)
         {
-            @NotNull final NBTTagCompound fieldCompound = new NBTTagCompound();
+            @NotNull final CompoundNBT fieldCompound = new CompoundNBT();
             BlockPosUtil.writeToNBT(fieldCompound, TAG_POS, pos);
-            fieldTagList.appendTag(fieldCompound);
+            fieldTagList.add(fieldCompound);
         }
-        compound.setTag(TAG_NEW_FIELDS, fieldTagList);
+        compound.put(TAG_NEW_FIELDS, fieldTagList);
     }
 
     @Override
@@ -357,7 +357,7 @@ public class BuildingManager implements IBuildingManager
                       workOrder.getRotation(world),
                       workOrder.isMirrored());
 
-                    building.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
+                    building.setCorners(corners.getA().getA(), corners.getA().getB(), corners.getB().getA(), corners.getB().getB());
                     building.setHeight(wrapper.getHeight());
 
                     ConstructionTapeHelper.placeConstructionTape(building.getPosition(), corners, world);

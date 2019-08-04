@@ -49,7 +49,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand implements
     }
 
     @Override
-    public boolean canRankUseCommand(@NotNull final IColony colony, @NotNull final EntityPlayer player)
+    public boolean canRankUseCommand(@NotNull final IColony colony, @NotNull final PlayerEntity player)
     {
         return false;
     }
@@ -79,7 +79,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand implements
 
     private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final boolean confirmDelete) throws CommandException
     {
-        if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
+        if (sender instanceof PlayerEntity && !isPlayerOpped(sender))
         {
             sender.sendMessage(new TextComponentString("Must be OP to use command"));
             return;

@@ -28,7 +28,7 @@ public interface IPermissions
      * @param action {@link Action} action.
      * @return true if has permission, otherwise false.
      */
-    boolean hasPermission(EntityPlayer player, Action action);
+    boolean hasPermission(PlayerEntity player, Action action);
 
     boolean addPlayer(@NotNull String player, Rank rank, World world);
 
@@ -43,14 +43,14 @@ public interface IPermissions
      * @param player {@link EntityPlayer} to check.
      * @return true if the player is a member of the colony.
      */
-    boolean isColonyMember(EntityPlayer player);
+    boolean isColonyMember(PlayerEntity player);
 
     void togglePermission(Rank rank, @NotNull Action action);
 
     @Nullable
     Map.Entry<UUID, Player> getOwnerEntry();
 
-    boolean setOwner(EntityPlayer player);
+    boolean setOwner(PlayerEntity player);
 
     @NotNull
     UUID getOwner();
@@ -76,7 +76,7 @@ public interface IPermissions
     @NotNull
     Rank getRank(UUID player);
 
-    Rank getRank(EntityPlayer player);
+    Rank getRank(PlayerEntity player);
 
     void restoreOwnerIfNull();
 

@@ -58,7 +58,7 @@ public class TextField extends Pane
     public TextField(@NotNull final PaneParams params)
     {
         super(params);
-        maxTextLength = params.getIntegerAttribute("maxlength", maxTextLength);
+        maxTextLength = params.getIntAttribute("maxlength", maxTextLength);
         textColor = params.getColorAttribute("color", textColor);
         textColorDisabled = params.getColorAttribute("colordisabled", textColorDisabled);
         shadow = params.getBooleanAttribute("shadow", shadow);

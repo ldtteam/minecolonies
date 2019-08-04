@@ -4,10 +4,10 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -75,8 +75,8 @@ public class DecorationControllUpdateMessage extends AbstractMessage<DecorationC
         final TileEntity tileEntity = player.getServerWorld().getTileEntity(message.pos);
         if (tileEntity instanceof TileEntityDecorationController)
         {
-            final IBlockState state = player.getServerWorld().getBlockState(message.pos);
-            final EnumFacing basicFacing = state.getValue(BlockDecorationController.FACING);
+            final BlockState state = player.getServerWorld().getBlockState(message.pos);
+            final Direction basicFacing = state.getValue(BlockDecorationController.FACING);
             ((TileEntityDecorationController) tileEntity).setSchematicName(message.name);
             ((TileEntityDecorationController) tileEntity).setLevel(message.level);
             ((TileEntityDecorationController) tileEntity).setBasicFacing(basicFacing);

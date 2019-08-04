@@ -58,9 +58,9 @@ public final class SortingUtils
 
             final Tuple<AtomicInteger, Map<Integer, Integer>> tuple = SortingUtils.calcRequiredSlots(map);
             final double totalSlots = inv.getSlots();
-            final int totalReq = tuple.getFirst().get();
+            final int totalReq = tuple.getA().get();
             map.entrySet().stream().sorted(SortingUtils::compare)
-              .forEach(entry -> SortingUtils.pushIntoInv(runCount, entry, inv, tuple.getFirst(), totalSlots, totalReq, tuple.getSecond()));
+              .forEach(entry -> SortingUtils.pushIntoInv(runCount, entry, inv, tuple.getA(), totalSlots, totalReq, tuple.getB()));
         }
     }
 

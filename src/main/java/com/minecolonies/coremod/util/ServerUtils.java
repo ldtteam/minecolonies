@@ -27,14 +27,14 @@ public final class ServerUtils
     }
 
     /**
-     * Returns the online EntityPlayer with the given UUID.
+     * Returns the online PlayerEntity with the given UUID.
      *
      * @param world world the player is in
      * @param id    the player's UUID
      * @return the Player
      */
     @Nullable
-    public static EntityPlayer getPlayerFromUUID(@NotNull final World world, @NotNull final UUID id)
+    public static PlayerEntity getPlayerFromUUID(@NotNull final World world, @NotNull final UUID id)
     {
         for (int i = 0; i < world.playerEntities.size(); ++i)
         {
@@ -66,7 +66,7 @@ public final class ServerUtils
         {
             if (o instanceof EntityPlayer)
             {
-                @NotNull final EntityPlayer player = (EntityPlayer) o;
+                @NotNull final PlayerEntity player = (EntityPlayer) o;
                 if (ids.contains(player.getGameProfile().getId()))
                 {
                     players.add(player);
@@ -120,7 +120,7 @@ public final class ServerUtils
      * @return The {@link EntityPlayer} reference.
      */
     @Nullable
-    public static EntityPlayer getPlayerFromPermPlayer(@NotNull final Player player, @NotNull final World world)
+    public static PlayerEntity getPlayerFromPermPlayer(@NotNull final Player player, @NotNull final World world)
     {
         return ServerUtils.getPlayerFromUUID(player.getID(), world);
     }
@@ -135,7 +135,7 @@ public final class ServerUtils
      * @return The player the player if found or null
      */
     @Nullable
-    public static EntityPlayer getPlayerFromUUID(@Nullable final UUID uuid, @NotNull final World world)
+    public static PlayerEntity getPlayerFromUUID(@Nullable final UUID uuid, @NotNull final World world)
     {
         if (uuid == null)
         {

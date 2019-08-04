@@ -26,10 +26,10 @@ import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
 import com.minecolonies.coremod.event.EventHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
@@ -56,7 +56,7 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
     /**
      * The state at the offset position.
      */
-    private IBlockState state;
+    private BlockState state;
 
     private String   structureName;
     private String   workOrderName;
@@ -91,7 +91,7 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
       final int rotation,
       final Mirror mirror,
       final IBuildingView building,
-      final IBlockState state)
+      final BlockState state)
     {
         super();
         this.structureName = structureName;
@@ -134,7 +134,7 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
         buf.writeInt(rotation);
         buf.writeBoolean(mirror);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
-        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new NBTTagCompound(), state));
+        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new CompoundNBT(), state));
     }
 
     @Override
@@ -162,9 +162,9 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
      * @param state         the hut state.
      */
     private static void handleHut(
-      @NotNull final World world, @NotNull final EntityPlayer player,
+      @NotNull final World world, @NotNull final PlayerEntity player,
       final StructureName sn,
-      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockPos oldBuildingId, final IBlockState state)
+      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockPos oldBuildingId, final BlockState state)
     {
         final String hut = sn.getSection();
         final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
@@ -214,7 +214,7 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
      * @param oldBuilding The old building id.
      */
     private static void setupBuilding(
-      @NotNull final World world, @NotNull final EntityPlayer player,
+      @NotNull final World world, @NotNull final PlayerEntity player,
       final StructureName sn,
       final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, @Nullable final IBuilding oldBuilding)
     {

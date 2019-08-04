@@ -1,13 +1,13 @@
 package com.minecolonies.api.colony.buildings;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
 
-public interface ISchematicProvider extends INBTSerializable<NBTTagCompound>
+public interface ISchematicProvider extends INBTSerializable<CompoundNBT>
 {
     /**
      * Returns the {@code BlockPos} of the current object, also used as ID.

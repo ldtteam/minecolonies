@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 public class IntegerFactory implements IFactory<FactoryVoidInput,Integer>
@@ -35,19 +35,19 @@ public class IntegerFactory implements IFactory<FactoryVoidInput,Integer>
 
     @NotNull
     @Override
-    public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final Integer integer)
+    public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final Integer integer)
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        CompoundNBT compound = new CompoundNBT();
 
-        compound.setInteger(NbtTagConstants.TAG_VALUE, integer);
+        compound.putInt(NbtTagConstants.TAG_VALUE, integer);
 
         return compound;
     }
 
     @NotNull
     @Override
-    public Integer deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+    public Integer deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
-        return nbt.getInteger(NbtTagConstants.TAG_VALUE);
+        return nbt.getInt(NbtTagConstants.TAG_VALUE);
     }
 }

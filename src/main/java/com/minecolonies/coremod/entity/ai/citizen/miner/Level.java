@@ -3,8 +3,8 @@ package com.minecolonies.coremod.entity.ai.citizen.miner;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
@@ -138,11 +138,11 @@ public class Level
      *
      * @param compound compound to use.
      */
-    public Level(@NotNull final NBTTagCompound compound)
+    public Level(@NotNull final CompoundNBT compound)
     {
 
-        this.depth = compound.getInteger(TAG_DEPTH);
-        if (compound.hasKey(TAG_LEVEL_SIGN))
+        this.depth = compound.getInt(TAG_DEPTH);
+        if (compound.keySet().contains(TAG_LEVEL_SIGN))
         {
             this.levelSign = BlockPosUtil.readFromNBT(compound, TAG_LEVEL_SIGN);
         }
@@ -151,14 +151,14 @@ public class Level
             this.levelSign = null;
         }
 
-        final NBTTagList nodeTagList = compound.getTagList(TAG_NODES, Constants.NBT.TAG_COMPOUND);
+        final ListNBT nodeTagList = compound.getTagList(TAG_NODES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < nodeTagList.tagCount(); i++)
         {
             @NotNull final Node node = Node.createFromNBT(nodeTagList.getCompoundTagAt(i));
             this.nodes.put(new Vec2i(node.getX(), node.getZ()), node);
         }
 
-        final boolean hasDoubles = compound.hasKey(TAG_LADDERX, Constants.NBT.TAG_DOUBLE);
+        final boolean hasDoubles = compound.keySet().contains(TAG_LADDERX, Constants.NBT.TAG_DOUBLE);
 
         final int ladderX;
         final int ladderZ;
@@ -169,14 +169,14 @@ public class Level
         }
         else
         {
-            ladderX = compound.getInteger(TAG_LADDERX);
-            ladderZ = compound.getInteger(TAG_LADDERZ);
+            ladderX = compound.getInt(TAG_LADDERX);
+            ladderZ = compound.getInt(TAG_LADDERZ);
         }
 
         this.ladderNode = this.nodes.get(new Vec2i(ladderX, ladderZ));
 
 
-        final NBTTagList openNodeTagList = compound.getTagList(TAG_OPEN_NODES, Constants.NBT.TAG_COMPOUND);
+        final ListNBT openNodeTagList = compound.getTagList(TAG_OPEN_NODES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < openNodeTagList.tagCount(); i++)
         {
             @NotNull final Node node = Node.createFromNBT(openNodeTagList.getCompoundTagAt(i));
@@ -300,34 +300,34 @@ public class Level
      *
      * @param compound compound to use.
      */
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
-        compound.setInteger(TAG_DEPTH, depth);
+        compound.putInt(TAG_DEPTH, depth);
         if (levelSign != null)
         {
             BlockPosUtil.writeToNBT(compound, TAG_LEVEL_SIGN, levelSign);
         }
 
-        @NotNull final NBTTagList nodeTagList = new NBTTagList();
+        @NotNull final ListNBT nodeTagList = new ListNBT();
         for (@NotNull final Node node : nodes.values())
         {
-            @NotNull final NBTTagCompound nodeCompound = new NBTTagCompound();
+            @NotNull final CompoundNBT nodeCompound = new CompoundNBT();
             node.writeToNBT(nodeCompound);
-            nodeTagList.appendTag(nodeCompound);
+            nodeTagList.add(nodeCompound);
         }
-        compound.setTag(TAG_NODES, nodeTagList);
+        compound.put(TAG_NODES, nodeTagList);
 
-        compound.setInteger(TAG_LADDERX, ladderNode.getX());
-        compound.setInteger(TAG_LADDERZ, ladderNode.getZ());
+        compound.putInt(TAG_LADDERX, ladderNode.getX());
+        compound.putInt(TAG_LADDERZ, ladderNode.getZ());
 
-        @NotNull final NBTTagList openNodeTagList = new NBTTagList();
+        @NotNull final ListNBT openNodeTagList = new ListNBT();
         for (@NotNull final Node node : openNodes)
         {
-            @NotNull final NBTTagCompound nodeCompound = new NBTTagCompound();
+            @NotNull final CompoundNBT nodeCompound = new CompoundNBT();
             node.writeToNBT(nodeCompound);
-            openNodeTagList.appendTag(nodeCompound);
+            openNodeTagList.add(nodeCompound);
         }
-        compound.setTag(TAG_OPEN_NODES, openNodeTagList);
+        compound.put(TAG_OPEN_NODES, openNodeTagList);
     }
 
     @NotNull

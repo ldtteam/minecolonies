@@ -1,8 +1,8 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -63,7 +63,7 @@ public interface IRaiderManager
      * @param directionZ the second direction paramter.
      * @return the position.
      */
-    BlockPos getRandomOutsiderInDirection(final EnumFacing directionX, final EnumFacing directionZ);
+    BlockPos getRandomOutsiderInDirection(final Direction directionX, final Direction directionZ);
 
     /**
      * Getter for the last spawn points.
@@ -103,7 +103,7 @@ public interface IRaiderManager
      * Reads the raider manager from NBT.
      * @param compound the compound to read it from.
      */
-    void readFromNBT(@NotNull NBTTagCompound compound);
+    void readFromNBT(@NotNull CompoundNBT compound);
 
     /**
      * To be executed on each colony world tick.
@@ -115,5 +115,5 @@ public interface IRaiderManager
      * Writes the raider manager to NBT.
      * @param compound the compound to write it to.
      */
-    void writeToNBT(@NotNull NBTTagCompound compound);
+    void writeToNBT(@NotNull CompoundNBT compound);
 }

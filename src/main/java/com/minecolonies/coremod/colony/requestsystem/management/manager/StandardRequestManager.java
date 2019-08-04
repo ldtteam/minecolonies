@@ -21,7 +21,7 @@ import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequest
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.*;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -386,20 +386,20 @@ public class StandardRequestManager implements IStandardRequestManager
      * @return The NBTData that describes the current request system
      */
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound systemCompound = new NBTTagCompound();
-        systemCompound.setInteger(NBT_VERSION, version);
+        final CompoundNBT systemCompound = new CompoundNBT();
+        systemCompound.putInt(NBT_VERSION, version);
 
-        systemCompound.setTag(NBT_DATASTORE, getFactoryController().serialize(dataStoreManager));
-        systemCompound.setTag(NBT_ID_REQUEST_IDENTITIES, getFactoryController().serialize(requestIdentitiesDataStoreId));
-        systemCompound.setTag(NBT_ID_REQUEST_RESOLVER_IDENTITIES, getFactoryController().serialize(requestResolverIdentitiesDataStoreId));
-        systemCompound.setTag(NBT_ID_PROVIDER_ASSIGNMENTS, getFactoryController().serialize(providerRequestResolverAssignmentDataStoreId));
-        systemCompound.setTag(NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS, getFactoryController().serialize(requestResolverRequestAssignmentDataStoreId));
-        systemCompound.setTag(NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS, getFactoryController().serialize(requestableTypeRequestResolverAssignmentDataStoreId));
+        systemCompound.put(NBT_DATASTORE, getFactoryController().serialize(dataStoreManager));
+        systemCompound.put(NBT_ID_REQUEST_IDENTITIES, getFactoryController().serialize(requestIdentitiesDataStoreId));
+        systemCompound.put(NBT_ID_REQUEST_RESOLVER_IDENTITIES, getFactoryController().serialize(requestResolverIdentitiesDataStoreId));
+        systemCompound.put(NBT_ID_PROVIDER_ASSIGNMENTS, getFactoryController().serialize(providerRequestResolverAssignmentDataStoreId));
+        systemCompound.put(NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS, getFactoryController().serialize(requestResolverRequestAssignmentDataStoreId));
+        systemCompound.put(NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS, getFactoryController().serialize(requestableTypeRequestResolverAssignmentDataStoreId));
 
-        systemCompound.setTag(NBT_ID_PLAYER, getFactoryController().serialize(playerRequestResolverId));
-        systemCompound.setTag(NBT_ID_RETRYING, getFactoryController().serialize(retryingRequestResolverId));
+        systemCompound.put(NBT_ID_PLAYER, getFactoryController().serialize(playerRequestResolverId));
+        systemCompound.put(NBT_ID_RETRYING, getFactoryController().serialize(retryingRequestResolverId));
 
         return systemCompound;
     }
@@ -410,53 +410,53 @@ public class StandardRequestManager implements IStandardRequestManager
      * @param nbt The data to deserialize.
      */
     @Override
-    public void deserializeNBT(final NBTTagCompound nbt)
+    public void deserializeNBT(final CompoundNBT nbt)
     {
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_VERSION,
-          NBTTagCompound::getInteger,
+          CompoundNBT::getInt,
           v -> version = v);
 
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_DATASTORE,
-          NBTTagCompound::getCompoundTag,
+          CompoundNBT::getCompoundTag,
           c -> dataStoreManager = getFactoryController().deserialize(c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUEST_IDENTITIES,
-          NBTTagCompound::getCompoundTag,
+          CompoundNBT::getCompoundTag,
           c -> requestIdentitiesDataStoreId = getFactoryController().deserialize(c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUEST_RESOLVER_IDENTITIES,
-          NBTTagCompound::getCompoundTag,
+          CompoundNBT::getCompoundTag,
           c -> requestResolverIdentitiesDataStoreId = getFactoryController().deserialize(c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_PROVIDER_ASSIGNMENTS,
-          NBTTagCompound::getCompoundTag,
+          CompoundNBT::getCompoundTag,
           c -> providerRequestResolverAssignmentDataStoreId = getFactoryController().deserialize(c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS,
-          NBTTagCompound::getCompoundTag,
+          CompoundNBT::getCompoundTag,
           c -> requestResolverRequestAssignmentDataStoreId = getFactoryController().deserialize(c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS,
-          NBTTagCompound::getCompoundTag,
+          CompoundNBT::getCompoundTag,
           c -> requestableTypeRequestResolverAssignmentDataStoreId = getFactoryController().deserialize(c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_PLAYER,
-          NBTTagCompound::getCompoundTag,
+          CompoundNBT::getCompoundTag,
           c -> playerRequestResolverId = getFactoryController().deserialize(c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_RETRYING,
-          NBTTagCompound::getCompoundTag,
+          CompoundNBT::getCompoundTag,
           c -> retryingRequestResolverId = getFactoryController().deserialize(c));
 
         updateIfRequired();
     }
 
-    private <T> void executeDeserializationStepOrMarkForUpdate(@NotNull final NBTTagCompound nbt, @NotNull final String key, @NotNull final BiFunction<NBTTagCompound, String, T> extractor, @NotNull final Consumer<T> valueConsumer)
+    private <T> void executeDeserializationStepOrMarkForUpdate(@NotNull final CompoundNBT nbt, @NotNull final String key, @NotNull final BiFunction<CompoundNBT, String, T> extractor, @NotNull final Consumer<T> valueConsumer)
     {
         if (!nbt.hasKey(key))
         {

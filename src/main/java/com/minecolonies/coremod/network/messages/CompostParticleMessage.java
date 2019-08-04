@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
@@ -65,11 +65,11 @@ public class CompostParticleMessage extends AbstractMessage<CompostParticleMessa
         final WorldClient world = ctx.getClientHandler().world;
         final int amount = random.nextInt(15) + 1;
         final BlockPos pos = message.pos;
-        final IBlockState iblockstate = world.getBlockState(pos);
+        final BlockState BlockState = world.getBlockState(pos);
         double d0;
         double d1;
         double d2;
-        if (iblockstate.getMaterial() != Material.AIR)
+        if (BlockState.getMaterial() != Material.AIR)
         {
             for (int i = 0; i < amount; ++i)
             {
@@ -78,7 +78,7 @@ public class CompostParticleMessage extends AbstractMessage<CompostParticleMessa
                 d2 = random.nextGaussian() * 0.02D;
                 world.spawnParticle(EnumParticleTypes.VILLAGER_HAPPY,
                   (double) ((float) pos.getX() + random.nextFloat()),
-                  (double) pos.getY() + (double) random.nextFloat() * iblockstate.getBoundingBox(world, pos).maxY,
+                  (double) pos.getY() + (double) random.nextFloat() * BlockState.getBoundingBox(world, pos).maxY,
                   (double) ((float) pos.getZ() + random.nextFloat()),
                   d0,
                   d1,

@@ -32,7 +32,7 @@ import com.minecolonies.coremod.event.DebugRendererChunkBorder;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -138,7 +138,7 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void openSuggestionWindow(@NotNull final BlockPos pos, @NotNull final IBlockState state, @NotNull final ItemStack stack)
+    public void openSuggestionWindow(@NotNull final BlockPos pos, @NotNull final BlockState state, @NotNull final ItemStack stack)
     {
         new WindowSuggestBuildTool(pos, state, stack).open();
     }
@@ -321,7 +321,7 @@ public class ClientProxy extends CommonProxy
 
     @NotNull
     @Override
-    public RecipeBook getRecipeBookFromPlayer(@NotNull final EntityPlayer player)
+    public RecipeBook getRecipeBookFromPlayer(@NotNull final PlayerEntity player)
     {
         if (player instanceof EntityPlayerSP)
         {

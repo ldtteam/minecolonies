@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverFactor
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -45,21 +45,21 @@ public class BuildingRequestResolverFactory implements IRequestResolverFactory<B
 
     @NotNull
     @Override
-    public NBTTagCompound serialize(
+    public CompoundNBT serialize(
                                      @NotNull final IFactoryController controller, @NotNull final BuildingRequestResolver deliveryRequestResolver)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
-        compound.setTag(NBT_TOKEN, controller.serialize(deliveryRequestResolver.getId()));
-        compound.setTag(NBT_LOCATION, controller.serialize(deliveryRequestResolver.getLocation()));
+        final CompoundNBT compound = new CompoundNBT();
+        compound.put(NBT_TOKEN, controller.serialize(deliveryRequestResolver.getId()));
+        compound.put(NBT_LOCATION, controller.serialize(deliveryRequestResolver.getLocation()));
         return compound;
     }
 
     @NotNull
     @Override
-    public BuildingRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+    public BuildingRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
-        final IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
-        final ILocation location = controller.deserialize(nbt.getCompoundTag(NBT_LOCATION));
+        final IToken token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
+        final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
 
         return new BuildingRequestResolver(location, token);
     }

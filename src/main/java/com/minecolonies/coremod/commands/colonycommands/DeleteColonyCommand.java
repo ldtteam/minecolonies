@@ -59,7 +59,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
     }
 
     @Override
-    public boolean canRankUseCommand(@NotNull final IColony colony, @NotNull final EntityPlayer player)
+    public boolean canRankUseCommand(@NotNull final IColony colony, @NotNull final PlayerEntity player)
     {
         return colony.getPermissions().getRank(player).equals(Rank.OWNER);
     }
@@ -150,7 +150,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
 
         if (senderEntity instanceof EntityPlayer)
         {
-            final EntityPlayer player = (EntityPlayer) sender;
+            final PlayerEntity player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, DELETECOLONY, colony.getID()))
             {
                 sender.sendMessage(new TextComponentString(NOT_PERMITTED));

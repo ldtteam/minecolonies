@@ -14,15 +14,15 @@ import net.minecraft.block.BlockRedstoneOre;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.NonNullList;
@@ -267,7 +267,7 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public ItemStack getSaplingForLeaf(final IBlockState block)
+    public ItemStack getSaplingForLeaf(final BlockState block)
     {
         final BlockStateStorage tempLeaf = new BlockStateStorage(block, leafCompareWithoutProperties, true);
 
@@ -309,7 +309,7 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public boolean isOre(final IBlockState block)
+    public boolean isOre(final BlockState block)
     {
         if (block.getBlock() instanceof BlockOre || block.getBlock() instanceof BlockRedstoneOre)
         {
@@ -369,28 +369,28 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
-        @NotNull final NBTTagList saplingsLeavesTagList =
+        @NotNull final ListNBT saplingsLeavesTagList =
           leavesToSaplingMap.entrySet()
             .stream()
             .filter(entry -> entry.getKey() != null)
             .map(entry -> writeLeafSaplingEntryToNBT(entry.getKey().getState(), entry.getValue()))
-            .collect(NBTUtils.toNBTTagList());
-        compound.setTag(TAG_SAP_LEAF, saplingsLeavesTagList);
+            .collect(NBTUtils.toListNBT());
+        compound.put(TAG_SAP_LEAF, saplingsLeavesTagList);
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         NBTUtils.streamCompound(compound.getTagList(TAG_SAP_LEAF, Constants.NBT.TAG_COMPOUND))
           .map(CompatibilityManager::readLeafSaplingEntryFromNBT)
-          .filter(key -> !leavesToSaplingMap.containsKey(key.getFirst()) && !leavesToSaplingMap.containsValue(key.getSecond()))
-          .forEach(key -> leavesToSaplingMap.put(new BlockStateStorage(key.getFirst(), leafCompareWithoutProperties, true), key.getSecond()));
+          .filter(key -> !leavesToSaplingMap.containsKey(key.getA()) && !leavesToSaplingMap.containsValue(key.getB()))
+          .forEach(key -> leavesToSaplingMap.put(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true), key.getB()));
     }
 
     @Override
-    public void connectLeafToSapling(final IBlockState leaf, final ItemStack stack)
+    public void connectLeafToSapling(final BlockState leaf, final ItemStack stack)
     {
         final BlockStateStorage store = new BlockStateStorage(leaf, leafCompareWithoutProperties, true);
         if (!leavesToSaplingMap.containsKey(store))
@@ -660,7 +660,7 @@ public class CompatibilityManager implements ICompatibilityManager
                     continue;
                 }
 
-                final ItemStorage meshStorage = sifterMeshes.get(mesh).getFirst();
+                final ItemStorage meshStorage = sifterMeshes.get(mesh).getA();
 
                 final String[] item = drop[2].split(":");
                 final String itemName = item[0] + ":" + item[1];
@@ -788,15 +788,15 @@ public class CompatibilityManager implements ICompatibilityManager
         }
     }
 
-    private static NBTTagCompound writeLeafSaplingEntryToNBT(final IBlockState state, final ItemStorage storage)
+    private static CompoundNBT writeLeafSaplingEntryToNBT(final BlockState state, final ItemStorage storage)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
+        final CompoundNBT compound = new CompoundNBT();
         NBTUtil.writeBlockState(compound, state);
         storage.getItemStack().writeToNBT(compound);
         return compound;
     }
 
-    private static Tuple<IBlockState, ItemStorage> readLeafSaplingEntryFromNBT(final NBTTagCompound compound)
+    private static Tuple<BlockState, ItemStorage> readLeafSaplingEntryFromNBT(final CompoundNBT compound)
     {
         return new Tuple<>(NBTUtil.readBlockState(compound), new ItemStorage(new ItemStack(compound), false, true));
     }

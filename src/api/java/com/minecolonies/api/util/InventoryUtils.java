@@ -8,7 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -487,7 +487,7 @@ public class InventoryUtils
     }
 
     /**
-     * Method to process the given predicate for all {@link EnumFacing} of a
+     * Method to process the given predicate for all {@link Direction} of a
      * {@link ICapabilityProvider}, including the internal one (passing null as
      * argument).
      *
@@ -521,7 +521,7 @@ public class InventoryUtils
     @NotNull
     public static Set<IItemHandler> getItemHandlersFromProvider(@NotNull final ICapabilityProvider provider)
     {
-        final Set<IItemHandler> handlerList = Arrays.stream(EnumFacing.VALUES)
+        final Set<IItemHandler> handlerList = Arrays.stream(Direction.VALUES)
           .filter(facing -> provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
           .map(facing -> provider.getCapability(ITEM_HANDLER_CAPABILITY, facing))
           .filter(Objects::nonNull)
@@ -1046,7 +1046,7 @@ public class InventoryUtils
      * @param provider The provider to check for.
      * @return True when the provider has multiple distinct IItemHandler of
      * different sides (sidedness {@link ICapabilityProvider#hasCapability(Capability,
-     * EnumFacing)}), false when not
+     * Direction)}), false when not
      */
     @NotNull
     public static boolean isProviderSided(@NotNull final ICapabilityProvider provider)
@@ -1058,14 +1058,14 @@ public class InventoryUtils
      * Returns an {@link IItemHandler} as list of item stacks.
      *
      * @param provider The {@link ICapabilityProvider} that holds the {@link
-     *                 IItemHandler} for the given {@link EnumFacing}
+     *                 IItemHandler} for the given {@link Direction}
      * @param facing   The facing to get the {@link IItemHandler} from. Can be
      *                 null for the internal one {@link ICapabilityProvider#hasCapability(Capability,
-     *                 EnumFacing)}
+     *                 Direction)}
      * @return List of item stacks.
      */
     @NotNull
-    public static List<ItemStack> getInventoryAsListFromProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final EnumFacing facing)
+    public static List<ItemStack> getInventoryAsListFromProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final Direction facing)
     {
         return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), (ItemStack stack) -> true);
     }
@@ -1077,10 +1077,10 @@ public class InventoryUtils
      * Predicate.
      *
      * @param provider The {@link ICapabilityProvider} that holds the {@link
-     *                 IItemHandler} for the given {@link EnumFacing}
+     *                 IItemHandler} for the given {@link Direction}
      * @param facing   The facing to get the {@link IItemHandler} from. Can be
      *                 null for the internal one {@link ICapabilityProvider#hasCapability(Capability,
-     *                 EnumFacing)}
+     *                 Direction)}
      * @param block    Block to filter
      * @param metaData the damage value.
      * @return List of item stacks
@@ -1088,7 +1088,7 @@ public class InventoryUtils
     @NotNull
     public static List<ItemStack> filterItemHandlerFromProviderForSide(
                                                                         @NotNull final ICapabilityProvider provider,
-                                                                        @Nullable final EnumFacing facing,
+                                                                        @Nullable final Direction facing,
                                                                         @NotNull final Block block,
                                                                         final int metaData)
     {
@@ -1101,10 +1101,10 @@ public class InventoryUtils
      * parameters, in an {@link IItemHandler}.
      *
      * @param provider   The {@link ICapabilityProvider} that holds the {@link
-     *                   IItemHandler} for the given {@link EnumFacing}
+     *                   IItemHandler} for the given {@link Direction}
      * @param facing     The facing to get the {@link IItemHandler} from. Can be
      *                   null for the internal one {@link ICapabilityProvider#hasCapability(Capability,
-     *                   EnumFacing)}
+     *                   Direction)}
      * @param targetItem Item to look for
      * @param itemDamage the damage value.
      * @return List of item stacks with the given item in inventory
@@ -1112,7 +1112,7 @@ public class InventoryUtils
     @NotNull
     public static List<ItemStack> filterItemHandlerFromProviderForSide(
                                                                         @NotNull final ICapabilityProvider provider,
-                                                                        @Nullable final EnumFacing facing,
+                                                                        @Nullable final Direction facing,
                                                                         @NotNull final Item targetItem,
                                                                         final int itemDamage)
     {
@@ -1125,18 +1125,18 @@ public class InventoryUtils
      *
      * @param provider                    The {@link ICapabilityProvider} that
      *                                    holds the {@link IItemHandler} for the
-     *                                    given {@link EnumFacing}
+     *                                    given {@link Direction}
      * @param facing                      The facing to get the {@link
      *                                    IItemHandler} from. Can be null for
      *                                    the internal one {@link ICapabilityProvider#hasCapability(Capability,
-     *                                    EnumFacing)}
+     *                                    Direction)}
      * @param itemStackSelectionPredicate The predicate to match the stack to.
      * @return List of item stacks that match the given predicate.
      */
     @NotNull
     public static List<ItemStack> filterItemHandlerFromProviderForSide(
                                                                         @NotNull final ICapabilityProvider provider,
-                                                                        @Nullable final EnumFacing facing,
+                                                                        @Nullable final Direction facing,
                                                                         @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
@@ -1149,7 +1149,7 @@ public class InventoryUtils
 
     /**
      * Returns the index of the first occurrence of the block in the {@link
-     * ICapabilityProvider} for a given {@link EnumFacing}.
+     * ICapabilityProvider} for a given {@link Direction}.
      *
      * @param provider   {@link ICapabilityProvider} to check.
      * @param facing     The facing to check for.
@@ -1159,7 +1159,7 @@ public class InventoryUtils
      */
     public static int findFirstSlotInProviderForSideWith(
                                                           @NotNull final ICapabilityProvider provider,
-                                                          @Nullable final EnumFacing facing,
+                                                          @Nullable final Direction facing,
                                                           @NotNull final Block block,
                                                           final int itemDamage)
     {
@@ -1169,7 +1169,7 @@ public class InventoryUtils
     /**
      * Returns the index of the first occurrence of the Item with the given
      * ItemDamage in the {@link ICapabilityProvider} for a given {@link
-     * EnumFacing}.
+     * Direction}.
      *
      * @param provider   {@link ICapabilityProvider} to check
      * @param facing     The facing to check for.
@@ -1179,7 +1179,7 @@ public class InventoryUtils
      */
     public static int findFirstSlotInProviderForSideWith(
                                                           @NotNull final ICapabilityProvider provider,
-                                                          @Nullable final EnumFacing facing,
+                                                          @Nullable final Direction facing,
                                                           @NotNull final Item targetItem,
                                                           final int itemDamage)
     {
@@ -1189,7 +1189,7 @@ public class InventoryUtils
     /**
      * Returns the index of the first occurrence of an ItemStack that matches
      * the given predicate in the {@link ICapabilityProvider} for a given {@link
-     * EnumFacing}.
+     * Direction}.
      *
      * @param provider                    Provider to check
      * @param facing                      The facing to check for.
@@ -1198,7 +1198,7 @@ public class InventoryUtils
      */
     public static int findFirstSlotInProviderForSideWith(
                                                           @NotNull final ICapabilityProvider provider,
-                                                          @Nullable final EnumFacing facing,
+                                                          @Nullable final Direction facing,
                                                           @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
@@ -1213,7 +1213,7 @@ public class InventoryUtils
 
     /**
      * Returns the amount of occurrences in the {@link ICapabilityProvider} for
-     * a given {@link EnumFacing}.
+     * a given {@link Direction}.
      *
      * @param provider   {@link ICapabilityProvider} to scan.
      * @param facing     The facing to count in.
@@ -1224,7 +1224,7 @@ public class InventoryUtils
      */
     public static int getItemCountInProviderForSide(
                                                      @NotNull final ICapabilityProvider provider,
-                                                     @Nullable final EnumFacing facing,
+                                                     @Nullable final Direction facing,
                                                      @NotNull final Block block,
                                                      final int itemDamage)
     {
@@ -1233,7 +1233,7 @@ public class InventoryUtils
 
     /**
      * Returns the amount of occurrences in the {@link ICapabilityProvider} for
-     * a given {@link EnumFacing}.
+     * a given {@link Direction}.
      *
      * @param provider   {@link ICapabilityProvider} to scan.
      * @param facing     The facing to count in.
@@ -1244,7 +1244,7 @@ public class InventoryUtils
      */
     public static int getItemCountInProviderForSide(
                                                      @NotNull final ICapabilityProvider provider,
-                                                     @Nullable final EnumFacing facing,
+                                                     @Nullable final Direction facing,
                                                      @NotNull final Item targetItem,
                                                      final int itemDamage)
     {
@@ -1253,7 +1253,7 @@ public class InventoryUtils
 
     /**
      * Returns the amount of occurrences in the {@link ICapabilityProvider} for
-     * a given {@link EnumFacing}.
+     * a given {@link Direction}.
      *
      * @param provider                    {@link ICapabilityProvider} to scan.
      * @param facing                      The facing to count in.
@@ -1263,7 +1263,7 @@ public class InventoryUtils
      */
     public static int getItemCountInProviderForSide(
                                                      @NotNull final ICapabilityProvider provider,
-                                                     @Nullable final EnumFacing facing,
+                                                     @Nullable final Direction facing,
                                                      @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
@@ -1276,7 +1276,7 @@ public class InventoryUtils
 
     /**
      * Checks if a player has a block in the {@link ICapabilityProvider}, for a
-     * given {@link EnumFacing}. Checked by {@link #getItemCountInProvider(ICapabilityProvider,
+     * given {@link Direction}. Checked by {@link #getItemCountInProvider(ICapabilityProvider,
      * Block, int)} &gt; 0;
      *
      * @param provider   {@link ICapabilityProvider} to scan
@@ -1285,14 +1285,14 @@ public class InventoryUtils
      * @param itemDamage the damage value.
      * @return True when in {@link ICapabilityProvider}, otherwise false
      */
-    public static boolean hasItemInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final EnumFacing facing, @NotNull final Block block, final int itemDamage)
+    public static boolean hasItemInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final Direction facing, @NotNull final Block block, final int itemDamage)
     {
         return hasItemInProviderForSide(provider, facing, getItemFromBlock(block), itemDamage);
     }
 
     /**
      * Checks if a player has an item in the {@link ICapabilityProvider}, for a
-     * given {@link EnumFacing}. Checked by {@link #getItemCountInProvider(ICapabilityProvider,
+     * given {@link Direction}. Checked by {@link #getItemCountInProvider(ICapabilityProvider,
      * Item, int)} &gt; 0;
      *
      * @param provider   {@link ICapabilityProvider} to scan
@@ -1301,14 +1301,14 @@ public class InventoryUtils
      * @param itemDamage the damage value of the item.
      * @return True when in {@link ICapabilityProvider}, otherwise false
      */
-    public static boolean hasItemInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final EnumFacing facing, @NotNull final Item item, final int itemDamage)
+    public static boolean hasItemInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final Direction facing, @NotNull final Item item, final int itemDamage)
     {
         return hasItemInProviderForSide(provider, facing, (ItemStack stack) -> compareItems(stack, item, itemDamage));
     }
 
     /**
      * Checks if a player has an item in the {@link ICapabilityProvider}, for a
-     * given {@link EnumFacing}. Checked by {@link InventoryUtils#getItemCountInProvider(ICapabilityProvider,
+     * given {@link Direction}. Checked by {@link InventoryUtils#getItemCountInProvider(ICapabilityProvider,
      * Predicate)} &gt; 0;
      *
      * @param provider                    {@link ICapabilityProvider} to scan
@@ -1319,7 +1319,7 @@ public class InventoryUtils
      */
     public static boolean hasItemInProviderForSide(
                                                     @NotNull final ICapabilityProvider provider,
-                                                    @Nullable final EnumFacing facing,
+                                                    @Nullable final Direction facing,
                                                     @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
@@ -1332,26 +1332,26 @@ public class InventoryUtils
 
     /**
      * Returns if the {@link ICapabilityProvider} is full, for a given {@link
-     * EnumFacing}.
+     * Direction}.
      *
      * @param provider The {@link ICapabilityProvider}.
      * @param facing   The side to check for.
      * @return True if the {@link ICapabilityProvider} is full, false when not.
      */
-    public static boolean isProviderFull(@NotNull final ICapabilityProvider provider, @Nullable final EnumFacing facing)
+    public static boolean isProviderFull(@NotNull final ICapabilityProvider provider, @Nullable final Direction facing)
     {
         return getFirstOpenSlotFromProviderForSide(provider, facing) == -1;
     }
 
     /**
      * Returns the first open slot in the {@link ICapabilityProvider}, for a
-     * given {@link EnumFacing}.
+     * given {@link Direction}.
      *
      * @param provider The {@link ICapabilityProvider} to check.
      * @param facing   The side to check for.
      * @return slot index or -1 if none found.
      */
-    public static int getFirstOpenSlotFromProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final EnumFacing facing)
+    public static int getFirstOpenSlotFromProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final Direction facing)
     {
         if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
         {
@@ -1363,7 +1363,7 @@ public class InventoryUtils
 
     /**
      * Checks if the {@link ICapabilityProvider} contains the following toolName
-     * with the given minimal Level, for a given {@link EnumFacing}.
+     * with the given minimal Level, for a given {@link Direction}.
      *
      * @param provider     The {@link ICapabilityProvider} to scan.
      * @param facing       The side to check for.
@@ -1374,7 +1374,7 @@ public class InventoryUtils
      * {@link ICapabilityProvider}, false when not.
      */
     public static boolean isToolInProviderForSide(
-                                                   @NotNull final ICapabilityProvider provider, @Nullable final EnumFacing facing, @NotNull final IToolType toolType,
+                                                   @NotNull final ICapabilityProvider provider, @Nullable final Direction facing, @NotNull final IToolType toolType,
                                                    final int minimalLevel, final int maximumLevel)
     {
         if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))

@@ -27,7 +27,7 @@ public class CommandEntryPointNew extends AbstractCommandParser
             return IColonyManager.getInstance().getAllColonies();
         }
 
-        public IColony getIColonyByOwner(final World entityWorld, final EntityPlayer sender)
+        public IColony getIColonyByOwner(final World entityWorld, final PlayerEntity sender)
         {
             return IColonyManager.getInstance().getIColonyByOwner(entityWorld, sender);
         }
@@ -40,7 +40,7 @@ public class CommandEntryPointNew extends AbstractCommandParser
 
     public class ForgeCommandsPermissionsChecker implements PermissionsChecker
     {
-        public boolean hasPermission(final ForgePermissionNodes forgePermissionNode, final EntityPlayer player)
+        public boolean hasPermission(final ForgePermissionNodes forgePermissionNode, final PlayerEntity player)
         {
             return PermissionAPI.hasPermission(player.getGameProfile(), forgePermissionNode.getNodeName(), new PlayerContext(player));
         }

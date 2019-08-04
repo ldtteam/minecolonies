@@ -114,7 +114,7 @@ public class ColonyPackageManager implements IColonyPackageManager
                 .forEach(subscribers::add);
 
         //  Add nearby players
-        for (final EntityPlayer o : world.playerEntities)
+        for (final PlayerEntity o : world.playerEntities)
         {
             if (o instanceof EntityPlayerMP)
             {

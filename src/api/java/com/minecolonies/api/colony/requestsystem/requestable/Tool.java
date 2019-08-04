@@ -6,9 +6,9 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -56,17 +56,17 @@ public class Tool implements IDeliverable
      * Serializes this Tool into NBT.
      *
      * @param controller The IFactoryController used to serialize sub types.
-     * @return The NBTTagCompound containing the tool data.
+     * @return The CompoundNBT containing the tool data.
      */
     @NotNull
-    public static NBTTagCompound serialize(final IFactoryController controller, final Tool tool)
+    public static CompoundNBT serialize(final IFactoryController controller, final Tool tool)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
+        final CompoundNBT compound = new CompoundNBT();
 
-        compound.setString(NBT_TYPE, tool.getToolClass().getName());
-        compound.setInteger(NBT_MIN_LEVEL, tool.getMinLevel());
-        compound.setInteger(NBT_MAX_LEVEL, tool.getMaxLevel());
-        compound.setTag(NBT_RESULT, tool.getResult().serializeNBT());
+        compound.putString(NBT_TYPE, tool.getToolClass().getName());
+        compound.putInt(NBT_MIN_LEVEL, tool.getMinLevel());
+        compound.putInt(NBT_MAX_LEVEL, tool.getMaxLevel());
+        compound.put(NBT_RESULT, tool.getResult().serializeNBT());
 
         return compound;
     }
@@ -121,13 +121,13 @@ public class Tool implements IDeliverable
      * @return An instance of Tool with the data contained in the given NBT.
      */
     @NotNull
-    public static Tool deserialize(final IFactoryController controller, final NBTTagCompound nbt)
+    public static Tool deserialize(final IFactoryController controller, final CompoundNBT nbt)
     {
         //API:Map the given strings a proper way.
         final IToolType type = ToolType.getToolType(nbt.getString(NBT_TYPE));
-        final Integer minLevel = nbt.getInteger(NBT_MIN_LEVEL);
-        final Integer maxLevel = nbt.getInteger(NBT_MAX_LEVEL);
-        final ItemStack result = new ItemStack(nbt.getCompoundTag(NBT_RESULT));
+        final Integer minLevel = nbt.getInt(NBT_MIN_LEVEL);
+        final Integer maxLevel = nbt.getInt(NBT_MAX_LEVEL);
+        final ItemStack result = new ItemStack(nbt.getCompound(NBT_RESULT));
 
         return new Tool(type, minLevel, maxLevel, result);
     }
@@ -196,19 +196,19 @@ public class Tool implements IDeliverable
              * system.
              */
             final ItemArmor armor = (ItemArmor) stack.getItem();
-            if (armor.armorType == EntityEquipmentSlot.CHEST)
+            if (armor.armorType == EquipmentSlotType.CHEST)
             {
                 set.add("chestplate");
             }
-            else if (armor.armorType == EntityEquipmentSlot.FEET)
+            else if (armor.armorType == EquipmentSlotType.FEET)
             {
                 set.add("boots");
             }
-            else if (armor.armorType == EntityEquipmentSlot.HEAD)
+            else if (armor.armorType == EquipmentSlotType.HEAD)
             {
                 set.add("helmet");
             }
-            else if (armor.armorType == EntityEquipmentSlot.LEGS)
+            else if (armor.armorType == EquipmentSlotType.LEGS)
             {
                 set.add("leggings");
             }

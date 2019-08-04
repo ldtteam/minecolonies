@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.Log;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
@@ -14,9 +14,9 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 public class CitizenDataManager implements ICitizenDataManager
 {
     @Override
-    public ICitizenData createFromNBT(@NotNull final NBTTagCompound compound, final IColony colony)
+    public ICitizenData createFromNBT(@NotNull final CompoundNBT compound, final IColony colony)
     {
-        final int id = compound.getInteger(TAG_ID);
+        final int id = compound.getInt(TAG_ID);
         final @NotNull CitizenData citizen = new CitizenData(id, colony);
         citizen.readFromNBT(compound);
         return citizen;

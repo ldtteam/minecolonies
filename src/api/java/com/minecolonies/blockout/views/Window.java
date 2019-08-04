@@ -104,8 +104,8 @@ public class Window extends View
         final PaneParams.SizePair size = params.getSizePairAttribute("size", null, null);
         if (size == null)
         {
-            final int w = params.getIntegerAttribute("width", width);
-            final int h = params.getIntegerAttribute("height", height);
+            final int w = params.getIntAttribute("width", width);
+            final int h = params.getIntAttribute("height", height);
             setSize(w, h);
         }
         else

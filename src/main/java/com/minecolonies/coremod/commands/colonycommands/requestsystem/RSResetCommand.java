@@ -106,7 +106,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
 
         if (senderEntity instanceof EntityPlayer)
         {
-            final EntityPlayer player = (EntityPlayer) sender;
+            final PlayerEntity player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, RSRESET, colony.getID()))
             {
                 sender.sendMessage(new TextComponentString(NOT_PERMITTED));

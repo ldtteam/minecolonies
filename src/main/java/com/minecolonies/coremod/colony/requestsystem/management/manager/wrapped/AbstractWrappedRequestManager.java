@@ -16,7 +16,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.RequestHandler;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -214,13 +214,13 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
         return wrappedManager.serializeNBT();
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound nbt)
+    public void deserializeNBT(final CompoundNBT nbt)
     {
         wrappedManager.deserializeNBT(nbt);
     }

@@ -1,8 +1,8 @@
 package com.minecolonies.api.colony;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.Constants.NBT;
 import org.jetbrains.annotations.NotNull;
@@ -209,24 +209,24 @@ public class HappinessData
     *
     * @param compound pointer to NBT fields
     */
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
-        final NBTTagList happinessTagList = compound.getTagList(TAG_TASKS, NBT.TAG_COMPOUND);
-        final NBTTagCompound tagCompound = happinessTagList.getCompoundTagAt(0);
+        final ListNBT happinessTagList = compound.getTagList(TAG_TASKS, NBT.TAG_COMPOUND);
+        final CompoundNBT tagCompound = happinessTagList.getCompoundTagAt(0);
 
-        guards = tagCompound.getInteger(TAG_GUARDS);
-        housing = tagCompound.getInteger(TAG_HOUSING);
-        saturation = tagCompound.getInteger(TAG_SATURATION);
+        guards = tagCompound.getInt(TAG_GUARDS);
+        housing = tagCompound.getInt(TAG_HOUSING);
+        saturation = tagCompound.getInt(TAG_SATURATION);
         housingRatioModifier = tagCompound.getDouble(TAG_HOUSING_MODIFIER);
 
-        final int numDeaths = tagCompound.getInteger(TAG_TOTAL_DEATH_MODIFIER);
-        final NBTTagList deathTagList = tagCompound.getTagList(TAG_DEATH_MODIFIER, Constants.NBT.TAG_COMPOUND);
+        final int numDeaths = tagCompound.getInt(TAG_TOTAL_DEATH_MODIFIER);
+        final ListNBT deathTagList = tagCompound.getTagList(TAG_DEATH_MODIFIER, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < numDeaths; ++i)
         {
-            final NBTTagCompound deathCompound = deathTagList.getCompoundTagAt(i);
-            final int numDays = deathCompound.getInteger(TAG_DEATH_NUMOFDAYS);
+            final CompoundNBT deathCompound = deathTagList.getCompoundTagAt(i);
+            final int numDays = deathCompound.getInt(TAG_DEATH_NUMOFDAYS);
             final double value = deathCompound.getDouble(TAG_DEATH_MODIFIER_VALUE);
-            final int numDaysLast = deathCompound.getInteger(TAG_DEATH_NUMOFDAYS_LAST);
+            final int numDaysLast = deathCompound.getInt(TAG_DEATH_NUMOFDAYS_LAST);
             final double adjustment = deathCompound.getDouble(TAG_DEATH_ADJUSTMENT_MODIFIER);
             final DeathModifierData data = new DeathModifierData(numDays, value, numDaysLast);
             data.setAdjustment(adjustment);
@@ -240,31 +240,31 @@ public class HappinessData
      *
      * @param compound compound to use.
      */
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
-        @NotNull final NBTTagList tasksTagList = new NBTTagList();
-        @NotNull final NBTTagCompound taskCompound = new NBTTagCompound();
-        taskCompound.setInteger(TAG_GUARDS, guards);
-        taskCompound.setInteger(TAG_HOUSING, housing);
-        taskCompound.setInteger(TAG_SATURATION, saturation);
+        @NotNull final ListNBT tasksTagList = new ListNBT();
+        @NotNull final CompoundNBT taskCompound = new CompoundNBT();
+        taskCompound.putInt(TAG_GUARDS, guards);
+        taskCompound.putInt(TAG_HOUSING, housing);
+        taskCompound.putInt(TAG_SATURATION, saturation);
         taskCompound.setDouble(TAG_HOUSING_MODIFIER, housingRatioModifier);
 
-        taskCompound.setInteger(TAG_TOTAL_DEATH_MODIFIER, deathModifier.size());
-        @NotNull final NBTTagList deathTagList = new NBTTagList();
+        taskCompound.putInt(TAG_TOTAL_DEATH_MODIFIER, deathModifier.size());
+        @NotNull final ListNBT deathTagList = new ListNBT();
         for (int i = 0; i < deathModifier.size(); i++)
         {
-            @NotNull final NBTTagCompound deathCompound = new NBTTagCompound();
+            @NotNull final CompoundNBT deathCompound = new CompoundNBT();
         	final DeathModifierData data = deathModifier.get(i);
-        	deathCompound.setInteger(TAG_DEATH_NUMOFDAYS, data.getDaysSinceEvent());
+        	deathCompound.putInt(TAG_DEATH_NUMOFDAYS, data.getDaysSinceEvent());
             deathCompound.setDouble(TAG_DEATH_MODIFIER_VALUE, data.getModifier());
-            deathCompound.setInteger(TAG_DEATH_NUMOFDAYS_LAST, data.getNumDaysLast());
+            deathCompound.putInt(TAG_DEATH_NUMOFDAYS_LAST, data.getNumDaysLast());
             deathCompound.setDouble(TAG_DEATH_ADJUSTMENT_MODIFIER, data.getAdjustmentModifier());
-            deathTagList.appendTag(deathCompound);
+            deathTagList.add(deathCompound);
         }
-        taskCompound.setTag(TAG_DEATH_MODIFIER, deathTagList);
+        taskCompound.put(TAG_DEATH_MODIFIER, deathTagList);
 
-        tasksTagList.appendTag(taskCompound);
-        compound.setTag(TAG_TASKS, tasksTagList);
+        tasksTagList.add(taskCompound);
+        compound.put(TAG_TASKS, tasksTagList);
     }
 
     /**

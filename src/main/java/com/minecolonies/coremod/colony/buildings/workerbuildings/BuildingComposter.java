@@ -14,8 +14,8 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsVi
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -122,33 +122,33 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        final NBTTagList compostBinTagList = compound.getTagList(TAG_BARRELS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT compostBinTagList = compound.getTagList(TAG_BARRELS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < compostBinTagList.tagCount(); ++i)
         {
-            barrels.add(NBTUtil.getPosFromTag(compostBinTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
+            barrels.add(NBTUtil.getPosFromTag(compostBinTagList.getCompoundTagAt(i).getCompound(TAG_POS)));
         }
-        if (compound.hasKey(TAG_DIRT))
+        if (compound.keySet().contains(TAG_DIRT))
         {
             retrieveDirtFromCompostBin = compound.getBoolean(TAG_DIRT);
         }
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = super.serializeNBT();
-        @NotNull final NBTTagList compostBinTagList = new NBTTagList();
+        final CompoundNBT compound = super.serializeNBT();
+        @NotNull final ListNBT compostBinTagList = new ListNBT();
         for (@NotNull final BlockPos entry : barrels)
         {
-            @NotNull final NBTTagCompound compostBinCompound = new NBTTagCompound();
-            compostBinCompound.setTag(TAG_POS, NBTUtil.createPosTag(entry));
-            compostBinTagList.appendTag(compostBinCompound);
+            @NotNull final CompoundNBT compostBinCompound = new CompoundNBT();
+            compostBinCompound.put(TAG_POS, NBTUtil.createPosTag(entry));
+            compostBinTagList.add(compostBinCompound);
         }
-        compound.setTag(TAG_BARRELS, compostBinTagList);
-        compound.setBoolean(TAG_DIRT, retrieveDirtFromCompostBin);
+        compound.put(TAG_BARRELS, compostBinTagList);
+        compound.putBoolean(TAG_DIRT, retrieveDirtFromCompostBin);
 
         return compound;
     }

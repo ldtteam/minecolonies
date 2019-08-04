@@ -42,7 +42,7 @@ public class GbookEventHandler
         final Entity entity = event.getEntity();
         final String bookPlayerTag = Constants.MOD_ID + ":gbookGiven";
 
-        if (Configurations.gameplay.playerGetsGuidebookOnFirstJoin && entity instanceof EntityPlayer && !entity.getEntityWorld().isRemote && !entity.getTags().contains(bookPlayerTag))
+        if (Configurations.gameplay.playerGetsGuidebookOnFirstJoin && entity instanceof PlayerEntity && !entity.getEntityWorld().isRemote && !entity.getTags().contains(bookPlayerTag))
         {
             ItemHandlerHelper.giveItemToPlayer((EntityPlayer) entity, gbookStack.copy());
             entity.addTag(bookPlayerTag);

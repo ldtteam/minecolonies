@@ -10,7 +10,7 @@ import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -68,7 +68,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     public BlockDecorationController(final Material blockMaterialIn)
     {
         super(blockMaterialIn);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(MIRROR, false));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, Direction.NORTH).withProperty(MIRROR, false));
         initBlock();
     }
 
@@ -88,7 +88,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
      * @deprecated
      */
     @Nullable
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, @NotNull IBlockAccess worldIn, @NotNull BlockPos pos)
+    public AxisAlignedBB getCollisionBoundingBox(BlockState blockState, @NotNull IBlockAccess worldIn, @NotNull BlockPos pos)
     {
         return NULL_AABB;
     }
@@ -98,10 +98,10 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
      */
     @NotNull
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    public AxisAlignedBB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos)
     {
-        EnumFacing enumfacing = state.getValue(FACING);
-        switch (enumfacing)
+        Direction Direction = state.getValue(FACING);
+        switch (Direction)
         {
             case EAST:
                 return AABB_EAST;
@@ -119,10 +119,10 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     public boolean onBlockActivated(
       final World worldIn,
       final BlockPos pos,
-      final IBlockState state,
-      final EntityPlayer playerIn,
+      final BlockState state,
+      final PlayerEntity playerIn,
       final EnumHand hand,
-      final EnumFacing facing,
+      final Direction facing,
       final float hitX,
       final float hitY,
       final float hitZ)
@@ -139,7 +139,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     }
 
     @Override
-    public boolean hasTileEntity(final IBlockState state)
+    public boolean hasTileEntity(final BlockState state)
     {
         return true;
     }
@@ -153,13 +153,13 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
 
     @Nullable
     @Override
-    public TileEntity createTileEntity(@NotNull final World world, @NotNull final IBlockState state)
+    public TileEntity createTileEntity(@NotNull final World world, @NotNull final BlockState state)
     {
         return new TileEntityDecorationController();
     }
 
     @Override
-    public int getMetaFromState(final IBlockState state)
+    public int getMetaFromState(final BlockState state)
     {
         return state.getValue(FACING).getHorizontalIndex() + (state.getValue(MIRROR) ? 4 : 0);
     }
@@ -167,7 +167,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     @NotNull
     @Override
     @SuppressWarnings(DEPRECATION)
-    public IBlockState getStateFromMeta(final int meta)
+    public BlockState getStateFromMeta(final int meta)
     {
         int theMeta = meta;
         boolean mirrored = false;
@@ -177,13 +177,13 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
             theMeta = meta - 4;
         }
 
-        return getDefaultState().withProperty(FACING, EnumFacing.byHorizontalIndex(theMeta)).withProperty(MIRROR, mirrored);
+        return getDefaultState().withProperty(FACING, Direction.byHorizontalIndex(theMeta)).withProperty(MIRROR, mirrored);
     }
 
     @NotNull
     @Override
     @SuppressWarnings(DEPRECATION)
-    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+    public BlockState getStateForPlacement(World worldIn, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
     {
         if (facing.getAxis().isHorizontal())
         {
@@ -197,7 +197,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
      */
     @NotNull
     @Override
-    public IBlockState withRotation(@NotNull IBlockState state, Rotation rot)
+    public BlockState withRotation(@NotNull BlockState state, Rotation rot)
     {
         return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
     }
@@ -207,7 +207,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
      */
     @NotNull
     @Override
-    public IBlockState withMirror(@NotNull IBlockState state, Mirror mirrorIn)
+    public BlockState withMirror(@NotNull BlockState state, Mirror mirrorIn)
     {
         return state.withProperty(MIRROR, mirrorIn != Mirror.NONE);
     }
@@ -218,7 +218,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
-    public boolean isFullBlock(final IBlockState state)
+    public boolean isFullBlock(final BlockState state)
     {
         return false;
     }
@@ -229,7 +229,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
-    public boolean isFullCube(final IBlockState state)
+    public boolean isFullCube(final BlockState state)
     {
         return false;
     }
@@ -240,7 +240,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
-    public boolean isOpaqueCube(final IBlockState state)
+    public boolean isOpaqueCube(final BlockState state)
     {
         return false;
     }
@@ -254,7 +254,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     }
 
     @Override
-    public boolean doesSideBlockRendering(final IBlockState state, final IBlockAccess world, final BlockPos pos, final EnumFacing face)
+    public boolean doesSideBlockRendering(final BlockState state, final IBlockAccess world, final BlockPos pos, final Direction face)
     {
         return false;
     }

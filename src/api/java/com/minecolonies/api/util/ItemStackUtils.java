@@ -13,14 +13,14 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.*;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
@@ -118,7 +118,7 @@ public final class ItemStackUtils
      * @param world    the world.
      * @return the list of itemstacks.
      */
-    public static List<ItemStack> getItemStacksOfTileEntity(final NBTTagCompound compound, final World world)
+    public static List<ItemStack> getItemStacksOfTileEntity(final CompoundNBT compound, final World world)
     {
         final List<ItemStack> items = new ArrayList<>();
         if (compound != null)
@@ -163,7 +163,7 @@ public final class ItemStackUtils
      * @return the output object or null.
      */
     @Nullable
-    public static Entity getEntityFromEntityInfoOrNull(final NBTTagCompound entityData, final World world)
+    public static Entity getEntityFromEntityInfoOrNull(final CompoundNBT entityData, final World world)
     {
         try
         {
@@ -184,7 +184,7 @@ public final class ItemStackUtils
      * @param placer     the entity placer.
      * @return a list of stacks.
      */
-    public static List<ItemStorage> getListOfStackForEntityInfo(final NBTTagCompound entityData, final World world, final Entity placer)
+    public static List<ItemStorage> getListOfStackForEntityInfo(final CompoundNBT entityData, final World world, final Entity placer)
     {
         if (entityData != null)
         {
@@ -209,7 +209,7 @@ public final class ItemStackUtils
      * @param placer     the entity placer.
      * @return a list of stacks.
      */
-    public static List<ItemStorage> getListOfStackForEntityInfo(final NBTTagCompound entityData, final World world, final AbstractEntityCitizen placer)
+    public static List<ItemStorage> getListOfStackForEntityInfo(final CompoundNBT entityData, final World world, final AbstractEntityCitizen placer)
     {
         if (placer instanceof Entity)
         {
@@ -486,24 +486,24 @@ public final class ItemStackUtils
      */
     private static int getArmorLevel(final ArmorMaterial material)
     {
-        final int damageReductionAmount = material.getDamageReductionAmount(EntityEquipmentSlot.CHEST);
-        if (damageReductionAmount <= ArmorMaterial.LEATHER.getDamageReductionAmount(EntityEquipmentSlot.CHEST))
+        final int damageReductionAmount = material.getDamageReductionAmount(EquipmentSlotType.CHEST);
+        if (damageReductionAmount <= ArmorMaterial.LEATHER.getDamageReductionAmount(EquipmentSlotType.CHEST))
         {
             return 0;
         }
-        else if (damageReductionAmount <= ArmorMaterial.GOLD.getDamageReductionAmount(EntityEquipmentSlot.CHEST) && material != ArmorMaterial.CHAIN)
+        else if (damageReductionAmount <= ArmorMaterial.GOLD.getDamageReductionAmount(EquipmentSlotType.CHEST) && material != ArmorMaterial.CHAIN)
         {
             return 1;
         }
-        else if (damageReductionAmount <= ArmorMaterial.CHAIN.getDamageReductionAmount(EntityEquipmentSlot.CHEST))
+        else if (damageReductionAmount <= ArmorMaterial.CHAIN.getDamageReductionAmount(EquipmentSlotType.CHEST))
         {
             return 2;
         }
-        else if (damageReductionAmount <= ArmorMaterial.IRON.getDamageReductionAmount(EntityEquipmentSlot.CHEST))
+        else if (damageReductionAmount <= ArmorMaterial.IRON.getDamageReductionAmount(EquipmentSlotType.CHEST))
         {
             return 3;
         }
-        else if (damageReductionAmount <= ArmorMaterial.DIAMOND.getDamageReductionAmount(EntityEquipmentSlot.CHEST))
+        else if (damageReductionAmount <= ArmorMaterial.DIAMOND.getDamageReductionAmount(EquipmentSlotType.CHEST))
         {
             return 4;
         }
@@ -526,13 +526,13 @@ public final class ItemStackUtils
         int maxLevel = 0;
         if (itemStack != null)
         {
-            final NBTTagList nbttaglist = itemStack.getEnchantmentTagList();
+            final ListNBT ListNBT = itemStack.getEnchantmentTagList();
 
-            if (nbttaglist != null)
+            if (ListNBT != null)
             {
-                for (int j = 0; j < nbttaglist.tagCount(); ++j)
+                for (int j = 0; j < ListNBT.tagCount(); ++j)
                 {
-                    final int level = nbttaglist.getCompoundTagAt(j).getShort("lvl");
+                    final int level = ListNBT.getCompoundTagAt(j).getShort("lvl");
                     maxLevel = level > maxLevel ? level : maxLevel;
                 }
             }
@@ -556,7 +556,7 @@ public final class ItemStackUtils
         int fortune = 0;
         if (tool.isItemEnchanted())
         {
-            final NBTTagList t = tool.getEnchantmentTagList();
+            final ListNBT t = tool.getEnchantmentTagList();
 
             for (int i = 0; i < t.tagCount(); i++)
             {
@@ -579,7 +579,7 @@ public final class ItemStackUtils
         boolean hasSilk = false;
         if (tool.isItemEnchanted())
         {
-            final NBTTagList t = tool.getEnchantmentTagList();
+            final ListNBT t = tool.getEnchantmentTagList();
 
             for (int i = 0; i < t.tagCount(); i++)
             {
@@ -796,7 +796,7 @@ public final class ItemStackUtils
      * @return The ItemStack stored in the NBT Data.
      */
     @NotNull
-    public static ItemStack deserializeFromNBT(@NotNull final NBTTagCompound compound)
+    public static ItemStack deserializeFromNBT(@NotNull final CompoundNBT compound)
     {
         return new ItemStack(compound);
     }

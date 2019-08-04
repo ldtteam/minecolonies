@@ -29,12 +29,12 @@ import com.minecolonies.coremod.network.messages.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.BuildingSetStyleMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
-import net.minecraft.block.BlockDoor;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.DoorBlock;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -153,7 +153,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
-        final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ORIGIN : builders.get(buildersDropDownList.getSelectedIndex()).getSecond();
+        final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ORIGIN : builders.get(buildersDropDownList.getSelectedIndex()).getB();
         MineColonies.getNetwork().sendToServer(new BuildingSetStyleMessage(building, styles.get(stylesDropDownList.getSelectedIndex())));
         if (building.getBuildingLevel() == building.getBuildingMaxLevel())
         {
@@ -171,7 +171,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void repairClicked()
     {
-        final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ORIGIN : builders.get(buildersDropDownList.getSelectedIndex()).getSecond();
+        final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0 ? BlockPos.ORIGIN : builders.get(buildersDropDownList.getSelectedIndex()).getB();
         MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR, builder));
         cancelClicked();
     }
@@ -261,7 +261,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         while (structure.findNextBlock())
         {
             @Nullable final BlockInfo blockInfo = structure.getBlockInfo();
-            @Nullable final IBlockState blockState = blockInfo.getState();
+            @Nullable final BlockState blockState = blockInfo.getState();
 
             if (blockState == null)
             {
@@ -272,7 +272,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
 
             if (StructurePlacementUtils.isStructureBlockEqualWorldBlock(world, structure.getBlockPosition(), blockState)
                   || (blockState.getBlock() instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
-                  || (blockState.getBlock() instanceof BlockDoor && blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
+                  || (blockState.getBlock() instanceof DoorBlock && blockState.getValue(DoorBlock.HALF).equals(DoorBlock.EnumDoorHalf.UPPER)))
             {
                 continue;
             }
@@ -300,7 +300,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             }
         }
 
-        for (final NBTTagCompound entityInfo : structure.getEntityData())
+        for (final CompoundNBT entityInfo : structure.getEntityData())
         {
             if (entityInfo != null)
             {
@@ -391,7 +391,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             {
                 if (index >= 0 && index < builders.size())
                 {
-                    return builders.get(index).getFirst();
+                    return builders.get(index).getA();
                 }
                 return "";
             }

@@ -30,7 +30,7 @@ public final class LanguageHandler
      * @param key     the key of the message.
      * @param message the message to send.
      */
-    public static void sendPlayerMessage(@NotNull final EntityPlayer player, final String key, final Object... message)
+    public static void sendPlayerMessage(@NotNull final PlayerEntity player, final String key, final Object... message)
     {
         player.sendMessage(buildChatComponent(key, message));
     }
@@ -154,7 +154,7 @@ public final class LanguageHandler
             return;
         }
 
-        for (@NotNull final EntityPlayer player : players)
+        for (@NotNull final PlayerEntity player : players)
         {
             player.sendMessage(component);
         }

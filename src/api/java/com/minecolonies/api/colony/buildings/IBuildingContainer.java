@@ -3,10 +3,10 @@ package com.minecolonies.api.colony.buildings;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -20,10 +20,10 @@ import java.util.List;
 public interface IBuildingContainer extends ISchematicProvider, ICitizenAssignable, ICapabilityProvider
 {
     @Override
-    void deserializeNBT(NBTTagCompound compound);
+    void deserializeNBT(CompoundNBT compound);
 
     @Override
-    NBTTagCompound serializeNBT();
+    CompoundNBT serializeNBT();
 
     /**
      * Get the pick up priority of the building.
@@ -79,7 +79,7 @@ public interface IBuildingContainer extends ISchematicProvider, ICitizenAssignab
      * @param blockState to be registered
      * @param pos   of the blockState
      */
-    void registerBlockPosition(@NotNull IBlockState blockState, @NotNull BlockPos pos, @NotNull World world);
+    void registerBlockPosition(@NotNull BlockState blockState, @NotNull BlockPos pos, @NotNull World world);
 
     /**
      * Register a block and position.
@@ -116,9 +116,9 @@ public interface IBuildingContainer extends ISchematicProvider, ICitizenAssignab
 
     @Override
     boolean hasCapability(
-      @Nonnull Capability<?> capability, @Nullable EnumFacing facing);
+      @Nonnull Capability<?> capability, @Nullable Direction facing);
 
     @Nullable
     @Override
-    <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing);
+    <T> T getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing);
 }
