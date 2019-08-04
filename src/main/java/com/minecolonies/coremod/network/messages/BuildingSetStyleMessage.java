@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -83,7 +83,7 @@ public class BuildingSetStyleMessage extends AbstractMessage<BuildingSetStyleMes
     }
 
     @Override
-    public void messageOnServerThread(final BuildingSetStyleMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final BuildingSetStyleMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

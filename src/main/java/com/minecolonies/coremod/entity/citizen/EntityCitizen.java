@@ -45,7 +45,7 @@ import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.ai.EntityAIWatchClosest2;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemNameTag;
 import net.minecraft.item.ShieldItem;
@@ -244,7 +244,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.tasks.addTask(++priority, new EntityAIGoHome(this));
         this.tasks.addTask(++priority, new EntityAIOpenDoor(this, true));
         this.tasks.addTask(priority, new EntityAIOpenFenceGate(this, true));
-        this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityPlayer.class, WATCH_CLOSEST2, 1.0F));
+        this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, PlayerEntity.class, WATCH_CLOSEST2, 1.0F));
         this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
         this.tasks.addTask(++priority, new EntityAICitizenWander(this, DEFAULT_SPEED, 1.0D));
         this.tasks.addTask(++priority, new EntityAIWatchClosest(this, LivingEntity.class, WATCH_CLOSEST));
@@ -341,7 +341,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (sourceEntity instanceof PlayerEntity && getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
         {
-            if (!IGuardBuilding.checkIfGuardShouldTakeDamage(this, (EntityPlayer) sourceEntity))
+            if (!IGuardBuilding.checkIfGuardShouldTakeDamage(this, (PlayerEntity) sourceEntity))
             {
                 return false;
             }
@@ -589,7 +589,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public boolean processInteract(final PlayerEntity player, @NotNull final Hand hand)
     {
-        final IColonyView iColonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), player.world.provider.getDimension());
+        final IColonyView iColonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), player.world.world.getDimension().getType().getId());
         if (IColonyView != null && !IColonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             return false;
@@ -808,7 +808,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                 if (Configurations.gameplay.allowGlobalNameChanges == 0 &&
                       Arrays.stream(Configurations.gameplay.specialPermGroup).noneMatch(owner -> owner.equals(citizenColonyHandler.getColony().getPermissions().getOwnerName())))
                 {
-                    LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessageEntityPlayers(), CITIZEN_RENAME_NOT_ALLOWED);
+                    LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessagePlayerEntitys(), CITIZEN_RENAME_NOT_ALLOWED);
                     return;
                 }
 
@@ -819,7 +819,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                     {
                         if (citizen.getName().equals(name))
                         {
-                            LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessageEntityPlayers(), CITIZEN_RENAME_SAME);
+                            LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessagePlayerEntitys(), CITIZEN_RENAME_SAME);
                             return;
                         }
                     }
@@ -919,7 +919,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (citizenColonyHandler.getColonyId() != 0 && citizenId != 0)
         {
-            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.provider.getDimension());
+            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), world.world.getDimension().getType().getId());
             if (colonyView != null)
             {
                 return colonyView.getCitizen(citizenId);

@@ -18,7 +18,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -252,7 +252,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
             {
                 final BlockPos pos = posIterator.next();
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity))
+                if (tempTileEntity instanceof ChestTileEntity && !InventoryUtils.isProviderFull(tempTileEntity))
                 {
                     resultStack = InventoryUtils.addItemStackToProviderWithResult(tempTileEntity, stack);
                 }

@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 
@@ -75,7 +75,7 @@ public class PauseCitizenMessage extends AbstractMessage<PauseCitizenMessage, IM
     }
 
     @Override
-    public void messageOnServerThread(final PauseCitizenMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final PauseCitizenMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.colonyDim);
         

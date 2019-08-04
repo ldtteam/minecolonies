@@ -33,7 +33,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -647,7 +647,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             for (final BlockPos pos : building.getAdditionalCountainers())
             {
                 final TileEntity entity = world.getTileEntity(pos);
-                if (entity instanceof TileEntityChest)
+                if (entity instanceof ChestTileEntity)
                 {
                     hasItem = isInTileEntity(entity, is);
 
@@ -685,7 +685,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             for (final BlockPos pos : building.getAdditionalCountainers())
             {
                 final TileEntity entity = world.getTileEntity(pos);
-                if (entity instanceof TileEntityChest)
+                if (entity instanceof ChestTileEntity)
                 {
                     hasItem = isInTileEntity(entity, is);
 
@@ -972,7 +972,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             for (final BlockPos pos : building.getAdditionalCountainers())
             {
                 final TileEntity entity = world.getTileEntity(pos);
-                if (entity instanceof TileEntityChest && retrieveToolInTileEntity(entity, toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
+                if (entity instanceof ChestTileEntity && retrieveToolInTileEntity(entity, toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
                 {
                     return true;
                 }

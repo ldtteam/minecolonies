@@ -8,7 +8,7 @@ import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
@@ -115,7 +115,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
             playerName = args[1];
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().world.getDimension().getType().getId()));
         if (colony == null)
         {
             sender.sendMessage(new StringTextComponent(String.format(COLONY_X_NULL, colonyId)));

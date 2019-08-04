@@ -54,7 +54,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
             return;
         }
 
-        if (placer.getActiveHand().equals(Hand.MAIN_HAND) && placer instanceof EntityPlayer)
+        if (placer.getActiveHand().equals(Hand.MAIN_HAND) && placer instanceof PlayerEntity)
         {
             final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, pos);
             String style = Constants.DEFAULT_STYLE;
@@ -69,11 +69,11 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
             {
                 if (Configurations.gameplay.enableDynamicColonySizes)
                 {
-                    IColony ownedColony = IColonyManager.getInstance().getIColonyByOwner(worldIn, (EntityPlayer) placer);
+                    IColony ownedColony = IColonyManager.getInstance().getIColonyByOwner(worldIn, (PlayerEntity) placer);
 
                     if (ownedColony == null)
                     {
-                        IColonyManager.getInstance().createColony(worldIn, pos, (EntityPlayer) placer, style);
+                        IColonyManager.getInstance().createColony(worldIn, pos, (PlayerEntity) placer, style);
                     }
                     else
                     {
@@ -82,7 +82,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
                 }
                 else
                 {
-                    IColonyManager.getInstance().createColony(worldIn, pos, (EntityPlayer) placer, style);
+                    IColonyManager.getInstance().createColony(worldIn, pos, (PlayerEntity) placer, style);
                 }
             }
             else

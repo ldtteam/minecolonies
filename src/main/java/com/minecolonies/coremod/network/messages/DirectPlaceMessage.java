@@ -7,7 +7,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -87,7 +87,7 @@ public class DirectPlaceMessage extends AbstractMessage<DirectPlaceMessage, IMes
     }
 
     @Override
-    public void messageOnServerThread(final DirectPlaceMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final DirectPlaceMessage message, final ServerPlayerEntity player)
     {
         final World world = player.getServerWorld();
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, message.pos);

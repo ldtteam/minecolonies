@@ -73,7 +73,7 @@ public class ColonyListTest
         when(world.getScoreboard()).thenReturn(board);
         when(board.getTeam(any())).thenReturn(new ScorePlayerTeam(board, "team"));
 
-        when(worldProvider.getDimension()).thenReturn(1);
+        when(worldworld.getDimension().getType().getId()).thenReturn(1);
         ReflectionUtil.setFinalField(world, "provider", worldProvider);
         ReflectionUtil.setStaticFinalField(MinecraftForge.class, "EVENT_BUS", eventBus);
         StandardFactoryControllerInitializer.onPreInit();

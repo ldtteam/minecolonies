@@ -22,8 +22,8 @@ import com.minecolonies.coremod.tileentities.*;
 import com.minecolonies.coremod.util.TownHallRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -133,20 +133,6 @@ public abstract class CommonProxy implements IProxy
     public boolean isClient()
     {
         return false;
-    }
-
-    @Override
-    public void registerTileEntities()
-    {
-        GameRegistry.registerTileEntity(TileEntityColonyBuilding.class, new ResourceLocation(Constants.MOD_ID, "colonybuilding"));
-        GameRegistry.registerTileEntity(TileEntityScarecrow.class, new ResourceLocation(Constants.MOD_ID, "scarecrow"));
-        GameRegistry.registerTileEntity(TileEntityWareHouse.class, new ResourceLocation(Constants.MOD_ID, "warehouse"));
-        GameRegistry.registerTileEntity(TileEntityRack.class, new ResourceLocation(Constants.MOD_ID, "rack"));
-        GameRegistry.registerTileEntity(TileEntityInfoPoster.class, new ResourceLocation(Constants.MOD_ID, "infoposter"));
-        GameRegistry.registerTileEntity(TileEntityBarrel.class, new ResourceLocation(Constants.MOD_ID, "barrel"));
-        GameRegistry.registerTileEntity(TileEntityDecorationController.class, new ResourceLocation(Constants.MOD_ID, "decorationcontroller"));
-
-        NetworkRegistry.INSTANCE.registerGuiHandler(MineColonies.instance, new GuiHandler());
     }
 
     @Override
@@ -370,7 +356,7 @@ public abstract class CommonProxy implements IProxy
     @Override
     public RecipeBook getRecipeBookFromPlayer(@NotNull final PlayerEntity player)
     {
-        return ((EntityPlayerMP) player).getRecipeBook();
+        return ((ServerPlayerEntity) player).getRecipeBook();
     }
 
     @Override

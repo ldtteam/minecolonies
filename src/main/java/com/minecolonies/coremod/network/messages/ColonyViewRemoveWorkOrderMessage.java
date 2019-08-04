@@ -54,6 +54,6 @@ public class ColonyViewRemoveWorkOrderMessage extends AbstractMessage<ColonyView
     @Override
     protected void messageOnClientThread(final ColonyViewRemoveWorkOrderMessage message, final MessageContext ctx)
     {
-        IColonyManager.getInstance().handleColonyViewRemoveWorkOrderMessage(message.colonyId, message.workOrderId, Minecraft.getMinecraft().world.provider.getDimension());
+        IColonyManager.getInstance().handleColonyViewRemoveWorkOrderMessage(message.colonyId, message.workOrderId, Minecraft.getMinecraft().world.world.getDimension().getType().getId());
     }
 }

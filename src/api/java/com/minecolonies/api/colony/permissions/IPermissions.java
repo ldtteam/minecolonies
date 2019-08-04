@@ -1,7 +1,8 @@
 package com.minecolonies.api.colony.permissions;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +25,7 @@ public interface IPermissions
     /**
      * Returns whether the player has the permission for an action.
      *
-     * @param player {@link EntityPlayer} player.
+     * @param player {@link PlayerEntity} player.
      * @param action {@link Action} action.
      * @return true if has permission, otherwise false.
      */
@@ -40,7 +41,7 @@ public interface IPermissions
     /**
      * Returns whether the player is a member of the colony.
      *
-     * @param player {@link EntityPlayer} to check.
+     * @param player {@link PlayerEntity} to check.
      * @return true if the player is a member of the colony.
      */
     boolean isColonyMember(PlayerEntity player);

@@ -20,7 +20,7 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveCitizenMessage;
 import com.minecolonies.coremod.network.messages.HappinessDataMessage;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
@@ -106,9 +106,9 @@ public class CitizenManager implements ICitizenManager
 
     @Override
     public void sendPackets(
-      @NotNull final Set<EntityPlayerMP> oldSubscribers,
+      @NotNull final Set<ServerPlayerEntity> oldSubscribers,
       final boolean hasNewSubscribers,
-      @NotNull final Set<EntityPlayerMP> subscribers)
+      @NotNull final Set<ServerPlayerEntity> subscribers)
     {
         if (isCitizensDirty || hasNewSubscribers)
         {
@@ -159,7 +159,7 @@ public class CitizenManager implements ICitizenManager
                 if (getMaxCitizens() == getCitizens().size() && !force)
                 {
                     LanguageHandler.sendPlayersMessage(
-                      colony.getMessageEntityPlayers(),
+                      colony.getMessagePlayerEntitys(),
                       "tile.blockHutTownHall.messageMaxSize",
                       colony.getName());
                 }
@@ -179,7 +179,7 @@ public class CitizenManager implements ICitizenManager
         }
         else
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.citizens.nospace");
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), "com.minecolonies.coremod.citizens.nospace");
         }
         return data;
     }
@@ -229,7 +229,7 @@ public class CitizenManager implements ICitizenManager
         colony.getWorkManager().clearWorkForCitizen(citizen);
 
         //  Inform Subscribers of removed citizen
-        for (final EntityPlayerMP player : colony.getPackageManager().getSubscribers())
+        for (final ServerPlayerEntity player : colony.getPackageManager().getSubscribers())
         {
             MineColonies.getNetwork().sendTo(new ColonyViewRemoveCitizenMessage(colony, citizen.getId()), player);
         }

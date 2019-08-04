@@ -61,9 +61,9 @@ public class GuardArrow extends EntityTippedArrow
         super.arrowHit(targetEntity);
         if (targetEntity.getHealth() <= 0.0F)
         {
-            if (targetEntity instanceof EntityPlayer)
+            if (targetEntity instanceof PlayerEntity)
             {
-                final PlayerEntity player = (EntityPlayer) targetEntity;
+                final PlayerEntity player = (PlayerEntity) targetEntity;
                 if (colony.getPermissions().isColonyMember(player))
                 {
                     this.colony.getStatsManager().triggerAchievement(ModAchievements.achievementPlayerDeathGuard);

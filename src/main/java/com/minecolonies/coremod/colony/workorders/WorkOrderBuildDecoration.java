@@ -209,7 +209,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         }
 
         hasSentMessageForThisWorkOrder = true;
-        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+        LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
           "entity.builder.messageNoBuilder");
     }
 

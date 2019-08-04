@@ -2,7 +2,7 @@ package com.minecolonies.coremod.commands;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -101,7 +101,7 @@ public class ActionMenuState
         return null;
     }
 
-    public EntityPlayerMP getPlayerForArgument(@NotNull final String argumentName)
+    public ServerPlayerEntity getPlayerForArgument(@NotNull final String argumentName)
     {
         for (final ActionArgument actionArgument : getAllArgumentsList())
         {
@@ -109,14 +109,14 @@ public class ActionMenuState
             {
                 if (ActionArgumentType.ONLINE_PLAYER == actionArgument.getType() || ActionArgumentType.PLAYER == actionArgument.getType())
                 {
-                    return (EntityPlayerMP) getValue(actionArgument);
+                    return (ServerPlayerEntity) getValue(actionArgument);
                 }
             }
         }
         return null;
     }
 
-    public EntityPlayerMP getOnlinePlayerForArgument(@NotNull final String argumentName)
+    public ServerPlayerEntity getOnlinePlayerForArgument(@NotNull final String argumentName)
     {
         for (final ActionArgument actionArgument : getAllArgumentsList())
         {
@@ -124,7 +124,7 @@ public class ActionMenuState
             {
                 if (ActionArgumentType.ONLINE_PLAYER == actionArgument.getType())
                 {
-                    return (EntityPlayerMP) getValue(actionArgument);
+                    return (ServerPlayerEntity) getValue(actionArgument);
                 }
             }
         }

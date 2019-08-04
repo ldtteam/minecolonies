@@ -14,7 +14,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -70,7 +70,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     /**
      * The citizen the worker is currently trying to serve.
      */
-    private final List<EntityPlayer> playerToServe = new ArrayList<>();
+    private final List<PlayerEntity> playerToServe = new ArrayList<>();
 
     /**
      * The building range the cook should search for clients.
@@ -203,9 +203,9 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             citizenToServe.get(0).getCitizenData().setJustAte(true);
         }
 
-        if (citizenToServe.isEmpty() && living instanceof EntityPlayer)
+        if (citizenToServe.isEmpty() && living instanceof PlayerEntity)
         {
-            LanguageHandler.sendPlayerMessage((EntityPlayer) living, "com.minecolonies.coremod.cook.serve.player", worker.getName());
+            LanguageHandler.sendPlayerMessage((PlayerEntity) living, "com.minecolonies.coremod.cook.serve.player", worker.getName());
         }
         removeFromQueue();
 
@@ -255,7 +255,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
           .filter(cit -> !(cit.getCitizenJobHandler().getColonyJob() instanceof JobCook) && cit.shouldBeFed())
           .collect(Collectors.toList());
 
-        final List<EntityPlayer> playerList = world.getEntitiesWithinAABB(EntityPlayer.class,
+        final List<PlayerEntity> playerList = world.getEntitiesWithinAABB(PlayerEntity.class,
           range, player -> player != null && player.getFoodStats().getFoodLevel() < LEVEL_TO_FEED_PLAYER);
 
         if (!citizenList.isEmpty() || !playerList.isEmpty())

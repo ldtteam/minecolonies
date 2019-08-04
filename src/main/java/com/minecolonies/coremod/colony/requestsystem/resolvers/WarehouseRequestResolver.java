@@ -111,7 +111,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
                 request.addDelivery(deliveryStack.copy());
 
                 final BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> ItemStack.areItemsEqual(itemStack, deliveryStack));
-                final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().provider.getDimension());
+                final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().world.getDimension().getType().getId());
 
                 final Delivery delivery = new Delivery(itemStackLocation, request.getRequester().getLocation(), deliveryStack.copy());
 

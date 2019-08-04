@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.colony.Colony;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ public class AttackingPlayer
 
     /**
      * Get the attacking player.
-     * @return the EntityPlayer.
+     * @return the PlayerEntity.
      */
     public PlayerEntity getPlayer()
     {

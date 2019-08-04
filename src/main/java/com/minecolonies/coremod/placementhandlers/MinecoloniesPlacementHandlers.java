@@ -17,7 +17,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -137,9 +137,9 @@ public final class MinecoloniesPlacementHandlers
             }
 
             final TileEntity entity = world.getTileEntity(pos);
-            if (entity instanceof TileEntityChest)
+            if (entity instanceof ChestTileEntity)
             {
-                BuildingWareHouse.handleBuildingOverChest(pos, (TileEntityChest) entity, world);
+                BuildingWareHouse.handleBuildingOverChest(pos, (ChestTileEntity) entity, world);
             }
             else if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
             {
@@ -186,9 +186,9 @@ public final class MinecoloniesPlacementHandlers
         {
             final TileEntity entity = world.getTileEntity(pos);
             final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
-            if (colony != null && entity instanceof TileEntityChest)
+            if (colony != null && entity instanceof ChestTileEntity)
             {
-                BuildingWareHouse.handleBuildingOverChest(pos, (TileEntityChest) entity, world);
+                BuildingWareHouse.handleBuildingOverChest(pos, (ChestTileEntity) entity, world);
             }
             else
             {

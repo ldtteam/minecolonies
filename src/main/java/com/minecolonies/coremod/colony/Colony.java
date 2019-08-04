@@ -29,8 +29,8 @@ import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTTagString;
@@ -202,7 +202,7 @@ public class Colony implements IColony
     /**
      * List of players visiting the colony.
      */
-    private final List<EntityPlayer> visitingPlayers = new ArrayList<>();
+    private final List<PlayerEntity> visitingPlayers = new ArrayList<>();
 
     /**
      * List of players attacking the colony.
@@ -268,7 +268,7 @@ public class Colony implements IColony
         this.id = id;
         if (world != null)
         {
-            this.dimensionId = world.provider.getDimension();
+            this.dimensionId = world.world.getDimension().getType().getId();
             this.world = world;
             checkOrCreateTeam();
         }
@@ -683,7 +683,7 @@ public class Colony implements IColony
 
         getRequestManager().update();
 
-        final List<EntityPlayer> visitors = new ArrayList<>(visitingPlayers);
+        final List<PlayerEntity> visitors = new ArrayList<>(visitingPlayers);
 
         //Clean up visiting player.
         for (final PlayerEntity player : visitors)
@@ -833,7 +833,7 @@ public class Colony implements IColony
                     player.refreshList(this);
                     if (player.getGuards().isEmpty())
                     {
-                        LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), "You successfully defended your colony against, " + player.getPlayer().getName());
+                        LanguageHandler.sendPlayersMessage(getMessagePlayerEntitys(), "You successfully defended your colony against, " + player.getPlayer().getName());
                     }
                 }
             }
@@ -967,7 +967,7 @@ public class Colony implements IColony
     @Override
     public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        if (w.provider.getDimension() != this.dimensionId)
+        if (w.world.getDimension().getType().getId() != this.dimensionId)
         {
             return false;
         }
@@ -1072,7 +1072,7 @@ public class Colony implements IColony
 
     @Override
     @NotNull
-    public List<EntityPlayer> getMessageEntityPlayers()
+    public List<PlayerEntity> getMessagePlayerEntitys()
     {
         return ServerUtils.getPlayersFromUUID(this.world, this.getPermissions().getMessagePlayers());
     }
@@ -1149,7 +1149,7 @@ public class Colony implements IColony
     public void removeWorkOrderInView(final int orderId)
     {
         //  Inform Subscribers of removed workOrder
-        for (final EntityPlayerMP player : packageManager.getSubscribers())
+        for (final ServerPlayerEntity player : packageManager.getSubscribers())
         {
             MineColonies.getNetwork().sendTo(new ColonyViewRemoveWorkOrderMessage(this, orderId), player);
         }
@@ -1331,7 +1331,7 @@ public class Colony implements IColony
      *
      * @return the list.
      */
-    public ImmutableList<EntityPlayer> getVisitingPlayers()
+    public ImmutableList<PlayerEntity> getVisitingPlayers()
     {
         return ImmutableList.copyOf(visitingPlayers);
     }
@@ -1344,18 +1344,18 @@ public class Colony implements IColony
         {
             visitingPlayers.add(player);
             LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName(), this.getName());
+            LanguageHandler.sendPlayersMessage(getMessagePlayerEntitys(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName(), this.getName());
         }
     }
 
     @Override
     public void removeVisitingPlayer(final PlayerEntity player)
     {
-        if (!getMessageEntityPlayers().contains(player) && Configurations.gameplay.sendEnteringLeavingMessages)
+        if (!getMessagePlayerEntitys().contains(player) && Configurations.gameplay.sendEnteringLeavingMessages)
         {
             visitingPlayers.remove(player);
             LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName(), this.getName());
+            LanguageHandler.sendPlayersMessage(getMessagePlayerEntitys(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName(), this.getName());
         }
     }
 
@@ -1426,7 +1426,7 @@ public class Colony implements IColony
         this.needToMourn = needToMourn;
         if (needToMourn)
         {
-            LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN, name);
+            LanguageHandler.sendPlayersMessage(getMessagePlayerEntitys(), COM_MINECOLONIES_COREMOD_MOURN, name);
         }
     }
 
@@ -1498,7 +1498,7 @@ public class Colony implements IColony
             {
                 if (attackingPlayer.addGuard(IEntityCitizen))
                 {
-                    LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(),
+                    LanguageHandler.sendPlayersMessage(getMessagePlayerEntitys(),
                       "Beware, " + attackingPlayer.getPlayer().getName() + " has now: " + attackingPlayer.getGuards().size() + " guards!");
                 }
                 return;
@@ -1512,7 +1512,7 @@ public class Colony implements IColony
                 final AttackingPlayer attackingPlayer = new AttackingPlayer(visitingPlayer);
                 attackingPlayer.addGuard(IEntityCitizen);
                 attackingPlayers.add(attackingPlayer);
-                LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), "Beware, " + visitingPlayer.getName() + " is attacking you and he brought guards.");
+                LanguageHandler.sendPlayersMessage(getMessagePlayerEntitys(), "Beware, " + visitingPlayer.getName() + " is attacking you and he brought guards.");
             }
         }
     }

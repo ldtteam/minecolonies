@@ -5,7 +5,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.commands.colonycommands.HomeTeleportCommand;
 import com.minecolonies.coremod.commands.colonycommands.LoadColonyBackupCommand;
 import com.minecolonies.coremod.commands.generalcommands.*;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;

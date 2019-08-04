@@ -30,13 +30,13 @@ import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.event.ClientEventHandler;
 import com.minecolonies.coremod.event.DebugRendererChunkBorder;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
-import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
+import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.entity.PlayerEntitySP;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.RecipeBook;
@@ -102,7 +102,7 @@ public class ClientProxy extends CommonProxy
     public void registerTileEntityRendering()
     {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityScarecrow.class, new TileEntityScarecrowRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(ScarecrowTileEntity.class, new TileEntityScarecrowRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityInfoPoster.class, new TileEntityInfoPosterRenderer());
     }
 
@@ -323,9 +323,9 @@ public class ClientProxy extends CommonProxy
     @Override
     public RecipeBook getRecipeBookFromPlayer(@NotNull final PlayerEntity player)
     {
-        if (player instanceof EntityPlayerSP)
+        if (player instanceof PlayerEntitySP)
         {
-            return ((EntityPlayerSP) player).getRecipeBook();
+            return ((PlayerEntitySP) player).getRecipeBook();
         }
 
         return super.getRecipeBookFromPlayer(player);

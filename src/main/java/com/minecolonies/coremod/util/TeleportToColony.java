@@ -7,8 +7,8 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.play.server.SPacketEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -59,13 +59,13 @@ public final class TeleportToColony
         final int colonyId;
         final Entity senderEntity = sender.getCommandSenderEntity();
         //see if sent by a player and grab their name and Get the players Colony ID that sent the command
-        if (senderEntity instanceof EntityPlayer)
+        if (senderEntity instanceof PlayerEntity)
         {
             //if no args then this is a home colony TP and we get the players Colony ID
             if (args.length == 0)
             {
-                playerToTeleport = (EntityPlayer) sender;
-                colony = IColonyManager.getInstance().getIColonyByOwner(((EntityPlayer) sender).world, (EntityPlayer) sender);
+                playerToTeleport = (PlayerEntity) sender;
+                colony = IColonyManager.getInstance().getIColonyByOwner(((PlayerEntity) sender).world, (PlayerEntity) sender);
 
                 if(colony == null)
                 {
@@ -77,7 +77,7 @@ public final class TeleportToColony
             {
                 //if there is args then this will be to a friends colony TP and we use the Colony ID they specify
                 //will need to see if they friendly to destination colony
-                playerToTeleport = (EntityPlayer) sender;
+                playerToTeleport = (PlayerEntity) sender;
                 colonyId = Integer.valueOf(args[0]);
             }
         }
@@ -87,7 +87,7 @@ public final class TeleportToColony
             return;
         }
 
-        if (MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
+        if (MinecoloniesCommand.canExecuteCommand((PlayerEntity) sender))
         {
             teleportPlayer(playerToTeleport, colonyId, sender);
             return;
@@ -114,7 +114,7 @@ public final class TeleportToColony
 
         final BlockPos position = townHall.getPosition();
 
-        final int dimension = playerToTeleport.getEntityWorld().provider.getDimension();
+        final int dimension = playerToTeleport.getEntityWorld().world.getDimension().getType().getId();
         final int colonyDimension = townHall.getColony().getDimension();
 
         if (colID < MIN_COLONY_ID)
@@ -123,7 +123,7 @@ public final class TeleportToColony
             return;
         }
 
-        final EntityPlayerMP entityPlayerMP = (EntityPlayerMP) sender;
+        final ServerPlayerEntity ServerPlayerEntity = (ServerPlayerEntity) sender;
         if (dimension != colonyDimension)
         {
             playerToTeleport.sendMessage(new StringTextComponent("We got places to go, kid..."));
@@ -132,21 +132,21 @@ public final class TeleportToColony
             final WorldServer worldServer = server.getWorld(colonyDimension);
 
             // Vanilla does that as well.
-            entityPlayerMP.connection.sendPacket(new SPacketEffect(SOUND_TYPE, BlockPos.ORIGIN, 0, false));
-            entityPlayerMP.addExperience(0);
-            entityPlayerMP.setPlayerHealthUpdated();
+            ServerPlayerEntity.connection.sendPacket(new SPacketEffect(SOUND_TYPE, BlockPos.ORIGIN, 0, false));
+            ServerPlayerEntity.addExperience(0);
+            ServerPlayerEntity.setPlayerHealthUpdated();
 
             playerToTeleport.sendMessage(new StringTextComponent("Hold onto your pants, we're going Inter-Dimensional!"));
 
             worldServer.getMinecraftServer().getPlayerList()
-                    .transferPlayerToDimension(entityPlayerMP, colonyDimension, new Teleporter(worldServer));
+                    .transferPlayerToDimension(ServerPlayerEntity, colonyDimension, new Teleporter(worldServer));
             if (dimension == 1)
             {
                 worldServer.addEntity(playerToTeleport);
                 worldServer.updateEntityWithOptionalForce(playerToTeleport, false);
             }
         }
-        entityPlayerMP.connection.setPlayerLocation(position.getX(), position.getY() + 2.0, position.getZ(), entityPlayerMP.rotationYaw, entityPlayerMP.rotationPitch);
+        ServerPlayerEntity.connection.setPlayerLocation(position.getX(), position.getY() + 2.0, position.getZ(), ServerPlayerEntity.rotationYaw, ServerPlayerEntity.rotationPitch);
     }
 }
 

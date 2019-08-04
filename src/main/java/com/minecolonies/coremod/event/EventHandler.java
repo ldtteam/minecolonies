@@ -31,13 +31,13 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockSilverfish;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.entity.PlayerEntitySP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
@@ -101,7 +101,7 @@ public class EventHandler
             if (mc.gameSettings.showDebugInfo)
             {
                 final WorldClient world = mc.world;
-                final EntityPlayerSP player = mc.player;
+                final PlayerEntitySP player = mc.player;
                 IColony colony = IColonyManager.getInstance().getIColony(world, player.getPosition());
                 if (colony == null)
                 {
@@ -175,10 +175,10 @@ public class EventHandler
         final Entity entity = event.getEntity();
 
         //  Add nearby players
-        if (entity instanceof EntityPlayerMP)
+        if (entity instanceof ServerPlayerEntity)
         {
             final World world = entity.getEntityWorld();
-            MineColonies.getNetwork().sendTo(new UpdateChunkRangeCapabilityMessage(world, event.getNewChunkX(), event.getNewChunkZ(), Configurations.gameplay.workingRangeTownHallChunks), (EntityPlayerMP) event.getEntity());
+            MineColonies.getNetwork().sendTo(new UpdateChunkRangeCapabilityMessage(world, event.getNewChunkX(), event.getNewChunkZ(), Configurations.gameplay.workingRangeTownHallChunks), (ServerPlayerEntity) event.getEntity());
 
             final Chunk newChunk = world.getChunk(event.getNewChunkX(), event.getNewChunkZ());
             ChunkDataHelper.loadChunk(newChunk, entity.world);
@@ -186,14 +186,14 @@ public class EventHandler
             final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null);
 
             MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.x, newChunk.z));
-            @NotNull final EntityPlayerMP player = (EntityPlayerMP) entity;
+            @NotNull final ServerPlayerEntity player = (ServerPlayerEntity) entity;
             final Chunk oldChunk = world.getChunk(event.getOldChunkX(), event.getOldChunkZ());
             final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null);
 
             // Add new subscribers to colony.
             for (final int colonyId : newCloseColonies.getAllCloseColonies())
             {
-                final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, ((EntityPlayerMP) entity).getServerWorld());
+                final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, ((ServerPlayerEntity) entity).getServerWorld());
                 if (colony != null)
                 {
                     colony.getPackageManager().addSubscribers(player);
@@ -205,7 +205,7 @@ public class EventHandler
             {
                 if (!newCloseColonies.getAllCloseColonies().contains(colonyId))
                 {
-                    final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, ((EntityPlayerMP) entity).getServerWorld());
+                    final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, ((ServerPlayerEntity) entity).getServerWorld());
                     if (colony != null)
                     {
                         colony.getPackageManager().removeSubscriber(player);
@@ -217,7 +217,7 @@ public class EventHandler
             {
                 if (newCloseColonies.getOwningColony() == 0)
                 {
-                    final IColony colony = IColonyManager.getInstance().getColonyByWorld(oldCloseColonies.getOwningColony(), ((EntityPlayerMP) entity).getServerWorld());
+                    final IColony colony = IColonyManager.getInstance().getColonyByWorld(oldCloseColonies.getOwningColony(), ((ServerPlayerEntity) entity).getServerWorld());
                     if (colony != null)
                     {
                         colony.removeVisitingPlayer(player);
@@ -225,7 +225,7 @@ public class EventHandler
                     return;
                 }
 
-                final IColony colony = IColonyManager.getInstance().getColonyByWorld(newCloseColonies.getOwningColony(), ((EntityPlayerMP) entity).getServerWorld());
+                final IColony colony = IColonyManager.getInstance().getColonyByWorld(newCloseColonies.getOwningColony(), ((ServerPlayerEntity) entity).getServerWorld());
                 if (colony != null)
                 {
                     colony.addVisitingPlayer(player);
@@ -320,7 +320,7 @@ public class EventHandler
     @SubscribeEvent
     public void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickBlock event)
     {
-        final PlayerEntity player = event.getEntityPlayer();
+        final PlayerEntity player = event.getPlayerEntity();
         final World world = event.getWorld();
         BlockPos bedBlockPos = event.getPos();
 
@@ -340,10 +340,10 @@ public class EventHandler
 
                 return;
             }
-            else if ("pmardle".equalsIgnoreCase(event.getEntityPlayer().getName())
+            else if ("pmardle".equalsIgnoreCase(event.getPlayerEntity().getName())
                        && Block.getBlockFromItem(event.getItemStack().getItem()) instanceof BlockSilverfish)
             {
-                LanguageHandler.sendPlayerMessage(event.getEntityPlayer(), "Stop that you twat!!!");
+                LanguageHandler.sendPlayerMessage(event.getPlayerEntity(), "Stop that you twat!!!");
                 event.setCanceled(true);
             }
 
@@ -417,7 +417,7 @@ public class EventHandler
                 final ItemStack stack = event.getPlayer().getHeldItem(event.getHand());
                 if (!stack.isEmpty() && !world.isRemote)
                 {
-                    MineColonies.getNetwork().sendTo(new OpenSuggestionWindowMessage(event.getPlacedBlock(), event.getPos(), stack), (EntityPlayerMP) event.getPlayer());
+                    MineColonies.getNetwork().sendTo(new OpenSuggestionWindowMessage(event.getPlacedBlock(), event.getPos(), stack), (ServerPlayerEntity) event.getPlayer());
 
                 }
                 event.setCanceled(true);
@@ -488,7 +488,7 @@ public class EventHandler
      */
     public static boolean onBlockHutPlaced(@NotNull final World world, @NotNull final PlayerEntity player, final Block block, final BlockPos pos)
     {
-        if (!Configurations.gameplay.allowOtherDimColonies && world.provider.getDimension() != 0)
+        if (!Configurations.gameplay.allowOtherDimColonies && world.world.getDimension().getType().getId() != 0)
         {
             LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_IN_OTHER_DIM);
             return false;
@@ -705,9 +705,9 @@ public class EventHandler
     /*@SubscribeEvent
     public void onEntityConstructing(@NotNull EntityEvent.EntityConstructing event)
     {
-        if (event.getEntity() instanceof EntityPlayer)
+        if (event.getEntity() instanceof PlayerEntity)
         {
-            @NotNull PlayerEntity player = (EntityPlayer) event.getEntity();
+            @NotNull PlayerEntity player = (PlayerEntity) event.getEntity();
             if (PlayerProperties.get(player) == null)
             {
                 PlayerProperties.register(player);
@@ -725,9 +725,9 @@ public class EventHandler
     /*@SubscribeEvent
     public void onLivingDeath(@NotNull LivingDeathEvent event)
     {
-        if (!event.getEntity().worldObj.isRemote && event.getEntity() instanceof EntityPlayer)
+        if (!event.getEntity().worldObj.isRemote && event.getEntity() instanceof PlayerEntity)
         {
-            PlayerProperties.saveProxyData((EntityPlayer) event.getEntity());
+            PlayerProperties.saveProxyData((PlayerEntity) event.getEntity());
         }
     }*/
 
@@ -740,9 +740,9 @@ public class EventHandler
     /*@SubscribeEvent
     public void onEntityJoinWorld(@NotNull EntityJoinWorldEvent event)
     {
-        if (!event.getEntity().worldObj.isRemote && event.getEntity() instanceof EntityPlayer)
+        if (!event.getEntity().worldObj.isRemote && event.getEntity() instanceof PlayerEntity)
         {
-            PlayerProperties.loadProxyData((EntityPlayer) event.getEntity());
+            PlayerProperties.loadProxyData((PlayerEntity) event.getEntity());
         }
     }*/
 

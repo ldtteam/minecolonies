@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.network.messages;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -23,7 +23,7 @@ public abstract class AbstractMessage<A extends IMessage, B extends IMessage> im
     {
         if(ctx.side.isServer())
         {
-            final EntityPlayerMP player = ctx.getServerHandler().player;
+            final ServerPlayerEntity player = ctx.getServerHandler().player;
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> messageOnServerThread(message, player));
         }
         else
@@ -50,7 +50,7 @@ public abstract class AbstractMessage<A extends IMessage, B extends IMessage> im
      * @param message the original message.
      * @param player  the player associated.
      */
-    public void messageOnServerThread(final A message, final EntityPlayerMP player)
+    public void messageOnServerThread(final A message, final ServerPlayerEntity player)
     {
         //NOOP
     }

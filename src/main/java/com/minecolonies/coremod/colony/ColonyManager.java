@@ -19,7 +19,7 @@ import com.minecolonies.coremod.util.BackUpHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
@@ -485,7 +485,7 @@ public final class ColonyManager implements IColonyManager
         {
             return null;
         }
-        return getColonyView(id, w.provider.getDimension());
+        return getColonyView(id, w.world.getDimension().getType().getId());
     }
 
     /**
@@ -526,7 +526,7 @@ public final class ColonyManager implements IColonyManager
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
         if (cap.getOwningColony() != 0)
         {
-            return getColonyView(cap.getOwningColony(), w.provider.getDimension());
+            return getColonyView(cap.getOwningColony(), w.world.getDimension().getType().getId());
         }
         else if (!cap.getAllCloseColonies().isEmpty())
         {
@@ -535,8 +535,8 @@ public final class ColonyManager implements IColonyManager
 
             for (final int cId : cap.getAllCloseColonies())
             {
-                final IColonyView c = getColonyView(cId, w.provider.getDimension());
-                if (c != null && c.getDimension() == w.provider.getDimension())
+                final IColonyView c = getColonyView(cId, w.world.getDimension().getType().getId());
+                if (c != null && c.getDimension() == w.world.getDimension().getType().getId())
                 {
                     final long dist = c.getDistanceSquared(pos);
                     if (dist < closestDist)
@@ -552,11 +552,11 @@ public final class ColonyManager implements IColonyManager
         @Nullable IColonyView closestColony = null;
         long closestDist = Long.MAX_VALUE;
 
-        if (colonyViews.containsKey(w.provider.getDimension()))
+        if (colonyViews.containsKey(w.world.getDimension().getType().getId()))
         {
-            for (@NotNull final IColonyView c : colonyViews.get(w.provider.getDimension()))
+            for (@NotNull final IColonyView c : colonyViews.get(w.world.getDimension().getType().getId()))
             {
-                if (c.getDimension() == w.provider.getDimension() && c.getCenter() != null)
+                if (c.getDimension() == w.world.getDimension().getType().getId() && c.getCenter() != null)
                 {
                     final long dist = c.getDistanceSquared(pos);
                     if (dist < closestDist)
@@ -595,7 +595,7 @@ public final class ColonyManager implements IColonyManager
             for (final int cId : cap.getAllCloseColonies())
             {
                 final IColony c = getColonyByWorld(cId, w);
-                if (c != null && c.getDimension() == w.provider.getDimension())
+                if (c != null && c.getDimension() == w.world.getDimension().getType().getId())
                 {
                     final long dist = c.getDistanceSquared(pos);
                     if (dist < closestDist)
@@ -613,7 +613,7 @@ public final class ColonyManager implements IColonyManager
 
         for (@NotNull final IColony c : getColonies(w))
         {
-            if (c.getDimension() == w.provider.getDimension())
+            if (c.getDimension() == w.world.getDimension().getType().getId())
             {
                 final long dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
@@ -660,7 +660,7 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getIColonyByOwner(@NotNull final World w, final UUID owner)
     {
-        return w.isRemote ? getColonyViewByOwner(owner, w.provider.getDimension()) : getColonyByOwner(owner);
+        return w.isRemote ? getColonyViewByOwner(owner, w.world.getDimension().getType().getId()) : getColonyByOwner(owner);
     }
 
     /**

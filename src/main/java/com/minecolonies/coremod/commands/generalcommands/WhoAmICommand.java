@@ -8,7 +8,7 @@ import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
@@ -64,13 +64,13 @@ public class WhoAmICommand extends AbstractSingleCommand implements IActionComma
 
     private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender) throws CommandException
     {
-        if (!(sender instanceof EntityPlayer))
+        if (!(sender instanceof PlayerEntity))
         {
             Log.getLogger().info("Very funny, you're a console!");
             return;
         }
 
-        final IColony colony = IColonyManager.getInstance().getIColonyByOwner(server.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
+        final IColony colony = IColonyManager.getInstance().getIColonyByOwner(server.getEntityWorld(), ((PlayerEntity) sender).getUniqueID());
         final BlockPos pos = colony.getCenter();
         final String colonyName = colony.getName();
         final String playerName = sender.getDisplayName().getFormattedText();

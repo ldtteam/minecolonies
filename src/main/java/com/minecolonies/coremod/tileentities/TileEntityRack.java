@@ -13,7 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Rotation;
@@ -411,10 +411,10 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket()
+    public SUpdateTileEntityPacket getUpdatePacket()
     {
         final CompoundNBT compound = new CompoundNBT();
-        return new SPacketUpdateTileEntity(this.pos, 0, this.write(compound));
+        return new SUpdateTileEntityPacket(this.pos, 0, this.write(compound));
     }
 
     @NotNull
@@ -425,7 +425,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
-    public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
+    public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
     {
         this.read(packet.getNbtCompound());
     }

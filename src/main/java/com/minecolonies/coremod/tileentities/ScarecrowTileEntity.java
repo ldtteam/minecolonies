@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.ldtteam.structurize.api.util.LanguageHandler;
 import com.ldtteam.structurize.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -9,21 +10,17 @@ import com.minecolonies.api.tileentities.ScareCrowType;
 import com.minecolonies.api.tileentities.ScarecrowFieldStage;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.LanguageHandler;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockFence;
-import net.minecraft.block.BlockFenceGate;
-import net.minecraft.block.BlockWall;
+import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -39,7 +36,7 @@ import static net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND;
 /**
  * The scarecrow tile entity to store extra data.
  */
-public class TileEntityScarecrow extends AbstractScarescrowTileEntity
+public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
 {
     /**
      * The max width/length of a field.
@@ -121,7 +118,7 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
     /**
      * Creates an instance of the tileEntity.
      */
-    public TileEntityScarecrow()
+    public ScarecrowTileEntity()
     {
         super();
         name = LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format(owner));
@@ -147,8 +144,7 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
     public void setName(final String name)
     {
         this.name = name;
-        setCustomName(name);
-        markDirty();
+        setCustomName(new StringTextComponent(name));
     }
 
     /**
@@ -177,7 +173,6 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
         this.lengthMinusX = searchNextBlock(0, position.west(), Direction.WEST, world);
         this.widthPlusZ = searchNextBlock(0, position.south(), Direction.SOUTH, world);
         this.widthMinusZ = searchNextBlock(0, position.north(), Direction.NORTH, world);
-        markDirty();
     }
 
     /**
@@ -218,7 +213,7 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
      */
     private static boolean isValidDelimiter(final Block block)
     {
-        return block instanceof BlockFence || block instanceof BlockFenceGate || block == ModBlocks.blockCactusFence || block == ModBlocks.blockCactusFenceGate || block instanceof BlockWall;
+        return block instanceof FenceBlock || block instanceof FenceGateBlock || block == ModBlocks.blockCactusFence || block == ModBlocks.blockCactusFenceGate || block instanceof WallBlock;
     }
 
     /**
@@ -230,7 +225,7 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
     public BlockPos getID()
     {
         // Location doubles as ID
-        return this.getPos();
+        return this.getPosition();
     }
 
     /**
@@ -253,7 +248,6 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
     public void setTaken(final boolean taken)
     {
         this.taken = taken;
-        markDirty();
     }
 
     @Override
@@ -266,7 +260,6 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
             return;
         }
         setFieldStage(ScarecrowFieldStage.values()[getFieldStage().ordinal() + 1]);
-        markDirty();
     }
 
     /**
@@ -289,7 +282,6 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
     public void setFieldStage(final ScarecrowFieldStage fieldStage)
     {
         this.fieldStage = fieldStage;
-        markDirty();
     }
 
     /**
@@ -312,7 +304,6 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
     public void setNeedsWork(final boolean needsWork)
     {
         this.doesNeedWork = needsWork;
-        markDirty();
     }
 
     /**
@@ -375,15 +366,10 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
         return widthMinusZ;
     }
 
-    /**
-     * Location getter.
-     *
-     * @return the location of the scarecrow of the field.
-     */
     @Override
     public BlockPos getPosition()
     {
-        return this.pos;
+        return getPos();
     }
 
     /**
@@ -429,7 +415,6 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
             }
         }
         setName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format(owner)));
-        markDirty();
     }
 
     /**
@@ -453,7 +438,6 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
                 owner = tempColony.getCitizen(ownerId).getName();
             }
         }
-        markDirty();
     }
 
     /**
@@ -469,7 +453,7 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
     ///////////---- Following methods are used to update the tileEntity between client and server ----///////////
 
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket()
+    public SUpdateTileEntityPacket getUpdatePacket()
     {
         final CompoundNBT compound = new CompoundNBT();
         this.write(compound);
@@ -477,7 +461,7 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
         {
             compound.putInt(TAG_COLONY_ID, colony.getID());
         }
-        return new SPacketUpdateTileEntity(this.pos, 0, compound);
+        return new SUpdateTileEntityPacket(this.getPosition(), 0, compound);
     }
 
     @NotNull
@@ -488,13 +472,13 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
     }
 
     @Override
-    public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
+    public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
     {
         final CompoundNBT compound = packet.getNbtCompound();
         this.read(compound);
         if(compound.keySet().contains(TAG_COLONY_ID))
         {
-            setOwner(ownerId, IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY_ID), world.provider.getDimension()));
+            setOwner(ownerId, IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY_ID), world.getDimension().getType().getId()));
         }
     }
 
@@ -511,7 +495,7 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
         {
             @Nullable final Entity entity = EntityUtils.getEntityFromUUID(world, colony.getPermissions().getOwner());
 
-            if (entity instanceof EntityPlayer)
+            if (entity instanceof PlayerEntity)
             {
                 colony.getBuildingManager().addNewField(this, pos, world);
             }
@@ -525,7 +509,7 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
         for (int i = 0; i < inventoryTagList.size(); ++i)
         {
             final CompoundNBT inventoryCompound = inventoryTagList.getCompound(i);
-            final ItemStack stack = new ItemStack(inventoryCompound);
+            final ItemStack stack = ItemStack.read(inventoryCompound);
             if (ItemStackUtils.getSize(stack) <= 0)
             {
                 inventory.setStackInSlot(i, ItemStackUtils.EMPTY);
@@ -590,7 +574,7 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
      * @return the enum type.
      */
     @Override
-    public ScareCrowType getType()
+    public ScareCrowType getScarecrowType()
     {
         if (this.type == null)
         {

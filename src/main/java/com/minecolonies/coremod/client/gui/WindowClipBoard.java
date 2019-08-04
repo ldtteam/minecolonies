@@ -144,7 +144,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
                 logo.setImage(request.getDisplayIcon());
             }
 
-            final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getMinecraft().world.provider.getDimension());
+            final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getMinecraft().world.world.getDimension().getType().getId());
             rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getId()).getFormattedText());
 
             rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
@@ -159,7 +159,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     public ImmutableList<IRequest> getOpenRequests()
     {
         final ArrayList<IRequest<?>> requests = Lists.newArrayList();
-        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getMinecraft().world.provider.getDimension());
+        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getMinecraft().world.world.getDimension().getType().getId());
 
         if (view == null)
         {

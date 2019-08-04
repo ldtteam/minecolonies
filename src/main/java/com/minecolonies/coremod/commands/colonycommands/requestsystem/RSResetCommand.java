@@ -8,7 +8,7 @@ import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
@@ -78,9 +78,9 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
         final Entity senderEntity = sender.getCommandSenderEntity();
 
         int colonyId = getIthArgument(args, 0, -1);
-        if (colonyId == -1 && senderEntity instanceof EntityPlayer)
+        if (colonyId == -1 && senderEntity instanceof PlayerEntity)
         {
-            final IColony colony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
+            final IColony colony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), ((PlayerEntity) sender).getUniqueID());
             if (colony == null)
             {
                 sender.sendMessage(new StringTextComponent(COLONY_NULL));
@@ -89,7 +89,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
             colonyId = colony.getID();
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().world.getDimension().getType().getId()));
 
         if (colony == null)
         {
@@ -104,9 +104,9 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
     {
         final Entity senderEntity = sender.getCommandSenderEntity();
 
-        if (senderEntity instanceof EntityPlayer)
+        if (senderEntity instanceof PlayerEntity)
         {
-            final PlayerEntity player = (EntityPlayer) sender;
+            final PlayerEntity player = (PlayerEntity) sender;
             if (!canPlayerUseCommand(player, RSRESET, colony.getID()))
             {
                 sender.sendMessage(new StringTextComponent(NOT_PERMITTED));

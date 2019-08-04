@@ -121,14 +121,14 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         if (hasBuilder && sendMessage)
         {
             hasSentMessageForThisWorkOrder = true;
-            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
               "entity.builder.messageBuilderNecessary", Integer.toString(this.upgradeLevel));
         }
 
         if (!hasBuilder)
         {
             hasSentMessageForThisWorkOrder = true;
-            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
               "entity.builder.messageNoBuilder");
         }
     }

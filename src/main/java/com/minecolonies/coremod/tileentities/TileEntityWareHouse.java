@@ -9,7 +9,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -113,7 +113,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             @Nullable final TileEntity chest = searchRightChestForStack(stack);
             if (chest == null)
             {
-                LanguageHandler.sendPlayersMessage(getColony().getMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL);
+                LanguageHandler.sendPlayersMessage(getColony().getMessagePlayerEntitys(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL);
                 return;
             }
             final IItemHandler handler = chest.getCapability(ITEM_HANDLER_CAPABILITY, null);
@@ -175,7 +175,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
      */
     private static boolean isInChest(final ItemStack stack, final TileEntity entity, final boolean ignoreDamageValue)
     {
-        return entity instanceof TileEntityChest
+        return entity instanceof ChestTileEntity
                  && InventoryUtils.findSlotInItemHandlerNotFullWithItem(entity.getCapability(ITEM_HANDLER_CAPABILITY, null), stack);
     }
 
@@ -232,9 +232,9 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                     emptiestChest = entity;
                 }
             }
-            else if (entity instanceof TileEntityChest && InventoryUtils.getFirstOpenSlotFromProvider(entity) != -1)
+            else if (entity instanceof ChestTileEntity && InventoryUtils.getFirstOpenSlotFromProvider(entity) != -1)
             {
-                tempFreeSlots = ((TileEntityChest) entity).getSizeInventory() - InventoryUtils.getAmountOfStacksInProvider(entity);
+                tempFreeSlots = ((ChestTileEntity) entity).getSizeInventory() - InventoryUtils.getAmountOfStacksInProvider(entity);
                 if (freeSlots < tempFreeSlots)
                 {
                     freeSlots = tempFreeSlots;

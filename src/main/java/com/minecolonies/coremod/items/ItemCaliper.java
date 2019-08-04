@@ -4,7 +4,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;

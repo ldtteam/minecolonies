@@ -8,7 +8,7 @@ import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -108,7 +108,7 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
     }
 
     @Override
-    public void messageOnServerThread(final GuardTaskMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final GuardTaskMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

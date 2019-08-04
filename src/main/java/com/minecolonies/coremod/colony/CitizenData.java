@@ -23,7 +23,7 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -119,7 +119,7 @@ public class CitizenData implements ICitizenData
     /**
      * Report end message to:
      */
-    private EntityPlayerMP originPlayerRestart;
+    private ServerPlayerEntity originPlayerRestart;
 
     /**
      * The id of the citizens texture.
@@ -1382,7 +1382,7 @@ public class CitizenData implements ICitizenData
      * Schedule restart and cleanup
      */
     @Override
-    public void scheduleRestart(final EntityPlayerMP player)
+    public void scheduleRestart(final ServerPlayerEntity player)
     {
         originPlayerRestart = player;
         restartScheduled = true;

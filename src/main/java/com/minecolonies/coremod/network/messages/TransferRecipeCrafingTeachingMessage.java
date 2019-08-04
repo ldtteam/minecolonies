@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.inventory.CraftingGUIBuilding;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -70,7 +70,7 @@ public class TransferRecipeCrafingTeachingMessage extends AbstractMessage<Transf
     }
 
     @Override
-    public void messageOnServerThread(final TransferRecipeCrafingTeachingMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final TransferRecipeCrafingTeachingMessage message, final ServerPlayerEntity player)
     {
         if (player.openContainer instanceof CraftingGUIBuilding)
         {

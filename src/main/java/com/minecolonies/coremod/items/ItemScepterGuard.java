@@ -13,7 +13,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.client.gui.WindowGuardControl;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
@@ -103,7 +103,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             {
                 return ActionResult.newResult(ActionResultType.FAIL, stack);
             }
-            final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), Minecraft.getMinecraft().world.provider.getDimension());
+            final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), Minecraft.getMinecraft().world.world.getDimension().getType().getId());
             if (colony == null)
             {
                 return ActionResult.newResult(ActionResultType.FAIL, stack);

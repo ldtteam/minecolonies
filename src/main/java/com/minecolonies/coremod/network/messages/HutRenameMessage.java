@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -80,7 +80,7 @@ public class HutRenameMessage extends AbstractMessage<HutRenameMessage, IMessage
     }
 
     @Override
-    public void messageOnServerThread(final HutRenameMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final HutRenameMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))

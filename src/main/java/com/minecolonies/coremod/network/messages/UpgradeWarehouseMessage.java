@@ -11,7 +11,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -77,7 +77,7 @@ public class UpgradeWarehouseMessage extends AbstractMessage<UpgradeWarehouseMes
     }
 
     @Override
-    public void messageOnServerThread(final UpgradeWarehouseMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final UpgradeWarehouseMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null)

@@ -8,7 +8,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -112,7 +112,7 @@ public class SifterSettingsMessage extends AbstractMessage<SifterSettingsMessage
     }
 
     @Override
-    public void messageOnServerThread(final SifterSettingsMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final SifterSettingsMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

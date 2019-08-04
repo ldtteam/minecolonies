@@ -1,7 +1,7 @@
 package com.minecolonies.api.util.constant;
 
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,20 +17,20 @@ public enum ToolType implements IToolType
      * com.minecolonies.api.util.ItemStackUtils.isTool
      * to be usable by the RS system
      */
-    NONE("", false, new TextComponentTranslation(COM_MINECOLONIES_TOOLTYPE_NONE)),
-    PICKAXE("pickaxe", true, new TextComponentTranslation(COM_MINECOLONIES_TOOLTYPE_PICKAXE)),
-    SHOVEL("shovel", true, new TextComponentTranslation(COM_MINECOLONIES_TOOLTYPE_SHOVEL)),
-    AXE("axe", true, new TextComponentTranslation(COM_MINECOLONIES_TOOLTYPE_AXE)),
-    HOE("hoe", true, new TextComponentTranslation(COM_MINECOLONIES_TOOLTYPE_HOE)),
-    SWORD("weapon", true, new TextComponentTranslation(COM_MINECOLONIES_TOOLTYPE_SWORD)),
-    BOW("bow", false, new TextComponentTranslation(COM_MINECOLONIES_TOOLTYPE_BOW)),
-    FISHINGROD("rod", false, new TextComponentTranslation(COM_MINECOLONIES_TOOLTYPE_FISHINGROD)),
-    SHEARS("shears", false, new TextComponentTranslation(COM_MINECOLONIES_TOOLTYPE_SHEARS)),
-    SHIELD("shield", false, new TextComponentTranslation(COM_MINECOLONIES_TOOLTYPE_SHIELD)),
-    HELMET("helmet", false, new TextComponentTranslation(COM_MINECOLONIES_TOOLTYPE_HELMET)),
-    LEGGINGS("leggings", false, new TextComponentTranslation(COM_MINECOLONIES_TOOLTYPE_LEGGINGS)),
-    CHESTPLATE("chestplate", false, new TextComponentTranslation(COM_MINECOLONIES_TOOLTYPE_CHESTPLATE)),
-    BOOTS("boots", false, new TextComponentTranslation(COM_MINECOLONIES_TOOLTYPE_BOOTS));
+    NONE("", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_NONE)),
+    PICKAXE("pickaxe", true, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_PICKAXE)),
+    SHOVEL("shovel", true, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_SHOVEL)),
+    AXE("axe", true, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_AXE)),
+    HOE("hoe", true, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_HOE)),
+    SWORD("weapon", true, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_SWORD)),
+    BOW("bow", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_BOW)),
+    FISHINGROD("rod", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_FISHINGROD)),
+    SHEARS("shears", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_SHEARS)),
+    SHIELD("shield", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_SHIELD)),
+    HELMET("helmet", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_HELMET)),
+    LEGGINGS("leggings", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_LEGGINGS)),
+    CHESTPLATE("chestplate", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_CHESTPLATE)),
+    BOOTS("boots", false, new TranslationTextComponent(COM_MINECOLONIES_TOOLTYPE_BOOTS));
 
     
     static final private Map<String, IToolType> tools = new HashMap<>();

@@ -20,7 +20,7 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
@@ -349,7 +349,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
     @Override
     protected void collideWithEntity(final Entity entityIn)
     {
-        if (slapTimer == 0 && entityIn instanceof EntityPlayer)
+        if (slapTimer == 0 && entityIn instanceof PlayerEntity)
         {
             slapTimer = SLAP_INTERVAL;
             entityIn.attackEntityFrom(new EntityDamageSource("Slap", this), 1.0f);
@@ -364,7 +364,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
             if (!ItemStackUtils.isEmpty(stack))
             {
                 this.swingArm(Hand.OFF_HAND);
-                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
                   "com.minecolonies.coremod.mercenary.mercenaryStealCitizen",
                   entityIn.getName(),
                   stack.getDisplayName());

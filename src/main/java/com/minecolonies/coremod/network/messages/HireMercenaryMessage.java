@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.init.SoundEvents;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
@@ -51,7 +51,7 @@ public class HireMercenaryMessage extends AbstractMessage<HireMercenaryMessage, 
     }
 
     @Override
-    public void messageOnServerThread(final HireMercenaryMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final HireMercenaryMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
 

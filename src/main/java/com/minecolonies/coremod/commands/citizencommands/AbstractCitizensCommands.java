@@ -8,7 +8,7 @@ import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
@@ -97,7 +97,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
         final IColony colony;
         if (sender instanceof PlayerEntity && colonyId == -1)
         {
-            final IColony tempColony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
+            final IColony tempColony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), (PlayerEntity) sender);
             if (tempColony != null)
             {
                 colonyId = tempColony.getID();
@@ -105,7 +105,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
             }
         }
 
-        colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().world.getDimension().getType().getId()));
 
         if (colony == null)
         {
@@ -113,9 +113,9 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
             return;
         }
 
-        if (sender instanceof EntityPlayer)
+        if (sender instanceof PlayerEntity)
         {
-            final PlayerEntity player = (EntityPlayer) sender;
+            final PlayerEntity player = (PlayerEntity) sender;
             if (!canPlayerUseCommand(player, getCommand(), colonyId))
             {
                 sender.sendMessage(new StringTextComponent(NOT_PERMITTED));

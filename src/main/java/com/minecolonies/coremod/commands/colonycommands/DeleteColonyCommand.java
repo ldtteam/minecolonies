@@ -10,7 +10,7 @@ import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
@@ -90,9 +90,9 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
         if (args.length == 0)
         {
             IColony colony = null;
-            if (sender instanceof EntityPlayer)
+            if (sender instanceof PlayerEntity)
             {
-                colony = IColonyManager.getInstance().getIColonyByOwner(CompatibilityUtils.getWorldFromEntity((EntityPlayer) sender), (EntityPlayer) sender);
+                colony = IColonyManager.getInstance().getIColonyByOwner(CompatibilityUtils.getWorldFromEntity((PlayerEntity) sender), (PlayerEntity) sender);
             }
 
             if (colony == null)
@@ -116,7 +116,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
             }
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().world.getDimension().getType().getId()));
         if (colony == null)
         {
             final String noColonyFoundMessage = String.format(COLONY_X_NULL, colonyId);
@@ -148,9 +148,9 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
 
         final Entity senderEntity = sender.getCommandSenderEntity();
 
-        if (senderEntity instanceof EntityPlayer)
+        if (senderEntity instanceof PlayerEntity)
         {
-            final PlayerEntity player = (EntityPlayer) sender;
+            final PlayerEntity player = (PlayerEntity) sender;
             if (!canPlayerUseCommand(player, DELETECOLONY, colony.getID()))
             {
                 sender.sendMessage(new StringTextComponent(NOT_PERMITTED));

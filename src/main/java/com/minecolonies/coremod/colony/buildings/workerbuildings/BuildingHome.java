@@ -359,7 +359,7 @@ public class BuildingHome extends AbstractBuilding
                     }
                 }
             }
-            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.progress.newChild");
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), "com.minecolonies.coremod.progress.newChild");
             colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), this.getPosition());
         }
     }

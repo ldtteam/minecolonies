@@ -4,7 +4,7 @@ import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.math.BlockPos;
@@ -26,11 +26,6 @@ public interface IProxy
      * @return true when client, false when server.
      */
     boolean isClient();
-
-    /**
-     * Method to register Tile Entities in.
-     */
-    void registerTileEntities();
 
     /**
      * Method to register events in.

@@ -11,7 +11,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCompost
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -324,7 +324,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if(ticksToComplain <= 0)
         {
             ticksToComplain = TICKS_UNTIL_COMPLAIN;
-            for(final PlayerEntity player : getOwnBuilding().getColony().getMessageEntityPlayers())
+            for(final PlayerEntity player : getOwnBuilding().getColony().getMessagePlayerEntitys())
             {
                 player.sendMessage(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST));
             }

@@ -74,7 +74,7 @@ public class ContainerGUICraftingFurnace extends Container
             }
 
             @Override
-            public boolean canTakeStack(final PlayerEntity par1EntityPlayer)
+            public boolean canTakeStack(final PlayerEntity par1PlayerEntity)
             {
                 return false;
             }
@@ -142,11 +142,11 @@ public class ContainerGUICraftingFurnace extends Container
 
         if (!worldObj.isRemote)
         {
-            final EntityPlayerMP entityPlayerMP = (EntityPlayerMP) player;
+            final ServerPlayerEntity ServerPlayerEntity = (ServerPlayerEntity) player;
             final ItemStack result = FurnaceRecipes.instance().getSmeltingResult(furnaceInventory.getStackInSlot(0)).copy();
 
             this.furnaceInventory.setInventorySlotContents(1, result);
-            entityPlayerMP.connection.sendPacket(new SPacketSetSlot(this.windowId, 1, result));
+            ServerPlayerEntity.connection.sendPacket(new SPacketSetSlot(this.windowId, 1, result));
         }
         return clickResult;
     }

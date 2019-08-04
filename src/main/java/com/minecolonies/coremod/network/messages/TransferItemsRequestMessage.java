@@ -9,7 +9,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -103,7 +103,7 @@ public class TransferItemsRequestMessage extends AbstractMessage<TransferItemsRe
     }
 
     @Override
-    public void messageOnServerThread(final TransferItemsRequestMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final TransferItemsRequestMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null)

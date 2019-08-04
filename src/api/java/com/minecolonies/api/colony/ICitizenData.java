@@ -9,7 +9,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -413,7 +413,7 @@ public interface ICitizenData extends INBTSerializable<CompoundNBT>
     /**
      * Schedule restart and cleanup.
      */
-    void scheduleRestart(EntityPlayerMP player);
+    void scheduleRestart(ServerPlayerEntity player);
 
     /**
      * AI will be restarted, also restart building etc

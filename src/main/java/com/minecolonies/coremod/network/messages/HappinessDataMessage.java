@@ -76,6 +76,6 @@ public class HappinessDataMessage extends AbstractMessage<HappinessDataMessage, 
     @Override
     protected void messageOnClientThread(final HappinessDataMessage message, final MessageContext ctx)
     {
-        IColonyManager.getInstance().handleHappinessDataMessage(message.colonyId, message.happinessData, Minecraft.getMinecraft().world.provider.getDimension());
+        IColonyManager.getInstance().handleHappinessDataMessage(message.colonyId, message.happinessData, Minecraft.getMinecraft().world.world.getDimension().getType().getId());
     }
 }
