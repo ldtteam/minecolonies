@@ -9,8 +9,11 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,12 +38,12 @@ public class BuildingHiringModeMessage implements IMessage
     private HiringMode mode;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public BuildingHiringModeMessage()
     {
@@ -48,7 +51,7 @@ public class BuildingHiringModeMessage implements IMessage
     }
 
     /**
-     * Creates object for the hiring mode message.
+     * Creates object for the hiring mode 
      *
      * @param building View of the building to read data from.
      * @param mode  the hiring mode.
@@ -66,7 +69,7 @@ public class BuildingHiringModeMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
-        buildingId = BlockPosUtil.readFromByteBuf(buf);
+        buildingId = buf.readBlockPos();
         mode = HiringMode.values()[buf.readInt()];
         dimension = buf.readInt();
     }
@@ -75,21 +78,29 @@ public class BuildingHiringModeMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeBlockPos(buildingId);
         buf.writeInt(mode.ordinal());
         buf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final BuildingHiringModeMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final ServerPlayerEntity player = ctxIn.getSender();
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
         {
-            @Nullable final AbstractBuildingWorker building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingWorker.class);
+            @Nullable final AbstractBuildingWorker building = colony.getBuildingManager().getBuilding(buildingId, AbstractBuildingWorker.class);
             if (building != null)
             {
-                building.setHiringMode(message.mode);
+                building.setHiringMode(mode);
             }
         }
     }

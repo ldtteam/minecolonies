@@ -83,8 +83,8 @@ public class GuardTaskMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
-        buildingId = BlockPosUtil.readFromByteBuf(buf);
-        job = new ResourceLocation(ByteBufUtils.readUTF8String(buf));
+        buildingId = buf.readBlockPos();
+        job = buf.readInt();
         assignmentMode = buf.readBoolean();
         patrollingMode = buf.readBoolean();
         tightGrouping = buf.readBoolean();
@@ -97,8 +97,8 @@ public class GuardTaskMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
-        ByteBufUtils.writeUTF8String(buf, job.toString());
+        buf.writeInt(job);
+        buf.writeBlockPos(buildingId);
         buf.writeBoolean(assignmentMode);
         buf.writeBoolean(patrollingMode);
         buf.writeBoolean(tightGrouping);

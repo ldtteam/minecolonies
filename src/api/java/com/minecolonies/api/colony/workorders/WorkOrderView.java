@@ -134,10 +134,10 @@ public class WorkOrderView
     {
         id = buf.readInt();
         priority = buf.readInt();
-        claimedBy = BlockPosUtil.readFromByteBuf(buf);
+        claimedBy = buf.readBlockPos();
         type = WorkOrderType.values()[buf.readInt()];
         value = buf.readString();
-        pos = BlockPosUtil.readFromByteBuf(buf);
+        pos = buf.readBlockPos();
     }
 
     /**

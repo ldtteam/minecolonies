@@ -81,7 +81,7 @@ public class LocalizedParticleEffectMessage implements IMessage
     @Override
     protected void messageOnClientThread(final LocalizedParticleEffectMessage message, final MessageContext ctx)
     {
-        final WorldClient world = Minecraft.getMinecraft().world;
+        final WorldClient world = Minecraft.getInstance().world;
         final ItemStack localStack = message.stack;
 
         for (int i = 0; i < 5; ++i)

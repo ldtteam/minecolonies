@@ -182,7 +182,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
         requests.addAll(requestTokens.stream().map(requestManager::getRequestForToken).filter(Objects::nonNull).collect(Collectors.toSet()));
 
-        final BlockPos playerPos = Minecraft.getMinecraft().player.getPosition();
+        final BlockPos playerPos = Minecraft.getInstance().player.getPosition();
         requests.sort(Comparator.comparing((IRequest request) -> request.getRequester().getLocation().getInDimensionLocation()
                 .getDistance(playerPos.getX(), playerPos.getY(), playerPos.getZ()))
                 .thenComparingInt((IRequest request) -> request.getId().hashCode()));

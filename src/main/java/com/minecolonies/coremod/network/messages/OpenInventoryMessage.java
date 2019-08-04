@@ -105,11 +105,11 @@ public class OpenInventoryMessage implements IMessage
                 entityID = buf.readInt();
                 break;
             case INVENTORY_CHEST:
-                tePos = BlockPosUtil.readFromByteBuf(buf);
+                tePos = buf.readBlockPos();
                 break;
             case INVENTORY_FIELD:
                 colonyId = buf.readInt();
-                tePos = BlockPosUtil.readFromByteBuf(buf);
+                tePos = buf.readBlockPos();
         }
     }
 
@@ -124,11 +124,11 @@ public class OpenInventoryMessage implements IMessage
                 buf.writeInt(entityID);
                 break;
             case INVENTORY_CHEST:
-                BlockPosUtil.writeToByteBuf(buf, tePos);
+                buf.writeBlockPos(tePos);
                 break;
             case INVENTORY_FIELD:
                 buf.writeInt(colonyId);
-                BlockPosUtil.writeToByteBuf(buf, tePos);
+                buf.writeBlockPos(tePos);
                 break;
         }
     }

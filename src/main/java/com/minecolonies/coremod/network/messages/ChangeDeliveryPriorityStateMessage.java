@@ -60,7 +60,7 @@ public class ChangeDeliveryPriorityStateMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         this.colonyId = buf.readInt();
-        this.buildingId = BlockPosUtil.readFromByteBuf(buf);
+        this.buildingId = buf.readBlockPos();
         dimension = buf.readInt();
     }
 
@@ -73,7 +73,7 @@ public class ChangeDeliveryPriorityStateMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(this.colonyId);
-        BlockPosUtil.writeToByteBuf(buf, this.buildingId);
+        buf.writeBlockPos(this.buildingId);
         buf.writeInt(dimension);
     }
 

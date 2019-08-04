@@ -145,7 +145,7 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
 
                 final Button switchButton = rowPane.findPaneOfTypeByID(MESH_BUTTON, Button.class);
 
-                if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(Minecraft.getMinecraft().player.inventory), stack -> stack.isItemEqual(resource)) || isSet)
+                if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(Minecraft.getInstance().player.inventory), stack -> stack.isItemEqual(resource)) || isSet)
                 {
                     switchButton.hide();
                 }

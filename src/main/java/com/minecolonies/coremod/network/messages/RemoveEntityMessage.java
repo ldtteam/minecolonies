@@ -58,16 +58,16 @@ public class RemoveEntityMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        from = BlockPosUtil.readFromByteBuf(buf);
-        to = BlockPosUtil.readFromByteBuf(buf);
+        from = buf.readBlockPos();
+        to = buf.readBlockPos();
         entityName = buf.readString();
     }
 
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        BlockPosUtil.writeToByteBuf(buf, from);
-        BlockPosUtil.writeToByteBuf(buf, to);
+        buf.writeBlockPos(from);
+        buf.writeBlockPos(to);
         buf.writeString(entityName);
     }
 

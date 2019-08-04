@@ -202,7 +202,7 @@ public final class ColonyView implements IColonyView
         //  General Attributes
         buf.writeString(colony.getName());
         buf.writeInt(colony.getDimension());
-        BlockPosUtil.writeToByteBuf(buf, colony.getCenter());
+        buf.writeBlockPos(colony.getCenter());
         buf.writeBoolean(colony.isManualHiring());
         //  Citizenry
         buf.writeInt(colony.getCitizenManager().getMaxCitizens());
@@ -220,7 +220,7 @@ public final class ColonyView implements IColonyView
         buf.writeInt(freePos.size());
         for (final BlockPos block : freePos)
         {
-            BlockPosUtil.writeToByteBuf(buf, block);
+            buf.writeBlockPos(block);
         }
         buf.writeDouble(colony.getOverallHappiness());
         buf.writeBoolean(colony.hasWarehouse());
@@ -228,7 +228,7 @@ public final class ColonyView implements IColonyView
         buf.writeInt(waypoints.size());
         for (final Map.Entry<BlockPos, BlockState> block : waypoints.entrySet())
         {
-            BlockPosUtil.writeToByteBuf(buf, block.getKey());
+            buf.writeBlockPos(block.getKey());
             ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new CompoundNBT(), block.getValue()));
         }
 
@@ -260,7 +260,7 @@ public final class ColonyView implements IColonyView
         buf.writeInt(colony.getRaiderManager().getLastSpawnPoints().size());
         for (final BlockPos block : colony.getRaiderManager().getLastSpawnPoints())
         {
-            BlockPosUtil.writeToByteBuf(buf, block);
+            buf.writeBlockPos(block);
         }
 
         buf.writeInt(colony.getTeamColonyColor().ordinal());
@@ -604,7 +604,7 @@ public final class ColonyView implements IColonyView
         //  General Attributes
         name = buf.readString();
         dimensionId = buf.readInt();
-        center = BlockPosUtil.readFromByteBuf(buf);
+        center = buf.readBlockPos();
         manualHiring = buf.readBoolean();
         //  Citizenry
         citizenCount = buf.readInt();

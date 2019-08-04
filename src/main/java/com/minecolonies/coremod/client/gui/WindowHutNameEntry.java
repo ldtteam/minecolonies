@@ -60,7 +60,7 @@ public class WindowHutNameEntry extends Window implements ButtonHandler
             if (name.length() > MAX_NAME_LENGTH)
             {
                 name = name.substring(0, MAX_NAME_LENGTH);
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.gui.name.tooLong", name);
+                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "com.minecolonies.coremod.gui.name.tooLong", name);
             }
 
             building.setCustomName(name);
