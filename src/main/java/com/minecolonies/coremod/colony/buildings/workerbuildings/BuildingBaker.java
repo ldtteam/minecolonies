@@ -215,13 +215,13 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         @NotNull final ListNBT tasksTagList = new ListNBT();
         for (@NotNull final Map.Entry<ProductState, List<BakingProduct>> entry : tasks.entrySet())
         {
-            if (!entry.getValue().isEmpty())
+            if (!entry.get().isEmpty())
             {
                 @NotNull final CompoundNBT taskCompound = new CompoundNBT();
                 taskCompound.putInt(TAG_STATE, entry.getKey().ordinal());
 
                 @NotNull final ListNBT productsTaskList = new ListNBT();
-                for (@NotNull final BakingProduct bakingProduct : entry.getValue())
+                for (@NotNull final BakingProduct bakingProduct : entry.get())
                 {
                     @NotNull final CompoundNBT productCompound = new CompoundNBT();
                     bakingProduct.write(productCompound);
@@ -238,9 +238,9 @@ public class BuildingBaker extends AbstractFilterableListBuilding
             @NotNull final CompoundNBT furnaceCompound = new CompoundNBT();
             BlockPosUtil.write(furnaceCompound, TAG_FURNACE_POS, entry.getKey());
 
-            if (entry.getValue() != null)
+            if (entry.get() != null)
             {
-                entry.getValue().write(furnaceCompound);
+                entry.get().write(furnaceCompound);
             }
             furnacesTagList.add(furnaceCompound);
         }
@@ -308,15 +308,15 @@ public class BuildingBaker extends AbstractFilterableListBuilding
                 continue;
             }
 
-            final BakingProduct bakingProduct = entry.getValue();
+            final BakingProduct bakingProduct = entry.get();
             if (bakingProduct != null && bakingProduct.getState() == ProductState.BAKING)
             {
                 bakingProduct.increaseBakingProgress();
-                worldObj.setBlockState(entry.getKey(), Blocks.LIT_FURNACE.getDefaultState().withProperty(BlockFurnace.FACING, furnace.getValue(BlockFurnace.FACING)));
+                worldObj.setBlockState(entry.getKey(), Blocks.LIT_FURNACE.getDefaultState().with(BlockFurnace.FACING, furnace.get(BlockFurnace.FACING)));
             }
             else
             {
-                worldObj.setBlockState(entry.getKey(), Blocks.FURNACE.getDefaultState().withProperty(BlockFurnace.FACING, furnace.getValue(BlockFurnace.FACING)));
+                worldObj.setBlockState(entry.getKey(), Blocks.FURNACE.getDefaultState().with(BlockFurnace.FACING, furnace.get(BlockFurnace.FACING)));
             }
         }
     }

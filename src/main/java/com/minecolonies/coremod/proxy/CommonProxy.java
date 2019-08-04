@@ -3,8 +3,6 @@ package com.minecolonies.coremod.proxy;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import com.minecolonies.api.entity.mobs.barbarians.IChiefBarbarianEntity;
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.MinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.ModBlocksInitializer;
@@ -20,8 +18,6 @@ import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
-import com.minecolonies.coremod.inventory.GuiHandler;
-import com.minecolonies.coremod.tileentities.*;
 import com.minecolonies.coremod.util.TownHallRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -30,22 +26,14 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.RecipeBook;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.HashMap;
@@ -150,12 +138,6 @@ public abstract class CommonProxy implements IProxy
         return false;
     }
 
-    @Override
-    public void registerEvents()
-    {
-
-    }
-
     /*
     * @param entityName A unique name for the entity
     * @param id A mod specific ID for the entity
@@ -246,16 +228,6 @@ public abstract class CommonProxy implements IProxy
           Constants.ENTITY_UPDATE_FREQUENCY,
           true);
 
-        //Register Barbarian loot tables.
-        LootTableList.register(EntityBarbarian.LOOT_TABLE);
-        LootTableList.register(EntityArcherBarbarian.LOOT_TABLE);
-        LootTableList.register(IChiefBarbarianEntity.LOOT_TABLE);
-
-        //Register Pirate loot tables.
-        LootTableList.register(EntityPirate.LOOT_TABLE);
-        LootTableList.register(EntityArcherPirate.LOOT_TABLE);
-        LootTableList.register(EntityCaptainPirate.LOOT_TABLE);
-
         //Register Barbarian spawn eggs
         EntityRegistry.registerEgg(BARBARIAN, PRIMARY_COLOR_BARBARIAN, SECONDARY_COLOR_BARBARIAN);
         EntityRegistry.registerEgg(ARCHER, PRIMARY_COLOR_BARBARIAN, SECONDARY_COLOR_BARBARIAN);
@@ -343,20 +315,6 @@ public abstract class CommonProxy implements IProxy
     public File getSchematicsFolder()
     {
         return null;
-    }
-
-    @Nullable
-    @Override
-    public World getWorldFromMessage(@NotNull final MessageContext context)
-    {
-        return context.getServerHandler().player.getServerWorld();
-    }
-
-    @Nullable
-    @Override
-    public World getWorld(final int dimension)
-    {
-        return FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension);
     }
 
     /**

@@ -76,7 +76,7 @@ public final class RequestManagerMock
             return request.getId();
         });
 
-        when(requestManager.isDirty()).thenAnswer(invocation -> dirty.getValue());
+        when(requestManager.isDirty()).thenAnswer(invocation -> dirty.get());
 
         doVoidAnswer(invocationOnMock -> {
             dirty.setValue(invocationOnMock.getArgumentAt(0, Boolean.class));

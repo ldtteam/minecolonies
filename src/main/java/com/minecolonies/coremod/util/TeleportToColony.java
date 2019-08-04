@@ -103,7 +103,7 @@ public final class TeleportToColony
      */
     private static void teleportPlayer(final PlayerEntity playerToTeleport, final int colID, final CommandSource sender)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colID, FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colID, ServerLifecycleHooks.getCurrentServer().getWorld(0));
         final ITownHall townHall = colony.getBuildingManager().getTownHall();
 
         if (townHall == null)

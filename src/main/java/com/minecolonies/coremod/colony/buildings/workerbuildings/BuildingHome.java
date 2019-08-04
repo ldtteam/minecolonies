@@ -165,10 +165,10 @@ public class BuildingHome extends AbstractBuilding
             BlockState state = world.getBlockState(pos);
             state = state.getBlock().getExtendedState(state, world, pos);
             if (state.getBlock() instanceof BlockBed
-                  && state.getValue(BlockBed.OCCUPIED)
-                  && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
+                  && state.get(BlockBed.OCCUPIED)
+                  && state.get(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
             {
-                world.setBlockState(pos, state.withProperty(BlockBed.OCCUPIED, false), 0x03);
+                world.setBlockState(pos, state.with(BlockBed.OCCUPIED, false), 0x03);
             }
         }
     }
@@ -188,9 +188,9 @@ public class BuildingHome extends AbstractBuilding
         BlockPos registrationPosition = pos;
         if (blockState.getBlock() instanceof BlockBed)
         {
-            if (blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
+            if (blockState.get(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
             {
-                registrationPosition = registrationPosition.offset(blockState.getValue(BlockBed.FACING));
+                registrationPosition = registrationPosition.offset(blockState.get(BlockBed.FACING));
             }
 
             if (!bedList.contains(registrationPosition))

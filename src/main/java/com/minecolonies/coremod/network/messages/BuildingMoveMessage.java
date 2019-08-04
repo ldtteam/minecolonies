@@ -179,7 +179,7 @@ public class BuildingMoveMessage implements IMessage
     {
         final String hut = sn.getSection();
 
-        final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(Constants.MOD_ID, "blockHut" + hut));
+        final Block block = ForgeRegistries.BLOCKS.get(new ResourceLocation(Constants.MOD_ID, "blockHut" + hut));
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (tempColony != null
               && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
@@ -273,7 +273,7 @@ public class BuildingMoveMessage implements IMessage
             {
                 for (final Map.Entry<ProductState, List<BakingProduct>> task : ((BuildingBaker) oldBuilding).getTasks().entrySet())
                 {
-                    for (final BakingProduct product : task.getValue())
+                    for (final BakingProduct product : task.get())
                     {
                         ((BuildingBaker) building).addToTasks(task.getKey(), product);
                     }

@@ -245,7 +245,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             }
 
             Log.getLogger().info("Request To Server for structure " + sn);
-            if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+            if (ServerLifecycleHooks.getCurrentServer() == null)
             {
                 Structurize.getNetwork().sendToServer(new SchematicRequestMessage(sn.toString()));
                 return;
@@ -271,8 +271,8 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             @Nullable final Block block = blockState.getBlock();
 
             if (StructurePlacementUtils.isStructureBlockEqualWorldBlock(world, structure.getBlockPosition(), blockState)
-                  || (blockState.getBlock() instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
-                  || (blockState.getBlock() instanceof DoorBlock && blockState.getValue(DoorBlock.HALF).equals(DoorBlock.EnumDoorHalf.UPPER)))
+                  || (blockState.getBlock() instanceof BlockBed && blockState.get(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
+                  || (blockState.getBlock() instanceof DoorBlock && blockState.get(DoorBlock.HALF).equals(DoorBlock.EnumDoorHalf.UPPER)))
             {
                 continue;
             }

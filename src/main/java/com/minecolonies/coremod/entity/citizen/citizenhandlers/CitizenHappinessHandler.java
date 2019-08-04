@@ -290,7 +290,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         noToolModifier = 0;
         for (final Map.Entry<IToolType, Integer> entry : needsTool.entrySet())
         {
-            final int numDays = entry.getValue() + 1;
+            final int numDays = entry.get() + 1;
             final IToolType toolType = entry.getKey();
             needsTool.put(toolType, numDays);
             if (numDays > NO_TOOLS_DEMANDS_DAYS)
@@ -511,7 +511,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         for (final Map.Entry<BlockPos, FieldDataModifier> entry : fieldModifier.entrySet())
         {
             final BlockPos pos = entry.getKey();
-            final FieldDataModifier field = entry.getValue();
+            final FieldDataModifier field = entry.get();
             @NotNull final CompoundNBT fieldCompound = new CompoundNBT();
             fieldCompound.putInt(NbtTagConstants.TAG_FIELD_DAYS_INACTIVE, field.getInactiveDays());
             fieldCompound.putBoolean(NbtTagConstants.TAG_FIELD_CAN_FARM, field.isCanFarm());
@@ -528,7 +528,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         for (final Map.Entry<IToolType, Integer> entry : needsTool.entrySet())
         {
             final IToolType toolType = entry.getKey();
-            final int numDays = entry.getValue();
+            final int numDays = entry.get();
             @NotNull final CompoundNBT noToolsCompound = new CompoundNBT();
             noToolsCompound.putInt(NbtTagConstants.TAG_NO_TOOLS_NUMBER_DAYS, numDays);
             noToolsCompound.putString(NbtTagConstants.TAG_NO_TOOLS_TOOL_TYPE, toolType.getName());

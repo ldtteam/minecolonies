@@ -202,7 +202,7 @@ public class BuildToolPlaceMessage implements IMessage
       final BlockState state)
     {
         final String hut = sn.getSection();
-        final Block block =  ForgeRegistries.BLOCKS.getValue(new ResourceLocation(Constants.MOD_ID, "blockHut" + hut));
+        final Block block =  ForgeRegistries.BLOCKS.get(new ResourceLocation(Constants.MOD_ID, "blockHut" + hut));
 
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (tempColony != null

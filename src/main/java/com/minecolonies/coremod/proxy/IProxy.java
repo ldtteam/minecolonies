@@ -6,10 +6,8 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stats.RecipeBook;
+import net.minecraft.item.crafting.RecipeBook;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -94,21 +92,6 @@ public interface IProxy
      */
     @Nullable
     File getSchematicsFolder();
-
-    /**
-     * Method to get a side specific world from a message context during networking.
-     * @param context The context to get the world from.
-     * @return The world.
-     */
-    @Nullable
-    World getWorldFromMessage(@NotNull final MessageContext context);
-
-    /**
-     * Method to get a side specific world from a message context anywhere.
-     * @return The world.
-     */
-    @Nullable
-    World getWorld(final int dimension);
 
     /**
      * Returns the recipe book from the player.

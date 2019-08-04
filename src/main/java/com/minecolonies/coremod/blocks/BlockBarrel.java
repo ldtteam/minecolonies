@@ -55,7 +55,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     public BlockBarrel()
     {
         super(Material.WOOD);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(AbstractBlockBarrel.FACING, Direction.NORTH).withProperty(VARIANT, BarrelType.ZERO));
+        this.setDefaultState(this.blockState.getBaseState().with(AbstractBlockBarrel.FACING, Direction.NORTH).with(VARIANT, BarrelType.ZERO));
         initBlock();
     }
 
@@ -159,7 +159,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     @SuppressWarnings(DEPRECATION)
     public BlockState getStateFromMeta(final int meta)
     {
-        return this.getDefaultState().withProperty(AbstractBlockBarrel.FACING,
+        return this.getDefaultState().with(AbstractBlockBarrel.FACING,
                 Direction.byHorizontalIndex(meta));
     }
 
@@ -170,13 +170,13 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     @Override
     public int damageDropped(final BlockState state)
     {
-        return this.getDefaultState().getValue(VARIANT).getMetadata();
+        return this.getDefaultState().get(VARIANT).getMetadata();
     }
 
     @Override
     protected ItemStack getSilkTouchDrop(@NotNull final BlockState state)
     {
-        return new ItemStack(Item.getItemFromBlock(this), 1, state.getValue(VARIANT).getMetadata());
+        return new ItemStack(Item.getItemFromBlock(this), 1, state.get(VARIANT).getMetadata());
     }
 
     @NotNull
@@ -193,7 +193,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     @Override
     public int getMetaFromState(final BlockState state)
     {
-        return state.getValue(AbstractBlockBarrel.FACING).getHorizontalIndex();
+        return state.get(AbstractBlockBarrel.FACING).getHorizontalIndex();
     }
 
     @NotNull
@@ -222,7 +222,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     @Deprecated
     public BlockState withRotation(@NotNull final BlockState state, final Rotation rot)
     {
-        return state.withProperty(AbstractBlockBarrel.FACING, rot.rotate(state.getValue(AbstractBlockBarrel.FACING)));
+        return state.with(AbstractBlockBarrel.FACING, rot.rotate(state.get(AbstractBlockBarrel.FACING)));
     }
 
     /**
@@ -233,7 +233,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     @Deprecated
     public BlockState withMirror(@NotNull final BlockState state, final Mirror mirrorIn)
     {
-        return state.withRotation(mirrorIn.toRotation(state.getValue(AbstractBlockBarrel.FACING)));
+        return state.withRotation(mirrorIn.toRotation(state.get(AbstractBlockBarrel.FACING)));
     }
 
     @NotNull
@@ -242,7 +242,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
       @NotNull final World world, @NotNull final BlockPos pos, @NotNull final Direction facing, final float hitX, final float hitY,
                                             final float hitZ, final int meta, @NotNull final LivingEntityBase placer, final Hand hand)
     {
-        return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(AbstractBlockBarrel.FACING, placer.getHorizontalFacing());
+        return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).with(AbstractBlockBarrel.FACING, placer.getHorizontalFacing());
     }
 
     /**

@@ -300,7 +300,7 @@ public class Permissions implements IPermissions
 
             final Rank rank = Rank.valueOf(ownerCompound.getString(TAG_RANK));
 
-            final GameProfile player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getProfileByUUID(id);
+            final GameProfile player = ServerLifecycleHooks.getCurrentServer().getPlayerProfileCache().getProfileByUUID(id);
 
             if (player != null)
             {
@@ -426,7 +426,7 @@ public class Permissions implements IPermissions
         final Map.Entry<UUID, Player> owner = getOwnerEntry();
         if (owner == null && ownerUUID != null)
         {
-            final GameProfile player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getProfileByUUID(ownerUUID);
+            final GameProfile player = ServerLifecycleHooks.getCurrentServer().getPlayerProfileCache().getProfileByUUID(ownerUUID);
 
             if (player != null)
             {
@@ -448,7 +448,7 @@ public class Permissions implements IPermissions
     {
         for (@NotNull final Map.Entry<UUID, Player> entry : players.entrySet())
         {
-            if (entry.getValue().getRank().equals(Rank.OWNER))
+            if (entry.get().getRank().equals(Rank.OWNER))
             {
                 return entry;
             }
@@ -529,7 +529,7 @@ public class Permissions implements IPermissions
             @NotNull final ListNBT flagsTagList = new ListNBT();
             for (@NotNull final Action action : Action.values())
             {
-                if (Utils.testFlag(entry.getValue(), action.getFlag()))
+                if (Utils.testFlag(entry.get(), action.getFlag()))
                 {
                     flagsTagList.add(new NBTTagString(action.name()));
                 }
@@ -807,7 +807,7 @@ public class Permissions implements IPermissions
             final Map.Entry<UUID, Player> owner = getOwnerEntry();
             if (owner != null)
             {
-                ownerName = owner.getValue().getName();
+                ownerName = owner.get().getName();
             }
         }
         return ownerName;
@@ -868,8 +868,8 @@ public class Permissions implements IPermissions
         for (@NotNull final Map.Entry<UUID, Player> player : players.entrySet())
         {
             PacketUtils.writeUUID(buf, player.getKey());
-            buf.writeString(player.getValue().getName());
-            buf.writeString(player.getValue().getRank().name());
+            buf.writeString(player.get().getName());
+            buf.writeString(player.get().getRank().name());
         }
 
         // Permissions
@@ -877,7 +877,7 @@ public class Permissions implements IPermissions
         for (@NotNull final Map.Entry<Rank, Integer> entry : permissionMap.entrySet())
         {
             buf.writeString(entry.getKey().name());
-            buf.writeInt(entry.getValue());
+            buf.writeInt(entry.get());
         }
     }
 

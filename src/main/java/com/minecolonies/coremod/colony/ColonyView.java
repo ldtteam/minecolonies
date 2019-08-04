@@ -229,7 +229,7 @@ public final class ColonyView implements IColonyView
         for (final Map.Entry<BlockPos, BlockState> block : waypoints.entrySet())
         {
             buf.writeBlockPos(block.getKey());
-            ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new CompoundNBT(), block.getValue()));
+            ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new CompoundNBT(), block.get()));
         }
 
         buf.writeInt(colony.getLastContactInHours());

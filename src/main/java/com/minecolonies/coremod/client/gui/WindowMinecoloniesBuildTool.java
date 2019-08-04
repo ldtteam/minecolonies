@@ -129,7 +129,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
                 for (final Map.Entry<PlacementError.PlacementErrorType, List<BlockPos>> entry : blockPosListByErrorTypeMap.entrySet())
                 {
                     final PlacementError.PlacementErrorType placementErrorType = entry.getKey();
-                    final List<BlockPos> blockPosList = entry.getValue();
+                    final List<BlockPos> blockPosList = entry.get();
 
                     final int numberOfBlocksTOReport = blockPosList.size() > 5 ? 5 : blockPosList.size();
                     final List<BlockPos> blocksToReportList = blockPosList.subList(0, numberOfBlocksTOReport);

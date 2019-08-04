@@ -180,7 +180,7 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
         final IColony tempColony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), sender.getCommandSenderEntity().getUniqueID());
         if (tempColony != null)
         {
-            final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0);
+            final World world = ServerLifecycleHooks.getCurrentServer().getWorld(0);
             final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, tempColony.getCenter());
             if (colony != null)
             {

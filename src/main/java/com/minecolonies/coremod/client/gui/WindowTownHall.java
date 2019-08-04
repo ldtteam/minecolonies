@@ -484,7 +484,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final TextField input = findPaneOfTypeByID(INPUT_BLOCK_NAME, TextField.class);
         final String inputText = input.getText();
 
-        final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(inputText));
+        final Block block = ForgeRegistries.BLOCKS.get(new ResourceLocation(inputText));
 
         if (block != null)
         {
@@ -694,7 +694,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 final String job = entry.getKey();
                 final String labelJobKey = job.endsWith("man") ? job.replace("man", "men") : (job + "s");
                 final String numberOfWorkers = LanguageHandler.format(
-                    "com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.getValue());
+                    "com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.get());
                 label.setLabelText(numberOfWorkers);
                 jobCountMap.remove(entry.getKey());
             }
@@ -1011,7 +1011,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                     }
                 }
 
-                rowPane.findPaneOfTypeByID(WORK_LABEL, Label.class).setLabelText(workOrder.getValue());
+                rowPane.findPaneOfTypeByID(WORK_LABEL, Label.class).setLabelText(workOrder.get());
                 rowPane.findPaneOfTypeByID(ASSIGNEE_LABEL, Label.class).setLabelText(claimingCitizen);
                 rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Label.class).setLabelText(Integer.toString(workOrder.getId()));
             }

@@ -386,7 +386,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
         final ItemStack books = new ItemStack(Items.ENCHANTED_BOOK);
         for (final Map.Entry<Enchantment, Integer> entry : enchants.entrySet())
         {
-            ItemEnchantedBook.addEnchantment(books, new EnchantmentData(entry.getKey(), entry.getValue()));
+            ItemEnchantedBook.addEnchantment(books, new EnchantmentData(entry.getKey(), entry.get()));
         }
         worker.decreaseSaturationForAction();
         return books;

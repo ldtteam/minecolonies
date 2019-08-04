@@ -191,7 +191,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
         for (final Map.Entry<IToolType, List<GuardGear>> entry : correctArmor.entrySet())
         {
             final List<Integer> slotsWorker = InventoryUtils.findAllSlotsInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
-              itemStack -> entry.getValue().stream().anyMatch(guardGear -> guardGear.test(itemStack)));
+              itemStack -> entry.get().stream().anyMatch(guardGear -> guardGear.test(itemStack)));
             int bestLevel = -1;
             final List<Integer> nonOptimalSlots = new ArrayList<>();
             int bestSlot = -1;
@@ -217,10 +217,10 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
             int bestSlotChest = -1;
             IItemHandler bestHandler = null;
             final Map<IItemHandler, List<Integer>> slotsChest =
-              InventoryUtils.findAllSlotsInProviderWith(building, itemStack -> entry.getValue().stream().anyMatch(guardGear -> guardGear.test(itemStack)));
+              InventoryUtils.findAllSlotsInProviderWith(building, itemStack -> entry.get().stream().anyMatch(guardGear -> guardGear.test(itemStack)));
             for (final Map.Entry<IItemHandler, List<Integer>> handlers : slotsChest.entrySet())
             {
-                for (final int slot : handlers.getValue())
+                for (final int slot : handlers.get())
                 {
                     final ItemStack stack = handlers.getKey().getStackInSlot(slot);
                     if (!ItemStackUtils.isEmpty(stack))
@@ -236,7 +236,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
                 }
             }
 
-            if (!entry.getValue().isEmpty())
+            if (!entry.get().isEmpty())
             {
                 if (bestLevelChest > bestLevel)
                 {
@@ -254,7 +254,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
                 }
                 else if (bestSlot == -1)
                 {
-                    requiredArmor.put(entry.getKey(), entry.getValue());
+                    requiredArmor.put(entry.getKey(), entry.get());
                 }
                 else
                 {
@@ -330,12 +330,12 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
 
             for (final Map.Entry<IToolType, ItemStack> armorStack : armorToWear.entrySet())
             {
-                if (ItemStackUtils.isEmpty(armorStack.getValue()))
+                if (ItemStackUtils.isEmpty(armorStack.get()))
                 {
                     continue;
                 }
                 final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
-                  itemStack -> itemStack.isItemEqualIgnoreDurability(armorStack.getValue()));
+                  itemStack -> itemStack.isItemEqualIgnoreDurability(armorStack.get()));
                 if (slot == -1)
                 {
                     continue;
@@ -359,7 +359,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
             {
                 int minLevel = Integer.MAX_VALUE;
                 int maxLevel = -1;
-                for (final GuardGear item : entry.getValue())
+                for (final GuardGear item : entry.get())
                 {
                     if (item.getMinArmorLevel() < minLevel)
                     {

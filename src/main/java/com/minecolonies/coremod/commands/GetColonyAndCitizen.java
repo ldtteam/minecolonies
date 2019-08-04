@@ -94,7 +94,7 @@ public final class GetColonyAndCitizen
      */
     public static int getCitizenId(@NotNull final int colonyId, @NotNull final String... args)
     {
-        final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0);
+        final World world = ServerLifecycleHooks.getCurrentServer().getWorld(0);
         int citizenId;
         final String citizenName;
         citizenId = STANDARD_CITIZEN_ID;

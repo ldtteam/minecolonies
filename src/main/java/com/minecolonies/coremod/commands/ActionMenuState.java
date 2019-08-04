@@ -46,7 +46,7 @@ public class ActionMenuState
         return argumentState.valueIsSet;
     }
 
-    public Object getValue(@NotNull final ActionArgument actionArgument)
+    public Object get(@NotNull final ActionArgument actionArgument)
     {
         final ArgumentState argumentState = argumentStateByActionArgumentNameMap.get(actionArgument.getName());
         if (null == argumentState)
@@ -95,7 +95,7 @@ public class ActionMenuState
             {
                 if (ActionArgumentType.COLONY == actionArgument.getType())
                 {
-                    return (IColony) getValue(actionArgument);
+                    return (IColony) get(actionArgument);
                 }
             }
         }
@@ -110,7 +110,7 @@ public class ActionMenuState
             {
                 if (ActionArgumentType.ONLINE_PLAYER == actionArgument.getType() || ActionArgumentType.PLAYER == actionArgument.getType())
                 {
-                    return (ServerPlayerEntity) getValue(actionArgument);
+                    return (ServerPlayerEntity) get(actionArgument);
                 }
             }
         }
@@ -125,7 +125,7 @@ public class ActionMenuState
             {
                 if (ActionArgumentType.ONLINE_PLAYER == actionArgument.getType())
                 {
-                    return (ServerPlayerEntity) getValue(actionArgument);
+                    return (ServerPlayerEntity) get(actionArgument);
                 }
             }
         }
@@ -140,7 +140,7 @@ public class ActionMenuState
             {
                 if (ActionArgumentType.CITIZEN == actionArgument.getType())
                 {
-                    return (ICitizenData) getValue(actionArgument);
+                    return (ICitizenData) get(actionArgument);
                 }
             }
         }
@@ -163,7 +163,7 @@ public class ActionMenuState
             {
                 if (ActionArgumentType.BOOLEAN == actionArgument.getType())
                 {
-                    return (Boolean) getValue(actionArgument);
+                    return (Boolean) get(actionArgument);
                 }
             }
         }
@@ -195,7 +195,7 @@ public class ActionMenuState
                     case COORDINATE_X:
                     case COORDINATE_Y:
                     case COORDINATE_Z:
-                        return (Integer) getValue(actionArgument);
+                        return (Integer) get(actionArgument);
                     default:
                         break;
                 }
@@ -213,7 +213,7 @@ public class ActionMenuState
                 switch (actionArgument.getType())
                 {
                     case DOUBLE:
-                        return (Double) getValue(actionArgument);
+                        return (Double) get(actionArgument);
                     default:
                         break;
                 }
@@ -229,7 +229,7 @@ public class ActionMenuState
         {
             if (argumentName.equals(actionArgument.getName()) && actionArgument.getType() == STRING)
             {
-                return (String) getValue(actionArgument);
+                return (String) get(actionArgument);
             }
         }
         return null;

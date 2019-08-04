@@ -167,12 +167,12 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         boolean emptyFurnace = false;
         for (final Map.Entry<BlockPos, BakingProduct> entry : getOwnBuilding().getFurnacesWithProduct().entrySet())
         {
-            if (entry.getValue() == null)
+            if (entry.get() == null)
             {
                 emptyFurnace = true;
                 currentFurnace = entry.getKey();
             }
-            else if (entry.getValue().getState() == ProductState.BAKED)
+            else if (entry.get().getState() == ProductState.BAKED)
             {
                 currentFurnace = entry.getKey();
                 return BAKER_TAKE_OUT_OF_OVEN;
@@ -338,7 +338,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         {
             building.putInFurnace(currentFurnace, bakingProduct);
             bakingProduct.nextState();
-            world.setBlockState(currentFurnace, Blocks.LIT_FURNACE.getDefaultState().withProperty(BlockFurnace.FACING, furnace.getValue(BlockFurnace.FACING)));
+            world.setBlockState(currentFurnace, Blocks.LIT_FURNACE.getDefaultState().with(BlockFurnace.FACING, furnace.get(BlockFurnace.FACING)));
         }
         return PREPARING;
     }

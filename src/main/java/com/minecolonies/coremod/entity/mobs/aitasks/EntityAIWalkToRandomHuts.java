@@ -236,11 +236,11 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
                             {
                                 if (random.nextBoolean())
                                 {
-                                    world.setBlockState(entity.getPosition().up(), Blocks.LADDER.getDefaultState().withProperty(BlockLadder.FACING, dir.getOpposite()));
+                                    world.setBlockState(entity.getPosition().up(), Blocks.LADDER.getDefaultState().with(BlockLadder.FACING, dir.getOpposite()));
                                 }
                                 else if (!ladderHere.getMaterial().isLiquid())
                                 {
-                                    world.setBlockState(entity.getPosition(), Blocks.LADDER.getDefaultState().withProperty(BlockLadder.FACING, dir.getOpposite()));
+                                    world.setBlockState(entity.getPosition(), Blocks.LADDER.getDefaultState().with(BlockLadder.FACING, dir.getOpposite()));
                                 }
                                 break;
                             }

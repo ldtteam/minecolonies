@@ -124,7 +124,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     {
         final CompoundNBT compound = new CompoundNBT();
         compound.putInt(TAG_PARTNER1, tuple.getKey());
-        compound.putInt(TAG_PARTNER2, tuple.getValue());
+        compound.putInt(TAG_PARTNER2, tuple.get());
         return compound;
     }
 

@@ -80,7 +80,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + BLOCK_NAME);
         setTranslationKey(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, Direction.NORTH).withProperty(VARIANT, RackType.DEFAULT));
+        this.setDefaultState(this.blockState.getBaseState().with(FACING, Direction.NORTH).with(VARIANT, RackType.DEFAULT));
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         setLightOpacity(LIGHT_OPACITY);
@@ -104,13 +104,13 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     public BlockState getStateFromMeta(final int meta)
     {
         final Direction Direction = Direction.byHorizontalIndex(meta);
-        return this.getDefaultState().withProperty(FACING, Direction);
+        return this.getDefaultState().with(FACING, Direction);
     }
 
     @Override
     public int getMetaFromState(@NotNull final BlockState state)
     {
-        return state.getValue(FACING).getHorizontalIndex();
+        return state.get(FACING).getHorizontalIndex();
     }
 
     /**
@@ -133,16 +133,16 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
             {
                 if (rack.isMain())
                 {
-                     return state.withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE).withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
+                     return state.with(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE).with(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
                 }
                 else
                 {
-                    return state.withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
+                    return state.with(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
                 }
             }
             else
             {
-                return state.withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULT);
+                return state.with(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULT);
             }
         }
         else
@@ -151,17 +151,17 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
             {
                 if (rack.isMain())
                 {
-                    return state.withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
-                             .withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
+                    return state.with(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
+                             .with(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
                 }
                 else
                 {
-                    return state.withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
+                    return state.with(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
                 }
             }
             else
             {
-                return state.withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULL);
+                return state.with(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULL);
             }
         }
     }
@@ -176,7 +176,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     @Deprecated
     public BlockState withRotation(@NotNull final BlockState state, final Rotation rot)
     {
-        return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
+        return state.with(FACING, rot.rotate(state.get(FACING)));
     }
 
     /**
@@ -187,7 +187,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     @Deprecated
     public BlockState withMirror(@NotNull final BlockState state, final Mirror mirrorIn)
     {
-        return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
+        return state.withRotation(mirrorIn.toRotation(state.get(FACING)));
     }
 
     /**
@@ -293,8 +293,8 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
                                  final World worldIn, final BlockPos pos, final BlockState state, final LivingEntityBase placer, final ItemStack stack)
     {
         BlockState tempState = state;
-        tempState = tempState.withProperty(VARIANT, RackType.byMetadata(stack.getItemDamage()));
-        tempState = tempState.withProperty(FACING, placer.getHorizontalFacing().getOpposite());
+        tempState = tempState.with(VARIANT, RackType.byMetadata(stack.getItemDamage()));
+        tempState = tempState.with(FACING, placer.getHorizontalFacing().getOpposite());
 
         worldIn.setBlockState(pos, tempState, 2);
     }

@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.placementhandlers;
 
+import com.ldtteam.structurize.api.util.ItemStackUtils;
 import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
 import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
+import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
-import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
@@ -86,7 +86,7 @@ public final class MinecoloniesPlacementHandlers
           final boolean complete,
           final BlockPos centerPos)
         {
-            world.setBlockToAir(pos);
+            world.removeBlock(pos, false);
             final IColony colony = IColonyManager.getInstance().getClosestColony(world, pos);
             if (colony != null)
             {

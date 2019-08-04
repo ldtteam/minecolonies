@@ -347,7 +347,7 @@ public class BuildingManager implements IBuildingManager
                 {
                     building.onPlacement();
 
-                    building.setRotation(BlockUtils.getRotationFromFacing(world.getBlockState(building.getPosition()).getValue(AbstractBlockHut.FACING)));
+                    building.setRotation(BlockUtils.getRotationFromFacing(world.getBlockState(building.getPosition()).get(AbstractBlockHut.FACING)));
                     final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
                     final Structure wrapper = new Structure(world, workOrder.getStructureName(), new PlacementSettings());
                     final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners

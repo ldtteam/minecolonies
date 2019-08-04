@@ -109,9 +109,9 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
         //If the arguments aren't empty, the sender probably wants to teleport another player.
         if ((null != playerName) && isPlayerOpped(sender))
         {
-            final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
+            final World world = ServerLifecycleHooks.getCurrentServer().getEntityWorld();
             playerToTeleport =
-              ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache()
+              ServerUtils.getPlayerFromUUID(ServerLifecycleHooks.getCurrentServer().getPlayerProfileCache()
                                               .getGameProfileForUsername(playerName).getId(), world);
 
             sender.sendMessage(new StringTextComponent("TPing Player: " + playerToTeleport.getName()));

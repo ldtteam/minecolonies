@@ -221,7 +221,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     @Override
-    protected String getValue()
+    protected String get()
     {
         return workOrderName;
     }

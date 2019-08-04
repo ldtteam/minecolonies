@@ -77,10 +77,10 @@ public final class ConstructionTapeHelper
                 {
                     newY = checkIfPlaceable(i, y, z1, world);
                     final BlockPos row1 = new BlockPos(i, newY, z1);
-                    world.setBlockState(row1, constructionTape.withProperty(FACING, Direction.SOUTH));
+                    world.setBlockState(row1, constructionTape.with(FACING, Direction.SOUTH));
                     newY = checkIfPlaceable(i, y, z3, world);
                     final BlockPos row2 = new BlockPos(i, newY, z3);
-                    world.setBlockState(row2, constructionTape.withProperty(FACING, Direction.NORTH));
+                    world.setBlockState(row2, constructionTape.with(FACING, Direction.NORTH));
                 }
             }
             else
@@ -89,10 +89,10 @@ public final class ConstructionTapeHelper
                 {
                     newY = checkIfPlaceable(i, y, z1, world);
                     final BlockPos row1 = new BlockPos(i, newY, z1);
-                    world.setBlockState(row1, constructionTape.withProperty(FACING, Direction.SOUTH));
+                    world.setBlockState(row1, constructionTape.with(FACING, Direction.SOUTH));
                     newY = checkIfPlaceable(i, y, z3, world);
                     final BlockPos row2 = new BlockPos(i, newY, z3);
-                    world.setBlockState(row2, constructionTape.withProperty(FACING, Direction.NORTH));
+                    world.setBlockState(row2, constructionTape.with(FACING, Direction.NORTH));
                 }
             }
             if (z1 < z3)
@@ -101,10 +101,10 @@ public final class ConstructionTapeHelper
                 {
                     newY = checkIfPlaceable(x1, y, i, world);
                     final BlockPos row3 = new BlockPos(x1, newY, i);
-                    world.setBlockState(row3, constructionTape.withProperty(FACING, Direction.EAST));
+                    world.setBlockState(row3, constructionTape.with(FACING, Direction.EAST));
                     newY = checkIfPlaceable(x3, y, i, world);
                     final BlockPos row4 = new BlockPos(x3, newY, i);
-                    world.setBlockState(row4, constructionTape.withProperty(FACING, Direction.WEST));
+                    world.setBlockState(row4, constructionTape.with(FACING, Direction.WEST));
                 }
             }
             else
@@ -113,10 +113,10 @@ public final class ConstructionTapeHelper
                 {
                     newY = checkIfPlaceable(x1, y, i, world);
                     final BlockPos row3 = new BlockPos(x1, newY, i);
-                    world.setBlockState(row3, constructionTape.withProperty(FACING, Direction.EAST));
+                    world.setBlockState(row3, constructionTape.with(FACING, Direction.EAST));
                     newY = checkIfPlaceable(x3, y, i, world);
                     final BlockPos row4 = new BlockPos(x3, newY, i);
-                    world.setBlockState(row4, constructionTape.withProperty(FACING, Direction.WEST));
+                    world.setBlockState(row4, constructionTape.with(FACING, Direction.WEST));
                 }
             }
             newY = checkIfPlaceable(x1, y, z1, world);
@@ -127,10 +127,10 @@ public final class ConstructionTapeHelper
             final BlockPos corner3 = new BlockPos(x3, newY, z1);
             newY = checkIfPlaceable(x3, y, z3, world);
             final BlockPos corner4 = new BlockPos(x3, newY, z3);
-            world.setBlockState(corner1, constructionTape.withProperty(FACING, Direction.SOUTH));
-            world.setBlockState(corner2, constructionTape.withProperty(FACING, Direction.EAST));
-            world.setBlockState(corner3, constructionTape.withProperty(FACING, Direction.WEST));
-            world.setBlockState(corner4, constructionTape.withProperty(FACING, Direction.NORTH));
+            world.setBlockState(corner1, constructionTape.with(FACING, Direction.SOUTH));
+            world.setBlockState(corner2, constructionTape.with(FACING, Direction.EAST));
+            world.setBlockState(corner3, constructionTape.with(FACING, Direction.WEST));
+            world.setBlockState(corner4, constructionTape.with(FACING, Direction.NORTH));
         }
     }
 

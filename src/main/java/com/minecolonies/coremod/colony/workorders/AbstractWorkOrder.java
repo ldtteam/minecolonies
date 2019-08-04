@@ -408,7 +408,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         buf.writeInt(priority);
         buf.writeBlockPos(claimedBy == null ? BlockPos.ZERO : claimedBy);
         buf.writeInt(getType().ordinal());
-        buf.writeString(getValue());
+        buf.writeString(get());
         buf.writeBlockPos(buildingLocation == null ? BlockPos.ZERO : buildingLocation);
 
         //value is upgradeName and upgradeLevel for workOrderBuild
@@ -427,7 +427,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      *
      * @return a description string.
      */
-    protected abstract String getValue();
+    protected abstract String get();
 
     /**
      * Executed when a work order is added.

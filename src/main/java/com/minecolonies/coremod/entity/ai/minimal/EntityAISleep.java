@@ -97,18 +97,18 @@ public class EntityAISleep extends EntityAIBase
                         BlockState state = world.getBlockState(pos);
                         state = state.getBlock().getExtendedState(state, world, pos);
                         if (state.getBlock() == Blocks.BED
-                              && !state.getValue(BlockBed.OCCUPIED)
-                              && state.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD)
+                              && !state.get(BlockBed.OCCUPIED)
+                              && state.get(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD)
                               && world.isAirBlock(pos.up()))
                         {
                             usedBed = pos;
-                            citizen.world.setBlockState(pos, state.withProperty(BlockBed.OCCUPIED, true), 0x03);
+                            citizen.world.setBlockState(pos, state.with(BlockBed.OCCUPIED, true), 0x03);
 
-                            final BlockPos feetPos = pos.offset(state.getValue(BlockBed.FACING).getOpposite());
+                            final BlockPos feetPos = pos.offset(state.get(BlockBed.FACING).getOpposite());
                             final BlockState feetState = citizen.world.getBlockState(feetPos);
                             if (feetState.getBlock() == Blocks.BED)
                             {
-                                citizen.world.setBlockState(feetPos, feetState.withProperty(BlockBed.OCCUPIED, true), 0x03);
+                                citizen.world.setBlockState(feetPos, feetState.with(BlockBed.OCCUPIED, true), 0x03);
                             }
 
                             return true;
@@ -136,14 +136,14 @@ public class EntityAISleep extends EntityAIBase
             if (state.getBlock() == Blocks.BED)
             {
                 final BlockState headState = citizen.world.getBlockState(usedBed);
-                citizen.world.setBlockState(usedBed, headState.withProperty(BlockBed.OCCUPIED, false), 0x03);
+                citizen.world.setBlockState(usedBed, headState.with(BlockBed.OCCUPIED, false), 0x03);
 
-                final BlockPos feetPos = usedBed.offset(headState.getValue(BlockBed.FACING).getOpposite());
+                final BlockPos feetPos = usedBed.offset(headState.get(BlockBed.FACING).getOpposite());
                 final BlockState feetState = citizen.world.getBlockState(feetPos);
 
                 if (feetState.getBlock() == Blocks.BED)
                 {
-                    citizen.world.setBlockState(feetPos, feetState.withProperty(BlockBed.OCCUPIED, false), 0x03);
+                    citizen.world.setBlockState(feetPos, feetState.with(BlockBed.OCCUPIED, false), 0x03);
                 }
             }
             usedBed = null;

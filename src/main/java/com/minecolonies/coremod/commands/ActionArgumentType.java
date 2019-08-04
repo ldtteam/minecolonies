@@ -241,7 +241,7 @@ public enum ActionArgumentType
         {
             if (ActionArgumentType.COLONY == actionArgument.getType())
             {
-                colony = (Colony) actionMenuState.getValue(actionArgument);
+                colony = (Colony) actionMenuState.get(actionArgument);
                 if (null != colony)
                 {
                     break;

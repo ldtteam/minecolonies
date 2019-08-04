@@ -175,6 +175,6 @@ public class MobEntryView
 
     public EntityType<?> getEntityEntry()
     {
-        return ForgeRegistries.ENTITIES.getValue(this.getLocation());
+        return ForgeRegistries.ENTITIES.get(this.getLocation());
     }
 }

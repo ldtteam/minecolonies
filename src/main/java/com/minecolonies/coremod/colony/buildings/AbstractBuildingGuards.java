@@ -779,7 +779,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         final List<MobEntryView> mobs = new ArrayList<>();
 
         int i = 0;
-        for (final EntityEntry entry : ForgeRegistries.ENTITIES.getValuesCollection())
+        for (final EntityEntry entry : ForgeRegistries.ENTITIES.getsCollection())
         {
             if (EntityMob.class.isAssignableFrom(entry.getEntityClass()))
             {

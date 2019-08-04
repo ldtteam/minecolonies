@@ -279,7 +279,7 @@ public class Colony implements IColony
 
         for (final String s : MineColonies.getConfig().getCommon().gameplay.freeToInteractBlocks)
         {
-            final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
+            final Block block = ForgeRegistries.BLOCKS.get(new ResourceLocation(s));
             if (block == null)
             {
                 final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
@@ -454,7 +454,7 @@ public class Colony implements IColony
         final ListNBT freeBlockTagList = compound.getList(TAG_FREE_BLOCKS, NBT.TAG_STRING);
         for (int i = 0; i < freeBlockTagList.size(); ++i)
         {
-            freeBlocks.add(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(freeBlockTagList.getString(i))));
+            freeBlocks.add(ForgeRegistries.BLOCKS.get(new ResourceLocation(freeBlockTagList.getString(i))));
         }
 
         // Free positions
@@ -577,7 +577,7 @@ public class Colony implements IColony
         {
             @NotNull final CompoundNBT wayPointCompound = new CompoundNBT();
             BlockPosUtil.write(wayPointCompound, TAG_WAYPOINT, entry.getKey());
-            NBTUtil.writeBlockState(wayPointCompound, entry.getValue());
+            NBTUtil.writeBlockState(wayPointCompound, entry.get());
 
             wayPointTagList.add(wayPointCompound);
         }
@@ -914,12 +914,12 @@ public class Colony implements IColony
             final int stopAt = world.rand.nextInt(entries.length);
             final Object obj = entries[stopAt];
 
-            if (obj instanceof Map.Entry && ((Map.Entry) obj).getKey() instanceof BlockPos && ((Map.Entry) obj).getValue() instanceof BlockState)
+            if (obj instanceof Map.Entry && ((Map.Entry) obj).getKey() instanceof BlockPos && ((Map.Entry) obj).get() instanceof BlockState)
             {
                 @NotNull final BlockPos key = (BlockPos) ((Map.Entry) obj).getKey();
                 if (world.isBlockLoaded(key))
                 {
-                    @NotNull final BlockState value = (BlockState) ((Map.Entry) obj).getValue();
+                    @NotNull final BlockState value = (BlockState) ((Map.Entry) obj).get();
                     if (world.getBlockState(key).getBlock() != (value.getBlock()))
                     {
                         wayPoints.remove(key);

@@ -3,10 +3,8 @@ package com.minecolonies.coremod.proxy;
 import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.Structures;
-import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
@@ -27,31 +25,23 @@ import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
-import com.minecolonies.coremod.event.ClientEventHandler;
-import com.minecolonies.coremod.event.DebugRendererChunkBorder;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.PlayerEntitySP;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stats.RecipeBook;
+import net.minecraft.item.crafting.RecipeBook;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,7 +50,7 @@ import java.io.File;
 /**
  * Client side proxy.
  */
-@Mod.EventBusSubscriber(Side.CLIENT)
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientProxy extends CommonProxy
 {
     /**
@@ -145,109 +135,6 @@ public class ClientProxy extends CommonProxy
         window.open();
     }
 
-    /**
-     * Creates a custom model ResourceLocation for a block with metadata 0
-     */
-    private static void createCustomModel(final Block block)
-    {
-        final Item item = Item.getItemFromBlock(block);
-        if (item != null)
-        {
-            ModelLoader.setCustomModelResourceLocation(item, 0,
-              new ModelResourceLocation(block.getRegistryName(), INVENTORY));
-        }
-    }
-
-    /**
-     * Creates a custom model ResourceLocation for an item with metadata 0
-     */
-    private static void createCustomModel(final Item item)
-    {
-        if (item != null)
-        {
-            ModelLoader.setCustomModelResourceLocation(item, 0,
-              new ModelResourceLocation(item.getRegistryName(), INVENTORY));
-        }
-    }
-
-    /**
-     * Event handler for forge ModelRegistryEvent event.
-     *
-     * @param event the forge pre ModelRegistryEvent event.
-     */
-    @SubscribeEvent
-    public static void registerModels(@NotNull final ModelRegistryEvent event)
-    {
-        createCustomModel(ModBlocks.blockHutBaker);
-        createCustomModel(ModBlocks.blockHutBlacksmith);
-        createCustomModel(ModBlocks.blockHutBuilder);
-        createCustomModel(ModBlocks.blockHutHome);
-        createCustomModel(ModBlocks.blockHutFarmer);
-        createCustomModel(ModBlocks.blockHutFisherman);
-        createCustomModel(ModBlocks.blockHutLumberjack);
-        createCustomModel(ModBlocks.blockHutMiner);
-        createCustomModel(ModBlocks.blockHutStonemason);
-        createCustomModel(ModBlocks.blockHutTownHall);
-        createCustomModel(ModBlocks.blockHutWareHouse);
-        createCustomModel(ModBlocks.blockHutDeliveryman);
-        createCustomModel(ModBlocks.blockBarracksTowerSubstitution);
-        createCustomModel(ModBlocks.blockScarecrow);
-        createCustomModel(ModBlocks.blockHutGuardTower);
-        createCustomModel(ModBlocks.blockHutBarracks);
-        createCustomModel(ModBlocks.blockHutBarracksTower);
-        createCustomModel(ModBlocks.blockHutCook);
-        createCustomModel(ModBlocks.blockHutShepherd);
-        createCustomModel(ModBlocks.blockHutCowboy);
-        createCustomModel(ModBlocks.blockHutSwineHerder);
-        createCustomModel(ModBlocks.blockHutChickenHerder);
-        createCustomModel(ModBlocks.blockHutSmeltery);
-        createCustomModel(ModBlocks.blockHutComposter);
-        createCustomModel(ModBlocks.blockHutLibrary);
-        createCustomModel(ModBlocks.blockHutArchery);
-        createCustomModel(ModBlocks.blockHutCombatAcademy);
-        createCustomModel(ModBlocks.blockHutSawmill);
-        createCustomModel(ModBlocks.blockHutStoneSmeltery);
-        createCustomModel(ModBlocks.blockHutCrusher);
-        createCustomModel(ModBlocks.blockHutSifter);
-
-        createCustomModel(ModBlocks.blockConstructionTape);
-        createCustomModel(ModBlocks.blockRack);
-        createCustomModel(ModBlocks.blockWayPoint);
-        createCustomModel(ModBlocks.blockPostBox);
-        createCustomModel(ModBlocks.blockDecorationPlaceholder);
-
-        createCustomModel(ModItems.clipboard);
-        createCustomModel(ModItems.caliper);
-        createCustomModel(ModItems.scepterGuard);
-        createCustomModel(ModItems.supplyChest);
-        createCustomModel(ModItems.supplyCamp);
-        createCustomModel(ModItems.permTool);
-        createCustomModel(ModItems.ancientTome);
-        createCustomModel(ModItems.chiefSword);
-        createCustomModel(ModItems.scimitar);
-
-        createCustomModel(ModItems.pirateBoots_1);
-        createCustomModel(ModItems.pirateChest_1);
-        createCustomModel(ModItems.pirateHelmet_1);
-        createCustomModel(ModItems.pirateLegs_1);
-
-        createCustomModel(ModItems.pirateBoots_2);
-        createCustomModel(ModItems.pirateChest_2);
-        createCustomModel(ModItems.pirateHelmet_2);
-        createCustomModel(ModItems.pirateLegs_2);
-
-        createCustomModel(ModItems.santaHat);
-
-        // Achievement proxy Items
-        createCustomModel(ModItems.itemAchievementProxySettlement);
-        createCustomModel(ModItems.itemAchievementProxyTown);
-        createCustomModel(ModItems.itemAchievementProxyCity);
-        createCustomModel(ModItems.itemAchievementProxyMetropolis);
-        createCustomModel(ModBlocks.blockBarrel);
-        createCustomModel(ModItems.compost);
-        createCustomModel(ModItems.resourceScroll);
-    }
-
     @Override
     public void openClipBoardWindow(final int colonyId)
     {
@@ -265,7 +152,7 @@ public class ClientProxy extends CommonProxy
     @Override
     public File getSchematicsFolder()
     {
-        if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+        if (ServerLifecycleHooks.getCurrentServer() == null)
         {
             if (IColonyManager.getInstance().getServerUUID() != null)
             {
@@ -280,7 +167,7 @@ public class ClientProxy extends CommonProxy
 
         // if the world schematics folder exists we use it
         // otherwise we use the minecraft folder  /minecolonies/schematics if on the physical client on the logical server
-        final File worldSchematicFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getDataDirectory()
+        final File worldSchematicFolder = new File(ServerLifecycleHooks.getCurrentServer().getDataDirectory()
                                                      + "/" + Constants.MOD_ID + '/' + Structures.SCHEMATICS_PREFIX);
 
         if (!worldSchematicFolder.exists())
@@ -291,31 +178,13 @@ public class ClientProxy extends CommonProxy
         return worldSchematicFolder.getParentFile();
     }
 
-    @Nullable
-    @Override
-    public World getWorldFromMessage(@NotNull final MessageContext context)
-    {
-        return context.getClientHandler().world;
-    }
-
-    @Nullable
-    @Override
-    public World getWorld(final int dimension)
-    {
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
-        {
-            return super.getWorld(dimension);
-        }
-        return Minecraft.getInstance().world;
-    }
-
     @NotNull
     @Override
     public RecipeBook getRecipeBookFromPlayer(@NotNull final PlayerEntity player)
     {
-        if (player instanceof PlayerEntitySP)
+        if (player instanceof ClientPlayerEntity)
         {
-            return ((PlayerEntitySP) player).getRecipeBook();
+            return ((ClientPlayerEntity) player).getRecipeBook();
         }
 
         return super.getRecipeBookFromPlayer(player);

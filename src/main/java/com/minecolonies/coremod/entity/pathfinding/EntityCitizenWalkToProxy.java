@@ -163,7 +163,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                     final double distanceToNode = node.getKey().distanceSq(citizen.getPosition().getX(), citizen.getPosition().getZ());
                     if (distanceToNode < closestNode)
                     {
-                        lastNode = node.getValue();
+                        lastNode = node.get();
                         closestNode = distanceToNode;
                     }
                 }

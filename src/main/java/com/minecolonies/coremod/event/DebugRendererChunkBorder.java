@@ -95,26 +95,26 @@ public class DebugRendererChunkBorder
             final int incX = x * 16;
             final int incZ = z * 16;
 
-            if (c.getValue() == view.getID())
+            if (c.get() == view.getID())
             {
                 boolean north = false;
                 boolean south = false;
                 boolean east = false;
                 boolean west = false;
 
-                if (!c.getValue().equals(colonies.get(new Tuple<>(x, z - 1))) && colonies.containsKey(new Tuple<>(x, z - 1)))
+                if (!c.get().equals(colonies.get(new Tuple<>(x, z - 1))) && colonies.containsKey(new Tuple<>(x, z - 1)))
                 {
                     north = true;
                 }
-                if (!c.getValue().equals(colonies.get(new Tuple<>(x, z + 1))) && colonies.containsKey(new Tuple<>(x, z + 1)))
+                if (!c.get().equals(colonies.get(new Tuple<>(x, z + 1))) && colonies.containsKey(new Tuple<>(x, z + 1)))
                 {
                     south = true;
                 }
-                if (!c.getValue().equals(colonies.get(new Tuple<>(x + 1, z))) && colonies.containsKey(new Tuple<>(x + 1, z)))
+                if (!c.get().equals(colonies.get(new Tuple<>(x + 1, z))) && colonies.containsKey(new Tuple<>(x + 1, z)))
                 {
                     east = true;
                 }
-                if (!c.getValue().equals(colonies.get(new Tuple<>(x - 1, z))) && colonies.containsKey(new Tuple<>(x - 1, z)))
+                if (!c.get().equals(colonies.get(new Tuple<>(x - 1, z))) && colonies.containsKey(new Tuple<>(x - 1, z)))
                 {
                     west = true;
                 }

@@ -307,7 +307,7 @@ public final class ChunkDataHelper
                 }
             }
         }
-        final IColonyManagerCapability cap = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension).getCapability(COLONY_MANAGER_CAP, null);
+        final IColonyManagerCapability cap = ServerLifecycleHooks.getCurrentServer().getWorld(dimension).getCapability(COLONY_MANAGER_CAP, null);
         cap.setMissingChunksToLoad(cap.getMissingChunksToLoad() + additionalChunksToLoad);
     }
 
@@ -371,7 +371,7 @@ public final class ChunkDataHelper
                 }
             }
         }
-        final IColonyManagerCapability cap = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension).getCapability(COLONY_MANAGER_CAP, null);
+        final IColonyManagerCapability cap = ServerLifecycleHooks.getCurrentServer().getWorld(dimension).getCapability(COLONY_MANAGER_CAP, null);
         cap.setMissingChunksToLoad(cap.getMissingChunksToLoad() + additionalChunksToLoad);
     }
 

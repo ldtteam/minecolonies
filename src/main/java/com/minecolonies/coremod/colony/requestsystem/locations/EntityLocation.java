@@ -39,7 +39,7 @@ public class EntityLocation implements ILocation
             return;
         }
 
-        entity = new WeakReference<>(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(uuid));
+        entity = new WeakReference<>(ServerLifecycleHooks.getCurrentServer().getEntityFromUuid(uuid));
     }
 
     /**

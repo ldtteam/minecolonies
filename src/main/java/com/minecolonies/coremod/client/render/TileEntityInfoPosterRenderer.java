@@ -107,7 +107,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         final BlockState state = world.getBlockState(te.getPos());
         final BlockPos pos = te.getPos();
         final BlockState actualState = state.getBlock().getExtendedState(state, world, pos);
-        int facing = (int) actualState.getValue(BlockWallSign.FACING).getHorizontalAngle();
+        int facing = (int) actualState.get(BlockWallSign.FACING).getHorizontalAngle();
 
         double plusX = 0;
         double plusZ = 0;
@@ -196,7 +196,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         double plusX = addX;
         double plusZ = addZ;
 
-        int facing = (int) actualState.getValue(BlockWallSign.FACING).getHorizontalAngle();
+        int facing = (int) actualState.get(BlockWallSign.FACING).getHorizontalAngle();
         switch (facing)
         {
             case NINETY_DEGREE:

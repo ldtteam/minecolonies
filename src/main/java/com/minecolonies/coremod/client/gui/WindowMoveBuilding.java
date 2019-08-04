@@ -149,7 +149,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
                 }
 
                 Log.getLogger().info("Request To Server for structure " + structureName);
-                if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+                if (ServerLifecycleHooks.getCurrentServer() == null)
                 {
                     Structurize.getNetwork().sendToServer(new SchematicRequestMessage(structureName.toString()));
                     return;
@@ -258,7 +258,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
             return;
         }
         final StructureName structureName = new StructureName(Settings.instance.getStructureName());
-        if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+        if (structureName.getPrefix().equals(Structures.SCHEMATICS_SCAN) && ServerLifecycleHooks.getCurrentServer() == null)
         {
             //We need to check that the server have it too using the md5
             WindowBuildTool.requestScannedSchematic(structureName);

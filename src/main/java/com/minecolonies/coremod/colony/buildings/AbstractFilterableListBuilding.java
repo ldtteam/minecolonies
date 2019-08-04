@@ -84,7 +84,7 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
             @NotNull final CompoundNBT listCompound = new CompoundNBT();
             listCompound.putString(TAG_ID, entry.getKey());
             @NotNull final ListNBT filteredItems = new ListNBT();
-            for(@NotNull final ItemStorage item : entry.getValue())
+            for(@NotNull final ItemStorage item : entry.get())
             {
                 @NotNull final CompoundNBT itemCompound = new CompoundNBT();
                 item.getItemStack().write(itemCompound);
@@ -163,8 +163,8 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
         for (final Map.Entry<String, List<ItemStorage>> entry : itemsAllowed.entrySet())
         {
             buf.writeString(entry.getKey());
-            buf.writeInt(entry.getValue().size());
-            for (final ItemStorage item : entry.getValue())
+            buf.writeInt(entry.get().size());
+            for (final ItemStorage item : entry.get())
             {
                 buf.writeItemStack(item.getItemStack());
             }
