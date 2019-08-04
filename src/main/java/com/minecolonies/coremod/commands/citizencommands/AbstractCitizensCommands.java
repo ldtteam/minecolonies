@@ -7,7 +7,7 @@ import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -36,7 +36,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
         final IColony colony = actionMenuState.getColonyForArgument("colony");
         if (colony == null)
@@ -58,14 +58,14 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
 
     @NotNull
     @Override
-    public String getCommandUsage(@NotNull final ICommandSender sender)
+    public String getCommandUsage(@NotNull final CommandSource sender)
     {
         return super.getCommandUsage(sender) + "<ColonyId> <CitizenId>";
     }
 
     @NotNull
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final String... args) throws CommandException
     {
         if (args.length == 0)
         {
@@ -142,7 +142,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
     @Override
     public List<String> getTabCompletionOptions(
                                                  @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final CommandSource sender,
                                                  @NotNull final String[] args,
                                                  @Nullable final BlockPos pos)
     {
@@ -215,5 +215,5 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand imp
      * @param colonyId  the id for the colony
      * @param citizenId the id for the citizen
      */
-    public abstract void executeSpecializedCode(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final IColony colonyId, final int citizenId);
+    public abstract void executeSpecializedCode(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final IColony colonyId, final int citizenId);
 }

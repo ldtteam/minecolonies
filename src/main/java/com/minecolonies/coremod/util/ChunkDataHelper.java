@@ -95,7 +95,7 @@ public final class ChunkDataHelper
                         if (dirty)
                         {
                             chunk.markDirty();
-                            MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(closeCap, chunk.x, chunk.z));
+                            Network.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(closeCap, chunk.x, chunk.z));
                         }
                     }
                 }
@@ -117,7 +117,7 @@ public final class ChunkDataHelper
 
         if (cap != null)
         {
-            MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
+            Network.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
         }
     }
 
@@ -447,7 +447,7 @@ public final class ChunkDataHelper
         }
 
         chunk.markDirty();
-        MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
+        Network.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
         return true;
     }
 
@@ -487,7 +487,7 @@ public final class ChunkDataHelper
         }
 
         chunk.markDirty();
-        MineColonies.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
+        Network.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
         return true;
     }
 }

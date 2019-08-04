@@ -76,7 +76,7 @@ public final class ColonyView implements IColonyView
      * Colony team color.
      */
     private TextFormatting teamColonyColor = TextFormatting.WHITE;
-    private BlockPos       center          = BlockPos.ORIGIN;
+    private BlockPos       center          = BlockPos.ZERO;
 
     /**
      * Defines if workers are hired manually or automatically.
@@ -511,7 +511,7 @@ public final class ColonyView implements IColonyView
     {
         if (permissions.setPermission(rank, action))
         {
-            MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.SET_PERMISSION, rank, action));
+            Network.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.SET_PERMISSION, rank, action));
         }
     }
 
@@ -527,7 +527,7 @@ public final class ColonyView implements IColonyView
     {
         if (permissions.removePermission(rank, action))
         {
-            MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.REMOVE_PERMISSION, rank, action));
+            Network.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.REMOVE_PERMISSION, rank, action));
         }
     }
 
@@ -541,7 +541,7 @@ public final class ColonyView implements IColonyView
     public void togglePermission(final Rank rank, @NotNull final Action action)
     {
         permissions.togglePermission(rank, action);
-        MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
+        Network.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
     }
 
     /**
@@ -822,7 +822,7 @@ public final class ColonyView implements IColonyView
     @Override
     public void addPlayer(final String player)
     {
-        MineColonies.getNetwork().sendToServer(new PermissionsMessage.AddPlayer(this, player));
+        Network.getNetwork().sendToServer(new PermissionsMessage.AddPlayer(this, player));
     }
 
     /**
@@ -833,7 +833,7 @@ public final class ColonyView implements IColonyView
     @Override
     public void removePlayer(final UUID player)
     {
-        MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(this, player));
+        Network.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(this, player));
     }
 
     /**
@@ -878,7 +878,7 @@ public final class ColonyView implements IColonyView
     public void setName(final String name)
     {
         this.name = name;
-        MineColonies.getNetwork().sendToServer(new TownHallRenameMessage(this, name));
+        Network.getNetwork().sendToServer(new TownHallRenameMessage(this, name));
     }
 
     @NotNull

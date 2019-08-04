@@ -348,7 +348,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
                     entry.setAttack(!entry.hasAttack());
                 }
             }
-            MineColonies.getNetwork().sendToServer(new MobEntryChangeMessage(building, this.mobsToAttack));
+            Network.getNetwork().sendToServer(new MobEntryChangeMessage(building, this.mobsToAttack));
             window.findPaneOfTypeByID(GUI_ELEMENT_LIST_MOBS, ScrollingList.class).refreshElementPanes();
         }
     }
@@ -379,7 +379,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
                         }
                     }
                     sortMobsToAttack();
-                    MineColonies.getNetwork().sendToServer(new MobEntryChangeMessage(building, this.mobsToAttack));
+                    Network.getNetwork().sendToServer(new MobEntryChangeMessage(building, this.mobsToAttack));
                     window.findPaneOfTypeByID(GUI_ELEMENT_LIST_MOBS, ScrollingList.class).refreshElementPanes();
                     return;
                 }
@@ -395,7 +395,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
                         }
                     }
                     sortMobsToAttack();
-                    MineColonies.getNetwork().sendToServer(new MobEntryChangeMessage(building, this.mobsToAttack));
+                    Network.getNetwork().sendToServer(new MobEntryChangeMessage(building, this.mobsToAttack));
                     window.findPaneOfTypeByID(GUI_ELEMENT_LIST_MOBS, ScrollingList.class).refreshElementPanes();
                     return;
                 }
@@ -499,7 +499,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
      */
     private void recalculate()
     {
-        MineColonies.getNetwork().sendToServer(new GuardRecalculateMessage(building.getColony().getID(), building));
+        Network.getNetwork().sendToServer(new GuardRecalculateMessage(building.getColony().getID(), building));
         pullInfoFromHut();
     }
 
@@ -510,7 +510,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
      */
     private void givePlayerScepter(final GuardTask localTask)
     {
-        MineColonies.getNetwork().sendToServer(new GuardScepterMessage(localTask.ordinal(), building.getID(), building.getColony().getID()));
+        Network.getNetwork().sendToServer(new GuardScepterMessage(localTask.ordinal(), building.getID(), building.getColony().getID()));
     }
 
     /**
@@ -550,6 +550,6 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     private void sendChangesToServer()
     {
         final ResourceLocation resourceName = building.getGuardType() == null ? new ResourceLocation("") : building.getGuardType().getRegistryName();
-        MineColonies.getNetwork().sendToServer(new GuardTaskMessage(building, resourceName, assignManually, patrolManually, retrieveOnLowHealth, task.ordinal(), tightGrouping));
+        Network.getNetwork().sendToServer(new GuardTaskMessage(building, resourceName, assignManually, patrolManually, retrieveOnLowHealth, task.ordinal(), tightGrouping));
     }
 }

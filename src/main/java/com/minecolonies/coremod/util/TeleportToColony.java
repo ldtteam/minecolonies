@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.commands.MinecoloniesCommand;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -52,7 +52,7 @@ public final class TeleportToColony
      */
 
     @NotNull
-    public static void colonyTeleport(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args)
+    public static void colonyTeleport(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final String... args)
     {
         final PlayerEntity playerToTeleport;
         final IColony colony;
@@ -101,7 +101,7 @@ public final class TeleportToColony
      * @param colID            the senders colony ID.
      * @param playerToTeleport the player which shall be teleported.
      */
-    private static void teleportPlayer(final PlayerEntity playerToTeleport, final int colID, final ICommandSender sender)
+    private static void teleportPlayer(final PlayerEntity playerToTeleport, final int colID, final CommandSource sender)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByWorld(colID, FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0));
         final ITownHall townHall = colony.getBuildingManager().getTownHall();
@@ -132,7 +132,7 @@ public final class TeleportToColony
             final WorldServer worldServer = server.getWorld(colonyDimension);
 
             // Vanilla does that as well.
-            ServerPlayerEntity.connection.sendPacket(new SPacketEffect(SOUND_TYPE, BlockPos.ORIGIN, 0, false));
+            ServerPlayerEntity.connection.sendPacket(new SPacketEffect(SOUND_TYPE, BlockPos.ZERO, 0, false));
             ServerPlayerEntity.addExperience(0);
             ServerPlayerEntity.setPlayerHealthUpdated();
 

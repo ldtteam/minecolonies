@@ -267,7 +267,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
         {
             final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint());
             final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset);
-            MineColonies.getNetwork().sendToServer(new BuildingMoveMessage(
+            Network.getNetwork().sendToServer(new BuildingMoveMessage(
                     structureName.toString(),
                     structureName.toString(),
                     Settings.instance.getPosition(),

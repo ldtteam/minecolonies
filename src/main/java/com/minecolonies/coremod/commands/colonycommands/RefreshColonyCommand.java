@@ -6,7 +6,7 @@ import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
@@ -50,13 +50,13 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
 
     @NotNull
     @Override
-    public String getCommandUsage(@NotNull final ICommandSender sender)
+    public String getCommandUsage(@NotNull final CommandSource sender)
     {
         return super.getCommandUsage(sender) + "<ColonyId|OwnerName>";
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
         IColony colony = actionMenuState.getColonyForArgument("colony");
         if (null == colony)
@@ -95,7 +95,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final String... args) throws CommandException
     {
         final int colonyId;
         colonyId = getIthArgument(args, 0, -1);
@@ -148,7 +148,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
         executeShared(server, sender, colony);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final IColony colony)
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final IColony colony)
     {
         if (sender instanceof PlayerEntity)
         {
@@ -169,7 +169,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
     @Override
     public List<String> getTabCompletionOptions(
                                                  @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final CommandSource sender,
                                                  @NotNull final String[] args,
                                                  @Nullable final BlockPos pos)
     {

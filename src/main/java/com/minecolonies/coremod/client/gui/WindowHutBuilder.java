@@ -118,7 +118,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         });
 
         //Make sure we have a fresh view
-        MineColonies.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.building));
+        Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.building));
 
         findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Label.class).setLabelText(building.getConstructionName());
         findPaneOfTypeByID(LABEL_CONSTRUCTION_POS, Label.class).setLabelText(building.getConstructionPos());
@@ -242,7 +242,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             itemStack.put(res.getItemStack().getTag());
             final Label quantityLabel = pane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class);
             final int quantity = Integer.parseInt(quantityLabel.getLabelText());
-            MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, itemStack, quantity, true));
+            Network.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, itemStack, quantity, true));
         }
     }
 }

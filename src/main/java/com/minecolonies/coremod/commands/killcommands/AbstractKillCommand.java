@@ -2,7 +2,7 @@ package com.minecolonies.coremod.commands.killcommands;
 
 import com.minecolonies.coremod.commands.*;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
@@ -38,18 +38,18 @@ public abstract class AbstractKillCommand<T extends Entity> extends AbstractSing
     public abstract String getDesc();
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
         executeShared(server, sender);
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final String... args) throws CommandException
     {
         executeShared(server, sender);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender) throws CommandException
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final CommandSource sender) throws CommandException
     {
         if (sender instanceof PlayerEntity && !isPlayerOpped(sender))
         {
@@ -77,7 +77,7 @@ public abstract class AbstractKillCommand<T extends Entity> extends AbstractSing
     @Override
     public List<String> getTabCompletionOptions(
                                                  @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final CommandSource sender,
                                                  @NotNull final String[] args,
                                                  @Nullable final BlockPos pos)
     {

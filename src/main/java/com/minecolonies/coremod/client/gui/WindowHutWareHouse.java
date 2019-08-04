@@ -64,7 +64,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
         updateResourcePane();
 
         //Make sure we have a fresh view
-        MineColonies.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.building));
+        Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.building));
     }
 
     /**
@@ -152,7 +152,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
      */
     private void transferItems()
     {
-        MineColonies.getNetwork().sendToServer(new UpgradeWarehouseMessage(this.building));
+        Network.getNetwork().sendToServer(new UpgradeWarehouseMessage(this.building));
         allowMoreStorageUpgrades = false;
         this.updateResourcePane();
     }
@@ -162,7 +162,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
      */
     private void sortWarehouse()
     {
-        MineColonies.getNetwork().sendToServer(new SortWarehouseMessage(this.building));
+        Network.getNetwork().sendToServer(new SortWarehouseMessage(this.building));
     }
 
     /**

@@ -3,7 +3,7 @@ package com.minecolonies.coremod.commands;
 import com.minecolonies.api.configuration.Configurations;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -44,13 +44,13 @@ public class CommandEntryPoint extends CommandBase
 
     @NotNull
     @Override
-    public String getUsage(final ICommandSender sender)
+    public String getUsage(final CommandSource sender)
     {
         return root.getCommandUsage(sender);
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String[] args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final String[] args) throws CommandException
     {
         // We can pass this without stripping as mc does that for us with the alias
         root.execute(server, sender, args);
@@ -78,7 +78,7 @@ public class CommandEntryPoint extends CommandBase
      * @return true if so.
      */
     @Override
-    public boolean checkPermission(final MinecraftServer server, final ICommandSender sender)
+    public boolean checkPermission(final MinecraftServer server, final CommandSource sender)
     {
         if (sender instanceof PlayerEntity)
         {
@@ -91,7 +91,7 @@ public class CommandEntryPoint extends CommandBase
     @Override
     public List<String> getTabCompletions(
                                            @NotNull final MinecraftServer server,
-                                           @NotNull final ICommandSender sender,
+                                           @NotNull final CommandSource sender,
                                            @NotNull final String[] args,
                                            @Nullable final BlockPos pos)
     {

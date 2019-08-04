@@ -240,7 +240,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
         if (getOpenRequests().size() > row && row >= 0)
         {
             @NotNull final IRequest request = getOpenRequests().get(row);
-            MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(colonyId, request.getId(), RequestState.CANCELLED, null));
+            Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colonyId, request.getId(), RequestState.CANCELLED, null));
         }
     }
 }

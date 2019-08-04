@@ -58,7 +58,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
      */
     private void directClicked()
     {
-        MineColonies.getNetwork().sendToServer(new DirectPlaceMessage(building, pos, stack));
+        Network.getNetwork().sendToServer(new DirectPlaceMessage(building, pos, stack));
         close();
     }
 

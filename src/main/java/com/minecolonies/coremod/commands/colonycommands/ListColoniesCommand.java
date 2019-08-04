@@ -6,7 +6,7 @@ import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -61,12 +61,12 @@ public class ListColoniesCommand extends AbstractSingleCommand implements IActio
 
     @NotNull
     @Override
-    public String getCommandUsage(@NotNull final ICommandSender sender)
+    public String getCommandUsage(@NotNull final CommandSource sender)
     {
         return super.getCommandUsage(sender);
     }
 
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
         @Nullable final Integer page = actionMenuState.getIntForArgument("page");
         @Nullable final Integer abandonedSinceTimeInHours = actionMenuState.getIntForArgument("abandonedSinceTimeInHours");
@@ -74,7 +74,7 @@ public class ListColoniesCommand extends AbstractSingleCommand implements IActio
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final String... args) throws CommandException
     {
         final int page = getIthArgument(args, 0, 1);
         final int abandonedSinceTimeInHours = getIthArgument(args, 1, 0);
@@ -82,7 +82,7 @@ public class ListColoniesCommand extends AbstractSingleCommand implements IActio
         executeShared(server, sender, page, abandonedSinceTimeInHours);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender,
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final CommandSource sender,
             @Nullable final Integer pageProvided, @Nullable final Integer abandonedSinceTimeInHoursProvided) throws CommandException
     {
         int page;
@@ -179,7 +179,7 @@ public class ListColoniesCommand extends AbstractSingleCommand implements IActio
     @Override
     public List<String> getTabCompletionOptions(
                                                  @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final CommandSource sender,
                                                  @NotNull final String[] args,
                                                  @Nullable final BlockPos pos)
     {

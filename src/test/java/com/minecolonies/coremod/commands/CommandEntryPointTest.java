@@ -16,7 +16,7 @@ import com.minecolonies.coremod.commands.colonycommands.ListColoniesCommand;
 import com.minecolonies.coremod.commands.generalcommands.CheckForAutoDeletesCommand;
 import com.minecolonies.coremod.commands.generalcommands.ScanCommand;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
 public class CommandEntryPointTest
 {
     @NotNull private MinecraftServer server;
-    @NotNull private ICommandSender sender;
+    @NotNull private CommandSource sender;
     @NotNull private CommandEntryPointNew instance;
     @Nullable private BlockPos pos;
     @NotNull private PermissionsChecker permissionsChecker;
@@ -364,7 +364,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -408,7 +408,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -782,7 +782,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -821,7 +821,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -859,7 +859,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -933,7 +933,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -967,7 +967,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1001,7 +1001,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1174,7 +1174,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1208,7 +1208,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1242,7 +1242,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1276,7 +1276,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1310,7 +1310,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1344,7 +1344,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1378,7 +1378,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1412,7 +1412,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1517,7 +1517,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1558,7 +1558,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1598,7 +1598,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1636,7 +1636,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1674,7 +1674,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1708,7 +1708,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1742,7 +1742,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1776,7 +1776,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1810,7 +1810,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1844,7 +1844,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1878,7 +1878,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1912,7 +1912,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1946,7 +1946,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -1979,7 +1979,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -2016,7 +2016,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -2042,7 +2042,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException
@@ -2078,7 +2078,7 @@ public class CommandEntryPointTest
         instance = new CommandEntryPointNew()
         {
             @Override
-            protected void createInstanceAndExecute(final MinecraftServer myServer, final ICommandSender mySender,
+            protected void createInstanceAndExecute(final MinecraftServer myServer, final CommandSource mySender,
                     @NotNull final ActionMenuState actionMenuState,
                     final Class<? extends IActionCommand> clazz)
                     throws InstantiationException, IllegalAccessException, CommandException

@@ -604,7 +604,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             if (player.isSneaking())
             {
-                MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(this.getName(), this.getEntityId()));
+                Network.getNetwork().sendToServer(new OpenInventoryMessage(this.getName(), this.getEntityId()));
             }
             else
             {

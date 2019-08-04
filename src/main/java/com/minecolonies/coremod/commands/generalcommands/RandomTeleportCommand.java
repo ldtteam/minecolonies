@@ -10,7 +10,7 @@ import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -62,20 +62,20 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
 
     @NotNull
     @Override
-    public String getCommandUsage(@NotNull final ICommandSender sender)
+    public String getCommandUsage(@NotNull final CommandSource sender)
     {
         return super.getCommandUsage(sender) + "rtp" + "<playerName>";
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
         final PlayerEntity player = actionMenuState.getPlayerForArgument("player");
         executeShared(server, sender, ((null != player) ? player.getName() : null));
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final String... args) throws CommandException
     {
         String playerName = null;
         if (args.length != 0)
@@ -85,7 +85,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
         executeShared(server, sender, playerName);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final String playerName) throws CommandException
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, final String playerName) throws CommandException
     {
         if (SPAWN_NO_TP >= LOWER_BOUNDS)
         {
@@ -131,7 +131,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
      * @param sender           the sender to have access to the world.
      * @param playerToTeleport the player which shall be teleported.
      */
-    private static void teleportPlayer(final ICommandSender sender, final PlayerEntity playerToTeleport)
+    private static void teleportPlayer(final CommandSource sender, final PlayerEntity playerToTeleport)
     {
         //Now the position will be calculated, we will try up to 4 times to find a save position.
         int attCounter = 0;
@@ -213,7 +213,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
     @Override
     public List<String> getTabCompletionOptions(
                                                  @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final CommandSource sender,
                                                  @NotNull final String[] args,
                                                  final BlockPos pos)
     {

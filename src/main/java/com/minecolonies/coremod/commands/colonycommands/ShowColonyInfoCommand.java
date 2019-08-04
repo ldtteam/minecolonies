@@ -7,7 +7,7 @@ import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -61,12 +61,12 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
 
     @NotNull
     @Override
-    public String getCommandUsage(@NotNull final ICommandSender sender)
+    public String getCommandUsage(@NotNull final CommandSource sender)
     {
         return super.getCommandUsage(sender) + "<ColonyId|OwnerName>";
     }
 
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
         // See if we have a valid colony,
         IColony colony = actionMenuState.getColonyForArgument("colony");
@@ -127,7 +127,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final String... args) throws CommandException
     {
         int colonyId = getIthArgument(args, 0, -1);
         IColony tempColony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().world.getDimension().getType().getId()));
@@ -194,7 +194,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
         executeShared(server, sender, colony);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final IColony colony) throws CommandException
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final IColony colony) throws CommandException
     {
         final BlockPos position = colony.getCenter();
         sender.sendMessage(new StringTextComponent(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()));
@@ -215,7 +215,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
     @Override
     public List<String> getTabCompletionOptions(
                                                  @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final CommandSource sender,
                                                  @NotNull final String[] args,
                                                  @Nullable final BlockPos pos)
     {

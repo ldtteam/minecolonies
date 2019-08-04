@@ -227,7 +227,7 @@ public class RaidManager implements IRaiderManager
         {
             for (final Map.Entry<BlockPos, Tuple<String, Long>> entry : new HashMap<>(schematicMap).entrySet())
             {
-                if (entry.getKey().equals(BlockPos.ORIGIN))
+                if (entry.getKey().equals(BlockPos.ZERO))
                 {
                     schematicMap.remove(entry.getKey());
                 }

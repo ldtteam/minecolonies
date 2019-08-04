@@ -224,7 +224,7 @@ public class EntityAIEatTask extends EntityAIBase
         {
             citizen.swingArm(Hand.MAIN_HAND);
             citizen.playSound(SoundEvents.ENTITY_GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
-            MineColonies.getNetwork()
+            Network.getNetwork()
               .sendToAllTracking(new ItemParticleEffectMessage(citizen.getHeldItemMainhand(),
                 citizen.posX,
                 citizen.posY,

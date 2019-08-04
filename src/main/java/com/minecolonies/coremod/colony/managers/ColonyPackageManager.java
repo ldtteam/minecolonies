@@ -213,7 +213,7 @@ public class ColonyPackageManager implements IColonyPackageManager
                 final boolean isNewSubscriber = !oldSubscribers.contains(player);
                 if (isDirty || isNewSubscriber)
                 {
-                    MineColonies.getNetwork().sendTo(new ColonyViewMessage(colony, colonyByteBuf, isNewSubscriber), player);
+                    Network.getNetwork().sendTo(new ColonyViewMessage(colony, colonyByteBuf, isNewSubscriber), player);
                 }
             }
         }
@@ -231,7 +231,7 @@ public class ColonyPackageManager implements IColonyPackageManager
                     .filter(player -> permissions.isDirty() || !oldSubscribers.contains(player)).forEach(player ->
             {
                 final Rank rank = permissions.getRank(player);
-                MineColonies.getNetwork().sendTo(new PermissionsMessage.View(colony, rank), player);
+                Network.getNetwork().sendTo(new PermissionsMessage.View(colony, rank), player);
             });
         }
     }
@@ -247,7 +247,7 @@ public class ColonyPackageManager implements IColonyPackageManager
                 if (!(workOrder instanceof WorkOrderBuildMiner))
                 {
                     subscribers.stream().filter(player -> workManager.isDirty() || !oldSubscribers.contains(player))
-                            .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewWorkOrderMessage(colony, workOrder), player));
+                            .forEach(player -> Network.getNetwork().sendTo(new ColonyViewWorkOrderMessage(colony, workOrder), player));
                 }
             }
 
@@ -261,7 +261,7 @@ public class ColonyPackageManager implements IColonyPackageManager
         if (Structures.isDirty() || hasNewSubscribers)
         {
             subscribers.stream()
-                    .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), player));
+                    .forEach(player -> Network.getNetwork().sendTo(new ColonyStylesMessage(), player));
         }
     }
 

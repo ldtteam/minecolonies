@@ -95,7 +95,7 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
     {
         ownBuilding.shouldReplant = !ownBuilding.shouldReplant;
         setupReplantButton(replant);
-        MineColonies.getNetwork().sendToServer(new LumberjackReplantSaplingToggleMessage(ownBuilding, ownBuilding.shouldReplant));
+        Network.getNetwork().sendToServer(new LumberjackReplantSaplingToggleMessage(ownBuilding, ownBuilding.shouldReplant));
     }
 
     /**

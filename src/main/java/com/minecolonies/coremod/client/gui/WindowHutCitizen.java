@@ -139,7 +139,7 @@ public class WindowHutCitizen extends AbstractWindowBuilding<BuildingHome.View>
             final int row = citizen.getListElementIndexByPane(button);
             final int citizenid = home.getResidents().get(row);
             home.removeResident(row);
-            MineColonies.getNetwork().sendToServer(new AssignUnassignMessage(building, false, citizenid));
+            Network.getNetwork().sendToServer(new AssignUnassignMessage(building, false, citizenid));
             refreshView();
         }
     }

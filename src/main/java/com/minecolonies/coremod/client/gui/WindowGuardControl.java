@@ -223,7 +223,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
     private void sendChangesToServer()
     {
         final ResourceLocation resourceName = building.getGuardType() == null ? new ResourceLocation("") : building.getGuardType().getRegistryName();
-        MineColonies.getNetwork()
+        Network.getNetwork()
           .sendToServer(new GuardTaskMessage(building, resourceName, building.isAssignManually(), patrolManually, retrieveOnLowHealth, task.ordinal(), tightGrouping));
     }
 
@@ -349,7 +349,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
      */
     private void recalculate()
     {
-        MineColonies.getNetwork().sendToServer(new GuardRecalculateMessage(building.getColony().getID(), building));
+        Network.getNetwork().sendToServer(new GuardRecalculateMessage(building.getColony().getID(), building));
         pullInfoFromHut();
     }
 
@@ -360,7 +360,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
      */
     private void givePlayerScepter(final GuardTask localTask)
     {
-        MineColonies.getNetwork().sendToServer(new GuardScepterMessage(localTask.ordinal(), building.getID(), building.getColony().getID()));
+        Network.getNetwork().sendToServer(new GuardScepterMessage(localTask.ordinal(), building.getID(), building.getColony().getID()));
     }
 
     /**

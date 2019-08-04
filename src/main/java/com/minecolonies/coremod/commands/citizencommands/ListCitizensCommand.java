@@ -7,7 +7,7 @@ import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -65,13 +65,13 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
 
     @NotNull
     @Override
-    public String getCommandUsage(@NotNull final ICommandSender sender)
+    public String getCommandUsage(@NotNull final CommandSource sender)
     {
         return super.getCommandUsage(sender) + "<colonyId>";
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
         final IColony colony = actionMenuState.getColonyForArgument("colony");
         final Integer page = actionMenuState.getIntForArgument("page");
@@ -79,7 +79,7 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final String... args) throws CommandException
     {
         int colonyId = getIthArgument(args, 0, getColonyId(sender));
         final Integer page = getIthArgument(args, 1, 1);
@@ -101,7 +101,7 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
         executeShared(server, sender, colony, page);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final IColony colony, final Integer pageProvided) throws CommandException
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, final IColony colony, final Integer pageProvided) throws CommandException
     {
         int page;
         if (null != pageProvided)
@@ -175,7 +175,7 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
      * @param sender the sender of the command.
      * @return the colonyId.
      */
-    private static int getColonyId(@NotNull final ICommandSender sender)
+    private static int getColonyId(@NotNull final CommandSource sender)
     {
         final IColony tempColony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), sender.getCommandSenderEntity().getUniqueID());
         if (tempColony != null)
@@ -200,7 +200,7 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
      * @param halfPage the halfPage.
      * @param colonyId the colony id.
      */
-    private static void drawPageSwitcher(@NotNull final ICommandSender sender, final int page, final int count, final int halfPage, final int colonyId)
+    private static void drawPageSwitcher(@NotNull final CommandSource sender, final int page, final int count, final int halfPage, final int colonyId)
     {
         final int prevPage = Math.max(0, page - 1);
         final int nextPage = Math.min(page + 1, (count / CITIZENS_ON_PAGE) + halfPage);
@@ -221,7 +221,7 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
     @Override
     public List<String> getTabCompletionOptions(
                                                  @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final CommandSource sender,
                                                  @NotNull final String[] args,
                                                  @Nullable final BlockPos pos)
     {
