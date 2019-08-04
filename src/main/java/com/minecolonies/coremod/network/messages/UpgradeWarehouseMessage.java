@@ -10,13 +10,17 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Issues the upgrade of the warehouse pos level 5.
@@ -34,12 +38,12 @@ public class UpgradeWarehouseMessage implements IMessage
     private int colonyId;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public UpgradeWarehouseMessage()
     {
@@ -47,7 +51,7 @@ public class UpgradeWarehouseMessage implements IMessage
     }
 
     /**
-     * Creates a Upgrade Warehouse message.
+     * Creates a Upgrade Warehouse 
      *
      * @param building AbstractBuilding of the request.
      */
@@ -75,22 +79,30 @@ public class UpgradeWarehouseMessage implements IMessage
         buf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final UpgradeWarehouseMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony == null)
         {
             Log.getLogger().warn("UpgradeWarehouseMessage colony is null");
             return;
         }
 
+        final PlayerEntity player = ctxIn.getSender();
         if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
         {
             return;
         }
 
-        final IBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
+        final IBuilding building = colony.getBuildingManager().getBuilding(buildingId);
         if (!(building instanceof BuildingWareHouse))
         {
             Log.getLogger().warn("UpgradeWarehouseMessage building is not a Warehouse");
@@ -99,7 +111,7 @@ public class UpgradeWarehouseMessage implements IMessage
 
         ((IWareHouse) building).upgradeContainers(player.world);
 
-        final boolean isCreative = player.capabilities.isCreativeMode;
+        final boolean isCreative = player.isCreative();
         if (!isCreative)
         {
             final int slot = InventoryUtils.

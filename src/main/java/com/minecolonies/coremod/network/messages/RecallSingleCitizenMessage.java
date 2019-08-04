@@ -9,10 +9,14 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.network.IMessage;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.util.TeleportHelper;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -37,7 +41,7 @@ public class RecallSingleCitizenMessage implements IMessage
     private int citizenId;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
@@ -82,19 +86,27 @@ public class RecallSingleCitizenMessage implements IMessage
         buf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final RecallSingleCitizenMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
+            final PlayerEntity player = ctxIn.getSender();
             //Verify player has permission to change this huts settings
             if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
             {
                 return;
             }
 
-            final ICitizenData citizenData = colony.getCitizenManager().getCitizen(message.citizenId);
+            final ICitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
             Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
             if (!optionalEntityCitizen.isPresent())
             {
@@ -107,7 +119,7 @@ public class RecallSingleCitizenMessage implements IMessage
                 citizenData.updateCitizenEntityIfNecessary();
             }
 
-            final BlockPos loc = message.buildingId;
+            final BlockPos loc = buildingId;
             if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), colony.getWorld(), loc))
             {
                 LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.workerHuts.recallFail");

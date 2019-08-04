@@ -11,12 +11,15 @@ import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.player.ServerPlayerEntity;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -28,7 +31,7 @@ public class PermissionsMessage
     private static final String COLONY_DOES_NOT_EXIST = "Colony #%d does not exist.";
 
     /**
-     * Enums for Message Type for the permission message.
+     * Enums for Message Type for the permission 
      * <p>
      * SET_PERMISSION       Setting a permission.
      * REMOVE_PERMISSION    Removing a permission.
@@ -42,7 +45,7 @@ public class PermissionsMessage
     }
 
     /**
-     * Client side presentation of the message.
+     * Client side presentation of the 
      */
     public static class View implements IMessage
     {
@@ -50,12 +53,12 @@ public class PermissionsMessage
         private PacketBuffer data;
 
         /**
-         * The dimension of the message.
+         * The dimension of the 
          */
         private int dimension;
 
         /**
-         * Empty constructor used when registering the message.
+         * Empty constructor used when registering the 
          */
         public View()
         {
@@ -63,7 +66,7 @@ public class PermissionsMessage
         }
 
         /**
-         * Instantiate message.
+         * Instantiate 
          *
          * @param colony     with the colony.
          * @param viewerRank and viewer rank.
@@ -71,7 +74,7 @@ public class PermissionsMessage
         public View(@NotNull final Colony colony, @NotNull final Rank viewerRank)
         {
             this.colonyID = colony.getID();
-            this.data = Unpooled.buffer();
+            this.data = new PacketBuffer(Unpooled.buffer());
             colony.getPermissions().serializeViewNetworkData(this.data, viewerRank);
             this.dimension = colony.getDimension();
         }
@@ -79,16 +82,23 @@ public class PermissionsMessage
         @Override
         public void fromBytes(@NotNull final PacketBuffer buf)
         {
-            final PacketBuffer newBuf = buf.retain();
+            final PacketBuffer newBuf = new PacketBuffer(buf.retain());
             colonyID = newBuf.readInt();
             dimension = newBuf.readInt();
             data = newBuf;
         }
 
+        @Nullable
         @Override
-        protected void messageOnClientThread(final View message, final MessageContext ctx)
+        public LogicalSide getExecutionSide()
         {
-            IColonyManager.getInstance().handlePermissionsViewMessage(message.colonyID, message.data, message.dimension);
+            return LogicalSide.CLIENT;
+        }
+
+        @Override
+        public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        {
+            IColonyManager.getInstance().handlePermissionsViewMessage(colonyID, data, dimension);
         }
 
         @Override
@@ -111,7 +121,7 @@ public class PermissionsMessage
         private Action      action;
 
         /**
-         * The dimension of the message.
+         * The dimension of the 
          */
         private int dimension;
 
@@ -141,35 +151,42 @@ public class PermissionsMessage
             this.dimension = colony.getDimension();
         }
 
+        @Nullable
         @Override
-        public void messageOnServerThread(final Permission message, final ServerPlayerEntity player)
+        public LogicalSide getExecutionSide()
         {
-            final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
+            return LogicalSide.CLIENT;
+        }
+
+        @Override
+        public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        {
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
             if (colony == null)
             {
-                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID));
                 return;
             }
 
             //Verify player has permission to do edit permissions
-            if (!colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
+            if (!colony.getPermissions().hasPermission(Minecraft.getInstance().player, Action.EDIT_PERMISSIONS))
             {
                 return;
             }
 
-            switch (message.type)
+            switch (type)
             {
                 case SET_PERMISSION:
-                    colony.getPermissions().setPermission(message.rank, message.action);
+                    colony.getPermissions().setPermission(rank, action);
                     break;
                 case REMOVE_PERMISSION:
-                    colony.getPermissions().removePermission(message.rank, message.action);
+                    colony.getPermissions().removePermission(rank, action);
                     break;
                 case TOGGLE_PERMISSION:
-                    colony.getPermissions().togglePermission(message.rank, message.action);
+                    colony.getPermissions().togglePermission(rank, action);
                     break;
                 default:
-                    Log.getLogger().error(String.format("Invalid MessageType %s", message.type.toString()));
+                    Log.getLogger().error(String.format("Invalid MessageType %s", type.toString()));
             }
         }
 
@@ -203,7 +220,7 @@ public class PermissionsMessage
         private String playerName;
 
         /**
-         * The dimension of the message.
+         * The dimension of the 
          */
         private int dimension;
 
@@ -216,7 +233,7 @@ public class PermissionsMessage
         }
 
         /**
-         * Constructor for adding player to permission message.
+         * Constructor for adding player to permission 
          *
          * @param colony Colony the permission is set in.
          * @param player New player name to be added.
@@ -245,18 +262,25 @@ public class PermissionsMessage
             dimension = buf.readInt();
         }
 
+        @Nullable
         @Override
-        public void messageOnServerThread(final AddPlayer message, final ServerPlayerEntity player)
+        public LogicalSide getExecutionSide()
         {
-            final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
+            return LogicalSide.CLIENT;
+        }
 
-            if (colony != null && colony.getPermissions().hasPermission(player, Action.CAN_PROMOTE) && colony.getWorld() != null)
+        @Override
+        public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        {
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
+
+            if (colony != null && colony.getPermissions().hasPermission(Minecraft.getInstance().player, Action.CAN_PROMOTE) && colony.getWorld() != null)
             {
-                colony.getPermissions().addPlayer(message.playerName, Rank.NEUTRAL, colony.getWorld());
+                colony.getPermissions().addPlayer(playerName, Rank.NEUTRAL, colony.getWorld());
             }
             else
             {
-                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID));
             }
         }
     }
@@ -271,7 +295,7 @@ public class PermissionsMessage
         private UUID   id;
 
         /**
-         * The dimension of the message.
+         * The dimension of the 
          */
         private int dimension;
 
@@ -284,7 +308,7 @@ public class PermissionsMessage
         }
 
         /**
-         * Constructor for adding player to permission message.
+         * Constructor for adding player to permission 
          *
          * @param colony Colony the permission is set in.
          * @param playerName New player name to be added.
@@ -317,18 +341,25 @@ public class PermissionsMessage
             dimension = buf.readInt();
         }
 
+        @Nullable
         @Override
-        public void messageOnServerThread(final AddPlayerOrFakePlayer message, final ServerPlayerEntity player)
+        public LogicalSide getExecutionSide()
         {
-            final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
+            return LogicalSide.CLIENT;
+        }
 
-            if (colony != null && colony.getPermissions().hasPermission(player, Action.CAN_PROMOTE) && colony.getWorld() != null)
+        @Override
+        public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        {
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
+
+            if (colony != null && colony.getPermissions().hasPermission(Minecraft.getInstance().player, Action.CAN_PROMOTE) && colony.getWorld() != null)
             {
-                colony.getPermissions().addPlayer(message.id, message.playerName, Rank.NEUTRAL);
+                colony.getPermissions().addPlayer(id, playerName, Rank.NEUTRAL);
             }
             else
             {
-                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID));
             }
         }
     }
@@ -343,7 +374,7 @@ public class PermissionsMessage
         private Type type;
 
         /**
-         * The dimension of the message.
+         * The dimension of the 
          */
         private int dimension;
 
@@ -398,28 +429,35 @@ public class PermissionsMessage
             dimension = buf.readInt();
         }
 
+        @Nullable
         @Override
-        public void messageOnServerThread(final ChangePlayerRank message, final ServerPlayerEntity player)
+        public LogicalSide getExecutionSide()
         {
-            final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
+            return LogicalSide.CLIENT;
+        }
+
+        @Override
+        public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        {
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
 
             if (colony == null || colony.getWorld() == null)
             {
-                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID));
                 return;
             }
-
+            final PlayerEntity player = ctxIn.getSender();
             if (colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
             {
-                if (message.type == Type.PROMOTE && colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(message.playerID).ordinal())
+                if (type == Type.PROMOTE && colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(playerID).ordinal())
                 {
-                    colony.getPermissions().setPlayerRank(message.playerID, Permissions.getPromotionRank(colony.getPermissions().getRank(message.playerID)), colony.getWorld());
+                    colony.getPermissions().setPlayerRank(playerID, Permissions.getPromotionRank(colony.getPermissions().getRank(playerID)), colony.getWorld());
                 }
-                else if (message.type == Type.DEMOTE
-                           && (colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(message.playerID).ordinal()
-                                 || player.getUniqueID().equals(message.playerID)))
+                else if (type == Type.DEMOTE
+                           && (colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(playerID).ordinal()
+                                 || player.getUniqueID().equals(playerID)))
                 {
-                    colony.getPermissions().setPlayerRank(message.playerID, Permissions.getDemotionRank(colony.getPermissions().getRank(message.playerID)), colony.getWorld());
+                    colony.getPermissions().setPlayerRank(playerID, Permissions.getDemotionRank(colony.getPermissions().getRank(playerID)), colony.getWorld());
                 }
             }
         }
@@ -434,7 +472,7 @@ public class PermissionsMessage
         private UUID playerID;
 
         /**
-         * The dimension of the message.
+         * The dimension of the 
          */
         private int dimension;
 
@@ -476,25 +514,32 @@ public class PermissionsMessage
             dimension = buf.readInt();
         }
 
+        @Nullable
         @Override
-        public void messageOnServerThread(final RemovePlayer message, final ServerPlayerEntity player)
+        public LogicalSide getExecutionSide()
         {
-            final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
+            return LogicalSide.CLIENT;
+        }
+
+        @Override
+        public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+        {
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
 
             if (colony == null)
             {
-                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID));
                 return;
             }
-
-            final Player permissionsPlayer = colony.getPermissions().getPlayers().get(message.playerID);
+            final PlayerEntity player = ctxIn.getSender();
+            final Player permissionsPlayer = colony.getPermissions().getPlayers().get(playerID);
             if ((permissionsPlayer.getRank() == Rank.HOSTILE && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
                   || (permissionsPlayer.getRank() != Rank.HOSTILE
                         && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS)
-                        && colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(message.playerID).ordinal())
-                  || player.getUniqueID().equals(message.playerID))
+                        && colony.getPermissions().getRank(player).ordinal() < colony.getPermissions().getRank(playerID).ordinal())
+                  || player.getUniqueID().equals(playerID))
             {
-                colony.getPermissions().removePlayer(message.playerID);
+                colony.getPermissions().removePlayer(playerID);
             }
         }
     }

@@ -8,15 +8,18 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Transfer some items from the player inventory to the Builder's chest or additional chests.
@@ -48,12 +51,12 @@ public class TransferItemsRequestMessage implements IMessage
     private boolean   attemptResolve;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public TransferItemsRequestMessage()
     {
@@ -61,7 +64,7 @@ public class TransferItemsRequestMessage implements IMessage
     }
 
     /**
-     * Creates a Transfer Items request message.
+     * Creates a Transfer Items request 
      *
      * @param building  AbstractBuilding of the request.
      * @param itemStack to be take from the player for the building
@@ -100,47 +103,54 @@ public class TransferItemsRequestMessage implements IMessage
         buf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final TransferItemsRequestMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony == null)
         {
             Log.getLogger().warn("TransferItemsRequestMessage colony is null");
             return;
         }
 
-        final IBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
+        final IBuilding building = colony.getBuildingManager().getBuilding(buildingId);
         if (building == null)
         {
             Log.getLogger().warn("TransferItemsRequestMessage building is null");
             return;
         }
 
-        if (message.quantity <= 0)
+        if (quantity <= 0)
         {
             Log.getLogger().warn("TransferItemsRequestMessage quantity below 0");
             return;
         }
 
-        final boolean isCreative = player.capabilities.isCreativeMode;
-        final Item item = message.itemStack.getItem();
+        final PlayerEntity player = ctxIn.getSender();
+
+        final boolean isCreative = player.isCreative();
         final int amountToTake;
         if (isCreative)
         {
-            amountToTake = message.quantity;
+            amountToTake = quantity;
         }
         else
         {
-            amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory),
-                    stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, message.itemStack, true, true)));
+            amountToTake = Math.min(quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory),
+                    stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true)));
         }
 
-        final ItemStack itemStackToTake = new ItemStack(item, amountToTake, message.itemStack.getItemDamage());
-        itemStackToTake.put(message.itemStack.getTag());
+        final ItemStack itemStackToTake = itemStack.copy();
+        itemStackToTake.setCount(quantity);
 
         ItemStack remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(building.getTileEntity(), itemStackToTake);
-
         if (!ItemStackUtils.isEmpty(remainingItemStack))
         {
             //If we still have some to drop, let's try the additional chests now
@@ -170,7 +180,7 @@ public class TransferItemsRequestMessage implements IMessage
             {
                 final int slot =
                         InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory),
-                                stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, message.itemStack, true, true));
+                                stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, true, true));
                 final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
                 amountToRemoveFromPlayer -= ItemStackUtils.getSize(itemsTaken);
             }

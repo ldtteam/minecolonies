@@ -2,12 +2,16 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -32,7 +36,7 @@ public class RemoveEntityMessage implements IMessage
     private String entityName;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public RemoveEntityMessage()
     {
@@ -69,29 +73,37 @@ public class RemoveEntityMessage implements IMessage
         buf.writeString(entityName);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final RemoveEntityMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        if (!player.capabilities.isCreativeMode)
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final PlayerEntity player = ctxIn.getSender();
+        if (!player.isCreative())
         {
             return;
         }
 
-        final World world = player.getServerWorld();
-        for(int x = Math.min(message.from.getX(), message.to.getX()); x <= Math.max(message.from.getX(), message.to.getX()); x++)
+        final World world = player.world;
+        for(int x = Math.min(from.getX(), to.getX()); x <= Math.max(from.getX(), to.getX()); x++)
         {
-            for (int y = Math.min(message.from.getY(), message.to.getY()); y <= Math.max(message.from.getY(), message.to.getY()); y++)
+            for (int y = Math.min(from.getY(), to.getY()); y <= Math.max(from.getY(), to.getY()); y++)
             {
-                for (int z = Math.min(message.from.getZ(), message.to.getZ()); z <= Math.max(message.from.getZ(), message.to.getZ()); z++)
+                for (int z = Math.min(from.getZ(), to.getZ()); z <= Math.max(from.getZ(), to.getZ()); z++)
                 {
                     final BlockPos here = new BlockPos(x, y, z);
                     final List<Entity> list = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(here));
 
                     for(final Entity entity: list)
                     {
-                        if (entity.getName().equals(message.entityName))
+                        if (entity.getName().equals(entityName))
                         {
-                            entity.setDead();
+                            entity.remove();
                         }
                     }
                 }

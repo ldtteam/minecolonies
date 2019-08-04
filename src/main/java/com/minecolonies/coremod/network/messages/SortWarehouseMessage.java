@@ -10,11 +10,15 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.util.SortingUtils;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Sort the warehouse if level bigger than 3.
@@ -37,12 +41,12 @@ public class SortWarehouseMessage implements IMessage
     private int colonyId;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public SortWarehouseMessage()
     {
@@ -50,7 +54,7 @@ public class SortWarehouseMessage implements IMessage
     }
 
     /**
-     * Creates a Sort Warehouse message.
+     * Creates a Sort Warehouse 
      *
      * @param building AbstractBuilding of the request.
      */
@@ -78,10 +82,19 @@ public class SortWarehouseMessage implements IMessage
         buf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final SortWarehouseMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
+        final PlayerEntity player = ctxIn.getSender();
+
         if (colony == null)
         {
             Log.getLogger().warn("UpgradeWarehouseMessage colony is null");
@@ -93,7 +106,7 @@ public class SortWarehouseMessage implements IMessage
             return;
         }
 
-        final IBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
+        final IBuilding building = colony.getBuildingManager().getBuilding(buildingId);
         if (!(building instanceof BuildingWareHouse))
         {
             Log.getLogger().warn("UpgradeWarehouseMessage building is not a Warehouse");
@@ -102,7 +115,7 @@ public class SortWarehouseMessage implements IMessage
 
         if (building.getBuildingLevel() >= REQUIRED_LEVEL_TO_SORT_WAREHOUSE)
         {
-            final CombinedItemHandler inv = (CombinedItemHandler) building.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+            final CombinedItemHandler inv = (CombinedItemHandler) building.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElseGet(null);
             SortingUtils.sort(inv);
         }
     }

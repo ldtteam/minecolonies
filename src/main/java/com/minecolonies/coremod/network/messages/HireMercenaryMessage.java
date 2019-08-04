@@ -64,7 +64,6 @@ public class HireMercenaryMessage implements IMessage
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
-
         if (colony != null)
         {
             final PlayerEntity player = ctxIn.getSender();

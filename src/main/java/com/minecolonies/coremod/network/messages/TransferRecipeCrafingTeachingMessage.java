@@ -3,9 +3,12 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.inventory.CraftingGUIBuilding;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +29,7 @@ public class TransferRecipeCrafingTeachingMessage implements IMessage
     private Map<Integer, ItemStack> itemStacks = new HashMap<>();
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public TransferRecipeCrafingTeachingMessage()
     {
@@ -68,31 +71,39 @@ public class TransferRecipeCrafingTeachingMessage implements IMessage
         buf.writeBoolean(complete);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final TransferRecipeCrafingTeachingMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final PlayerEntity player = ctxIn.getSender();
         if (player.openContainer instanceof CraftingGUIBuilding)
         {
             final CraftingGUIBuilding container = (CraftingGUIBuilding) player.openContainer;
 
-            if(message.complete)
+            if(complete)
             {
-                container.handleSlotClick(container.getSlot(1), message.itemStacks.containsKey(0) ? message.itemStacks.get(0) : ItemStackUtils.EMPTY);
-                container.handleSlotClick(container.getSlot(2), message.itemStacks.containsKey(1) ? message.itemStacks.get(1) : ItemStackUtils.EMPTY);
-                container.handleSlotClick(container.getSlot(3), message.itemStacks.containsKey(2) ? message.itemStacks.get(2) : ItemStackUtils.EMPTY);
-                container.handleSlotClick(container.getSlot(4), message.itemStacks.containsKey(3) ? message.itemStacks.get(3) : ItemStackUtils.EMPTY);
-                container.handleSlotClick(container.getSlot(5), message.itemStacks.containsKey(4) ? message.itemStacks.get(4) : ItemStackUtils.EMPTY);
-                container.handleSlotClick(container.getSlot(6), message.itemStacks.containsKey(5) ? message.itemStacks.get(5) : ItemStackUtils.EMPTY);
-                container.handleSlotClick(container.getSlot(7), message.itemStacks.containsKey(6) ? message.itemStacks.get(6) : ItemStackUtils.EMPTY);
-                container.handleSlotClick(container.getSlot(8), message.itemStacks.containsKey(7) ? message.itemStacks.get(7) : ItemStackUtils.EMPTY);
-                container.handleSlotClick(container.getSlot(9), message.itemStacks.containsKey(8) ? message.itemStacks.get(8) : ItemStackUtils.EMPTY);
+                container.handleSlotClick(container.getSlot(1), itemStacks.containsKey(0) ? itemStacks.get(0) : ItemStackUtils.EMPTY);
+                container.handleSlotClick(container.getSlot(2), itemStacks.containsKey(1) ? itemStacks.get(1) : ItemStackUtils.EMPTY);
+                container.handleSlotClick(container.getSlot(3), itemStacks.containsKey(2) ? itemStacks.get(2) : ItemStackUtils.EMPTY);
+                container.handleSlotClick(container.getSlot(4), itemStacks.containsKey(3) ? itemStacks.get(3) : ItemStackUtils.EMPTY);
+                container.handleSlotClick(container.getSlot(5), itemStacks.containsKey(4) ? itemStacks.get(4) : ItemStackUtils.EMPTY);
+                container.handleSlotClick(container.getSlot(6), itemStacks.containsKey(5) ? itemStacks.get(5) : ItemStackUtils.EMPTY);
+                container.handleSlotClick(container.getSlot(7), itemStacks.containsKey(6) ? itemStacks.get(6) : ItemStackUtils.EMPTY);
+                container.handleSlotClick(container.getSlot(8), itemStacks.containsKey(7) ? itemStacks.get(7) : ItemStackUtils.EMPTY);
+                container.handleSlotClick(container.getSlot(9), itemStacks.containsKey(8) ? itemStacks.get(8) : ItemStackUtils.EMPTY);
             }
             else
             {
-                container.handleSlotClick(container.getSlot(1), message.itemStacks.containsKey(0) ? message.itemStacks.get(0) : ItemStackUtils.EMPTY);
-                container.handleSlotClick(container.getSlot(2), message.itemStacks.containsKey(1) ? message.itemStacks.get(1) : ItemStackUtils.EMPTY);
-                container.handleSlotClick(container.getSlot(3), message.itemStacks.containsKey(3) ? message.itemStacks.get(3) : ItemStackUtils.EMPTY);
-                container.handleSlotClick(container.getSlot(4), message.itemStacks.containsKey(4) ? message.itemStacks.get(4) : ItemStackUtils.EMPTY);
+                container.handleSlotClick(container.getSlot(1), itemStacks.containsKey(0) ? itemStacks.get(0) : ItemStackUtils.EMPTY);
+                container.handleSlotClick(container.getSlot(2), itemStacks.containsKey(1) ? itemStacks.get(1) : ItemStackUtils.EMPTY);
+                container.handleSlotClick(container.getSlot(3), itemStacks.containsKey(3) ? itemStacks.get(3) : ItemStackUtils.EMPTY);
+                container.handleSlotClick(container.getSlot(4), itemStacks.containsKey(4) ? itemStacks.get(4) : ItemStackUtils.EMPTY);
             }
 
             container.detectAndSendChanges();

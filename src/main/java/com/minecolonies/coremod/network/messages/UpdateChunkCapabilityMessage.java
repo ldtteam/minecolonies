@@ -2,10 +2,15 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.network.IMessage;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.chunk.Chunk;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +43,7 @@ public class UpdateChunkCapabilityMessage implements IMessage
     private List<Integer> closeColonies;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public UpdateChunkCapabilityMessage()
     {
@@ -47,9 +52,10 @@ public class UpdateChunkCapabilityMessage implements IMessage
 
     /**
      * Create a message to update the chunk cap on the client side.
+     *
      * @param tagCapability the cap.
-     * @param x the x pos.
-     * @param z the z pos.
+     * @param x             the x pos.
+     * @param z             the z pos.
      */
     public UpdateChunkCapabilityMessage(@NotNull final IColonyTagCapability tagCapability, final int x, final int z)
     {
@@ -67,7 +73,7 @@ public class UpdateChunkCapabilityMessage implements IMessage
         owningColonyId = buf.readInt();
         final int size = buf.readInt();
         closeColonies = new ArrayList<>();
-        for(int i = 0; i < size; i++)
+        for (int i = 0; i < size; i++)
         {
             closeColonies.add(buf.readInt());
         }
@@ -80,28 +86,33 @@ public class UpdateChunkCapabilityMessage implements IMessage
         buf.writeInt(z);
         buf.writeInt(owningColonyId);
         buf.writeInt(closeColonies.size());
-        for(final int id: closeColonies)
+        for (final int id : closeColonies)
         {
             buf.writeInt(id);
         }
     }
 
+    @Nullable
     @Override
-    protected void messageOnClientThread(final UpdateChunkCapabilityMessage message, final MessageContext ctx)
+    public LogicalSide getExecutionSide()
     {
-        if(ctx.getClientHandler().world != null)
-        {
-            final Chunk chunk = ctx.getClientHandler().world.getChunk(message.x, message.z);
-            final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+        return LogicalSide.CLIENT;
+    }
 
-            if (cap.getOwningColony() != message.owningColonyId)
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final ClientWorld world = Minecraft.getInstance().world;
+        final Chunk chunk = world.getChunk(x, z);
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
+
+        if (cap != null && cap.getOwningColony() != owningColonyId)
+        {
+            cap.reset();
+            cap.setOwningColony(owningColonyId);
+            for (final int id : closeColonies)
             {
-                cap.reset();
-                cap.setOwningColony(message.owningColonyId);
-                for (final int id : message.closeColonies)
-                {
-                    cap.addColony(id);
-                }
+                cap.addColony(id);
             }
         }
     }

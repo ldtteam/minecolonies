@@ -13,13 +13,12 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.BlockState;
-import net.minecraft.command.CommandSource;
+import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAITasks;
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ShieldItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -32,6 +31,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +45,7 @@ import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 /**
  * The abstract citizen entity.
  */
-public abstract class AbstractEntityCitizen extends EntityAgeable implements CommandSource, ICapabilitySerializable<CompoundNBT>
+public abstract class AbstractEntityCitizen extends AgeableEntity implements ICapabilitySerializable<CompoundNBT>, INamedContainerProvider
 {
 
     public static final DataParameter<Integer>  DATA_LEVEL           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
@@ -96,9 +96,9 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements Com
         super(world);
     }
 
-    public EntityAITasks getTasks()
+    public GoalSelector getTasks()
     {
-        return tasks;
+        return goalSelector;
     }
 
     public int getTicksExisted()
@@ -106,15 +106,9 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements Com
         return ticksExisted;
     }
 
-    /**
-     * We override this method and execute no code to avoid citizens travelling
-     * to the nether.
-     *
-     * @param dimensionIn dimension to travel to.
-     */
-    @Override
     @Nullable
-    public Entity changeDimension(final int dimensionIn)
+    @Override
+    public Entity changeDimension(@NotNull final DimensionType destination)
     {
         return null;
     }
@@ -126,9 +120,10 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements Com
         return new BlockPos(posX, posY, posZ);
     }
 
-    public void setCanCaptureDrops(final boolean b)
+    @Override
+    public boolean canPickUpLoot()
     {
-        this.captureDrops = b;
+        return super.canPickUpLoot();
     }
 
     public float getPreviousRotationPitch()
@@ -227,8 +222,9 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements Com
      * @param child the ageable entity.
      * @return the child.
      */
+    @Nullable
     @Override
-    public EntityAgeable createChild(@NotNull final EntityAgeable child)
+    public AgeableEntity createChild(@NotNull final AgeableEntity child)
     {
         return null;
     }
@@ -291,7 +287,6 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements Com
             this.pathNavigate = IPathNavigateRegistry.getInstance().getNavigateFor(this);
             this.navigator = pathNavigate;
             this.pathNavigate.setCanSwim(true);
-            this.pathNavigate.setEnterDoors(false);
         }
         return pathNavigate;
     }
@@ -356,12 +351,6 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements Com
     public String getRenderMetadata()
     {
         return renderMetadata;
-    }
-
-    @Override
-    protected void updateEquipmentIfNeeded(final EntityItem itemEntity)
-    {
-        //Just do nothing!
     }
 
     /**

@@ -8,11 +8,13 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.Colony;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.LogicalSide;
 
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Updates the request state of a request.
@@ -40,12 +42,12 @@ public class UpdateRequestStateMessage implements IMessage
     private RequestState state;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public UpdateRequestStateMessage()
     {
@@ -53,7 +55,7 @@ public class UpdateRequestStateMessage implements IMessage
     }
 
     /**
-     * Create an update request state message.
+     * Create an update request state 
      *
      * @param colonyId  the colony id.
      * @param requestId the request id.
@@ -74,7 +76,7 @@ public class UpdateRequestStateMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
-        token = StandardFactoryController.getInstance().deserialize(ByteBufUtils.readTag(buf));
+        token = StandardFactoryController.getInstance().deserialize(buf.readCompoundTag());
         state = RequestState.values()[buf.readInt()];
         if (state == RequestState.OVERRULED)
         {
@@ -87,7 +89,7 @@ public class UpdateRequestStateMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
-        ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(token));
+        buf.writeCompoundTag(StandardFactoryController.getInstance().serialize(token));
         buf.writeInt(state.ordinal());
         if (state == RequestState.OVERRULED)
         {
@@ -96,18 +98,25 @@ public class UpdateRequestStateMessage implements IMessage
         buf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final UpdateRequestStateMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony instanceof Colony)
         {
-            if (message.state == RequestState.OVERRULED)
+            if (state == RequestState.OVERRULED)
             {
-                colony.getRequestManager().overruleRequest(message.token, message.itemStack);
+                colony.getRequestManager().overruleRequest(token, itemStack);
                 return;
             }
-            colony.getRequestManager().updateRequestState(message.token, message.state);
+            colony.getRequestManager().updateRequestState(token, state);
         }
     }
 }

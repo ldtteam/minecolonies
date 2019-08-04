@@ -1,10 +1,11 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -36,7 +37,7 @@ public class OpenCraftingGUIMessage implements IMessage
     private int gridSize;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
@@ -90,11 +91,13 @@ public class OpenCraftingGUIMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
+        final ServerPlayerEntity player = ctxIn.getSender();
         if (colony != null && checkPermissions(colony, player))
         {
-            final BlockPos pos = message.buildingId;
-            player.openGui(MineColonies.instance, 0, player.world, pos.getX(), pos.getY(), pos.getZ());
+            final BlockPos pos = buildingId;
+            //todo, which is our inventory?
+            player.openContainer(player.world.getTileEntity(pos));
         }
     }
 
