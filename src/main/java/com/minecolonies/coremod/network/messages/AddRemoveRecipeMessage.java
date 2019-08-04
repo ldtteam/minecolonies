@@ -11,16 +11,16 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,7 +54,7 @@ public class AddRemoveRecipeMessage implements IMessage
     private BlockPos building;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
@@ -157,29 +157,23 @@ public class AddRemoveRecipeMessage implements IMessage
     {
         return LogicalSide.SERVER;
     }
-
-    /**
-     * Executes the message on the server thread.
-     * Only if the player has the permission, toggle message.
-     *
-     * @param message the original message.
-     * @param player  the player associated.
-     */
+    
     @Override
-    public void messageOnServerThread(final AddRemoveRecipeMessage message, final ServerPlayerEntity player)
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        final ServerPlayerEntity player = ctxIn.getSender();
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony == null || !colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
         {
             return;
         }
 
-        final IBuilding buildingWorker = colony.getBuildingManager().getBuilding(message.building);
+        final IBuilding buildingWorker = colony.getBuildingManager().getBuilding(building);
         if(buildingWorker instanceof AbstractBuildingWorker)
         {
-            final IToken token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(message.storage);
+            final IToken token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage);
 
-            if(message.remove)
+            if(remove)
             {
                 ((IBuildingWorker) buildingWorker).removeRecipe(token);
             }

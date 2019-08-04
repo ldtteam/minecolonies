@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,7 +60,7 @@ public class UpdateChunkCapabilityMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         x = buf.readInt();
         z = buf.readInt();
@@ -74,7 +74,7 @@ public class UpdateChunkCapabilityMessage implements IMessage
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(x);
         buf.writeInt(z);

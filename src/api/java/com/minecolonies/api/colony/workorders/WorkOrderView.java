@@ -136,7 +136,7 @@ public class WorkOrderView
         priority = buf.readInt();
         claimedBy = BlockPosUtil.readFromByteBuf(buf);
         type = WorkOrderType.values()[buf.readInt()];
-        value = ByteBufUtils.readUTF8String(buf);
+        value = buf.readString();
         pos = BlockPosUtil.readFromByteBuf(buf);
     }
 

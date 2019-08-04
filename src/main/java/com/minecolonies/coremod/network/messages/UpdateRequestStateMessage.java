@@ -11,7 +11,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -71,27 +71,27 @@ public class UpdateRequestStateMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
         token = StandardFactoryController.getInstance().deserialize(ByteBufUtils.readTag(buf));
         state = RequestState.values()[buf.readInt()];
         if (state == RequestState.OVERRULED)
         {
-            itemStack = ByteBufUtils.readItemStack(buf);
+            itemStack = buf.readItemStack();
         }
         dimension = buf.readInt();
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
         ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(token));
         buf.writeInt(state.ordinal());
         if (state == RequestState.OVERRULED)
         {
-            ByteBufUtils.writeItemStack(buf, itemStack);
+            buf.writeItemStack(itemStack);
         }
         buf.writeInt(dimension);
     }

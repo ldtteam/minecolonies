@@ -13,7 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -88,26 +88,26 @@ public class SifterSettingsMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
         dimension = buf.readInt();
         quantity = buf.readInt();
-        block = ByteBufUtils.readItemStack(buf);
-        mesh = ByteBufUtils.readItemStack(buf);
+        block = buf.readItemStack();
+        mesh = buf.readItemStack();
         buy = buf.readBoolean();
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
         buf.writeInt(dimension);
         buf.writeInt(quantity);
-        ByteBufUtils.writeItemStack(buf, block);
-        ByteBufUtils.writeItemStack(buf, mesh);
+        buf.writeItemStack(block);
+        buf.writeItemStack(mesh);
         buf.writeBoolean(buy);
     }
 

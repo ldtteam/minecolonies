@@ -15,7 +15,7 @@ import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -95,10 +95,10 @@ public class OpenInventoryMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         inventoryType = InventoryType.values()[buf.readInt()];
-        name = ByteBufUtils.readUTF8String(buf);
+        name = buf.readString();
         switch (inventoryType)
         {
             case INVENTORY_CITIZEN:
@@ -114,10 +114,10 @@ public class OpenInventoryMessage implements IMessage
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(inventoryType.ordinal());
-        ByteBufUtils.writeUTF8String(buf, name);
+        buf.writeString(name);
         switch (inventoryType)
         {
             case INVENTORY_CITIZEN:

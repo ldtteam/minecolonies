@@ -11,7 +11,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -54,17 +54,17 @@ public class DecorationControllUpdateMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        this.name = ByteBufUtils.readUTF8String(buf);
+        this.name = buf.readString();
         this.pos = BlockPosUtil.readFromByteBuf(buf);
         this.level = buf.readInt();
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
-        ByteBufUtils.writeUTF8String(buf, this.name);
+        buf.writeString(this.name);
         BlockPosUtil.writeToByteBuf(buf, this.pos);
         buf.writeInt(this.level);
     }

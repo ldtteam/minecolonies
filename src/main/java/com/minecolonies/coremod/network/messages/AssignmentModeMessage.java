@@ -4,11 +4,14 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.LogicalSide;
+
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +26,7 @@ public class AssignmentModeMessage implements IMessage
     private boolean  assignmentMode;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
@@ -36,7 +39,7 @@ public class AssignmentModeMessage implements IMessage
     }
 
     /**
-     * Creates object for the assignmentMode message.
+     * Creates object for the assignmentMode 
      *
      * @param building       View of the building to read data from.
      * @param assignmentMode assignmentMode of the particular farmer.
@@ -51,7 +54,7 @@ public class AssignmentModeMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
@@ -60,7 +63,7 @@ public class AssignmentModeMessage implements IMessage
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
@@ -68,10 +71,18 @@ public class AssignmentModeMessage implements IMessage
         buf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final AssignmentModeMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final ServerPlayerEntity player = ctxIn.getSender();
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
@@ -80,10 +91,10 @@ public class AssignmentModeMessage implements IMessage
                 return;
             }
 
-            @Nullable final BuildingFarmer building = colony.getBuildingManager().getBuilding(message.buildingId, BuildingFarmer.class);
+            @Nullable final BuildingFarmer building = colony.getBuildingManager().getBuilding(buildingId, BuildingFarmer.class);
             if (building != null)
             {
-                building.setAssignManually(message.assignmentMode);
+                building.setAssignManually(assignmentMode);
             }
         }
     }

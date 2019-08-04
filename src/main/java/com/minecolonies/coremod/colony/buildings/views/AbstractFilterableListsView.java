@@ -96,12 +96,12 @@ public abstract class AbstractFilterableListsView extends AbstractBuildingWorker
         final int ids = buf.readInt();
         for(int i = 0; i < ids; i++)
         {
-            final String id = ByteBufUtils.readUTF8String(buf);
+            final String id = buf.readString();
             final int size = buf.readInt();
             final List<ItemStorage> list = new ArrayList<>();
             for (int j = 0; j < size; j++)
             {
-                list.add(new ItemStorage(ByteBufUtils.readItemStack(buf)));
+                list.add(new ItemStorage(buf.readItemStack()));
             }
             listsOfItems.put(id,list);
         }

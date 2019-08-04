@@ -8,7 +8,7 @@ import com.minecolonies.coremod.MineColonies;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -49,18 +49,18 @@ public class TownHallRenameMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
-        name = ByteBufUtils.readUTF8String(buf);
+        name = buf.readString();
         dimension = buf.readInt();
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
-        ByteBufUtils.writeUTF8String(buf, name);
+        buf.writeString(name);
         buf.writeInt(dimension);
     }
 

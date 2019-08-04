@@ -66,8 +66,8 @@ public class PermissionEvent
         {
             this.id = uuid;
         }
-        this.name = ByteBufUtils.readUTF8String(buf);
-        this.action = Action.valueOf(ByteBufUtils.readUTF8String(buf));
+        this.name = buf.readString();
+        this.action = Action.valueOf(buf.readString());
         this.position = BlockPosUtil.readFromByteBuf(buf);
     }
 
@@ -122,8 +122,8 @@ public class PermissionEvent
         {
             PacketUtils.writeUUID(buf, id);
         }
-        ByteBufUtils.writeUTF8String(buf, name);
-        ByteBufUtils.writeUTF8String(buf, action.toString());
+        buf.writeString(name);
+        buf.writeString(action.toString());
         BlockPosUtil.writeToByteBuf(buf, position);
     }
 

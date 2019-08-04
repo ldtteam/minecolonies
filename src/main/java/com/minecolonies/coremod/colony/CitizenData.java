@@ -914,7 +914,7 @@ public class CitizenData implements ICitizenData
     @Override
     public void serializeViewNetworkData(@NotNull final ByteBuf buf)
     {
-        ByteBufUtils.writeUTF8String(buf, name);
+        buf.writeString(name);
         buf.writeBoolean(female);
 
         buf.writeInt(getCitizenEntity().map(AbstractEntityCitizen::getEntityId).orElse(-1));
@@ -953,7 +953,7 @@ public class CitizenData implements ICitizenData
 
         citizenHappinessHandler.serializeViewNetworkData(buf);
 
-        ByteBufUtils.writeUTF8String(buf, (job != null) ? job.getName() : "");
+        buf.writeString((job != null) ? job.getName() : "");
 
         writeStatusToBuffer(buf);
 
@@ -980,7 +980,7 @@ public class CitizenData implements ICitizenData
             final ITextComponent[] latestStatusArray = entityCitizen.getCitizenStatusHandler().getLatestStatus();
             for (final ITextComponent latestStatus : latestStatusArray)
             {
-                ByteBufUtils.writeUTF8String(buf, latestStatus == null ? "" : latestStatus.getUnformattedText());
+                buf.writeString(latestStatus == null ? "" : latestStatus.getUnformattedText());
             }
         });
     }

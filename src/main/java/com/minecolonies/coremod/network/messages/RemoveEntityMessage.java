@@ -8,7 +8,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -56,19 +56,19 @@ public class RemoveEntityMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         from = BlockPosUtil.readFromByteBuf(buf);
         to = BlockPosUtil.readFromByteBuf(buf);
-        entityName = ByteBufUtils.readUTF8String(buf);
+        entityName = buf.readString();
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         BlockPosUtil.writeToByteBuf(buf, from);
         BlockPosUtil.writeToByteBuf(buf, to);
-        ByteBufUtils.writeUTF8String(buf, entityName);
+        buf.writeString(entityName);
     }
 
     @Override

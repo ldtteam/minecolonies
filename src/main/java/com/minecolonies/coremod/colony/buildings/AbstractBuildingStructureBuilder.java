@@ -190,7 +190,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         double qty = 0;
         for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
-            ByteBufUtils.writeItemStack(buf, resource.getItemStack());
+            buf.writeItemStack(resource.getItemStack());
             buf.writeInt(resource.getAvailable());
             buf.writeInt(resource.getAmount());
             qty += resource.getAmount();
@@ -206,7 +206,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 final BlockPos pos = workOrderBuildDecoration.getBuildingLocation();
                 final String name =
                         workOrderBuildDecoration instanceof WorkOrderBuild ? ((WorkOrderBuild) workOrderBuildDecoration).getUpgradeName() : workOrderBuildDecoration.getName();
-                ByteBufUtils.writeUTF8String(buf, name);
+                buf.writeString(name);
 
                 final String desc;
                 if(pos.equals(getPosition()))
@@ -221,23 +221,23 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                     desc = relativePos.getX() + " " + facingX + " " + relativePos.getZ() + " " + facingZ;
                 }
 
-                ByteBufUtils.writeUTF8String(buf, desc);
+                buf.writeString(desc);
                 buf.writeDouble(workOrderBuildDecoration.getAmountOfRes() == 0 ? 0 : qty/workOrderBuildDecoration.getAmountOfRes());
             }
             else
             {
-                ByteBufUtils.writeUTF8String(buf, "-");
-                ByteBufUtils.writeUTF8String(buf, "");
+                buf.writeString("-");
+                buf.writeString("");
                 buf.writeDouble(0.0);
             }
         }
         else
         {
-            ByteBufUtils.writeUTF8String(buf, "-");
-            ByteBufUtils.writeUTF8String(buf, "");
+            buf.writeString("-");
+            buf.writeString("");
             buf.writeDouble(0.0);
         }
-        ByteBufUtils.writeUTF8String(buf, (getMainCitizen() == null || colony.getCitizenManager().getCitizen(getMainCitizen().getId()) == null) ? "" : getMainCitizen().getName());
+        buf.writeString((getMainCitizen() == null || colony.getCitizenManager().getCitizen(getMainCitizen().getId()) == null) ? "" : getMainCitizen().getName());
 
     }
 

@@ -383,7 +383,7 @@ public class CitizenDataView implements ICitizenDataView
     @Override
     public void deserialize(@NotNull final ByteBuf buf)
     {
-        name = ByteBufUtils.readUTF8String(buf);
+        name = buf.readString();
         female = buf.readBoolean();
         entityId = buf.readInt();
         paused = buf.readBoolean();
@@ -413,12 +413,12 @@ public class CitizenDataView implements ICitizenDataView
         fieldsModifier = buf.readDouble();
         toolsModifiers = buf.readDouble();
 
-        job = ByteBufUtils.readUTF8String(buf);
+        job = buf.readString();
 
         final int length = buf.readInt();
         for (int i = 0; i < length; i++)
         {
-            final String textComp = ByteBufUtils.readUTF8String(buf);
+            final String textComp = buf.readString();
             final TextComponentTranslation textComponent = new TextComponentTranslation(textComp);
             latestStatus[i] = textComponent;
         }

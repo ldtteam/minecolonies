@@ -5,13 +5,15 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.LogicalSide;
+
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +43,7 @@ public class AssignFilterableItemMessage implements IMessage
     private ItemStorage item;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
@@ -78,31 +80,39 @@ public class AssignFilterableItemMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         this.colonyId = buf.readInt();
         this.buildingId = BlockPosUtil.readFromByteBuf(buf);
         this.assign = buf.readBoolean();
-        this.item = new ItemStorage(ByteBufUtils.readItemStack(buf));
+        this.item = new ItemStorage(buf.readItemStack());
         this.dimension = buf.readInt();
-        this.id = ByteBufUtils.readUTF8String(buf);
+        this.id = buf.readString();
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(this.colonyId);
         BlockPosUtil.writeToByteBuf(buf, this.buildingId);
         buf.writeBoolean(this.assign);
-        ByteBufUtils.writeItemStack(buf, this.item.getItemStack());
+        buf.writeItemStack(this.item.getItemStack());
         buf.writeInt(this.dimension);
-        ByteBufUtils.writeUTF8String(buf, this.id);
+        buf.writeString(this.id);
+    }
+
+    @Nullable
+    @Override
+    public LogicalSide getExecutionSide()
+    {
+        return LogicalSide.SERVER;
     }
 
     @Override
-    public void messageOnServerThread(final AssignFilterableItemMessage message, final ServerPlayerEntity player)
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        final ServerPlayerEntity player = ctxIn.getSender();
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
@@ -111,16 +121,16 @@ public class AssignFilterableItemMessage implements IMessage
                 return;
             }
 
-            @Nullable final AbstractFilterableListBuilding building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractFilterableListBuilding.class);
+            @Nullable final AbstractFilterableListBuilding building = colony.getBuildingManager().getBuilding(buildingId, AbstractFilterableListBuilding.class);
             if (building != null)
             {
-                if(message.assign)
+                if(assign)
                 {
-                    building.addItem(message.id, message.item);
+                    building.addItem(id, item);
                 }
                 else
                 {
-                    building.removeItem(message.id,message.item);
+                    building.removeItem(id,item);
                 }
             }
         }
