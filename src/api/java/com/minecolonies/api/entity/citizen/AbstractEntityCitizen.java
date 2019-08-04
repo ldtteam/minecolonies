@@ -13,7 +13,7 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.BlockState;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -45,7 +45,7 @@ import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 /**
  * The abstract citizen entity.
  */
-public abstract class AbstractEntityCitizen extends EntityAgeable implements ICommandSender, ICapabilitySerializable<CompoundNBT>
+public abstract class AbstractEntityCitizen extends EntityAgeable implements CommandSource, ICapabilitySerializable<CompoundNBT>
 {
 
     public static final DataParameter<Integer>  DATA_LEVEL           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);

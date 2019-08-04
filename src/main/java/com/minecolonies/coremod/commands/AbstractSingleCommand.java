@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.configuration.Configurations;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +54,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
 
     @NotNull
     @Override
-    public String getCommandUsage(@NotNull final ICommandSender sender)
+    public String getCommandUsage(@NotNull final CommandSource sender)
     {
         final StringBuilder sb = new StringBuilder().append('/');
         for (final String parent : parents)
@@ -97,7 +97,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      * @return boolean
      */
     @NotNull
-    public static boolean isPlayerOpped(@NotNull final ICommandSender sender)
+    public static boolean isPlayerOpped(@NotNull final CommandSource sender)
     {
         if (sender instanceof PlayerEntity)
         {

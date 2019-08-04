@@ -8,7 +8,7 @@ import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -52,7 +52,7 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
 
     @NotNull
     @Override
-    public String getCommandUsage(@NotNull final ICommandSender sender)
+    public String getCommandUsage(@NotNull final CommandSource sender)
     {
         return super.getCommandUsage(sender) + "<ColonyId|OwnerName>";
     }
@@ -64,7 +64,7 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
         final IColony colony = actionMenuState.getColonyForArgument("colony");
         final Optional<Double> level = Optional.ofNullable(actionMenuState.getDoubleForArgument("level"));
@@ -80,7 +80,7 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final String... args) throws CommandException
     {
         final int colonyId;
         Optional<Double> level = Optional.empty();
@@ -120,7 +120,7 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
     }
 
     private void executeShared(
-            @NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final IColony colony, final Optional<Double> level) throws CommandException
+            @NotNull final MinecraftServer server, @NotNull final CommandSource sender, final IColony colony, final Optional<Double> level) throws CommandException
     {
         colony.getColonyHappinessManager().setLockedHappinessModifier(level);
     }
@@ -129,7 +129,7 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
     @Override
     public List<String> getTabCompletionOptions(
             @NotNull final MinecraftServer server,
-            @NotNull final ICommandSender sender,
+            @NotNull final CommandSource sender,
             @NotNull final String[] args,
             @Nullable final BlockPos pos)
     {

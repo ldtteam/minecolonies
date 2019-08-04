@@ -112,7 +112,7 @@ public class WindowGuiFurnaceCrafting extends GuiContainer
 
             if(!ItemStackUtils.isEmpty(primaryOutput))
             {
-                MineColonies.getNetwork().sendToServer(new AddRemoveRecipeMessage(input, 1, primaryOutput, building, false));
+                Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(input, 1, primaryOutput, building, false));
             }
         }
     }

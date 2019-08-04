@@ -6,7 +6,7 @@ import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
@@ -48,13 +48,13 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
 
     @NotNull
     @Override
-    public String getCommandUsage(@NotNull final ICommandSender sender)
+    public String getCommandUsage(@NotNull final CommandSource sender)
     {
         return super.getCommandUsage(sender) + "<ColonyId> <(Optional)Player>";
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
         final IColony colony = actionMenuState.getColonyForArgument("colony");
         if (colony == null)
@@ -67,7 +67,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final String... args) throws CommandException
     {
         if (args.length == 0)
         {
@@ -100,7 +100,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
         executeShared(server, sender, colony);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final IColony colony) throws CommandException
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final IColony colony) throws CommandException
     {
         final Entity senderEntity = sender.getCommandSenderEntity();
 
@@ -122,7 +122,7 @@ public class RSResetCommand extends AbstractSingleCommand implements IActionComm
     @Override
     public List<String> getTabCompletionOptions(
       @NotNull final MinecraftServer server,
-      @NotNull final ICommandSender sender,
+      @NotNull final CommandSource sender,
       @NotNull final String[] args,
       @Nullable final BlockPos pos)
     {

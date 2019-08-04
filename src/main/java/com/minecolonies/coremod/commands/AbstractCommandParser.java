@@ -21,7 +21,7 @@ import com.minecolonies.coremod.colony.permissions.ForgePermissionNodes;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -57,7 +57,7 @@ public abstract class AbstractCommandParser extends CommandBase
     public interface PermissionsChecker
     {
         boolean hasPermission(ForgePermissionNodes forgePermissionNode, PlayerEntity player);
-        boolean canUseCommands(MinecraftServer server, ICommandSender sender);
+        boolean canUseCommands(MinecraftServer server, CommandSource sender);
     }
 
     public interface ModuleContext
@@ -200,7 +200,7 @@ public abstract class AbstractCommandParser extends CommandBase
     
     @NotNull
     @Override
-    public String getUsage(final ICommandSender sender)
+    public String getUsage(final CommandSource sender)
     {
         try
         {
@@ -213,7 +213,7 @@ public abstract class AbstractCommandParser extends CommandBase
     }
 
     @NotNull
-    private static String getCommandUsage(final ICommandSender sender, final TreeNode<IMenu> currentMenuTreeNode)
+    private static String getCommandUsage(final CommandSource sender, final TreeNode<IMenu> currentMenuTreeNode)
     {
         final IMenuType currentMenuType = currentMenuTreeNode.getData().getMenuType();
         if (currentMenuTreeNode.hasChildren())
@@ -273,14 +273,14 @@ public abstract class AbstractCommandParser extends CommandBase
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String[] args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final String[] args) throws CommandException
     {
         final PermissionsChecker permissionChecker = getPermissionsChecker();
         final ModuleContext moduleContext = getModuleContext();
         execute(server, sender, args, permissionChecker, moduleContext);
     }
 
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String[] args, 
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final String[] args,
             @NotNull final PermissionsChecker permissionsChecker, @NotNull final ModuleContext moduleContext) throws CommandException
     {
         final BlockPos pos = null;
@@ -338,7 +338,7 @@ public abstract class AbstractCommandParser extends CommandBase
         }
     }
 
-    protected void createInstanceAndExecute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState,
+    protected void createInstanceAndExecute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final ActionMenuState actionMenuState,
             @NotNull final Class<? extends IActionCommand> clazz) throws InstantiationException, IllegalAccessException, CommandException
     {
         final IActionCommand actionCommand = clazz.newInstance();
@@ -347,7 +347,7 @@ public abstract class AbstractCommandParser extends CommandBase
 
     private static void throwCommandUsageExceptionIfRequiredArgumentsAreNotProvided(@NotNull final TreeNode<IMenu> executionTreeNode, @NotNull final ActionMenu actionMenu,
             @NotNull final List<ActionArgument> executionActionArgumentList, @NotNull final ActionMenuState actionMenuState, final String badArgument,
-            @NotNull final ICommandSender sender) throws CommandException
+            @NotNull final CommandSource sender) throws CommandException
     {
         final List<ActionArgument> actionArgumentListForActionMenu = actionMenu.getActionArgumentList();
         for (final ActionArgument actionArgument : actionArgumentListForActionMenu)
@@ -410,7 +410,7 @@ public abstract class AbstractCommandParser extends CommandBase
      * @return true if so.
      */
     @Override
-    public boolean checkPermission(final MinecraftServer server, final ICommandSender sender)
+    public boolean checkPermission(final MinecraftServer server, final CommandSource sender)
     {
         final PermissionsChecker permissionsChecker = getPermissionsChecker();
         return permissionsChecker.canUseCommands(server, sender);
@@ -462,7 +462,7 @@ public abstract class AbstractCommandParser extends CommandBase
     @Override
     public List<String> getTabCompletions(
                                            @NotNull final MinecraftServer server,
-                                           @NotNull final ICommandSender sender,
+                                           @NotNull final CommandSource sender,
                                            @NotNull final String[] args,
                                            @Nullable final BlockPos pos)
     {
@@ -473,7 +473,7 @@ public abstract class AbstractCommandParser extends CommandBase
     @NotNull
     protected List<String> getTabCompletions(
                                            @NotNull final MinecraftServer server,
-                                           @NotNull final ICommandSender sender,
+                                           @NotNull final CommandSource sender,
                                            @NotNull final String[] args,
                                            @Nullable final BlockPos pos,
                                            @NotNull final ModuleContext moduleContext)
@@ -493,7 +493,7 @@ public abstract class AbstractCommandParser extends CommandBase
     private ParsingResult getTabCompletionsAndParsingHolders(
                                            @NotNull final TreeNode<IMenu> treeNode,
                                            @NotNull final MinecraftServer server,
-                                           @NotNull final ICommandSender sender,
+                                           @NotNull final CommandSource sender,
                                            @NotNull final String[] args,
                                            @Nullable final BlockPos pos,
                                            @NotNull final ModuleContext moduleContext)
@@ -566,7 +566,7 @@ public abstract class AbstractCommandParser extends CommandBase
                                            @NotNull final List<ActionArgument> parsedActionArgumentList,
                                            @NotNull final Map<String, ActionMenuHolder> possibleActionCommands,
                                            @NotNull final MinecraftServer server,
-                                           @NotNull final ICommandSender sender,
+                                           @NotNull final CommandSource sender,
                                            @NotNull final String[] args,
                                            @Nullable final BlockPos pos,
                                            @NotNull final ModuleContext moduleContext)

@@ -136,7 +136,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
         final int row = citizenList.getListElementIndexByPane(button);
         final int id = citizens.toArray(new CitizenDataView[0])[row].getId();
 
-        MineColonies.getNetwork().sendToServer(new RestartCitizenMessage(this.building, id));
+        Network.getNetwork().sendToServer(new RestartCitizenMessage(this.building, id));
         this.close();
     }
 
@@ -150,7 +150,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
         final int id = citizens.toArray(new CitizenDataView[0])[row].getId();
         @NotNull final ICitizenDataView citizen = citizens.get(row);
 
-        MineColonies.getNetwork().sendToServer(new PauseCitizenMessage(this.building, id));
+        Network.getNetwork().sendToServer(new PauseCitizenMessage(this.building, id));
         citizen.setPaused(!citizen.isPaused());
     }
 
@@ -164,7 +164,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
         final int id = citizens.toArray(new CitizenDataView[0])[row].getId();
         @NotNull final ICitizenDataView citizen = citizens.get(row);
 
-        MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building, false, id));
+        Network.getNetwork().sendToServer(new HireFireMessage(this.building, false, id));
         building.removeWorkerId(id);
         citizen.setWorkBuilding(null);
         onOpened();
@@ -181,7 +181,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
         @NotNull final ICitizenDataView citizen = citizens.get(row);
 
         building.addWorkerId(id);
-        MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building, true, id));
+        Network.getNetwork().sendToServer(new HireFireMessage(this.building, true, id));
         citizen.setWorkBuilding(building.getPosition());
         onOpened();
     }

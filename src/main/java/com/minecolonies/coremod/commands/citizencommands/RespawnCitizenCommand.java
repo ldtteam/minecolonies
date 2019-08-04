@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
@@ -48,13 +48,13 @@ public class RespawnCitizenCommand extends AbstractCitizensCommands
 
     @NotNull
     @Override
-    public String getCommandUsage(@NotNull final ICommandSender sender)
+    public String getCommandUsage(@NotNull final CommandSource sender)
     {
         return super.getCommandUsage(sender) + "<ColonyId> <CitizenId>";
     }
 
     @Override
-    public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final IColony colony, final int citizenId)
+    public void executeSpecializedCode(@NotNull final MinecraftServer server, final CommandSource sender, final IColony colony, final int citizenId)
     {
         final ICitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
         final Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
@@ -78,7 +78,7 @@ public class RespawnCitizenCommand extends AbstractCitizensCommands
     @Override
     public List<String> getTabCompletionOptions(
                                                  @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final CommandSource sender,
                                                  @NotNull final String[] args,
                                                  @Nullable final BlockPos pos)
     {

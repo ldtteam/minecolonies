@@ -161,7 +161,7 @@ public class BuildingCowboy extends AbstractBuildingWorker
 
         public void setMilkCows(final boolean milkCows)
         {
-            MineColonies.getNetwork().sendToServer(new CowboySetMilkCowsMessage(this, milkCows));
+            Network.getNetwork().sendToServer(new CowboySetMilkCowsMessage(this, milkCows));
             this.milkCows = milkCows;
         }
 

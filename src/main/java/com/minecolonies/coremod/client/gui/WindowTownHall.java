@@ -237,7 +237,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      */
     private void onDropDownListChanged(final DropDownList dropDownList)
     {
-        MineColonies.getNetwork().sendToServer(new TeamColonyColorChangeMessage(dropDownList.getSelectedIndex(), townHall));
+        Network.getNetwork().sendToServer(new TeamColonyColorChangeMessage(dropDownList.getSelectedIndex(), townHall));
     }
 
     /**
@@ -425,14 +425,14 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
             if (row < freeBlocks.size())
             {
-                MineColonies.getNetwork().sendToServer(
+                Network.getNetwork().sendToServer(
                   new ChangeFreeToInteractBlockMessage(townHall.getColony(), freeBlocks.get(row), ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
                 townHall.getColony().removeFreeBlock(freeBlocks.get(row));
             }
             else if (row < freeBlocks.size() + freePositions.size())
             {
                 final BlockPos freePos = freePositions.get(row - freeBlocks.size());
-                MineColonies.getNetwork().sendToServer(
+                Network.getNetwork().sendToServer(
                   new ChangeFreeToInteractBlockMessage(townHall.getColony(), freePos, ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
                 townHall.getColony().removeFreePosition(freePos);
             }
@@ -487,14 +487,14 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         if (block != null)
         {
             townHall.getColony().addFreeBlock(block);
-            MineColonies.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(townHall.getColony(), block, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
+            Network.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(townHall.getColony(), block, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
         }
 
         final BlockPos pos = BlockPosUtil.getBlockPosOfString(inputText);
 
         if (pos != null)
         {
-            MineColonies.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(townHall.getColony(), pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
+            Network.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(townHall.getColony(), pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
             townHall.getColony().addFreePosition(pos);
         }
 
@@ -519,7 +519,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final Action action = Action.values()[index];
         final Rank rank = Rank.valueOf(actionsList.getParent().getID().toUpperCase(Locale.ENGLISH));
 
-        MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(townHall.getColony(), PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
+        Network.getNetwork().sendToServer(new PermissionsMessage.Permission(townHall.getColony(), PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
         townHall.getColony().getPermissions().togglePermission(rank, action);
 
         if (trigger)
@@ -860,12 +860,12 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 if (buttonLabel.equals(BUTTON_UP) && i > 0)
                 {
                     workOrder.setPriority(workOrders.get(i - 1).getPriority() + 1);
-                    MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()));
+                    Network.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()));
                 }
                 else if (buttonLabel.equals(BUTTON_DOWN) && i <= workOrders.size())
                 {
                     workOrder.setPriority(workOrders.get(i + 1).getPriority() - 1);
-                    MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()));
+                    Network.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()));
                 }
 
                 sortWorkOrders();
@@ -892,7 +892,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 break;
             }
         }
-        MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, true, 0));
+        Network.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, true, 0));
         window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
     }
 
@@ -929,7 +929,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     {
         final String citizenidLabel = button.getParent().findPaneOfTypeByID(HIDDEN_CITIZEN_ID, Label.class).getLabelText();
         final int citizenid = Integer.parseInt(citizenidLabel);
-        MineColonies.getNetwork().sendToServer(new RecallSingleCitizenMessage(townHall, citizenid));
+        Network.getNetwork().sendToServer(new RecallSingleCitizenMessage(townHall, citizenid));
     }
 
     /**
@@ -1034,7 +1034,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
             toggle = false;
         }
-        MineColonies.getNetwork().sendToServer(new ToggleJobMessage(this.building.getColony(), toggle));
+        Network.getNetwork().sendToServer(new ToggleJobMessage(this.building.getColony(), toggle));
     }
 
     /**
@@ -1055,7 +1055,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             button.setLabel(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
             toggle = false;
         }
-        MineColonies.getNetwork().sendToServer(new ToggleHousingMessage(this.building.getColony(), toggle));
+        Network.getNetwork().sendToServer(new ToggleHousingMessage(this.building.getColony(), toggle));
     }
 
     /**
@@ -1076,7 +1076,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             button.setLabel(LanguageHandler.format(OFF_STRING));
             toggle = false;
         }
-        MineColonies.getNetwork().sendToServer(new ToggleMoveInMessage(this.building.getColony(), toggle));
+        Network.getNetwork().sendToServer(new ToggleMoveInMessage(this.building.getColony(), toggle));
     }
 
     /**
@@ -1092,7 +1092,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         {
             button.setLabel(LanguageHandler.format(OFF_STRING));
         }
-        MineColonies.getNetwork().sendToServer(new ToggleHelpMessage(this.building.getColony()));
+        Network.getNetwork().sendToServer(new ToggleHelpMessage(this.building.getColony()));
     }
 
     /**
@@ -1177,7 +1177,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     private void addPlayerCLicked()
     {
         final TextField input = findPaneOfTypeByID(INPUT_ADDPLAYER_NAME, TextField.class);
-        MineColonies.getNetwork().sendToServer(new PermissionsMessage.AddPlayer(townHall.getColony(), input.getText()));
+        Network.getNetwork().sendToServer(new PermissionsMessage.AddPlayer(townHall.getColony(), input.getText()));
         input.setText("");
     }
 
@@ -1194,7 +1194,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             final Player user = users.get(row);
             if (user.getRank() != Rank.OWNER)
             {
-                MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townHall.getColony(), user.getID()));
+                Network.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townHall.getColony(), user.getID()));
             }
         }
     }
@@ -1210,7 +1210,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         if (row >= 0 && row < building.getPermissionEvents().size())
         {
             final PermissionEvent user = building.getPermissionEvents().get(row);
-            MineColonies.getNetwork().sendToServer(new PermissionsMessage.AddPlayerOrFakePlayer(townHall.getColony(), user.getName(), user.getId()));
+            Network.getNetwork().sendToServer(new PermissionsMessage.AddPlayerOrFakePlayer(townHall.getColony(), user.getName(), user.getId()));
         }
     }
 
@@ -1228,12 +1228,12 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
             if (button.getID().equals(BUTTON_PROMOTE))
             {
-                MineColonies.getNetwork()
+                Network.getNetwork()
                   .sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.PROMOTE));
             }
             else
             {
-                MineColonies.getNetwork()
+                Network.getNetwork()
                   .sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.DEMOTE));
             }
         }
@@ -1244,7 +1244,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      */
     private void recallClicked()
     {
-        MineColonies.getNetwork().sendToServer(new RecallTownhallMessage(townHall));
+        Network.getNetwork().sendToServer(new RecallTownhallMessage(townHall));
     }
 
     /**

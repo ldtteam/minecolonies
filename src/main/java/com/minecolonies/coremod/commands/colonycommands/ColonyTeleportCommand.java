@@ -8,7 +8,7 @@ import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import com.minecolonies.coremod.util.TeleportToColony;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
@@ -57,7 +57,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
 
     @NotNull
     @Override
-    public String getCommandUsage(@NotNull final ICommandSender sender)
+    public String getCommandUsage(@NotNull final CommandSource sender)
     {
         return super.getCommandUsage(sender) + "colonytp" + "<colID>";
     }
@@ -69,7 +69,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
         IColony colony = actionMenuState.getColonyForArgument("colony");
         if (null == colony)
@@ -112,7 +112,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final String... args) throws CommandException
     {
         IColony colony = null;
         //see if player is allowed to use in the configs
@@ -138,7 +138,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
         executeShared(server, sender, colony);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final IColony colony)
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final IColony colony)
     {
         //see if player is allowed to use in the configs
         if ((sender instanceof PlayerEntity) && canPlayerUseCommand((PlayerEntity) sender, COLONYTP, colony.getID()))
@@ -161,7 +161,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
     @Override
     public List<String> getTabCompletionOptions(
                                                  @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final CommandSource sender,
                                                  @NotNull final String[] args,
                                                  final BlockPos pos)
     {

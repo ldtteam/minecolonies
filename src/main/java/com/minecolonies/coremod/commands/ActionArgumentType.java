@@ -8,7 +8,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.commands.AbstractCommandParser.ModuleContext;
 import com.minecolonies.coremod.commands.CommandEntryPointNew.MineColonyDataProvider;
 import com.mojang.authlib.GameProfile;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
@@ -310,7 +310,7 @@ public enum ActionArgumentType
     }
 
     @Nullable
-    public Object parse(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final BlockPos pos, 
+    public Object parse(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @Nullable final BlockPos pos,
             @NotNull final ModuleContext moduleContext,
             @NotNull final ActionMenuState actionMenuState,
             final String potentialArgumentValue)
@@ -458,7 +458,7 @@ public enum ActionArgumentType
     }
 
     @Nullable
-    private IColony parseColonyValue(@NotNull final ICommandSender sender, @NotNull final MineColonyDataProvider mineColonyDataProvider, final String potentialArgumentValue)
+    private IColony parseColonyValue(@NotNull final CommandSource sender, @NotNull final MineColonyDataProvider mineColonyDataProvider, final String potentialArgumentValue)
     {
         final List<String> colonyNumberStrings = getColonyIdStrings(mineColonyDataProvider);
         final Integer result = Ints.tryParse(potentialArgumentValue);

@@ -221,7 +221,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
             {
                 final BlockPos neighbor = pos.offset(offsetFacing);
                 final Block block = worldIn.getBlockState(neighbor).getBlock();
-                if (rack instanceof TileEntityRack && pos.getY() == neighbor.getY() && !pos.equals(neighbor) && !pos.equals(BlockPos.ORIGIN)
+                if (rack instanceof TileEntityRack && pos.getY() == neighbor.getY() && !pos.equals(neighbor) && !pos.equals(BlockPos.ZERO)
                       && (block instanceof BlockMinecoloniesRack || blockIn instanceof BlockMinecoloniesRack))
                 {
                     ((AbstractTileEntityRack) rack).neighborChanged(neighbor);

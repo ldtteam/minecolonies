@@ -120,14 +120,14 @@ public class CitizenManager implements ICitizenManager
                     {
                         subscribers.stream()
                           .filter(player -> citizen.isDirty() || !oldSubscribers.contains(player))
-                          .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewCitizenViewMessage(colony, citizen), player));
+                          .forEach(player -> Network.getNetwork().sendTo(new ColonyViewCitizenViewMessage(colony, citizen), player));
                     }
                 }
             }
 
             subscribers.stream()
               .filter(player -> !oldSubscribers.contains(player))
-              .forEach(player -> MineColonies.getNetwork().sendTo(new HappinessDataMessage(colony, colony.getHappinessData()), player));
+              .forEach(player -> Network.getNetwork().sendTo(new HappinessDataMessage(colony, colony.getHappinessData()), player));
         }
     }
 
@@ -231,7 +231,7 @@ public class CitizenManager implements ICitizenManager
         //  Inform Subscribers of removed citizen
         for (final ServerPlayerEntity player : colony.getPackageManager().getSubscribers())
         {
-            MineColonies.getNetwork().sendTo(new ColonyViewRemoveCitizenMessage(colony, citizen.getId()), player);
+            Network.getNetwork().sendTo(new ColonyViewRemoveCitizenMessage(colony, citizen.getId()), player);
         }
 
         colony.markDirty();

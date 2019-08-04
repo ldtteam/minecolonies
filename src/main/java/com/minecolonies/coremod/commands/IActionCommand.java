@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.commands;
 
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,5 +18,5 @@ public interface IActionCommand
      * @param actionMenuState contains argument values
      * @throws CommandException if something goes wrong (like wrong syntax).
      */
-    void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull ActionMenuState actionMenuState) throws CommandException;
+    void execute(@NotNull MinecraftServer server, @NotNull CommandSource sender, @NotNull ActionMenuState actionMenuState) throws CommandException;
 }

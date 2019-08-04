@@ -6,7 +6,7 @@ import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
@@ -47,7 +47,7 @@ public class MakeNotAutoDeletableCommand extends AbstractSingleCommand implement
 
     @NotNull
     @Override
-    public String getCommandUsage(@NotNull final ICommandSender sender)
+    public String getCommandUsage(@NotNull final CommandSource sender)
     {
         return super.getCommandUsage(sender) + "<ColonyId> <true|false>";
     }
@@ -59,7 +59,7 @@ public class MakeNotAutoDeletableCommand extends AbstractSingleCommand implement
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
         final IColony colony = actionMenuState.getColonyForArgument("colony");
         final boolean canBeDeleted = actionMenuState.getBooleanValueForArgument("canBeDeleted", false);
@@ -67,7 +67,7 @@ public class MakeNotAutoDeletableCommand extends AbstractSingleCommand implement
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final String... args) throws CommandException
     {
         if (args.length < NUMBER_OR_ARGS_REQUIRED)
         {
@@ -91,7 +91,7 @@ public class MakeNotAutoDeletableCommand extends AbstractSingleCommand implement
         executeShared(server, sender, colony, canBeDeleted);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final IColony colony, final boolean canBeDeleted)
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @Nullable final IColony colony, final boolean canBeDeleted)
     {
         if (sender instanceof PlayerEntity && !isPlayerOpped(sender))
         {
@@ -111,7 +111,7 @@ public class MakeNotAutoDeletableCommand extends AbstractSingleCommand implement
     @Override
     public List<String> getTabCompletionOptions(
                                                  @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final CommandSource sender,
                                                  @NotNull final String[] args,
                                                  @Nullable final BlockPos pos)
     {

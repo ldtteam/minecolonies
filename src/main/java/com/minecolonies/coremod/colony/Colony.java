@@ -1151,7 +1151,7 @@ public class Colony implements IColony
         //  Inform Subscribers of removed workOrder
         for (final ServerPlayerEntity player : packageManager.getSubscribers())
         {
-            MineColonies.getNetwork().sendTo(new ColonyViewRemoveWorkOrderMessage(this, orderId), player);
+            Network.getNetwork().sendTo(new ColonyViewRemoveWorkOrderMessage(this, orderId), player);
         }
     }
 

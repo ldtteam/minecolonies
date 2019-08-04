@@ -387,7 +387,7 @@ public class BuildingManager implements IBuildingManager
         {
             for (final ServerPlayerEntity player : subscribers)
             {
-                MineColonies.getNetwork().sendTo(new ColonyViewRemoveBuildingMessage(colony, building.getID()), player);
+                Network.getNetwork().sendTo(new ColonyViewRemoveBuildingMessage(colony, building.getID()), player);
             }
 
             Log.getLogger().info(String.format("Colony %d - removed AbstractBuilding %s of type %s",
@@ -504,7 +504,7 @@ public class BuildingManager implements IBuildingManager
                 {
                     subscribers.stream()
                             .filter(player -> building.isDirty() || !oldSubscribers.contains(player))
-                            .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
+                            .forEach(player -> Network.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
                 }
             }
         }
@@ -523,7 +523,7 @@ public class BuildingManager implements IBuildingManager
             {
                 if (building instanceof BuildingFarmer)
                 {
-                    subscribers.forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
+                    subscribers.forEach(player -> Network.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
                 }
             }
         }

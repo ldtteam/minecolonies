@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.colony.permissions.ForgePermissionNodes;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
@@ -46,7 +46,7 @@ public class CommandEntryPointNew extends AbstractCommandParser
         }
 
         @Override
-        public boolean canUseCommands(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender)
+        public boolean canUseCommands(@NotNull final MinecraftServer server, @NotNull final CommandSource sender)
         {
             if (sender instanceof PlayerEntity)
             {

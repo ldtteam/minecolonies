@@ -77,7 +77,7 @@ public class EntityAIGoHome extends EntityAIBase
     public void startExecuting()
     {
         final BlockPos pos = citizen.getHomePosition();
-        if (pos == null || pos.equals(BlockPos.ORIGIN))
+        if (pos == null || pos.equals(BlockPos.ZERO))
         {
             //If the citizen has no colony as well, remove the citizen.
             if (citizen.getCitizenColonyHandler().getColony() == null)

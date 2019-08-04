@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.commands;
 
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +32,7 @@ public abstract class AbstractSplitCommand implements ISubCommand
 
     @NotNull
     @Override
-    public String getCommandUsage(@NotNull final ICommandSender sender)
+    public String getCommandUsage(@NotNull final CommandSource sender)
     {
         final Map<String, ISubCommand> childs = getSubCommands();
         final StringBuilder sb = new StringBuilder().append('/');
@@ -59,7 +59,7 @@ public abstract class AbstractSplitCommand implements ISubCommand
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final String... args) throws CommandException
     {
         final Map<String, ISubCommand> childs = getSubCommands();
         if (args.length == 0
@@ -78,7 +78,7 @@ public abstract class AbstractSplitCommand implements ISubCommand
     @Override
     public List<String> getTabCompletionOptions(
                                                  @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final CommandSource sender,
                                                  @NotNull final String[] args,
                                                  @Nullable final BlockPos pos)
     {

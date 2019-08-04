@@ -1,52 +1,56 @@
 package com.minecolonies.coremod;
 
+import com.ldtteam.structurize.Structurize;
+import com.ldtteam.structurize.config.Configuration;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.apiimp.MinecoloniesApiImpl;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
 import com.minecolonies.coremod.commands.CommandEntryPointNew;
-import com.minecolonies.coremod.event.BarbarianSpawnEventHandler;
-import com.minecolonies.coremod.event.EventHandler;
-import com.minecolonies.coremod.event.FMLEventHandler;
+import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.EntityFishHook;
+import com.minecolonies.coremod.entity.ai.mobs.EntityMercenary;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
+import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityArcherPirate;
+import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityCaptainPirate;
+import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityPirate;
+import com.minecolonies.coremod.event.*;
+import com.minecolonies.coremod.event.LifecycleSubscriber;
 import com.minecolonies.coremod.fixers.TileEntityIdFixer;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.placementhandlers.MinecoloniesPlacementHandlers;
+import com.minecolonies.coremod.proxy.ClientProxy;
 import com.minecolonies.coremod.proxy.IProxy;
+import com.minecolonies.coremod.proxy.ServerProxy;
 import com.minecolonies.coremod.util.RecipeHandler;
-import net.minecraft.init.Items;
-import net.minecraft.util.datafix.FixTypes;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-@Mod.EventBusSubscriber
-@Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION, dependencies="after:gbook;required-after:structurize@[0.10.79-ALPHA,);",
-  /*dependencies = Constants.FORGE_VERSION,*/ acceptedMinecraftVersions = Constants.MC_VERSION)
+import static com.minecolonies.api.util.constant.ColonyConstants.*;
+
+@Mod(com.ldtteam.structurize.api.util.constant.Constants.MOD_ID)
 public class MineColonies
 {
     @CapabilityInject(IColonyTagCapability.class)
@@ -58,57 +62,30 @@ public class MineColonies
     @CapabilityInject(IColonyManagerCapability.class)
     public static Capability<IColonyManagerCapability> COLONY_MANAGER_CAP;
 
-    private static final Logger logger = LogManager.getLogger(Constants.MOD_ID);
     /**
-     * Forge created instance of the Mod.
+     * Our mod logger.
      */
-    @Mod.Instance(Constants.MOD_ID)
-    public static MineColonies instance;
+    private static final Logger logger = LogManager.getLogger(com.ldtteam.structurize.api.util.constant.Constants.MOD_ID);
+
     /**
-     * Access to the proxy associated with your current side. Variable updated
-     * by forge.
+     * The config instance.
      */
-    @SidedProxy(clientSide = Constants.CLIENT_PROXY_LOCATION, serverSide = Constants.SERVER_PROXY_LOCATION)
+    private static final Configuration config = new Configuration(ModLoadingContext.get().getActiveContainer());
 
-    public static IProxy       proxy;
+    /**
+     * The proxy.
+     */
+    public static final  IProxy proxy  = DistExecutor.runForDist( () -> ClientProxy::new, () -> ServerProxy::new);
 
-    private static SimpleNetworkWrapper network;
-
-    static
+    public MineColonies()
     {
-        MinecraftForge.EVENT_BUS.register(new BarbarianSpawnEventHandler());
-        MinecraftForge.EVENT_BUS.register(new EventHandler());
-        MinecraftForge.EVENT_BUS.register(new FMLEventHandler());
-    }
+        Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(BarbarianSpawnEventHandler.class);
+        Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(EventHandler.class);
+        Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(FMLEventHandler.class);
+        Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(ClientEventHandler.class);
+        Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DebugRendererChunkBorder.class);
 
-    /**
-     * Returns whether the side is client or not
-     *
-     * @return True when client, otherwise false
-     */
-    public static boolean isClient()
-    {
-        return proxy.isClient() && FMLCommonHandler.instance().getEffectiveSide().isClient();
-    }
-
-    /**
-     * Returns whether the side is server or not
-     *
-     * @return True when server, otherwise false
-     */
-    public static boolean isServer()
-    {
-        return !proxy.isClient() && FMLCommonHandler.instance().getEffectiveSide().isServer();
-    }
-
-    /**
-     * Getter for the minecolonies Logger.
-     *
-     * @return the logger.
-     */
-    public static Logger getLogger()
-    {
-        return logger;
+        Mod.EventBusSubscriber.Bus.MOD.bus().get().register(this.getClass());
     }
 
     /**
@@ -116,12 +93,11 @@ public class MineColonies
      *
      * @param event the forge pre init event.
      */
-    @Mod.EventHandler
-    public void preInit(@NotNull final FMLPreInitializationEvent event)
+    @SubscribeEvent
+    public void preInit(@NotNull final FMLCommonSetupEvent event)
     {
         MinecoloniesAPIProxy.getInstance().setApiInstance(MinecoloniesApiImpl.getInstance());
 
-        FMLCommonHandler.instance().getDataFixer().init(Constants.MOD_ID, TileEntityIdFixer.VERSION).registerFix(FixTypes.BLOCK_ENTITY, new TileEntityIdFixer());
         StructureLoadingUtils.originFolders.add(Constants.MOD_ID);
         CapabilityManager.INSTANCE.register(IColonyTagCapability.class, new IColonyTagCapability.Storage(), IColonyTagCapability.Impl::new);
         CapabilityManager.INSTANCE.register(IChunkmanagerCapability.class, new IChunkmanagerCapability.Storage(), IChunkmanagerCapability.Impl::new);
@@ -130,15 +106,32 @@ public class MineColonies
         StandardFactoryControllerInitializer.onPreInit();
         proxy.registerEntities();
         proxy.registerEntityRendering();
-        proxy.registerEvents();
+    }
 
-        @NotNull final Configuration configuration = new Configuration(event.getSuggestedConfigurationFile());
-        configuration.load();
+    /**
+     * Called when MC loading is about to finish.
+     *
+     * @param event event
+     */
+    @SubscribeEvent
+    public static void onLoadComplete(final FMLLoadCompleteEvent event)
+    {
+        Structurize.getLogger().warn("FMLLoadCompleteEvent");
+        LanguageHandler.setMClanguageLoaded();
+    }
 
-        if (configuration.hasChanged())
-        {
-            configuration.save();
-        }
+    @SubscribeEvent
+    public void registerEntities(final RegistryEvent.Register<EntityType<?>> event)
+    {
+        //Register Barbarian loot tables.
+        LootTableList.register(EntityBarbarian.LOOT_TABLE);
+        LootTableList.register(EntityArcherBarbarian.LOOT_TABLE);
+        LootTableList.register(EntityChiefBarbarian.LOOT_TABLE);
+
+        //Register Pirate loot tables.
+        LootTableList.register(EntityPirate.LOOT_TABLE);
+        LootTableList.register(EntityArcherPirate.LOOT_TABLE);
+        LootTableList.register(EntityCaptainPirate.LOOT_TABLE);
     }
 
     /**
@@ -151,7 +144,6 @@ public class MineColonies
     {
         initializeNetwork();
 
-        proxy.registerEvents();
 
         proxy.registerTileEntityRendering();
 
@@ -311,5 +303,15 @@ public class MineColonies
         // register server commands
         event.registerServerCommand(new CommandEntryPoint());
         event.registerServerCommand(new CommandEntryPointNew());
+    }
+
+    /**
+     * Getter for the minecolonies Logger.
+     *
+     * @return the logger.
+     */
+    public static Logger getLogger()
+    {
+        return logger;
     }
 }

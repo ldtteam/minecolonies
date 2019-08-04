@@ -167,17 +167,17 @@ public class WindowListRecipes extends Window implements ButtonHandler
         {
             final IRecipeStorage data = recipes.get(row+1);
             building.removeRecipe(row+1);
-            MineColonies.getNetwork().sendToServer(new AddRemoveRecipeMessage(data, building, true));
+            Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(data, building, true));
         }
         else if (button.getID().equals(BUTTON_FORWARD))
         {
             building.switchIndex(row, row + 1);
-            MineColonies.getNetwork().sendToServer(new ChangeRecipePriorityMessage(building, row, true));
+            Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(building, row, true));
         }
         else if (button.getID().equals(BUTTON_BACKWARD))
         {
             building.switchIndex(row, row - 1);
-            MineColonies.getNetwork().sendToServer(new ChangeRecipePriorityMessage(building, row, false));
+            Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(building, row, false));
         }
         else if (button.getID().equals(BUTTON_CANCEL))
         {

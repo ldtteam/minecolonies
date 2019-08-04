@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.commands;
 
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +22,7 @@ public interface ISubCommand
      * @return this subcommands part of the usage string.
      */
     @NotNull
-    String getCommandUsage(@NotNull final ICommandSender sender);
+    String getCommandUsage(@NotNull final CommandSource sender);
 
     /**
      * Callback for when the command is executed.
@@ -32,7 +32,7 @@ public interface ISubCommand
      * @param args   leftover args stripped from parents.
      * @throws CommandException if something goes wrong (like wrong syntax).
      */
-    void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException;
+    void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final String... args) throws CommandException;
 
     /**
      * Return all possible autocomplete options.
@@ -44,7 +44,7 @@ public interface ISubCommand
      * @return a list containing all positions.
      */
     @NotNull
-    List<String> getTabCompletionOptions(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String[] args, @Nullable final BlockPos pos);
+    List<String> getTabCompletionOptions(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final String[] args, @Nullable final BlockPos pos);
 
     /**
      * Return whether the specified command parameter index is a username

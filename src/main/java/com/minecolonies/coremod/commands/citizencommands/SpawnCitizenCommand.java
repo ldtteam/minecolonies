@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.commands.IActionCommand;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -49,13 +49,13 @@ public class SpawnCitizenCommand extends AbstractCitizensCommands implements IAc
 
     @NotNull
     @Override
-    public String getCommandUsage(@NotNull final ICommandSender sender)
+    public String getCommandUsage(@NotNull final CommandSource sender)
     {
         return super.getCommandUsage(sender) + "<ColonyId> <CitizenId>";
     }
 
     @Override
-    public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final IColony colony, final int citizenId)
+    public void executeSpecializedCode(@NotNull final MinecraftServer server, final CommandSource sender, final IColony colony, final int citizenId)
     {
         if (isPlayerOpped(sender))
         {
@@ -67,7 +67,7 @@ public class SpawnCitizenCommand extends AbstractCitizensCommands implements IAc
     @Override
     public List<String> getTabCompletionOptions(
                                                  @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
+                                                 @NotNull final CommandSource sender,
                                                  @NotNull final String[] args,
                                                  @Nullable final BlockPos pos)
     {

@@ -395,7 +395,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
                 setPage("");
                 break;
             case INVENTORY_BUTTON_ID:
-                MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(citizen.getName(), citizen.getEntityId()));
+                Network.getNetwork().sendToServer(new OpenInventoryMessage(citizen.getName(), citizen.getEntityId()));
                 break;
             default:
                 super.onButtonClicked(button);
@@ -470,9 +470,9 @@ public class WindowCitizen extends AbstractWindowRequestTree
             {
                 colony.getBuilding(citizen.getWorkBuilding()).onRequestComplete(colony.getRequestManager(), tRequest.getId());
             }
-            MineColonies.getNetwork().sendToServer(
+            Network.getNetwork().sendToServer(
               new TransferItemsToCitizenRequestMessage(citizen, itemStack, isCreative ? amount : Math.min(amount, count), citizen.getColonyId()));
-            MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getId(), RequestState.OVERRULED, itemStack));
+            Network.getNetwork().sendToServer(new UpdateRequestStateMessage(citizen.getColonyId(), request.getId(), RequestState.OVERRULED, itemStack));
         }
         button.disable();
         updateRequests();

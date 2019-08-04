@@ -119,7 +119,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
         {
             prio++;
         }
-        MineColonies.getNetwork().sendToServer(new ChangeDeliveryPriorityMessage(building, true));
+        Network.getNetwork().sendToServer(new ChangeDeliveryPriorityMessage(building, true));
         findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabelText(prio + "/10");
     }
 
@@ -129,7 +129,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
         {
             prio--;
         }
-        MineColonies.getNetwork().sendToServer(new ChangeDeliveryPriorityMessage(building, false));
+        Network.getNetwork().sendToServer(new ChangeDeliveryPriorityMessage(building, false));
         findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabelText(prio + "/10");
     }
 
@@ -138,7 +138,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
         state = !state;
         stateString = state ? DP_MODE_STATIC : DP_MODE_AUTOMATIC;
 
-        MineColonies.getNetwork().sendToServer(new ChangeDeliveryPriorityStateMessage(building));
+        Network.getNetwork().sendToServer(new ChangeDeliveryPriorityStateMessage(building));
         findPaneOfTypeByID(BUTTON_DP_STATE, Button.class).setLabel(LanguageHandler.format(stateString));
         MineColonies.getLogger().info(state);
     }
@@ -156,7 +156,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
     {
         final BlockPos pos = building.getPosition();
         Minecraft.getMinecraft().player.openGui(MineColonies.instance, 0, Minecraft.getMinecraft().world, pos.getX(), pos.getY(), pos.getZ());
-        MineColonies.getNetwork().sendToServer(new OpenCraftingGUIMessage(building, 2));
+        Network.getNetwork().sendToServer(new OpenCraftingGUIMessage(building, 2));
     }
 
     /**
@@ -183,7 +183,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
      */
     private void recallClicked()
     {
-        MineColonies.getNetwork().sendToServer(new RecallCitizenMessage(building));
+        Network.getNetwork().sendToServer(new RecallCitizenMessage(building));
     }
 
     /**

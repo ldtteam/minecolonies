@@ -767,7 +767,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         public void setHiringMode(final HiringMode hiringMode)
         {
             this.hiringMode = hiringMode;
-            MineColonies.getNetwork().sendToServer(new BuildingHiringModeMessage(this, hiringMode));
+            Network.getNetwork().sendToServer(new BuildingHiringModeMessage(this, hiringMode));
         }
     }
 }

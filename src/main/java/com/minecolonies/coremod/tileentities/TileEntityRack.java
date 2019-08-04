@@ -344,7 +344,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         if (compound.keySet().contains(TAG_NEIGHBOR))
         {
             final BlockPos neighbor = BlockPosUtil.read(compound, TAG_NEIGHBOR);
-            if (neighbor != BlockPos.ORIGIN)
+            if (neighbor != BlockPos.ZERO)
             {
                 relativeNeighbor = pos.subtract(neighbor);
             }

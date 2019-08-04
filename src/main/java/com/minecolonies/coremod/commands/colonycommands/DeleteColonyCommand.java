@@ -8,7 +8,7 @@ import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
@@ -53,7 +53,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
 
     @NotNull
     @Override
-    public String getCommandUsage(@NotNull final ICommandSender sender)
+    public String getCommandUsage(@NotNull final CommandSource sender)
     {
         return super.getCommandUsage(sender) + "<ColonyId|OwnerName>";
     }
@@ -65,7 +65,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
         final IColony colony = actionMenuState.getColonyForArgument("colony");
         final boolean canDestroy = actionMenuState.getBooleanValueForArgument("canDestroy", true);
@@ -82,7 +82,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final CommandSource sender, @NotNull final String... args) throws CommandException
     {
         final int colonyId;
         boolean canDestroy = true;
@@ -128,7 +128,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
     }
 
     private void executeShared(
-            @NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final IColony colony, final boolean canDestroy,
+            @NotNull final MinecraftServer server, @NotNull final CommandSource sender, final IColony colony, final boolean canDestroy,
             final boolean confirmDelete) throws CommandException
     {
 
@@ -167,7 +167,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
     @Override
     public List<String> getTabCompletionOptions(
             @NotNull final MinecraftServer server,
-            @NotNull final ICommandSender sender,
+            @NotNull final CommandSource sender,
             @NotNull final String[] args,
             @Nullable final BlockPos pos)
     {

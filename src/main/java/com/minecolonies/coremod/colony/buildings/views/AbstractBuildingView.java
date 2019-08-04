@@ -311,7 +311,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         if (shouldOpenInv)
         {
-            MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(getID()));
+            Network.getNetwork().sendToServer(new OpenInventoryMessage(getID()));
         }
         else
         {
@@ -583,6 +583,6 @@ public abstract class AbstractBuildingView implements IBuildingView
     public void setCustomName(final String name)
     {
         this.customName = name;
-        MineColonies.getNetwork().sendToServer(new HutRenameMessage(colony, name, this));
+        Network.getNetwork().sendToServer(new HutRenameMessage(colony, name, this));
     }
 }
