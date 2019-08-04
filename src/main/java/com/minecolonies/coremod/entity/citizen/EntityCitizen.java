@@ -781,7 +781,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         if (dataBackup != null)
         {
             final ListNBT ListNBT = dataBackup.getList("Inventory", 10);
-            this.getCitizenData().getInventory().readFromNBT(ListNBT);
+            this.getCitizenData().getInventory().read(ListNBT);
             if (dataBackup.hasKey(TAG_HELD_ITEM_SLOT))
             {
                 this.getCitizenData().getInventory().setHeldItem(EnumHand.MAIN_HAND, dataBackup.getInt(TAG_HELD_ITEM_SLOT));

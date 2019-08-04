@@ -256,7 +256,7 @@ public interface IColonyTagCapability
         {
             final CompoundNBT compound = new CompoundNBT();
             compound.putInt(TAG_ID, entry.getKey());
-            compound.put(TAG_BUILDINGS, entry.getValue().stream().map(pos -> BlockPosUtil.writeToNBT(new CompoundNBT(), TAG_BUILDING, pos)).collect(NBTUtils.toListNBT()));
+            compound.put(TAG_BUILDINGS, entry.getValue().stream().map(pos -> BlockPosUtil.write(new CompoundNBT(), TAG_BUILDING, pos)).collect(NBTUtils.toListNBT()));
             return compound;
         }
 
@@ -268,7 +268,7 @@ public interface IColonyTagCapability
         private static void readClaims(@NotNull final CompoundNBT compound, @NotNull final IColonyTagCapability instance)
         {
             final int id = compound.getInt(TAG_ID);
-            NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND)).forEach(tagCompound -> instance.addBuildingClaim(id, BlockPosUtil.readFromNBT(((CompoundNBT) tagCompound), TAG_BUILDING)));
+            NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND)).forEach(tagCompound -> instance.addBuildingClaim(id, BlockPosUtil.read(((CompoundNBT) tagCompound), TAG_BUILDING)));
         }
     }
 }

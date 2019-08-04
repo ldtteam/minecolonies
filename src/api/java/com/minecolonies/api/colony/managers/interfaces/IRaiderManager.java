@@ -103,7 +103,7 @@ public interface IRaiderManager
      * Reads the raider manager from NBT.
      * @param compound the compound to read it from.
      */
-    void readFromNBT(@NotNull CompoundNBT compound);
+    void read(@NotNull CompoundNBT compound);
 
     /**
      * To be executed on each colony world tick.
@@ -115,5 +115,5 @@ public interface IRaiderManager
      * Writes the raider manager to NBT.
      * @param compound the compound to write it to.
      */
-    void writeToNBT(@NotNull CompoundNBT compound);
+    void write(@NotNull CompoundNBT compound);
 }

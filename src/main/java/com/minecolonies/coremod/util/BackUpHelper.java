@@ -176,7 +176,7 @@ public final class BackUpHelper
     public static void saveColonies(final boolean isWorldUnload)
     {
         @NotNull final CompoundNBT compound = new CompoundNBT();
-        IColonyManager.getInstance().writeToNBT(compound);
+        IColonyManager.getInstance().write(compound);
 
         @NotNull final File file = getSaveLocation();
         saveNBTToPath(file, compound);
@@ -184,7 +184,7 @@ public final class BackUpHelper
         for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
             final CompoundNBT colonyCompound = new CompoundNBT();
-            colony.writeToNBT(colonyCompound);
+            colony.write(colonyCompound);
             saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID(), colony.getDimension())), colonyCompound);
         }
     }
@@ -207,7 +207,7 @@ public final class BackUpHelper
         IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
-            colony.readFromNBT(compound);
+            colony.read(compound);
         }
         else
         {

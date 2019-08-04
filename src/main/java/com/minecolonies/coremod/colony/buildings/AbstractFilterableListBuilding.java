@@ -87,7 +87,7 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
             for(@NotNull final ItemStorage item : entry.getValue())
             {
                 @NotNull final CompoundNBT itemCompound = new CompoundNBT();
-                item.getItemStack().writeToNBT(itemCompound);
+                item.getItemStack().write(itemCompound);
                 filteredItems.add(itemCompound);
             }
             listCompound.put(TAG_ITEMLIST, filteredItems);

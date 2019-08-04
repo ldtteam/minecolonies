@@ -62,13 +62,13 @@ public interface IProgressManager
      * Reads the progress manager from NBT.
      * @param compound the compound to read it from.
      */
-    void readFromNBT(@NotNull CompoundNBT compound);
+    void read(@NotNull CompoundNBT compound);
 
     /**
      * Writes the progress manager to NBT.
      * @param compound the compound to write it to.
      */
-    void writeToNBT(@NotNull CompoundNBT compound);
+    void write(@NotNull CompoundNBT compound);
 
     /**
      * Check if progress should be printed.

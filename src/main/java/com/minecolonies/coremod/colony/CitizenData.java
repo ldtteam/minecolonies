@@ -230,7 +230,7 @@ public class CitizenData implements ICitizenData
      * @param compound NBT-Tag compound.
      */
     @Override
-    public void readFromNBT(@NotNull final CompoundNBT compound)
+    public void read(@NotNull final CompoundNBT compound)
     {
         name = compound.getString(TAG_NAME);
         female = compound.getBoolean(TAG_FEMALE);
@@ -273,7 +273,7 @@ public class CitizenData implements ICitizenData
         if (compound.keySet().contains(TAG_INVENTORY))
         {
             final ListNBT ListNBT = compound.getList(TAG_INVENTORY, 10);
-            this.inventory.readFromNBT(ListNBT);
+            this.inventory.read(ListNBT);
             this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInt(TAG_HELD_ITEM_SLOT));
             this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));
         }
@@ -285,7 +285,7 @@ public class CitizenData implements ICitizenData
 
         if (compound.keySet().contains(TAG_ASLEEP))
         {
-            bedPos = BlockPosUtil.readFromNBT(compound, TAG_POS);
+            bedPos = BlockPosUtil.read(compound, TAG_POS);
             isAsleep = compound.getBoolean(TAG_ASLEEP);
         }
 
@@ -294,7 +294,7 @@ public class CitizenData implements ICitizenData
             justAte = compound.getBoolean(TAG_JUST_ATE);
         }
 
-        citizenHappinessHandler.readFromNBT(compound);
+        citizenHappinessHandler.read(compound);
     }
 
     /**
@@ -851,7 +851,7 @@ public class CitizenData implements ICitizenData
      * @return return the data in NBT format
      */
     @Override
-    public CompoundNBT writeToNBT(@NotNull final CompoundNBT compound)
+    public CompoundNBT write(@NotNull final CompoundNBT compound)
     {
         compound.putInt(TAG_ID, id);
         compound.putString(TAG_NAME, name);
@@ -892,15 +892,15 @@ public class CitizenData implements ICitizenData
             compound.put("job", jobCompound);
         }
 
-        compound.put(TAG_INVENTORY, inventory.writeToNBT(new ListNBT()));
+        compound.put(TAG_INVENTORY, inventory.write(new ListNBT()));
         compound.putInt(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.MAIN_HAND));
         compound.putInt(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.OFF_HAND));
 
-        BlockPosUtil.writeToNBT(compound, TAG_POS, bedPos);
+        BlockPosUtil.write(compound, TAG_POS, bedPos);
         compound.putBoolean(TAG_ASLEEP, isAsleep);
         compound.putBoolean(TAG_JUST_ATE, justAte);
 
-        citizenHappinessHandler.writeToNBT(compound);
+        citizenHappinessHandler.write(compound);
 
         return compound;
     }
@@ -959,7 +959,7 @@ public class CitizenData implements ICitizenData
         buf.writeInt(colony.getID());
 
         final CompoundNBT compound = new CompoundNBT();
-        compound.put("inventory", inventory.writeToNBT(new ListNBT()));
+        compound.put("inventory", inventory.write(new ListNBT()));
         ByteBufUtils.writeTag(buf, compound);
 
         BlockPosUtil.writeToByteBuf(buf, lastPosition);

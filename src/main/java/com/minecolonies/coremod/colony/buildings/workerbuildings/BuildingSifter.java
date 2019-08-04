@@ -253,11 +253,11 @@ public class BuildingSifter extends AbstractBuildingWorker
         compound.putInt(TAG_CURRENT_DAILY, currentDailyQuantity);
 
         final CompoundNBT sievableBlockTAG = new CompoundNBT();
-        sievableBlock.getItemStack().writeToNBT(sievableBlockTAG);
+        sievableBlock.getItemStack().write(sievableBlockTAG);
         compound.put(TAG_BLOCK, sievableBlockTAG);
 
         final CompoundNBT meshTAG = new CompoundNBT();
-        sifterMesh.getA().getItemStack().writeToNBT(meshTAG);
+        sifterMesh.getA().getItemStack().write(meshTAG);
         compound.put(TAG_MESH, meshTAG);
         compound.setDouble(TAG_MESH_PROB, sifterMesh.getB());
 

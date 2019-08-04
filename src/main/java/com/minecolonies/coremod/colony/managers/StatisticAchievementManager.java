@@ -53,7 +53,7 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
     }
 
     @Override
-    public void readFromNBT(@NotNull final CompoundNBT compound)
+    public void read(@NotNull final CompoundNBT compound)
     {
         // Restore colony achievements
         /*final ListNBT achievementTagList = compound.getList(TAG_ACHIEVEMENT_LIST, Constants.NBT.TAG_COMPOUND);
@@ -90,7 +90,7 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         /*//  Achievements
         @NotNull final ListNBT achievementsTagList = new ListNBT();

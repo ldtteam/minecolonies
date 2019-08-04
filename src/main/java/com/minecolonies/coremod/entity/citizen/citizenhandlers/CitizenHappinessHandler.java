@@ -494,7 +494,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      * @param compound  compound to use.
      */
     @Override
-    public void writeToNBT(final CompoundNBT compound)
+    public void write(final CompoundNBT compound)
     {
         @NotNull final CompoundNBT taskCompound = new CompoundNBT();
         taskCompound.setDouble(NbtTagConstants.TAG_BASE, baseHappiness);
@@ -546,7 +546,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      * @param compound pointer to NBT fields
      */
     @Override
-    public void readFromNBT(final CompoundNBT compound)
+    public void read(final CompoundNBT compound)
     {
         final CompoundNBT tagCompound = compound.getCompound(NbtTagConstants.TAG_HAPPINESS_NAME);
         baseHappiness = tagCompound.getDouble(NbtTagConstants.TAG_BASE);

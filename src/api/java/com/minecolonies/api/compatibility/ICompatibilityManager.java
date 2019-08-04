@@ -125,14 +125,14 @@ public interface ICompatibilityManager
      *
      * @param compound NBT-Tag.
      */
-    void writeToNBT(@NotNull final CompoundNBT compound);
+    void write(@NotNull final CompoundNBT compound);
 
     /**
      * Read Colonies from saved NBT data.
      *
      * @param compound NBT Tag.
      */
-    void readFromNBT(@NotNull final CompoundNBT compound);
+    void read(@NotNull final CompoundNBT compound);
 
     /**
      * Connect a certain block as leave to an ItemStack as sapling.

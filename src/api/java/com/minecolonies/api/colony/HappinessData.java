@@ -209,7 +209,7 @@ public class HappinessData
     *
     * @param compound pointer to NBT fields
     */
-    public void readFromNBT(@NotNull final CompoundNBT compound)
+    public void read(@NotNull final CompoundNBT compound)
     {
         final ListNBT happinessTagList = compound.getList(TAG_TASKS, NBT.TAG_COMPOUND);
         final CompoundNBT tagCompound = happinessTagList.getCompound(0);
@@ -240,7 +240,7 @@ public class HappinessData
      *
      * @param compound compound to use.
      */
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         @NotNull final ListNBT tasksTagList = new ListNBT();
         @NotNull final CompoundNBT taskCompound = new CompoundNBT();

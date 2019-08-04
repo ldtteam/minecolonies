@@ -91,7 +91,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         else
         {
             compound.putString(TAG_BUILDING_TYPE, s);
-            BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
+            BlockPosUtil.write(compound, TAG_LOCATION, location);
             final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
             if (Structures.hasMD5(structureName))
             {
@@ -136,7 +136,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
             {
                 //We found the new location for the schematic, update the style accordingly
                 style = newStructureName.getStyle();
-                Log.getLogger().warn("AbstractBuilding.readFromNBT: " + sn + " have been moved to " + newStructureName);
+                Log.getLogger().warn("AbstractBuilding.read: " + sn + " have been moved to " + newStructureName);
             }
         }
 

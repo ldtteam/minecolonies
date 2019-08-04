@@ -472,7 +472,7 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
     public SPacketUpdateTileEntity getUpdatePacket()
     {
         final CompoundNBT compound = new CompoundNBT();
-        this.writeToNBT(compound);
+        this.write(compound);
         if(colony != null)
         {
             compound.putInt(TAG_COLONY_ID, colony.getID());
@@ -484,14 +484,14 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
     @Override
     public CompoundNBT getUpdateTag()
     {
-        return writeToNBT(new CompoundNBT());
+        return write(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
     {
         final CompoundNBT compound = packet.getNbtCompound();
-        this.readFromNBT(compound);
+        this.read(compound);
         if(compound.keySet().contains(TAG_COLONY_ID))
         {
             setOwner(ownerId, IColonyManager.getInstance().getColonyView(compound.getInt(TAG_COLONY_ID), world.provider.getDimension()));
@@ -519,7 +519,7 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
     }
 
     @Override
-    public void readFromNBT(final CompoundNBT compound)
+    public void read(final CompoundNBT compound)
     {
         final ListNBT inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
         for (int i = 0; i < inventoryTagList.size(); ++i)
@@ -546,11 +546,11 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
         name = compound.getString(TAG_NAME);
         setOwner(ownerId);
 
-        super.readFromNBT(compound);
+        super.read(compound);
     }
 
     @Override
-    public CompoundNBT writeToNBT(final CompoundNBT compound)
+    public CompoundNBT write(final CompoundNBT compound)
     {
         @NotNull final ListNBT inventoryTagList = new ListNBT();
         for (int slot = 0; slot < inventory.getSlots(); slot++)
@@ -559,11 +559,11 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
             final ItemStack stack = inventory.getStackInSlot(slot);
             if (stack == ItemStackUtils.EMPTY)
             {
-                new ItemStack(Blocks.AIR, 0).writeToNBT(inventoryCompound);
+                new ItemStack(Blocks.AIR, 0).write(inventoryCompound);
             }
             else
             {
-                stack.writeToNBT(inventoryCompound);
+                stack.write(inventoryCompound);
             }
             inventoryTagList.add(inventoryCompound);
         }
@@ -578,7 +578,7 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
         compound.putInt(TAG_OWNER, ownerId);
         compound.putString(TAG_NAME, name);
 
-        return super.writeToNBT(compound);
+        return super.write(compound);
     }
 
 

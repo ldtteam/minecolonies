@@ -232,7 +232,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     @Override
     public CompoundNBT getUpdateTag()
     {
-        return writeToNBT(new CompoundNBT());
+        return write(new CompoundNBT());
     }
 
     @Override
@@ -300,9 +300,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     }
 
     @Override
-    public void readFromNBT(final CompoundNBT compound)
+    public void read(final CompoundNBT compound)
     {
-        super.readFromNBT(compound);
+        super.read(compound);
         if (compound.keySet().contains(TAG_COLONY))
         {
             colonyId = compound.getInt(TAG_COLONY);
@@ -315,9 +315,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
 
     @NotNull
     @Override
-    public CompoundNBT writeToNBT(@NotNull final CompoundNBT compound)
+    public CompoundNBT write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
         compound.putInt(TAG_COLONY, colonyId);
         compound.putBoolean(TAG_MIRROR, mirror);
         compound.putString(TAG_STYLE, style);

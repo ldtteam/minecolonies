@@ -235,14 +235,14 @@ public interface IColonyManager
      *
      * @param compound NBT-Tag.
      */
-    void writeToNBT(@NotNull CompoundNBT compound);
+    void write(@NotNull CompoundNBT compound);
 
     /**
      * Read Colonies from saved NBT data.
      *
      * @param compound NBT Tag.
      */
-    void readFromNBT(@NotNull CompoundNBT compound, @NotNull World world);
+    void read(@NotNull CompoundNBT compound, @NotNull World world);
 
     /**
      * On Client tick, clears views when player left.

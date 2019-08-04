@@ -40,13 +40,13 @@ public class JobLumberjack extends AbstractJob
      * @param compound CompoundNBT containing saved Job data.
      */
     @Override
-    public void readFromNBT(@NotNull final CompoundNBT compound)
+    public void read(@NotNull final CompoundNBT compound)
     {
-        super.readFromNBT(compound);
+        super.read(compound);
 
         if (compound.keySet().contains(TAG_TREE))
         {
-            tree = Tree.readFromNBT(compound.getCompound(TAG_TREE));
+            tree = Tree.read(compound.getCompound(TAG_TREE));
         }
     }
 
@@ -80,15 +80,15 @@ public class JobLumberjack extends AbstractJob
      * @param compound CompoundNBT to save the Job to.
      */
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
 
         @NotNull final CompoundNBT treeTag = new CompoundNBT();
 
         if (tree != null)
         {
-            tree.writeToNBT(treeTag);
+            tree.write(treeTag);
         }
     }
 

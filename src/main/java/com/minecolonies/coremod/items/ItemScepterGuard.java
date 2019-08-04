@@ -75,7 +75,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
 
         if (compound.keySet().contains(TAG_LAST_POS))
         {
-            final BlockPos lastPos = BlockPosUtil.readFromNBT(compound, TAG_LAST_POS);
+            final BlockPos lastPos = BlockPosUtil.read(compound, TAG_LAST_POS);
             if (lastPos.equals(pos))
             {
                 playerIn.inventory.removeStackFromSlot(playerIn.inventory.currentItem);
@@ -108,7 +108,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             {
                 return ActionResult.newResult(EnumActionResult.FAIL, stack);
             }
-            final BlockPos guardTower = BlockPosUtil.readFromNBT(compound, TAG_POS);
+            final BlockPos guardTower = BlockPosUtil.read(compound, TAG_POS);
             final IBuildingView hut = colony.getBuilding(guardTower);
 
             if (hut instanceof AbstractBuildingGuards.View && playerIn.isSneaking())
@@ -143,7 +143,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             return EnumActionResult.FAIL;
         }
 
-        final BlockPos guardTower = BlockPosUtil.readFromNBT(compound, TAG_POS);
+        final BlockPos guardTower = BlockPosUtil.read(compound, TAG_POS);
         final IBuilding hut = colony.getBuildingManager().getBuilding(guardTower);
         if (!(hut instanceof AbstractBuildingGuards))
         {
@@ -181,7 +181,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             tower.addPatrolTargets(pos);
             LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolClickPatrol", pos, name);
         }
-        BlockPosUtil.writeToNBT(compound, TAG_LAST_POS, pos);
+        BlockPosUtil.write(compound, TAG_LAST_POS, pos);
 
         return EnumActionResult.SUCCESS;
     }

@@ -100,14 +100,14 @@ public interface ICitizenHappinessHandler
      *
      * @param compound  compound to use.
      */
-    void writeToNBT(CompoundNBT compound);
+    void write(CompoundNBT compound);
 
     /**
      * Reads in Happiness data from the NBT file.
      *
      * @param compound pointer to NBT fields
      */
-    void readFromNBT(CompoundNBT compound);
+    void read(CompoundNBT compound);
 
     /**
      * Write to the incoming variable all the related data to modifiers.

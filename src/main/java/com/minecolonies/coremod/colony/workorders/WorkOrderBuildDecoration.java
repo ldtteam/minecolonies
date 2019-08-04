@@ -104,9 +104,9 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      * @param compound NBT Tag compound.
      */
     @Override
-    public void readFromNBT(@NotNull final CompoundNBT compound, final IWorkManager manager)
+    public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
     {
-        super.readFromNBT(compound, manager);
+        super.read(compound, manager);
         final StructureName sn = new StructureName(compound.getString(TAG_SCHEMATIC_NAME));
         structureName = sn.toString();
         workOrderName = compound.getString(TAG_WORKORDER_NAME);
@@ -118,11 +118,11 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
             final StructureName newSN = Structures.getStructureNameByMD5(md5);
             if (newSN == null)
             {
-                Log.getLogger().error("WorkOrderBuildDecoration.readFromNBT: Could not find " + structureName);
+                Log.getLogger().error("WorkOrderBuildDecoration.read: Could not find " + structureName);
             }
             else
             {
-                Log.getLogger().warn("WorkOrderBuildDecoration.readFromNBT: replace " + sn + " by " + newSN);
+                Log.getLogger().warn("WorkOrderBuildDecoration.read: replace " + sn + " by " + newSN);
                 structureName = newSN.toString();
             }
         }
@@ -140,9 +140,9 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      * @param compound NBT tag compound.
      */
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
         if (workOrderName != null)
         {
             compound.putString(TAG_WORKORDER_NAME, workOrderName);
@@ -154,7 +154,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         }
         if (structureName == null)
         {
-            Log.getLogger().error("WorkOrderBuild.writeToNBT: structureName should not be null!!!");
+            Log.getLogger().error("WorkOrderBuild.write: structureName should not be null!!!");
         }
         else
         {

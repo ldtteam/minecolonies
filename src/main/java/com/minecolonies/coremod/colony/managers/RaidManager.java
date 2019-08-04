@@ -299,19 +299,19 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public void readFromNBT(@NotNull final CompoundNBT compound)
+    public void read(@NotNull final CompoundNBT compound)
     {
         if (compound.keySet().contains(TAG_RAID_MANAGER))
         {
             final CompoundNBT raiderCompound = compound.getCompound(TAG_RAID_MANAGER);
             final ListNBT raiderTags = raiderCompound.getList(TAG_SCHEMATIC_LIST, Constants.NBT.TAG_COMPOUND);
             schematicMap.putAll(NBTUtils.streamCompound(raiderTags)
-                                      .collect(Collectors.toMap(raiderTagCompound -> BlockPosUtil.readFromNBT(raiderTagCompound, TAG_POS), raiderTagCompound ->  new Tuple<>(raiderTagCompound.getString(TAG_NAME), raiderTagCompound.getLong(TAG_TIME)))));
+                                      .collect(Collectors.toMap(raiderTagCompound -> BlockPosUtil.read(raiderTagCompound, TAG_POS), raiderTagCompound ->  new Tuple<>(raiderTagCompound.getString(TAG_NAME), raiderTagCompound.getLong(TAG_TIME)))));
         }
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         final CompoundNBT raiderCompound = new CompoundNBT();
         @NotNull final ListNBT raiderTagList = schematicMap.entrySet().stream()
@@ -330,7 +330,7 @@ public class RaidManager implements IRaiderManager
     private CompoundNBT writeMapEntryToNBT(final Map.Entry<BlockPos, Tuple<String, Long>> entry)
     {
         final CompoundNBT compound = new CompoundNBT();
-        BlockPosUtil.writeToNBT(compound, TAG_POS, entry.getKey());
+        BlockPosUtil.write(compound, TAG_POS, entry.getKey());
         compound.putString(TAG_NAME, entry.getValue().getA());
         compound.setLong(TAG_TIME, entry.getValue().getB());
 

@@ -63,11 +63,11 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         for (@NotNull final ItemStack stack : recipeStorage.getInput())
         {
             @NotNull final CompoundNBT neededRes = new CompoundNBT();
-            stack.writeToNBT(neededRes);
+            stack.write(neededRes);
             inputTagList.add(neededRes);
         }
         compound.put(INPUT_TAG, inputTagList);
-        recipeStorage.getPrimaryOutput().writeToNBT(compound);
+        recipeStorage.getPrimaryOutput().write(compound);
 
         if(recipeStorage.getIntermediate() != null)
         {

@@ -320,7 +320,7 @@ public class ChunkLoadStorage
     {
         final CompoundNBT compound = new CompoundNBT();
         compound.putInt(TAG_COLONY_ID, tuple.getA());
-        BlockPosUtil.writeToNBT(compound, TAG_BUILDING, tuple.getB());
+        BlockPosUtil.write(compound, TAG_BUILDING, tuple.getB());
         return compound;
     }
 
@@ -331,6 +331,6 @@ public class ChunkLoadStorage
      */
     private static Tuple<Integer, BlockPos> readTupleFromNbt(final CompoundNBT compound)
     {
-        return new Tuple<>(compound.getInt(TAG_COLONY_ID), BlockPosUtil.readFromNBT(compound, TAG_BUILDING));
+        return new Tuple<>(compound.getInt(TAG_COLONY_ID), BlockPosUtil.read(compound, TAG_BUILDING));
     }
 }

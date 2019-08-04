@@ -220,17 +220,17 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
 
     @NotNull
     @Override
-    public CompoundNBT writeToNBT(final CompoundNBT compound)
+    public CompoundNBT write(final CompoundNBT compound)
     {
         compound.setLong(TAG_TIME, worldTimeAtSpawn);
         compound.putInt(TAG_STUCK_COUNTER, stuckCounter);
         compound.putInt(TAG_LADDER_COUNTER, ladderCounter);
         compound.putInt(TAG_COLONY_ID, this.colony == null ? 0 : colony.getID());
-        return super.writeToNBT(compound);
+        return super.write(compound);
     }
 
     @Override
-    public void readFromNBT(final CompoundNBT compound)
+    public void read(final CompoundNBT compound)
     {
         worldTimeAtSpawn = compound.getLong(TAG_TIME);
         stuckCounter = compound.getInt(TAG_STUCK_COUNTER);
@@ -243,7 +243,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
                 setColony(IColonyManager.getInstance().getColonyByWorld(colonyId, world));
             }
         }
-        super.readFromNBT(compound);
+        super.read(compound);
     }
 
     @Override

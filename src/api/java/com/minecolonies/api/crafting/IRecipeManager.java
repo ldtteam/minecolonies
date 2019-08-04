@@ -43,7 +43,7 @@ public interface IRecipeManager
      *
      * @param compound NBT-Tag.
      */
-    void writeToNBT(@NotNull final CompoundNBT compound);
+    void write(@NotNull final CompoundNBT compound);
 
 
     /**
@@ -51,5 +51,5 @@ public interface IRecipeManager
      *
      * @param compound NBT Tag.
      */
-    void readFromNBT(@NotNull final CompoundNBT compound);
+    void read(@NotNull final CompoundNBT compound);
 }

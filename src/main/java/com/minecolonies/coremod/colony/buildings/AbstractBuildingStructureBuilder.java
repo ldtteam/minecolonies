@@ -144,7 +144,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
         if (compound.keySet().contains(TAG_PROGRESS_POS))
         {
-            progressPos = BlockPosUtil.readFromNBT(compound, TAG_PROGRESS_POS);
+            progressPos = BlockPosUtil.read(compound, TAG_PROGRESS_POS);
             progressStage = StructureIterator.Stage.values()[compound.getInt(TAG_PROGRESS_STAGE)];
         }
     }
@@ -160,7 +160,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             @NotNull final CompoundNBT neededRes = new CompoundNBT();
             final ItemStack itemStack = new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
             itemStack.putCompound(resource.getItemStack().getTagCompound());
-            itemStack.writeToNBT(neededRes);
+            itemStack.write(neededRes);
 
             neededResTagList.add(neededRes);
         }
@@ -168,7 +168,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         compound.put(TAG_RESOURCE_LIST, neededResTagList);
         if (progressPos != null)
         {
-            BlockPosUtil.writeToNBT(compound, TAG_PROGRESS_POS, progressPos);
+            BlockPosUtil.write(compound, TAG_PROGRESS_POS, progressPos);
             compound.putInt(TAG_PROGRESS_STAGE, progressStage.ordinal());
         }
 

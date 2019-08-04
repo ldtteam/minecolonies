@@ -241,7 +241,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         if (crusherMode != null)
         {
             final CompoundNBT crusherModeNBT = new CompoundNBT();
-            crusherMode.getItemStack().writeToNBT(crusherModeNBT);
+            crusherMode.getItemStack().write(crusherModeNBT);
             compound.put(TAG_CRUSHER_MODE, crusherModeNBT);
         }
         return compound;
