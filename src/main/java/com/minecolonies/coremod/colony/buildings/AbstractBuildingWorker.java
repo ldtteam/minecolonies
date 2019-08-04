@@ -74,7 +74,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * @param c the colony
      * @param l the position
      */
-    public AbstractBuildingWorker(@NotNull final Colony c, final BlockPos l)
+    public AbstractBuildingWorker(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
     }

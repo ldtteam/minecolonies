@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
-
 import net.minecraft.block.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -13,12 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Contains all recipes the baker can use.
+ * Contains all recipes the bakery can use.
  */
 public final class BakerRecipes
 {
     /**
-     * The grid size the baker can use.
+     * The grid size the bakery can use.
      */
     private static final int GRID_SIZE = 9;
 

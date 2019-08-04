@@ -6,7 +6,9 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -23,10 +25,11 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
@@ -42,7 +45,7 @@ import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -109,7 +112,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * @param colony Colony the building belongs to.
      * @param pos    Location of the building (it's Hut Block).
      */
-    protected AbstractBuilding(@NotNull final Colony colony, final BlockPos pos)
+    protected AbstractBuilding(@NotNull final IColony colony, final BlockPos pos)
     {
         super(pos, colony);
 
@@ -186,8 +189,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public boolean isMatchingBlock(@NotNull final Block block)
     {
-        final Class<?> c = BuildingRegistry.getBlockClassToBuildingClassMap().get(block.getClass());
-        return getClass().equals(c);
+        return getBuildingRegistryEntry().getBuildingBlock() == block;
     }
 
     @Override
@@ -564,6 +566,40 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                 }
             }
         }
+    }
+
+    @Override
+    public AbstractTileEntityColonyBuilding getTileEntity()
+    {
+        if ((tileEntity == null || tileEntity.isInvalid())
+              && colony != null
+              && colony.getWorld() != null
+              && getPosition() != null
+              && colony.getWorld().getBlockState(getPosition())
+                   != Blocks.AIR && colony.getWorld().getBlockState(this.getPosition()).getBlock() instanceof AbstractBlockHut)
+        {
+            final TileEntity te = getColony().getWorld().getTileEntity(getPosition());
+            if (te instanceof TileEntityColonyBuilding)
+            {
+                tileEntity = (TileEntityColonyBuilding) te;
+                if (tileEntity.getBuilding() == null)
+                {
+                    tileEntity.setColony(colony);
+                    tileEntity.setBuilding(this);
+                }
+            }
+            else
+            {
+                com.minecolonies.blockout.Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be!");
+                Log.getLogger().error("Trying to restore order!");
+
+                AbstractTileEntityColonyBuilding tileEntityColonyBuilding = new TileEntityColonyBuilding(getBuildingRegistryEntry().getRegistryName());
+                colony.getWorld().setTileEntity(getPosition(), tileEntityColonyBuilding);
+                this.tileEntity = tileEntityColonyBuilding;
+            }
+        }
+
+        return tileEntity;
     }
 
     /**

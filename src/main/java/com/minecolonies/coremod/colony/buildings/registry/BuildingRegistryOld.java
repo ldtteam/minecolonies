@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.blocks.BlockPostBox;
 import com.minecolonies.coremod.blocks.huts.*;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -31,7 +30,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LOCATION;
 /**
  * Class taking care of registering the buildings.
  */
-public class BuildingRegistry
+public class BuildingRegistryOld
 {
 
     /**
@@ -93,7 +92,7 @@ public class BuildingRegistry
     /**
      * Private constructor to hide implicit public one.
      */
-    private BuildingRegistry()
+    private BuildingRegistryOld()
     {
         /**
          * Intentionally left empty.

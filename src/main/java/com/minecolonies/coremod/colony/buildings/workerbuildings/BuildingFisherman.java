@@ -1,14 +1,16 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutFisherman;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
@@ -39,7 +41,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
      * @param c the colony.
      * @param l the position.
      */
-    public BuildingFisherman(final Colony c, final BlockPos l)
+    public BuildingFisherman(final IColony c, final BlockPos l)
     {
         super(c, l);
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.FISHINGROD, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
@@ -84,6 +86,12 @@ public class BuildingFisherman extends AbstractBuildingWorker
         {
             this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeFisherMax);
         }
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.fisherman;
     }
 
     /**

@@ -2,6 +2,8 @@ package com.minecolonies.coremod.blocks.huts;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import net.minecraft.block.BlockState;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -20,6 +22,12 @@ public class BlockHutArchery extends AbstractBlockHut<BlockHutArchery>
     public String getName()
     {
         return "blockHutArchery";
+    }
+
+    @Override
+    public BuildingEntry getBuildingEntry()
+    {
+        return ModBuildings.archery;
     }
 
     /**

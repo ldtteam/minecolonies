@@ -22,7 +22,7 @@ public class InventoryTest
     @Before
     public void setupInventories()
     {
-        final TileEntityColonyBuilding buildingTileEntity = new TileEntityColonyBuilding();
+        final TileEntityColonyBuilding buildingTileEntity = new TileEntityColonyBuilding(building.getBuildingRegistryEntry().getRegistryName());
         buildingTileEntity.setBuilding(building);
         this.inventory = buildingTileEntity;
     }

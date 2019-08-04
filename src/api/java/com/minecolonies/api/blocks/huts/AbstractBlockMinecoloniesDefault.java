@@ -7,7 +7,7 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 
-public abstract class AbstractBlockMinecoloniesBlockHutField<B extends AbstractBlockMinecoloniesBlockHutField<B>> extends AbstractBlockMinecoloniesContainer<B> implements IBlockMinecolonies<B>
+public abstract class AbstractBlockMinecoloniesDefault<B extends AbstractBlockMinecoloniesDefault<B>> extends AbstractBlockMinecoloniesContainer<B> implements IBlockMinecolonies<B>
 {
     /**
      * The position it faces.
@@ -42,12 +42,12 @@ public abstract class AbstractBlockMinecoloniesBlockHutField<B extends AbstractB
      */
     public static final String            REGISTRY_NAME    = "blockHutField";
 
-    public AbstractBlockMinecoloniesBlockHutField(final Material blockMaterialIn, final MapColor blockMapColorIn)
+    public AbstractBlockMinecoloniesDefault(final Material blockMaterialIn, final MapColor blockMapColorIn)
     {
         super(blockMaterialIn, blockMapColorIn);
     }
 
-    public AbstractBlockMinecoloniesBlockHutField(final Material materialIn)
+    public AbstractBlockMinecoloniesDefault(final Material materialIn)
     {
         super(materialIn);
     }

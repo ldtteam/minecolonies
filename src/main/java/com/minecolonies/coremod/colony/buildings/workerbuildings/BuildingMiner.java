@@ -1,7 +1,10 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -9,7 +12,6 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutMiner;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
@@ -120,7 +122,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * @param c colony containing the building.
      * @param l location of the building.
      */
-    public BuildingMiner(final Colony c, final BlockPos l)
+    public BuildingMiner(final IColony c, final BlockPos l)
     {
         super(c, l);
 
@@ -183,6 +185,12 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         {
             this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeMinerMax);
         }
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.miner;
     }
 
     /**

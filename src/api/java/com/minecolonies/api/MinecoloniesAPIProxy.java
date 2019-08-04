@@ -2,10 +2,13 @@ package com.minecolonies.api;
 
 import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.registry.IGuardTypeRegistry;
+import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.api.entity.ai.registry.IEntityAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
-import com.minecolonies.coremod.colony.jobs.registry.IJobRegistry;
+import net.minecraftforge.registries.IForgeRegistry;
 
 public class MinecoloniesAPIProxy implements IMinecoloniesAPI
 {
@@ -61,5 +64,17 @@ public class MinecoloniesAPIProxy implements IMinecoloniesAPI
     public IJobRegistry getJobRegistry()
     {
         return apiInstance.getJobRegistry();
+    }
+
+    @Override
+    public IBuildingDataManager getBuildingDataManager()
+    {
+        return apiInstance.getBuildingDataManager();
+    }
+
+    @Override
+    public IForgeRegistry<BuildingEntry> getBuildingRegistry()
+    {
+        return apiInstance.getBuildingRegistry();
     }
 }

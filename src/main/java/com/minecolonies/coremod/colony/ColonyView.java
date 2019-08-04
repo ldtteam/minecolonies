@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.managers.interfaces.*;
@@ -16,7 +17,6 @@ import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.permissions.PermissionsView;
@@ -55,22 +55,22 @@ public final class ColonyView implements IColonyView
     private static final int MAX_BYTES_NBTCOMPOUND = (int) 1e6;
 
     //  General Attributes
-    private final int                                 id;
-    private final Map<Integer, WorkOrderView>         workOrders    = new HashMap<>();
+    private final int                            id;
+    private final Map<Integer, WorkOrderView>    workOrders    = new HashMap<>();
     //  Administration/permissions
     @NotNull
-    private final PermissionsView                     permissions   = new PermissionsView();
+    private final PermissionsView                permissions   = new PermissionsView();
     @NotNull
-    private final Map<BlockPos, AbstractBuildingView> buildings     = new HashMap<>();
+    private final Map<BlockPos, IBuildingView>   buildings     = new HashMap<>();
     //  Citizenry
     @NotNull
-    private final Map<Integer, ICitizenDataView>      citizens      = new HashMap<>();
+    private final Map<Integer, ICitizenDataView> citizens      = new HashMap<>();
     /**
      * Datas about the happiness of a colony
      */
-    private final HappinessData                       happinessData = new HappinessData();
-    private       String                              name          = "Unknown";
-    private       int                                 dimensionId;
+    private final HappinessData                  happinessData = new HappinessData();
+    private       String                         name          = "Unknown";
+    private       int                            dimensionId;
 
     /**
      * Colony team color.
@@ -467,7 +467,7 @@ public final class ColonyView implements IColonyView
      * Coordinates/ID, or null.
      */
     @Override
-    public AbstractBuildingView getBuilding(final int x, final int y, final int z)
+    public IBuildingView getBuilding(final int x, final int y, final int z)
     {
         return getBuilding(new BlockPos(x, y, z));
     }
@@ -481,7 +481,7 @@ public final class ColonyView implements IColonyView
      * Coordinates/ID, or null.
      */
     @Override
-    public AbstractBuildingView getBuilding(final BlockPos buildingId)
+    public IBuildingView getBuilding(final BlockPos buildingId)
     {
         return buildings.get(buildingId);
     }
@@ -752,7 +752,7 @@ public final class ColonyView implements IColonyView
     @Nullable
     public IMessage handleColonyViewRemoveBuildingMessage(final BlockPos buildingId)
     {
-        final AbstractBuildingView building = buildings.remove(buildingId);
+        final IBuildingView building = buildings.remove(buildingId);
         if (townHall == building)
         {
             townHall = null;
@@ -788,7 +788,7 @@ public final class ColonyView implements IColonyView
     @Nullable
     public IMessage handleColonyBuildingViewMessage(final BlockPos buildingId, @NotNull final ByteBuf buf)
     {
-        @Nullable final AbstractBuildingView building = BuildingRegistry.createBuildingView(this, buildingId, buf);
+        @Nullable final IBuildingView building = IBuildingDataManager.getInstance().createViewFrom(this, buildingId, buf);
         if (building != null)
         {
             buildings.put(building.getID(), building);

@@ -10,6 +10,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -30,6 +31,8 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
  */
 public class TileEntityWareHouse extends AbstractTileEntityWareHouse
 {
+
+    public TileEntityWareHouse(final ResourceLocation resourceName) {super(resourceName);}
 
     /**
      * Method used to check if this warehouse holds any of the requested itemstacks.

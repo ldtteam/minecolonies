@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
-import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesBlockHutField;
+import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -209,7 +209,7 @@ public abstract class AbstractPathJob implements Callable<Path>
                 bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
             }
         }
-        else if (b instanceof BlockFence || b instanceof BlockWall || b instanceof AbstractBlockMinecoloniesBlockHutField)
+        else if (b instanceof BlockFence || b instanceof BlockWall || b instanceof AbstractBlockMinecoloniesDefault)
         {
             //Push away from fence
             final double dX = entity.posX - Math.floor(entity.posX);
@@ -1009,7 +1009,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (block instanceof BlockFence
               || block instanceof BlockFenceGate
               || block instanceof BlockWall
-              || block instanceof AbstractBlockMinecoloniesBlockHutField
+              || block instanceof AbstractBlockMinecoloniesDefault
               || block instanceof AbstractBlockBarrel
               || (blockState.getCollisionBoundingBox(world, pos) != null
                    && blockState.getCollisionBoundingBox(world, pos).maxY > 1.0))

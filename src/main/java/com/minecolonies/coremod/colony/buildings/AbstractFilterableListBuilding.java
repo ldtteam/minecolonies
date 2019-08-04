@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.Colony;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -40,7 +40,7 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
      * @param c the colony
      * @param l the position
      */
-    public AbstractFilterableListBuilding(@NotNull final Colony c, final BlockPos l)
+    public AbstractFilterableListBuilding(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
     }
