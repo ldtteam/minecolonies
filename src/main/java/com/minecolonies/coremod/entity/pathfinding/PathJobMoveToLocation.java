@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntityBase;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -32,7 +32,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
      * @param range max search range.
      * @param entity the entity.
      */
-    public PathJobMoveToLocation(final World world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range, final EntityLivingBase entity)
+    public PathJobMoveToLocation(final World world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range, final LivingEntityBase entity)
     {
         super(world, start, end, range, entity);
 

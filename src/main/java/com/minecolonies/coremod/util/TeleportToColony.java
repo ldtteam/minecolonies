@@ -142,7 +142,7 @@ public final class TeleportToColony
                     .transferPlayerToDimension(entityPlayerMP, colonyDimension, new Teleporter(worldServer));
             if (dimension == 1)
             {
-                worldServer.spawnEntity(playerToTeleport);
+                worldServer.addEntity(playerToTeleport);
                 worldServer.updateEntityWithOptionalForce(playerToTeleport, false);
             }
         }

@@ -143,9 +143,9 @@ public final class ItemStackUtils
             {
                 items.addAll(ChiselAndBitsCheck.getBitStacks(tileEntity));
             }
-            else if (tileEntity instanceof TileEntityBed)
+            else if (tileEntity instanceof BedTileEntity)
             {
-                items.add(new ItemStack(Items.BED, 1, ((TileEntityBed) tileEntity).getColor().getMetadata()));
+                items.add(new ItemStack(Items.BED, 1, ((BedTileEntity) tileEntity).getColor().getMetadata()));
             }
             else if (tileEntity instanceof TileEntityBanner)
             {

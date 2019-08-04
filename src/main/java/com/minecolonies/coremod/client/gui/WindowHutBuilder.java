@@ -17,7 +17,7 @@ import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +69,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         if (newView instanceof BuildingBuilder.View)
         {
             final BuildingBuilder.View updatedView = (BuildingBuilder.View) newView;
-            final InventoryPlayer inventory = this.mc.player.inventory;
+            final PlayerInventory inventory = this.mc.player.inventory;
             final boolean isCreative = this.mc.player.capabilities.isCreativeMode;
 
             resources.clear();
@@ -189,7 +189,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount() - resource.getAvailable()));
 
         final ItemStack stack = new ItemStack(resource.getItem(), 1, resource.getDamageValue());
-        stack.putCompound(resource.getItemStack().getTagCompound());
+        stack.put(resource.getItemStack().getTag());
         rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(stack);
     }
 
@@ -239,7 +239,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
             // and use quantity for the size
             @NotNull final ItemStack itemStack = new ItemStack(res.getItem(), 1, res.getDamageValue());
-            itemStack.putCompound(res.getItemStack().getTagCompound());
+            itemStack.put(res.getItemStack().getTag());
             final Label quantityLabel = pane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class);
             final int quantity = Integer.parseInt(quantityLabel.getLabelText());
             MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, itemStack, quantity, true));

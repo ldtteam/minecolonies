@@ -43,8 +43,8 @@ public final class CompatibilityUtils
      * @param world         The world which we are spawning the entity in.
      * @param entityToSpawn The entity which we are spawning.
      */
-    public static void spawnEntity(final World world, final Entity entityToSpawn)
+    public static void addEntity(final World world, final Entity entityToSpawn)
     {
-        world.spawnEntity(entityToSpawn);
+        world.addEntity(entityToSpawn);
     }
 }

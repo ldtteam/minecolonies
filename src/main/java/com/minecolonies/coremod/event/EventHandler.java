@@ -298,13 +298,13 @@ public class EventHandler
             final ItemStack itemstack = event.getPlayer().getHeldItem(EnumHand.MAIN_HAND);
             if (!itemstack.hasTagCompound())
             {
-                itemstack.putCompound(new CompoundNBT());
+                itemstack.put(new CompoundNBT());
             }
-            final CompoundNBT compound = itemstack.getTagCompound();
+            final CompoundNBT compound = itemstack.getTag();
 
             BlockPosUtil.write(compound, FIRST_POS_STRING, event.getPos());
             LanguageHandler.sendPlayerMessage(event.getPlayer(), "item.scepterSteel.point", event.getPos().getX(), event.getPos().getY(), event.getPos().getZ());
-            itemstack.putCompound(compound);
+            itemstack.put(compound);
 
             event.setCanceled(true);
         }
@@ -356,7 +356,7 @@ public class EventHandler
 
                 final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, bedBlockPos);
                 //Checks to see if player tries to sleep in a bed belonging to a Citizen, ancels the event, and Notifies Player that bed is occuppied
-                if (colony != null && world.getBlockState(event.getPos()).getPropertyKeys().contains(BlockBed.PART))
+                if (colony != null && world.getBlockState(event.getPos()).getProperties().contains(BlockBed.PART))
                 {
                     final List<ICitizenData> citizenList = colony.getCitizenManager().getCitizens();
                     if (world.getBlockState(event.getPos()).getBlock().isBedFoot(world, event.getPos()))

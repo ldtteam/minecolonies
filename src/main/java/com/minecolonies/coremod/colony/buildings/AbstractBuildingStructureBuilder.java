@@ -138,7 +138,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             final CompoundNBT neededRes = neededResTagList.getCompound(i);
             final ItemStack stack = new ItemStack(neededRes);
             final BuildingBuilderResource resource = new BuildingBuilderResource(stack, ItemStackUtils.getSize(stack));
-            final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
+            final int hashCode = stack.hasTagCompound() ? stack.getTag().hashCode() : 0;
             neededResources.put(stack.getTranslationKey() + ":" + stack.getItemDamage() + "-" + hashCode, resource);
         }
 
@@ -159,7 +159,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         {
             @NotNull final CompoundNBT neededRes = new CompoundNBT();
             final ItemStack itemStack = new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
-            itemStack.putCompound(resource.getItemStack().getTagCompound());
+            itemStack.put(resource.getItemStack().getTag());
             itemStack.write(neededRes);
 
             neededResTagList.add(neededRes);
@@ -300,7 +300,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         {
             return;
         }
-        final int hashCode = res.hasTagCompound() ? res.getTagCompound().hashCode() : 0;
+        final int hashCode = res.hasTagCompound() ? res.getTag().hashCode() : 0;
         BuildingBuilderResource resource = this.neededResources.get(res.getTranslationKey() + ":" + res.getItemDamage() + "-" + hashCode);
         if (resource == null)
         {
@@ -322,7 +322,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      */
     public void reduceNeededResource(final ItemStack res, final int amount)
     {
-        final int hashCode = res.hasTagCompound() ? res.getTagCompound().hashCode() : 0;
+        final int hashCode = res.hasTagCompound() ? res.getTag().hashCode() : 0;
         int preAmount = 0;
         final String name = res.getTranslationKey() + ":" + res.getItemDamage() + "-" + hashCode;
         if (this.neededResources.containsKey(name))
@@ -358,7 +358,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
      */
     public boolean requiresResourceForBuilding(final ItemStack stack)
     {
-        final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;
+        final int hashCode = stack.hasTagCompound() ? stack.getTag().hashCode() : 0;
         return neededResources.containsKey(stack.getTranslationKey() + ":" + stack.getItemDamage() + "-" + hashCode);
     }
 

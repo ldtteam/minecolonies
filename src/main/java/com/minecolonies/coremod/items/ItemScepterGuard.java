@@ -69,9 +69,9 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         final ItemStack scepter = playerIn.getHeldItem(hand);
         if (!scepter.hasTagCompound())
         {
-            scepter.putCompound(new CompoundNBT());
+            scepter.put(new CompoundNBT());
         }
-        final CompoundNBT compound = scepter.getTagCompound();
+        final CompoundNBT compound = scepter.getTag();
 
         if (compound.keySet().contains(TAG_LAST_POS))
         {
@@ -93,9 +93,9 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         final ItemStack stack = playerIn.getHeldItem(hand);
         if (!stack.hasTagCompound())
         {
-            stack.putCompound(new CompoundNBT());
+            stack.put(new CompoundNBT());
         }
-        final CompoundNBT compound = stack.getTagCompound();
+        final CompoundNBT compound = stack.getTag();
 
         if (worldIn.isRemote && compound != null)
         {

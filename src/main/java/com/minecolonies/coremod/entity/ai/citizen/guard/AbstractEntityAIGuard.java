@@ -20,8 +20,8 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.LivingEntityBase;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -82,7 +82,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     /**
      * The current target for our guard.
      */
-    protected EntityLivingBase target = null;
+    protected LivingEntityBase target = null;
 
     /**
      * The current blockPos we're patrolling at.
@@ -274,7 +274,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      * @param citizen  the citizen to help.
      * @param attacker the citizens attacker.
      */
-    public void startHelpCitizen(final EntityCitizen citizen, final EntityLivingBase attacker)
+    public void startHelpCitizen(final EntityCitizen citizen, final LivingEntityBase attacker)
     {
         if (canHelp())
         {
@@ -440,7 +440,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      *
      * @return The next IAIState to go to.
      */
-    protected EntityLivingBase getTarget()
+    protected LivingEntityBase getTarget()
     {
         reduceAttackDelay(1);
 
@@ -475,7 +475,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 {
                     if (citizen.getCitizenEntity().isPresent())
                     {
-                        final EntityLivingBase entity = citizen.getCitizenEntity().get().getLastAttackedEntity();
+                        final LivingEntityBase entity = citizen.getCitizenEntity().get().getLastAttackedEntity();
                         if (entity instanceof AbstractEntityMinecoloniesMob && worker.canEntityBeSeen(entity))
                         {
                             return entity;
@@ -493,7 +493,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 }
             }
 
-            final List<EntityLivingBase> targets = world.getEntitiesWithinAABB(EntityLivingBase.class, getSearchArea(),
+            final List<LivingEntityBase> targets = world.getEntitiesWithinAABB(LivingEntityBase.class, getSearchArea(),
               entity -> buildingGuards.getMobsToAttack()
                           .stream()
                           .filter(MobEntryView::hasAttack)
@@ -501,8 +501,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
 
             int closest = Integer.MAX_VALUE;
-            EntityLivingBase targetEntity = null;
-            for (final EntityLivingBase entity : targets)
+            LivingEntityBase targetEntity = null;
+            for (final LivingEntityBase entity : targets)
             {
                 if (worker.canEntityBeSeen(entity) && isWithinPersecutionDistance(entity.getPosition()))
                 {

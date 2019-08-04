@@ -25,7 +25,7 @@ import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -95,7 +95,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
     /**
      * Inventory of the player.
      */
-    private final InventoryPlayer inventory = this.mc.player.inventory;
+    private final PlayerInventory inventory = this.mc.player.inventory;
 
     /**
      * Is the player in creative or not.

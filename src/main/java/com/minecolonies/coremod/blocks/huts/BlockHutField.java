@@ -9,9 +9,9 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.entity.LivingEntityBase;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -163,14 +163,14 @@ public class BlockHutField extends AbstractBlockMinecoloniesBlockHutField<BlockH
                                              final float hitY,
                                              final float hitZ,
                                              final int meta,
-                                             final EntityLivingBase placer)
+                                             final LivingEntityBase placer)
     {
         @NotNull final Direction Direction = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, Direction);
     }
 
     @Override
-    public void onBlockPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final BlockState state, final EntityLivingBase placer, final ItemStack stack)
+    public void onBlockPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntityBase placer, final ItemStack stack)
     {
         //Only work on server side.
         if (worldIn.isRemote)

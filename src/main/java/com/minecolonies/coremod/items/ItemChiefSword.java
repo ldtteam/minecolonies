@@ -6,8 +6,8 @@ import com.minecolonies.api.entity.mobs.util.BarbarianUtils;
 import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.LivingEntityBase;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.potion.PotionEffect;
@@ -46,7 +46,7 @@ public class ItemChiefSword extends SwordItem implements IChiefSwordItem
     }
 
     @Override
-    public boolean hitEntity(final ItemStack stack, final EntityLivingBase target, @NotNull final EntityLivingBase attacker)
+    public boolean hitEntity(final ItemStack stack, final LivingEntityBase target, @NotNull final LivingEntityBase attacker)
     {
         if (attacker instanceof PlayerEntity && target instanceof AbstractEntityBarbarian)
         {

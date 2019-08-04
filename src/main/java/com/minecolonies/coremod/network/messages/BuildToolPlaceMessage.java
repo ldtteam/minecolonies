@@ -214,7 +214,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                 if (slot != -1)
                 {
                     final ItemStack stack = player.inventory.getStackInSlot(slot);
-                    final CompoundNBT compound = stack.getTagCompound();
+                    final CompoundNBT compound = stack.getTag();
                     if (compound != null)
                     {
                         if (compound.keySet().contains(TAG_OTHER_LEVEL))

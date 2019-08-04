@@ -18,7 +18,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -47,7 +47,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     /**
      * Inventory of the player.
      */
-    private final InventoryPlayer inventory = this.mc.player.inventory;
+    private final PlayerInventory inventory = this.mc.player.inventory;
 
     /**
      * Is the player in creative or not.

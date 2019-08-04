@@ -13,7 +13,7 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntityBase;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
@@ -62,7 +62,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
     /**
      * The current target for our guard.
      */
-    protected EntityLivingBase target = null;
+    protected LivingEntityBase target = null;
 
     /**
      * The value of the speed which the guard will move.
