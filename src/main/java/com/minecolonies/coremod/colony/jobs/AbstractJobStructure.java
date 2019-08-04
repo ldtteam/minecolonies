@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -91,24 +91,24 @@ public abstract class AbstractJobStructure extends AbstractJob
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = super.serializeNBT();
+        final CompoundNBT compound = super.serializeNBT();
         if (workOrderId != 0)
         {
-            compound.setInteger(TAG_WORK_ORDER, workOrderId);
+            compound.putInt(TAG_WORK_ORDER, workOrderId);
         }
 
         return compound;
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        if (compound.hasKey(TAG_WORK_ORDER))
+        if (compound.keySet().contains(TAG_WORK_ORDER))
         {
-            workOrderId = compound.getInteger(TAG_WORK_ORDER);
+            workOrderId = compound.getInt(TAG_WORK_ORDER);
         }
     }
 

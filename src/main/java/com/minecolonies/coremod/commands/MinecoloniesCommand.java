@@ -55,7 +55,7 @@ public class MinecoloniesCommand extends AbstractSplitCommand
      * @param player the player executing.
      * @return true if should be able to.
      */
-    public static boolean canExecuteCommand(@NotNull final EntityPlayer player)
+    public static boolean canExecuteCommand(@NotNull final PlayerEntity player)
     {
         if (Configurations.gameplay.teleportBuffer == 0 || AbstractSingleCommand.isPlayerOpped(player))
         {

@@ -9,8 +9,8 @@ import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.fisherman.EntityAIWorkFisherman;
 import net.minecraft.entity.monster.EntityGuardian;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -58,25 +58,25 @@ public class JobFisherman extends AbstractJob
     }
 
     /**
-     * Restore the Job from an NBTTagCompound.
+     * Restore the Job from an CompoundNBT.
      *
-     * @param compound NBTTagCompound containing saved Job data.
+     * @param compound CompoundNBT containing saved Job data.
      */
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         super.readFromNBT(compound);
 
-        if (compound.hasKey(TAG_WATER))
+        if (compound.keySet().contains(TAG_WATER))
         {
             water = BlockPosUtil.readFromNBT(compound, TAG_WATER);
         }
 
         ponds = new ArrayList<>();
-        final NBTTagList listOfPonds = compound.getTagList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT listOfPonds = compound.getTagList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < listOfPonds.tagCount(); i++)
         {
-            ponds.add(BlockPosUtil.readFromNBTTagList(listOfPonds, i));
+            ponds.add(BlockPosUtil.readFromListNBT(listOfPonds, i));
         }
     }
 
@@ -105,52 +105,52 @@ public class JobFisherman extends AbstractJob
     }
 
     /**
-     * Save the Job to an NBTTagCompound.
+     * Save the Job to an CompoundNBT.
      *
-     * @param compound NBTTagCompound to save the Job to.
+     * @param compound CompoundNBT to save the Job to.
      */
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
 
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = super.serializeNBT();
+        final CompoundNBT compound = super.serializeNBT();
 
-        @NotNull final NBTTagCompound waterTag = new NBTTagCompound();
+        @NotNull final CompoundNBT waterTag = new CompoundNBT();
         if (water != null)
         {
             BlockPosUtil.writeToNBT(waterTag, TAG_WATER, water);
         }
 
-        @NotNull final NBTTagList lakes = new NBTTagList();
+        @NotNull final ListNBT lakes = new ListNBT();
         for (@NotNull final BlockPos pond : ponds)
         {
-            BlockPosUtil.writeToNBTTagList(lakes, pond);
+            BlockPosUtil.writeToListNBT(lakes, pond);
         }
-        compound.setTag(TAG_PONDS, lakes);
+        compound.put(TAG_PONDS, lakes);
 
         return compound;
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         super.readFromNBT(compound);
 
-        if (compound.hasKey(TAG_WATER))
+        if (compound.keySet().contains(TAG_WATER))
         {
             water = BlockPosUtil.readFromNBT(compound, TAG_WATER);
         }
 
         ponds = new ArrayList<>();
-        final NBTTagList listOfPonds = compound.getTagList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT listOfPonds = compound.getTagList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < listOfPonds.tagCount(); i++)
         {
-            ponds.add(BlockPosUtil.readFromNBTTagList(listOfPonds, i));
+            ponds.add(BlockPosUtil.readFromListNBT(listOfPonds, i));
         }
     }
 

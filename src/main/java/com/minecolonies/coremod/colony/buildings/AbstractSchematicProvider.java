@@ -8,7 +8,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
 import com.minecolonies.coremod.util.BuildingUtils;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -79,9 +79,9 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = new NBTTagCompound();
+        final CompoundNBT compound = new CompoundNBT();
         final String s = BuildingRegistry.getNameToClassMap().inverse().get(this.getClass());
 
         if (s == null)
@@ -90,37 +90,37 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         }
         else
         {
-            compound.setString(TAG_BUILDING_TYPE, s);
+            compound.putString(TAG_BUILDING_TYPE, s);
             BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
             final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
             if (Structures.hasMD5(structureName))
             {
-                compound.setString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName.toString()));
+                compound.putString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName.toString()));
             }
         }
 
-        compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
-        compound.setInteger(TAG_ROTATION, rotation);
-        compound.setString(TAG_STYLE, style);
+        compound.putInt(TAG_BUILDING_LEVEL, buildingLevel);
+        compound.putInt(TAG_ROTATION, rotation);
+        compound.putString(TAG_STYLE, style);
 
-        compound.setBoolean(TAG_MIRROR, isBuildingMirrored);
+        compound.putBoolean(TAG_MIRROR, isBuildingMirrored);
 
-        compound.setInteger(TAG_CORNER1, this.cornerX1);
-        compound.setInteger(TAG_CORNER2, this.cornerX2);
-        compound.setInteger(TAG_CORNER3, this.cornerZ1);
-        compound.setInteger(TAG_CORNER4, this.cornerZ2);
+        compound.putInt(TAG_CORNER1, this.cornerX1);
+        compound.putInt(TAG_CORNER2, this.cornerX2);
+        compound.putInt(TAG_CORNER3, this.cornerZ1);
+        compound.putInt(TAG_CORNER4, this.cornerZ2);
 
-        compound.setInteger(TAG_HEIGHT, this.height);
+        compound.putInt(TAG_HEIGHT, this.height);
 
         return compound;
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
-        buildingLevel = compound.getInteger(TAG_BUILDING_LEVEL);
+        buildingLevel = compound.getInt(TAG_BUILDING_LEVEL);
 
-        rotation = compound.getInteger(TAG_ROTATION);
+        rotation = compound.getInt(TAG_ROTATION);
         style = compound.getString(TAG_STYLE);
 
         final String md5 = compound.getString(TAG_SCHEMATIC_MD5);
@@ -148,17 +148,17 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
 
         isBuildingMirrored = compound.getBoolean(TAG_MIRROR);
 
-        if (compound.hasKey(TAG_CORNER1))
+        if (compound.keySet().contains(TAG_CORNER1))
         {
-            this.cornerX1 = compound.getInteger(TAG_CORNER1);
-            this.cornerX2 = compound.getInteger(TAG_CORNER2);
-            this.cornerZ1 = compound.getInteger(TAG_CORNER3);
-            this.cornerZ2 = compound.getInteger(TAG_CORNER4);
+            this.cornerX1 = compound.getInt(TAG_CORNER1);
+            this.cornerX2 = compound.getInt(TAG_CORNER2);
+            this.cornerZ1 = compound.getInt(TAG_CORNER3);
+            this.cornerZ2 = compound.getInt(TAG_CORNER4);
         }
 
-        if (compound.hasKey(TAG_HEIGHT))
+        if (compound.keySet().contains(TAG_HEIGHT))
         {
-            this.height = compound.getInteger(TAG_HEIGHT);
+            this.height = compound.getInt(TAG_HEIGHT);
         }
     }
 

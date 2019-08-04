@@ -92,7 +92,7 @@ public class ContainerField extends Container
 
     @Nullable
     @Override
-    public ItemStack transferStackInSlot(@NotNull final EntityPlayer playerIn, final int slotIndex)
+    public ItemStack transferStackInSlot(@NotNull final PlayerEntity playerIn, final int slotIndex)
     {
         if (slotIndex == 0)
         {
@@ -117,7 +117,7 @@ public class ContainerField extends Container
     }
 
     @Override
-    public boolean canInteractWith(@NotNull final EntityPlayer playerIn)
+    public boolean canInteractWith(@NotNull final PlayerEntity playerIn)
     {
         return colony.getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS);
     }

@@ -97,7 +97,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
             currentRecipeStorage = crusherBuilding.getCurrentRecipe();
         }
 
-        if ((getState() != CRAFT && crusherBuilding.getCurrentDailyQuantity() >= crusherBuilding.getCrusherMode().getSecond()) || currentRecipeStorage == null)
+        if ((getState() != CRAFT && crusherBuilding.getCurrentDailyQuantity() >= crusherBuilding.getCrusherMode().getB()) || currentRecipeStorage == null)
         {
             return START_WORKING;
         }
@@ -112,7 +112,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
                 if (getState() != CRAFT)
                 {
                     crusherBuilding.setCurrentDailyQuantity(crusherBuilding.getCurrentDailyQuantity() + 1);
-                    if (crusherBuilding.getCurrentDailyQuantity() >= crusherBuilding.getCrusherMode().getSecond())
+                    if (crusherBuilding.getCurrentDailyQuantity() >= crusherBuilding.getCrusherMode().getB())
                     {
                         incrementActionsDoneAndDecSaturation();
                     }
@@ -126,7 +126,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
             else if (getState() != CRAFT)
             {
                 currentRecipeStorage = crusherBuilding.getCurrentRecipe();
-                final int requestQty = Math.min((crusherBuilding.getCrusherMode().getSecond() - crusherBuilding.getCurrentDailyQuantity()) * 2, STACKSIZE);
+                final int requestQty = Math.min((crusherBuilding.getCrusherMode().getB() - crusherBuilding.getCurrentDailyQuantity()) * 2, STACKSIZE);
                 if (requestQty <= 0)
                 {
                     return START_WORKING;

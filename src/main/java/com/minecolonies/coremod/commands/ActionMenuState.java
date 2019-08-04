@@ -182,7 +182,7 @@ public class ActionMenuState
         }
     }
 
-    public Integer getIntegerForArgument(@NotNull final String argumentName)
+    public Integer getIntForArgument(@NotNull final String argumentName)
     {
         for (final ActionArgument actionArgument : getAllArgumentsList())
         {
@@ -236,7 +236,7 @@ public class ActionMenuState
 
     public int getIntValueForArgument(@NotNull final String argumentName, final int defaultValue)
     {
-        final Integer integerObject = getIntegerForArgument(argumentName);
+        final Integer integerObject = getIntForArgument(argumentName);
         if (null != integerObject)
         {
             return integerObject.intValue();

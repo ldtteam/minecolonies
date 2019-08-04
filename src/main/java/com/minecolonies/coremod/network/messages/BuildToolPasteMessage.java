@@ -22,12 +22,12 @@ import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.Mirror;
@@ -58,7 +58,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
     /**
      * The state at the offset position.
      */
-    private IBlockState state;
+    private BlockState state;
 
     private boolean                  complete;
     private String                   structureName;
@@ -100,7 +100,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
       final String workOrderName, final BlockPos pos,
       final int rotation, final boolean isHut,
       final Mirror mirror, final boolean complete,
-      final WindowBuildTool.FreeMode freeMode, final IBlockState state)
+      final WindowBuildTool.FreeMode freeMode, final BlockState state)
     {
         super();
         this.structureName = structureName;
@@ -176,7 +176,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
             buf.writeInt(freeMode.ordinal());
         }
 
-        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new NBTTagCompound(), state));
+        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new CompoundNBT(), state));
     }
 
     @Override
@@ -261,9 +261,9 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      * @param state         The state of the hut.
      */
     private static void handleHut(
-                                   @NotNull final World world, @NotNull final EntityPlayer player,
+                                   @NotNull final World world, @NotNull final PlayerEntity player,
                                    final StructureName sn,
-                                   final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final IBlockState state)
+                                   final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockState state)
     {
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (tempColony != null
@@ -295,7 +295,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
      * @param mirror        Whether or not the strcture is mirrored.
      */
     private static void setupBuilding(
-                                       @NotNull final World world, @NotNull final EntityPlayer player,
+                                       @NotNull final World world, @NotNull final PlayerEntity player,
                                        final StructureName sn,
                                        final int rotation, @NotNull final BlockPos buildPos, final boolean mirror)
     {
@@ -347,7 +347,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
                   workOrder.getRotation(world),
                   workOrder.isMirrored());
 
-                building.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
+                building.setCorners(corners.getA().getA(), corners.getA().getB(), corners.getB().getA(), corners.getB().getB());
                 building.setHeight(wrapper.getHeight());
             }
 

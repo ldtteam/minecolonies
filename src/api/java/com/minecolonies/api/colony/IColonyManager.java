@@ -7,7 +7,7 @@ import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -33,7 +33,7 @@ public interface IColonyManager
      * @param player the player that creates the colony - owner.
      * @param style  the default style of the colony.
      */
-    void createColony(@NotNull World w, BlockPos pos, @NotNull EntityPlayer player, @NotNull String style);
+    void createColony(@NotNull World w, BlockPos pos, @NotNull PlayerEntity player, @NotNull String style);
 
     /**
      * Delete the colony in a world.
@@ -198,7 +198,7 @@ public interface IColonyManager
      * @return IColony belonging to specific player.
      */
     @Nullable
-    IColony getIColonyByOwner(@NotNull World w, @NotNull EntityPlayer owner);
+    IColony getIColonyByOwner(@NotNull World w, @NotNull PlayerEntity owner);
 
     /**
      * Side neutral method to get colony.
@@ -235,14 +235,14 @@ public interface IColonyManager
      *
      * @param compound NBT-Tag.
      */
-    void writeToNBT(@NotNull NBTTagCompound compound);
+    void writeToNBT(@NotNull CompoundNBT compound);
 
     /**
      * Read Colonies from saved NBT data.
      *
      * @param compound NBT Tag.
      */
-    void readFromNBT(@NotNull NBTTagCompound compound, @NotNull World world);
+    void readFromNBT(@NotNull CompoundNBT compound, @NotNull World world);
 
     /**
      * On Client tick, clears views when player left.

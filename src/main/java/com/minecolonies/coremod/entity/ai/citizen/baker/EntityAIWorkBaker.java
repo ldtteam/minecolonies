@@ -11,8 +11,8 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import net.minecraft.block.BlockFurnace;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
@@ -402,7 +402,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             return BAKER_BAKING;
         }
 
-        final IBlockState furnace = world.getBlockState(currentFurnace);
+        final BlockState furnace = world.getBlockState(currentFurnace);
         final List<BakingProduct> bakingProducts = building.getTasks().get(ProductState.PREPARED);
         if (!(furnace.getBlock() instanceof BlockFurnace))
         {

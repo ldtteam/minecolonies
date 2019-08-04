@@ -67,10 +67,10 @@ public final class BuildingUtils
         else
         {
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = building.getCorners();
-            x1 = corners.getFirst().getFirst();
-            x3 = corners.getFirst().getSecond();
-            z1 = corners.getSecond().getFirst();
-            z3 = corners.getSecond().getSecond();
+            x1 = corners.getA().getA();
+            x3 = corners.getA().getB();
+            z1 = corners.getB().getA();
+            z3 = corners.getB().getB();
             y3 = location.getY() + building.getHeight();
         }
 

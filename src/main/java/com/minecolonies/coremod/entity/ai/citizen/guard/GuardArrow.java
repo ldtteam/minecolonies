@@ -7,7 +7,7 @@ import com.minecolonies.coremod.achievements.ModAchievements;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityTippedArrow;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
 
 /**
@@ -41,17 +41,17 @@ public class GuardArrow extends EntityTippedArrow
     }
 
     @Override
-    public void writeEntityToNBT(final NBTTagCompound compound)
+    public void writeEntityToNBT(final CompoundNBT compound)
     {
         super.writeEntityToNBT(compound);
-        compound.setInteger(TAG_COLONY, colony.getID());
+        compound.putInt(TAG_COLONY, colony.getID());
     }
 
     @Override
-    public void readEntityFromNBT(final NBTTagCompound compound)
+    public void readEntityFromNBT(final CompoundNBT compound)
     {
         super.readEntityFromNBT(compound);
-        final int colonyID = compound.getInteger(TAG_COLONY);
+        final int colonyID = compound.getInt(TAG_COLONY);
         colony = IColonyManager.getInstance().getColonyByWorld(colonyID, world);
     }
 
@@ -63,7 +63,7 @@ public class GuardArrow extends EntityTippedArrow
         {
             if (targetEntity instanceof EntityPlayer)
             {
-                final EntityPlayer player = (EntityPlayer) targetEntity;
+                final PlayerEntity player = (EntityPlayer) targetEntity;
                 if (colony.getPermissions().isColonyMember(player))
                 {
                     this.colony.getStatsManager().triggerAchievement(ModAchievements.achievementPlayerDeathGuard);

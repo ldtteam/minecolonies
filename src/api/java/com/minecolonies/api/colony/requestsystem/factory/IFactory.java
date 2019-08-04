@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony.requestsystem.factory;
 
 import com.google.common.reflect.TypeToken;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -49,7 +49,7 @@ public interface IFactory<Input, Output>
      * @return The serialized data of the given requets.
      */
     @NotNull
-    NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull Output output);
+    CompoundNBT serialize(@NotNull IFactoryController controller, @NotNull Output output);
 
     /**
      * Method to deserialize a given constructable.
@@ -59,5 +59,5 @@ public interface IFactory<Input, Output>
      * @return The request that corresponds with the given data in the nbt
      */
     @NotNull
-    Output deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt) throws Throwable;
+    Output deserialize(@NotNull IFactoryController controller, @NotNull CompoundNBT nbt) throws Throwable;
 }

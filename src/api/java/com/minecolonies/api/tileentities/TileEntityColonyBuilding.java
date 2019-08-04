@@ -13,12 +13,12 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -223,23 +223,23 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     @Override
     public SPacketUpdateTileEntity getUpdatePacket()
     {
-        final NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger(TAG_COLONY, colonyId);
+        final CompoundNBT compound = new CompoundNBT();
+        compound.putInt(TAG_COLONY, colonyId);
         return new SPacketUpdateTileEntity(this.getPosition(), 0, compound);
     }
 
     @NotNull
     @Override
-    public NBTTagCompound getUpdateTag()
+    public CompoundNBT getUpdateTag()
     {
-        return writeToNBT(new NBTTagCompound());
+        return writeToNBT(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
     {
-        final NBTTagCompound compound = packet.getNbtCompound();
-        colonyId = compound.getInteger(TAG_COLONY);
+        final CompoundNBT compound = packet.getNbtCompound();
+        colonyId = compound.getInt(TAG_COLONY);
     }
 
     @Override
@@ -300,12 +300,12 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     }
 
     @Override
-    public void readFromNBT(final NBTTagCompound compound)
+    public void readFromNBT(final CompoundNBT compound)
     {
         super.readFromNBT(compound);
-        if (compound.hasKey(TAG_COLONY))
+        if (compound.keySet().contains(TAG_COLONY))
         {
-            colonyId = compound.getInteger(TAG_COLONY);
+            colonyId = compound.getInt(TAG_COLONY);
         }
 
         updateColonyReferences();
@@ -315,12 +315,12 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
 
     @NotNull
     @Override
-    public NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound)
+    public CompoundNBT writeToNBT(@NotNull final CompoundNBT compound)
     {
         super.writeToNBT(compound);
-        compound.setInteger(TAG_COLONY, colonyId);
-        compound.setBoolean(TAG_MIRROR, mirror);
-        compound.setString(TAG_STYLE, style);
+        compound.putInt(TAG_COLONY, colonyId);
+        compound.putBoolean(TAG_MIRROR, mirror);
+        compound.putString(TAG_STYLE, style);
         return compound;
     }
 
@@ -346,7 +346,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     }
 
     @Override
-    public boolean isUsableByPlayer(final EntityPlayer player)
+    public boolean isUsableByPlayer(final PlayerEntity player)
     {
         return super.isUsableByPlayer(player) && this.hasAccessPermission(player);
     }
@@ -358,7 +358,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
      * @return True when player has access, or building doesn't exist, otherwise false.
      */
     @Override
-    public boolean hasAccessPermission(final EntityPlayer player)
+    public boolean hasAccessPermission(final PlayerEntity player)
     {
         //TODO This is called every tick the GUI is open. Is that bad?
         return building == null || building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS);
@@ -409,7 +409,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     }
 
     @Override
-    public boolean hasCapability(@NotNull final Capability<?> capability, final EnumFacing facing)
+    public boolean hasCapability(@NotNull final Capability<?> capability, final Direction facing)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
@@ -419,7 +419,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     }
 
     @Override
-    public <T> T getCapability(@NotNull final Capability<T> capability, final EnumFacing facing)
+    public <T> T getCapability(@NotNull final Capability<T> capability, final Direction facing)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getBuilding() != null)
         {

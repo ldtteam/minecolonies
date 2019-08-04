@@ -2,7 +2,7 @@ package com.minecolonies.api.compatibility.candb;
 
 import mod.chiselsandbits.api.*;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 
 @ChiselsAndBitsAddon

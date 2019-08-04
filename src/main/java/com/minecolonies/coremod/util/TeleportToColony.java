@@ -54,7 +54,7 @@ public final class TeleportToColony
     @NotNull
     public static void colonyTeleport(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args)
     {
-        final EntityPlayer playerToTeleport;
+        final PlayerEntity playerToTeleport;
         final IColony colony;
         final int colonyId;
         final Entity senderEntity = sender.getCommandSenderEntity();
@@ -101,7 +101,7 @@ public final class TeleportToColony
      * @param colID            the senders colony ID.
      * @param playerToTeleport the player which shall be teleported.
      */
-    private static void teleportPlayer(final EntityPlayer playerToTeleport, final int colID, final ICommandSender sender)
+    private static void teleportPlayer(final PlayerEntity playerToTeleport, final int colID, final ICommandSender sender)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByWorld(colID, FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0));
         final ITownHall townHall = colony.getBuildingManager().getTownHall();

@@ -465,7 +465,7 @@ public enum ActionArgumentType
         if (null != result)
         {
             int colonyNumber = result.intValue();
-            if (sender instanceof EntityPlayer && colonyNumber == -1)
+            if (sender instanceof PlayerEntity && colonyNumber == -1)
             {
                 final IColony icolony = mineColonyDataProvider.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
                 if (icolony != null)

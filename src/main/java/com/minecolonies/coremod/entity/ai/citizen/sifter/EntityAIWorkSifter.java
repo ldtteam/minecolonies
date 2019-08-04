@@ -166,14 +166,14 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
                 }
 
                 final ItemStack result =
-                  IColonyManager.getInstance().getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getFirst(), sifterBuilding.getSievableBlock());
+                  IColonyManager.getInstance().getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getA(), sifterBuilding.getSievableBlock());
                 if (!result.isEmpty())
                 {
                     InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), result);
                 }
                 InventoryUtils.reduceStackInItemHandler(new InvWrapper(worker.getInventoryCitizen()), sifterBuilding.getSievableBlock().getItemStack());
 
-                if (worker.getRandom().nextDouble() * 100 < sifterBuilding.getMesh().getSecond())
+                if (worker.getRandom().nextDouble() * 100 < sifterBuilding.getMesh().getB())
                 {
                     sifterBuilding.resetMesh();
                     worker.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.sifter.meshBroke"));
@@ -192,7 +192,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
         if (check == SIFT)
         {
             MineColonies.getNetwork()
-              .sendToAllTracking(new LocalizedParticleEffectMessage(sifterBuilding.getMesh().getFirst().getItemStack().copy(), sifterBuilding.getID()), worker);
+              .sendToAllTracking(new LocalizedParticleEffectMessage(sifterBuilding.getMesh().getA().getItemStack().copy(), sifterBuilding.getID()), worker);
             MineColonies.getNetwork()
               .sendToAllTracking(new LocalizedParticleEffectMessage(sifterBuilding.getSievableBlock().getItemStack().copy(), sifterBuilding.getID().down()), worker);
 

@@ -21,8 +21,8 @@ import com.minecolonies.coremod.network.messages.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveCitizenMessage;
 import com.minecolonies.coremod.network.messages.HappinessDataMessage;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -78,9 +78,9 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
-        maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
+        maxCitizens = compound.getInt(TAG_MAX_CITIZENS);
 
         //  Citizens before Buildings, because Buildings track the Citizens
         citizens.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_CITIZENS, Constants.NBT.TAG_COMPOUND))
@@ -88,7 +88,7 @@ public class CitizenManager implements ICitizenManager
                           .collect(Collectors.toMap(ICitizenData::getId, Function.identity())));
     }
 
-    private ICitizenData deserializeCitizen(@NotNull final NBTTagCompound compound)
+    private ICitizenData deserializeCitizen(@NotNull final CompoundNBT compound)
     {
         final ICitizenData data = ICitizenDataManager.getInstance().createFromNBT(compound, colony);
         topCitizenId = Math.max(topCitizenId, data.getId());
@@ -96,12 +96,12 @@ public class CitizenManager implements ICitizenManager
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
-        compound.setInteger(TAG_MAX_CITIZENS, maxCitizens);
+        compound.putInt(TAG_MAX_CITIZENS, maxCitizens);
 
-        @NotNull final NBTTagList citizenTagList = citizens.values().stream().map(citizen -> citizen.writeToNBT(new NBTTagCompound())).collect(NBTUtils.toNBTTagList());
-        compound.setTag(TAG_CITIZENS, citizenTagList);
+        @NotNull final ListNBT citizenTagList = citizens.values().stream().map(citizen -> citizen.writeToNBT(new CompoundNBT())).collect(NBTUtils.toListNBT());
+        compound.put(TAG_CITIZENS, citizenTagList);
     }
 
     @Override

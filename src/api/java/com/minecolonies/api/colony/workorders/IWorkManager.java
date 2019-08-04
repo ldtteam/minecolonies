@@ -2,7 +2,7 @@ package com.minecolonies.api.colony.workorders;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -88,14 +88,14 @@ public interface IWorkManager
      *
      * @param compound Compound to save to.
      */
-    void writeToNBT(@NotNull NBTTagCompound compound);
+    void writeToNBT(@NotNull CompoundNBT compound);
 
     /**
      * Restore the Work Manager.
      *
      * @param compound Compound to read from.
      */
-    void readFromNBT(@NotNull NBTTagCompound compound);
+    void readFromNBT(@NotNull CompoundNBT compound);
 
     /**
      * Adds work order to the work manager.

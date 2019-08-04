@@ -2,7 +2,7 @@ package com.minecolonies.api.compatibility.candb;
 
 import mod.chiselsandbits.api.*;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.Optional;
@@ -34,7 +34,7 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
      * @param blockState the blockState.
      * @return if the blockState is a candb blockState.
      */
-    public static boolean isChiselAndBitsBlock(@NotNull final IBlockState blockState)
+    public static boolean isChiselAndBitsBlock(@NotNull final BlockState blockState)
     {
         return new ChiselAndBitsCheck().checkForChiselAndBitsBlock(blockState);
     }
@@ -52,7 +52,7 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
 
     @Override
     @Optional.Method(modid = CANDB)
-    public boolean checkForChiselAndBitsBlock(@NotNull final IBlockState blockState)
+    public boolean checkForChiselAndBitsBlock(@NotNull final BlockState blockState)
     {
         return blockState.getBlock() instanceof IMultiStateBlock;
     }

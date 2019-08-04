@@ -63,7 +63,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
     }
 
     @Override
-    public boolean canRankUseCommand(@NotNull final IColony colony, @NotNull final EntityPlayer player)
+    public boolean canRankUseCommand(@NotNull final IColony colony, @NotNull final PlayerEntity player)
     {
         return colony.getPermissions().hasPermission(player, Action.TELEPORT_TO_COLONY);
     }
@@ -74,7 +74,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
         IColony colony = actionMenuState.getColonyForArgument("colony");
         if (null == colony)
         {
-            final EntityPlayer player = actionMenuState.getPlayerForArgument("player");
+            final PlayerEntity player = actionMenuState.getPlayerForArgument("player");
             if (player != null)
             {
                 IColony iColony = IColonyManager.getInstance().getIColonyByOwner(server.getEntityWorld(), player);

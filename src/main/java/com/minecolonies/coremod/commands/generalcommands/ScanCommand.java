@@ -41,12 +41,12 @@ public class ScanCommand implements IActionCommand
         final String playerArgument = actionMenuState.getStringForArgument("player");
 
         // Will throw ClassCastException if null, but should never be null as these values are required.
-        final int x1 = actionMenuState.getIntegerForArgument("x1");
-        final int y1 = actionMenuState.getIntegerForArgument("y1");
-        final int z1 = actionMenuState.getIntegerForArgument("z1");
-        final int x2 = actionMenuState.getIntegerForArgument("x2");
-        final int y2 = actionMenuState.getIntegerForArgument("y2");
-        final int z2 = actionMenuState.getIntegerForArgument("z2");
+        final int x1 = actionMenuState.getIntForArgument("x1");
+        final int y1 = actionMenuState.getIntForArgument("y1");
+        final int z1 = actionMenuState.getIntForArgument("z1");
+        final int x2 = actionMenuState.getIntForArgument("x2");
+        final int y2 = actionMenuState.getIntForArgument("y2");
+        final int z2 = actionMenuState.getIntForArgument("z2");
         final String name = actionMenuState.getStringForArgument("name");
 
         if (!name.matches("^[\\w]*"))
@@ -62,7 +62,7 @@ public class ScanCommand implements IActionCommand
             server.addScheduledTask(() ->
             {
                 @Nullable final World world = server.getEntityWorld();
-                final EntityPlayer player;
+                final PlayerEntity player;
                 if (playerArgument != null)
                 {
                     if (playerArgument.equalsIgnoreCase("@p"))

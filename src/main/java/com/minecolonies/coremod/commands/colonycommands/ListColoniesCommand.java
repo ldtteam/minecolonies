@@ -68,8 +68,8 @@ public class ListColoniesCommand extends AbstractSingleCommand implements IActio
 
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        @Nullable final Integer page = actionMenuState.getIntegerForArgument("page");
-        @Nullable final Integer abandonedSinceTimeInHours = actionMenuState.getIntegerForArgument("abandonedSinceTimeInHours");
+        @Nullable final Integer page = actionMenuState.getIntForArgument("page");
+        @Nullable final Integer abandonedSinceTimeInHours = actionMenuState.getIntForArgument("abandonedSinceTimeInHours");
         executeShared(server, sender, page, abandonedSinceTimeInHours);
     }
 

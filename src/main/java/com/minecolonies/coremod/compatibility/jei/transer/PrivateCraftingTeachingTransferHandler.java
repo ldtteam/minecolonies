@@ -46,7 +46,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
     public IRecipeTransferError transferRecipe(
             final CraftingGUIBuilding craftingGUIBuilding,
             final IRecipeLayout recipeLayout,
-            final EntityPlayer entityPlayer,
+            final PlayerEntity entityPlayer,
             final boolean b,
             final boolean b1)
     {
@@ -98,7 +98,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
         final InventoryCrafting craftMatrix = new InventoryCrafting(new Container()
         {
             @Override
-            public boolean canInteractWith(final EntityPlayer entityPlayer)
+            public boolean canInteractWith(final PlayerEntity entityPlayer)
             {
                 return false;
             }

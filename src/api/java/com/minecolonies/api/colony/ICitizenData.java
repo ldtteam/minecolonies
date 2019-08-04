@@ -10,7 +10,7 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHand
 import com.minecolonies.api.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.Random;
 
-public interface ICitizenData extends INBTSerializable<NBTTagCompound>
+public interface ICitizenData extends INBTSerializable<CompoundNBT>
 {
     /**
      * Maximum saturation of a citizen.
@@ -31,7 +31,7 @@ public interface ICitizenData extends INBTSerializable<NBTTagCompound>
      *
      * @param compound NBT-Tag compound.
      */
-    void readFromNBT(@NotNull NBTTagCompound compound);
+    void readFromNBT(@NotNull CompoundNBT compound);
 
     /**
      * Return the entity instance of the citizen data. Respawn the citizen if
@@ -199,7 +199,7 @@ public interface ICitizenData extends INBTSerializable<NBTTagCompound>
      * @param compound NBT-Tag compound.
      * @return return the data in NBT format
      */
-    NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound);
+    CompoundNBT writeToNBT(@NotNull CompoundNBT compound);
 
     /**
      * Writes the citizen data to a byte buf for transition.

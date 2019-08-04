@@ -17,7 +17,7 @@ import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.workorders.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -111,17 +111,17 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
         this.purgedMobsToday = compound.getBoolean(TAG_PURGE_MOBS);
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = super.serializeNBT();
-        compound.setBoolean(TAG_PURGE_MOBS, this.purgedMobsToday);
+        final CompoundNBT compound = super.serializeNBT();
+        compound.putBoolean(TAG_PURGE_MOBS, this.purgedMobsToday);
 
         return compound;
     }

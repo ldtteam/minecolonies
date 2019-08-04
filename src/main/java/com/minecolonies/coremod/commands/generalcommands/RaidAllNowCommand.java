@@ -65,7 +65,7 @@ public class RaidAllNowCommand extends AbstractSingleCommand implements IActionC
 
     private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender) throws CommandException
     {
-        if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
+        if (sender instanceof PlayerEntity && !isPlayerOpped(sender))
         {
             sender.sendMessage(new TextComponentString("Must be OP to use command"));
             return;

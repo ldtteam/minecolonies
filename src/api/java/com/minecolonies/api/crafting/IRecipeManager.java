@@ -2,7 +2,7 @@ package com.minecolonies.api.crafting;
 
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -43,7 +43,7 @@ public interface IRecipeManager
      *
      * @param compound NBT-Tag.
      */
-    void writeToNBT(@NotNull final NBTTagCompound compound);
+    void writeToNBT(@NotNull final CompoundNBT compound);
 
 
     /**
@@ -51,5 +51,5 @@ public interface IRecipeManager
      *
      * @param compound NBT Tag.
      */
-    void readFromNBT(@NotNull final NBTTagCompound compound);
+    void readFromNBT(@NotNull final CompoundNBT compound);
 }

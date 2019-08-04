@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -35,13 +35,13 @@ public class Delivery implements IRequestable
     }
 
     @NotNull
-    public static NBTTagCompound serialize(@NotNull final IFactoryController controller, final Delivery delivery)
+    public static CompoundNBT serialize(@NotNull final IFactoryController controller, final Delivery delivery)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
+        final CompoundNBT compound = new CompoundNBT();
 
-        compound.setTag(NBT_START, controller.serialize(delivery.getStart()));
-        compound.setTag(NBT_TARGET, controller.serialize(delivery.getTarget()));
-        compound.setTag(NBT_STACK, delivery.getStack().serializeNBT());
+        compound.put(NBT_START, controller.serialize(delivery.getStart()));
+        compound.put(NBT_TARGET, controller.serialize(delivery.getTarget()));
+        compound.put(NBT_STACK, delivery.getStack().serializeNBT());
 
         return compound;
     }
@@ -65,11 +65,11 @@ public class Delivery implements IRequestable
     }
 
     @NotNull
-    public static Delivery deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound compound)
+    public static Delivery deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT compound)
     {
-        final ILocation start = controller.deserialize(compound.getCompoundTag(NBT_START));
-        final ILocation target = controller.deserialize(compound.getCompoundTag(NBT_TARGET));
-        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompoundTag(NBT_STACK));
+        final ILocation start = controller.deserialize(compound.getCompound(NBT_START));
+        final ILocation target = controller.deserialize(compound.getCompound(NBT_TARGET));
+        final ItemStack stack = ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_STACK));
 
         return new Delivery(start, target, stack);
     }

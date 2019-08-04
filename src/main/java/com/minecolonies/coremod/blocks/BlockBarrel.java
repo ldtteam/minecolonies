@@ -10,7 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -57,7 +57,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     public BlockBarrel()
     {
         super(Material.WOOD);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(AbstractBlockBarrel.FACING, EnumFacing.NORTH).withProperty(VARIANT, BarrelType.ZERO));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(AbstractBlockBarrel.FACING, Direction.NORTH).withProperty(VARIANT, BarrelType.ZERO));
         initBlock();
     }
 
@@ -88,13 +88,13 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
      */
     @SuppressWarnings(DEPRECATION)
     @Override
-    public boolean isOpaqueCube(final IBlockState state)
+    public boolean isOpaqueCube(final BlockState state)
     {
         return false;
     }
 
     @Override
-    public void updateTick(final World worldIn, final BlockPos pos, final IBlockState state, final Random rand)
+    public void updateTick(final World worldIn, final BlockPos pos, final BlockState state, final Random rand)
     {
         final TileEntity te = worldIn.getTileEntity(pos);
         if(te!=null)
@@ -115,14 +115,14 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     }
 
     @Override
-    public TileEntity createTileEntity(@NotNull final World world, @NotNull final IBlockState state)
+    public TileEntity createTileEntity(@NotNull final World world, @NotNull final BlockState state)
     {
         return new TileEntityBarrel();
     }
 
 
     @Override
-    public boolean hasTileEntity(final IBlockState state)
+    public boolean hasTileEntity(final BlockState state)
     {
         return true;
     }
@@ -134,10 +134,10 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     public boolean onBlockActivated(
             final World worldIn,
             final BlockPos pos,
-            final IBlockState state,
-            final EntityPlayer playerIn,
+            final BlockState state,
+            final PlayerEntity playerIn,
             final EnumHand hand,
-            final EnumFacing facing,
+            final Direction facing,
             final float hitX,
             final float hitY,
             final float hitZ)
@@ -159,10 +159,10 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
      */
     @Override
     @SuppressWarnings(DEPRECATION)
-    public IBlockState getStateFromMeta(final int meta)
+    public BlockState getStateFromMeta(final int meta)
     {
         return this.getDefaultState().withProperty(AbstractBlockBarrel.FACING,
-                EnumFacing.byHorizontalIndex(meta));
+                Direction.byHorizontalIndex(meta));
     }
 
     /**
@@ -170,13 +170,13 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
      * returns the metadata of the dropped item based on the old metadata of the block.
      */
     @Override
-    public int damageDropped(final IBlockState state)
+    public int damageDropped(final BlockState state)
     {
         return this.getDefaultState().getValue(VARIANT).getMetadata();
     }
 
     @Override
-    protected ItemStack getSilkTouchDrop(@NotNull final IBlockState state)
+    protected ItemStack getSilkTouchDrop(@NotNull final BlockState state)
     {
         return new ItemStack(Item.getItemFromBlock(this), 1, state.getValue(VARIANT).getMetadata());
     }
@@ -193,7 +193,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
      * Convert the BlockState into the correct metadata value
      */
     @Override
-    public int getMetaFromState(final IBlockState state)
+    public int getMetaFromState(final BlockState state)
     {
         return state.getValue(AbstractBlockBarrel.FACING).getHorizontalIndex();
     }
@@ -201,7 +201,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     @NotNull
     @Override
     @SuppressWarnings(DEPRECATION)
-    public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
+    public AxisAlignedBB getBoundingBox(final BlockState state, final IBlockAccess source, final BlockPos pos)
     {
         return BOUNDING_BOX;
     }
@@ -209,7 +209,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     @Nullable
     @Override
     @SuppressWarnings(DEPRECATION)
-    public AxisAlignedBB getCollisionBoundingBox(final IBlockState blockState, final IBlockAccess worldIn, final BlockPos pos)
+    public AxisAlignedBB getCollisionBoundingBox(final BlockState blockState, final IBlockAccess worldIn, final BlockPos pos)
     {
         return BOUNDING_BOX;
     }
@@ -222,7 +222,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     @NotNull
     @Override
     @Deprecated
-    public IBlockState withRotation(@NotNull final IBlockState state, final Rotation rot)
+    public BlockState withRotation(@NotNull final BlockState state, final Rotation rot)
     {
         return state.withProperty(AbstractBlockBarrel.FACING, rot.rotate(state.getValue(AbstractBlockBarrel.FACING)));
     }
@@ -233,15 +233,15 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     @NotNull
     @Override
     @Deprecated
-    public IBlockState withMirror(@NotNull final IBlockState state, final Mirror mirrorIn)
+    public BlockState withMirror(@NotNull final BlockState state, final Mirror mirrorIn)
     {
         return state.withRotation(mirrorIn.toRotation(state.getValue(AbstractBlockBarrel.FACING)));
     }
 
     @NotNull
     @Override
-    public IBlockState getStateForPlacement(
-      @NotNull final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing facing, final float hitX, final float hitY,
+    public BlockState getStateForPlacement(
+      @NotNull final World world, @NotNull final BlockPos pos, @NotNull final Direction facing, final float hitX, final float hitY,
                                             final float hitZ, final int meta, @NotNull final EntityLivingBase placer, final EnumHand hand)
     {
         return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(AbstractBlockBarrel.FACING, placer.getHorizontalFacing());
@@ -252,7 +252,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
      */
     @Deprecated
     @Override
-    public IBlockState getActualState(@NotNull final IBlockState state, @NotNull final IBlockAccess worldIn, @NotNull final BlockPos pos)
+    public BlockState getActualState(@NotNull final BlockState state, @NotNull final IBlockAccess worldIn, @NotNull final BlockPos pos)
     {
         final TileEntity entity = worldIn.getTileEntity(pos);
 
@@ -280,7 +280,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
 
     @Override
     @SuppressWarnings(DEPRECATION)
-    public void neighborChanged(final IBlockState state, final World worldIn, final BlockPos pos, final Block blockIn, final BlockPos fromPos)
+    public void neighborChanged(final BlockState state, final World worldIn, final BlockPos pos, final Block blockIn, final BlockPos fromPos)
     {
         if(worldIn.isAirBlock(pos.down()) || worldIn.getBlockState(pos.down()).getBlock() == ModBlocks.blockBarrel)
         {
@@ -297,7 +297,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
 
     @Override
     @SuppressWarnings(DEPRECATION)
-    public boolean isFullCube(final IBlockState state)
+    public boolean isFullCube(final BlockState state)
     {
         return false;
     }

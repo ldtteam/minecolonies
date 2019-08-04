@@ -191,8 +191,8 @@ public class ButtonImage extends Button
     private void loadImageDimensions()
     {
         final Tuple<Integer, Integer> dimensions = Image.getImageDimensions(image);
-        imageMapWidth = dimensions.getFirst();
-        imageMapHeight = dimensions.getSecond();
+        imageMapWidth = dimensions.getA();
+        imageMapHeight = dimensions.getB();
     }
 
     /**
@@ -201,8 +201,8 @@ public class ButtonImage extends Button
     private void loadImageHighlightDimensions()
     {
         final Tuple<Integer, Integer> dimensions = Image.getImageDimensions(imageHighlight);
-        highlightMapWidth = dimensions.getFirst();
-        highlightMapHeight = dimensions.getSecond();
+        highlightMapWidth = dimensions.getA();
+        highlightMapHeight = dimensions.getB();
     }
 
     /**
@@ -211,8 +211,8 @@ public class ButtonImage extends Button
     private void loadImageDisabledDimensions()
     {
         final Tuple<Integer, Integer> dimensions = Image.getImageDimensions(imageDisabled);
-        disabledMapWidth = dimensions.getFirst();
-        disabledMapHeight = dimensions.getSecond();
+        disabledMapWidth = dimensions.getA();
+        disabledMapHeight = dimensions.getB();
     }
 
     /**

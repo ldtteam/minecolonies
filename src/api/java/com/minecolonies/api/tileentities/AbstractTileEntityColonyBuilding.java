@@ -96,7 +96,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityChest
      * @param player Player to check permission of.
      * @return True when player has access, or building doesn't exist, otherwise false.
      */
-    public abstract boolean hasAccessPermission(EntityPlayer player);
+    public abstract boolean hasAccessPermission(PlayerEntity player);
 
     /**
      * Set if the entity is mirrored.

@@ -20,8 +20,8 @@ import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -234,19 +234,19 @@ public class BuildingFarmer extends AbstractBuildingWorker
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        final NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT fieldTagList = compound.getTagList(TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < fieldTagList.tagCount(); ++i)
         {
-            final NBTTagCompound fieldCompound = fieldTagList.getCompoundTagAt(i);
+            final CompoundNBT fieldCompound = fieldTagList.getCompoundTagAt(i);
             final BlockPos fieldLocation = BlockPosUtil.readFromNBT(fieldCompound, TAG_FIELDS_BLOCKPOS);
             farmerFields.add(fieldLocation);
         }
         shouldAssignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
 
-        if (compound.hasKey(LAST_FIELD_TAG))
+        if (compound.keySet().contains(LAST_FIELD_TAG))
         {
             final BlockPos pos = BlockPosUtil.readFromNBT(compound, LAST_FIELD_TAG);
             lastField = pos;
@@ -254,18 +254,18 @@ public class BuildingFarmer extends AbstractBuildingWorker
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = super.serializeNBT();
-        @NotNull final NBTTagList fieldTagList = new NBTTagList();
+        final CompoundNBT compound = super.serializeNBT();
+        @NotNull final ListNBT fieldTagList = new ListNBT();
         for (@NotNull final BlockPos f : farmerFields)
         {
-            @NotNull final NBTTagCompound fieldCompound = new NBTTagCompound();
+            @NotNull final CompoundNBT fieldCompound = new CompoundNBT();
             BlockPosUtil.writeToNBT(fieldCompound, TAG_FIELDS_BLOCKPOS, f);
-            fieldTagList.appendTag(fieldCompound);
+            fieldTagList.add(fieldCompound);
         }
-        compound.setTag(TAG_FIELDS, fieldTagList);
-        compound.setBoolean(TAG_ASSIGN_MANUALLY, shouldAssignManually);
+        compound.put(TAG_FIELDS, fieldTagList);
+        compound.putBoolean(TAG_ASSIGN_MANUALLY, shouldAssignManually);
 
         if (lastField != null)
         {

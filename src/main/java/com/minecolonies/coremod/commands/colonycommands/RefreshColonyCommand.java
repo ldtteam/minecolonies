@@ -61,7 +61,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
         IColony colony = actionMenuState.getColonyForArgument("colony");
         if (null == colony)
         {
-            final EntityPlayer player = actionMenuState.getPlayerForArgument("player");
+            final PlayerEntity player = actionMenuState.getPlayerForArgument("player");
             if (null != player)
             {
                 IColony iColony = IColonyManager.getInstance().getIColonyByOwner(server.getEntityWorld(), player);
@@ -103,7 +103,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
 
         if (colonyId == -1 && args.length >= 1)
         {
-            final EntityPlayer player = server.getEntityWorld().getPlayerEntityByName(args[0]);
+            final PlayerEntity player = server.getEntityWorld().getPlayerEntityByName(args[0]);
             if (player != null)
             {
                 tempColony = IColonyManager.getInstance().getIColonyByOwner(server.getEntityWorld(), player);
@@ -152,7 +152,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
     {
         if (sender instanceof EntityPlayer)
         {
-            final EntityPlayer senderPlayer = (EntityPlayer) sender.getCommandSenderEntity();
+            final PlayerEntity senderPlayer = (EntityPlayer) sender.getCommandSenderEntity();
             if (!canPlayerUseCommand(senderPlayer, Commands.REFRESH_COLONY, colony.getID()))
             {
                 sender.sendMessage(new TextComponentString(NOT_PERMITTED));

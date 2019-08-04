@@ -8,14 +8,14 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -105,7 +105,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
     @Override
     public void removeHeldItem()
     {
-        citizen.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
+        citizen.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
     }
 
     /**
@@ -120,11 +120,11 @@ public class CitizenItemHandler implements ICitizenItemHandler
         citizen.getCitizenData().getInventory().setHeldItem(hand, slot);
         if (hand.equals(EnumHand.MAIN_HAND))
         {
-            citizen.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
+            citizen.setItemStackToSlot(EquipmentSlotType.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
         }
         else if (hand.equals(EnumHand.OFF_HAND))
         {
-            citizen.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
+            citizen.setItemStackToSlot(EquipmentSlotType.OFFHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
         }
     }
 
@@ -137,7 +137,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
     public void setMainHeldItem(final int slot)
     {
         citizen.getCitizenData().getInventory().setHeldItem(EnumHand.MAIN_HAND, slot);
-        citizen.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
+        citizen.setItemStackToSlot(EquipmentSlotType.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
     }
 
     /**
@@ -178,7 +178,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
 
         citizen.swingArm(citizen.getActiveHand());
 
-        final IBlockState blockState = CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos);
+        final BlockState blockState = CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos);
         final Block block = blockState.getBlock();
         if (breakBlock)
         {
@@ -204,7 +204,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
             if (!CompatibilityUtils.getWorldFromCitizen(citizen).isRemote)
             {
                 final BlockPos vector = blockPos.subtract(citizen.getPosition());
-                final EnumFacing facing = EnumFacing.getFacingFromVector(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
+                final Direction facing = Direction.getFacingFromVector(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
 
                 MineColonies.getNetwork().sendToAllAround(
                   new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), facing.ordinal()),
@@ -240,7 +240,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
         if (ItemStackUtils.getSize(heldItem) < 1)
         {
             citizen.getInventoryCitizen().setInventorySlotContents(citizen.getInventoryCitizen().getHeldItemSlot(hand), ItemStackUtils.EMPTY);
-            citizen.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
+            citizen.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
         }
     }
 

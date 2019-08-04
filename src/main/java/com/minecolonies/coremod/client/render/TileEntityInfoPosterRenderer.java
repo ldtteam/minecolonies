@@ -4,7 +4,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import net.minecraft.block.BlockWallSign;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiUtilRenderComponents;
@@ -16,7 +16,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -104,9 +104,9 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         }
 
         final World world = te.getWorld();
-        final IBlockState state = world.getBlockState(te.getPos());
+        final BlockState state = world.getBlockState(te.getPos());
         final BlockPos pos = te.getPos();
-        final IBlockState actualState = state.getBlock().getExtendedState(state, world, pos);
+        final BlockState actualState = state.getBlock().getExtendedState(state, world, pos);
         int facing = (int) actualState.getValue(BlockWallSign.FACING).getHorizontalAngle();
 
         double plusX = 0;
@@ -175,11 +175,11 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
 
     private static void renderModel(final World world, final IBakedModel model, final BlockPos pos, final int alpha)
     {
-        final IBlockState state = world.getBlockState(pos);
-        final IBlockState actualState = state.getBlock().getExtendedState(state, world, pos);
-        final IBlockState iBlockExtendedState = state.getBlock().getExtendedState(state, world, pos);
+        final BlockState state = world.getBlockState(pos);
+        final BlockState actualState = state.getBlock().getExtendedState(state, world, pos);
+        final BlockState iBlockExtendedState = state.getBlock().getExtendedState(state, world, pos);
 
-        for (final EnumFacing facing : EnumFacing.values())
+        for (final Direction facing : Direction.values())
         {
             renderQuads(world, actualState, pos, model.getQuads(actualState, facing, 0), alpha);
         }
@@ -188,7 +188,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
     }
 
     private void renderText(
-                             final IBlockState actualState, final double addZ, final double addX, final TileEntityInfoPoster te,
+                             final BlockState actualState, final double addZ, final double addX, final TileEntityInfoPoster te,
                              final double x, final double y, final double z)
     {
         GlStateManager.pushMatrix();
@@ -241,7 +241,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         GlStateManager.popMatrix();
     }
 
-    private static void renderQuads(final World world, final IBlockState actualState, final BlockPos pos, final List<BakedQuad> quads, final int alpha)
+    private static void renderQuads(final World world, final BlockState actualState, final BlockPos pos, final List<BakedQuad> quads, final int alpha)
     {
         final Tessellator tessellator = Tessellator.getInstance();
         final BufferBuilder buffer = tessellator.getBuffer();
@@ -258,7 +258,7 @@ public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<Tile
         }
     }
 
-    private static int getTint(final World world, final IBlockState actualState, final BlockPos pos, final int alpha, final int tintIndex)
+    private static int getTint(final World world, final BlockState actualState, final BlockPos pos, final int alpha, final int tintIndex)
     {
         return alpha | Minecraft.getMinecraft().getBlockColors().colorMultiplier(actualState, world, pos, tintIndex);
     }

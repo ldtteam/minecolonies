@@ -70,7 +70,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
     {
         // See if we have a valid colony,
         IColony colony = actionMenuState.getColonyForArgument("colony");
-        EntityPlayer player = null;
+        PlayerEntity player = null;
         if (null == colony)
         {
             // see if we have a valid player
@@ -155,7 +155,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand implements IAct
                 colonyId = tempColony.getID();
             }
 
-            final EntityPlayer player = (EntityPlayer) sender;
+            final PlayerEntity player = (EntityPlayer) sender;
 
             if (!canPlayerUseCommand(player, SHOWCOLONYINFO, colonyId))
             {

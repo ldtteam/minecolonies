@@ -11,8 +11,8 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import net.minecraft.block.Block;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -186,27 +186,27 @@ public class ProgressManager implements IProgressManager
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
-        final NBTTagCompound progressCompound = compound.getCompoundTag(TAG_PROGRESS_MANAGER);
-        final NBTTagList progressTags = progressCompound.getTagList(TAG_PROGRESS_LIST, Constants.NBT.TAG_COMPOUND);
+        final CompoundNBT progressCompound = compound.getCompound(TAG_PROGRESS_MANAGER);
+        final ListNBT progressTags = progressCompound.getTagList(TAG_PROGRESS_LIST, Constants.NBT.TAG_COMPOUND);
         notifiedProgress.addAll(NBTUtils.streamCompound(progressTags)
-                         .map(progressTypeCompound -> values()[progressTypeCompound.getInteger(TAG_PROGRESS_TYPE)])
+                         .map(progressTypeCompound -> values()[progressTypeCompound.getInt(TAG_PROGRESS_TYPE)])
                          .collect(Collectors.toList()));
         printProgress = progressCompound.getBoolean(TAG_PRINT_PROGRESS);
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
-        final NBTTagCompound progressCompound = new NBTTagCompound();
-        @NotNull final NBTTagList progressTagList = notifiedProgress.stream()
+        final CompoundNBT progressCompound = new CompoundNBT();
+        @NotNull final ListNBT progressTagList = notifiedProgress.stream()
                                                      .map(this::writeProgressTypeToNBT)
-                                                     .collect(NBTUtils.toNBTTagList());
+                                                     .collect(NBTUtils.toListNBT());
 
-        progressCompound.setTag(TAG_PROGRESS_LIST, progressTagList);
-        progressCompound.setBoolean(TAG_PRINT_PROGRESS, printProgress);
-        compound.setTag(TAG_PROGRESS_MANAGER, progressCompound);
+        progressCompound.put(TAG_PROGRESS_LIST, progressTagList);
+        progressCompound.putBoolean(TAG_PRINT_PROGRESS, printProgress);
+        compound.put(TAG_PROGRESS_MANAGER, progressCompound);
     }
 
     /**
@@ -214,10 +214,10 @@ public class ProgressManager implements IProgressManager
      * @param type the type.
      * @return the NBT representation.
      */
-    private NBTTagCompound writeProgressTypeToNBT(final ColonyProgressType type)
+    private CompoundNBT writeProgressTypeToNBT(final ColonyProgressType type)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger(TAG_PROGRESS_TYPE, type.ordinal());
+        final CompoundNBT compound = new CompoundNBT();
+        compound.putInt(TAG_PROGRESS_TYPE, type.ordinal());
         return compound;
     }
 }

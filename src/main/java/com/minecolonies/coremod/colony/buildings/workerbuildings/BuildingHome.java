@@ -13,9 +13,9 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.BlockBed;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -92,11 +92,11 @@ public class BuildingHome extends AbstractBuilding
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
 
-        if (compound.hasKey(TAG_RESIDENTS))
+        if (compound.keySet().contains(TAG_RESIDENTS))
         {
             final int[] residentIds = compound.getIntArray(TAG_RESIDENTS);
             for (final int citizenId : residentIds)
@@ -110,10 +110,10 @@ public class BuildingHome extends AbstractBuilding
             }
         }
 
-        final NBTTagList bedTagList = compound.getTagList(TAG_BEDS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT bedTagList = compound.getTagList(TAG_BEDS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < bedTagList.tagCount(); ++i)
         {
-            final NBTTagCompound bedCompound = bedTagList.getCompoundTagAt(i);
+            final CompoundNBT bedCompound = bedTagList.getCompoundTagAt(i);
             final BlockPos bedPos = NBTUtil.getPosFromTag(bedCompound);
             if (!bedList.contains(bedPos))
             {
@@ -123,9 +123,9 @@ public class BuildingHome extends AbstractBuilding
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = super.serializeNBT();
+        final CompoundNBT compound = super.serializeNBT();
         if (hasAssignedCitizen())
         {
             @NotNull final int[] residentIds = new int[getAssignedCitizen().size()];
@@ -137,12 +137,12 @@ public class BuildingHome extends AbstractBuilding
         }
         if (!bedList.isEmpty())
         {
-            @NotNull final NBTTagList bedTagList = new NBTTagList();
+            @NotNull final ListNBT bedTagList = new ListNBT();
             for (@NotNull final BlockPos pos : bedList)
             {
-                bedTagList.appendTag(NBTUtil.createPosTag(pos));
+                bedTagList.add(NBTUtil.createPosTag(pos));
             }
-            compound.setTag(TAG_BEDS, bedTagList);
+            compound.put(TAG_BEDS, bedTagList);
         }
 
         return compound;
@@ -159,7 +159,7 @@ public class BuildingHome extends AbstractBuilding
 
         for (final BlockPos pos : bedList)
         {
-            IBlockState state = world.getBlockState(pos);
+            BlockState state = world.getBlockState(pos);
             state = state.getBlock().getExtendedState(state, world, pos);
             if (state.getBlock() instanceof BlockBed
                   && state.getValue(BlockBed.OCCUPIED)
@@ -178,7 +178,7 @@ public class BuildingHome extends AbstractBuilding
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final IBlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
+    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
     {
         super.registerBlockPosition(blockState, pos, world);
 

@@ -11,15 +11,15 @@ import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -77,39 +77,39 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
 
-        final NBTTagList containerTagList = compound.getTagList(TAG_CONTAINERS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT containerTagList = compound.getTagList(TAG_CONTAINERS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < containerTagList.tagCount(); ++i)
         {
-            final NBTTagCompound containerCompound = containerTagList.getCompoundTagAt(i);
+            final CompoundNBT containerCompound = containerTagList.getCompoundTagAt(i);
             containerList.add(NBTUtil.getPosFromTag(containerCompound));
         }
-        if (compound.hasKey(TAG_PRIO))
+        if (compound.keySet().contains(TAG_PRIO))
         {
-            this.pickUpPriority = compound.getInteger(TAG_PRIO);
+            this.pickUpPriority = compound.getInt(TAG_PRIO);
         }
-        if (compound.hasKey(TAG_PRIO_MODE))
+        if (compound.keySet().contains(TAG_PRIO_MODE))
         {
             this.priorityStatic = compound.getBoolean(TAG_PRIO_MODE);
         }
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = super.serializeNBT();
+        final CompoundNBT compound = super.serializeNBT();
 
-        @NotNull final NBTTagList containerTagList = new NBTTagList();
+        @NotNull final ListNBT containerTagList = new ListNBT();
         for (@NotNull final BlockPos pos : containerList)
         {
-            containerTagList.appendTag(NBTUtil.createPosTag(pos));
+            containerTagList.add(NBTUtil.createPosTag(pos));
         }
-        compound.setTag(TAG_CONTAINERS, containerTagList);
-        compound.setInteger(TAG_PRIO, this.pickUpPriority);
-        compound.setBoolean(TAG_PRIO_MODE, this.priorityStatic);
+        compound.put(TAG_CONTAINERS, containerTagList);
+        compound.putInt(TAG_PRIO, this.pickUpPriority);
+        compound.putBoolean(TAG_PRIO_MODE, this.priorityStatic);
 
         return compound;
     }
@@ -211,7 +211,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
      * @param pos   of the blockState
      */
     @Override
-    public void registerBlockPosition(@NotNull final IBlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
+    public void registerBlockPosition(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
     {
         registerBlockPosition(blockState.getBlock(), pos, world);
     }
@@ -317,14 +317,14 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
 
     @Override
     public boolean hasCapability(
-      @Nonnull final Capability<?> capability, @Nullable final EnumFacing facing)
+      @Nonnull final Capability<?> capability, @Nullable final Direction facing)
     {
         return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null;
     }
 
     @Nullable
     @Override
-    public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final EnumFacing facing)
+    public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final Direction facing)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null && getTileEntity() != null)
         {

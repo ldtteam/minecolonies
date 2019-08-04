@@ -15,7 +15,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -152,14 +152,14 @@ public class BuildingRegistry
     }
 
     /**
-     * Create and load a AbstractBuilding given it's saved NBTTagCompound.
+     * Create and load a AbstractBuilding given it's saved CompoundNBT.
      *
      * @param colony   The owning colony.
      * @param compound The saved data.
      * @return {@link AbstractBuilding} created from the compound.
      */
     @Nullable
-    public static IBuilding createFromNBT(final Colony colony, @NotNull final NBTTagCompound compound)
+    public static IBuilding createFromNBT(final Colony colony, @NotNull final CompoundNBT compound)
     {
         @Nullable AbstractBuilding building = null;
         @Nullable Class<?> oclass = null;
@@ -235,7 +235,7 @@ public class BuildingRegistry
     }
 
     /**
-     * Create a AbstractBuilding View given it's saved NBTTagCompound.
+     * Create a AbstractBuilding View given it's saved CompoundNBT.
      *
      * @param colony The owning colony.
      * @param id     Chunk coordinate of the block a view is created for.

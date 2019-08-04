@@ -8,8 +8,8 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.NBTUtils;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,15 +67,15 @@ public class StandardRecipeManager implements IRecipeManager
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
-        @NotNull final NBTTagList recipesTagList =
-                recipes.entrySet().stream().map(entry ->  StandardFactoryController.getInstance().serialize(entry.getValue())).collect(NBTUtils.toNBTTagList());
-        compound.setTag(TAG_RECIPES, recipesTagList);
+        @NotNull final ListNBT recipesTagList =
+                recipes.entrySet().stream().map(entry ->  StandardFactoryController.getInstance().serialize(entry.getValue())).collect(NBTUtils.toListNBT());
+        compound.put(TAG_RECIPES, recipesTagList);
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         recipes.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND))
                 .map(recipeCompound -> (IRecipeStorage) StandardFactoryController.getInstance().deserialize(recipeCompound))

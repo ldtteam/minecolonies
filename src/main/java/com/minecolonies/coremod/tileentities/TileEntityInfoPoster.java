@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.tileentities;
 
 import net.minecraft.command.CommandResultStats;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.ITextComponent;
@@ -18,7 +18,7 @@ public class TileEntityInfoPoster extends TileEntity
     private final CommandResultStats stats = new CommandResultStats();
 
     @Override
-    public void readFromNBT(final NBTTagCompound compound)
+    public void readFromNBT(final CompoundNBT compound)
     {
         super.readFromNBT(compound);
 
@@ -33,14 +33,14 @@ public class TileEntityInfoPoster extends TileEntity
     }
 
     @Override
-    public NBTTagCompound writeToNBT(final NBTTagCompound compound)
+    public CompoundNBT writeToNBT(final CompoundNBT compound)
     {
         super.writeToNBT(compound);
 
         for (int i = 0; i < signText.length; ++i)
         {
             final String s = ITextComponent.Serializer.componentToJson(this.signText[i]);
-            compound.setString("Text" + (i + 1), s);
+            compound.putString("Text" + (i + 1), s);
         }
 
         this.stats.writeStatsToNBT(compound);
@@ -61,9 +61,9 @@ public class TileEntityInfoPoster extends TileEntity
     }
 
     @Override
-    public NBTTagCompound getUpdateTag()
+    public CompoundNBT getUpdateTag()
     {
-        return this.writeToNBT(new NBTTagCompound());
+        return this.writeToNBT(new CompoundNBT());
     }
 
     /**

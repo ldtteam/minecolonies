@@ -90,7 +90,7 @@ public class DoRaidTonightCommand extends AbstractSingleCommand implements IActi
 
     private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final IColony colony)
     {
-        if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
+        if (sender instanceof PlayerEntity && !isPlayerOpped(sender))
         {
             sender.sendMessage(new TextComponentString("Must be OP to use command"));
             return;

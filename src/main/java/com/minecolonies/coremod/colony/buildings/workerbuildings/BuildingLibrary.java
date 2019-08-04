@@ -14,8 +14,8 @@ import com.minecolonies.coremod.colony.jobs.JobStudent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBookshelf;
 import net.minecraft.item.Item;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -159,28 +159,28 @@ public class BuildingLibrary extends AbstractBuildingWorker
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        final NBTTagList furnaceTagList = compound.getTagList(TAG_BOOKCASES, Constants.NBT.TAG_COMPOUND);
+        final ListNBT furnaceTagList = compound.getTagList(TAG_BOOKCASES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < furnaceTagList.tagCount(); ++i)
         {
-            bookCases.add(NBTUtil.getPosFromTag(furnaceTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
+            bookCases.add(NBTUtil.getPosFromTag(furnaceTagList.getCompoundTagAt(i).getCompound(TAG_POS)));
         }
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = super.serializeNBT();
-        @NotNull final NBTTagList bookcaseTagList = new NBTTagList();
+        final CompoundNBT compound = super.serializeNBT();
+        @NotNull final ListNBT bookcaseTagList = new ListNBT();
         for (@NotNull final BlockPos entry : bookCases)
         {
-            @NotNull final NBTTagCompound bookCompound = new NBTTagCompound();
-            bookCompound.setTag(TAG_POS, NBTUtil.createPosTag(entry));
-            bookcaseTagList.appendTag(bookCompound);
+            @NotNull final CompoundNBT bookCompound = new CompoundNBT();
+            bookCompound.put(TAG_POS, NBTUtil.createPosTag(entry));
+            bookcaseTagList.add(bookCompound);
         }
-        compound.setTag(TAG_BOOKCASES, bookcaseTagList);
+        compound.put(TAG_BOOKCASES, bookcaseTagList);
 
         return compound;
     }

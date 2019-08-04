@@ -10,7 +10,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFactories;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -79,13 +79,13 @@ public class StandardFactoryControllerTest
         final StandardToken standardToken = new StandardToken(UUID.randomUUID());
         final IToken token = standardToken;
 
-        final NBTTagCompound compound = StandardFactoryController.getInstance().serialize(token);
+        final CompoundNBT compound = StandardFactoryController.getInstance().serialize(token);
 
-        assertTrue(compound.hasKey(StandardFactoryController.NBT_TYPE));
-        assertTrue(compound.hasKey(StandardFactoryController.NBT_DATA));
+        assertTrue(compound.keySet().contains(StandardFactoryController.NBT_TYPE));
+        assertTrue(compound.keySet().contains(StandardFactoryController.NBT_DATA));
         assertEquals(compound.getString(StandardFactoryController.NBT_TYPE), new TypeToken<StandardToken>() {}.toString());
-        assertEquals(compound.getCompoundTag(StandardFactoryController.NBT_DATA).getLong(StandardTokenFactory.NBT_MSB), standardToken.getIdentifier().getMostSignificantBits());
-        assertEquals(compound.getCompoundTag(StandardFactoryController.NBT_DATA).getLong(StandardTokenFactory.NBT_LSB), standardToken.getIdentifier().getLeastSignificantBits());
+        assertEquals(compound.getCompound(StandardFactoryController.NBT_DATA).getLong(StandardTokenFactory.NBT_MSB), standardToken.getIdentifier().getMostSignificantBits());
+        assertEquals(compound.getCompound(StandardFactoryController.NBT_DATA).getLong(StandardTokenFactory.NBT_LSB), standardToken.getIdentifier().getLeastSignificantBits());
     }
 
     @Test
@@ -94,7 +94,7 @@ public class StandardFactoryControllerTest
         final StandardToken standardToken = new StandardToken(UUID.randomUUID());
         final IToken token = standardToken;
 
-        final NBTTagCompound compound = StandardFactoryController.getInstance().serialize(token);
+        final CompoundNBT compound = StandardFactoryController.getInstance().serialize(token);
         final IToken deserialize = StandardFactoryController.getInstance().deserialize(compound);
 
         assertEquals(token, deserialize);

@@ -8,7 +8,7 @@ import com.minecolonies.coremod.client.model.ModelScarecrowBoth;
 import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -94,7 +94,7 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<TileE
         //In the case of worldLags tileEntities may sometimes disappear.
         if (getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockHutField)
         {
-            final EnumFacing facing = getWorld().getBlockState(te.getPos()).getValue(AbstractBlockMinecoloniesBlockHutField.FACING);
+            final Direction facing = getWorld().getBlockState(te.getPos()).getValue(AbstractBlockMinecoloniesBlockHutField.FACING);
             switch (facing)
             {
                 case EAST:

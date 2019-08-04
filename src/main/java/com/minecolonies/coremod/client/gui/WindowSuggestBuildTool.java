@@ -5,7 +5,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.controls.Text;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.DirectPlaceMessage;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
      * Building the worker is trying to place.
      */
     @NotNull
-    private final IBlockState building;
+    private final BlockState building;
 
     /**
      * The stack in the players hand.
@@ -41,7 +41,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
      * @param pos   the position of the placement.
      * @param state the block he is trying to place.
      */
-    public WindowSuggestBuildTool(@NotNull final BlockPos pos, @NotNull final IBlockState state, @NotNull final ItemStack stack)
+    public WindowSuggestBuildTool(@NotNull final BlockPos pos, @NotNull final BlockState state, @NotNull final ItemStack stack)
     {
         super(Constants.MOD_ID + SUGGEST_BUILDING_SOURCE_SUFFIX);
         this.pos = pos;

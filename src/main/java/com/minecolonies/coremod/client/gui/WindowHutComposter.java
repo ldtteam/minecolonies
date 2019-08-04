@@ -10,7 +10,7 @@ import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
 import com.minecolonies.coremod.network.messages.ComposterRetrievalMessage;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 
 import java.util.List;

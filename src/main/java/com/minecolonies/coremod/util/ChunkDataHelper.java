@@ -11,7 +11,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
@@ -146,7 +146,7 @@ public final class ChunkDataHelper
         {
             for (final File file : files)
             {
-                @Nullable final NBTTagCompound chunkData = BackUpHelper.loadNBTFromPath(file);
+                @Nullable final CompoundNBT chunkData = BackUpHelper.loadNBTFromPath(file);
                 if (chunkData != null)
                 {
                     final ChunkLoadStorage storage = new ChunkLoadStorage(chunkData);

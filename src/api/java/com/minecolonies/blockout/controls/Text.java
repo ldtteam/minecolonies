@@ -53,7 +53,7 @@ public class Text extends AbstractTextElement
         super(params);
 
         textContent = params.getLocalizedText();
-        linespace = params.getIntegerAttribute("linespace", linespace);
+        linespace = params.getIntAttribute("linespace", linespace);
     }
 
     @Override

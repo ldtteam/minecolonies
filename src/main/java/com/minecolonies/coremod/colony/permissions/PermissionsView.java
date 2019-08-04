@@ -181,7 +181,7 @@ public class PermissionsView implements IPermissions
     }
 
     @Override
-    public boolean setOwner(final EntityPlayer player)
+    public boolean setOwner(final PlayerEntity player)
     {
         return false;
     }
@@ -232,7 +232,7 @@ public class PermissionsView implements IPermissions
      * @return the rank.
      */
     @NotNull
-    public Rank getRank(@NotNull final EntityPlayer player)
+    public Rank getRank(@NotNull final PlayerEntity player)
     {
         return getRank(player.getUniqueID());
     }
@@ -252,7 +252,7 @@ public class PermissionsView implements IPermissions
     }
 
     @Override
-    public boolean hasPermission(@NotNull final EntityPlayer player, @NotNull final Action action)
+    public boolean hasPermission(@NotNull final PlayerEntity player, @NotNull final Action action)
     {
         return hasPermission(getRank(player), action);
     }
@@ -277,7 +277,7 @@ public class PermissionsView implements IPermissions
     }
 
     @Override
-    public boolean isColonyMember(@NotNull final EntityPlayer player)
+    public boolean isColonyMember(@NotNull final PlayerEntity player)
     {
         return players.containsKey(player.getUniqueID());
     }

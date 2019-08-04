@@ -1,7 +1,7 @@
 package com.minecolonies.api.compatibility.dynamictrees;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -64,7 +64,7 @@ public class DynamicTreeProxy
     protected NonNullList<ItemStack> getDropsForLeaf(
       final IBlockAccess world,
       final BlockPos pos,
-      final IBlockState blockstate,
+      final BlockState blockstate,
       final int fortune,
       final Block leaf)
     {return NonNullList.create();}

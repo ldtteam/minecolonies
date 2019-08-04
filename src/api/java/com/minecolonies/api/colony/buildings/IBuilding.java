@@ -152,7 +152,7 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
      * @param player the requesting player.
      * @param builder the assigned builder.
      */
-    void requestUpgrade(EntityPlayer player, BlockPos builder);
+    void requestUpgrade(PlayerEntity player, BlockPos builder);
 
     /**
      * Requests a repair for the current building.

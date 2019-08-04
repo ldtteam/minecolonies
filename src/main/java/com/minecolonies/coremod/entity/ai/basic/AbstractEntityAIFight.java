@@ -14,7 +14,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -323,10 +323,10 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
     {
         if (worker.getRandom().nextInt(60) <= 0)
         {
-            worker.setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStackUtils.EMPTY);
-            worker.setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStackUtils.EMPTY);
-            worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStackUtils.EMPTY);
-            worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStackUtils.EMPTY);
+            worker.setItemStackToSlot(EquipmentSlotType.CHEST, ItemStackUtils.EMPTY);
+            worker.setItemStackToSlot(EquipmentSlotType.FEET, ItemStackUtils.EMPTY);
+            worker.setItemStackToSlot(EquipmentSlotType.HEAD, ItemStackUtils.EMPTY);
+            worker.setItemStackToSlot(EquipmentSlotType.LEGS, ItemStackUtils.EMPTY);
 
             for (final Map.Entry<IToolType, ItemStack> armorStack : armorToWear.entrySet())
             {

@@ -15,7 +15,7 @@ import com.minecolonies.coremod.colony.jobs.JobSifter;
 import com.minecolonies.coremod.network.messages.SifterSettingsMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -203,9 +203,9 @@ public class BuildingSifter extends AbstractBuildingWorker
         this.sievableBlock = block;
         for (final Tuple<ItemStorage, Double> tuple : IColonyManager.getInstance().getCompatibilityManager().getMeshes())
         {
-            if (tuple.getFirst().equals(mesh))
+            if (tuple.getA().equals(mesh))
             {
-                this.sifterMesh = new Tuple<>(mesh, tuple.getSecond());
+                this.sifterMesh = new Tuple<>(mesh, tuple.getB());
                 break;
             }
         }
@@ -231,35 +231,35 @@ public class BuildingSifter extends AbstractBuildingWorker
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
 
-        this.dailyQuantity = compound.getInteger(TAG_DAILY);
-        this.currentDailyQuantity = compound.getInteger(TAG_CURRENT_DAILY);
+        this.dailyQuantity = compound.getInt(TAG_DAILY);
+        this.currentDailyQuantity = compound.getInt(TAG_CURRENT_DAILY);
 
-        this.sievableBlock = new ItemStorage(new ItemStack(compound.getCompoundTag(TAG_BLOCK)));
-        final ItemStorage mesh = new ItemStorage(new ItemStack(compound.getCompoundTag(TAG_MESH)));
+        this.sievableBlock = new ItemStorage(new ItemStack(compound.getCompound(TAG_BLOCK)));
+        final ItemStorage mesh = new ItemStorage(new ItemStack(compound.getCompound(TAG_MESH)));
         final double prob = compound.getDouble(TAG_MESH_PROB);
         this.sifterMesh = new Tuple<>(mesh, prob);
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = super.serializeNBT();
+        final CompoundNBT compound = super.serializeNBT();
 
-        compound.setInteger(TAG_DAILY, dailyQuantity);
-        compound.setInteger(TAG_CURRENT_DAILY, currentDailyQuantity);
+        compound.putInt(TAG_DAILY, dailyQuantity);
+        compound.putInt(TAG_CURRENT_DAILY, currentDailyQuantity);
 
-        final NBTTagCompound sievableBlockTAG = new NBTTagCompound();
+        final CompoundNBT sievableBlockTAG = new CompoundNBT();
         sievableBlock.getItemStack().writeToNBT(sievableBlockTAG);
-        compound.setTag(TAG_BLOCK, sievableBlockTAG);
+        compound.put(TAG_BLOCK, sievableBlockTAG);
 
-        final NBTTagCompound meshTAG = new NBTTagCompound();
-        sifterMesh.getFirst().getItemStack().writeToNBT(meshTAG);
-        compound.setTag(TAG_MESH, meshTAG);
-        compound.setDouble(TAG_MESH_PROB, sifterMesh.getSecond());
+        final CompoundNBT meshTAG = new CompoundNBT();
+        sifterMesh.getA().getItemStack().writeToNBT(meshTAG);
+        compound.put(TAG_MESH, meshTAG);
+        compound.setDouble(TAG_MESH_PROB, sifterMesh.getB());
 
         return compound;
     }
@@ -271,7 +271,7 @@ public class BuildingSifter extends AbstractBuildingWorker
         buf.writeInt(dailyQuantity);
 
         ByteBufUtils.writeItemStack(buf, sievableBlock.getItemStack());
-        ByteBufUtils.writeItemStack(buf, sifterMesh.getFirst().getItemStack());
+        ByteBufUtils.writeItemStack(buf, sifterMesh.getA().getItemStack());
 
         buf.writeInt(IColonyManager.getInstance().getCompatibilityManager().getSievableBlock().size());
         for (final ItemStorage storage : IColonyManager.getInstance().getCompatibilityManager().getSievableBlock())
@@ -282,7 +282,7 @@ public class BuildingSifter extends AbstractBuildingWorker
         buf.writeInt(IColonyManager.getInstance().getCompatibilityManager().getMeshes().size());
         for (final Tuple<ItemStorage, Double> storage : IColonyManager.getInstance().getCompatibilityManager().getMeshes())
         {
-            ByteBufUtils.writeItemStack(buf, storage.getFirst().getItemStack());
+            ByteBufUtils.writeItemStack(buf, storage.getA().getItemStack());
         }
     }
 

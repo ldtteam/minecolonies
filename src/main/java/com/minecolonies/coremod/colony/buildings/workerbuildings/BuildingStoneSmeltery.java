@@ -14,7 +14,7 @@ import com.minecolonies.coremod.colony.jobs.JobStoneSmeltery;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockGlazedTerracotta;
 import net.minecraft.block.BlockHardenedClay;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;

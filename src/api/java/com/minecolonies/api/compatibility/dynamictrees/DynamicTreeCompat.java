@@ -8,7 +8,7 @@ import com.ferreusveritas.dynamictrees.trees.TreeFamily;
 import com.minecolonies.api.util.Log;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
@@ -149,7 +149,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
     protected NonNullList<ItemStack> getDropsForLeaf(
       @NotNull final IBlockAccess world,
       @NotNull final BlockPos pos,
-      @NotNull final IBlockState blockState,
+      @NotNull final BlockState blockState,
       @NotNull final int fortune,
       @NotNull final Block leaf)
     {
@@ -175,7 +175,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
      * @param fortune    amount of fortune to use
      * @param leaf       The leaf to check
      */
-    public static NonNullList<ItemStack> getDropsForLeafCompat(final IBlockAccess world, final BlockPos pos, final IBlockState blockState, final int fortune, final Block leaf)
+    public static NonNullList<ItemStack> getDropsForLeafCompat(final IBlockAccess world, final BlockPos pos, final BlockState blockState, final int fortune, final Block leaf)
     {
         return instance.getDropsForLeaf(world, pos, blockState, fortune, leaf);
     }
@@ -228,7 +228,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
     {
         return () ->
         {
-            final IBlockState curBlockState = world.getBlockState(blockToBreak);
+            final BlockState curBlockState = world.getBlockState(blockToBreak);
             @Nullable final Block curBlock = curBlockState.getBlock();
 
             if (world.getMinecraftServer() == null)

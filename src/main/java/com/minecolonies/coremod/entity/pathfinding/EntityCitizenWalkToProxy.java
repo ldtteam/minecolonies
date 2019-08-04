@@ -13,7 +13,7 @@ import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -107,7 +107,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
                     {
                         if (currentNode.getStyle() == Node.NodeType.SHAFT)
                         {
-                            final EnumFacing facing = BlockPosUtil.getXZFacing(ladderPos, new BlockPos(currentNode.getX(), 0, currentNode.getZ()));
+                            final Direction facing = BlockPosUtil.getXZFacing(ladderPos, new BlockPos(currentNode.getX(), 0, currentNode.getZ()));
                             final BlockPos ladderHeight = new BlockPos(ladderPos.getX(), targetY+1, ladderPos.getZ());
 
                             return new BlockPos(ladderHeight.offset(facing, 7));
@@ -170,7 +170,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
 
                 if (lastNode != null && lastNode.getStyle() == Node.NodeType.SHAFT)
                 {
-                    final EnumFacing facing = BlockPosUtil.getXZFacing(ladderPos, new BlockPos(lastNode.getX(), 0, lastNode.getZ()));
+                    final Direction facing = BlockPosUtil.getXZFacing(ladderPos, new BlockPos(lastNode.getX(), 0, lastNode.getZ()));
                     final BlockPos ladderHeight = new BlockPos(ladderPos.getX(), targetY+1, ladderPos.getZ());
                     return new BlockPos(ladderHeight.offset(facing, 7));
                 }
@@ -210,7 +210,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
             if (currentNode.getStyle() == Node.NodeType.SHAFT)
             {
                 final BlockPos ladderPos = buildingMiner.getLadderLocation();
-                final EnumFacing facing = BlockPosUtil.getXZFacing(ladderPos, new BlockPos(currentNode.getX(), 0, currentNode.getZ()));
+                final Direction facing = BlockPosUtil.getXZFacing(ladderPos, new BlockPos(currentNode.getX(), 0, currentNode.getZ()));
                 final BlockPos ladderHeight = new BlockPos(ladderPos.getX(), levelDepth + 1, ladderPos.getZ());
                 nodesToTarget.add(new BlockPos(ladderHeight.offset(facing, 7)));
             }

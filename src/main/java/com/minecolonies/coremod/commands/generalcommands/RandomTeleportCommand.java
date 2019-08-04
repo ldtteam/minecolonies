@@ -70,7 +70,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        final EntityPlayer player = actionMenuState.getPlayerForArgument("player");
+        final PlayerEntity player = actionMenuState.getPlayerForArgument("player");
         executeShared(server, sender, ((null != player) ? player.getName() : null));
     }
 
@@ -99,7 +99,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
             return;
         }
 
-        EntityPlayer playerToTeleport = null;
+        PlayerEntity playerToTeleport = null;
 
         if (sender instanceof EntityPlayer)
         {
@@ -131,7 +131,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
      * @param sender           the sender to have access to the world.
      * @param playerToTeleport the player which shall be teleported.
      */
-    private static void teleportPlayer(final ICommandSender sender, final EntityPlayer playerToTeleport)
+    private static void teleportPlayer(final ICommandSender sender, final PlayerEntity playerToTeleport)
     {
         //Now the position will be calculated, we will try up to 4 times to find a save position.
         int attCounter = 0;

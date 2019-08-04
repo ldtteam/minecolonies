@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.tileentities;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -32,7 +32,7 @@ public class TileEntityDecorationController extends TileEntity
     /**
      * The basic direction this block is facing.
      */
-    private EnumFacing basicFacing = EnumFacing.NORTH;
+    private Direction basicFacing = Direction.NORTH;
 
     /**
      * Geter for the name stored in this.
@@ -76,7 +76,7 @@ public class TileEntityDecorationController extends TileEntity
      * Set the basic facing of this block.
      * @param basicFacing the basic facing.
      */
-    public void setBasicFacing(final EnumFacing basicFacing)
+    public void setBasicFacing(final Direction basicFacing)
     {
         this.basicFacing = basicFacing;
     }
@@ -85,7 +85,7 @@ public class TileEntityDecorationController extends TileEntity
      * Get the basic facing of the block.
      * @return the basic facing.
      */
-    public EnumFacing getBasicFacing()
+    public Direction getBasicFacing()
     {
         return basicFacing;
     }
@@ -96,27 +96,27 @@ public class TileEntityDecorationController extends TileEntity
     private void update()
     {
         this.markDirty();
-        final IBlockState state = world.getBlockState(pos);
+        final BlockState state = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, state, state, 0x03);
     }
 
     @Override
-    public void readFromNBT(final NBTTagCompound compound)
+    public void readFromNBT(final CompoundNBT compound)
     {
         super.readFromNBT(compound);
         this.schematicName = compound.getString(TAG_NAME);
-        this.level = compound.getInteger(TAG_LEVEL);
-        this.basicFacing = EnumFacing.byHorizontalIndex(compound.getInteger(TAG_FACING));
+        this.level = compound.getInt(TAG_LEVEL);
+        this.basicFacing = Direction.byHorizontalIndex(compound.getInt(TAG_FACING));
     }
 
     @NotNull
     @Override
-    public NBTTagCompound writeToNBT(final NBTTagCompound compound)
+    public CompoundNBT writeToNBT(final CompoundNBT compound)
     {
         super.writeToNBT(compound);
-        compound.setString(TAG_NAME, schematicName);
-        compound.setInteger(TAG_LEVEL, level);
-        compound.setInteger(TAG_FACING, basicFacing.getHorizontalIndex());
+        compound.putString(TAG_NAME, schematicName);
+        compound.putInt(TAG_LEVEL, level);
+        compound.putInt(TAG_FACING, basicFacing.getHorizontalIndex());
         return compound;
     }
 
@@ -129,15 +129,15 @@ public class TileEntityDecorationController extends TileEntity
 
     @NotNull
     @Override
-    public NBTTagCompound getUpdateTag()
+    public CompoundNBT getUpdateTag()
     {
-        return this.writeToNBT(new NBTTagCompound());
+        return this.writeToNBT(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
     {
-        final NBTTagCompound compound = packet.getNbtCompound();
+        final CompoundNBT compound = packet.getNbtCompound();
         this.readFromNBT(compound);
     }
 }

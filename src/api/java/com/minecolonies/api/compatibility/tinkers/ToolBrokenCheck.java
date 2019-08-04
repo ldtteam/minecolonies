@@ -1,7 +1,7 @@
 package com.minecolonies.api.compatibility.tinkers;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -22,10 +22,10 @@ public final class ToolBrokenCheck
     {
         if (stack.hasTagCompound())
         {
-            final NBTTagCompound tags = stack.getTagCompound();
+            final CompoundNBT tags = stack.getTagCompound();
             if (tags.hasKey(STATS))
             {
-                final NBTTagCompound stats = tags.getCompoundTag(STATS);
+                final CompoundNBT stats = tags.getCompound(STATS);
                 if (stats.getBoolean(BROKEN))
                 {
                     return true;

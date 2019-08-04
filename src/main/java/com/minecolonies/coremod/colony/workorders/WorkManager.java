@@ -5,8 +5,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.coremod.colony.Colony;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -178,17 +178,17 @@ public class WorkManager implements IWorkManager
      * @param compound Compound to save to.
      */
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         //  Work Orders
-        @NotNull final NBTTagList list = new NBTTagList();
+        @NotNull final ListNBT list = new ListNBT();
         for (@NotNull final IWorkOrder o : workOrders.values())
         {
-            @NotNull final NBTTagCompound orderCompound = new NBTTagCompound();
+            @NotNull final CompoundNBT orderCompound = new CompoundNBT();
             o.writeToNBT(orderCompound);
-            list.appendTag(orderCompound);
+            list.add(orderCompound);
         }
-        compound.setTag(TAG_WORK_ORDERS, list);
+        compound.put(TAG_WORK_ORDERS, list);
     }
 
     /**
@@ -197,13 +197,13 @@ public class WorkManager implements IWorkManager
      * @param compound Compound to read from.
      */
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         //  Work Orders
-        final NBTTagList list = compound.getTagList(TAG_WORK_ORDERS, NBT.TAG_COMPOUND);
+        final ListNBT list = compound.getTagList(TAG_WORK_ORDERS, NBT.TAG_COMPOUND);
         for (int i = 0; i < list.tagCount(); ++i)
         {
-            final NBTTagCompound orderCompound = list.getCompoundTagAt(i);
+            final CompoundNBT orderCompound = list.getCompoundTagAt(i);
             @Nullable final AbstractWorkOrder o = AbstractWorkOrder.createFromNBT(orderCompound, this);
             if (o != null)
             {

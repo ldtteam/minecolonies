@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
@@ -39,20 +39,20 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
         this.requesterId = requesterId;
     }
 
-    public static BuildingBasedRequester deserialize(final IFactoryController controller, final NBTTagCompound compound)
+    public static BuildingBasedRequester deserialize(final IFactoryController controller, final CompoundNBT compound)
     {
-        final ILocation location = controller.deserialize(compound.getCompoundTag(NBT_LOCATION));
-        final IToken<?> token = controller.deserialize(compound.getCompoundTag(NBT_ID));
+        final ILocation location = controller.deserialize(compound.getCompound(NBT_LOCATION));
+        final IToken<?> token = controller.deserialize(compound.getCompound(NBT_ID));
 
         return new BuildingBasedRequester(location, token);
     }
 
-    public NBTTagCompound serialize(final IFactoryController controller)
+    public CompoundNBT serialize(final IFactoryController controller)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
+        final CompoundNBT compound = new CompoundNBT();
 
-        compound.setTag(NBT_LOCATION, controller.serialize(getLocation()));
-        compound.setTag(NBT_ID, controller.serialize(getId()));
+        compound.put(NBT_LOCATION, controller.serialize(getLocation()));
+        compound.put(NBT_ID, controller.serialize(getId()));
 
         return compound;
     }

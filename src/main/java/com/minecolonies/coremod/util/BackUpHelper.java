@@ -8,7 +8,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -126,13 +126,13 @@ public final class BackUpHelper
     }
 
     /**
-     * Save an NBTTagCompound to a file.  Does so in a safe manner using an
+     * Save an CompoundNBT to a file.  Does so in a safe manner using an
      * intermediate tmp file.
      *
      * @param file     The destination file to write the data to.
-     * @param compound The NBTTagCompound to write to the file.
+     * @param compound The CompoundNBT to write to the file.
      */
-    public static void saveNBTToPath(@Nullable final File file, @NotNull final NBTTagCompound compound)
+    public static void saveNBTToPath(@Nullable final File file, @NotNull final CompoundNBT compound)
     {
         try
         {
@@ -149,12 +149,12 @@ public final class BackUpHelper
     }
 
     /**
-     * Load a file and return the data as an NBTTagCompound.
+     * Load a file and return the data as an CompoundNBT.
      *
      * @param file The path to the file.
-     * @return the data from the file as an NBTTagCompound, or null.
+     * @return the data from the file as an CompoundNBT, or null.
      */
-    public static NBTTagCompound loadNBTFromPath(@Nullable final File file)
+    public static CompoundNBT loadNBTFromPath(@Nullable final File file)
     {
         try
         {
@@ -175,7 +175,7 @@ public final class BackUpHelper
      */
     public static void saveColonies(final boolean isWorldUnload)
     {
-        @NotNull final NBTTagCompound compound = new NBTTagCompound();
+        @NotNull final CompoundNBT compound = new CompoundNBT();
         IColonyManager.getInstance().writeToNBT(compound);
 
         @NotNull final File file = getSaveLocation();
@@ -183,7 +183,7 @@ public final class BackUpHelper
         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
         for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
-            final NBTTagCompound colonyCompound = new NBTTagCompound();
+            final CompoundNBT colonyCompound = new CompoundNBT();
             colony.writeToNBT(colonyCompound);
             saveNBTToPath(new File(saveDir, String.format(FILENAME_COLONY, colony.getID(), colony.getDimension())), colonyCompound);
         }
@@ -197,7 +197,7 @@ public final class BackUpHelper
     public static void loadColonyBackup(final int colonyId, final int dimension)
     {
         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-        final NBTTagCompound compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension)));
+        final CompoundNBT compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension)));
         if (compound == null)
         {
             Log.getLogger().warn("Can't find NBT of colony: " + colonyId + " at location: " + new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension)));

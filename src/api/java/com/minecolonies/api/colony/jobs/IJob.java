@@ -8,7 +8,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public interface IJob<AI extends EntityAIBase> extends INBTSerializable<NBTTagCompound>
+public interface IJob<AI extends EntityAIBase> extends INBTSerializable<CompoundNBT>
 {
     /**
      * Return a Localization textContent for the Job.

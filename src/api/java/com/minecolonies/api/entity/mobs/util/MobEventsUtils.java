@@ -10,7 +10,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import net.minecraft.block.material.Material;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -201,8 +201,8 @@ public final class MobEventsUtils
     {
         final Random random = new Random();
         final BlockPos pos = colony.getRaiderManager().getRandomOutsiderInDirection(
-          random.nextInt(2) < 1 ? EnumFacing.EAST : EnumFacing.WEST,
-          random.nextInt(2) < 1 ? EnumFacing.NORTH : EnumFacing.SOUTH);
+          random.nextInt(2) < 1 ? Direction.EAST : Direction.WEST,
+          random.nextInt(2) < 1 ? Direction.NORTH : Direction.SOUTH);
 
         if (pos.equals(colony.getCenter()))
         {

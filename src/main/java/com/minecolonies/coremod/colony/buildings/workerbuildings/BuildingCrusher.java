@@ -19,7 +19,7 @@ import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.network.messages.CrusherSetModeMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -211,15 +211,15 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        this.dailyQuantity = compound.getInteger(TAG_DAILY);
-        this.currentDailyQuantity = compound.getInteger(TAG_CURRENT_DAILY);
+        this.dailyQuantity = compound.getInt(TAG_DAILY);
+        this.currentDailyQuantity = compound.getInt(TAG_CURRENT_DAILY);
 
-        if (compound.hasKey(TAG_CRUSHER_MODE))
+        if (compound.keySet().contains(TAG_CRUSHER_MODE))
         {
-            this.crusherMode = new ItemStorage(new ItemStack(compound.getCompoundTag(TAG_CRUSHER_MODE)));
+            this.crusherMode = new ItemStorage(new ItemStack(compound.getCompound(TAG_CRUSHER_MODE)));
         }
 
         if (super.recipes.isEmpty())
@@ -233,16 +233,16 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = super.serializeNBT();
-        compound.setInteger(TAG_DAILY, dailyQuantity);
-        compound.setInteger(TAG_CURRENT_DAILY, currentDailyQuantity);
+        final CompoundNBT compound = super.serializeNBT();
+        compound.putInt(TAG_DAILY, dailyQuantity);
+        compound.putInt(TAG_CURRENT_DAILY, currentDailyQuantity);
         if (crusherMode != null)
         {
-            final NBTTagCompound crusherModeNBT = new NBTTagCompound();
+            final CompoundNBT crusherModeNBT = new CompoundNBT();
             crusherMode.getItemStack().writeToNBT(crusherModeNBT);
-            compound.setTag(TAG_CRUSHER_MODE, crusherModeNBT);
+            compound.put(TAG_CRUSHER_MODE, crusherModeNBT);
         }
         return compound;
     }

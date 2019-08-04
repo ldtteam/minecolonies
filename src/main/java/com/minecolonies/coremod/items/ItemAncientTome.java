@@ -6,7 +6,7 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -35,9 +35,9 @@ public class ItemAncientTome extends AbstractItemMinecolonies
         final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, entityIn.getPosition());
 
         if (stack.getTagCompound() == null)
-            stack.setTagCompound(new NBTTagCompound());
+            stack.putCompound(new CompoundNBT());
 
-        stack.getTagCompound().setBoolean(NbtTagConstants.TAG_RAID_WILL_HAPPEN, colony.getRaiderManager().willRaidTonight());
+        stack.getTagCompound().putBoolean(NbtTagConstants.TAG_RAID_WILL_HAPPEN, colony.getRaiderManager().willRaidTonight());
     }
 
     @SideOnly(Side.CLIENT)

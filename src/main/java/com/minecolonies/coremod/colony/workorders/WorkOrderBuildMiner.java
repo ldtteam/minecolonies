@@ -3,7 +3,7 @@ package com.minecolonies.coremod.colony.workorders;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.util.BlockPosUtil;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,24 +50,24 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
     }
 
     /**
-     * Read the WorkOrder data from the NBTTagCompound.
+     * Read the WorkOrder data from the CompoundNBT.
      *  @param compound NBT Tag compound.
      * @param manager
      */
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound, final IWorkManager manager)
+    public void readFromNBT(@NotNull final CompoundNBT compound, final IWorkManager manager)
     {
         super.readFromNBT(compound, manager);
         minerBuilding = BlockPosUtil.readFromNBT(compound, TAG_POS);
     }
 
     /**
-     * Save the Work Order to an NBTTagCompound.
+     * Save the Work Order to an CompoundNBT.
      *
      * @param compound NBT tag compound.
      */
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         super.writeToNBT(compound);
         BlockPosUtil.writeToNBT(compound, TAG_POS, minerBuilding);

@@ -31,7 +31,7 @@ import com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequestFactories;
 import com.minecolonies.coremod.test.ReflectionUtil;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -273,11 +273,11 @@ public class StandardRequestManagerTest
 
         @NotNull
         @Override
-        public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StringRequest request)
+        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StringRequest request)
         {
             return StandardRequestFactories.serializeToNBT(controller, request, (controller1, object) -> {
-                final NBTTagCompound compound = new NBTTagCompound();
-                compound.setTag("String", controller.serialize(request.getRequest()));
+                final CompoundNBT compound = new CompoundNBT();
+                compound.put("String", controller.serialize(request.getRequest()));
                 return compound;
             });
         }
@@ -285,9 +285,9 @@ public class StandardRequestManagerTest
         @NotNull
         @Override
         @SuppressWarnings(Suppression.LEFT_CURLY_BRACE)
-        public StringRequest deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+        public StringRequest deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
         {
-            return StandardRequestFactories.deserializeFromNBT(controller, nbt, ((controller1, compound) -> controller1.deserialize(compound.getCompoundTag("String"))),
+            return StandardRequestFactories.deserializeFromNBT(controller, nbt, ((controller1, compound) -> controller1.deserialize(compound.getCompound("String"))),
               (requested, token, requester, requestState) -> controller.getNewInstance(TypeToken.of(StringRequest.class), requested, token, requester, requestState));
         }
     }
@@ -349,17 +349,17 @@ public class StandardRequestManagerTest
 
         @NotNull
         @Override
-        public NBTTagCompound serialize(
+        public CompoundNBT serialize(
                                          @NotNull final IFactoryController controller, @NotNull final StringRequestable stringRequestable)
         {
-            final NBTTagCompound compound = new NBTTagCompound();
-            compound.setString("s", stringRequestable.content);
+            final CompoundNBT compound = new CompoundNBT();
+            compound.putString("s", stringRequestable.content);
             return compound;
         }
 
         @NotNull
         @Override
-        public StringRequestable deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+        public StringRequestable deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
         {
             return new StringRequestable(nbt.getString("s"));
         }
@@ -499,18 +499,18 @@ public class StandardRequestManagerTest
 
         @NotNull
         @Override
-        public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StringResolver stackResolver)
+        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StringResolver stackResolver)
         {
-            final NBTTagCompound compound = new NBTTagCompound();
-            compound.setInteger("prio", stackResolver.getPriority());
+            final CompoundNBT compound = new CompoundNBT();
+            compound.putInt("prio", stackResolver.getPriority());
             return compound;
         }
 
         @NotNull
         @Override
-        public StringResolver deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+        public StringResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
         {
-            return new StringResolver(nbt.getInteger("prio"));
+            return new StringResolver(nbt.getInt("prio"));
         }
     }
 
@@ -593,18 +593,18 @@ public class StandardRequestManagerTest
 
         @NotNull
         @Override
-        public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final TestRequester testRequester)
+        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final TestRequester testRequester)
         {
-            final NBTTagCompound compound = new NBTTagCompound();
-            compound.setTag("Token", controller.serialize(testRequester.token));
+            final CompoundNBT compound = new CompoundNBT();
+            compound.put("Token", controller.serialize(testRequester.token));
             return compound;
         }
 
         @NotNull
         @Override
-        public TestRequester deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+        public TestRequester deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
         {
-            final IToken<?> token = controller.deserialize(nbt.getCompoundTag("Token"));
+            final IToken<?> token = controller.deserialize(nbt.getCompound("Token"));
             return new TestRequester(token);
         }
     }

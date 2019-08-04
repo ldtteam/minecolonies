@@ -12,8 +12,8 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -89,35 +89,35 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
 
         @NotNull
         @Override
-        public NBTTagCompound serialize(
+        public CompoundNBT serialize(
           @NotNull final IFactoryController controller, @NotNull final StandardRequestIdentitiesDataStore standardRequestIdentitiesDataStore)
         {
-            final NBTTagCompound systemCompound = new NBTTagCompound();
+            final CompoundNBT systemCompound = new CompoundNBT();
 
-            systemCompound.setTag(TAG_TOKEN, controller.serialize(standardRequestIdentitiesDataStore.getId()));
-            systemCompound.setTag(TAG_LIST, standardRequestIdentitiesDataStore.getIdentities().keySet().stream().map(token -> {
-                NBTTagCompound mapCompound = new NBTTagCompound();
-                mapCompound.setTag(TAG_TOKEN, controller.serialize(token));
-                mapCompound.setTag(TAG_REQUEST, controller.serialize(standardRequestIdentitiesDataStore.getIdentities().get(token)));
+            systemCompound.put(TAG_TOKEN, controller.serialize(standardRequestIdentitiesDataStore.getId()));
+            systemCompound.put(TAG_LIST, standardRequestIdentitiesDataStore.getIdentities().keySet().stream().map(token -> {
+                CompoundNBT mapCompound = new CompoundNBT();
+                mapCompound.put(TAG_TOKEN, controller.serialize(token));
+                mapCompound.put(TAG_REQUEST, controller.serialize(standardRequestIdentitiesDataStore.getIdentities().get(token)));
                 return mapCompound;
-            }).collect(NBTUtils.toNBTTagList()));
+            }).collect(NBTUtils.toListNBT()));
 
             return systemCompound;
         }
 
         @NotNull
         @Override
-        public StandardRequestIdentitiesDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt)
+        public StandardRequestIdentitiesDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
         {
-            final IToken<?> token = controller.deserialize(nbt.getCompoundTag(TAG_TOKEN));
-            final NBTTagList list = nbt.getTagList(TAG_LIST, Constants.NBT.TAG_COMPOUND);
+            final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
+            final ListNBT list = nbt.getTagList(TAG_LIST, Constants.NBT.TAG_COMPOUND);
 
-            final Map<IToken<?>, IRequest<?>> map = NBTUtils.streamCompound(list).map(nbtTagCompound -> {
-                final IToken<?> id = controller.deserialize(nbtTagCompound.getCompoundTag(TAG_TOKEN));
-                final IRequest<?> request = controller.deserialize(nbtTagCompound.getCompoundTag(TAG_REQUEST));
+            final Map<IToken<?>, IRequest<?>> map = NBTUtils.streamCompound(list).map(CompoundNBT -> {
+                final IToken<?> id = controller.deserialize(CompoundNBT.getCompound(TAG_TOKEN));
+                final IRequest<?> request = controller.deserialize(CompoundNBT.getCompound(TAG_REQUEST));
 
                 return new Tuple<IToken<?>, IRequest<?>>(id, request);
-            }).collect(Collectors.toMap((Tuple<IToken<?>, IRequest<?>> t) -> t.getFirst(), (Tuple<IToken<?>, IRequest<?>> t) -> t.getSecond()));
+            }).collect(Collectors.toMap((Tuple<IToken<?>, IRequest<?>> t) -> t.getA(), (Tuple<IToken<?>, IRequest<?>> t) -> t.getB()));
 
             final BiMap<IToken<?>, IRequest<?>> biMap = HashBiMap.create(map);
 

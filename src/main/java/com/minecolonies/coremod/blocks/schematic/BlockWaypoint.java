@@ -4,8 +4,8 @@ import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.BlockState;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
@@ -65,7 +65,7 @@ public class BlockWaypoint extends AbstractBlockMinecolonies<BlockWaypoint>
     @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
-    public boolean isFullBlock(final IBlockState state)
+    public boolean isFullBlock(final BlockState state)
     {
         return false;
     }
@@ -82,13 +82,13 @@ public class BlockWaypoint extends AbstractBlockMinecolonies<BlockWaypoint>
     @SuppressWarnings(DEPRECATION)
     @Override
     @Deprecated
-    public boolean isOpaqueCube(final IBlockState state)
+    public boolean isOpaqueCube(final BlockState state)
     {
         return false;
     }
 
     @Override
-    public boolean doesSideBlockRendering(final IBlockState state, final IBlockAccess world, final BlockPos pos, final EnumFacing face)
+    public boolean doesSideBlockRendering(final BlockState state, final IBlockAccess world, final BlockPos pos, final Direction face)
     {
         return false;
     }

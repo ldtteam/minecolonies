@@ -40,7 +40,7 @@ public class TownHallPlacementTest extends AbstractMockStaticsTest
     @Mock
     private World        world;
     @Mock
-    private EntityPlayer player;
+    private PlayerEntity player;
     @Mock
     private Permissions  permissions;
 

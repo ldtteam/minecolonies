@@ -19,7 +19,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.BuildingMoveMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.Rotation;
@@ -266,7 +266,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
         else
         {
             final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint());
-            final IBlockState state  = Settings.instance.getActiveStructure().getBlockState(offset);
+            final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset);
             MineColonies.getNetwork().sendToServer(new BuildingMoveMessage(
                     structureName.toString(),
                     structureName.toString(),

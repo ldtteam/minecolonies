@@ -9,10 +9,10 @@ import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -114,9 +114,9 @@ public class DecorationBuildRequestMessage extends AbstractMessage<DecorationBui
                 colony.getWorkManager().removeWorkOrder(wo.get().getKey());
                 return;
             }
-            final IBlockState state = player.getServerWorld().getBlockState(message.pos);
-            final EnumFacing facing = state.getValue(BlockDecorationController.FACING);
-            final EnumFacing basic = ((TileEntityDecorationController) entity).getBasicFacing();
+            final BlockState state = player.getServerWorld().getBlockState(message.pos);
+            final Direction facing = state.getValue(BlockDecorationController.FACING);
+            final Direction basic = ((TileEntityDecorationController) entity).getBasicFacing();
             int difference = facing.getHorizontalIndex() - basic.getHorizontalIndex();
             if (difference < 0)
             {

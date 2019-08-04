@@ -9,7 +9,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -60,28 +60,28 @@ public class LootGenCommand extends AbstractSingleCommand implements IActionComm
             server.addScheduledTask(() ->
             {
                 final Item item = Item.getByNameOrId(Constants.MOD_ID + ":" + building);
-                final NBTTagCompound compound = new NBTTagCompound();
+                final CompoundNBT compound = new CompoundNBT();
                 final StringBuilder nameString = new StringBuilder();
                 if (paste)
                 {
-                    compound.setBoolean(TAG_PASTEABLE, true);
+                    compound.putBoolean(TAG_PASTEABLE, true);
                     nameString.append("Insta ");
                 }
                 nameString.append(building.replace("blockHut", ""));
                 if (level > 0)
                 {
                     nameString.append(" Level: ").append(level);
-                    compound.setInteger(TAG_OTHER_LEVEL, level);
+                    compound.putInt(TAG_OTHER_LEVEL, level);
                 }
 
-                final NBTTagCompound nameCompound = new NBTTagCompound();
-                nameCompound.setString(TAG_STRING_NAME, nameString.toString());
-                compound.setTag(TAG_DISPLAY, nameCompound);
+                final CompoundNBT nameCompound = new CompoundNBT();
+                nameCompound.putString(TAG_STRING_NAME, nameString.toString());
+                compound.put(TAG_DISPLAY, nameCompound);
 
                 if (sender instanceof EntityPlayerMP && item != null)
                 {
                     final ItemStack stack = new ItemStack(item, 1);
-                    stack.setTagCompound(compound);
+                    stack.putCompound(compound);
                     ((EntityPlayerMP) sender).inventory.addItemStackToInventory(stack);
                 }
             });

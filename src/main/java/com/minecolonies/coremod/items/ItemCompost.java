@@ -3,11 +3,11 @@ package com.minecolonies.coremod.items;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.IGrowable;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -45,8 +45,8 @@ public class ItemCompost extends AbstractItemMinecolonies
      * @return EnumActionResult.SUCCESS if it could apply the event, EnumActionResult.FAIL if not
      */
     @Override
-    public EnumActionResult onItemUse(final EntityPlayer player, final World worldIn, final BlockPos pos, final EnumHand hand,
-                                      final EnumFacing facing, final float hitX, final float hitY, final float hitZ)
+    public EnumActionResult onItemUse(final PlayerEntity player, final World worldIn, final BlockPos pos, final EnumHand hand,
+                                      final Direction facing, final float hitX, final float hitY, final float hitZ)
     {
         final ItemStack itemstack = player.getHeldItem(hand);
         if (applyBonemeal(itemstack, worldIn, pos, player, hand))
@@ -69,27 +69,27 @@ public class ItemCompost extends AbstractItemMinecolonies
      * @param hand the hand of the player
      * @return true if it could apply the event, false if not
      */
-    public static boolean applyBonemeal(final ItemStack stack, final World worldIn, final BlockPos target, final EntityPlayer player,
+    public static boolean applyBonemeal(final ItemStack stack, final World worldIn, final BlockPos target, final PlayerEntity player,
                                         @Nullable final EnumHand hand)
     {
-        final IBlockState iblockstate = worldIn.getBlockState(target);
-        final int hook = ForgeEventFactory.onApplyBonemeal(player, worldIn, target, iblockstate, stack, hand);
+        final BlockState BlockState = worldIn.getBlockState(target);
+        final int hook = ForgeEventFactory.onApplyBonemeal(player, worldIn, target, BlockState, stack, hand);
         if (hook != 0)
         {
             return hook > 0;
         }
         else
             {
-            if (iblockstate.getBlock() instanceof IGrowable)
+            if (BlockState.getBlock() instanceof IGrowable)
             {
-                final IGrowable igrowable = (IGrowable)iblockstate.getBlock();
-                if (igrowable.canGrow(worldIn, target, iblockstate, worldIn.isRemote))
+                final IGrowable igrowable = (IGrowable)BlockState.getBlock();
+                if (igrowable.canGrow(worldIn, target, BlockState, worldIn.isRemote))
                 {
                     if (!worldIn.isRemote)
                     {
-                        if (igrowable.canUseBonemeal(worldIn, worldIn.rand, target, iblockstate))
+                        if (igrowable.canUseBonemeal(worldIn, worldIn.rand, target, BlockState))
                         {
-                            igrowable.grow(worldIn, worldIn.rand, target, iblockstate);
+                            igrowable.grow(worldIn, worldIn.rand, target, BlockState);
                         }
                         stack.shrink(1);
                     }

@@ -74,7 +74,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      * @return boolean.
      */
 
-    public boolean canPlayerUseCommand(final EntityPlayer player, final Commands theCommand, final int colonyId)
+    public boolean canPlayerUseCommand(final PlayerEntity player, final Commands theCommand, final int colonyId)
     {
         if (isPlayerOpped(player))
         {
@@ -156,7 +156,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      * @param player the player.
      * @return true if so.
      */
-    public boolean canRankUseCommand(@NotNull final IColony colony, @NotNull final EntityPlayer player)
+    public boolean canRankUseCommand(@NotNull final IColony colony, @NotNull final PlayerEntity player)
     {
         return colony.getPermissions().getRank(player).equals(Rank.OFFICER) || colony.getPermissions().getRank(player).equals(Rank.OWNER);
     }

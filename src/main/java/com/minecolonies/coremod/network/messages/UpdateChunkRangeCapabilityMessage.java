@@ -78,9 +78,9 @@ public class UpdateChunkRangeCapabilityMessage extends AbstractMessage<UpdateChu
         buf.writeInt(colonies.size());
         for (final Tuple<Tuple<Integer, Integer>, Integer> c : colonies)
         {
-            buf.writeInt(c.getFirst().getFirst());
-            buf.writeInt(c.getFirst().getSecond());
-            buf.writeInt(c.getSecond());
+            buf.writeInt(c.getA().getA());
+            buf.writeInt(c.getA().getB());
+            buf.writeInt(c.getB());
         }
     }
 
@@ -91,12 +91,12 @@ public class UpdateChunkRangeCapabilityMessage extends AbstractMessage<UpdateChu
         {
             for (final Tuple<Tuple<Integer, Integer>, Integer> c : message.colonies)
             {
-                final Chunk chunk = ctx.getClientHandler().world.getChunk(c.getFirst().getFirst(), c.getFirst().getSecond());
+                final Chunk chunk = ctx.getClientHandler().world.getChunk(c.getA().getA(), c.getA().getB());
                 final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
                 if (cap != null)
                 {
-                    cap.setOwningColony(c.getSecond());
-                    cap.addColony(c.getSecond());
+                    cap.setOwningColony(c.getB());
+                    cap.addColony(c.getB());
                 }
             }
         }

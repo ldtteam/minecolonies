@@ -26,10 +26,10 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemArmor;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
@@ -136,7 +136,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * The player the guard has been set to follow.
      */
-    private EntityPlayer followPlayer;
+    private PlayerEntity followPlayer;
 
     /**
      * Indicates if in Follow mode what type of follow is use.
@@ -159,16 +159,16 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ItemArmor
-                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.CHEST, new Tuple<>(1, true));
+                                 && ((ItemArmor) itemStack.getItem()).armorType == EquipmentSlotType.CHEST, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ItemArmor
-                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.HEAD, new Tuple<>(1, true));
+                                 && ((ItemArmor) itemStack.getItem()).armorType == EquipmentSlotType.HEAD, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ItemArmor
-                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.LEGS, new Tuple<>(1, true));
+                                 && ((ItemArmor) itemStack.getItem()).armorType == EquipmentSlotType.LEGS, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ItemArmor
-                                 && ((ItemArmor) itemStack.getItem()).armorType == EntityEquipmentSlot.FEET, new Tuple<>(1, true));
+                                 && ((ItemArmor) itemStack.getItem()).armorType == EquipmentSlotType.FEET, new Tuple<>(1, true));
     }
 
     //// ---- NBT Overrides ---- \\\\
@@ -253,17 +253,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     //// ---- Overrides ---- \\\\
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
 
-        task = GuardTask.values()[compound.getInteger(NBT_TASK)];
+        task = GuardTask.values()[compound.getInt(NBT_TASK)];
         final ResourceLocation jobName = new ResourceLocation(compound.getString(NBT_JOB));
         job = IGuardTypeRegistry.getInstance().getFromName(jobName);
         assignManually = compound.getBoolean(NBT_ASSIGN);
         retrieveOnLowHealth = compound.getBoolean(NBT_RETRIEVE);
         patrolManually = compound.getBoolean(NBT_PATROL);
-        if (compound.hasKey(NBT_TIGHT_GROUPING))
+        if (compound.keySet().contains(NBT_TIGHT_GROUPING))
         {
             tightGrouping = compound.getBoolean(NBT_TIGHT_GROUPING);
         }
@@ -272,18 +272,18 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             tightGrouping = true;
         }
 
-        final NBTTagList wayPointTagList = compound.getTagList(NBT_PATROL_TARGETS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT wayPointTagList = compound.getTagList(NBT_PATROL_TARGETS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < wayPointTagList.tagCount(); ++i)
         {
-            final NBTTagCompound blockAtPos = wayPointTagList.getCompoundTagAt(i);
+            final CompoundNBT blockAtPos = wayPointTagList.getCompoundTagAt(i);
             final BlockPos pos = BlockPosUtil.readFromNBT(blockAtPos, NBT_TARGET);
             patrolTargets.add(pos);
         }
 
-        final NBTTagList mobsTagList = compound.getTagList(NBT_MOBS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT mobsTagList = compound.getTagList(NBT_MOBS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < mobsTagList.tagCount(); i++)
         {
-            final NBTTagCompound mobCompound = mobsTagList.getCompoundTagAt(i);
+            final CompoundNBT mobCompound = mobsTagList.getCompoundTagAt(i);
             final MobEntryView mobEntry = MobEntryView.readFromNBT(mobCompound, NBT_MOB_VIEW);
             if (mobEntry.getEntityEntry() != null)
             {
@@ -291,41 +291,41 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             }
         }
 
-        guardPos = NBTUtil.getPosFromTag(compound.getCompoundTag(NBT_GUARD));
+        guardPos = NBTUtil.getPosFromTag(compound.getCompound(NBT_GUARD));
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = super.serializeNBT();
+        final CompoundNBT compound = super.serializeNBT();
 
-        compound.setInteger(NBT_TASK, task.ordinal());
-        compound.setString(NBT_JOB, job == null ? "" : job.getRegistryName().toString());
-        compound.setBoolean(NBT_ASSIGN, assignManually);
-        compound.setBoolean(NBT_RETRIEVE, retrieveOnLowHealth);
-        compound.setBoolean(NBT_PATROL, patrolManually);
-        compound.setBoolean(NBT_TIGHT_GROUPING, tightGrouping);
+        compound.putInt(NBT_TASK, task.ordinal());
+        compound.putString(NBT_JOB, job == null ? "" : job.getRegistryName().toString());
+        compound.putBoolean(NBT_ASSIGN, assignManually);
+        compound.putBoolean(NBT_RETRIEVE, retrieveOnLowHealth);
+        compound.putBoolean(NBT_PATROL, patrolManually);
+        compound.putBoolean(NBT_TIGHT_GROUPING, tightGrouping);
 
-        @NotNull final NBTTagList wayPointTagList = new NBTTagList();
+        @NotNull final ListNBT wayPointTagList = new ListNBT();
         for (@NotNull final BlockPos pos : patrolTargets)
         {
-            @NotNull final NBTTagCompound wayPointCompound = new NBTTagCompound();
+            @NotNull final CompoundNBT wayPointCompound = new CompoundNBT();
             BlockPosUtil.writeToNBT(wayPointCompound, NBT_TARGET, pos);
 
-            wayPointTagList.appendTag(wayPointCompound);
+            wayPointTagList.add(wayPointCompound);
         }
-        compound.setTag(NBT_PATROL_TARGETS, wayPointTagList);
+        compound.put(NBT_PATROL_TARGETS, wayPointTagList);
 
-        @NotNull final NBTTagList mobsTagList = new NBTTagList();
+        @NotNull final ListNBT mobsTagList = new ListNBT();
         for (@NotNull final MobEntryView entry : mobsToAttack)
         {
-            @NotNull final NBTTagCompound mobCompound = new NBTTagCompound();
+            @NotNull final CompoundNBT mobCompound = new CompoundNBT();
             MobEntryView.writeToNBT(mobCompound, NBT_MOB_VIEW, entry);
-            mobsTagList.appendTag(mobCompound);
+            mobsTagList.add(mobCompound);
         }
-        compound.setTag(NBT_MOBS, mobsTagList);
+        compound.put(NBT_MOBS, mobsTagList);
 
-        compound.setTag(NBT_GUARD, NBTUtil.createPosTag(guardPos));
+        compound.put(NBT_GUARD, NBTUtil.createPosTag(guardPos));
 
         return compound;
     }
@@ -339,12 +339,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             if (optCitizen.isPresent())
             {
                 optCitizen.get().removeAllHealthModifiers();
-                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.OFFHAND, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemStackToSlot(EquipmentSlotType.CHEST, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemStackToSlot(EquipmentSlotType.FEET, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemStackToSlot(EquipmentSlotType.HEAD, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemStackToSlot(EquipmentSlotType.LEGS, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemStackToSlot(EquipmentSlotType.OFFHAND, ItemStackUtils.EMPTY);
             }
         }
         colony.getCitizenManager().calculateMaxCitizens();
@@ -414,10 +414,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * Entity of player to follow.
      *
-     * @return the entityPlayer reference.
+     * @return the PlayerEntity reference.
      */
     @Override
-    public EntityPlayer getFollowPlayer()
+    public PlayerEntity getFollowPlayer()
     {
         return followPlayer;
     }
@@ -699,7 +699,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      * @param player the player to follow.
      */
     @Override
-    public void setPlayerToFollow(final EntityPlayer player)
+    public void setPlayerToFollow(final PlayerEntity player)
     {
         if (this.getColony().getWorld() != null)
         {

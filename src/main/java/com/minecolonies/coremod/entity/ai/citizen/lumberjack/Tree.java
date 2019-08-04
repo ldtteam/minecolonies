@@ -13,11 +13,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -213,7 +213,7 @@ public class Tree
      */
     private ItemStack calcSaplingForPos(final IBlockAccess world, final BlockPos pos, final boolean checkFitsBase)
     {
-        IBlockState blockState = world.getBlockState(pos);
+        BlockState blockState = world.getBlockState(pos);
         final Block block = blockState.getBlock();
 
         if (block instanceof BlockLeaves)
@@ -281,7 +281,7 @@ public class Tree
         // Find the closest leaf above, stay below max height
         for (int i = 1; (i + topLog.getY()) < 255 && i < 10; i++)
         {
-            final IBlockState blockState = world.getBlockState(topLog.add(0, i, 0));
+            final BlockState blockState = world.getBlockState(topLog.add(0, i, 0));
             if (blockState.getBlock() instanceof BlockLeaves)
             {
                 return topLog.add(0, i, 0);
@@ -302,7 +302,7 @@ public class Tree
     {
 
         //Is the first block a log?
-        final IBlockState state = world.getBlockState(pos);
+        final BlockState state = world.getBlockState(pos);
         final Block block = state.getBlock();
         if (!block.isWood(world, pos) && !Compatibility.isSlimeBlock(block) && !Compatibility.isDynamicBlock(block))
         {
@@ -320,12 +320,12 @@ public class Tree
         final Tuple<BlockPos, BlockPos> baseAndTOp = getBottomAndTopLog(world, pos, new LinkedList<>(), null, null);
 
         //Get base log, should already be base log.
-        final BlockPos basePos = baseAndTOp.getFirst();
+        final BlockPos basePos = baseAndTOp.getA();
 
         //Make sure tree is on solid ground and tree is not build above cobblestone.
         return world.getBlockState(basePos.down()).getMaterial().isSolid()
                  && world.getBlockState(basePos.down()).getBlock() != Blocks.COBBLESTONE
-                 && hasEnoughLeavesAndIsSupposedToCut(world, baseAndTOp.getSecond(), treesToNotCut);
+                 && hasEnoughLeavesAndIsSupposedToCut(world, baseAndTOp.getB(), treesToNotCut);
     }
 
     /**
@@ -463,23 +463,23 @@ public class Tree
      * @return a new tree object.
      */
     @NotNull
-    public static Tree readFromNBT(@NotNull final NBTTagCompound compound)
+    public static Tree readFromNBT(@NotNull final CompoundNBT compound)
     {
         @NotNull final Tree tree = new Tree();
         tree.location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
 
         tree.woodBlocks = new LinkedList<>();
-        final NBTTagList logs = compound.getTagList(TAG_LOGS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT logs = compound.getTagList(TAG_LOGS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < logs.tagCount(); i++)
         {
-            tree.woodBlocks.add(BlockPosUtil.readFromNBTTagList(logs, i));
+            tree.woodBlocks.add(BlockPosUtil.readFromListNBT(logs, i));
         }
 
         tree.stumpLocations = new ArrayList<>();
-        final NBTTagList stumps = compound.getTagList(TAG_STUMPS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT stumps = compound.getTagList(TAG_STUMPS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < stumps.tagCount(); i++)
         {
-            tree.stumpLocations.add(BlockPosUtil.readFromNBTTagList(stumps, i));
+            tree.stumpLocations.add(BlockPosUtil.readFromListNBT(stumps, i));
         }
 
         tree.topLog = BlockPosUtil.readFromNBT(compound, TAG_TOP_LOG);
@@ -796,7 +796,7 @@ public class Tree
      *
      * @param compound the compound of the tree.
      */
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         if (!isTree)
         {
@@ -805,24 +805,24 @@ public class Tree
 
         BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
 
-        @NotNull final NBTTagList logs = new NBTTagList();
+        @NotNull final ListNBT logs = new ListNBT();
         for (@NotNull final BlockPos log : woodBlocks)
         {
-            BlockPosUtil.writeToNBTTagList(logs, log);
+            BlockPosUtil.writeToListNBT(logs, log);
         }
-        compound.setTag(TAG_LOGS, logs);
+        compound.put(TAG_LOGS, logs);
 
-        @NotNull final NBTTagList stumps = new NBTTagList();
+        @NotNull final ListNBT stumps = new ListNBT();
         for (@NotNull final BlockPos stump : stumpLocations)
         {
-            BlockPosUtil.writeToNBTTagList(stumps, stump);
+            BlockPosUtil.writeToListNBT(stumps, stump);
         }
-        compound.setTag(TAG_STUMPS, stumps);
+        compound.put(TAG_STUMPS, stumps);
 
         BlockPosUtil.writeToNBT(compound, TAG_TOP_LOG, topLog);
 
-        compound.setBoolean(TAG_IS_SLIME_TREE, slimeTree);
-        compound.setBoolean(TAG_DYNAMIC_TREE, dynamicTree);
+        compound.putBoolean(TAG_IS_SLIME_TREE, slimeTree);
+        compound.putBoolean(TAG_DYNAMIC_TREE, dynamicTree);
     }
 
     /**
@@ -866,10 +866,10 @@ public class Tree
         for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
             final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners = building.getCorners();
-            final int x1 = corners.getFirst().getFirst();
-            final int x2 = corners.getFirst().getSecond();
-            final int z1 = corners.getSecond().getFirst();
-            final int z2 = corners.getSecond().getSecond();
+            final int x1 = corners.getA().getA();
+            final int x2 = corners.getA().getB();
+            final int z1 = corners.getB().getA();
+            final int z2 = corners.getB().getB();
 
             final int x = pos.getX();
             final int z = pos.getZ();

@@ -17,7 +17,7 @@ import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -79,7 +79,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + BLOCK_NAME);
         setTranslationKey(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(VARIANT, RackType.DEFAULT));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, Direction.NORTH).withProperty(VARIANT, RackType.DEFAULT));
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         setLightOpacity(LIGHT_OPACITY);
@@ -90,7 +90,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
      */
     @Override
     @Deprecated
-    public boolean isFullBlock(final IBlockState state)
+    public boolean isFullBlock(final BlockState state)
     {
         return false;
     }
@@ -100,14 +100,14 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
      */
     @Deprecated
     @Override
-    public IBlockState getStateFromMeta(final int meta)
+    public BlockState getStateFromMeta(final int meta)
     {
-        final EnumFacing enumFacing = EnumFacing.byHorizontalIndex(meta);
-        return this.getDefaultState().withProperty(FACING, enumFacing);
+        final Direction Direction = Direction.byHorizontalIndex(meta);
+        return this.getDefaultState().withProperty(FACING, Direction);
     }
 
     @Override
-    public int getMetaFromState(@NotNull final IBlockState state)
+    public int getMetaFromState(@NotNull final BlockState state)
     {
         return state.getValue(FACING).getHorizontalIndex();
     }
@@ -116,7 +116,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
      * @deprecated but we still need this because there is nothing better.
      */
     @Override
-    public IBlockState getActualState(final IBlockState state, final IBlockAccess worldIn, final BlockPos pos)
+    public BlockState getActualState(final BlockState state, final IBlockAccess worldIn, final BlockPos pos)
     {
         final TileEntity entity = worldIn.getTileEntity(pos);
 
@@ -173,7 +173,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     @NotNull
     @Override
     @Deprecated
-    public IBlockState withRotation(@NotNull final IBlockState state, final Rotation rot)
+    public BlockState withRotation(@NotNull final BlockState state, final Rotation rot)
     {
         return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
     }
@@ -184,7 +184,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     @NotNull
     @Override
     @Deprecated
-    public IBlockState withMirror(@NotNull final IBlockState state, final Mirror mirrorIn)
+    public BlockState withMirror(@NotNull final BlockState state, final Mirror mirrorIn)
     {
         return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
     }
@@ -194,7 +194,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
      */
     @Override
     @Deprecated
-    public boolean isFullCube(final IBlockState state)
+    public boolean isFullCube(final BlockState state)
     {
         return false;
     }
@@ -204,19 +204,19 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
      */
     @Override
     @Deprecated
-    public boolean isOpaqueCube(final IBlockState state)
+    public boolean isOpaqueCube(final BlockState state)
     {
         return false;
     }
 
     @Override
     @SuppressWarnings(DEPRECATION)
-    public void neighborChanged(final IBlockState state, final World worldIn, final BlockPos pos, final Block blockIn, final BlockPos fromPos)
+    public void neighborChanged(final BlockState state, final World worldIn, final BlockPos pos, final Block blockIn, final BlockPos fromPos)
     {
         if (state.getBlock() instanceof BlockMinecoloniesRack)
         {
             final TileEntity rack = worldIn.getTileEntity(pos);
-            for (final EnumFacing offsetFacing : BlockHorizontal.FACING.getAllowedValues())
+            for (final Direction offsetFacing : BlockHorizontal.FACING.getAllowedValues())
             {
                 final BlockPos neighbor = pos.offset(offsetFacing);
                 final Block block = worldIn.getBlockState(neighbor).getBlock();
@@ -231,7 +231,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     }
 
     @Override
-    public void breakBlock(@NotNull final World worldIn, @NotNull final BlockPos pos, @NotNull final IBlockState state)
+    public void breakBlock(@NotNull final World worldIn, @NotNull final BlockPos pos, @NotNull final BlockState state)
     {
         final TileEntity tileentity = worldIn.getTileEntity(pos);
 
@@ -247,7 +247,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     @NotNull
     @Override
     @SuppressWarnings(DEPRECATION)
-    public BlockFaceShape getBlockFaceShape(final IBlockAccess worldIn, final IBlockState state, final BlockPos pos, final EnumFacing face)
+    public BlockFaceShape getBlockFaceShape(final IBlockAccess worldIn, final BlockState state, final BlockPos pos, final Direction face)
     {
         return BlockFaceShape.CENTER_BIG;
     }
@@ -264,10 +264,10 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     public boolean onBlockActivated(
                                      final World worldIn,
                                      final BlockPos pos,
-                                     final IBlockState state,
-                                     final EntityPlayer playerIn,
+                                     final BlockState state,
+                                     final PlayerEntity playerIn,
                                      final EnumHand hand,
-                                     final EnumFacing facing,
+                                     final Direction facing,
                                      final float hitX,
                                      final float hitY,
                                      final float hitZ)
@@ -289,9 +289,9 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
 
     @Override
     public void onBlockPlacedBy(
-                                 final World worldIn, final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
+                                 final World worldIn, final BlockPos pos, final BlockState state, final EntityLivingBase placer, final ItemStack stack)
     {
-        IBlockState tempState = state;
+        BlockState tempState = state;
         tempState = tempState.withProperty(VARIANT, RackType.byMetadata(stack.getItemDamage()));
         tempState = tempState.withProperty(FACING, placer.getHorizontalFacing().getOpposite());
 
@@ -322,13 +322,13 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     }
 
     @Override
-    public boolean hasTileEntity(final IBlockState state)
+    public boolean hasTileEntity(final BlockState state)
     {
         return true;
     }
 
     @Override
-    public TileEntity createTileEntity(final World world, final IBlockState state)
+    public TileEntity createTileEntity(final World world, final BlockState state)
     {
         return new TileEntityRack();
     }
@@ -344,7 +344,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
      */
     @Override
     @SuppressWarnings(DEPRECATION)
-    public List<ItemStack> getDrops(final IBlockAccess world, final BlockPos pos, final IBlockState state, final int fortune)
+    public List<ItemStack> getDrops(final IBlockAccess world, final BlockPos pos, final BlockState state, final int fortune)
     {
         final List<ItemStack> drops = new ArrayList<>();
 
@@ -364,7 +364,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
      * @return the block pick result.
      */
     @Override
-    public ItemStack getPickBlock(final IBlockState state, final RayTraceResult target, final World world, final BlockPos pos, final EntityPlayer player)
+    public ItemStack getPickBlock(final BlockState state, final RayTraceResult target, final World world, final BlockPos pos, final PlayerEntity player)
     {
         return new ItemStack(this, 1);
     }

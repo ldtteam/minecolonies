@@ -45,7 +45,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Tuple;
@@ -191,11 +191,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
         loadRequestSystemFromNBT(compound);
-        if (compound.hasKey(TAG_IS_BUILT))
+        if (compound.keySet().contains(TAG_IS_BUILT))
         {
             isBuilt = compound.getBoolean(TAG_IS_BUILT);
         }
@@ -203,19 +203,19 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         {
             isBuilt = true;
         }
-        if (compound.hasKey(TAG_CUSTOM_NAME))
+        if (compound.keySet().contains(TAG_CUSTOM_NAME))
         {
             this.customName = compound.getString(TAG_CUSTOM_NAME);
         }
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = super.serializeNBT();
+        final CompoundNBT compound = super.serializeNBT();
         writeRequestSystemToNBT(compound);
-        compound.setBoolean(TAG_IS_BUILT, isBuilt);
-        compound.setString(TAG_CUSTOM_NAME, customName);
+        compound.putBoolean(TAG_IS_BUILT, isBuilt);
+        compound.putString(TAG_CUSTOM_NAME, customName);
         return compound;
     }
 
@@ -447,7 +447,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         buf.writeBoolean(isMirrored());
         buf.writeInt(getClaimRadius(getBuildingLevel()));
 
-        final NBTTagCompound requestSystemCompound = new NBTTagCompound();
+        final CompoundNBT requestSystemCompound = new CompoundNBT();
         writeRequestSystemToNBT(requestSystemCompound);
 
         final ImmutableCollection<IRequestResolver<?>> resolvers = getResolvers();
@@ -510,7 +510,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * @param builder the assigned builder.
      */
     @Override
-    public void requestUpgrade(final EntityPlayer player, final BlockPos builder)
+    public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
         if (getBuildingLevel() < getMaxBuildingLevel())
         {
@@ -554,9 +554,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public void deconstruct()
     {
         final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> tuple = getCorners();
-        for (int x = tuple.getFirst().getFirst(); x < tuple.getFirst().getSecond(); x++)
+        for (int x = tuple.getA().getA(); x < tuple.getA().getB(); x++)
         {
-            for (int z = tuple.getSecond().getFirst(); z < tuple.getSecond().getSecond(); z++)
+            for (int z = tuple.getB().getA(); z < tuple.getB().getB(); z++)
             {
                 for (int y = getPosition().getY() - 1; y < getPosition().getY() + this.getHeight(); y++)
                 {
@@ -595,7 +595,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
           workOrder.getRotation(colony.getWorld()),
           workOrder.isMirrored());
         this.setHeight(wrapper.getHeight());
-        this.setCorners(corners.getFirst().getFirst(), corners.getFirst().getSecond(), corners.getSecond().getFirst(), corners.getSecond().getSecond());
+        this.setCorners(corners.getA().getA(), corners.getA().getB(), corners.getB().getA(), corners.getB().getB());
         this.isBuilt = true;
 
         if (newLevel > getBuildingLevel())
@@ -621,7 +621,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         for (final Map.Entry<Predicate<ItemStack>, Tuple<Integer, Boolean>> entry : getRequiredItemsAndAmount().entrySet())
         {
-            if (inventory && !entry.getValue().getSecond())
+            if (inventory && !entry.getValue().getB())
             {
                 continue;
             }
@@ -629,7 +629,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             if (entry.getKey().test(stack))
             {
                 final ItemStorage kept = ItemStorage.getItemStackOfListMatchingPredicate(localAlreadyKept, entry.getKey());
-                final int toKeep = entry.getValue().getFirst();
+                final int toKeep = entry.getValue().getA();
                 int rest = stack.getCount() - toKeep;
                 if (kept != null)
                 {
@@ -725,9 +725,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     //------------------------- !START! RequestSystem handling for minecolonies buildings -------------------------//
 
-    protected void writeRequestSystemToNBT(final NBTTagCompound compound)
+    protected void writeRequestSystemToNBT(final CompoundNBT compound)
     {
-        compound.setTag(TAG_RS_BUILDING_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
+        compound.put(TAG_RS_BUILDING_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
     }
 
     protected void setupRsDataStore()
@@ -741,20 +741,20 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                                   .getId();
     }
 
-    private void loadRequestSystemFromNBT(final NBTTagCompound compound)
+    private void loadRequestSystemFromNBT(final CompoundNBT compound)
     {
-        if (compound.hasKey(TAG_REQUESTOR_ID))
+        if (compound.keySet().contains(TAG_REQUESTOR_ID))
         {
-            this.requester = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(TAG_REQUESTOR_ID));
+            this.requester = StandardFactoryController.getInstance().deserialize(compound.getCompound(TAG_REQUESTOR_ID));
         }
         else
         {
             this.requester = StandardFactoryController.getInstance().getNewInstance(TypeToken.of(BuildingBasedRequester.class), this);
         }
 
-        if (compound.hasKey(TAG_RS_BUILDING_DATASTORE))
+        if (compound.keySet().contains(TAG_RS_BUILDING_DATASTORE))
         {
-            this.rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompoundTag(TAG_RS_BUILDING_DATASTORE));
+            this.rsDataStoreToken = StandardFactoryController.getInstance().deserialize(compound.getCompound(TAG_RS_BUILDING_DATASTORE));
         }
         else
         {

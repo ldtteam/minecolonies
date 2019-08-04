@@ -7,9 +7,9 @@ import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -62,7 +62,7 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, Direction.NORTH));
     }
 
     /**
@@ -74,23 +74,23 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     @NotNull
     @Override
     @Deprecated
-    public IBlockState getStateFromMeta(final int meta)
+    public BlockState getStateFromMeta(final int meta)
     {
-        EnumFacing enumfacing = EnumFacing.byIndex(meta);
+        Direction Direction = Direction.byIndex(meta);
 
-        if (enumfacing.getAxis() == EnumFacing.Axis.Y)
+        if (Direction.getAxis() == Direction.Axis.Y)
         {
-            enumfacing = EnumFacing.NORTH;
+            Direction = Direction.NORTH;
         }
 
-        return this.getDefaultState().withProperty(FACING, enumfacing);
+        return this.getDefaultState().withProperty(FACING, Direction);
     }
 
     /**
      * Convert the BlockState into the correct metadata value.
      */
     @Override
-    public int getMetaFromState(final IBlockState state)
+    public int getMetaFromState(final BlockState state)
     {
         return state.getValue(FACING).getIndex();
     }
@@ -104,7 +104,7 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     @NotNull
     @Override
     @Deprecated
-    public IBlockState withRotation(@NotNull final IBlockState state, final Rotation rot)
+    public BlockState withRotation(@NotNull final BlockState state, final Rotation rot)
     {
         return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
     }
@@ -116,7 +116,7 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     @NotNull
     @Override
     @Deprecated
-    public IBlockState withMirror(@NotNull final IBlockState state, final Mirror mirrorIn)
+    public BlockState withMirror(@NotNull final BlockState state, final Mirror mirrorIn)
     {
         return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
     }
@@ -124,18 +124,18 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     @SuppressWarnings(DEPRECATION)
     @NotNull
     @Override
-    public IBlockState getStateForPlacement(
+    public BlockState getStateForPlacement(
       final World worldIn,
       final BlockPos pos,
-      final EnumFacing facing,
+      final Direction facing,
       final float hitX,
       final float hitY,
       final float hitZ,
       final int meta,
       final EntityLivingBase placer)
     {
-        @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
-        return this.getDefaultState().withProperty(FACING, enumFacing);
+        @NotNull final Direction Direction = (placer == null) ? Direction.NORTH : Direction.fromAngle(placer.rotationYaw);
+        return this.getDefaultState().withProperty(FACING, Direction);
     }
 
     @NotNull
@@ -154,7 +154,7 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     //todo: remove once we no longer need to support this
     @SuppressWarnings(DEPRECATION)
     @Override
-    public boolean isOpaqueCube(final IBlockState state)
+    public boolean isOpaqueCube(final BlockState state)
     {
         return true;
     }

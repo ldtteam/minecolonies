@@ -58,7 +58,7 @@ public class SetHappinessLevelColonyCommand extends AbstractSingleCommand implem
     }
 
     @Override
-    public boolean canRankUseCommand(@NotNull final IColony colony, @NotNull final EntityPlayer player)
+    public boolean canRankUseCommand(@NotNull final IColony colony, @NotNull final PlayerEntity player)
     {
         return colony.getPermissions().getRank(player).equals(Rank.OWNER);
     }

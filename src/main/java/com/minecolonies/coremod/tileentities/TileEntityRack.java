@@ -7,15 +7,15 @@ import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -174,7 +174,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         }
 
         inventory = tempInventory;
-        final IBlockState state = world.getBlockState(pos);
+        final BlockState state = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, state, state, 0x03);
 
         if (main && combinedHandler == null && getOtherChest() != null)
@@ -238,8 +238,8 @@ public class TileEntityRack extends AbstractTileEntityRack
     {
         if (world != null && world.getBlockState(pos).getBlock() instanceof BlockMinecoloniesRack && (main || single))
         {
-            final IBlockState typeHere;
-            final IBlockState typeNeighbor;
+            final BlockState typeHere;
+            final BlockState typeNeighbor;
             if (content.isEmpty() && (getOtherChest() == null || getOtherChest().isEmpty()))
             {
                 if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof BlockMinecoloniesRack)
@@ -321,12 +321,12 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
-    public void readFromNBT(final NBTTagCompound compound)
+    public void readFromNBT(final CompoundNBT compound)
     {
         super.readFromNBT(compound);
-        if (compound.hasKey(TAG_SIZE))
+        if (compound.keySet().contains(TAG_SIZE))
         {
-            size = compound.getInteger(TAG_SIZE);
+            size = compound.getInt(TAG_SIZE);
             if (size > 0)
             {
                 inventory = new ItemStackHandler(DEFAULT_SIZE + size * SLOT_PER_LINE)
@@ -341,7 +341,7 @@ public class TileEntityRack extends AbstractTileEntityRack
             }
         }
 
-        if (compound.hasKey(TAG_NEIGHBOR))
+        if (compound.keySet().contains(TAG_NEIGHBOR))
         {
             final BlockPos neighbor = BlockPosUtil.readFromNBT(compound, TAG_NEIGHBOR);
             if (neighbor != BlockPos.ORIGIN)
@@ -349,7 +349,7 @@ public class TileEntityRack extends AbstractTileEntityRack
                 relativeNeighbor = pos.subtract(neighbor);
             }
         }
-        else if (compound.hasKey(TAG_RELATIVE_NEIGHBOR))
+        else if (compound.keySet().contains(TAG_RELATIVE_NEIGHBOR))
         {
             relativeNeighbor = BlockPosUtil.readFromNBT(compound, TAG_RELATIVE_NEIGHBOR);
         }
@@ -358,10 +358,10 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             single = false;
         }
-        final NBTTagList inventoryTagList = compound.getTagList(TAG_INVENTORY, TAG_COMPOUND);
+        final ListNBT inventoryTagList = compound.getTagList(TAG_INVENTORY, TAG_COMPOUND);
         for (int i = 0; i < inventoryTagList.tagCount(); ++i)
         {
-            final NBTTagCompound inventoryCompound = inventoryTagList.getCompoundTagAt(i);
+            final CompoundNBT inventoryCompound = inventoryTagList.getCompoundTagAt(i);
             final ItemStack stack = new ItemStack(inventoryCompound);
             if (ItemStackUtils.getSize(stack) <= 0)
             {
@@ -380,19 +380,19 @@ public class TileEntityRack extends AbstractTileEntityRack
 
     @NotNull
     @Override
-    public NBTTagCompound writeToNBT(final NBTTagCompound compound)
+    public CompoundNBT writeToNBT(final CompoundNBT compound)
     {
         super.writeToNBT(compound);
-        compound.setInteger(TAG_SIZE, size);
+        compound.putInt(TAG_SIZE, size);
 
         if (relativeNeighbor != null)
         {
             BlockPosUtil.writeToNBT(compound, TAG_RELATIVE_NEIGHBOR, relativeNeighbor);
         }
-        @NotNull final NBTTagList inventoryTagList = new NBTTagList();
+        @NotNull final ListNBT inventoryTagList = new ListNBT();
         for (int slot = 0; slot < inventory.getSlots(); slot++)
         {
-            @NotNull final NBTTagCompound inventoryCompound = new NBTTagCompound();
+            @NotNull final CompoundNBT inventoryCompound = new CompoundNBT();
             final ItemStack stack = inventory.getStackInSlot(slot);
             if (stack == ItemStackUtils.EMPTY)
             {
@@ -402,26 +402,26 @@ public class TileEntityRack extends AbstractTileEntityRack
             {
                 stack.writeToNBT(inventoryCompound);
             }
-            inventoryTagList.appendTag(inventoryCompound);
+            inventoryTagList.add(inventoryCompound);
         }
-        compound.setTag(TAG_INVENTORY, inventoryTagList);
-        compound.setBoolean(TAG_MAIN, main);
-        compound.setBoolean(TAG_IN_WAREHOUSE, inWarehouse);
+        compound.put(TAG_INVENTORY, inventoryTagList);
+        compound.putBoolean(TAG_MAIN, main);
+        compound.putBoolean(TAG_IN_WAREHOUSE, inWarehouse);
         return compound;
     }
 
     @Override
     public SPacketUpdateTileEntity getUpdatePacket()
     {
-        final NBTTagCompound compound = new NBTTagCompound();
+        final CompoundNBT compound = new CompoundNBT();
         return new SPacketUpdateTileEntity(this.pos, 0, this.writeToNBT(compound));
     }
 
     @NotNull
     @Override
-    public NBTTagCompound getUpdateTag()
+    public CompoundNBT getUpdateTag()
     {
-        return writeToNBT(new NBTTagCompound());
+        return writeToNBT(new CompoundNBT());
     }
 
     @Override
@@ -431,13 +431,13 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
-    public boolean shouldRefresh(final World world, final BlockPos pos, @NotNull final IBlockState oldState, @NotNull final IBlockState newState)
+    public boolean shouldRefresh(final World world, final BlockPos pos, @NotNull final BlockState oldState, @NotNull final BlockState newState)
     {
         return oldState.getBlock() != newState.getBlock();
     }
 
     @Override
-    public boolean hasCapability(@NotNull final Capability<?> capability, final EnumFacing facing)
+    public boolean hasCapability(@NotNull final Capability<?> capability, final Direction facing)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
@@ -457,7 +457,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
-    public <T> T getCapability(@NotNull final Capability<T> capability, final EnumFacing facing)
+    public <T> T getCapability(@NotNull final Capability<T> capability, final Direction facing)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {

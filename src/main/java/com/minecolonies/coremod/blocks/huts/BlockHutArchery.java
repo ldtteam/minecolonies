@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.blocks.huts;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -36,7 +36,7 @@ public class BlockHutArchery extends AbstractBlockHut<BlockHutArchery>
     @NotNull
     @Override
     @Deprecated
-    public List<ItemStack> getDrops(@NotNull final IBlockAccess world, @NotNull final BlockPos pos, @NotNull final IBlockState state, final int fortune)
+    public List<ItemStack> getDrops(@NotNull final IBlockAccess world, @NotNull final BlockPos pos, @NotNull final BlockState state, final int fortune)
     {
         return Collections.emptyList();
     }

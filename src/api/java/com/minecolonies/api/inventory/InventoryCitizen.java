@@ -3,7 +3,7 @@ package com.minecolonies.api.inventory;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,8 +11,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ReportedException;
@@ -407,7 +407,7 @@ public class InventoryCitizen implements IInventory
      * @return if the player is allowed to access.
      */
     @Override
-    public boolean isUsableByPlayer(@NotNull final EntityPlayer player)
+    public boolean isUsableByPlayer(@NotNull final PlayerEntity player)
     {
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
         {
@@ -428,7 +428,7 @@ public class InventoryCitizen implements IInventory
      * @param player the player who opened the inventory.
      */
     @Override
-    public void openInventory(final EntityPlayer player)
+    public void openInventory(final PlayerEntity player)
     {
         /*
          * This may be filled in order to specify some custom handling.
@@ -441,7 +441,7 @@ public class InventoryCitizen implements IInventory
      * @param player the player who opened the inventory.
      */
     @Override
-    public void closeInventory(final EntityPlayer player)
+    public void closeInventory(final PlayerEntity player)
     {
         /*
          * This may be filled in order to specify some custom handling.
@@ -631,7 +631,7 @@ public class InventoryCitizen implements IInventory
 
                 if (itemStackIn.hasTagCompound())
                 {
-                    itemstack.setTagCompound(itemStackIn.getTagCompound().copy());
+                    itemstack.putCompound(itemStackIn.getTagCompound().copy());
                 }
 
                 this.setInventorySlotContents(j, itemstack);
@@ -726,7 +726,7 @@ public class InventoryCitizen implements IInventory
      * @param state the block.
      * @return the float value.
      */
-    public float getStrVsBlock(final EnumHand hand, final IBlockState state)
+    public float getStrVsBlock(final EnumHand hand, final BlockState state)
     {
         float f = 1.0F;
 
@@ -750,19 +750,19 @@ public class InventoryCitizen implements IInventory
      * Writes the inventory out as a list of compound tags. This is where the slot indices are used (+100 for armor, +80
      * for crafting).
      *
-     * @param nbtTagListIn the taglist in.
+     * @param ListNBTIn the taglist in.
      * @return the filled list.
      */
-    public NBTTagList writeToNBT(final NBTTagList nbtTagListIn)
+    public ListNBT writeToNBT(final ListNBT ListNBTIn)
     {
         for (int i = 0; i < this.mainInventory.size(); ++i)
         {
             if (!(this.mainInventory.get(i)).isEmpty())
             {
-                final NBTTagCompound nbttagcompound = new NBTTagCompound();
-                nbttagcompound.setByte("Slot", (byte) i);
-                (this.mainInventory.get(i)).writeToNBT(nbttagcompound);
-                nbtTagListIn.appendTag(nbttagcompound);
+                final CompoundNBT CompoundNBT = new CompoundNBT();
+                CompoundNBT.setByte("Slot", (byte) i);
+                (this.mainInventory.get(i)).writeToNBT(CompoundNBT);
+                ListNBTIn.add(CompoundNBT);
             }
         }
 
@@ -770,10 +770,10 @@ public class InventoryCitizen implements IInventory
         {
             if (!(this.armorInventory.get(j)).isEmpty())
             {
-                final NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-                nbttagcompound1.setByte("Slot", (byte) (j + 100));
-                (this.armorInventory.get(j)).writeToNBT(nbttagcompound1);
-                nbtTagListIn.appendTag(nbttagcompound1);
+                final CompoundNBT CompoundNBT1 = new CompoundNBT();
+                CompoundNBT1.setByte("Slot", (byte) (j + 100));
+                (this.armorInventory.get(j)).writeToNBT(CompoundNBT1);
+                ListNBTIn.add(CompoundNBT1);
             }
         }
 
@@ -781,32 +781,32 @@ public class InventoryCitizen implements IInventory
         {
             if (!(this.offHandInventory.get(k)).isEmpty())
             {
-                final NBTTagCompound nbttagcompound2 = new NBTTagCompound();
-                nbttagcompound2.setByte("Slot", (byte) (k + 150));
-                (this.offHandInventory.get(k)).writeToNBT(nbttagcompound2);
-                nbtTagListIn.appendTag(nbttagcompound2);
+                final CompoundNBT CompoundNBT2 = new CompoundNBT();
+                CompoundNBT2.setByte("Slot", (byte) (k + 150));
+                (this.offHandInventory.get(k)).writeToNBT(CompoundNBT2);
+                ListNBTIn.add(CompoundNBT2);
             }
         }
 
-        return nbtTagListIn;
+        return ListNBTIn;
     }
 
     /**
      * Reads from the given tag list and fills the slots in the inventory with the correct items.
      *
-     * @param nbtTagListIn the tag list.
+     * @param ListNBTIn the tag list.
      */
-    public void readFromNBT(final NBTTagList nbtTagListIn)
+    public void readFromNBT(final ListNBT ListNBTIn)
     {
         this.mainInventory.clear();
         this.armorInventory.clear();
         this.offHandInventory.clear();
 
-        for (int i = 0; i < nbtTagListIn.tagCount(); ++i)
+        for (int i = 0; i < ListNBTIn.tagCount(); ++i)
         {
-            final NBTTagCompound nbttagcompound = nbtTagListIn.getCompoundTagAt(i);
-            final int j = nbttagcompound.getByte("Slot") & 255;
-            final ItemStack itemstack = new ItemStack(nbttagcompound);
+            final CompoundNBT CompoundNBT = ListNBTIn.getCompoundTagAt(i);
+            final int j = CompoundNBT.getByte("Slot") & 255;
+            final ItemStack itemstack = new ItemStack(CompoundNBT);
 
             if (!itemstack.isEmpty())
             {

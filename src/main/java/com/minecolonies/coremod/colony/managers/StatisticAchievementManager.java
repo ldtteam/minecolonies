@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.managers.interfaces.IStatisticAchievementMana
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.TriggerColonyAchievements;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -53,13 +53,13 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         // Restore colony achievements
-        /*final NBTTagList achievementTagList = compound.getTagList(TAG_ACHIEVEMENT_LIST, Constants.NBT.TAG_COMPOUND);
+        /*final ListNBT achievementTagList = compound.getTagList(TAG_ACHIEVEMENT_LIST, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < achievementTagList.tagCount(); ++i)
         {
-            final NBTTagCompound achievementCompound = achievementTagList.getCompoundTagAt(i);
+            final CompoundNBT achievementCompound = achievementTagList.getCompoundTagAt(i);
             final String achievementKey = achievementCompound.getString(TAG_ACHIEVEMENT);
 
             final StatBase statBase = StatList.getOneShotStat(achievementKey);
@@ -70,63 +70,63 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
         }*/
 
         //Statistics
-        final NBTTagCompound statisticsCompound = compound.getCompoundTag(TAG_STATISTICS);
-        final NBTTagCompound minerStatisticsCompound = statisticsCompound.getCompoundTag(TAG_MINER_STATISTICS);
-        final NBTTagCompound farmerStatisticsCompound = statisticsCompound.getCompoundTag(TAG_FARMER_STATISTICS);
-        final NBTTagCompound guardStatisticsCompound = statisticsCompound.getCompoundTag(TAG_FARMER_STATISTICS);
-        final NBTTagCompound builderStatisticsCompound = statisticsCompound.getCompoundTag(TAG_BUILDER_STATISTICS);
-        final NBTTagCompound fishermanStatisticsCompound = statisticsCompound.getCompoundTag(TAG_FISHERMAN_STATISTICS);
-        final NBTTagCompound lumberjackStatisticsCompound = statisticsCompound.getCompoundTag(TAG_LUMBERJACK_STATISTICS);
-        minedOres = minerStatisticsCompound.getInteger(TAG_MINER_ORES);
-        minedDiamonds = minerStatisticsCompound.getInteger(TAG_MINER_DIAMONDS);
-        harvestedCarrots = farmerStatisticsCompound.getInteger(TAG_FARMER_CARROTS);
-        harvestedPotatoes = farmerStatisticsCompound.getInteger(TAG_FARMER_POTATOES);
-        harvestedWheat = farmerStatisticsCompound.getInteger(TAG_FARMER_WHEAT);
-        killedMobs = guardStatisticsCompound.getInteger(TAG_GUARD_MOBS);
-        builtHuts = builderStatisticsCompound.getInteger(TAG_BUILDER_HUTS);
-        caughtFish = fishermanStatisticsCompound.getInteger(TAG_FISHERMAN_FISH);
-        felledTrees = lumberjackStatisticsCompound.getInteger(TAG_LUMBERJACK_TREES);
-        plantedSaplings = lumberjackStatisticsCompound.getInteger(TAG_LUMBERJACK_SAPLINGS);
+        final CompoundNBT statisticsCompound = compound.getCompound(TAG_STATISTICS);
+        final CompoundNBT minerStatisticsCompound = statisticsCompound.getCompound(TAG_MINER_STATISTICS);
+        final CompoundNBT farmerStatisticsCompound = statisticsCompound.getCompound(TAG_FARMER_STATISTICS);
+        final CompoundNBT guardStatisticsCompound = statisticsCompound.getCompound(TAG_FARMER_STATISTICS);
+        final CompoundNBT builderStatisticsCompound = statisticsCompound.getCompound(TAG_BUILDER_STATISTICS);
+        final CompoundNBT fishermanStatisticsCompound = statisticsCompound.getCompound(TAG_FISHERMAN_STATISTICS);
+        final CompoundNBT lumberjackStatisticsCompound = statisticsCompound.getCompound(TAG_LUMBERJACK_STATISTICS);
+        minedOres = minerStatisticsCompound.getInt(TAG_MINER_ORES);
+        minedDiamonds = minerStatisticsCompound.getInt(TAG_MINER_DIAMONDS);
+        harvestedCarrots = farmerStatisticsCompound.getInt(TAG_FARMER_CARROTS);
+        harvestedPotatoes = farmerStatisticsCompound.getInt(TAG_FARMER_POTATOES);
+        harvestedWheat = farmerStatisticsCompound.getInt(TAG_FARMER_WHEAT);
+        killedMobs = guardStatisticsCompound.getInt(TAG_GUARD_MOBS);
+        builtHuts = builderStatisticsCompound.getInt(TAG_BUILDER_HUTS);
+        caughtFish = fishermanStatisticsCompound.getInt(TAG_FISHERMAN_FISH);
+        felledTrees = lumberjackStatisticsCompound.getInt(TAG_LUMBERJACK_TREES);
+        plantedSaplings = lumberjackStatisticsCompound.getInt(TAG_LUMBERJACK_SAPLINGS);
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void writeToNBT(@NotNull final CompoundNBT compound)
     {
         /*//  Achievements
-        @NotNull final NBTTagList achievementsTagList = new NBTTagList();
+        @NotNull final ListNBT achievementsTagList = new ListNBT();
         for (@NotNull final Advancement achievement : this.colonyAchievements)
         {
-            @NotNull final NBTTagCompound achievementCompound = new NBTTagCompound();
-            achievementCompound.setString(TAG_ACHIEVEMENT, achievement.);
-            achievementsTagList.appendTag(achievementCompound);
+            @NotNull final CompoundNBT achievementCompound = new CompoundNBT();
+            achievementCompound.putString(TAG_ACHIEVEMENT, achievement.);
+            achievementsTagList.add(achievementCompound);
         }
-        compound.setTag(TAG_ACHIEVEMENT_LIST, achievementsTagList);*/
+        compound.put(TAG_ACHIEVEMENT_LIST, achievementsTagList);*/
 
         // Statistics
-        @NotNull final NBTTagCompound statisticsCompound = new NBTTagCompound();
-        @NotNull final NBTTagCompound minerStatisticsCompound = new NBTTagCompound();
-        @NotNull final NBTTagCompound farmerStatisticsCompound = new NBTTagCompound();
-        @NotNull final NBTTagCompound guardStatisticsCompound = new NBTTagCompound();
-        @NotNull final NBTTagCompound builderStatisticsCompound = new NBTTagCompound();
-        @NotNull final NBTTagCompound fishermanStatisticsCompound = new NBTTagCompound();
-        @NotNull final NBTTagCompound lumberjackStatisticsCompound = new NBTTagCompound();
-        compound.setTag(TAG_STATISTICS, statisticsCompound);
-        statisticsCompound.setTag(TAG_MINER_STATISTICS, minerStatisticsCompound);
-        minerStatisticsCompound.setInteger(TAG_MINER_ORES, minedOres);
-        minerStatisticsCompound.setInteger(TAG_MINER_DIAMONDS, minedDiamonds);
-        statisticsCompound.setTag(TAG_FARMER_STATISTICS, farmerStatisticsCompound);
-        farmerStatisticsCompound.setInteger(TAG_FARMER_CARROTS, harvestedCarrots);
-        farmerStatisticsCompound.setInteger(TAG_FARMER_POTATOES, harvestedPotatoes);
-        farmerStatisticsCompound.setInteger(TAG_FARMER_WHEAT, harvestedWheat);
-        statisticsCompound.setTag(TAG_GUARD_STATISTICS, guardStatisticsCompound);
-        guardStatisticsCompound.setInteger(TAG_GUARD_MOBS, killedMobs);
-        statisticsCompound.setTag(TAG_BUILDER_STATISTICS, builderStatisticsCompound);
-        builderStatisticsCompound.setInteger(TAG_BUILDER_HUTS, builtHuts);
-        statisticsCompound.setTag(TAG_FISHERMAN_STATISTICS, fishermanStatisticsCompound);
-        fishermanStatisticsCompound.setInteger(TAG_FISHERMAN_FISH, caughtFish);
-        statisticsCompound.setTag(TAG_LUMBERJACK_STATISTICS, lumberjackStatisticsCompound);
-        lumberjackStatisticsCompound.setInteger(TAG_LUMBERJACK_TREES, felledTrees);
-        lumberjackStatisticsCompound.setInteger(TAG_LUMBERJACK_SAPLINGS, plantedSaplings);
+        @NotNull final CompoundNBT statisticsCompound = new CompoundNBT();
+        @NotNull final CompoundNBT minerStatisticsCompound = new CompoundNBT();
+        @NotNull final CompoundNBT farmerStatisticsCompound = new CompoundNBT();
+        @NotNull final CompoundNBT guardStatisticsCompound = new CompoundNBT();
+        @NotNull final CompoundNBT builderStatisticsCompound = new CompoundNBT();
+        @NotNull final CompoundNBT fishermanStatisticsCompound = new CompoundNBT();
+        @NotNull final CompoundNBT lumberjackStatisticsCompound = new CompoundNBT();
+        compound.put(TAG_STATISTICS, statisticsCompound);
+        statisticsCompound.put(TAG_MINER_STATISTICS, minerStatisticsCompound);
+        minerStatisticsCompound.putInt(TAG_MINER_ORES, minedOres);
+        minerStatisticsCompound.putInt(TAG_MINER_DIAMONDS, minedDiamonds);
+        statisticsCompound.put(TAG_FARMER_STATISTICS, farmerStatisticsCompound);
+        farmerStatisticsCompound.putInt(TAG_FARMER_CARROTS, harvestedCarrots);
+        farmerStatisticsCompound.putInt(TAG_FARMER_POTATOES, harvestedPotatoes);
+        farmerStatisticsCompound.putInt(TAG_FARMER_WHEAT, harvestedWheat);
+        statisticsCompound.put(TAG_GUARD_STATISTICS, guardStatisticsCompound);
+        guardStatisticsCompound.putInt(TAG_GUARD_MOBS, killedMobs);
+        statisticsCompound.put(TAG_BUILDER_STATISTICS, builderStatisticsCompound);
+        builderStatisticsCompound.putInt(TAG_BUILDER_HUTS, builtHuts);
+        statisticsCompound.put(TAG_FISHERMAN_STATISTICS, fishermanStatisticsCompound);
+        fishermanStatisticsCompound.putInt(TAG_FISHERMAN_FISH, caughtFish);
+        statisticsCompound.put(TAG_LUMBERJACK_STATISTICS, lumberjackStatisticsCompound);
+        lumberjackStatisticsCompound.putInt(TAG_LUMBERJACK_TREES, felledTrees);
+        lumberjackStatisticsCompound.putInt(TAG_LUMBERJACK_SAPLINGS, plantedSaplings);
     }
 
     @Override

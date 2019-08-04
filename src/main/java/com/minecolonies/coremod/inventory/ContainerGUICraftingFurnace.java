@@ -32,7 +32,7 @@ public class ContainerGUICraftingFurnace extends Container
     /**
      * The player assigned to it.
      */
-    private final EntityPlayer player;
+    private final PlayerEntity player;
 
     /**
      * Constructs the GUI with the player and furnace inventory.
@@ -55,7 +55,7 @@ public class ContainerGUICraftingFurnace extends Container
 
             @NotNull
             @Override
-            public ItemStack onTake(final EntityPlayer player, @NotNull final ItemStack stack)
+            public ItemStack onTake(final PlayerEntity player, @NotNull final ItemStack stack)
             {
                 return ItemStack.EMPTY;
             }
@@ -74,7 +74,7 @@ public class ContainerGUICraftingFurnace extends Container
             }
 
             @Override
-            public boolean canTakeStack(final EntityPlayer par1EntityPlayer)
+            public boolean canTakeStack(final PlayerEntity par1EntityPlayer)
             {
                 return false;
             }
@@ -110,7 +110,7 @@ public class ContainerGUICraftingFurnace extends Container
 
     @NotNull
     @Override
-    public ItemStack slotClick(final int slotId, final int clickedButton, final ClickType mode, final EntityPlayer playerIn)
+    public ItemStack slotClick(final int slotId, final int clickedButton, final ClickType mode, final PlayerEntity playerIn)
     {
         final ItemStack clickResult;
         if (slotId >= 0 && slotId < FURNACE_SLOTS)
@@ -174,14 +174,14 @@ public class ContainerGUICraftingFurnace extends Container
     }
 
     @Override
-    public boolean canInteractWith(@NotNull final EntityPlayer playerIn)
+    public boolean canInteractWith(@NotNull final PlayerEntity playerIn)
     {
         return true;
     }
 
     @NotNull
     @Override
-    public ItemStack transferStackInSlot(final EntityPlayer playerIn, final int index)
+    public ItemStack transferStackInSlot(final PlayerEntity playerIn, final int index)
     {
         if (index <= FURNACE_SLOTS)
         {

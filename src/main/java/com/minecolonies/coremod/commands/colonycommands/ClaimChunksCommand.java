@@ -45,8 +45,8 @@ public class ClaimChunksCommand implements IActionCommand
         //See if the player is opped.
         if (sender instanceof EntityPlayerMP && isPlayerOpped(sender))
         {
-            final int colonyId = actionMenuState.getIntegerForArgument("colony");
-            final int dimId = actionMenuState.getIntegerForArgument("dimension");
+            final int colonyId = actionMenuState.getIntForArgument("colony");
+            final int dimId = actionMenuState.getIntForArgument("dimension");
 
             final int range = actionMenuState.getIntValueForArgument("range", Configurations.gameplay.workingRangeTownHallChunks);
             final Boolean add = actionMenuState.getBooleanForArgument("add");

@@ -17,11 +17,11 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -310,7 +310,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             final BlockPos schemPos = job.getWorkOrder().getBuildingLocation();
             final int yStart = targetPosition.getY() > schemPos.getY() ? targetPosition.getY() : schemPos.getY();
             final int yEnd = targetPosition.getY() < schemPos.getY() ? Math.max(targetPosition.getY(), schemPos.getY() - MAX_DEPTH_DIFFERENCE) : schemPos.getY();
-            final EnumFacing direction = BlockPosUtil.getXZFacing(worker.getPosition(), targetPosition).getOpposite();
+            final Direction direction = BlockPosUtil.getXZFacing(worker.getPosition(), targetPosition).getOpposite();
             for (int i = MIN_DISTANCE + 1; i < MAX_DISTANCE; i++)
             {
                 for (int y = yStart; y >= yEnd; y--)
@@ -329,7 +329,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    public void connectBlockToBuildingIfNecessary(@NotNull final IBlockState blockState, @NotNull final BlockPos pos)
+    public void connectBlockToBuildingIfNecessary(@NotNull final BlockState blockState, @NotNull final BlockPos pos)
     {
         final BlockPos buildingLocation = job.getWorkOrder().getBuildingLocation();
         final IBuilding building = this.getOwnBuilding().getColony().getBuildingManager().getBuilding(buildingLocation);
@@ -346,13 +346,13 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    public boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final IBlockState worldMetadata)
+    public boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final BlockState worldMetadata)
     {
         return false;
     }
 
     @Override
-    public IBlockState getSolidSubstitution(@NotNull final BlockPos location)
+    public BlockState getSolidSubstitution(@NotNull final BlockPos location)
     {
         return BlockUtils.getSubstitutionBlockAtWorld(world, location);
     }

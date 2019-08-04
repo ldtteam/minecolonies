@@ -24,8 +24,8 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.network.messages.CompostParticleMessage;
 import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
 import net.minecraft.block.*;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -617,7 +617,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean shouldHarvest(@NotNull final BlockPos position)
     {
-        IBlockState state = world.getBlockState(position.up());
+        BlockState state = world.getBlockState(position.up());
         Block block = state.getBlock();
 
         if (block == Blocks.PUMPKIN || block == Blocks.MELON_BLOCK)
@@ -676,7 +676,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         final ItemStack tool = worker.getHeldItemMainhand();
 
         final int fortune = ItemStackUtils.getFortuneOf(tool);
-        final IBlockState state = world.getBlockState(pos);
+        final BlockState state = world.getBlockState(pos);
         NonNullList<ItemStack> drops = NonNullList.create();
         state.getBlock().getDrops(drops, world, pos, state, fortune);
         for (final ItemStack item : drops)

@@ -5,9 +5,9 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -156,7 +156,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
       @NotNull final boolean getDrops,
       final Runnable blockBreakAction)
     {
-        final IBlockState curBlockState = world.getBlockState(blockToMine);
+        final BlockState curBlockState = world.getBlockState(blockToMine);
         @Nullable final Block curBlock = curBlockState.getBlock();
         if (curBlock == null
               || curBlock.equals(Blocks.AIR)
@@ -263,7 +263,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      * Trigger that a block was succesfully mined.
      * @param blockToMine the mined blockState.
      */
-    protected void triggerMinedBlock(@NotNull final IBlockState blockToMine)
+    protected void triggerMinedBlock(@NotNull final BlockState blockToMine)
     {
         final IStatisticAchievementManager statsManager = this.getOwnBuilding().getColony().getStatsManager();
         final Block block = blockToMine.getBlock();

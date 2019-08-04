@@ -11,7 +11,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -92,29 +92,29 @@ public class StandardDataStoreManager implements IDataStoreManager
 
         @NotNull
         @Override
-        public NBTTagCompound serialize(@NotNull final IFactoryController controller, @NotNull final StandardDataStoreManager standardDataStoreManager)
+        public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StandardDataStoreManager standardDataStoreManager)
         {
-            final NBTTagCompound compound = new NBTTagCompound();
+            final CompoundNBT compound = new CompoundNBT();
 
-            compound.setTag(NbtTagConstants.TAG_LIST, standardDataStoreManager.storeMap.keySet().stream().map(iToken -> {
-                final NBTTagCompound entryCompound = new NBTTagCompound();
+            compound.put(NbtTagConstants.TAG_LIST, standardDataStoreManager.storeMap.keySet().stream().map(iToken -> {
+                final CompoundNBT entryCompound = new CompoundNBT();
 
-                entryCompound.setTag(NbtTagConstants.TAG_TOKEN, controller.serialize(iToken));
-                entryCompound.setTag(NbtTagConstants.TAG_VALUE, controller.serialize(standardDataStoreManager.storeMap.get(iToken)));
+                entryCompound.put(NbtTagConstants.TAG_TOKEN, controller.serialize(iToken));
+                entryCompound.put(NbtTagConstants.TAG_VALUE, controller.serialize(standardDataStoreManager.storeMap.get(iToken)));
 
                 return entryCompound;
-            }).collect(NBTUtils.toNBTTagList()));
+            }).collect(NBTUtils.toListNBT()));
 
             return compound;
         }
 
         @NotNull
         @Override
-        public StandardDataStoreManager deserialize(@NotNull final IFactoryController controller, @NotNull final NBTTagCompound nbt) throws Throwable
+        public StandardDataStoreManager deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt) throws Throwable
         {
-            final Map<IToken<?>, IDataStore> storeMap = NBTUtils.streamCompound(nbt.getTagList(NbtTagConstants.TAG_LIST, Constants.NBT.TAG_COMPOUND)).map(nbtTagCompound -> {
-                final IToken<?> token = controller.deserialize(nbtTagCompound.getCompoundTag(NbtTagConstants.TAG_TOKEN));
-                final IDataStore store = controller.deserialize(nbtTagCompound.getCompoundTag(NbtTagConstants.TAG_VALUE));
+            final Map<IToken<?>, IDataStore> storeMap = NBTUtils.streamCompound(nbt.getTagList(NbtTagConstants.TAG_LIST, Constants.NBT.TAG_COMPOUND)).map(CompoundNBT -> {
+                final IToken<?> token = controller.deserialize(CompoundNBT.getCompound(NbtTagConstants.TAG_TOKEN));
+                final IDataStore store = controller.deserialize(CompoundNBT.getCompound(NbtTagConstants.TAG_VALUE));
 
                 return new Tuple<>(token, store);
             }).collect(Collectors.toMap(Tuple::getFirst, Tuple::getSecond));

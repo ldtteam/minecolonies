@@ -4,7 +4,7 @@ import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControl
 import com.minecolonies.coremod.test.ReflectionUtil;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.math.BlockPos;
@@ -40,7 +40,7 @@ public class ColonyTest
     private World world;
 
     @Mock
-    private EntityPlayer player;
+    private PlayerEntity player;
 
     @Mock
     private EventBus eventBus;
@@ -84,7 +84,7 @@ public class ColonyTest
     @Test
     public void testToggleInLoad()
     {
-        final NBTTagCompound compound = colony.getColonyTag();
+        final CompoundNBT compound = colony.getColonyTag();
         final Colony test = Colony.loadColony(compound, world);
         test.setActive(false);
         assertNotNull(test.getColonyTag());
@@ -94,11 +94,11 @@ public class ColonyTest
     @Test
     public void testLoadDifferentThanActual()
     {
-        final NBTTagCompound compound = colony.getColonyTag();
+        final CompoundNBT compound = colony.getColonyTag();
         final Colony test = Colony.loadColony(compound, world);
         assertNotEquals(null, test.getColonyTag());
         test.setName("blahColony");
-        test.writeToNBT(new NBTTagCompound());
+        test.writeToNBT(new CompoundNBT());
         assertNotEquals(compound, test.getColonyTag());
     }
 }

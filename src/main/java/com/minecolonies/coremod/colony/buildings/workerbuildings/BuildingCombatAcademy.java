@@ -15,9 +15,9 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHay;
-import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.block.Blocks;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -86,29 +86,29 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
 
         fightingPos.clear();
 
-        final NBTTagList targetTagList = compound.getTagList(TAG_COMBAT_TARGET, Constants.NBT.TAG_COMPOUND);
+        final ListNBT targetTagList = compound.getTagList(TAG_COMBAT_TARGET, Constants.NBT.TAG_COMPOUND);
         fightingPos.addAll(NBTUtils.streamCompound(targetTagList).map(targetCompound -> BlockPosUtil.readFromNBT(targetCompound, TAG_TARGET)).collect(Collectors.toList()));
 
-        final NBTTagList partnersTagList = compound.getTagList(TAG_COMBAT_PARTNER, Constants.NBT.TAG_COMPOUND);
-        trainingPartners.putAll(NBTUtils.streamCompound(partnersTagList).collect(Collectors.toMap(targetCompound -> targetCompound.getInteger(TAG_PARTNER1), targetCompound -> targetCompound.getInteger(TAG_PARTNER2))));
+        final ListNBT partnersTagList = compound.getTagList(TAG_COMBAT_PARTNER, Constants.NBT.TAG_COMPOUND);
+        trainingPartners.putAll(NBTUtils.streamCompound(partnersTagList).collect(Collectors.toMap(targetCompound -> targetCompound.getInt(TAG_PARTNER1), targetCompound -> targetCompound.getInt(TAG_PARTNER2))));
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = super.serializeNBT();
+        final CompoundNBT compound = super.serializeNBT();
 
-        final NBTTagList targetTagList = fightingPos.stream().map(target -> BlockPosUtil.writeToNBT(new NBTTagCompound(), TAG_TARGET, target)).collect(NBTUtils.toNBTTagList());
-        compound.setTag(TAG_COMBAT_TARGET, targetTagList);
+        final ListNBT targetTagList = fightingPos.stream().map(target -> BlockPosUtil.writeToNBT(new CompoundNBT(), TAG_TARGET, target)).collect(NBTUtils.toListNBT());
+        compound.put(TAG_COMBAT_TARGET, targetTagList);
 
-        final NBTTagList partnersTagList = trainingPartners.entrySet().stream().map(BuildingCombatAcademy::writePartnerTupleToNBT).collect(NBTUtils.toNBTTagList());
-        compound.setTag(TAG_COMBAT_PARTNER, partnersTagList);
+        final ListNBT partnersTagList = trainingPartners.entrySet().stream().map(BuildingCombatAcademy::writePartnerTupleToNBT).collect(NBTUtils.toListNBT());
+        compound.put(TAG_COMBAT_PARTNER, partnersTagList);
 
         return compound;
     }
@@ -118,11 +118,11 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
      * @param tuple the tuple to write to NBT
      * @return a compound with the data.
      */
-    private static NBTTagCompound writePartnerTupleToNBT(final Map.Entry<Integer, Integer> tuple)
+    private static CompoundNBT writePartnerTupleToNBT(final Map.Entry<Integer, Integer> tuple)
     {
-        final NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger(TAG_PARTNER1, tuple.getKey());
-        compound.setInteger(TAG_PARTNER2, tuple.getValue());
+        final CompoundNBT compound = new CompoundNBT();
+        compound.putInt(TAG_PARTNER1, tuple.getKey());
+        compound.putInt(TAG_PARTNER2, tuple.getValue());
         return compound;
     }
 

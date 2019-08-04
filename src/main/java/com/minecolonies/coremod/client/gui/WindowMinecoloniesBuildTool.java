@@ -15,7 +15,7 @@ import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.placementhandlers.PlacementError;
 import com.ldtteam.structures.helpers.Settings;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.math.BlockPos;
@@ -60,7 +60,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     public void place(final StructureName structureName)
     {
         final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint());;
-        final IBlockState state  = Settings.instance.getActiveStructure().getBlockState(offset);
+        final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset);
         MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
           structureName.toString(),
           structureName.toString(),
@@ -87,7 +87,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     public void paste(final StructureName name, final boolean complete)
     {
         final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint());;
-        final IBlockState state  = Settings.instance.getActiveStructure().getBlockState(offset);
+        final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset);
         MineColonies.getNetwork().sendToServer(new BuildToolPasteMessage(
           name.toString(),
           name.toString(),

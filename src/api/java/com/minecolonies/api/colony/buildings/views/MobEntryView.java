@@ -3,7 +3,7 @@ package com.minecolonies.api.colony.buildings.views;
 import com.minecolonies.api.configuration.Configurations;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.EntityList;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.registry.EntityEntry;
@@ -76,13 +76,13 @@ public class MobEntryView
      * @param name     Name of the tag.
      * @param entry      the View to write
      */
-    public static void writeToNBT(@NotNull final NBTTagCompound compound, final String name, @NotNull final MobEntryView entry)
+    public static void writeToNBT(@NotNull final CompoundNBT compound, final String name, @NotNull final MobEntryView entry)
     {
-        @NotNull final NBTTagCompound coordsCompound = new NBTTagCompound();
-        coordsCompound.setString("location", entry.getLocation().toString());
-        coordsCompound.setBoolean("attack", entry.hasAttack());
-        coordsCompound.setInteger("priority", entry.getPriority());
-        compound.setTag(name, coordsCompound);
+        @NotNull final CompoundNBT coordsCompound = new CompoundNBT();
+        coordsCompound.putString("location", entry.getLocation().toString());
+        coordsCompound.putBoolean("attack", entry.hasAttack());
+        coordsCompound.putInt("priority", entry.getPriority());
+        compound.put(name, coordsCompound);
     }
 
     /**
@@ -93,12 +93,12 @@ public class MobEntryView
      * @return The new MobEntryView
      */
     @NotNull
-    public static MobEntryView readFromNBT(@NotNull final NBTTagCompound compound, final String name)
+    public static MobEntryView readFromNBT(@NotNull final CompoundNBT compound, final String name)
     {
-        final NBTTagCompound entryCompound = compound.getCompoundTag(name);
+        final CompoundNBT entryCompound = compound.getCompound(name);
         final ResourceLocation location = new ResourceLocation(entryCompound.getString("location"));
         final Boolean attack = entryCompound.getBoolean("attack");
-        final Integer priority = entryCompound.getInteger("priority");
+        final Integer priority = entryCompound.getInt("priority");
         return new MobEntryView(location, attack, priority);
     }
 
