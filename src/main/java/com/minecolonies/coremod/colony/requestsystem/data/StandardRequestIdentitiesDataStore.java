@@ -110,7 +110,7 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
         public StandardRequestIdentitiesDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
         {
             final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
-            final ListNBT list = nbt.getTagList(TAG_LIST, Constants.NBT.TAG_COMPOUND);
+            final ListNBT list = nbt.getList(TAG_LIST, Constants.NBT.TAG_COMPOUND);
 
             final Map<IToken<?>, IRequest<?>> map = NBTUtils.streamCompound(list).map(CompoundNBT -> {
                 final IToken<?> id = controller.deserialize(CompoundNBT.getCompound(TAG_TOKEN));

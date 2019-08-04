@@ -151,7 +151,7 @@ public class Level
             this.levelSign = null;
         }
 
-        final ListNBT nodeTagList = compound.getTagList(TAG_NODES, Constants.NBT.TAG_COMPOUND);
+        final ListNBT nodeTagList = compound.getList(TAG_NODES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < nodeTagList.size(); i++)
         {
             @NotNull final Node node = Node.createFromNBT(nodeTagList.getCompound(i));
@@ -176,7 +176,7 @@ public class Level
         this.ladderNode = this.nodes.get(new Vec2i(ladderX, ladderZ));
 
 
-        final ListNBT openNodeTagList = compound.getTagList(TAG_OPEN_NODES, Constants.NBT.TAG_COMPOUND);
+        final ListNBT openNodeTagList = compound.getList(TAG_OPEN_NODES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < openNodeTagList.size(); i++)
         {
             @NotNull final Node node = Node.createFromNBT(openNodeTagList.getCompound(i));

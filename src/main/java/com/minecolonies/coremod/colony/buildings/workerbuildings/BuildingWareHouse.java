@@ -193,7 +193,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         super.deserializeNBT(compound);
 
         registeredDeliverymen.clear();
-        final ListNBT deliverymanTagList = compound.getTagList(TAG_DELIVERYMAN, Constants.NBT.TAG_COMPOUND);
+        final ListNBT deliverymanTagList = compound.getList(TAG_DELIVERYMAN, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < deliverymanTagList.size(); i++)
         {
             final BlockPos pos = NBTUtil.getPosFromTag(deliverymanTagList.getCompound(i));

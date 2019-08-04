@@ -1,11 +1,8 @@
 package com.minecolonies.api.compatibility.candb;
 
-import mod.chiselsandbits.api.*;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -54,55 +51,20 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
     @Optional.Method(modid = CANDB)
     public boolean checkForChiselAndBitsBlock(@NotNull final BlockState blockState)
     {
-        return blockState.getBlock() instanceof IMultiStateBlock;
+        return false;
     }
 
     @Override
     @Optional.Method(modid = CANDB)
     public boolean checkForChiselAndBitsTileEntity(@NotNull final TileEntity tileEntity)
     {
-        return tileEntity instanceof IChiseledBlockTileEntity;
+        return false;
     }
 
     @Override
     @Optional.Method(modid = CANDB)
     public List<ItemStack> getChiseledStacks(@NotNull final TileEntity tileEntity)
     {
-        if (tileEntity instanceof IChiseledBlockTileEntity)
-        {
-            final IBitAccess access = ((IChiseledBlockTileEntity) tileEntity).getBitAccess();
-            final List<ItemStack> stacks = new ArrayList<>();
-
-            access.getStateCounts().forEach(stateCount ->
-            {
-                if (stateCount.stateId == 0)
-                {
-                    return;
-                }
-
-                final ItemStack bitStack = ChiselsAndBitsAPI.getBitStack(stateCount.stateId);
-                if (bitStack.isEmpty())
-                {
-                    return;
-                }
-
-                int count = stateCount.quantity;
-                final int max = bitStack.getMaxStackSize();
-                while (count > max)
-                {
-                    final ItemStack copy = bitStack.copy();
-                    copy.setCount(max);
-                    stacks.add(copy);
-                    count -= max;
-                }
-                if (count > 0)
-                {
-                    bitStack.setCount(count);
-                    stacks.add(bitStack);
-                }
-            });
-            return stacks;
-        }
         return Collections.emptyList();
     }
 }

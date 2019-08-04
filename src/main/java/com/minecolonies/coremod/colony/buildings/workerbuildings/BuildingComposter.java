@@ -125,7 +125,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        final ListNBT compostBinTagList = compound.getTagList(TAG_BARRELS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT compostBinTagList = compound.getList(TAG_BARRELS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < compostBinTagList.size(); ++i)
         {
             barrels.add(NBTUtil.getPosFromTag(compostBinTagList.getCompound(i).getCompound(TAG_POS)));

@@ -91,10 +91,10 @@ public class BuildingArchery extends AbstractBuildingWorker
         shootingTargets.clear();
         shootingStands.clear();
 
-        final ListNBT targetTagList = compound.getTagList(TAG_ARCHERY_TARGETS, Constants.NBT.TAG_COMPOUND);
-        shootingTargets.addAll(NBTUtils.streamCompound(targetTagList).map(targetCompound -> BlockPosUtil.readFromNBT(targetCompound, TAG_TARGET)).collect(Collectors.toList()));
+        final ListNBT targetList = compound.getList(TAG_ARCHERY_TARGETS, Constants.NBT.TAG_COMPOUND);
+        shootingTargets.addAll(NBTUtils.streamCompound(targetList).map(targetCompound -> BlockPosUtil.readFromNBT(targetCompound, TAG_TARGET)).collect(Collectors.toList()));
 
-        final ListNBT standTagList = compound.getTagList(TAG_ARCHERY_STANDS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT standTagList = compound.getList(TAG_ARCHERY_STANDS, Constants.NBT.TAG_COMPOUND);
         shootingStands.addAll(NBTUtils.streamCompound(standTagList).map(targetCompound -> BlockPosUtil.readFromNBT(targetCompound, TAG_STAND)).collect(Collectors.toList()));
     }
 
@@ -103,8 +103,8 @@ public class BuildingArchery extends AbstractBuildingWorker
     {
         final CompoundNBT compound = super.serializeNBT();
 
-        final ListNBT targetTagList = shootingTargets.stream().map(target -> BlockPosUtil.writeToNBT(new CompoundNBT(), TAG_TARGET, target)).collect(NBTUtils.toListNBT());
-        compound.put(TAG_ARCHERY_TARGETS, targetTagList);
+        final ListNBT targetList = shootingTargets.stream().map(target -> BlockPosUtil.writeToNBT(new CompoundNBT(), TAG_TARGET, target)).collect(NBTUtils.toListNBT());
+        compound.put(TAG_ARCHERY_TARGETS, targetList);
 
         final ListNBT standTagList = shootingStands.stream().map(target -> BlockPosUtil.writeToNBT(new CompoundNBT(), TAG_STAND, target)).collect(NBTUtils.toListNBT());
         compound.put(TAG_ARCHERY_STANDS, standTagList);

@@ -229,9 +229,9 @@ public interface IColonyTagCapability
             if(nbt instanceof CompoundNBT && ((CompoundNBT) nbt).hasKey(TAG_ID))
             {
                 instance.setOwningColony(((CompoundNBT) nbt).getInt(TAG_ID));
-                NBTUtils.streamCompound(((CompoundNBT) nbt).getTagList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
+                NBTUtils.streamCompound(((CompoundNBT) nbt).getList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
                         .map(compound -> compound.getInt(TAG_ID)).forEach(instance::addColony);
-                NBTUtils.streamCompound(((CompoundNBT) nbt).getTagList(TAG_BUILDINGS_CLAIM, Constants.NBT.TAG_COMPOUND)).forEach(tagCompound -> Storage.readClaims(tagCompound, instance));
+                NBTUtils.streamCompound(((CompoundNBT) nbt).getList(TAG_BUILDINGS_CLAIM, Constants.NBT.TAG_COMPOUND)).forEach(tagCompound -> Storage.readClaims(tagCompound, instance));
             }
         }
 
@@ -268,7 +268,7 @@ public interface IColonyTagCapability
         private static void readClaims(@NotNull final CompoundNBT compound, @NotNull final IColonyTagCapability instance)
         {
             final int id = compound.getInt(TAG_ID);
-            NBTUtils.streamCompound(compound.getTagList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND)).forEach(tagCompound -> instance.addBuildingClaim(id, BlockPosUtil.readFromNBT(((CompoundNBT) tagCompound), TAG_BUILDING)));
+            NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND)).forEach(tagCompound -> instance.addBuildingClaim(id, BlockPosUtil.readFromNBT(((CompoundNBT) tagCompound), TAG_BUILDING)));
         }
     }
 }

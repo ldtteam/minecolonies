@@ -135,7 +135,7 @@ public class BuildingBarracks extends AbstractBuilding
     {
         super.deserializeNBT(compound);
         towers.clear();
-        towers.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_TOWERS, Constants.NBT.TAG_COMPOUND))
+        towers.addAll(NBTUtils.streamCompound(compound.getList(TAG_TOWERS, Constants.NBT.TAG_COMPOUND))
                         .map(resultCompound -> BlockPosUtil.readFromNBT(resultCompound, TAG_POS))
                         .collect(Collectors.toList()));
     }

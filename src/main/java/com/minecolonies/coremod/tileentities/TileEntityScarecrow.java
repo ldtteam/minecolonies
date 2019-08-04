@@ -521,7 +521,7 @@ public class TileEntityScarecrow extends AbstractScarescrowTileEntity
     @Override
     public void readFromNBT(final CompoundNBT compound)
     {
-        final ListNBT inventoryTagList = compound.getTagList(TAG_INVENTORY, TAG_COMPOUND);
+        final ListNBT inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
         for (int i = 0; i < inventoryTagList.size(); ++i)
         {
             final CompoundNBT inventoryCompound = inventoryTagList.getCompound(i);

@@ -469,14 +469,14 @@ public class Tree
         tree.location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
 
         tree.woodBlocks = new LinkedList<>();
-        final ListNBT logs = compound.getTagList(TAG_LOGS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT logs = compound.getList(TAG_LOGS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < logs.size(); i++)
         {
             tree.woodBlocks.add(BlockPosUtil.readFromListNBT(logs, i));
         }
 
         tree.stumpLocations = new ArrayList<>();
-        final ListNBT stumps = compound.getTagList(TAG_STUMPS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT stumps = compound.getList(TAG_STUMPS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < stumps.size(); i++)
         {
             tree.stumpLocations.add(BlockPosUtil.readFromListNBT(stumps, i));

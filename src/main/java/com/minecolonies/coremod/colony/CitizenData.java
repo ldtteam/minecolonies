@@ -257,7 +257,7 @@ public class CitizenData implements ICitizenData
         //  Attributes
         if (compound.keySet().contains(TAG_LEVEL_MAP))
         {
-            final ListNBT levelTagList = compound.getTagList(TAG_LEVEL_MAP, Constants.NBT.TAG_COMPOUND);
+            final ListNBT levelTagList = compound.getList(TAG_LEVEL_MAP, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < levelTagList.size(); ++i)
             {
                 final CompoundNBT levelExperienceAtJob = levelTagList.getCompound(i);
@@ -272,7 +272,7 @@ public class CitizenData implements ICitizenData
 
         if (compound.keySet().contains(TAG_INVENTORY))
         {
-            final ListNBT ListNBT = compound.getTagList(TAG_INVENTORY, 10);
+            final ListNBT ListNBT = compound.getList(TAG_INVENTORY, 10);
             this.inventory.readFromNBT(ListNBT);
             this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInt(TAG_HELD_ITEM_SLOT));
             this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));

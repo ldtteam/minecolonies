@@ -14,7 +14,7 @@ import net.minecraft.block.BlockRedstoneOre;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.BlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -383,7 +383,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public void readFromNBT(@NotNull final CompoundNBT compound)
     {
-        NBTUtils.streamCompound(compound.getTagList(TAG_SAP_LEAF, Constants.NBT.TAG_COMPOUND))
+        NBTUtils.streamCompound(compound.getList(TAG_SAP_LEAF, Constants.NBT.TAG_COMPOUND))
           .map(CompatibilityManager::readLeafSaplingEntryFromNBT)
           .filter(key -> !leavesToSaplingMap.containsKey(key.getA()) && !leavesToSaplingMap.containsValue(key.getB()))
           .forEach(key -> leavesToSaplingMap.put(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true), key.getB()));
@@ -428,9 +428,9 @@ public class CompatibilityManager implements ICompatibilityManager
         if (oreBlocks.isEmpty())
         {
             oreBlocks.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isMineableOre)
-                                               .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof ItemBlock)
-                                               .map(stack -> ((ItemBlock) stack.getItem()).getBlock())
-                                               .collect(Collectors.toList())));
+                                                    .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof ItemBlock)
+                                                    .map(stack -> ((ItemBlock) stack.getItem()).getBlock())
+                                                    .collect(Collectors.toList())));
 
             for (final String oreString : Configurations.gameplay.extraOres)
             {

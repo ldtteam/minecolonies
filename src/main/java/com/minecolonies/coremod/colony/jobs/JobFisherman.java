@@ -73,7 +73,7 @@ public class JobFisherman extends AbstractJob
         }
 
         ponds = new ArrayList<>();
-        final ListNBT listOfPonds = compound.getTagList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT listOfPonds = compound.getList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < listOfPonds.size(); i++)
         {
             ponds.add(BlockPosUtil.readFromListNBT(listOfPonds, i));
@@ -147,7 +147,7 @@ public class JobFisherman extends AbstractJob
         }
 
         ponds = new ArrayList<>();
-        final ListNBT listOfPonds = compound.getTagList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT listOfPonds = compound.getList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < listOfPonds.size(); i++)
         {
             ponds.add(BlockPosUtil.readFromListNBT(listOfPonds, i));

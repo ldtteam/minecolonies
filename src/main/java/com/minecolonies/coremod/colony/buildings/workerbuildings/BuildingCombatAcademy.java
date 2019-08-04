@@ -92,10 +92,10 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
 
         fightingPos.clear();
 
-        final ListNBT targetTagList = compound.getTagList(TAG_COMBAT_TARGET, Constants.NBT.TAG_COMPOUND);
-        fightingPos.addAll(NBTUtils.streamCompound(targetTagList).map(targetCompound -> BlockPosUtil.readFromNBT(targetCompound, TAG_TARGET)).collect(Collectors.toList()));
+        final ListNBT targetList = compound.getList(TAG_COMBAT_TARGET, Constants.NBT.TAG_COMPOUND);
+        fightingPos.addAll(NBTUtils.streamCompound(targetList).map(targetCompound -> BlockPosUtil.readFromNBT(targetCompound, TAG_TARGET)).collect(Collectors.toList()));
 
-        final ListNBT partnersTagList = compound.getTagList(TAG_COMBAT_PARTNER, Constants.NBT.TAG_COMPOUND);
+        final ListNBT partnersTagList = compound.getList(TAG_COMBAT_PARTNER, Constants.NBT.TAG_COMPOUND);
         trainingPartners.putAll(NBTUtils.streamCompound(partnersTagList).collect(Collectors.toMap(targetCompound -> targetCompound.getInt(TAG_PARTNER1), targetCompound -> targetCompound.getInt(TAG_PARTNER2))));
     }
 
@@ -104,8 +104,8 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     {
         final CompoundNBT compound = super.serializeNBT();
 
-        final ListNBT targetTagList = fightingPos.stream().map(target -> BlockPosUtil.writeToNBT(new CompoundNBT(), TAG_TARGET, target)).collect(NBTUtils.toListNBT());
-        compound.put(TAG_COMBAT_TARGET, targetTagList);
+        final ListNBT targetList = fightingPos.stream().map(target -> BlockPosUtil.writeToNBT(new CompoundNBT(), TAG_TARGET, target)).collect(NBTUtils.toListNBT());
+        compound.put(TAG_COMBAT_TARGET, targetList);
 
         final ListNBT partnersTagList = trainingPartners.entrySet().stream().map(BuildingCombatAcademy::writePartnerTupleToNBT).collect(NBTUtils.toListNBT());
         compound.put(TAG_COMBAT_PARTNER, partnersTagList);

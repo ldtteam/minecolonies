@@ -162,7 +162,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        final ListNBT furnaceTagList = compound.getTagList(TAG_BOOKCASES, Constants.NBT.TAG_COMPOUND);
+        final ListNBT furnaceTagList = compound.getList(TAG_BOOKCASES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < furnaceTagList.size(); ++i)
         {
             bookCases.add(NBTUtil.getPosFromTag(furnaceTagList.getCompound(i).getCompound(TAG_POS)));

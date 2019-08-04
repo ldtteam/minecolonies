@@ -780,7 +780,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (dataBackup != null)
         {
-            final ListNBT ListNBT = dataBackup.getTagList("Inventory", 10);
+            final ListNBT ListNBT = dataBackup.getList("Inventory", 10);
             this.getCitizenData().getInventory().readFromNBT(ListNBT);
             if (dataBackup.hasKey(TAG_HELD_ITEM_SLOT))
             {

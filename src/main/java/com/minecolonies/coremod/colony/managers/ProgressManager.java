@@ -189,7 +189,7 @@ public class ProgressManager implements IProgressManager
     public void readFromNBT(@NotNull final CompoundNBT compound)
     {
         final CompoundNBT progressCompound = compound.getCompound(TAG_PROGRESS_MANAGER);
-        final ListNBT progressTags = progressCompound.getTagList(TAG_PROGRESS_LIST, Constants.NBT.TAG_COMPOUND);
+        final ListNBT progressTags = progressCompound.getList(TAG_PROGRESS_LIST, Constants.NBT.TAG_COMPOUND);
         notifiedProgress.addAll(NBTUtils.streamCompound(progressTags)
                          .map(progressTypeCompound -> values()[progressTypeCompound.getInt(TAG_PROGRESS_TYPE)])
                          .collect(Collectors.toList()));

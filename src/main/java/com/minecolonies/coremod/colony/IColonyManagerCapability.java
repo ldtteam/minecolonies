@@ -162,7 +162,7 @@ public interface IColonyManagerCapability
             if(nbt instanceof CompoundNBT)
             {
                 final CompoundNBT compound = (CompoundNBT) nbt;
-                NBTUtils.streamCompound(((CompoundNBT) nbt).getTagList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
+                NBTUtils.streamCompound(((CompoundNBT) nbt).getList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
                   .map(colonyCompound -> Colony.loadColony(colonyCompound, null)).filter(Objects::nonNull).forEach(instance::addColony);
                 instance.setMissingChunksToLoad(compound.getInt(TAG_MISSING_CHUNKS));
             }

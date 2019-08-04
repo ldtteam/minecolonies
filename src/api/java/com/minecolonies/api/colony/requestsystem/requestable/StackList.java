@@ -2,10 +2,12 @@ package com.minecolonies.api.colony.requestsystem.requestable;
 
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraft.tags.Tag;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -173,11 +175,11 @@ public class StackList implements IDeliverable
     {
         final List<ItemStack> stacks = new ArrayList<>();
 
-        final ListNBT neededResTagList = compound.getTagList(NBT_STACK_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+        final ListNBT neededResTagList = compound.getList(NBT_STACK_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < neededResTagList.size(); ++i)
         {
             final CompoundNBT neededRes = neededResTagList.getCompound(i);
-            stacks.add(new ItemStack(neededRes));
+            stacks.add(ItemStack.read(neededRes));
         }
 
         final boolean matchMeta = compound.getBoolean(NBT_MATCHMETA);
@@ -195,9 +197,13 @@ public class StackList implements IDeliverable
         {
             for (final ItemStack tempStack : theStacks)
             {
-                if (OreDictionary.itemMatches(tempStack, stack, matchMeta))
+                for (final ResourceLocation tag: tempStack.getItem().getTags())
                 {
-                    return true;
+                    final Tag<Item> theTag = new Tag<>(tag);
+                    if (theTag.contains(stack.getItem()));
+                    {
+                        return true;
+                    }
                 }
             }
         }

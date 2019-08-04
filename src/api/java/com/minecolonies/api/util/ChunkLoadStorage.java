@@ -72,13 +72,13 @@ public class ChunkLoadStorage
         this.xz = compound.getLong(TAG_POS);
         this.dimension = compound.getInt(TAG_DIMENSION);
 
-        coloniesToAdd.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_COLONIES_TO_ADD, Constants.NBT.TAG_COMPOUND))
+        coloniesToAdd.addAll(NBTUtils.streamCompound(compound.getList(TAG_COLONIES_TO_ADD, Constants.NBT.TAG_COMPOUND))
                 .map(tempCompound -> tempCompound.getInt(TAG_COLONY_ID)).collect(Collectors.toList()));
-        coloniesToRemove.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_COLONIES_TO_REMOVE, Constants.NBT.TAG_COMPOUND))
+        coloniesToRemove.addAll(NBTUtils.streamCompound(compound.getList(TAG_COLONIES_TO_REMOVE, Constants.NBT.TAG_COMPOUND))
                 .map(tempCompound -> tempCompound.getInt(TAG_COLONY_ID)).collect(Collectors.toList()));
-        claimingBuilding.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_BUILDINGS_CLAIM, Constants.NBT.TAG_COMPOUND))
+        claimingBuilding.addAll(NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS_CLAIM, Constants.NBT.TAG_COMPOUND))
                                   .map(ChunkLoadStorage::readTupleFromNbt).collect(Collectors.toList()));
-        unClaimingBuilding.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_BUILDINGS_UNCLAIM, Constants.NBT.TAG_COMPOUND))
+        unClaimingBuilding.addAll(NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS_UNCLAIM, Constants.NBT.TAG_COMPOUND))
                                   .map(ChunkLoadStorage::readTupleFromNbt).collect(Collectors.toList()));
     }
 

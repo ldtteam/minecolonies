@@ -783,7 +783,7 @@ public final class ColonyManager implements IColonyManager
         {
             if (!compound.keySet().contains(TAG_NEW_COLONIES))
             {
-                final ListNBT colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
+                final ListNBT colonyTags = compound.getList(TAG_COLONIES, NBT.TAG_COMPOUND);
                 for (int i = 0; i < colonyTags.size(); ++i)
                 {
                     final CompoundNBT colonyCompound = colonyTags.getCompound(i);

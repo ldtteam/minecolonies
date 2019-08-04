@@ -287,7 +287,7 @@ public class Permissions implements IPermissions
     public void loadPermissions(@NotNull final CompoundNBT compound)
     {
         //  Owners
-        final ListNBT ownerTagList = compound.getTagList(TAG_OWNERS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+        final ListNBT ownerTagList = compound.getList(TAG_OWNERS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < ownerTagList.size(); ++i)
         {
             final CompoundNBT ownerCompound = ownerTagList.getCompound(i);
@@ -313,13 +313,13 @@ public class Permissions implements IPermissions
         }
 
         //Permissions
-        final ListNBT permissionsTagList = compound.getTagList(TAG_PERMISSIONS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+        final ListNBT permissionsTagList = compound.getList(TAG_PERMISSIONS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < permissionsTagList.size(); ++i)
         {
             final CompoundNBT permissionsCompound = permissionsTagList.getCompound(i);
             final Rank rank = Rank.valueOf(permissionsCompound.getString(TAG_RANK));
 
-            final ListNBT flagsTagList = permissionsCompound.getTagList(TAG_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+            final ListNBT flagsTagList = permissionsCompound.getList(TAG_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
 
             int flags = 0;
 

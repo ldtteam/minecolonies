@@ -100,8 +100,8 @@ public class CombinedItemHandler
     @Override
     public void deserializeNBT(final CompoundNBT nbt)
     {
-        final ListNBT handlerList = nbt.getTagList(NBT_KEY_NAME, Constants.NBT.TAG_COMPOUND);
-        final ListNBT indexList = nbt.getTagList(NBT_KEY_HANDLERS_INDEXLIST, Constants.NBT.TAG_INT);
+        final ListNBT handlerList = nbt.getList(NBT_KEY_NAME, Constants.NBT.TAG_COMPOUND);
+        final ListNBT indexList = nbt.getList(NBT_KEY_HANDLERS_INDEXLIST, Constants.NBT.TAG_INT);
 
         if (handlerList.size() == handlers.length)
         {
