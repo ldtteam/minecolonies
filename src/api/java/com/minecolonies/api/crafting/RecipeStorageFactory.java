@@ -29,6 +29,11 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
     private static final String TAG_GRID = "grid";
 
     /**
+     * Tag to store the blockstate.
+     */
+    private static final String BLOCK_TAG = "block";
+
+    /**
      * Compound tag for the input.
      */
     private static final String INPUT_TAG = "input";
@@ -71,7 +76,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
         if(recipeStorage.getIntermediate() != null)
         {
-            NBTUtil.writeBlockState(compound, recipeStorage.getIntermediate().getDefaultState());
+            compound.put(BLOCK_TAG, NBTUtil.writeBlockState(recipeStorage.getIntermediate().getDefaultState()));
         }
         compound.putInt(TAG_GRID, recipeStorage.getGridSize());
         compound.put(TAG_TOKEN, StandardFactoryController.getInstance().serialize(recipeStorage.getToken()));
@@ -87,11 +92,11 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         for (int i = 0; i < inputTagList.size(); ++i)
         {
             final CompoundNBT inputTag = inputTagList.getCompound(i);
-            input.add(new ItemStack(inputTag));
+            input.add(ItemStack.read(inputTag));
         }
 
-        final ItemStack primaryOutput = new ItemStack(nbt);
-        final Block intermediate = NBTUtil.readBlockState(nbt).getBlock();
+        final ItemStack primaryOutput = ItemStack.read(nbt);
+        final Block intermediate = NBTUtil.readBlockState(nbt.getCompound(BLOCK_TAG)).getBlock();
         final int gridSize = nbt.getInt(TAG_GRID);
         final IToken token = StandardFactoryController.getInstance().deserialize(nbt.getCompound(TAG_TOKEN));
 

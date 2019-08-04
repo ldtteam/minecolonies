@@ -1,7 +1,7 @@
 package com.minecolonies.api.util;
 
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.BlockState;
+import net.minecraft.state.IProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -54,22 +54,22 @@ public class BlockStateStorage
             // hashcode only for included properties
             for (final IProperty prop : compareProperties)
             {
-                if (state.getPropertyKeys().contains(prop))
+                if (state.getProperties().contains(prop))
                 {
                     hashCode += prop.hashCode();
-                    hashCode += state.getValue(prop).hashCode();
+                    hashCode += state.get(prop).hashCode();
                 }
             }
         }
         else
         {
             // hashcode for all except the excluded properties
-            for (final IProperty prop : state.getPropertyKeys())
+            for (final IProperty prop : state.getProperties())
             {
                 if (!compareProperties.contains(prop))
                 {
                     hashCode += prop.hashCode();
-                    hashCode += state.getValue(prop).hashCode();
+                    hashCode += state.get(prop).hashCode();
                 }
             }
         }
@@ -122,7 +122,7 @@ public class BlockStateStorage
 
         if (exclude)
         {
-            for (final IProperty prop : state.getPropertyKeys())
+            for (final IProperty prop : state.getProperties())
             {
                 // skip excluded properties upon comparing
                 if (getCompareProperties().contains(prop))
@@ -130,12 +130,12 @@ public class BlockStateStorage
                     continue;
                 }
 
-                if (!comparingToStorage.getState().getPropertyKeys().contains(prop))
+                if (!comparingToStorage.getState().getProperties().contains(prop))
                 {
                     return false;
                 }
 
-                if (!comparingToStorage.getState().getValue(prop).equals(state.getValue(prop)))
+                if (!comparingToStorage.getState().get(prop).equals(state.get(prop)))
                 {
                     return false;
                 }
@@ -145,12 +145,12 @@ public class BlockStateStorage
         {
             for (final IProperty prop : propertyList)
             {
-                if (!comparingToStorage.getState().getPropertyKeys().contains(prop))
+                if (!comparingToStorage.getState().getProperties().contains(prop))
                 {
                     return false;
                 }
 
-                if (!comparingToStorage.getState().getValue(prop).equals(state.getValue(prop)))
+                if (!comparingToStorage.getState().get(prop).equals(state.get(prop)))
                 {
                     return false;
                 }

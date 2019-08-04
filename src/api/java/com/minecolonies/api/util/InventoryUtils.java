@@ -5,12 +5,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.block.Block;
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -101,7 +100,7 @@ public class InventoryUtils
      */
     private static boolean compareItems(@Nullable final ItemStack itemStack, final Item targetItem, final int itemDamage)
     {
-        return !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() == targetItem && (itemStack.getItemDamage() == itemDamage || itemDamage == -1);
+        return !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() == targetItem && (itemStack.getDamage() == itemDamage || itemDamage == -1);
     }
 
     /**
@@ -385,7 +384,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
+     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#addItemStackToInventory(ItemStack)}.
      *
      * @param itemHandler              {@link IItemHandler} to add itemstack
      *                                 to.
@@ -521,16 +520,16 @@ public class InventoryUtils
     @NotNull
     public static Set<IItemHandler> getItemHandlersFromProvider(@NotNull final ICapabilityProvider provider)
     {
-        final Set<IItemHandler> handlerList = Arrays.stream(Direction.VALUES)
-          .filter(facing -> provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
-          .map(facing -> provider.getCapability(ITEM_HANDLER_CAPABILITY, facing))
+        final Set<IItemHandler> handlerList = Arrays.stream(Direction.values())
+          .filter(facing -> provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).isPresent())
+          .map(facing -> provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null))
           .filter(Objects::nonNull)
           .collect(Collectors.toSet());
 
 
-        if (provider.hasCapability(ITEM_HANDLER_CAPABILITY, null))
+        if (provider.getCapability(ITEM_HANDLER_CAPABILITY, null).isPresent())
         {
-            final IItemHandler nullHandler = provider.getCapability(ITEM_HANDLER_CAPABILITY, null);
+            final IItemHandler nullHandler = provider.getCapability(ITEM_HANDLER_CAPABILITY, null).orElse(null);
             if (nullHandler != null)
             {
                 handlerList.add(nullHandler);
@@ -834,7 +833,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
+     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#addItemStackToInventory(ItemStack)}.
      *
      * @param provider  {@link ICapabilityProvider} to add itemstack to.
      * @param itemStack ItemStack to add.
@@ -846,7 +845,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
+     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#addItemStackToInventory(ItemStack)}.
      *
      * @param itemHandler {@link IItemHandler} to add itemstack to.
      * @param itemStack   ItemStack to add.
@@ -858,7 +857,7 @@ public class InventoryUtils
         {
             int slot;
 
-            if (itemStack.isItemDamaged())
+            if (itemStack.isDamaged())
             {
                 slot = getFirstOpenSlotFromItemHandler(itemHandler);
 
@@ -896,7 +895,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
+     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#addItemStackToInventory(ItemStack)}.
      *
      * @param provider  {@link ICapabilityProvider} to add itemstack to.
      * @param itemStack ItemStack to add.
@@ -920,7 +919,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
+     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#addItemStackToInventory(ItemStack)}.
      *
      * @param itemHandler {@link IItemHandler} to add itemstack to.
      * @param itemStack   ItemStack to add.
@@ -932,7 +931,7 @@ public class InventoryUtils
         {
             int slot;
 
-            if (itemStack.isItemDamaged())
+            if (itemStack.isDamaged())
             {
                 slot = getFirstOpenSlotFromItemHandler(itemHandler);
 
@@ -969,7 +968,7 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
+     * Adapted from {@link net.minecraft.entity.player.PlayerInventory#addItemStackToInventory(ItemStack)}.
      *
      * @param provider                 {@link ICapabilityProvider} to add
      *                                 itemstack to.
@@ -1045,8 +1044,7 @@ public class InventoryUtils
      *
      * @param provider The provider to check for.
      * @return True when the provider has multiple distinct IItemHandler of
-     * different sides (sidedness {@link ICapabilityProvider#hasCapability(Capability,
-     * Direction)}), false when not
+     * different sides, false when not
      */
     @NotNull
     public static boolean isProviderSided(@NotNull final ICapabilityProvider provider)
@@ -1060,14 +1058,13 @@ public class InventoryUtils
      * @param provider The {@link ICapabilityProvider} that holds the {@link
      *                 IItemHandler} for the given {@link Direction}
      * @param facing   The facing to get the {@link IItemHandler} from. Can be
-     *                 null for the internal one {@link ICapabilityProvider#hasCapability(Capability,
-     *                 Direction)}
+     *                 null for the internal one
      * @return List of item stacks.
      */
     @NotNull
     public static List<ItemStack> getInventoryAsListFromProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final Direction facing)
     {
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), (ItemStack stack) -> true);
+        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), (ItemStack stack) -> true);
     }
 
     /**
@@ -1079,8 +1076,7 @@ public class InventoryUtils
      * @param provider The {@link ICapabilityProvider} that holds the {@link
      *                 IItemHandler} for the given {@link Direction}
      * @param facing   The facing to get the {@link IItemHandler} from. Can be
-     *                 null for the internal one {@link ICapabilityProvider#hasCapability(Capability,
-     *                 Direction)}
+     *                 null for the internal one
      * @param block    Block to filter
      * @param metaData the damage value.
      * @return List of item stacks
@@ -1092,7 +1088,7 @@ public class InventoryUtils
                                                                         @NotNull final Block block,
                                                                         final int metaData)
     {
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), (ItemStack stack) -> compareItems(stack, getItemFromBlock(block), metaData));
+        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), (ItemStack stack) -> compareItems(stack, getItemFromBlock(block), metaData));
     }
 
     /**
@@ -1103,8 +1099,7 @@ public class InventoryUtils
      * @param provider   The {@link ICapabilityProvider} that holds the {@link
      *                   IItemHandler} for the given {@link Direction}
      * @param facing     The facing to get the {@link IItemHandler} from. Can be
-     *                   null for the internal one {@link ICapabilityProvider#hasCapability(Capability,
-     *                   Direction)}
+     *                   null for the internal one
      * @param targetItem Item to look for
      * @param itemDamage the damage value.
      * @return List of item stacks with the given item in inventory
@@ -1116,7 +1111,7 @@ public class InventoryUtils
                                                                         @NotNull final Item targetItem,
                                                                         final int itemDamage)
     {
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), (ItemStack stack) -> compareItems(stack, targetItem, itemDamage));
+        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), (ItemStack stack) -> compareItems(stack, targetItem, itemDamage));
     }
 
     /**
@@ -1128,8 +1123,7 @@ public class InventoryUtils
      *                                    given {@link Direction}
      * @param facing                      The facing to get the {@link
      *                                    IItemHandler} from. Can be null for
-     *                                    the internal one {@link ICapabilityProvider#hasCapability(Capability,
-     *                                    Direction)}
+     *                                    the internal one
      * @param itemStackSelectionPredicate The predicate to match the stack to.
      * @return List of item stacks that match the given predicate.
      */
@@ -1139,12 +1133,12 @@ public class InventoryUtils
                                                                         @Nullable final Direction facing,
                                                                         @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
+        if (!provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).isPresent())
         {
             return Collections.emptyList();
         }
 
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), itemStackSelectionPredicate);
+        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), itemStackSelectionPredicate);
     }
 
     /**
@@ -1201,14 +1195,14 @@ public class InventoryUtils
                                                           @Nullable final Direction facing,
                                                           @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
+        if (!provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).isPresent())
         {
             return -1;
             //TODO: Later harden contract to remove compare on slot := -1
             //throw new IllegalStateException("Item "+targetItem.getTranslationKey() + " not found in ItemHandler!");
         }
 
-        return findFirstSlotInItemHandlerWith(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), itemStackSelectionPredicate);
+        return findFirstSlotInItemHandlerWith(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), itemStackSelectionPredicate);
     }
 
     /**
@@ -1266,12 +1260,12 @@ public class InventoryUtils
                                                      @Nullable final Direction facing,
                                                      @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
+        if (!provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).isPresent())
         {
             return 0;
         }
 
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum();
+        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), itemStackSelectionPredicate).stream().mapToInt(ItemStackUtils::getSize).sum();
     }
 
     /**
@@ -1322,12 +1316,12 @@ public class InventoryUtils
                                                     @Nullable final Direction facing,
                                                     @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
+        if (!provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).isPresent())
         {
             return false;
         }
 
-        return getItemCountInItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), itemStackSelectionPredicate) > 0;
+        return getItemCountInItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), itemStackSelectionPredicate) > 0;
     }
 
     /**
@@ -1353,12 +1347,12 @@ public class InventoryUtils
      */
     public static int getFirstOpenSlotFromProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final Direction facing)
     {
-        if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
+        if (!provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).isPresent())
         {
             return -1;
         }
 
-        return getFirstOpenSlotFromItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing));
+        return getFirstOpenSlotFromItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null));
     }
 
     /**
@@ -1377,12 +1371,12 @@ public class InventoryUtils
                                                    @NotNull final ICapabilityProvider provider, @Nullable final Direction facing, @NotNull final IToolType toolType,
                                                    final int minimalLevel, final int maximumLevel)
     {
-        if (!provider.hasCapability(ITEM_HANDLER_CAPABILITY, facing))
+        if (!provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).isPresent())
         {
             return false;
         }
 
-        return isToolInItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing), toolType, minimalLevel, maximumLevel);
+        return isToolInItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), toolType, minimalLevel, maximumLevel);
     }
 
     /**
@@ -2191,7 +2185,7 @@ public class InventoryUtils
             {
                 foundEmptySlot = true;
             }
-            else if (compareItems(stack, inStack.getItem(), inStack.getItemDamage()))
+            else if (compareItems(stack, inStack.getItem(), inStack.getDamage()))
             {
                 if (ItemStackUtils.getSize(stack) + ItemStackUtils.getSize(inStack) <= stack.getMaxStackSize())
                 {
@@ -2254,12 +2248,10 @@ public class InventoryUtils
         while (stack.getCount() > 0)
         {
             final int randomSplitStackSize = random.nextInt(MAX_RANDOM_SPAWN) + MIN_RANDOM_SPAWN;
-            final EntityItem entityitem = new EntityItem(worldIn, x + spawnX, y + spawnY, z + spawnZ, stack.splitStack(randomSplitStackSize));
+            final ItemEntity entityitem = new ItemEntity(worldIn, x + spawnX, y + spawnY, z + spawnZ, stack.split(randomSplitStackSize));
 
-            entityitem.motionX = random.nextGaussian() * MOTION_MULTIPLIER;
-            entityitem.motionY = random.nextGaussian() * MOTION_MULTIPLIER + MOTION_Y_MIN;
-            entityitem.motionZ = random.nextGaussian() * MOTION_MULTIPLIER;
-            worldIn.spawnEntity(entityitem);
+            entityitem.setMotion(random.nextGaussian() * MOTION_MULTIPLIER, random.nextGaussian() * MOTION_MULTIPLIER + MOTION_Y_MIN, random.nextGaussian() * MOTION_MULTIPLIER);
+            worldIn.addEntity(entityitem);
         }
     }
 

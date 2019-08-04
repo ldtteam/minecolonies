@@ -16,7 +16,7 @@ import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -75,7 +75,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         if (newView instanceof BuildingBuilder.View)
         {
             final BuildingBuilder.View updatedView = (BuildingBuilder.View) newView;
-            final InventoryPlayer inventory = this.mc.player.inventory;
+            final PlayerInventory inventory = this.mc.player.inventory;
             final boolean isCreative = this.mc.player.capabilities.isCreativeMode;
 
             resources.clear();
@@ -188,7 +188,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount() - resource.getAvailable()));
 
         final ItemStack stack = new ItemStack(resource.getItem(), 1, resource.getDamageValue());
-        stack.putCompound(resource.getItemStack().getTagCompound());
+        stack.put(resource.getItemStack().getTag());
         rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(stack);
     }
 

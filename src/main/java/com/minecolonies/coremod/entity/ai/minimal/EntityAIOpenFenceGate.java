@@ -3,8 +3,8 @@ package com.minecolonies.coremod.entity.ai.minimal;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
 import net.minecraft.block.BlockFenceGate;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +33,7 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
      * @param entityLivingIn the registering entity.
      * @param shouldClose    should the entity close the gate.
      */
-    public EntityAIOpenFenceGate(@NotNull final EntityLiving entityLivingIn, final boolean shouldClose)
+    public EntityAIOpenFenceGate(@NotNull final LivingEntity entityLivingIn, final boolean shouldClose)
     {
         super(entityLivingIn);
         this.theEntity = entityLivingIn;

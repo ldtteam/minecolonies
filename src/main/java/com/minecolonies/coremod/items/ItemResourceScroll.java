@@ -136,8 +136,8 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     {
         if (!item.hasTagCompound())
         {
-            item.putCompound(new CompoundNBT());
+            item.put(new CompoundNBT());
         }
-        return item.getTagCompound();
+        return item.getTag();
     }
 }

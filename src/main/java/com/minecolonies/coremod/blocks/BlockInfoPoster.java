@@ -7,8 +7,8 @@ import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.entity.LivingEntityBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -119,7 +119,7 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     }
 
     @Override
-    public void onBlockPlacedBy(final World worldIn, final BlockPos pos, final BlockState state, final EntityLivingBase placer, final ItemStack stack)
+    public void onBlockPlacedBy(final World worldIn, final BlockPos pos, final BlockState state, final LivingEntityBase placer, final ItemStack stack)
     {
         @NotNull final Direction Direction = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
         this.getDefaultState().withProperty(FACING, Direction);

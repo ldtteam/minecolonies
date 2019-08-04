@@ -19,8 +19,9 @@ import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.BlockState;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.LivingEntityBase;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -289,7 +290,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
 
     @Override
     public void onBlockPlacedBy(
-                                 final World worldIn, final BlockPos pos, final BlockState state, final EntityLivingBase placer, final ItemStack stack)
+                                 final World worldIn, final BlockPos pos, final BlockState state, final LivingEntityBase placer, final ItemStack stack)
     {
         BlockState tempState = state;
         tempState = tempState.withProperty(VARIANT, RackType.byMetadata(stack.getItemDamage()));

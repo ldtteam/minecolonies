@@ -11,7 +11,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -96,7 +96,7 @@ public class WindowGuiCrafting extends GuiContainer
      * @param worldIn       the world.
      * @param building      the building.
      */
-    public WindowGuiCrafting(final InventoryPlayer playerInv, final World worldIn, final AbstractBuildingWorker.View building)
+    public WindowGuiCrafting(final PlayerInventory playerInv, final World worldIn, final AbstractBuildingWorker.View building)
     {
         super(new CraftingGUIBuilding(playerInv, worldIn, building.canCraftComplexRecipes()));
         this.building = building;

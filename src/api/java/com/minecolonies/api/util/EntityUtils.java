@@ -5,9 +5,9 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.block.Blocks;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -227,7 +227,7 @@ public final class EntityUtils
     /**
      * Sets the movement of the entity to specific point.
      * Returns true if direction is set, otherwise false.
-     * {@link #tryMoveLivingToXYZ(EntityLiving, int, int, int, double)}
+     * {@link #tryMoveLivingToXYZ(LivingEntity, int, int, int, double)}
      *
      * @param living Entity to move
      * @param x      x-coordinate
@@ -235,7 +235,7 @@ public final class EntityUtils
      * @param z      z-coordinate
      * @return True if the path is set to destination, otherwise false
      */
-    public static boolean tryMoveLivingToXYZ(@NotNull final EntityLiving living, final int x, final int y, final int z)
+    public static boolean tryMoveLivingToXYZ(@NotNull final LivingEntity living, final int x, final int y, final int z)
     {
         return tryMoveLivingToXYZ(living, x, y, z, 1.0D);
     }
@@ -251,13 +251,13 @@ public final class EntityUtils
      * @param speed  Speed to move with
      * @return True if the path is set to destination, otherwise false
      */
-    public static boolean tryMoveLivingToXYZ(@NotNull final EntityLiving living, final int x, final int y, final int z, final double speed)
+    public static boolean tryMoveLivingToXYZ(@NotNull final LivingEntity living, final int x, final int y, final int z, final double speed)
     {
         return living.getNavigator().tryMoveToXYZ(x, y, z, speed);
     }
 
     /**
-     * {@link #isLivingAtSiteWithMove(EntityLiving, int, int, int)}
+     * {@link #isLivingAtSiteWithMove(LivingEntity, int, int, int)}
      *
      * @param entity entity to check
      * @param x      X-coordinate
@@ -265,7 +265,7 @@ public final class EntityUtils
      * @param z      Z-coordinate
      * @return True if entity is at site, otherwise false
      */
-    public static boolean isLivingAtSiteWithMove(@NotNull final EntityLiving entity, final int x, final int y, final int z)
+    public static boolean isLivingAtSiteWithMove(@NotNull final LivingEntity entity, final int x, final int y, final int z)
     {
         //Default range of 3 works better
         //Range of 2 get some entitys stuck
@@ -283,7 +283,7 @@ public final class EntityUtils
      * @param range  Range to check in
      * @return True if entity is at site, otherwise false.
      */
-    public static boolean isLivingAtSiteWithMove(@NotNull final EntityLiving entity, final int x, final int y, final int z, final int range)
+    public static boolean isLivingAtSiteWithMove(@NotNull final LivingEntity entity, final int x, final int y, final int z, final int range)
     {
         if (x == 0 && y == 0 && z == 0)
         {
@@ -356,7 +356,7 @@ public final class EntityUtils
      * @param range        Range to check in
      * @return True if entity is at site, otherwise false
      */
-    public static boolean isLivingAtSite(@NotNull final EntityLiving entityLiving, final int x, final int y, final int z, final int range)
+    public static boolean isLivingAtSite(@NotNull final LivingEntity entityLiving, final int x, final int y, final int z, final int range)
     {
         return entityLiving.getPosition().distanceSq(new Vec3i(x, y, z)) < MathUtils.square(range);
     }

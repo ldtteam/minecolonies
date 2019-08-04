@@ -120,7 +120,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
         final ItemStack scepter = playerIn.getHeldItem(hand);
         if (!scepter.hasTagCompound())
         {
-            scepter.putCompound(new CompoundNBT());
+            scepter.put(new CompoundNBT());
         }
 
         final IColonyView IColonyView = IColonyManager.getInstance().getClosestColonyView(worldIn, pos);
@@ -154,9 +154,9 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
         }
         if (!scepter.hasTagCompound())
         {
-            scepter.putCompound(new CompoundNBT());
+            scepter.put(new CompoundNBT());
         }
-        final CompoundNBT compound = scepter.getTagCompound();
+        final CompoundNBT compound = scepter.getTag();
 
         toggleItemMode(playerIn, compound);
 

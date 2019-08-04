@@ -12,8 +12,8 @@ import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.SortWarehouseMessage;
 import com.minecolonies.coremod.network.messages.UpgradeWarehouseMessage;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -75,7 +75,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
         final BuildingBuilderResource resource = new BuildingBuilderResource(new ItemStack(Blocks.EMERALD_BLOCK, 1), 1);
 
         final int amountToSet;
-        final InventoryPlayer inventory = this.mc.player.inventory;
+        final PlayerInventory inventory = this.mc.player.inventory;
         final boolean isCreative = this.mc.player.capabilities.isCreativeMode;
         if (isCreative)
         {

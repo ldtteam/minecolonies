@@ -11,10 +11,10 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.LivingEntityBase;
+import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.Direction;
@@ -126,7 +126,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     /**
      * The entity this job belongs to.
      */
-    private EntityLivingBase entity;
+    private LivingEntityBase entity;
 
     /**
      * AbstractPathJob constructor.
@@ -137,7 +137,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param range maximum path range.
      * @param entity the entity.
      */
-    public AbstractPathJob(final World world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range, final EntityLivingBase entity)
+    public AbstractPathJob(final World world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range, final LivingEntityBase entity)
     {
         this(world, start, end, range, new PathResult(), entity);
     }
@@ -151,9 +151,9 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param range  maximum path range.
      * @param result path result.
      * @param entity the entity.
-     * @see AbstractPathJob#AbstractPathJob(World, BlockPos, BlockPos, int, EntityLivingBase)
+     * @see AbstractPathJob#AbstractPathJob(World, BlockPos, BlockPos, int, LivingEntityBase)
      */
-    public AbstractPathJob(final World world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range, final PathResult result, final EntityLivingBase entity)
+    public AbstractPathJob(final World world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range, final PathResult result, final LivingEntityBase entity)
     {
         final int minX = Math.min(start.getX(), end.getX()) - (range / 2);
         final int minZ = Math.min(start.getZ(), end.getZ()) - (range / 2);
@@ -193,7 +193,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param entity Entity for the pathfinding operation.
      * @return ChunkCoordinates for starting location.
      */
-    public static BlockPos prepareStart(@NotNull final EntityLiving entity)
+    public static BlockPos prepareStart(@NotNull final LivingEntity entity)
     {
         @NotNull final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(MathHelper.floor(entity.posX),
                                                                                     (int) entity.posY,

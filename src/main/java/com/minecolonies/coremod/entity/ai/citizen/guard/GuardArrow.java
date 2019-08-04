@@ -4,8 +4,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.achievements.ModAchievements;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.LivingEntityBase;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
@@ -56,7 +56,7 @@ public class GuardArrow extends EntityTippedArrow
     }
 
     @Override
-    protected void arrowHit(final EntityLivingBase targetEntity)
+    protected void arrowHit(final LivingEntityBase targetEntity)
     {
         super.arrowHit(targetEntity);
         if (targetEntity.getHealth() <= 0.0F)

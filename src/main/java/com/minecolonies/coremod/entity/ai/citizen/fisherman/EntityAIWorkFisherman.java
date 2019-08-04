@@ -537,7 +537,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
               0.5F,
               (float) (0.4D / (this.world.rand.nextFloat() * 0.4D + 0.8D)));
             this.entityFishHook = new EntityFishHook(world, this.getCitizen());
-            world.spawnEntity(this.entityFishHook);
+            world.addEntity(this.entityFishHook);
         }
 
         worker.swingArm(worker.getActiveHand());
