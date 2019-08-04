@@ -13,7 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.text.ITextComponent;
@@ -157,9 +157,9 @@ public class InventoryCitizen implements IInventory
      *
      * @return {@link ItemStack} currently being held by citizen.
      */
-    public ItemStack getHeldItem(final EnumHand hand)
+    public ItemStack getHeldItem(final Hand hand)
     {
-        if (hand.equals(EnumHand.MAIN_HAND))
+        if (hand.equals(Hand.MAIN_HAND))
         {
             return getStackInSlot(mainItem);
         }
@@ -172,9 +172,9 @@ public class InventoryCitizen implements IInventory
      *
      * @param slot Slot index with item to be held by citizen.
      */
-    public void setHeldItem(final EnumHand hand, final int slot)
+    public void setHeldItem(final Hand hand, final int slot)
     {
-        if (hand.equals(EnumHand.MAIN_HAND))
+        if (hand.equals(Hand.MAIN_HAND))
         {
             this.mainItem = slot;
         }
@@ -187,9 +187,9 @@ public class InventoryCitizen implements IInventory
      *
      * @return Slot index of held item
      */
-    public int getHeldItemSlot(final EnumHand hand)
+    public int getHeldItemSlot(final Hand hand)
     {
-        if (hand.equals(EnumHand.MAIN_HAND))
+        if (hand.equals(Hand.MAIN_HAND))
         {
             return mainItem;
         }
@@ -629,9 +629,9 @@ public class InventoryCitizen implements IInventory
                 itemstack = itemStackIn.copy();
                 ItemStackUtils.setSize(itemstack, 0);
 
-                if (itemStackIn.hasTagCompound())
+                if (itemStackIn.hasTag())
                 {
-                    itemstack.putCompound(itemStackIn.getTagCompound().copy());
+                    itemstack.putCompound(itemStackIn.getTag().copy());
                 }
 
                 this.setInventorySlotContents(j, itemstack);
@@ -726,18 +726,18 @@ public class InventoryCitizen implements IInventory
      * @param state the block.
      * @return the float value.
      */
-    public float getStrVsBlock(final EnumHand hand, final BlockState state)
+    public float getStrVsBlock(final Hand hand, final BlockState state)
     {
         float f = 1.0F;
 
-        if (hand.equals(EnumHand.MAIN_HAND))
+        if (hand.equals(Hand.MAIN_HAND))
         {
             if (!(this.mainInventory.get(this.mainItem)).isEmpty())
             {
                 f *= (this.mainInventory.get(this.mainItem)).getDestroySpeed(state);
             }
         }
-        else if (hand.equals(EnumHand.OFF_HAND)
+        else if (hand.equals(Hand.OFF_HAND)
                    && !(this.mainInventory.get(this.offhandItem)).isEmpty())
         {
             f *= (this.mainInventory.get(this.offhandItem)).getDestroySpeed(state);

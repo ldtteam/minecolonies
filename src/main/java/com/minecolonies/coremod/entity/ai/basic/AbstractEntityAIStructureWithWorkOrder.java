@@ -282,7 +282,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     public void registerBlockAsNeeded(final ItemStack stack)
     {
-        final int hashCode = stack.hasTagCompound() ? stack.getTag().hashCode() : 0;
+        final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
         if (getOwnBuilding(AbstractBuildingStructureBuilder.class)
               .getNeededResources()
               .get(stack.getTranslationKey()
@@ -300,7 +300,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         {
             return 0;
         }
-        final int hashCode = deliveredItemStack.hasTagCompound() ? deliveredItemStack.getTag().hashCode() : 0;
+        final int hashCode = deliveredItemStack.hasTag() ? deliveredItemStack.getTag().hashCode() : 0;
         final BuildingBuilderResource resource
                 = getOwnBuilding(AbstractBuildingStructureBuilder.class)
                 .getNeededResources()
@@ -456,7 +456,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         {
             return null;
         }
-        final int hashCode = stack.hasTagCompound() ? stack.getTag().hashCode() : 0;
+        final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
         final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding(AbstractBuildingStructureBuilder.class);
         BuildingBuilderResource resource = buildingWorker.getNeededResources().get(stack.getTranslationKey() + ":" + stack.getItemDamage() + "-" + hashCode);
 

@@ -48,7 +48,7 @@ public class ContainerRack extends net.minecraft.inventory.Container
      */
     public ContainerRack(
                           @NotNull final AbstractTileEntityRack abstractTileEntityRack, @Nullable final AbstractTileEntityRack neighborRack,
-                          final InventoryPlayer playerInventory)
+                          final PlayerInventory playerInventory)
     {
         super();
         if (neighborRack != null)

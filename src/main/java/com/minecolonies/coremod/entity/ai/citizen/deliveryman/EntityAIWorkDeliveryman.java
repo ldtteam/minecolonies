@@ -32,7 +32,7 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -340,7 +340,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         setDelay(DUMP_AND_GATHER_DELAY);
         worker.decreaseSaturationForContinuousAction();
 
-        worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, SLOT_HAND);
+        worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, SLOT_HAND);
         return false;
     }
 
@@ -426,7 +426,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         getWareHouse().getTileEntity().dumpInventoryIntoWareHouse(worker.getInventoryCitizen());
         gatherTarget = null;
-        worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, SLOT_HAND);
+        worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, SLOT_HAND);
 
         if (job.isReturning())
         {
@@ -562,7 +562,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         lastDelivery = deliveryHut.getBuildingToDeliver();
         worker.getCitizenExperienceHandler().addExperience(1.0D);
         worker.decreaseSaturationForContinuousAction();
-        worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, SLOT_HAND);
+        worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, SLOT_HAND);
         deliveryHut.setBuildingToDeliver(null);
         job.finishRequest(true);
 

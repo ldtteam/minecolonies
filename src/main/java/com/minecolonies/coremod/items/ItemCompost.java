@@ -6,9 +6,9 @@ import net.minecraft.block.IGrowable;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -42,10 +42,10 @@ public class ItemCompost extends AbstractItemMinecolonies
      * @param hitX the X coord to where the player used the item
      * @param hitY the Y coord to where the player used the item
      * @param hitZ the Z coord to where the player used the item
-     * @return EnumActionResult.SUCCESS if it could apply the event, EnumActionResult.FAIL if not
+     * @return ActionResultType.SUCCESS if it could apply the event, ActionResultType.FAIL if not
      */
     @Override
-    public EnumActionResult onItemUse(final PlayerEntity player, final World worldIn, final BlockPos pos, final EnumHand hand,
+    public ActionResultType onItemUse(final PlayerEntity player, final World worldIn, final BlockPos pos, final Hand hand,
                                       final Direction facing, final float hitX, final float hitY, final float hitZ)
     {
         final ItemStack itemstack = player.getHeldItem(hand);
@@ -55,9 +55,9 @@ public class ItemCompost extends AbstractItemMinecolonies
             {
                 worldIn.playEvent(2005, pos, 0);
             }
-            return EnumActionResult.SUCCESS;
+            return ActionResultType.SUCCESS;
         }
-        return EnumActionResult.FAIL;
+        return ActionResultType.FAIL;
     }
 
     /***
@@ -70,7 +70,7 @@ public class ItemCompost extends AbstractItemMinecolonies
      * @return true if it could apply the event, false if not
      */
     public static boolean applyBonemeal(final ItemStack stack, final World worldIn, final BlockPos target, final PlayerEntity player,
-                                        @Nullable final EnumHand hand)
+                                        @Nullable final Hand hand)
     {
         final BlockState BlockState = worldIn.getBlockState(target);
         final int hook = ForgeEventFactory.onApplyBonemeal(player, worldIn, target, BlockState, stack, hand);

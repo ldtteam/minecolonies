@@ -121,7 +121,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
       final BlockPos pos,
       final BlockState state,
       final PlayerEntity playerIn,
-      final EnumHand hand,
+      final Hand hand,
       final Direction facing,
       final float hitX,
       final float hitY,

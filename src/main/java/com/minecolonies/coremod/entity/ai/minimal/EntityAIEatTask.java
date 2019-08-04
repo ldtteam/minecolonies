@@ -20,7 +20,7 @@ import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -218,11 +218,11 @@ public class EntityAIEatTask extends EntityAIBase
             return CHECK_FOR_FOOD;
         }
 
-        citizen.setHeldItem(EnumHand.MAIN_HAND, stack);
+        citizen.setHeldItem(Hand.MAIN_HAND, stack);
 
         if (waitingTicks % 10 == 0)
         {
-            citizen.swingArm(EnumHand.MAIN_HAND);
+            citizen.swingArm(Hand.MAIN_HAND);
             citizen.playSound(SoundEvents.ENTITY_GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
             MineColonies.getNetwork()
               .sendToAllTracking(new ItemParticleEffectMessage(citizen.getHeldItemMainhand(),
@@ -244,7 +244,7 @@ public class EntityAIEatTask extends EntityAIBase
         citizenData.increaseSaturation(itemFood.getHealAmount(stack) / 2.0);
         citizenData.getInventory().decrStackSize(foodSlot, 1);
         citizenData.markDirty();
-        citizen.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+        citizen.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
 
         if (citizenData.getSaturation() < CitizenConstants.FULL_SATURATION && !stack.isEmpty())
         {
@@ -478,7 +478,7 @@ public class EntityAIEatTask extends EntityAIBase
         foodSlot = -1;
         citizen.stopActiveHand();
         citizen.resetActiveHand();
-        citizen.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+        citizen.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
         placeToPath = null;
         currentState = CHECK_FOR_FOOD;
     }

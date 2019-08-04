@@ -267,7 +267,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
                                      final BlockPos pos,
                                      final BlockState state,
                                      final PlayerEntity playerIn,
-                                     final EnumHand hand,
+                                     final Hand hand,
                                      final Direction facing,
                                      final float hitX,
                                      final float hitY,

@@ -6,7 +6,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -429,8 +429,8 @@ public class CitizenDataView implements ICitizenDataView
         inventory = new InventoryCitizen(this.name, true);
         final ListNBT ListNBT = compound.getList("inventory", 10);
         this.inventory.read(ListNBT);
-        this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInt(TAG_HELD_ITEM_SLOT));
-        this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));
+        this.inventory.setHeldItem(Hand.MAIN_HAND, compound.getInt(TAG_HELD_ITEM_SLOT));
+        this.inventory.setHeldItem(Hand.OFF_HAND, compound.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));
 
         position = BlockPosUtil.readFromByteBuf(buf);
     }

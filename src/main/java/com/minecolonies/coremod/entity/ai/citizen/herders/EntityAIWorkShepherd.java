@@ -11,7 +11,7 @@ import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -126,7 +126,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
             return DECIDE;
         }
 
-        if (!equipTool(EnumHand.MAIN_HAND, ToolType.SHEARS))
+        if (!equipTool(Hand.MAIN_HAND, ToolType.SHEARS))
         {
             return PREPARING;
         }
@@ -139,7 +139,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
             {
                 return getState();
             }
-            worker.swingArm(EnumHand.MAIN_HAND);
+            worker.swingArm(Hand.MAIN_HAND);
             final List<ItemStack> items = sheep.onSheared(worker.getHeldItemMainhand(),
               worker.getEntityWorld(),
               worker.getPosition(),

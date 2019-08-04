@@ -134,7 +134,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
             final BlockPos pos,
             final BlockState state,
             final PlayerEntity playerIn,
-            final EnumHand hand,
+            final Hand hand,
             final Direction facing,
             final float hitX,
             final float hitY,
@@ -240,7 +240,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
     @Override
     public BlockState getStateForPlacement(
       @NotNull final World world, @NotNull final BlockPos pos, @NotNull final Direction facing, final float hitX, final float hitY,
-                                            final float hitZ, final int meta, @NotNull final LivingEntityBase placer, final EnumHand hand)
+                                            final float hitZ, final int meta, @NotNull final LivingEntityBase placer, final Hand hand)
     {
         return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(AbstractBlockBarrel.FACING, placer.getHorizontalFacing());
     }

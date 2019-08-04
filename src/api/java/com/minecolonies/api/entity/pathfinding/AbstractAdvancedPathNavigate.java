@@ -3,7 +3,7 @@ package com.minecolonies.api.entity.pathfinding;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.util.math.BlockPos;
@@ -17,7 +17,7 @@ import java.util.concurrent.Future;
 public abstract class AbstractAdvancedPathNavigate extends PathNavigateGround
 {
     //  Parent class private members
-    protected final EntityLiving ourEntity;
+    protected final LivingEntity ourEntity;
     @Nullable
     protected       BlockPos     destination;
     protected       double       walkSpeed = 1.0D;
@@ -27,9 +27,9 @@ public abstract class AbstractAdvancedPathNavigate extends PathNavigateGround
     protected       Future<Path> future;
 
     public AbstractAdvancedPathNavigate(
-      final EntityLiving entitylivingIn,
+      final LivingEntity entitylivingIn,
       final World worldIn,
-      @NotNull final EntityLiving entity)
+      @NotNull final LivingEntity entity)
     {
         super(entitylivingIn, worldIn);
         this.ourEntity = entity;
@@ -51,11 +51,11 @@ public abstract class AbstractAdvancedPathNavigate extends PathNavigateGround
 
     public abstract WaterPathResult moveToWater(final int searchRange, final double v, final List<BlockPos> ponds);
 
-    public abstract PathResult moveAwayFromEntityLiving(final Entity target, final double distance, final double combatMovementSpeed);
+    public abstract PathResult moveAwayFromLivingEntity(final Entity target, final double distance, final double combatMovementSpeed);
 
     public abstract boolean tryMoveToBlockPos(final BlockPos position, final double speed);
 
     public abstract TreePathResult moveToTree(final int range, final double speed, final List<ItemStorage> treesToCut, final IColony colony);
 
-    public abstract PathResult moveToEntityLiving(@NotNull final Entity e, final double speed);
+    public abstract PathResult moveToLivingEntity(@NotNull final Entity e, final double speed);
 }

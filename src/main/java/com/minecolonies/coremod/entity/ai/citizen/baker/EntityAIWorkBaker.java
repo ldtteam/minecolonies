@@ -15,7 +15,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -153,14 +153,14 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             return PREPARING;
         }
 
-        worker.setHeldItem(EnumHand.MAIN_HAND, currentBakingProduct.getEndProduct());
+        worker.setHeldItem(Hand.MAIN_HAND, currentBakingProduct.getEndProduct());
 
         final ItemStack newItem = currentBakingProduct.getEndProduct();
         worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
 
         if (progress >= getRequiredProgressForKneading())
         {
-            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+            worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
             getOwnBuilding().removeFromTasks(ProductState.BAKED, currentBakingProduct);
             if (newItem != null)
             {
@@ -264,12 +264,12 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 	            return PREPARING;
 	        }
 
-	        worker.setHeldItem(EnumHand.MAIN_HAND, storage.getInput().get(worker.getRandom().nextInt(storage.getInput().size())).copy());
+	        worker.setHeldItem(Hand.MAIN_HAND, storage.getInput().get(worker.getRandom().nextInt(storage.getInput().size())).copy());
 	        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
 
 	        if (progress >= getRequiredProgressForKneading())
 	        {
-	            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+	            worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
                 worker.decreaseSaturationForAction();
 	            progress = 0;
 	            currentBakingProduct.nextState();

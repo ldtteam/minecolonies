@@ -18,7 +18,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -433,7 +433,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                 if (!mineBlock(log, workFrom, false, false, Compatibility.getDynamicTreeBreakAction(
                   world,
                   log,
-                  worker.getHeldItem(EnumHand.MAIN_HAND),
+                  worker.getHeldItem(Hand.MAIN_HAND),
                   worker.getPosition())))
                 {
                     return getState();
@@ -586,7 +586,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                                     || (!job.tree.isSlimeTree() && !Compatibility.isSlimeDirtOrGrass(dirt))))
         {
             final ItemStack stack = getInventory().getStackInSlot(saplingSlot);
-            worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, saplingSlot);
+            worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, saplingSlot);
 
             if (job.tree.isDynamicTree() && Compatibility.isDynamicTreeSapling(stack))
             {

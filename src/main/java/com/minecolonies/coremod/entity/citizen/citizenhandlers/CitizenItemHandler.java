@@ -9,14 +9,14 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -115,14 +115,14 @@ public class CitizenItemHandler implements ICitizenItemHandler
      * @param slot from the inventory slot.
      */
     @Override
-    public void setHeldItem(final EnumHand hand, final int slot)
+    public void setHeldItem(final Hand hand, final int slot)
     {
         citizen.getCitizenData().getInventory().setHeldItem(hand, slot);
-        if (hand.equals(EnumHand.MAIN_HAND))
+        if (hand.equals(Hand.MAIN_HAND))
         {
             citizen.setItemStackToSlot(EquipmentSlotType.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
         }
-        else if (hand.equals(EnumHand.OFF_HAND))
+        else if (hand.equals(Hand.OFF_HAND))
         {
             citizen.setItemStackToSlot(EquipmentSlotType.OFFHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
         }
@@ -136,7 +136,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
     @Override
     public void setMainHeldItem(final int slot)
     {
-        citizen.getCitizenData().getInventory().setHeldItem(EnumHand.MAIN_HAND, slot);
+        citizen.getCitizenData().getInventory().setHeldItem(Hand.MAIN_HAND, slot);
         citizen.setItemStackToSlot(EquipmentSlotType.MAINHAND, citizen.getCitizenData().getInventory().getStackInSlot(slot));
     }
 
@@ -226,7 +226,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
      * @param damage amount of damage.
      */
     @Override
-    public void damageItemInHand(final EnumHand hand, final int damage)
+    public void damageItemInHand(final Hand hand, final int damage)
     {
         final ItemStack heldItem = citizen.getCitizenData().getInventory().getHeldItem(hand);
         //If we hit with bare hands, ignore
@@ -318,9 +318,9 @@ public class CitizenItemHandler implements ICitizenItemHandler
 
             if (ItemStackUtils.getSize(stack) < 1)
             {
-                citizen.setItemStackToSlot(EntityLiving.getSlotForItemStack(stack), ItemStackUtils.EMPTY);
+                citizen.setItemStackToSlot(LivingEntity.getSlotForItemStack(stack), ItemStackUtils.EMPTY);
             }
-            citizen.setItemStackToSlot(EntityLiving.getSlotForItemStack(stack), stack);
+            citizen.setItemStackToSlot(LivingEntity.getSlotForItemStack(stack), stack);
         }
     }
 }

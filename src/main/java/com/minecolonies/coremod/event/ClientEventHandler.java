@@ -98,7 +98,7 @@ public class ClientEventHandler
         {
             final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
             final ItemStack stack = player.getHeldItemMainhand();
-            if (!stack.hasTagCompound())
+            if (!stack.hasTag())
             {
                 return;
             }

@@ -72,7 +72,7 @@ public class BuildingBuilderResource extends ItemStorage
     public String toString()
     {
         final int itemId = Item.getIdFromItem(getItem());
-        final int hashCode = getItemStack().hasTagCompound() ? getItemStack().getTag().hashCode() : 0;
+        final int hashCode = getItemStack().hasTag() ? getItemStack().getTag().hashCode() : 0;
         return getName() + "(p:"
                 + amountPlayer + " a:"
                 + amountAvailable + " n:" + getAmount()

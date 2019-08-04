@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -37,7 +37,7 @@ public class DebugRendererChunkBorder
         final double partialTicks = event.getPartialTicks();
         final PlayerEntity PlayerEntity = Minecraft.getMinecraft().player;
 
-        if (entityplayer.getHeldItem(EnumHand.MAIN_HAND).getItem() != ModItems.buildTool)
+        if (entityplayer.getHeldItem(Hand.MAIN_HAND).getItem() != ModItems.buildTool)
         {
             return;
         }

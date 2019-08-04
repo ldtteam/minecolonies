@@ -14,7 +14,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -236,7 +236,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
         progress++;
 
-        worker.setHeldItem(EnumHand.MAIN_HAND, currentRecipeStorage.getInput().get(worker.getRandom().nextInt(currentRecipeStorage.getInput().size())).copy());
+        worker.setHeldItem(Hand.MAIN_HAND, currentRecipeStorage.getInput().get(worker.getRandom().nextInt(currentRecipeStorage.getInput().size())).copy());
         worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
         setDelay(HIT_DELAY);
 
@@ -258,7 +258,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
                 progress = 0;
                 craftCounter = 0;
                 currentRecipeStorage = null;
-                worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+                worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
                 return START_WORKING;
             }
             else

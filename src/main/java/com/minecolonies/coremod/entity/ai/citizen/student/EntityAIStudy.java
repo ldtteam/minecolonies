@@ -10,7 +10,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary
 import com.minecolonies.coremod.colony.jobs.JobStudent;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -104,7 +104,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
         {
             // Default levelup
             data.tryRandomLevelUp(world.rand);
-            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+            worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
 
             for (final StudyItem studyItem : getOwnBuilding(BuildingLibrary.class).getStudyItems())
             {
@@ -129,7 +129,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
         {
             final StudyItem chosenItem = currentItems.get(world.rand.nextInt(currentItems.size()));
 
-            worker.setHeldItem(EnumHand.MAIN_HAND, new ItemStack(chosenItem.getItem(), 1));
+            worker.setHeldItem(Hand.MAIN_HAND, new ItemStack(chosenItem.getItem(), 1));
             data.tryRandomLevelUp(world.rand, data.getChanceToLevel() * 100 / chosenItem.getSkillIncreasePct());
 
             // Break item rand

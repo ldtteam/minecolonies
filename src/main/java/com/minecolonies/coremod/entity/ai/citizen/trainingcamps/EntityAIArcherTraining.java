@@ -12,7 +12,7 @@ import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -164,7 +164,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
         if (worker.isHandActive())
         {
             WorkerUtil.faceBlock(currentShootingTarget, worker);
-            worker.swingArm(EnumHand.MAIN_HAND);
+            worker.swingArm(Hand.MAIN_HAND);
 
             final EntityTippedArrow arrow = new GuardArrow(world, worker);
             final double xVector = currentShootingTarget.getX() - worker.getPosX();
@@ -186,7 +186,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
 
             if (worker.getRandom().nextBoolean())
             {
-                worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
+                worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
             }
             worker.resetActiveHand();
             this.incrementActionsDoneAndDecSaturation();
@@ -198,7 +198,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             reduceAttackDelay();
             if (currentAttackDelay <= 0)
             {
-                worker.setActiveHand(EnumHand.MAIN_HAND);
+                worker.setActiveHand(Hand.MAIN_HAND);
             }
             return ARCHER_SHOOT;
         }
@@ -231,7 +231,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
         }
 
         final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.BOW, 0, getOwnBuilding().getMaxToolLevel());
-        worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, bowSlot);
+        worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, bowSlot);
         return true;
     }
 }

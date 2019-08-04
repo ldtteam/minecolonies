@@ -29,7 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -339,9 +339,9 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
     @Override
     public boolean attackEntityFrom(final DamageSource source, final float damage)
     {
-        if (source.getTrueSource() instanceof EntityLivingBase)
+        if (source.getTrueSource() instanceof LivingEntityBase)
         {
-            this.setAttackTarget((EntityLivingBase) source.getTrueSource());
+            this.setAttackTarget((LivingEntityBase) source.getTrueSource());
         }
         return super.attackEntityFrom(source, damage);
     }
@@ -353,7 +353,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
         {
             slapTimer = SLAP_INTERVAL;
             entityIn.attackEntityFrom(new EntityDamageSource("Slap", this), 1.0f);
-            this.swingArm(EnumHand.OFF_HAND);
+            this.swingArm(Hand.OFF_HAND);
         }
 
         if (slapTimer == 0 && entityIn instanceof EntityCitizen && colony != null)
@@ -363,7 +363,7 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
             final ItemStack stack = handler.extractItem(rand.nextInt(handler.getSlots()), 5, false);
             if (!ItemStackUtils.isEmpty(stack))
             {
-                this.swingArm(EnumHand.OFF_HAND);
+                this.swingArm(Hand.OFF_HAND);
                 LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
                   "com.minecolonies.coremod.mercenary.mercenaryStealCitizen",
                   entityIn.getName(),
@@ -456,14 +456,14 @@ public class EntityMercenary extends EntityCreature implements INpc, IColonyRela
             merc.setPosition(spawn.getX() + i, spawn.getY(), spawn.getZ());
             merc.setDoSpawnEvent();
             soldiers.add(merc);
-            world.spawnEntity(merc);
+            world.addEntity(merc);
         }
 
         // spawn leader for the event.
         final EntityMercenary merc = new EntityMercenary(world, colony);
         merc.setPosition(spawn.getX(), spawn.getY(), spawn.getZ() + 1);
         merc.setLeader(soldiers);
-        world.spawnEntity(merc);
+        world.addEntity(merc);
     }
 
     /**

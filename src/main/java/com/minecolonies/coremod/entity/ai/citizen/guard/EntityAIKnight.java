@@ -22,7 +22,7 @@ import net.minecraft.item.SwordItem;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.Direction;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -81,7 +81,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
         if (weaponSlot != -1)
         {
-            worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, weaponSlot);
+            worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, weaponSlot);
         }
     }
 
@@ -125,8 +125,8 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
         {
             if (shieldSlot != -1)
             {
-                worker.getCitizenItemHandler().setHeldItem(EnumHand.OFF_HAND, shieldSlot);
-                worker.setActiveHand(EnumHand.OFF_HAND);
+                worker.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, shieldSlot);
+                worker.setActiveHand(Hand.OFF_HAND);
 
                 worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
                 worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
@@ -179,7 +179,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
             worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
             worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
 
-            worker.swingArm(EnumHand.MAIN_HAND);
+            worker.swingArm(Hand.MAIN_HAND);
             worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
 
             double damageToBeDealt = getAttackDamage();
@@ -195,7 +195,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
                 source.setDamageBypassesArmor();
             }
 
-            final int fireLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.FIRE_ASPECT, worker.getHeldItem(EnumHand.MAIN_HAND));
+            final int fireLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.FIRE_ASPECT, worker.getHeldItem(Hand.MAIN_HAND));
             if (fireLevel > 0)
             {
                 target.setFire(fireLevel * 80);
@@ -205,7 +205,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
             target.setRevengeTarget(worker);
             worker.decreaseSaturationForContinuousAction();
 
-            worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
+            worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
         }
         return GUARD_ATTACK_PHYSICAL;
     }
@@ -216,7 +216,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
         {
             int addDmg = 0;
 
-            final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
+            final ItemStack heldItem = worker.getHeldItem(Hand.MAIN_HAND);
 
             if (ItemStackUtils.doesItemServeAsWeapon(heldItem))
             {

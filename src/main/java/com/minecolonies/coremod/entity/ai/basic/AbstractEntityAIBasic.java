@@ -35,7 +35,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Direction;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -1145,7 +1145,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         final int bestSlot = getMostEfficientTool(target);
         if (bestSlot >= 0)
         {
-            worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, bestSlot);
+            worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, bestSlot);
             return true;
         }
         requestTool(target, pos);

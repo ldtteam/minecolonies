@@ -25,8 +25,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -168,7 +168,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements ICo
 
     @NotNull
     @Override
-    public EnumActionResult applyPlayerInteraction(final PlayerEntity player, final Vec3d vec, final EnumHand hand)
+    public ActionResultType applyPlayerInteraction(final PlayerEntity player, final Vec3d vec, final Hand hand)
     {
         SoundUtils.playInteractionSoundAtCitizenWithChance(CompatibilityUtils.getWorldFromCitizen(this), this.getPosition(), ONE_HUNDRED_PERCENT, this);
         return super.applyPlayerInteraction(player, vec, hand);

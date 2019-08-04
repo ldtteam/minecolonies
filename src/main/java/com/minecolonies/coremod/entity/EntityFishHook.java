@@ -679,8 +679,8 @@ public final class EntityFishHook extends Entity
         entityitem.motionX = distanceX * 0.1;
         entityitem.motionY = distanceY * 0.1 + Math.sqrt(Math.sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ)) * 0.08;
         entityitem.motionZ = distanceZ * 0.1;
-        CompatibilityUtils.getWorldFromEntity(this).spawnEntity(entityitem);
-        CompatibilityUtils.getWorldFromCitizen(citizen).spawnEntity(new EntityXPOrb(CompatibilityUtils.getWorldFromCitizen(citizen),
+        CompatibilityUtils.getWorldFromEntity(this).addEntity(entityitem);
+        CompatibilityUtils.getWorldFromCitizen(citizen).addEntity(new EntityXPOrb(CompatibilityUtils.getWorldFromCitizen(citizen),
                                                                           citizenPosX,
                                                                           citizenPosY + 0.D,
                                                                           citizenPosZ + 0.5,

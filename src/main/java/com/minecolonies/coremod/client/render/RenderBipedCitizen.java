@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHandSide;
+import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -140,7 +140,7 @@ public class RenderBipedCitizen<C extends EntityCitizen> extends RenderBiped<C>
             }
         }
 
-        if (citizen.getPrimaryHand() == EnumHandSide.RIGHT)
+        if (citizen.getPrimaryHand() == HandSide.RIGHT)
         {
             citizenModel.rightArmPose = armPoseMainHand;
             citizenModel.leftArmPose = armPoseOffHand;

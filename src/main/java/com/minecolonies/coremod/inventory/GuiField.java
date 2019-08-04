@@ -50,7 +50,7 @@ public class GuiField extends GuiContainer
      * @param world              the world the field is in.
      * @param location           the location the field is at.
      */
-    protected GuiField(final InventoryPlayer parInventoryPlayer, final TileEntityScarecrow tileEntity, final World world, final BlockPos location)
+    protected GuiField(final PlayerInventory parPlayerInventory, final TileEntityScarecrow tileEntity, final World world, final BlockPos location)
     {
         super(new ContainerField(tileEntity, parPlayerInventory, world, location));
         this.tileEntity = tileEntity;
