@@ -81,7 +81,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
             return true;
         }
 
-        final IColony chkColony = IColonyManager.getInstance().getColonyByWorld(colonyId, FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0));
+        final IColony chkColony = IColonyManager.getInstance().getColonyByWorld(colonyId, ServerLifecycleHooks.getCurrentServer().getWorld(0));
         if (chkColony == null)
         {
             return false;
@@ -101,7 +101,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
     {
         if (sender instanceof PlayerEntity)
         {
-            return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
+            return ServerLifecycleHooks.getCurrentServer().getPlayerList()
                      .canSendCommands(((PlayerEntity) sender).getGameProfile());
         }
         return true;

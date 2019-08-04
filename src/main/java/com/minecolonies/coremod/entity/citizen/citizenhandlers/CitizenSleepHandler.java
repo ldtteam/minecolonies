@@ -204,7 +204,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         final BlockState state = citizen.world.isBlockLoaded(getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, getBedLocation(), citizen);
-        final Direction Direction = isBed && state.getBlock() instanceof BlockHorizontal ? state.getValue(BlockHorizontal.FACING) : null;
+        final Direction Direction = isBed && state.getBlock() instanceof BlockHorizontal ? state.get(BlockHorizontal.FACING) : null;
 
         if (Direction == null)
         {
@@ -228,7 +228,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         final BlockState state = citizen.world.isBlockLoaded(getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, getBedLocation(), citizen);
-        final Direction Direction = isBed && state.getBlock() instanceof BlockHorizontal ? state.getValue(BlockHorizontal.FACING) : null;
+        final Direction Direction = isBed && state.getBlock() instanceof BlockHorizontal ? state.get(BlockHorizontal.FACING) : null;
 
         if (Direction == null)
         {

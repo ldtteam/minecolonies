@@ -231,13 +231,13 @@ public class RaidManager implements IRaiderManager
                 {
                     schematicMap.remove(entry.getKey());
                 }
-                else if (entry.getValue().getB() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * MineColonies.getConfig().getCommon().gameplay.daysUntilPirateshipsDespawn < world.getWorldTime())
+                else if (entry.get().getB() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * MineColonies.getConfig().getCommon().gameplay.daysUntilPirateshipsDespawn < world.getWorldTime())
                 {
                     // Load the backup from before spawning
                     try
                     {
                         InstantStructurePlacer.loadAndPlaceStructureWithRotation(world,
-                          new StructureName("cache", "backup", entry.getValue().getA()).toString() + colony.getID() + colony.getDimension() + entry.getKey(),
+                          new StructureName("cache", "backup", entry.get().getA()).toString() + colony.getID() + colony.getDimension() + entry.getKey(),
                           entry.getKey(),
                           0,
                           Mirror.NONE,
@@ -331,8 +331,8 @@ public class RaidManager implements IRaiderManager
     {
         final CompoundNBT compound = new CompoundNBT();
         BlockPosUtil.write(compound, TAG_POS, entry.getKey());
-        compound.putString(TAG_NAME, entry.getValue().getA());
-        compound.putLong(TAG_TIME, entry.getValue().getB());
+        compound.putString(TAG_NAME, entry.get().getA());
+        compound.putLong(TAG_TIME, entry.get().getB());
 
         return compound;
     }

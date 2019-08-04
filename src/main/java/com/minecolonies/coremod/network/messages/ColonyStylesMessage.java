@@ -64,7 +64,7 @@ public class ColonyStylesMessage implements IMessage
         for (final Map.Entry<String, String> entry : md5s.entrySet())
         {
             buf.writeString(entry.getKey());
-            buf.writeString(entry.getValue());
+            buf.writeString(entry.get());
         }
     }
 

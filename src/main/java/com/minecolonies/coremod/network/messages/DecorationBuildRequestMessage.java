@@ -116,8 +116,8 @@ public class DecorationBuildRequestMessage implements IMessage
         if (entity instanceof TileEntityDecorationController)
         {
             final Optional<Map.Entry<Integer, IWorkOrder>> wo = colony.getWorkManager().getWorkOrders().entrySet().stream()
-                  .filter(entry -> entry.getValue() instanceof WorkOrderBuildDecoration)
-                  .filter(entry -> ((WorkOrderBuildDecoration) entry.getValue()).getBuildingLocation().equals(pos)).findFirst();
+                  .filter(entry -> entry.get() instanceof WorkOrderBuildDecoration)
+                  .filter(entry -> ((WorkOrderBuildDecoration) entry.get()).getBuildingLocation().equals(pos)).findFirst();
 
             if (wo.isPresent())
             {

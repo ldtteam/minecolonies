@@ -56,7 +56,7 @@ public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> exte
             type = BarrelType.DONE;
         }
 
-        return blockState.withProperty(AbstractBlockBarrel.VARIANT,
-          type).withProperty(AbstractBlockBarrel.FACING, blockState.getValue(AbstractBlockBarrel.FACING));
+        return blockState.with(AbstractBlockBarrel.VARIANT,
+          type).with(AbstractBlockBarrel.FACING, blockState.get(AbstractBlockBarrel.FACING));
     }
 }

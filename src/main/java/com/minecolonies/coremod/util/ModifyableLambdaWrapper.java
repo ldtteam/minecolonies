@@ -14,7 +14,7 @@ public class ModifyableLambdaWrapper<T>
     {
     }
 
-    public T getValue()
+    public T get()
     {
         return value;
     }

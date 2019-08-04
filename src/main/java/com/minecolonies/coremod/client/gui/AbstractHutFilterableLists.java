@@ -77,7 +77,7 @@ public abstract class AbstractHutFilterableLists extends AbstractWindowWorkerBui
                 parent = parent.getParent();
                 if (parent != null && view.getKey().equals(parent.getID()))
                 {
-                    view.getValue().onButtonClick(button);
+                    view.get().onButtonClick(button);
                     return;
                 }
                 maxDepth--;

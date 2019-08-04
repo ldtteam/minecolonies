@@ -31,7 +31,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockSilverfish;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.PlayerEntitySP;
+import net.minecraft.client.entity.ClientPlayerEntity;
 import net.minecraft.client.multiplayer.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
@@ -101,7 +101,7 @@ public class EventHandler
             if (mc.gameSettings.showDebugInfo)
             {
                 final ClientWorld world = mc.world;
-                final PlayerEntitySP player = mc.player;
+                final ClientPlayerEntity player = mc.player;
                 IColony colony = IColonyManager.getInstance().getIColony(world, player.getPosition());
                 if (colony == null)
                 {
@@ -361,7 +361,7 @@ public class EventHandler
                     final List<ICitizenData> citizenList = colony.getCitizenManager().getCitizens();
                     if (world.getBlockState(event.getPos()).getBlock().isBedFoot(world, event.getPos()))
                     {
-                        bedBlockPos = bedBlockPos.offset(world.getBlockState(event.getPos()).getValue(BlockBed.FACING));
+                        bedBlockPos = bedBlockPos.offset(world.getBlockState(event.getPos()).get(BlockBed.FACING));
                     }
                     //Searches through the nearest Colony's Citizen and sees if the bed belongs to a Citizen, and if the Citizen is asleep
 

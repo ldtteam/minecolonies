@@ -258,7 +258,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
             for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
             {
-                final BuildingBuilderResource resource = entry.getValue();
+                final BuildingBuilderResource resource = entry.get();
 
                 resource.setAvailable(0);
 

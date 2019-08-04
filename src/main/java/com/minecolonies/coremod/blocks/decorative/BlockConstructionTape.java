@@ -200,7 +200,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + BLOCK_NAME);
         setTranslationKey(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, NORTH));
+        this.setDefaultState(this.blockState.getBaseState().with(FACING, NORTH));
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         setLightOpacity(LIGHT_OPACITY);
@@ -224,13 +224,13 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
             Direction = NORTH;
         }
 
-        return this.getDefaultState().withProperty(FACING, Direction);
+        return this.getDefaultState().with(FACING, Direction);
     }
 
     @Override
     public int getMetaFromState(@NotNull final BlockState state)
     {
-        return state.getValue(FACING).getIndex();
+        return state.get(FACING).getIndex();
     }
 
     /**
@@ -259,9 +259,9 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     public AxisAlignedBB getBoundingBox(final BlockState stateIn, final IBlockAccess source, final BlockPos pos)
     {
         final BlockState state = getActualState(stateIn, source, pos);
-        if(state.getValue(VARIANT).equals(AbstractBlockMinecoloniesConstructionTape.ConstructionTapeType.CORNER))
+        if(state.get(VARIANT).equals(AbstractBlockMinecoloniesConstructionTape.ConstructionTapeType.CORNER))
         {
-            if (state.getValue(FACING).equals(NORTH))
+            if (state.get(FACING).equals(NORTH))
             {
                 return new AxisAlignedBB((float) N_START_COLLISION_X,
                         (float) BOTTOM_COLLISION,
@@ -270,7 +270,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
                         (float) HEIGHT_COLLISION,
                         (float) N_END_COLLISION_Z);
             }
-            if (state.getValue(FACING).equals(WEST))
+            if (state.get(FACING).equals(WEST))
             {
                 return new AxisAlignedBB((float) W_START_COLLISION_X,
                         (float) BOTTOM_COLLISION,
@@ -279,7 +279,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
                         (float) HEIGHT_COLLISION,
                         (float) W_END_COLLISION_Z);
             }
-            if (state.getValue(FACING).equals(SOUTH))
+            if (state.get(FACING).equals(SOUTH))
             {
                 return new AxisAlignedBB((float) S_START_COLLISION_X,
                         (float) BOTTOM_COLLISION,
@@ -299,7 +299,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
             }
         }
 
-        if (state.getValue(FACING).equals(EAST) || state.getValue(FACING).equals(WEST))
+        if (state.get(FACING).equals(EAST) || state.get(FACING).equals(WEST))
         {
             return new AxisAlignedBB((float) WE_START_COLLISION_X,
                                       (float) BOTTOM_COLLISION,
@@ -345,9 +345,9 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
 
         if((connectors[0] && connectors[2]) || (connectors[0] && connectors[3]) || (connectors[1] && connectors[3]) || (connectors[1] && connectors[2]))
         {
-            return state.withProperty(VARIANT, AbstractBlockMinecoloniesConstructionTape.ConstructionTapeType.CORNER);
+            return state.with(VARIANT, AbstractBlockMinecoloniesConstructionTape.ConstructionTapeType.CORNER);
         }
-        return state.withProperty(VARIANT, AbstractBlockMinecoloniesConstructionTape.ConstructionTapeType.STRAIGHT);
+        return state.with(VARIANT, AbstractBlockMinecoloniesConstructionTape.ConstructionTapeType.STRAIGHT);
     }
 
     /**
@@ -418,7 +418,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
                                              final LivingEntityBase placer)
     {
         @NotNull final Direction Direction = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
-        return this.getDefaultState().withProperty(FACING, Direction);
+        return this.getDefaultState().with(FACING, Direction);
     }
 
     @NotNull

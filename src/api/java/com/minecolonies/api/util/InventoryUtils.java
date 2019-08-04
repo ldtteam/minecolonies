@@ -2356,8 +2356,8 @@ public class InventoryUtils
     {
         final List<ItemStack> list = Lists.newArrayList();
         mergedCountedStacks.entrySet().forEach(itemStackIntegerEntry -> {
-            final int minimalFullStacks = itemStackIntegerEntry.getValue() / itemStackIntegerEntry.getKey().getMaxStackSize();
-            final int residualStackSize = itemStackIntegerEntry.getValue() % itemStackIntegerEntry.getKey().getMaxStackSize();
+            final int minimalFullStacks = itemStackIntegerEntry.get() / itemStackIntegerEntry.getKey().getMaxStackSize();
+            final int residualStackSize = itemStackIntegerEntry.get() % itemStackIntegerEntry.getKey().getMaxStackSize();
 
             for (int i = 0; i < minimalFullStacks; i++)
             {
@@ -2401,7 +2401,7 @@ public class InventoryUtils
               for (Map.Entry<ItemStack, Integer> entry : inventoryCounts.entrySet())
               {
                   ItemStack containedStack = entry.getKey();
-                  Integer containedCount = entry.getValue();
+                  Integer containedCount = entry.get();
                   if (ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, containedStack))
                   {
                       remainingCount -= containedCount;
@@ -2461,7 +2461,7 @@ public class InventoryUtils
               for (Map.Entry<ItemStack, Integer> entry : inventoryCounts.entrySet())
               {
                   ItemStack containedStack = entry.getKey();
-                  final Integer containedCount = entry.getValue();
+                  final Integer containedCount = entry.get();
                   if (ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, containedStack))
                   {
                       remainingCount -= containedCount;

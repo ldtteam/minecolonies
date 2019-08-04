@@ -62,7 +62,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
         setResistance(RESISTANCE);
         //Hardness of 10 takes a long time to mine to not loose progress.
         setHardness(HARDNESS);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, NORTH));
+        this.setDefaultState(this.blockState.getBaseState().with(FACING, NORTH));
     }
 
     @NotNull
@@ -76,7 +76,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     @Override
     public int getMetaFromState(@NotNull final BlockState state)
     {
-        return state.getValue(FACING).getIndex();
+        return state.get(FACING).getIndex();
     }
 
     //todo: remove once we no longer need to support this
@@ -166,7 +166,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
                                              final LivingEntityBase placer)
     {
         @NotNull final Direction Direction = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
-        return this.getDefaultState().withProperty(FACING, Direction);
+        return this.getDefaultState().with(FACING, Direction);
     }
 
     @Override

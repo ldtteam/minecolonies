@@ -15,17 +15,18 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -103,7 +104,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         int freeSlots = inventory.getSlots();
         for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
         {
-            final double slotsNeeded = (double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize();
+            final double slotsNeeded = (double) entry.get() / entry.getKey().getItemStack().getMaxStackSize();
             freeSlots -= (int) Math.ceil(slotsNeeded);
         }
         return freeSlots;
@@ -194,7 +195,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             if (predicate.test(entry.getKey().getItemStack()))
             {
-                return entry.getValue();
+                return entry.get();
             }
         }
         return 0;
@@ -245,13 +246,13 @@ public class TileEntityRack extends AbstractTileEntityRack
                 if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof BlockMinecoloniesRack)
                 {
 
-                    typeHere = world.getBlockState(pos).withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
-                    typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE)
-                                     .withProperty(AbstractBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
+                    typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
+                    typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE)
+                                     .with(AbstractBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
                 }
                 else
                 {
-                    typeHere = world.getBlockState(pos).withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULT);
+                    typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULT);
                     typeNeighbor = null;
                 }
             }
@@ -259,13 +260,13 @@ public class TileEntityRack extends AbstractTileEntityRack
             {
                 if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof BlockMinecoloniesRack)
                 {
-                    typeHere = world.getBlockState(pos).withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
-                    typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
-                                     .withProperty(AbstractBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
+                    typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
+                    typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
+                                     .with(AbstractBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(pos, this.pos.subtract(relativeNeighbor)));
                 }
                 else
                 {
-                    typeHere = world.getBlockState(pos).withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULL);
+                    typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULL);
                     typeNeighbor = null;
                 }
             }
@@ -362,7 +363,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         for (int i = 0; i < inventoryTagList.size(); ++i)
         {
             final CompoundNBT inventoryCompound = inventoryTagList.getCompound(i);
-            final ItemStack stack = new ItemStack(inventoryCompound);
+            final ItemStack stack = ItemStack.read(inventoryCompound);
             if (ItemStackUtils.getSize(stack) <= 0)
             {
                 inventory.setStackInSlot(i, ItemStackUtils.EMPTY);
@@ -437,16 +438,6 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
-    public boolean hasCapability(@NotNull final Capability<?> capability, final Direction facing)
-    {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-        {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
     public void rotate(final Rotation rotationIn)
     {
         super.rotate(rotationIn);
@@ -456,8 +447,9 @@ public class TileEntityRack extends AbstractTileEntityRack
         }
     }
 
+    @Nonnull
     @Override
-    public <T> T getCapability(@NotNull final Capability<T> capability, final Direction facing)
+    public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> capability)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
@@ -495,7 +487,7 @@ public class TileEntityRack extends AbstractTileEntityRack
                 }
             }
         }
-        return super.getCapability(capability, facing);
+        return super.getCapability(capability);
     }
 
     /**

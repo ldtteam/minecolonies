@@ -53,7 +53,7 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
      */
     private void initBlock()
     {
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, NORTH));
+        this.setDefaultState(this.blockState.getBaseState().with(FACING, NORTH));
         setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + BLOCK_NAME);
         setTranslationKey(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
     }
@@ -75,27 +75,27 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
             Direction = NORTH;
         }
 
-        return this.getDefaultState().withProperty(FACING, Direction);
+        return this.getDefaultState().with(FACING, Direction);
     }
 
     @Override
     public int getMetaFromState(final BlockState state)
     {
-        return state.getValue(FACING).getIndex();
+        return state.get(FACING).getIndex();
     }
 
     @Override
     @SuppressWarnings(DEPRECATION)
     public BlockState withRotation(final BlockState state, final Rotation rot)
     {
-        return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
+        return state.with(FACING, rot.rotate(state.get(FACING)));
     }
 
     @Override
     @SuppressWarnings(DEPRECATION)
     public BlockState withMirror(final BlockState state, final Mirror mirrorIn)
     {
-        return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
+        return state.withRotation(mirrorIn.toRotation(state.get(FACING)));
     }
 
     @Override
@@ -122,7 +122,7 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     public void onBlockPlacedBy(final World worldIn, final BlockPos pos, final BlockState state, final LivingEntityBase placer, final ItemStack stack)
     {
         @NotNull final Direction Direction = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
-        this.getDefaultState().withProperty(FACING, Direction);
+        this.getDefaultState().with(FACING, Direction);
     }
 
     @Override

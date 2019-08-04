@@ -168,7 +168,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
     }
 
     @Override
-    protected String getValue()
+    protected String get()
     {
         return upgradeName;
     }

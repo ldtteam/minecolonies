@@ -102,7 +102,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
             final IRecipeStorage recipe = StandardFactoryController.getInstance().getNewInstance(
               TypeConstants.RECIPE,
               StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              input, 2, mode.getValue().getItemStack(), ModBlocks.blockHutCrusher);
+              input, 2, mode.get().getItemStack(), ModBlocks.blockHutCrusher);
             crusherRecipes.put(mode.getKey(), recipe);
         }
     }

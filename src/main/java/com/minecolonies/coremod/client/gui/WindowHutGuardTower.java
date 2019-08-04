@@ -18,7 +18,7 @@ import com.minecolonies.coremod.network.messages.GuardRecalculateMessage;
 import com.minecolonies.coremod.network.messages.GuardScepterMessage;
 import com.minecolonies.coremod.network.messages.GuardTaskMessage;
 import com.minecolonies.coremod.network.messages.MobEntryChangeMessage;
-import net.minecraft.client.entity.PlayerEntitySP;
+import net.minecraft.client.entity.ClientPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -464,7 +464,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
      */
     private void setTarget()
     {
-        final PlayerEntitySP player = this.mc.player;
+        final ClientPlayerEntity player = this.mc.player;
         final int emptySlot = player.inventory.getFirstEmptyStack();
         pullInfoFromHut();
 

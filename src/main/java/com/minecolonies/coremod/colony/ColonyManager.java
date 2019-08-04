@@ -258,7 +258,7 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getColonyByDimension(final int id, final int dimension)
     {
-        final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension);
+        final World world = ServerLifecycleHooks.getCurrentServer().getWorld(dimension);
         final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
         if (cap == null)
         {
@@ -330,7 +330,7 @@ public final class ColonyManager implements IColonyManager
     @Override
     public IColony getColonyByPosFromDim(final int dim, @NotNull final BlockPos pos)
     {
-        final World w = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dim);
+        final World w = ServerLifecycleHooks.getCurrentServer().getWorld(dim);
         return getColonyByPosFromWorld(w, pos);
     }
 
@@ -396,7 +396,7 @@ public final class ColonyManager implements IColonyManager
     public List<IColony> getAllColonies()
     {
         final List<IColony> allColonies = new ArrayList<>();
-        for (final World world : FMLCommonHandler.instance().getMinecraftServerInstance().worlds)
+        for (final World world : ServerLifecycleHooks.getCurrentServer().worlds)
         {
             final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
             if (cap != null)
@@ -787,10 +787,10 @@ public final class ColonyManager implements IColonyManager
                 for (int i = 0; i < colonyTags.size(); ++i)
                 {
                     final CompoundNBT colonyCompound = colonyTags.getCompound(i);
-                    final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyCompound.getInt(TAG_DIMENSION));
+                    final World colonyWorld = ServerLifecycleHooks.getCurrentServer().getWorld(colonyCompound.getInt(TAG_DIMENSION));
                     final IColonyManagerCapability cap = colonyWorld.getCapability(COLONY_MANAGER_CAP, null);
                     @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompound(i),
-                      FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyCompound.getInt(TAG_DIMENSION)));
+                      ServerLifecycleHooks.getCurrentServer().getWorld(colonyCompound.getInt(TAG_DIMENSION)));
                     cap.addColony(colony);
                 }
 
@@ -807,7 +807,7 @@ public final class ColonyManager implements IColonyManager
                     @Nullable final CompoundNBT colonyData = BackUpHelper.loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY_OLD, colonyId)));
                     if (colonyData != null)
                     {
-                        final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyData.getInt(TAG_DIMENSION));
+                        final World colonyWorld = ServerLifecycleHooks.getCurrentServer().getWorld(colonyData.getInt(TAG_DIMENSION));
                         final IColonyManagerCapability cap = colonyWorld.getCapability(COLONY_MANAGER_CAP, null);
                         @NotNull final Colony colony = Colony.loadColony(colonyData, colonyWorld);
                         colony.getCitizenManager().checkCitizensForHappiness();
@@ -1245,7 +1245,7 @@ public final class ColonyManager implements IColonyManager
     public int getTopColonyId()
     {
         int top = 0;
-        for (final World world : FMLCommonHandler.instance().getMinecraftServerInstance().worlds)
+        for (final World world : ServerLifecycleHooks.getCurrentServer().worlds)
         {
             final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
             if (cap != null)

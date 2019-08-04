@@ -2,6 +2,7 @@ package com.minecolonies.coremod.proxy;
 
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.io.File;
 
@@ -14,7 +15,7 @@ public class ServerProxy extends CommonProxy
     @Override
     public File getSchematicsFolder()
     {
-        return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getDataDirectory()
+        return new File(ServerLifecycleHooks.getCurrentServer().getDataDirectory()
                           + "/" + Constants.MOD_ID);
     }
 }

@@ -367,7 +367,7 @@ public class CompatibilityManager implements ICompatibilityManager
           leavesToSaplingMap.entrySet()
             .stream()
             .filter(entry -> entry.getKey() != null)
-            .map(entry -> writeLeafSaplingEntryToNBT(entry.getKey().getState(), entry.getValue()))
+            .map(entry -> writeLeafSaplingEntryToNBT(entry.getKey().getState(), entry.get()))
             .collect(NBTUtils.toListNBT());
         compound.put(TAG_SAP_LEAF, saplingsLeavesTagList);
     }
@@ -427,7 +427,7 @@ public class CompatibilityManager implements ICompatibilityManager
             for (final String oreString : MineColonies.getConfig().getCommon().gameplay.extraOres)
             {
                 final String[] split = oreString.split(":");
-                final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(split[0], split[1]));
+                final Block block = ForgeRegistries.BLOCKS.get(new ResourceLocation(split[0], split[1]));
                 if (!(block == null || oreBlocks.contains(block)))
                 {
                     oreBlocks.add(block);
@@ -509,7 +509,7 @@ public class CompatibilityManager implements ICompatibilityManager
                     continue;
                 }
 
-                final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0], split[1]));
+                final Item item = ForgeRegistries.ITEMS.get(new ResourceLocation(split[0], split[1]));
                 if (item == null || item == Items.AIR)
                 {
                     Log.getLogger().warn("Invalid lucky block: " + ore);
@@ -554,7 +554,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 final double probability = Double.parseDouble(mesh[1]);
 
                 final String[] item = mesh[0].split(":");
-                final Item theItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(item[0], item[1]));
+                final Item theItem = ForgeRegistries.ITEMS.get(new ResourceLocation(item[0], item[1]));
 
                 if (theItem == null)
                 {
@@ -576,7 +576,7 @@ public class CompatibilityManager implements ICompatibilityManager
             try
             {
                 final String[] item = string.split(":");
-                final Item theItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(item[0], item[1]));
+                final Item theItem = ForgeRegistries.ITEMS.get(new ResourceLocation(item[0], item[1]));
 
                 if (theItem == null)
                 {
@@ -626,7 +626,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 final ItemStorage meshStorage = sifterMeshes.get(mesh).getA();
 
                 final String[] item = drop[2].split(":");
-                final Item theItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(item[0], item[1]));
+                final Item theItem = ForgeRegistries.ITEMS.get(new ResourceLocation(item[0], item[1]));
 
                 if (theItem == null)
                 {
@@ -670,14 +670,14 @@ public class CompatibilityManager implements ICompatibilityManager
 
         for (final Map.Entry<ItemStorage, Map<ItemStorage, Map<ItemStorage, Double>>> meshEntry : tempDrops.entrySet())
         {
-            for (final Map.Entry<ItemStorage, Map<ItemStorage, Double>> blockEntry : meshEntry.getValue().entrySet())
+            for (final Map.Entry<ItemStorage, Map<ItemStorage, Double>> blockEntry : meshEntry.get().entrySet())
             {
                 final List<ItemStorage> theDrops = new ArrayList<>();
                 double probabilitySum = 0;
-                for (final Map.Entry<ItemStorage, Double> drops : blockEntry.getValue().entrySet())
+                for (final Map.Entry<ItemStorage, Double> drops : blockEntry.get().entrySet())
                 {
                     final ItemStorage storage = drops.getKey();
-                    final double probability = drops.getValue();
+                    final double probability = drops.get();
                     probabilitySum += probability;
                     for (int i = 0; i < probability; i++)
                     {
@@ -725,8 +725,8 @@ public class CompatibilityManager implements ICompatibilityManager
             final String[] firstItem = split[0].split(":");
             final String[] secondItem = split[1].split(":");
 
-            final Item item1 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(firstItem[0], firstItem[1]));
-            final Item item2 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(secondItem[0], secondItem[1]));
+            final Item item1 = ForgeRegistries.ITEMS.get(new ResourceLocation(firstItem[0], firstItem[1]));
+            final Item item2 = ForgeRegistries.ITEMS.get(new ResourceLocation(secondItem[0], secondItem[1]));
 
             try
             {

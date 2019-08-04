@@ -295,7 +295,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     private void validateLadderOrientation()
     {
         @Nullable final BuildingMiner buildingMiner = getOwnBuilding();
-        final Direction ladderOrientation = world.getBlockState(buildingMiner.getLadderLocation()).getValue(BlockLadder.FACING);
+        final Direction ladderOrientation = world.getBlockState(buildingMiner.getLadderLocation()).get(BlockLadder.FACING);
 
         if (ladderOrientation == Direction.WEST)
         {

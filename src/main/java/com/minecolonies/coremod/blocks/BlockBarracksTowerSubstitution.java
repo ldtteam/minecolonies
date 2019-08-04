@@ -62,7 +62,7 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, Direction.NORTH));
+        this.setDefaultState(this.blockState.getBaseState().with(FACING, Direction.NORTH));
     }
 
     /**
@@ -83,7 +83,7 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
             Direction = Direction.NORTH;
         }
 
-        return this.getDefaultState().withProperty(FACING, Direction);
+        return this.getDefaultState().with(FACING, Direction);
     }
 
     /**
@@ -92,7 +92,7 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     @Override
     public int getMetaFromState(final BlockState state)
     {
-        return state.getValue(FACING).getIndex();
+        return state.get(FACING).getIndex();
     }
 
     /**
@@ -106,7 +106,7 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     @Deprecated
     public BlockState withRotation(@NotNull final BlockState state, final Rotation rot)
     {
-        return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
+        return state.with(FACING, rot.rotate(state.get(FACING)));
     }
 
     /**
@@ -118,7 +118,7 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     @Deprecated
     public BlockState withMirror(@NotNull final BlockState state, final Mirror mirrorIn)
     {
-        return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
+        return state.withRotation(mirrorIn.toRotation(state.get(FACING)));
     }
 
     @SuppressWarnings(DEPRECATION)
@@ -135,7 +135,7 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
       final LivingEntityBase placer)
     {
         @NotNull final Direction Direction = (placer == null) ? Direction.NORTH : Direction.fromAngle(placer.rotationYaw);
-        return this.getDefaultState().withProperty(FACING, Direction);
+        return this.getDefaultState().with(FACING, Direction);
     }
 
     @NotNull

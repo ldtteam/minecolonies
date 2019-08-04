@@ -51,7 +51,7 @@ public final class BackUpHelper
             @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
             final ZipOutputStream zos = new ZipOutputStream(fos);
 
-            for (int dim = 0; dim < FMLCommonHandler.instance().getMinecraftServerInstance().worlds.length; dim++)
+            for (int dim = 0; dim < ServerLifecycleHooks.getCurrentServer().worlds.length; dim++)
             {
                 for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
                 {
@@ -212,7 +212,7 @@ public final class BackUpHelper
         else
         {
             Log.getLogger().warn("Colony is null, creating new colony!");
-            final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimension);
+            final World colonyWorld = ServerLifecycleHooks.getCurrentServer().getWorld(dimension);
             colony = Colony.loadColony(compound, colonyWorld);
             colonyWorld.getCapability(COLONY_MANAGER_CAP, null).addColony(colony);
 

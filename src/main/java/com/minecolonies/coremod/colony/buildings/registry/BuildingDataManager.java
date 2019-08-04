@@ -51,7 +51,7 @@ public class BuildingDataManager implements IBuildingDataManager
     @Override
     public IBuilding createFrom(final IColony colony, final BlockPos position, final ResourceLocation buildingName)
     {
-        final BuildingEntry entry = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(buildingName);
+        final BuildingEntry entry = IMinecoloniesAPI.getInstance().getBuildingRegistry().get(buildingName);
 
         if (entry == null)
         {

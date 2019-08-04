@@ -89,7 +89,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         setResistance(RESISTANCE);
         //Hardness of 10 takes a long time to mine to not loose progress
         setHardness(MineColonies.getConfig().getCommon().gameplay.pvp_mode ? HARDNESS * HARDNESS_PVP_FACTOR : HARDNESS);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+        this.setDefaultState(this.blockState.getBaseState().with(FACING, EnumFacing.NORTH));
     }
 
     /**
@@ -143,7 +143,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
             enumfacing = EnumFacing.NORTH;
         }
 
-        return this.getDefaultState().withProperty(FACING, enumfacing);
+        return this.getDefaultState().with(FACING, enumfacing);
     }
 
     // =======================================================================
@@ -156,7 +156,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @Override
     public int getMetaFromState(final BlockState state)
     {
-        return state.getValue(FACING).getIndex();
+        return state.get(FACING).getIndex();
     }
 
     /**
@@ -170,7 +170,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @Deprecated
     public BlockState withRotation(@NotNull final BlockState state, final Rotation rot)
     {
-        return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
+        return state.with(FACING, rot.rotate(state.get(FACING)));
     }
 
     /**
@@ -182,7 +182,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @Deprecated
     public BlockState withMirror(@NotNull final BlockState state, final Mirror mirrorIn)
     {
-        return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
+        return state.withRotation(mirrorIn.toRotation(state.get(FACING)));
     }
 
     /**
@@ -258,7 +258,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
                                              final LivingEntity placer)
     {
         @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
-        return this.getDefaultState().withProperty(FACING, enumFacing);
+        return this.getDefaultState().with(FACING, enumFacing);
     }
 
     /**

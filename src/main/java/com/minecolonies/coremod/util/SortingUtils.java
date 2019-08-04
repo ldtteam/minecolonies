@@ -85,7 +85,7 @@ public final class SortingUtils
 
         int slotLimit = 0;
         final ItemStack stack = entry.getKey().getItemStack();
-        int tempSize = entry.getValue();
+        int tempSize = entry.get();
         while (tempSize > 0)
         {
             final ItemStack tempStack = stack.copy();
@@ -165,9 +165,9 @@ public final class SortingUtils
         int sum = 0;
         for (final Map.Entry<ItemStorage, Integer> entry : map.entrySet())
         {
-            sum += Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize());
+            sum += Math.ceil((double) entry.get() / entry.getKey().getItemStack().getMaxStackSize());
             creativeTabs.put(entry.getKey().getCreativeTabIndex(),
-              creativeTabs.getOrDefault(entry.getKey().getCreativeTabIndex(), 0) + (int) Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize()));
+              creativeTabs.getOrDefault(entry.getKey().getCreativeTabIndex(), 0) + (int) Math.ceil((double) entry.get() / entry.getKey().getItemStack().getMaxStackSize()));
         }
 
         return new Tuple<>(new AtomicInteger(sum), creativeTabs);

@@ -269,7 +269,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
         else
         {
-            p.setLadderFacing(world.getBlockState(pos).getValue(BlockLadder.FACING));
+            p.setLadderFacing(world.getBlockState(pos).get(BlockLadder.FACING));
         }
     }
 

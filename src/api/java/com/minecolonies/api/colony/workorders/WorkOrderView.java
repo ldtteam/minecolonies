@@ -79,7 +79,7 @@ public class WorkOrderView
      *
      * @return the value String.
      */
-    public String getValue()
+    public String get()
     {
         return value;
     }

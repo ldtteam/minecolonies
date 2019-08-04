@@ -240,7 +240,7 @@ public class Tree
             if (Compatibility.isDynamicLeaf(block))
             {
                 list = (Compatibility.getDropsForDynamicLeaf(world, pos, blockState, A_LOT_OF_LUCK, block));
-                blockState = blockState.withProperty(DYN_PROP_HYDRO, 1);
+                blockState = blockState.with(DYN_PROP_HYDRO, 1);
             }
             else
             {
@@ -312,7 +312,7 @@ public class Tree
         // Only harvest nearly fully grown dynamic trees(8 max)
         if (Compatibility.isDynamicBlock(block)
               && BlockStateUtils.getPropertyByNameFromState(state, DYNAMICTREERADIUS) != null
-              && ((int) state.getValue(BlockStateUtils.getPropertyByNameFromState(state, DYNAMICTREERADIUS)) < MineColonies.getConfig().getCommon().compatibility.dynamicTreeHarvestSize))
+              && ((int) state.get(BlockStateUtils.getPropertyByNameFromState(state, DYNAMICTREERADIUS)) < MineColonies.getConfig().getCommon().compatibility.dynamicTreeHarvestSize))
         {
             return false;
         }

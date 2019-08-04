@@ -199,8 +199,8 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             @Nullable Block block = blockState.getBlock();
 
             if (StructurePlacementUtils.isStructureBlockEqualWorldBlock(world, worldPos, blockState)
-                  || (blockState.getBlock() instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
-                  || (blockState.getBlock() instanceof DoorBlock && blockState.getValue(DoorBlock.HALF).equals(DoorBlock.EnumDoorHalf.UPPER))
+                  || (blockState.getBlock() instanceof BlockBed && blockState.get(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
+                  || (blockState.getBlock() instanceof DoorBlock && blockState.get(DoorBlock.HALF).equals(DoorBlock.EnumDoorHalf.UPPER))
                   || blockState.getBlock() == Blocks.AIR)
             {
                 continue;

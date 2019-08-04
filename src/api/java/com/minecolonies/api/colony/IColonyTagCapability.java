@@ -256,7 +256,7 @@ public interface IColonyTagCapability
         {
             final CompoundNBT compound = new CompoundNBT();
             compound.putInt(TAG_ID, entry.getKey());
-            compound.put(TAG_BUILDINGS, entry.getValue().stream().map(pos -> BlockPosUtil.write(new CompoundNBT(), TAG_BUILDING, pos)).collect(NBTUtils.toListNBT()));
+            compound.put(TAG_BUILDINGS, entry.get().stream().map(pos -> BlockPosUtil.write(new CompoundNBT(), TAG_BUILDING, pos)).collect(NBTUtils.toListNBT()));
             return compound;
         }
 

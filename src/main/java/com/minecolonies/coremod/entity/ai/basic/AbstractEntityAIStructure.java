@@ -446,7 +446,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 final BlockState worldState = world.getBlockState(coords);
 
                 if (worldState.getMaterial() != Material.AIR
-                      && !(worldState.getBlock() instanceof BlockDoublePlant && worldState.getValue(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.UPPER)))
+                      && !(worldState.getBlock() instanceof BlockDoublePlant && worldState.get(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.UPPER)))
                 {
                     handleBuildingOverBlock(coords);
                     world.setBlockToAir(coords);
@@ -557,7 +557,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                   .isEmpty())
             {
                 final Stack stackRequest = new Stack(placedStack.getKey().getItemStack());
-                stackRequest.setCount(placedStack.getValue());
+                stackRequest.setCount(placedStack.get());
                 placer.getWorker().getCitizenData().createRequest(stackRequest);
                 placer.registerBlockAsNeeded(placedStack.getKey().getItemStack());
                 return true;
@@ -877,8 +877,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             }
 
             if (StructurePlacementUtils.isStructureBlockEqualWorldBlock(world, currentBlock.blockPosition, job.getStructure().getBlockstate())
-                  || (currentBlock.block instanceof BlockBed && currentBlock.metadata.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
-                  || (currentBlock.block instanceof DoorBlock && currentBlock.metadata.getValue(DoorBlock.HALF).equals(DoorBlock.EnumDoorHalf.UPPER)))
+                  || (currentBlock.block instanceof BlockBed && currentBlock.metadata.get(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
+                  || (currentBlock.block instanceof DoorBlock && currentBlock.metadata.get(DoorBlock.HALF).equals(DoorBlock.EnumDoorHalf.UPPER)))
             {
                 return true;
             }

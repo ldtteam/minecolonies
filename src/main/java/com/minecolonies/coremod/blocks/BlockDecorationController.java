@@ -68,7 +68,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     public BlockDecorationController(final Material blockMaterialIn)
     {
         super(blockMaterialIn);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, Direction.NORTH).withProperty(MIRROR, false));
+        this.setDefaultState(this.blockState.getBaseState().with(FACING, Direction.NORTH).with(MIRROR, false));
         initBlock();
     }
 
@@ -100,7 +100,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     @Override
     public AxisAlignedBB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos)
     {
-        Direction Direction = state.getValue(FACING);
+        Direction Direction = state.get(FACING);
         switch (Direction)
         {
             case EAST:
@@ -161,7 +161,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     @Override
     public int getMetaFromState(final BlockState state)
     {
-        return state.getValue(FACING).getHorizontalIndex() + (state.getValue(MIRROR) ? 4 : 0);
+        return state.get(FACING).getHorizontalIndex() + (state.get(MIRROR) ? 4 : 0);
     }
 
     @NotNull
@@ -177,7 +177,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
             theMeta = meta - 4;
         }
 
-        return getDefaultState().withProperty(FACING, Direction.byHorizontalIndex(theMeta)).withProperty(MIRROR, mirrored);
+        return getDefaultState().with(FACING, Direction.byHorizontalIndex(theMeta)).with(MIRROR, mirrored);
     }
 
     @NotNull
@@ -186,7 +186,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     {
         if (facing.getAxis().isHorizontal())
         {
-            return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer).withProperty(FACING, facing);
+            return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer).with(FACING, facing);
         }
         return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer);
     }
@@ -198,7 +198,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     @Override
     public BlockState withRotation(@NotNull BlockState state, Rotation rot)
     {
-        return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
+        return state.with(FACING, rot.rotate(state.get(FACING)));
     }
 
     /**
@@ -208,7 +208,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     @Override
     public BlockState withMirror(@NotNull BlockState state, Mirror mirrorIn)
     {
-        return state.withProperty(MIRROR, mirrorIn != Mirror.NONE);
+        return state.with(MIRROR, mirrorIn != Mirror.NONE);
     }
 
     /**

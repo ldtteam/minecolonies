@@ -100,7 +100,7 @@ public class SpawnCitizenCommand extends AbstractCitizensCommands implements IAc
     @Override
     public boolean canPlayerUseCommand(final PlayerEntity player, final Commands theCommand, final int colonyId)
     {
-        final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0);
+        final World world = ServerLifecycleHooks.getCurrentServer().getWorld(0);
         return super.canPlayerUseCommand(player, theCommand, colonyId)
                  && IColonyManager.getInstance().getColonyByWorld(colonyId, world) != null && IColonyManager.getInstance().getColonyByWorld(colonyId, world).getPermissions().getRank(player).equals(Rank.OWNER);
     }

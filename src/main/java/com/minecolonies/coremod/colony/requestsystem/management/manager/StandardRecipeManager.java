@@ -58,7 +58,7 @@ public class StandardRecipeManager implements IRecipeManager
     {
         for(final Map.Entry<IToken, IRecipeStorage> tempStorage: recipes.entrySet())
         {
-            if(tempStorage.getValue().equals(storage))
+            if(tempStorage.get().equals(storage))
             {
                 return tempStorage.getKey();
             }
@@ -70,7 +70,7 @@ public class StandardRecipeManager implements IRecipeManager
     public void write(@NotNull final CompoundNBT compound)
     {
         @NotNull final ListNBT recipesTagList =
-                recipes.entrySet().stream().map(entry ->  StandardFactoryController.getInstance().serialize(entry.getValue())).collect(NBTUtils.toListNBT());
+                recipes.entrySet().stream().map(entry ->  StandardFactoryController.getInstance().serialize(entry.get())).collect(NBTUtils.toListNBT());
         compound.put(TAG_RECIPES, recipesTagList);
     }
 
