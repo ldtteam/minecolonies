@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
-import io.netty.buffer.ByteBuf;
+import com.minecolonies.api.network.IMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 
 import org.jetbrains.annotations.NotNull;

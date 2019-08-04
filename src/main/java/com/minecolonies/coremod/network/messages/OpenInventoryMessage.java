@@ -4,17 +4,16 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.inventory.GuiHandler;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

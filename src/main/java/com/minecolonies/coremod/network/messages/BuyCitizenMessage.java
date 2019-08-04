@@ -3,11 +3,10 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.block.Blocks;
-import net.minecraft.init.Items;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -162,7 +161,7 @@ public class BuyCitizenMessage implements IMessage
                 data.setCharisma((int) Math.round(rand.nextDouble() * (high - low) + low));
                 data.setStrength((int) Math.round(rand.nextDouble() * (high - low) + low));
 
-                LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.progress.hireCitizen");
+                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), "com.minecolonies.coremod.progress.hireCitizen");
                 colony.getCitizenManager().spawnOrCreateCitizen(data, colony.getWorld(), null, true);
             }
         }

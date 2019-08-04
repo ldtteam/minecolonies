@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
-import io.netty.buffer.ByteBuf;
+import com.minecolonies.api.network.IMessage;
 import net.minecraft.world.chunk.Chunk;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;

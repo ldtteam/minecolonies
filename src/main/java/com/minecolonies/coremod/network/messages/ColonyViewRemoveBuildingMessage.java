@@ -1,9 +1,8 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.Colony;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -59,7 +58,7 @@ public class ColonyViewRemoveBuildingMessage implements IMessage
     @Override
     public LogicalSide getExecutionSide()
     {
-        IColonyManager.getInstance().handleColonyViewRemoveBuildingMessage(message.colonyId, message.buildingId, Minecraft.getMinecraft().world.world.getDimension().getType().getId());
+        return LogicalSide.CLIENT;
     }
 
     @Override

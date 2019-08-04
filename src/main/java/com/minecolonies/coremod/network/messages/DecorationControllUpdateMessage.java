@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.block.BlockState;

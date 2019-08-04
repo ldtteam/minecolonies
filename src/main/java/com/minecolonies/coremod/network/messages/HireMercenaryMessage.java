@@ -3,8 +3,8 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.init.SoundEvents;
 

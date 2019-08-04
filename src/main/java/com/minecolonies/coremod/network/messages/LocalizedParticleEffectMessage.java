@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.network.messages;
 
-import io.netty.buffer.ByteBuf;
+import com.minecolonies.api.network.IMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.item.Item;
@@ -8,7 +8,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;

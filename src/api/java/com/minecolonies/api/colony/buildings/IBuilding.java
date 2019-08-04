@@ -14,7 +14,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -156,7 +156,7 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
      * @param player the requesting player.
      * @param builder the assigned builder.
      */
-    void requestUpgrade(EntityPlayer player, BlockPos builder);
+    void requestUpgrade(PlayerEntity player, BlockPos builder);
 
     /**
      * Requests a repair for the current building.

@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.network.messages;
+package com.minecolonies.api.network;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.LogicalSide;

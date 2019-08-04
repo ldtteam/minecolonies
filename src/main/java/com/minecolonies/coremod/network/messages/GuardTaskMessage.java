@@ -5,14 +5,13 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.registry.IGuardTypeRegistry;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
-import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

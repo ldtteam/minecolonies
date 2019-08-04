@@ -103,7 +103,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             {
                 return ActionResult.newResult(ActionResultType.FAIL, stack);
             }
-            final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), Minecraft.getMinecraft().world.world.getDimension().getType().getId());
+            final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), Minecraft.getInstance().world.world.getDimension().getType().getId());
             if (colony == null)
             {
                 return ActionResult.newResult(ActionResultType.FAIL, stack);

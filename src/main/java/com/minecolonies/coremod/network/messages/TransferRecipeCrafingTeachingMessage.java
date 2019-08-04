@@ -1,12 +1,11 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.inventory.CraftingGUIBuilding;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-
 
 import java.util.HashMap;
 import java.util.Map;

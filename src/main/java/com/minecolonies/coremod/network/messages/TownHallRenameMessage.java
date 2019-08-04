@@ -4,10 +4,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.coremod.MineColonies;
-import io.netty.buffer.ByteBuf;
+import com.minecolonies.api.network.IMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.views.MobEntryView;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;

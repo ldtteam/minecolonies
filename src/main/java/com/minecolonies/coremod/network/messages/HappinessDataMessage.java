@@ -2,8 +2,8 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.HappinessData;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.Colony;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -76,6 +76,6 @@ public class HappinessDataMessage implements IMessage
     @Override
     protected void messageOnClientThread(final HappinessDataMessage message, final MessageContext ctx)
     {
-        IColonyManager.getInstance().handleHappinessDataMessage(message.colonyId, message.happinessData, Minecraft.getMinecraft().world.world.getDimension().getType().getId());
+        IColonyManager.getInstance().handleHappinessDataMessage(message.colonyId, message.happinessData, Minecraft.getInstance().world.world.getDimension().getType().getId());
     }
 }

@@ -4,12 +4,13 @@ import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.item.BlockItem;
 import net.minecraftforge.registries.IForgeRegistry;
 
-public abstract class AbstractBlockMinecoloniesHorizontal<B extends AbstractBlockMinecoloniesHorizontal<B>> extends BlockHorizontal implements IBlockMinecolonies<B>
+public abstract class AbstractBlockMinecoloniesHorizontal<B extends AbstractBlockMinecoloniesHorizontal<B>> extends HorizontalBlock implements IBlockMinecolonies<B>
 {
     public AbstractBlockMinecoloniesHorizontal(final Material blockMaterialIn)
     {
