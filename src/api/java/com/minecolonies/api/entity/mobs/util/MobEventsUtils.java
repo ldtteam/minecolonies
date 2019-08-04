@@ -56,12 +56,12 @@ public final class MobEventsUtils
 
         BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);
         Log.getLogger().info("[BarbarianEvent]: Spawning: " + targetSpawnPoint.getX() + " " + targetSpawnPoint.getZ());
-        if (targetSpawnPoint.equals(colony.getCenter()) || targetSpawnPoint.getY() > Configurations.gameplay.maxYForBarbarians)
+        if (targetSpawnPoint.equals(colony.getCenter()) || targetSpawnPoint.getY() > MineColonies.getConfig().getCommon().gameplay.maxYForBarbarians)
         {
             return;
         }
 
-        if (Configurations.gameplay.enableInDevelopmentFeatures)
+        if (MineColonies.getConfig().getCommon().gameplay.enableInDevelopmentFeatures)
         {
             LanguageHandler.sendPlayersMessage(
               colony.getMessagePlayerEntitys(),
@@ -182,7 +182,7 @@ public final class MobEventsUtils
         }
 
         final int raidLevel =
-          Math.min(Configurations.gameplay.maxBarbarianSize, (int) ((getColonyRaidLevel(colony) / SPAWN_MODIFIER) * ((double) Configurations.gameplay.spawnBarbarianSize * 0.1)));
+          Math.min(MineColonies.getConfig().getCommon().gameplay.maxBarbarianSize, (int) ((getColonyRaidLevel(colony) / SPAWN_MODIFIER) * ((double) MineColonies.getConfig().getCommon().gameplay.spawnBarbarianSize * 0.1)));
         final int numberOfChiefs = Math.max(1, (int) (raidLevel * CHIEF_BARBARIANS_MULTIPLIER));
         final int numberOfArchers = Math.max(1, (int) (raidLevel * ARCHER_BARBARIANS_MULTIPLIER));
         final int numberOfBarbarians = raidLevel - numberOfChiefs - numberOfArchers;
@@ -244,7 +244,7 @@ public final class MobEventsUtils
             if (!colony.hasWillRaidTonight())
             {
                 final boolean raid = raidThisNight(world, colony);
-                if (Configurations.gameplay.enableInDevelopmentFeatures)
+                if (MineColonies.getConfig().getCommon().gameplay.enableInDevelopmentFeatures)
                 {
                     LanguageHandler.sendPlayersMessage(
                       colony.getMessagePlayerEntitys(),
@@ -258,7 +258,7 @@ public final class MobEventsUtils
         {
             colony.getRaiderManager().setHasRaidBeenCalculated(false);
             colony.getRaiderManager().setWillRaidTonight(false);
-            if (Configurations.gameplay.enableInDevelopmentFeatures)
+            if (MineColonies.getConfig().getCommon().gameplay.enableInDevelopmentFeatures)
             {
                 LanguageHandler.sendPlayersMessage(
                   colony.getMessagePlayerEntitys(),
@@ -282,8 +282,8 @@ public final class MobEventsUtils
      */
     private static boolean raidThisNight(final World world, final IColony colony)
     {
-        return colony.getNightsSinceLastRaid() > Configurations.gameplay.minimumNumberOfNightsBetweenRaids
-                 && world.rand.nextDouble() < 1.0 / Configurations.gameplay.averageNumberOfNightsBetweenRaids;
+        return colony.getNightsSinceLastRaid() > MineColonies.getConfig().getCommon().gameplay.minimumNumberOfNightsBetweenRaids
+                 && world.rand.nextDouble() < 1.0 / MineColonies.getConfig().getCommon().gameplay.averageNumberOfNightsBetweenRaids;
     }
 
     /**

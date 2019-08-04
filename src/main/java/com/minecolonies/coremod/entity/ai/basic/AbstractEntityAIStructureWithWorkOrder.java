@@ -160,7 +160,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
      */
     private void requestMaterialsState()
     {
-        if (Configurations.gameplay.builderInfiniteResources || job.getWorkOrder().isRequested() || job.getWorkOrder() instanceof WorkOrderBuildRemoval)
+        if (MineColonies.getConfig().getCommon().gameplay.builderInfiniteResources || job.getWorkOrder().isRequested() || job.getWorkOrder() instanceof WorkOrderBuildRemoval)
         {
             return;
         }

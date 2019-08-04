@@ -231,7 +231,7 @@ public class RaidManager implements IRaiderManager
                 {
                     schematicMap.remove(entry.getKey());
                 }
-                else if (entry.getValue().getB() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * Configurations.gameplay.daysUntilPirateshipsDespawn < world.getWorldTime())
+                else if (entry.getValue().getB() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * MineColonies.getConfig().getCommon().gameplay.daysUntilPirateshipsDespawn < world.getWorldTime())
                 {
                     // Load the backup from before spawning
                     try

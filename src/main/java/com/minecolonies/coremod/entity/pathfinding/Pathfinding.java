@@ -29,7 +29,7 @@ public final class Pathfinding
     private static final ThreadPoolExecutor executor;
     static
     {
-        executor = new ThreadPoolExecutor(1, Configurations.pathfinding.pathfindingMaxThreadCount, 10, TimeUnit.SECONDS, jobQueue);
+        executor = new ThreadPoolExecutor(1, MineColonies.getConfig().getCommon().pathfinding.pathfindingMaxThreadCount, 10, TimeUnit.SECONDS, jobQueue);
     }
     private Pathfinding()
     {

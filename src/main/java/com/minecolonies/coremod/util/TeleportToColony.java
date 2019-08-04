@@ -92,7 +92,7 @@ public final class TeleportToColony
             teleportPlayer(playerToTeleport, colonyId, sender);
             return;
         }
-        sender.sendMessage(new StringTextComponent("Please wait at least " + Configurations.gameplay.teleportBuffer + " seconds to teleport again"));
+        sender.sendMessage(new StringTextComponent("Please wait at least " + MineColonies.getConfig().getCommon().gameplay.teleportBuffer + " seconds to teleport again"));
     }
 
     /**

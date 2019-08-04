@@ -64,16 +64,16 @@ public final class MobSpawnUtils
         mob.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
         mob.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
 
-        final double attackDamage = Configurations.gameplay.barbarianHordeDifficulty >= 10 ? ATTACK_DAMAGE * 2 : ATTACK_DAMAGE;
+        final double attackDamage = MineColonies.getConfig().getCommon().gameplay.barbarianHordeDifficulty >= 10 ? ATTACK_DAMAGE * 2 : ATTACK_DAMAGE;
         mob.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attackDamage);
         if (mob instanceof IChiefBarbarianEntity)
         {
-            final double chiefArmor = Configurations.gameplay.barbarianHordeDifficulty > 5 ? CHIEF_ARMOR * 2 : CHIEF_ARMOR;
+            final double chiefArmor = MineColonies.getConfig().getCommon().gameplay.barbarianHordeDifficulty > 5 ? CHIEF_ARMOR * 2 : CHIEF_ARMOR;
             mob.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(chiefArmor);
         }
         else
         {
-            final double armor = Configurations.gameplay.barbarianHordeDifficulty * ARMOR;
+            final double armor = MineColonies.getConfig().getCommon().gameplay.barbarianHordeDifficulty * ARMOR;
             mob.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(armor);
         }
         mob.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getHealthBasedOnRaidLevel(colony));
@@ -90,7 +90,7 @@ public final class MobSpawnUtils
         if (colony != null)
         {
             final int raidLevel = (int) (MobEventsUtils.getColonyRaidLevel(colony) * BARBARIAN_HEALTH_MULTIPLIER);
-            return Math.max(BARBARIAN_BASE_HEALTH, (BARBARIAN_BASE_HEALTH + raidLevel) * ((double) Configurations.gameplay.barbarianHordeDifficulty * 0.1));
+            return Math.max(BARBARIAN_BASE_HEALTH, (BARBARIAN_BASE_HEALTH + raidLevel) * ((double) MineColonies.getConfig().getCommon().gameplay.barbarianHordeDifficulty * 0.1));
         }
         return BARBARIAN_BASE_HEALTH;
     }

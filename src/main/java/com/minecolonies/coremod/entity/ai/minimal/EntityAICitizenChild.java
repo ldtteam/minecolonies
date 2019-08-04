@@ -131,10 +131,10 @@ public class EntityAICitizenChild extends EntityAIBase
         // Timer used for delays on actions
         if (actionTimer > 0)
         {
-            actionTimer -= Configurations.gameplay.updateRate;
+            actionTimer -= MineColonies.getConfig().getCommon().gameplay.updateRate;
         }
 
-        AIActiveTime += Configurations.gameplay.updateRate;
+        AIActiveTime += MineColonies.getConfig().getCommon().gameplay.updateRate;
 
         return false;
     }
@@ -271,7 +271,7 @@ public class EntityAICitizenChild extends EntityAIBase
             }
 
             // 1/144 Chance to grow up, every 25 seconds = avg 1h. Set to half since this AI isnt always active, e.g. sleeping.  At 2h they directly grow
-            if (rand.nextInt((int) (70 / Configurations.gameplay.growthModifier)) == 0 || AIActiveTime > 70000 / Configurations.gameplay.growthModifier)
+            if (rand.nextInt((int) (70 / MineColonies.getConfig().getCommon().gameplay.growthModifier)) == 0 || AIActiveTime > 70000 / MineColonies.getConfig().getCommon().gameplay.growthModifier)
             {
 
                 LanguageHandler.sendPlayersMessage(child.getCitizenColonyHandler().getColony().getMessagePlayerEntitys(),

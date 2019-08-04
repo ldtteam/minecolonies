@@ -427,7 +427,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             if (handlers.canHandle(world, coords, blockState))
             {
-                if (!Configurations.gameplay.builderInfiniteResources)
+                if (!MineColonies.getConfig().getCommon().gameplay.builderInfiniteResources)
                 {
                     final List<ItemStack> requiredItems = handlers.getRequiredItems(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false);
 
@@ -651,9 +651,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             }
         }
 
-        if (Configurations.gameplay.builderBuildBlockDelay > 0 && blockToPlace != Blocks.AIR)
+        if (MineColonies.getConfig().getCommon().gameplay.builderBuildBlockDelay > 0 && blockToPlace != Blocks.AIR)
         {
-            setDelay(Configurations.gameplay.builderBuildBlockDelay * PROGRESS_MULTIPLIER / (worker.getCitizenExperienceHandler().getLevel() + PROGRESS_MULTIPLIER));
+            setDelay(MineColonies.getConfig().getCommon().gameplay.builderBuildBlockDelay * PROGRESS_MULTIPLIER / (worker.getCitizenExperienceHandler().getLevel() + PROGRESS_MULTIPLIER));
         }
 
         return true;
@@ -886,7 +886,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             WorkerUtil.faceBlock(currentBlock.blockPosition, worker);
 
             //We need to deal with materials
-            if (Configurations.gameplay.builderInfiniteResources || currentBlock.worldMetadata.getMaterial().isLiquid())
+            if (MineColonies.getConfig().getCommon().gameplay.builderInfiniteResources || currentBlock.worldMetadata.getMaterial().isLiquid())
             {
                 worker.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
                 world.setBlockToAir(currentBlock.blockPosition);
@@ -1058,7 +1058,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
                     request.removeIf(ItemStackUtils::isEmpty);
 
-                    if (!Configurations.gameplay.builderInfiniteResources)
+                    if (!MineColonies.getConfig().getCommon().gameplay.builderInfiniteResources)
                     {
                         if (checkForListInInvAndRequest(this, new ArrayList<>(request), true))
                         {

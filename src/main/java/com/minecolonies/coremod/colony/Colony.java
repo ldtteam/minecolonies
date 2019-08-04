@@ -277,7 +277,7 @@ public class Colony implements IColony
         }
         this.permissions = new Permissions(this);
 
-        for (final String s : Configurations.gameplay.freeToInteractBlocks)
+        for (final String s : MineColonies.getConfig().getCommon().gameplay.freeToInteractBlocks)
         {
             final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
             if (block == null)
@@ -818,7 +818,7 @@ public class Colony implements IColony
 
         if (shallUpdate(world, TICKS_SECOND)
               && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
-              && Configurations.gameplay.doBarbariansSpawn
+              && MineColonies.getConfig().getCommon().gameplay.doBarbariansSpawn
               && raidManager.canHaveRaiderEvents()
               && !world.getMinecraftServer().getPlayerList().getPlayers()
                     .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
@@ -889,7 +889,7 @@ public class Colony implements IColony
 
     public boolean areAllColonyChunksLoaded(@NotNull final TickEvent.WorldTickEvent event)
     {
-        final int distanceFromCenter = Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK + 48 /* 3 chunks */ + BLOCKS_PER_CHUNK - 1 /* round up a chunk */;
+        final int distanceFromCenter = MineColonies.getConfig().getCommon().gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK + 48 /* 3 chunks */ + BLOCKS_PER_CHUNK - 1 /* round up a chunk */;
         for (int x = -distanceFromCenter; x <= distanceFromCenter; x += CONST_CHUNKSIZE)
         {
             for (int z = -distanceFromCenter; z <= distanceFromCenter; z += CONST_CHUNKSIZE)
@@ -1343,7 +1343,7 @@ public class Colony implements IColony
     public void addVisitingPlayer(final PlayerEntity player)
     {
         final Rank rank = getPermissions().getRank(player);
-        if (rank != Rank.OWNER && rank != Rank.OFFICER && !visitingPlayers.contains(player) && Configurations.gameplay.sendEnteringLeavingMessages)
+        if (rank != Rank.OWNER && rank != Rank.OFFICER && !visitingPlayers.contains(player) && MineColonies.getConfig().getCommon().gameplay.sendEnteringLeavingMessages)
         {
             visitingPlayers.add(player);
             LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
@@ -1354,7 +1354,7 @@ public class Colony implements IColony
     @Override
     public void removeVisitingPlayer(final PlayerEntity player)
     {
-        if (!getMessagePlayerEntitys().contains(player) && Configurations.gameplay.sendEnteringLeavingMessages)
+        if (!getMessagePlayerEntitys().contains(player) && MineColonies.getConfig().getCommon().gameplay.sendEnteringLeavingMessages)
         {
             visitingPlayers.remove(player);
             LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());

@@ -273,7 +273,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
                 MobSpawnUtils.setMobAttributes(this, getColony());
 
                 if (!this.getHeldItemMainhand().isEmpty() && SPEED_EFFECT != null && this.getHeldItemMainhand().getItem() instanceof IChiefSwordItem
-                      && Configurations.gameplay.barbarianHordeDifficulty >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
+                      && MineColonies.getConfig().getCommon().gameplay.barbarianHordeDifficulty >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
                 {
                     BarbarianUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE)
                       .stream().filter(entity -> !entity.isPotionActive(SPEED_EFFECT))

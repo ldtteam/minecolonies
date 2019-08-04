@@ -411,7 +411,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
         if (worker.getCitizenData() != null)
         {
             int enchantDmg = 0;
-            if (Configurations.gameplay.rangerEnchants)
+            if (MineColonies.getConfig().getCommon().gameplay.rangerEnchants)
             {
                 final ItemStack heldItem = worker.getHeldItem(Hand.MAIN_HAND);
                 // Normalize to +1 dmg
@@ -419,9 +419,9 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 enchantDmg += EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, heldItem);
             }
 
-            return (RANGER_BASE_DMG + getLevelDamage() + enchantDmg) * Configurations.gameplay.rangerDamageMult;
+            return (RANGER_BASE_DMG + getLevelDamage() + enchantDmg) * MineColonies.getConfig().getCommon().gameplay.rangerDamageMult;
         }
-        return RANGER_BASE_DMG * Configurations.gameplay.rangerDamageMult;
+        return RANGER_BASE_DMG * MineColonies.getConfig().getCommon().gameplay.rangerDamageMult;
     }
 
     /**

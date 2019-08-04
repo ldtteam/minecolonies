@@ -89,7 +89,7 @@ public class StandardRequestManagerTest
     @Before
     public void setUp() throws Exception
     {
-        Configurations.requestSystem.enableDebugLogging = true;
+        MineColonies.getConfig().getCommon().requestSystem.enableDebugLogging = true;
         StandardFactoryControllerInitializer.onPreInit();
         StandardFactoryController.getInstance().registerNewFactory(new StringRequestableFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StringRequestFactory());

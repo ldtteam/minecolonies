@@ -60,7 +60,7 @@ public final class ConstructionTapeHelper
      */
     public static void placeConstructionTape(final BlockPos pos, final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners, @NotNull final World world)
     {
-        if (Configurations.gameplay.builderPlaceConstructionTape)
+        if (MineColonies.getConfig().getCommon().gameplay.builderPlaceConstructionTape)
         {
             final BlockState constructionTape = ModBlocks.blockConstructionTape.getDefaultState();
 

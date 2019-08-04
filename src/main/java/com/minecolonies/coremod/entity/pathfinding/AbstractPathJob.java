@@ -57,7 +57,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     /**
      * The maximum amount of nodes to Map, set in the config.
      */
-    private static final int MAX_NODES_VISITED = Configurations.pathfinding.pathfindingMaxNodes;
+    private static final int MAX_NODES_VISITED = MineColonies.getConfig().getCommon().pathfinding.pathfindingMaxNodes;
 
     /**
      * Additional cost of jumping and dropping - base 1.
@@ -169,7 +169,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         allowJumpPointSearchTypeWalk = false;
 
-        if (Configurations.pathfinding.pathfindingDebugDraw)
+        if (MineColonies.getConfig().getCommon().pathfinding.pathfindingDebugDraw)
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
@@ -452,7 +452,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         currentNode.setClosed();
 
-        if (Configurations.pathfinding.pathfindingDebugVerbosity == DEBUG_VERBOSITY_FULL)
+        if (MineColonies.getConfig().getCommon().pathfinding.pathfindingDebugVerbosity == DEBUG_VERBOSITY_FULL)
         {
             Log.getLogger().info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f",
               currentNode.pos.getX(), currentNode.pos.getY(), currentNode.pos.getZ(), currentNode.getCost(), currentNode.getScore()));
@@ -634,7 +634,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     private void doDebugPrinting(@NotNull final PathPoint[] points)
     {
-        if (Configurations.pathfinding.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
+        if (MineColonies.getConfig().getCommon().pathfinding.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
         {
             Log.getLogger().info("Path found:");
 

@@ -312,7 +312,7 @@ public class Tree
         // Only harvest nearly fully grown dynamic trees(8 max)
         if (Compatibility.isDynamicBlock(block)
               && BlockStateUtils.getPropertyByNameFromState(state, DYNAMICTREERADIUS) != null
-              && ((int) state.getValue(BlockStateUtils.getPropertyByNameFromState(state, DYNAMICTREERADIUS)) < Configurations.compatibility.dynamicTreeHarvestSize))
+              && ((int) state.getValue(BlockStateUtils.getPropertyByNameFromState(state, DYNAMICTREERADIUS)) < MineColonies.getConfig().getCommon().compatibility.dynamicTreeHarvestSize))
         {
             return false;
         }

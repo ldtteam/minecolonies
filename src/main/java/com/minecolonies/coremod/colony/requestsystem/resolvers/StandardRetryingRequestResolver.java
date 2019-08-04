@@ -60,13 +60,13 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Override
     public int getMaximalTries()
     {
-        return Configurations.requestSystem.maximalRetries;
+        return MineColonies.getConfig().getCommon().requestSystem.maximalRetries;
     }
 
     @Override
     public int getMaximalDelayBetweenRetriesInTicks()
     {
-        return Configurations.requestSystem.delayBetweenRetries;
+        return MineColonies.getConfig().getCommon().requestSystem.delayBetweenRetries;
     }
 
     @Override

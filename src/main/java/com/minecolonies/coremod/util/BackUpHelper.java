@@ -216,7 +216,7 @@ public final class BackUpHelper
             colony = Colony.loadColony(compound, colonyWorld);
             colonyWorld.getCapability(COLONY_MANAGER_CAP, null).addColony(colony);
 
-            if (Configurations.gameplay.enableDynamicColonySizes)
+            if (MineColonies.getConfig().getCommon().gameplay.enableDynamicColonySizes)
             {
                 for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
                 {

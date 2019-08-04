@@ -118,31 +118,31 @@ public abstract class AbstractSingleCommand implements ISubCommand
         switch (theCommand)
         {
             case HOMETP:
-                return Configurations.gameplay.canPlayerUseHomeTPCommand;
+                return MineColonies.getConfig().getCommon().gameplay.canPlayerUseHomeTPCommand;
             case COLONYTP:
-                return Configurations.gameplay.canPlayerUseColonyTPCommand;
+                return MineColonies.getConfig().getCommon().gameplay.canPlayerUseColonyTPCommand;
             case RTP:
-                return Configurations.gameplay.canPlayerUseRTPCommand;
+                return MineColonies.getConfig().getCommon().gameplay.canPlayerUseRTPCommand;
             case KILLCITIZENS:
-                return Configurations.gameplay.canPlayerUseKillCitizensCommand;
+                return MineColonies.getConfig().getCommon().gameplay.canPlayerUseKillCitizensCommand;
             case CITIZENINFO:
-                return Configurations.gameplay.canPlayerUseCitizenInfoCommand;
+                return MineColonies.getConfig().getCommon().gameplay.canPlayerUseCitizenInfoCommand;
             case LISTCITIZENS:
-                return Configurations.gameplay.canPlayerUseListCitizensCommand;
+                return MineColonies.getConfig().getCommon().gameplay.canPlayerUseListCitizensCommand;
             case RESPAWNCITIZENS:
-                return Configurations.gameplay.canPlayerRespawnCitizensCommand;
+                return MineColonies.getConfig().getCommon().gameplay.canPlayerRespawnCitizensCommand;
             case SHOWCOLONYINFO:
-                return Configurations.gameplay.canPlayerUseShowColonyInfoCommand;
+                return MineColonies.getConfig().getCommon().gameplay.canPlayerUseShowColonyInfoCommand;
             case ADDOFFICER:
-                return Configurations.gameplay.canPlayerUseAddOfficerCommand;
+                return MineColonies.getConfig().getCommon().gameplay.canPlayerUseAddOfficerCommand;
             case DELETECOLONY:
-                return Configurations.gameplay.canPlayerUseDeleteColonyCommand;
+                return MineColonies.getConfig().getCommon().gameplay.canPlayerUseDeleteColonyCommand;
             case REFRESH_COLONY:
-                return Configurations.gameplay.canPlayerUseRefreshColonyCommand;
+                return MineColonies.getConfig().getCommon().gameplay.canPlayerUseRefreshColonyCommand;
             case MC_BACKUP:
-                return Configurations.gameplay.canPlayerUseBackupCommand;
+                return MineColonies.getConfig().getCommon().gameplay.canPlayerUseBackupCommand;
             case RSRESET:
-                return Configurations.requestSystem.canPlayerUseResetCommand;
+                return MineColonies.getConfig().getCommon().requestSystem.canPlayerUseResetCommand;
             default:
                 return false;
         }

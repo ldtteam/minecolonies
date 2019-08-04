@@ -10,27 +10,18 @@ import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.MinecoloniesAPIImpl;
-import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
 import com.minecolonies.coremod.commands.CommandEntryPointNew;
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityArcherPirate;
-import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityCaptainPirate;
-import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.event.*;
 import com.minecolonies.coremod.placementhandlers.MinecoloniesPlacementHandlers;
 import com.minecolonies.coremod.proxy.ClientProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
 import com.minecolonies.coremod.util.RecipeHandler;
-import net.minecraft.item.Item;
-import net.minecraft.stats.StatType;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.entity.EntityType;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -145,11 +136,9 @@ public class MineColonies
 
         proxy.registerRenderer();
 
-        ModAchievements.init();
-
         MinecoloniesPlacementHandlers.initHandlers();
 
-        RecipeHandler.init(Configurations.gameplay.enableInDevelopmentFeatures, Configurations.gameplay.supplyChests);
+        RecipeHandler.init(MineColonies.getConfig().getCommon().gameplay.enableInDevelopmentFeatures, MineColonies.getConfig().getCommon().gameplay.supplyChests);
 
         //Register Vanilla items with tags
 

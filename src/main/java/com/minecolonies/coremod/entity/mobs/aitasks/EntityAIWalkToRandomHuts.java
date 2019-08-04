@@ -210,7 +210,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
                 world.setBlockState(front, Blocks.COBBLESTONE.getDefaultState());
             }
 
-            if (entity.getStuckCounter() > 1 && Configurations.gameplay.doBarbariansBreakThroughWalls)
+            if (entity.getStuckCounter() > 1 && MineColonies.getConfig().getCommon().gameplay.doBarbariansBreakThroughWalls)
             {
                 Collections.shuffle(directions);
 

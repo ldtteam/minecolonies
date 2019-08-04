@@ -220,7 +220,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         setSize((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT);
         this.enablePersistence();
-        this.setAlwaysRenderNameTag(Configurations.gameplay.alwaysRenderNameTag);
+        this.setAlwaysRenderNameTag(MineColonies.getConfig().getCommon().gameplay.alwaysRenderNameTag);
         initTasks();
     }
 
@@ -268,7 +268,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         //TODO: Is this actually needed here?
         if (citizenData != null)
         {
-            if (citizenJobHandler.getColonyJob() != null && Configurations.gameplay.enableInDevelopmentFeatures)
+            if (citizenJobHandler.getColonyJob() != null && MineColonies.getConfig().getCommon().gameplay.enableInDevelopmentFeatures)
             {
                 setCustomNameTag(citizenData.getName() + " (" + ICitizenStatusHandler.getStatus() + ")[" + citizenJobHandler.getColonyJob().getNameTagDescription() + "]");
             }
@@ -510,7 +510,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     public void callForHelp(final Entity attacker, final int guardHelpRange)
     {
-        if (!(attacker instanceof LivingEntityBase) || !Configurations.gameplay.citizenCallForHelp || callForHelpCooldown != 0)
+        if (!(attacker instanceof LivingEntityBase) || !MineColonies.getConfig().getCommon().gameplay.citizenCallForHelp || callForHelpCooldown != 0)
         {
             return;
         }
@@ -699,7 +699,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 final ItemStack hat = getItemStackFromSlot(EquipmentSlotType.HEAD);
                 if (LocalDate.now(Clock.systemDefaultZone()).getMonth() == Month.DECEMBER
-                      && Configurations.gameplay.holidayFeatures
+                      && MineColonies.getConfig().getCommon().gameplay.holidayFeatures
                       && !(getCitizenJobHandler().getColonyJob() instanceof JobStudent))
                 {
                     if (hat.isEmpty())
@@ -712,7 +712,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                     this.setItemStackToSlot(EquipmentSlotType.HEAD, ItemStackUtils.EMPTY);
                 }
 
-                this.setAlwaysRenderNameTag(Configurations.gameplay.alwaysRenderNameTag);
+                this.setAlwaysRenderNameTag(MineColonies.getConfig().getCommon().gameplay.alwaysRenderNameTag);
                 ICitizenItemHandler.pickupItems();
                 ICitizenChatHandler.cleanupChatMessages();
                 citizenColonyHandler.updateColonyServer();
@@ -803,10 +803,10 @@ public class EntityCitizen extends AbstractEntityCitizen
     {
         if (citizenData != null && citizenColonyHandler.getColony() != null)
         {
-            if (!name.contains(citizenData.getName()) && Configurations.gameplay.allowGlobalNameChanges >= 0)
+            if (!name.contains(citizenData.getName()) && MineColonies.getConfig().getCommon().gameplay.allowGlobalNameChanges >= 0)
             {
-                if (Configurations.gameplay.allowGlobalNameChanges == 0 &&
-                      Arrays.stream(Configurations.gameplay.specialPermGroup).noneMatch(owner -> owner.equals(citizenColonyHandler.getColony().getPermissions().getOwnerName())))
+                if (MineColonies.getConfig().getCommon().gameplay.allowGlobalNameChanges == 0 &&
+                      Arrays.stream(MineColonies.getConfig().getCommon().gameplay.specialPermGroup).noneMatch(owner -> owner.equals(citizenColonyHandler.getColony().getPermissions().getOwnerName())))
                 {
                     LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessagePlayerEntitys(), CITIZEN_RENAME_NOT_ALLOWED);
                     return;
@@ -1071,7 +1071,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     private boolean shouldWorkWhileRaining()
     {
-        return Configurations.gameplay.workersAlwaysWorkInRain ||
+        return MineColonies.getConfig().getCommon().gameplay.workersAlwaysWorkInRain ||
                  (citizenColonyHandler.getWorkBuilding() != null && citizenColonyHandler.getWorkBuilding().canWorkDuringTheRain());
     }
 
