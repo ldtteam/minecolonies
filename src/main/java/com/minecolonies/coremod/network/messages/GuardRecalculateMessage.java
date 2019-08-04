@@ -3,8 +3,9 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.IColonyManager;
+
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.network.PacketBuffer;
@@ -82,7 +83,7 @@ public class GuardRecalculateMessage implements IMessage
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
-            if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
+            if (!colony.getPermissions().hasPermission(ctxIn.getSender(), Action.MANAGE_HUTS))
             {
                 return;
             }

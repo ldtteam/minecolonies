@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
-import com.minecolonies.api.util.Log;
-import io.netty.buffer.ByteBuf;
+import com.minecolonies.api.network.IMessage;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

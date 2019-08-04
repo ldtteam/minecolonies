@@ -4,7 +4,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.api.network.IMessage;
+
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

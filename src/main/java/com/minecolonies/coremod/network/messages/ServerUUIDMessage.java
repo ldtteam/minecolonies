@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.network.PacketUtils;
-import io.netty.buffer.ByteBuf;
 
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;

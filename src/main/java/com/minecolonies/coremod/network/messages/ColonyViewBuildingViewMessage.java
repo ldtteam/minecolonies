@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.IColonyManager;
 import io.netty.buffer.ByteBuf;

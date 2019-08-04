@@ -1,13 +1,11 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.util.BlockPosUtil;
-import io.netty.buffer.ByteBuf;
+import com.minecolonies.api.network.IMessage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import org.jetbrains.annotations.NotNull;
 

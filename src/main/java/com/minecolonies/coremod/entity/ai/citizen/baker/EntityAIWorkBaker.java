@@ -312,7 +312,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             return BAKER_BAKING;
         }
 
-        final IBlockState furnace = world.getBlockState(currentFurnace);
+        final BlockState furnace = world.getBlockState(currentFurnace);
         final List<BakingProduct> bakingProducts = building.getTasks().get(ProductState.PREPARED);
         if (!(furnace.getBlock() instanceof BlockFurnace))
         {

@@ -5,8 +5,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
 
 import org.jetbrains.annotations.NotNull;

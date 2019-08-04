@@ -155,15 +155,15 @@ public class RenderBipedCitizen<C extends EntityCitizen> extends RenderBiped<C>
     }
 
     @Override
-    protected void renderLivingAt(final C entityLivingBaseIn, final double x, final double y, final double z)
+    protected void renderLivingAt(final C LivingEntityIn, final double x, final double y, final double z)
     {
-        if (entityLivingBaseIn.isEntityAlive() && entityLivingBaseIn.getCitizenSleepHandler().isAsleep())
+        if (LivingEntityIn.isEntityAlive() && LivingEntityIn.getCitizenSleepHandler().isAsleep())
         {
-            super.renderLivingAt(entityLivingBaseIn, x + (double)entityLivingBaseIn.getCitizenSleepHandler().getRenderOffsetX(), y + BED_HEIGHT, z + (double)entityLivingBaseIn.getCitizenSleepHandler().getRenderOffsetZ());
+            super.renderLivingAt(LivingEntityIn, x + (double)LivingEntityIn.getCitizenSleepHandler().getRenderOffsetX(), y + BED_HEIGHT, z + (double)LivingEntityIn.getCitizenSleepHandler().getRenderOffsetZ());
         }
         else
         {
-            super.renderLivingAt(entityLivingBaseIn, x, y, z);
+            super.renderLivingAt(LivingEntityIn, x, y, z);
         }
     }
 

@@ -35,7 +35,7 @@ public class DebugRendererChunkBorder
     public void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
     {
         final double partialTicks = event.getPartialTicks();
-        final PlayerEntity entityplayer = Minecraft.getInstance().player;
+        final PlayerEntity PlayerEntity = Minecraft.getInstance().player;
 
         if (PlayerEntity.getHeldItem(Hand.MAIN_HAND).getItem() != ModItems.buildTool)
         {

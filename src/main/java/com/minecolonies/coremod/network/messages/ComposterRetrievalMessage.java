@@ -4,7 +4,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.api.network.IMessage;
+
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
 import net.minecraft.entity.player.PlayerEntity;

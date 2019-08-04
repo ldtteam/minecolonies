@@ -142,7 +142,7 @@ public class ContainerGUICraftingFurnace extends Container
 
         if (!worldObj.isRemote)
         {
-            final ServerPlayerEntity entityPlayerMP = (ServerPlayerEntity) player;
+            final ServerPlayerEntity PlayerEntityMP = (ServerPlayerEntity) player;
             final ItemStack result = FurnaceRecipes.instance().getSmeltingResult(furnaceInventory.getStackInSlot(0)).copy();
 
             this.furnaceInventory.setInventorySlotContents(1, result);

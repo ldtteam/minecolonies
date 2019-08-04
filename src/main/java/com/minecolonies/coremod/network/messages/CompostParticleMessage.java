@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.network.IMessage;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -73,7 +74,7 @@ public class CompostParticleMessage implements IMessage
     {
         final ClientWorld world = Minecraft.getInstance().world;
         final int amount = random.nextInt(15) + 1;
-        final BlockState iblockstate = world.getBlockState(pos);
+        final BlockState BlockState = world.getBlockState(pos);
         double d0;
         double d1;
         double d2;
@@ -86,7 +87,7 @@ public class CompostParticleMessage implements IMessage
                 d2 = random.nextGaussian() * 0.02D;
                 world.addParticle(ParticleTypes.HAPPY_VILLAGER,
                   (double) ((float) pos.getX() + random.nextFloat()),
-                  (double) pos.getY() + (double) random.nextFloat() * iblockstate.getShape(world, pos).getBoundingBox().maxY,
+                  (double) pos.getY() + (double) random.nextFloat() * BlockState.getShape(world, pos).getBoundingBox().maxY,
                   (double) ((float) pos.getZ() + random.nextFloat()),
                   d0,
                   d1,
