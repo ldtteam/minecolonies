@@ -4,7 +4,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.ldtteam.structurize.management.Structures;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +28,7 @@ public class ColonyStylesMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull final ByteBuf buf)
+    public void fromBytes(@NotNull final PacketBuffer buf)
     {
         allowPlayerSchematics = buf.readBoolean();
         md5Map = readMD5MapFromByteBuf(buf);
@@ -42,15 +42,15 @@ public class ColonyStylesMessage implements IMessage
         final int count = buf.readInt();
         for (int i = 0; i < count; i++)
         {
-            final String filename = ByteBufUtils.readUTF8String(buf);
-            final String md5 = ByteBufUtils.readUTF8String(buf);
+            final String filename = buf.readString();
+            final String md5 = buf.readString();
             map.put(filename, md5);
         }
         return map;
     }
 
     @Override
-    public void toBytes(@NotNull final ByteBuf buf)
+    public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeBoolean(Configurations.gameplay.allowPlayerSchematics);
         writeMD5MapToByteBuf(buf);
@@ -62,8 +62,8 @@ public class ColonyStylesMessage implements IMessage
         buf.writeInt(md5s.size());
         for (final Map.Entry<String, String> entry : md5s.entrySet())
         {
-            ByteBufUtils.writeUTF8String(buf, entry.getKey());
-            ByteBufUtils.writeUTF8String(buf, entry.getValue());
+            buf.writeString(entry.getKey());
+            buf.writeString(entry.getValue());
         }
     }
 

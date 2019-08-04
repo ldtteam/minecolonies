@@ -7,7 +7,7 @@ import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.init.SoundEvents;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 
 /**
  * The message sent when activating mercenaries

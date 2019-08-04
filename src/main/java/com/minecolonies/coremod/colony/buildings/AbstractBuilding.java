@@ -439,9 +439,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         buf.writeInt(getPickUpPriority());
         buf.writeBoolean(isPriorityStatic());
         buf.writeInt(getCurrentWorkOrderLevel());
-        ByteBufUtils.writeUTF8String(buf, getStyle());
-        ByteBufUtils.writeUTF8String(buf, this.getSchematicName());
-        ByteBufUtils.writeUTF8String(buf, this.getCustomBuildingName());
+        buf.writeString(getStyle());
+        buf.writeString(this.getSchematicName());
+        buf.writeString(this.getCustomBuildingName());
 
         buf.writeInt(getRotation());
         buf.writeBoolean(isMirrored());

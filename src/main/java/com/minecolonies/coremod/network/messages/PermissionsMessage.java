@@ -14,7 +14,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -77,7 +77,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void fromBytes(@NotNull final ByteBuf buf)
+        public void fromBytes(@NotNull final PacketBuffer buf)
         {
             final ByteBuf newBuf = buf.retain();
             colonyID = newBuf.readInt();
@@ -92,7 +92,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void toBytes(@NotNull final ByteBuf buf)
+        public void toBytes(@NotNull final PacketBuffer buf)
         {
             buf.writeInt(colonyID);
             buf.writeInt(dimension);
@@ -174,22 +174,22 @@ public class PermissionsMessage
         }
 
         @Override
-        public void toBytes(@NotNull final ByteBuf buf)
+        public void toBytes(@NotNull final PacketBuffer buf)
         {
             buf.writeInt(colonyID);
-            ByteBufUtils.writeUTF8String(buf, type.name());
-            ByteBufUtils.writeUTF8String(buf, rank.name());
-            ByteBufUtils.writeUTF8String(buf, action.name());
+            buf.writeString(type.name());
+            buf.writeString(rank.name());
+            buf.writeString(action.name());
             buf.writeInt(dimension);
         }
 
         @Override
-        public void fromBytes(@NotNull final ByteBuf buf)
+        public void fromBytes(@NotNull final PacketBuffer buf)
         {
             colonyID = buf.readInt();
-            type = MessageType.valueOf(ByteBufUtils.readUTF8String(buf));
-            rank = Rank.valueOf(ByteBufUtils.readUTF8String(buf));
-            action = Action.valueOf(ByteBufUtils.readUTF8String(buf));
+            type = MessageType.valueOf(buf.readString());
+            rank = Rank.valueOf(buf.readString());
+            action = Action.valueOf(buf.readString());
             dimension = buf.readInt();
         }
     }
@@ -230,18 +230,18 @@ public class PermissionsMessage
         }
 
         @Override
-        public void toBytes(@NotNull final ByteBuf buf)
+        public void toBytes(@NotNull final PacketBuffer buf)
         {
             buf.writeInt(colonyID);
-            ByteBufUtils.writeUTF8String(buf, playerName);
+            buf.writeString(playerName);
             buf.writeInt(dimension);
         }
 
         @Override
-        public void fromBytes(@NotNull final ByteBuf buf)
+        public void fromBytes(@NotNull final PacketBuffer buf)
         {
             colonyID = buf.readInt();
-            playerName = ByteBufUtils.readUTF8String(buf);
+            playerName = buf.readString();
             dimension = buf.readInt();
         }
 
@@ -300,19 +300,19 @@ public class PermissionsMessage
         }
 
         @Override
-        public void toBytes(@NotNull final ByteBuf buf)
+        public void toBytes(@NotNull final PacketBuffer buf)
         {
             buf.writeInt(colonyID);
-            ByteBufUtils.writeUTF8String(buf, playerName);
+            buf.writeString(playerName);
             PacketUtils.writeUUID(buf, id);
             buf.writeInt(dimension);
         }
 
         @Override
-        public void fromBytes(@NotNull final ByteBuf buf)
+        public void fromBytes(@NotNull final PacketBuffer buf)
         {
             colonyID = buf.readInt();
-            playerName = ByteBufUtils.readUTF8String(buf);
+            playerName = buf.readString();
             id = PacketUtils.readUUID(buf);
             dimension = buf.readInt();
         }
@@ -381,20 +381,20 @@ public class PermissionsMessage
         }
 
         @Override
-        public void toBytes(@NotNull final ByteBuf buf)
+        public void toBytes(@NotNull final PacketBuffer buf)
         {
             buf.writeInt(colonyID);
             PacketUtils.writeUUID(buf, playerID);
-            ByteBufUtils.writeUTF8String(buf, type.name());
+            buf.writeString(type.name());
             buf.writeInt(dimension);
         }
 
         @Override
-        public void fromBytes(@NotNull final ByteBuf buf)
+        public void fromBytes(@NotNull final PacketBuffer buf)
         {
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
-            type = Type.valueOf(ByteBufUtils.readUTF8String(buf));
+            type = Type.valueOf(buf.readString());
             dimension = buf.readInt();
         }
 
@@ -461,7 +461,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void toBytes(@NotNull final ByteBuf buf)
+        public void toBytes(@NotNull final PacketBuffer buf)
         {
             buf.writeInt(colonyID);
             PacketUtils.writeUUID(buf, playerID);
@@ -469,7 +469,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void fromBytes(@NotNull final ByteBuf buf)
+        public void fromBytes(@NotNull final PacketBuffer buf)
         {
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);

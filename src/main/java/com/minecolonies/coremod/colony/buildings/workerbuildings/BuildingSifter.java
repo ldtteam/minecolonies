@@ -270,19 +270,19 @@ public class BuildingSifter extends AbstractBuildingWorker
         super.serializeToView(buf);
         buf.writeInt(dailyQuantity);
 
-        ByteBufUtils.writeItemStack(buf, sievableBlock.getItemStack());
-        ByteBufUtils.writeItemStack(buf, sifterMesh.getA().getItemStack());
+        buf.writeItemStack(sievableBlock.getItemStack());
+        buf.writeItemStack(sifterMesh.getA().getItemStack());
 
         buf.writeInt(IColonyManager.getInstance().getCompatibilityManager().getSievableBlock().size());
         for (final ItemStorage storage : IColonyManager.getInstance().getCompatibilityManager().getSievableBlock())
         {
-            ByteBufUtils.writeItemStack(buf, storage.getItemStack());
+            buf.writeItemStack(storage.getItemStack());
         }
 
         buf.writeInt(IColonyManager.getInstance().getCompatibilityManager().getMeshes().size());
         for (final Tuple<ItemStorage, Double> storage : IColonyManager.getInstance().getCompatibilityManager().getMeshes())
         {
-            ByteBufUtils.writeItemStack(buf, storage.getA().getItemStack());
+            buf.writeItemStack(storage.getA().getItemStack());
         }
     }
 
@@ -332,8 +332,8 @@ public class BuildingSifter extends AbstractBuildingWorker
         {
             super.deserialize(buf);
             dailyQuantity = buf.readInt();
-            this.sifterBlock = new ItemStorage(ByteBufUtils.readItemStack(buf));
-            this.mesh = new ItemStorage(ByteBufUtils.readItemStack(buf));
+            this.sifterBlock = new ItemStorage(buf.readItemStack());
+            this.mesh = new ItemStorage(buf.readItemStack());
 
             sievableBlocks.clear();
             meshes.clear();
@@ -341,13 +341,13 @@ public class BuildingSifter extends AbstractBuildingWorker
             final int size = buf.readInt();
             for (int i = 0; i < size; i++)
             {
-                sievableBlocks.add(new ItemStorage(ByteBufUtils.readItemStack(buf)));
+                sievableBlocks.add(new ItemStorage(buf.readItemStack()));
             }
 
             final int size2 = buf.readInt();
             for (int i = 0; i < size2; i++)
             {
-                meshes.add(new ItemStorage(ByteBufUtils.readItemStack(buf)));
+                meshes.add(new ItemStorage(buf.readItemStack()));
             }
         }
 
