@@ -6,10 +6,12 @@ import com.minecolonies.api.colony.buildings.views.MobEntryView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +28,7 @@ public class MobEntryChangeMessage implements IMessage
     private List<MobEntryView> mobsToAttack = new ArrayList<>();
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
@@ -51,7 +53,7 @@ public class MobEntryChangeMessage implements IMessage
     }
 
     @Override
-    public void toBytes(final ByteBuf buf)
+    public void toBytes(final PacketBuffer buf)
     {
         buf.writeInt(this.colonyId);
         buf.writeBlockPos(this.buildingId);
@@ -65,7 +67,7 @@ public class MobEntryChangeMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(final ByteBuf buf)
+    public void fromBytes(final PacketBuffer buf)
     {
         this.colonyId = buf.readInt();
         this.buildingId = buf.readBlockPos();
@@ -79,22 +81,30 @@ public class MobEntryChangeMessage implements IMessage
         dimension = buf.readInt();
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final MobEntryChangeMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
+            final PlayerEntity player = ctxIn.getSender();
             //Verify player has permission to change this huts settings
             if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
             {
                 return;
             }
 
-            @Nullable final AbstractBuildingGuards building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingGuards.class);
+            @Nullable final AbstractBuildingGuards building = colony.getBuildingManager().getBuilding(buildingId, AbstractBuildingGuards.class);
             if (building != null)
             {
-                building.setMobsToAttack(message.mobsToAttack);
+                building.setMobsToAttack(mobsToAttack);
             }
         }
     }

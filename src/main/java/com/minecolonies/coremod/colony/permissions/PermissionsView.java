@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Utils;
 import com.mojang.authlib.GameProfile;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -198,7 +198,7 @@ public class PermissionsView implements IPermissions
      *
      * @param buf the buffer.
      */
-    public void deserialize(@NotNull final ByteBuf buf)
+    public void deserialize(@NotNull final PacketBuffer buf)
     {
         userRank = Rank.valueOf(buf.readString());
 

@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony;
 
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
@@ -247,7 +247,7 @@ public class HappinessData
         taskCompound.putInt(TAG_GUARDS, guards);
         taskCompound.putInt(TAG_HOUSING, housing);
         taskCompound.putInt(TAG_SATURATION, saturation);
-        taskCompound.setDouble(TAG_HOUSING_MODIFIER, housingRatioModifier);
+        taskCompound.putDouble(TAG_HOUSING_MODIFIER, housingRatioModifier);
 
         taskCompound.putInt(TAG_TOTAL_DEATH_MODIFIER, deathModifier.size());
         @NotNull final ListNBT deathTagList = new ListNBT();
@@ -256,9 +256,9 @@ public class HappinessData
             @NotNull final CompoundNBT deathCompound = new CompoundNBT();
         	final DeathModifierData data = deathModifier.get(i);
         	deathCompound.putInt(TAG_DEATH_NUMOFDAYS, data.getDaysSinceEvent());
-            deathCompound.setDouble(TAG_DEATH_MODIFIER_VALUE, data.getModifier());
+            deathCompound.putDouble(TAG_DEATH_MODIFIER_VALUE, data.getModifier());
             deathCompound.putInt(TAG_DEATH_NUMOFDAYS_LAST, data.getNumDaysLast());
-            deathCompound.setDouble(TAG_DEATH_ADJUSTMENT_MODIFIER, data.getAdjustmentModifier());
+            deathCompound.putDouble(TAG_DEATH_ADJUSTMENT_MODIFIER, data.getAdjustmentModifier());
             deathTagList.add(deathCompound);
         }
         taskCompound.put(TAG_DEATH_MODIFIER, deathTagList);

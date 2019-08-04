@@ -19,7 +19,7 @@ import com.minecolonies.coremod.client.gui.WindowHutCrusher;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.network.messages.CrusherSetModeMessage;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
@@ -250,7 +250,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     }
 
     @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
+    public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
         if (crusherRecipes.isEmpty())
@@ -314,7 +314,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         }
 
         @Override
-        public void deserialize(@NotNull final ByteBuf buf)
+        public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
 

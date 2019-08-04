@@ -19,7 +19,7 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.HutRenameMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -341,7 +341,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @param buf The buffer to read this view from.
      */
     @Override
-    public void deserialize(@NotNull final ByteBuf buf)
+    public void deserialize(@NotNull final PacketBuffer buf)
     {
         buildingLevel = buf.readInt();
         buildingMaxLevel = buf.readInt();

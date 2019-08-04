@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.network.IMessage;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -221,7 +221,7 @@ public interface IColonyView extends IColony
      * @return null == no response.
      */
     @Nullable
-    IMessage handleColonyViewMessage(@NotNull ByteBuf buf, @NotNull World world, boolean isNewSubscription);
+    IMessage handleColonyViewMessage(@NotNull PacketBuffer buf, @NotNull World world, boolean isNewSubscription);
 
     /**
      * Update permissions.
@@ -230,7 +230,7 @@ public interface IColonyView extends IColony
      * @return null == no response
      */
     @Nullable
-    IMessage handlePermissionsViewMessage(@NotNull ByteBuf buf);
+    IMessage handlePermissionsViewMessage(@NotNull PacketBuffer buf);
 
     /**
      * Update a ColonyView's workOrders given a network data ColonyView update
@@ -241,7 +241,7 @@ public interface IColonyView extends IColony
      * @return null == no response.
      */
     @Nullable
-    IMessage handleColonyViewWorkOrderMessage(ByteBuf buf);
+    IMessage handleColonyViewWorkOrderMessage(PacketBuffer buf);
 
     /**
      * Update a ColonyView's citizens given a network data ColonyView update
@@ -253,7 +253,7 @@ public interface IColonyView extends IColony
      * @return null == no response.
      */
     @Nullable
-    IMessage handleColonyViewCitizensMessage(int id, ByteBuf buf);
+    IMessage handleColonyViewCitizensMessage(int id, PacketBuffer buf);
 
     /**
      * Remove a citizen from the ColonyView.
@@ -292,7 +292,7 @@ public interface IColonyView extends IColony
      * @return null == no response.
      */
     @Nullable
-    IMessage handleColonyBuildingViewMessage(BlockPos buildingId, @NotNull ByteBuf buf);
+    IMessage handleColonyBuildingViewMessage(BlockPos buildingId, @NotNull PacketBuffer buf);
 
     /**
      * Update the happiness values for a colony

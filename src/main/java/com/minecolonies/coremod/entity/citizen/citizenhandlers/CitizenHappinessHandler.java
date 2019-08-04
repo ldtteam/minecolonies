@@ -10,7 +10,7 @@ import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.FieldDataModifier;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -497,13 +497,13 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     public void write(final CompoundNBT compound)
     {
         @NotNull final CompoundNBT taskCompound = new CompoundNBT();
-        taskCompound.setDouble(NbtTagConstants.TAG_BASE, baseHappiness);
-        taskCompound.setDouble(NbtTagConstants.TAG_FOOD, foodModifier);
-        taskCompound.setDouble(NbtTagConstants.TAG_DAMAGE, damageModifier);
-        taskCompound.setDouble(NbtTagConstants.TAG_HOUSE, houseModifier);
+        taskCompound.putDouble(NbtTagConstants.TAG_BASE, baseHappiness);
+        taskCompound.putDouble(NbtTagConstants.TAG_FOOD, foodModifier);
+        taskCompound.putDouble(NbtTagConstants.TAG_DAMAGE, damageModifier);
+        taskCompound.putDouble(NbtTagConstants.TAG_HOUSE, houseModifier);
         taskCompound.putInt(NbtTagConstants.TAG_NUMBER_OF_DAYS_HOUSE, numberOfDaysWithoutHouse);
 
-        taskCompound.setDouble(NbtTagConstants.TAG_JOB, jobModifier);
+        taskCompound.putDouble(NbtTagConstants.TAG_JOB, jobModifier);
         taskCompound.putInt(NbtTagConstants.TAG_NUMBER_OF_DAYS_JOB, numberOfDaysWithoutJob);
         taskCompound.putBoolean(NbtTagConstants.TAG_HAS_NO_FIELDS, hasNoFields);
 
@@ -594,7 +594,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
      * @param buf  buffer to witch values of the modifiers will be written to.
      */
     @Override
-    public void serializeViewNetworkData(@NotNull final ByteBuf buf)
+    public void serializeViewNetworkData(@NotNull final PacketBuffer buf)
     {
         buf.writeDouble(getFoodModifier());
         buf.writeDouble(getDamageModifier());

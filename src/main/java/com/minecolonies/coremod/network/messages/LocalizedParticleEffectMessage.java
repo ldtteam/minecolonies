@@ -2,15 +2,18 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.item.Item;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.particles.ItemParticleData;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
@@ -37,7 +40,7 @@ public class LocalizedParticleEffectMessage implements IMessage
     private double posZ;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public LocalizedParticleEffectMessage()
     {
@@ -77,38 +80,31 @@ public class LocalizedParticleEffectMessage implements IMessage
         buf.writeDouble(posZ);
     }
 
+
+    @Nullable
     @Override
-    protected void messageOnClientThread(final LocalizedParticleEffectMessage message, final MessageContext ctx)
+    public LogicalSide getExecutionSide()
     {
-        final WorldClient world = Minecraft.getInstance().world;
-        final ItemStack localStack = message.stack;
+        return LogicalSide.CLIENT;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final ClientWorld world = Minecraft.getInstance().world;
+        final ItemStack localStack = stack;
 
         for (int i = 0; i < 5; ++i)
         {
             final Vec3d randomPos = new Vec3d((RAND.nextDouble() - 0.5D) * 0.1D, RAND.nextDouble() * 0.1D + 0.1D, 0.0D);
             final Vec3d randomOffset = new Vec3d((RAND.nextDouble() - 0.5D) * 0.1D, RAND.nextDouble() - 0.5D * 0.1D, (RAND.nextDouble() - 0.5D) * 0.1D);
-            if (localStack.getHasSubtypes())
-            {
-                world.spawnParticle(EnumParticleTypes.ITEM_CRACK,
-                  message.posX + randomOffset.x,
-                  message.posY + randomOffset.y,
-                  message.posZ + randomOffset.z,
+                world.addParticle(new ItemParticleData(ParticleTypes.ITEM, localStack),
+                  posX + randomOffset.x,
+                  posY + randomOffset.y,
+                  posZ + randomOffset.z,
                   randomPos.x,
                   randomPos.y + 0.05D,
-                  randomPos.z,
-                  Item.getIdFromItem(localStack.getItem()), localStack.getMetadata());
-            }
-            else
-            {
-                world.spawnParticle(EnumParticleTypes.ITEM_CRACK,
-                  message.posX + randomOffset.x,
-                  message.posY + randomOffset.y,
-                  message.posZ + randomOffset.z,
-                  randomPos.x,
-                  randomPos.y + 0.05D,
-                  randomPos.z,
-                  Item.getIdFromItem(localStack.getItem()));
-            }
+                  randomPos.z);
         }
     }
 }

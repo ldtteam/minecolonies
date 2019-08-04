@@ -9,7 +9,7 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.util.AchievementUtils;
 import com.mojang.authlib.GameProfile;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -859,7 +859,7 @@ public class Permissions implements IPermissions
      * @param buf        {@link ByteBuf} to write to.
      * @param viewerRank Rank of the viewer.
      */
-    public void serializeViewNetworkData(@NotNull final ByteBuf buf, @NotNull final Rank viewerRank)
+    public void serializeViewNetworkData(@NotNull final PacketBuffer buf, @NotNull final Rank viewerRank)
     {
         buf.writeString(viewerRank.name());
 

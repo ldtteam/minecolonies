@@ -15,7 +15,7 @@ import com.minecolonies.coremod.network.messages.ColonyViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewWorkOrderMessage;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.util.ColonyUtils;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -206,7 +206,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     {
         if (isDirty || hasNewSubscribers)
         {
-            final ByteBuf colonyByteBuf = Unpooled.buffer();
+            final PacketBuffer colonyPacketBuffer = Unpooled.buffer();
             ColonyView.serializeNetworkData(colony, colonyByteBuf, hasNewSubscribers);
             for (final ServerPlayerEntity player : subscribers)
             {

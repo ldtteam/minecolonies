@@ -222,7 +222,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
     @Override
     public CompoundNBT write(final CompoundNBT compound)
     {
-        compound.setLong(TAG_TIME, worldTimeAtSpawn);
+        compound.putLong(TAG_TIME, worldTimeAtSpawn);
         compound.putInt(TAG_STUCK_COUNTER, stuckCounter);
         compound.putInt(TAG_LADDER_COUNTER, ladderCounter);
         compound.putInt(TAG_COLONY_ID, this.colony == null ? 0 : colony.getID());

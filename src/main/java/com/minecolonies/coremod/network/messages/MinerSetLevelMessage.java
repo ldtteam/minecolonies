@@ -5,9 +5,12 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,12 +24,12 @@ public class MinerSetLevelMessage implements IMessage
     private int      level;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public MinerSetLevelMessage()
     {
@@ -34,7 +37,7 @@ public class MinerSetLevelMessage implements IMessage
     }
 
     /**
-     * Creates object for the miner set level message.
+     * Creates object for the miner set level 
      *
      * @param building View of the building to read data from.
      * @param level    Level of the miner.
@@ -66,23 +69,30 @@ public class MinerSetLevelMessage implements IMessage
         buf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final MinerSetLevelMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
-
+            final PlayerEntity player = ctxIn.getSender();
             //Verify player has permission to change this huts settings
             if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
             {
                 return;
             }
 
-            @Nullable final BuildingMiner building = colony.getBuildingManager().getBuilding(message.buildingId, BuildingMiner.class);
-            if (building != null && message.level >= 0 && message.level < building.getNumberOfLevels())
+            @Nullable final BuildingMiner building = colony.getBuildingManager().getBuilding(buildingId, BuildingMiner.class);
+            if (building != null && level >= 0 && level < building.getNumberOfLevels())
             {
-                building.setCurrentLevel(message.level);
+                building.setCurrentLevel(level);
             }
         }
     }

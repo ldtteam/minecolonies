@@ -285,7 +285,7 @@ public class EntityMercenary extends EntityCreature implements INPC, IColonyRela
     @Override
     public CompoundNBT write(final CompoundNBT compound)
     {
-        compound.setLong(TAG_TIME, worldTimeAtSpawn);
+        compound.putLong(TAG_TIME, worldTimeAtSpawn);
         compound.putInt(TAG_COLONY_ID, this.colony == null ? 0 : colony.getID());
         return super.write(compound);
     }

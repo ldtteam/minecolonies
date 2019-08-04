@@ -17,7 +17,7 @@ import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRecipeManager;
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -971,7 +971,7 @@ public final class ColonyManager implements IColonyManager
      * @param dim               the dimension.
      */
     @Override
-    public void handleColonyViewMessage(final int colonyId, @NotNull final ByteBuf colonyData, @NotNull final World world, final boolean isNewSubscription, final int dim)
+    public void handleColonyViewMessage(final int colonyId, @NotNull final PacketBuffer colonyData, @NotNull final World world, final boolean isNewSubscription, final int dim)
     {
         IColonyView view = getColonyView(colonyId, dim);
         if (view == null)
@@ -1018,7 +1018,7 @@ public final class ColonyManager implements IColonyManager
      * @param dim      the dimension.
      */
     @Override
-    public void handlePermissionsViewMessage(final int colonyID, @NotNull final ByteBuf data, final int dim)
+    public void handlePermissionsViewMessage(final int colonyID, @NotNull final PacketBuffer data, final int dim)
     {
         final IColonyView view = getColonyView(colonyID, dim);
         if (view == null)
@@ -1042,7 +1042,7 @@ public final class ColonyManager implements IColonyManager
      * @param dim       the dimension.
      */
     @Override
-    public void handleColonyViewCitizensMessage(final int colonyId, final int citizenId, final ByteBuf buf, final int dim)
+    public void handleColonyViewCitizensMessage(final int colonyId, final int citizenId, final PacketBuffer buf, final int dim)
     {
         final IColonyView view = getColonyView(colonyId, dim);
         if (view == null)
@@ -1062,7 +1062,7 @@ public final class ColonyManager implements IColonyManager
      * @param dim      the dimension.
      */
     @Override
-    public void handleColonyViewWorkOrderMessage(final int colonyId, final ByteBuf buf, final int dim)
+    public void handleColonyViewWorkOrderMessage(final int colonyId, final PacketBuffer buf, final int dim)
     {
         final IColonyView view = getColonyView(colonyId, dim);
         if (view == null)
@@ -1104,7 +1104,7 @@ public final class ColonyManager implements IColonyManager
      * @param dim        the dimension.
      */
     @Override
-    public void handleColonyBuildingViewMessage(final int colonyId, final BlockPos buildingId, @NotNull final ByteBuf buf, final int dim)
+    public void handleColonyBuildingViewMessage(final int colonyId, final BlockPos buildingId, @NotNull final PacketBuffer buf, final int dim)
     {
         final IColonyView view = getColonyView(colonyId, dim);
         if (view != null)

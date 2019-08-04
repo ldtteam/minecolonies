@@ -3,13 +3,16 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.BlockPosUtil;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
@@ -73,11 +76,19 @@ public class GuardScepterMessage implements IMessage
         buf.writeInt(colonyId);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final GuardScepterMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
+    {
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
         final ItemStack scepter;
         boolean giveToPlayer = true;
+        final PlayerEntity player = ctxIn.getSender();
         if (player.getHeldItemMainhand().getItem() == ModItems.scepterGuard)
         {
             scepter = player.getHeldItemMainhand();
@@ -90,7 +101,7 @@ public class GuardScepterMessage implements IMessage
 
         if (!scepter.hasTag())
         {
-            scepter.put(new CompoundNBT());
+            scepter.setTag(new CompoundNBT());
         }
         final CompoundNBT compound = scepter.getTag();
 
@@ -99,11 +110,11 @@ public class GuardScepterMessage implements IMessage
         {
             return;
         }
-        compound.putInt("task", message.taskId);
+        compound.putInt("task", taskId);
 
         final int emptySlot = player.inventory.getFirstEmptyStack();
-        BlockPosUtil.write(compound, TAG_POS, message.buildingId);
-        compound.putInt(TAG_ID, message.colonyId);
+        BlockPosUtil.write(compound, TAG_POS, buildingId);
+        compound.putInt(TAG_ID, colonyId);
 
         if (giveToPlayer)
         {

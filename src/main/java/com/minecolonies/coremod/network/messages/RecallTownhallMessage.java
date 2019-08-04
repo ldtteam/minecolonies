@@ -11,7 +11,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.util.TeleportHelper;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -54,14 +54,14 @@ public class RecallTownhallMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(final ByteBuf buf)
+    public void fromBytes(final PacketBuffer buf)
     {
         colonyId = buf.readInt();
         dimension = buf.readInt();
     }
 
     @Override
-    public void toBytes(final ByteBuf buf)
+    public void toBytes(final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
         buf.writeInt(dimension);

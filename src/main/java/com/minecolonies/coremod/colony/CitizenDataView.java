@@ -3,7 +3,7 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Hand;
@@ -381,7 +381,7 @@ public class CitizenDataView implements ICitizenDataView
      *            Byte buffer to deserialize.
      */
     @Override
-    public void deserialize(@NotNull final ByteBuf buf)
+    public void deserialize(@NotNull final PacketBuffer buf)
     {
         name = buf.readString();
         female = buf.readBoolean();

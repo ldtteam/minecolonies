@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony;
 
 import com.minecolonies.api.inventory.InventoryCitizen;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -184,7 +184,7 @@ public interface ICitizenDataView
      * @param buf
      *            Byte buffer to deserialize.
      */
-    void deserialize(@NotNull ByteBuf buf);
+    void deserialize(@NotNull PacketBuffer buf);
 
     /**
      * Get the array of the latest status.

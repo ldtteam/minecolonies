@@ -13,7 +13,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -242,7 +242,7 @@ public class BuildingRegistryOld
      * @return {@link AbstractBuildingView} created from reading the buf.
      */
     @Nullable
-    public static AbstractBuildingView createBuildingView(final IColonyView colony, final BlockPos id, @NotNull final ByteBuf buf)
+    public static AbstractBuildingView createBuildingView(final IColonyView colony, final BlockPos id, @NotNull final PacketBuffer buf)
     {
         @Nullable AbstractBuildingView view = null;
         @Nullable Class<?> oclass = null;

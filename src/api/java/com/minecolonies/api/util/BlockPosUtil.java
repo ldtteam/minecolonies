@@ -1,7 +1,7 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -172,7 +172,7 @@ public final class BlockPosUtil
      * @param buf Buf to write to.
      * @param pos Coordinate to write.
      */
-    public static void writeToByteBuf(@NotNull final ByteBuf buf, @NotNull final BlockPos pos)
+    public static void writeToByteBuf(@NotNull final PacketBuffer buf, @NotNull final BlockPos pos)
     {
         buf.writeInt(pos.getX());
         buf.writeInt(pos.getY());
@@ -186,7 +186,7 @@ public final class BlockPosUtil
      * @return Chunk coordinate that was read.
      */
     @NotNull
-    public static BlockPos readFromByteBuf(@NotNull final ByteBuf buf)
+    public static BlockPos readFromByteBuf(@NotNull final PacketBuffer buf)
     {
         final int x = buf.readInt();
         final int y = buf.readInt();

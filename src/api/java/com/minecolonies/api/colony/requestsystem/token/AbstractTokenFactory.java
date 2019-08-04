@@ -38,8 +38,8 @@ public abstract class AbstractTokenFactory<I> implements ITokenFactory<I, Standa
     {
         final CompoundNBT compound = new CompoundNBT();
 
-        compound.setLong(NBT_LSB, request.getIdentifier().getLeastSignificantBits());
-        compound.setLong(NBT_MSB, request.getIdentifier().getMostSignificantBits());
+        compound.putLong(NBT_LSB, request.getIdentifier().getLeastSignificantBits());
+        compound.putLong(NBT_MSB, request.getIdentifier().getMostSignificantBits());
 
         return compound;
     }

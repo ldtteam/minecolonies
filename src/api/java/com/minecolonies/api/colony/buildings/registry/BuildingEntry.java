@@ -5,11 +5,17 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import net.minecraft.block.BubbleColumnBlock;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.RegistryBuilder;
+import net.minecraftforge.registries.RegistryManager;
 import org.apache.commons.lang3.Validate;
 
+import javax.annotation.Nullable;
 import java.util.function.BiFunction;
 
 /**
@@ -18,7 +24,7 @@ import java.util.function.BiFunction;
  * Used to lookup how to create {@link IBuilding} and {@link IBuildingView}.
  * Also links a given {@link IBuilding} to a given {@link AbstractBlockHut}.
  */
-public class BuildingEntry extends IForgeRegistryEntry.Impl<BuildingEntry> implements IForgeRegistryEntry<BuildingEntry>
+public class BuildingEntry extends ForgeRegistry<BuildingEntry> implements IForgeRegistryEntry<BuildingEntry>
 {
     private final AbstractBlockHut<?> buildingBlock;
 
@@ -50,10 +56,29 @@ public class BuildingEntry extends IForgeRegistryEntry.Impl<BuildingEntry> imple
         return buildingViewProducer;
     }
 
+    @Override
+    public BuildingEntry setRegistryName(final ResourceLocation name)
+    {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public ResourceLocation getRegistryName()
+    {
+        return null;
+    }
+
+    @Override
+    public Class<BuildingEntry> getRegistryType()
+    {
+        return this.getClass();
+    }
+
     /**
      * A builder class for {@link BuildingEntry}.
      */
-    public static class Builder
+    public static class Builder extends RegistryBuilder
     {
         private AbstractBlockHut<?>                              buildingBlock;
         private BiFunction<IColony, BlockPos, IBuilding>         buildingProducer;

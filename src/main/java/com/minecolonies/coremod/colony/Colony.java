@@ -544,7 +544,7 @@ public class Colony implements IColony
         // Bought citizen count
         compound.putInt(TAG_BOUGHT_CITIZENS, boughtCitizenCost);
 
-        compound.setLong(TAG_MERCENARY_TIME, mercenaryLastUse);
+        compound.putLong(TAG_MERCENARY_TIME, mercenaryLastUse);
 
         // Permissions
         permissions.savePermissions(compound);
@@ -557,7 +557,7 @@ public class Colony implements IColony
         citizenManager.write(citizenCompound);
         compound.put(TAG_CITIZEN_MANAGER, citizenCompound);
 
-        colonyHappinessManager.getLockedHappinessModifier().ifPresent(d -> compound.setDouble(TAG_HAPPINESS_MODIFIER, d));
+        colonyHappinessManager.getLockedHappinessModifier().ifPresent(d -> compound.putDouble(TAG_HAPPINESS_MODIFIER, d));
 
         final CompoundNBT statsCompound = new CompoundNBT();
         statsManager.write(statsCompound);

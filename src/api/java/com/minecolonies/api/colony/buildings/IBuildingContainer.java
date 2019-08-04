@@ -11,6 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -114,11 +115,9 @@ public interface IBuildingContainer extends ISchematicProvider, ICitizenAssignab
      */
     void setTileEntity(AbstractTileEntityColonyBuilding te);
 
-    @Override
-    boolean hasCapability(
-      @Nonnull Capability<?> capability, @Nullable Direction facing);
+    boolean hasCapability(@Nonnull Capability<?> capability, @Nullable Direction facing);
 
-    @Nullable
+    @Nonnull
     @Override
-    <T> T getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing);
+    <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap);
 }

@@ -127,7 +127,7 @@ public class ChunkLoadStorage
     {
         final CompoundNBT compound = new CompoundNBT();
         compound.putInt(TAG_ID, colonyId);
-        compound.setLong(TAG_POS, xz);
+        compound.putLong(TAG_POS, xz);
         compound.putInt(TAG_DIMENSION, dimension);
 
         compound.put(TAG_COLONIES_TO_ADD, coloniesToAdd.stream().map(ChunkLoadStorage::getCompoundOfColonyId).collect(NBTUtils.toListNBT()));

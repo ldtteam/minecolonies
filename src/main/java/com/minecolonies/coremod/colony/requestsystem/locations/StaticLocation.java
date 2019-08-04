@@ -146,7 +146,7 @@ public class StaticLocation implements ILocation
         public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final StaticLocation request)
         {
             final CompoundNBT compound = new CompoundNBT();
-            compound.setLong(NBT_POS, request.getInDimensionLocation().toLong());
+            compound.putLong(NBT_POS, request.getInDimensionLocation().toLong());
             compound.putInt(NBT_DIM, request.getDimension());
             return compound;
         }

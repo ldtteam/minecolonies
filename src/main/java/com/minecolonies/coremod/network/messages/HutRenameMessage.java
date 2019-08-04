@@ -6,10 +6,14 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Message to execute the renaiming of the townHall.
@@ -32,7 +36,7 @@ public class HutRenameMessage implements IMessage
     private BlockPos buildingId;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
@@ -45,7 +49,7 @@ public class HutRenameMessage implements IMessage
     }
 
     /**
-     * Object creation for the town hall rename message.
+     * Object creation for the town hall rename 
      *
      * @param colony Colony the rename is going to occur in.
      * @param name   New name of the town hall.
@@ -77,17 +81,25 @@ public class HutRenameMessage implements IMessage
         buf.writeBlockPos(buildingId);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final HutRenameMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
+        final PlayerEntity player = ctxIn.getSender();
         if (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
         {
-            final IBuilding b = colony.getBuildingManager().getBuildings().get(message.buildingId);
+            final IBuilding b = colony.getBuildingManager().getBuildings().get(buildingId);
 
             if (b != null)
             {
-                b.setCustomBuildingName(message.name);
+                b.setCustomBuildingName(name);
             }
         }
     }

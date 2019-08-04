@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -297,7 +297,7 @@ public interface IColonyManager
      * @param isNewSubscription whether this is a new subscription or not.
      * @param dim               the dimension.
      */
-    void handleColonyViewMessage(int colonyId, @NotNull ByteBuf colonyData, @NotNull World world, boolean isNewSubscription, int dim);
+    void handleColonyViewMessage(int colonyId, @NotNull PacketBuffer colonyData, @NotNull World world, boolean isNewSubscription, int dim);
 
     /**
      * Get IColonyView by ID.
@@ -317,7 +317,7 @@ public interface IColonyManager
      * @param data     {@link ByteBuf} with colony data.
      * @param dim      the dimension.
      */
-    void handlePermissionsViewMessage(int colonyID, @NotNull ByteBuf data, int dim);
+    void handlePermissionsViewMessage(int colonyID, @NotNull PacketBuffer data, int dim);
 
     /**
      * Returns result of {@link IColonyView#handleColonyViewCitizensMessage(int,
@@ -329,7 +329,7 @@ public interface IColonyManager
      * @param buf       {@link ByteBuf} with colony data.
      * @param dim       the dimension.
      */
-    void handleColonyViewCitizensMessage(int colonyId, int citizenId, ByteBuf buf, int dim);
+    void handleColonyViewCitizensMessage(int colonyId, int citizenId, PacketBuffer buf, int dim);
 
     /**
      * Returns result of {@link IColonyView#handleColonyViewWorkOrderMessage(ByteBuf)}
@@ -340,7 +340,7 @@ public interface IColonyManager
      * @param buf      {@link ByteBuf} with colony data.
      * @param dim      the dimension.
      */
-    void handleColonyViewWorkOrderMessage(int colonyId, ByteBuf buf, int dim);
+    void handleColonyViewWorkOrderMessage(int colonyId, PacketBuffer buf, int dim);
 
     /**
      * Returns result of {@link IColonyView#handleColonyViewRemoveCitizenMessage(int)}
@@ -363,7 +363,7 @@ public interface IColonyManager
      * @param buf        {@link ByteBuf} with colony data.
      * @param dim        the dimension.
      */
-    void handleColonyBuildingViewMessage(int colonyId, BlockPos buildingId, @NotNull ByteBuf buf, int dim);
+    void handleColonyBuildingViewMessage(int colonyId, BlockPos buildingId, @NotNull PacketBuffer buf, int dim);
 
     /**
      * Returns result of {@link IColonyView#handleColonyViewRemoveBuildingMessage(BlockPos)}

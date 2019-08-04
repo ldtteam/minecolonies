@@ -1,7 +1,7 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.util.constant.IToolType;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -114,5 +114,5 @@ public interface ICitizenHappinessHandler
      *
      * @param buf  buffer to witch values of the modifiers will be written to.
      */
-    void serializeViewNetworkData(@NotNull ByteBuf buf);
+    void serializeViewNetworkData(@NotNull PacketBuffer buf);
 }
