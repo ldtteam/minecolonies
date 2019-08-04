@@ -14,7 +14,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -243,7 +243,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Override
     public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        return new TextComponentString("Player");
+        return new StringTextComponent("Player");
     }
 
     public void updateData(@NotNull final Map<IToken<?>, Integer> newAssignedRequests, @NotNull final Map<IToken<?>, Integer> newDelays)

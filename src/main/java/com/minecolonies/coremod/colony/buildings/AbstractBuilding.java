@@ -51,7 +51,7 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -1287,11 +1287,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         if (!getCitizensByRequest().containsKey(request.getId()))
         {
-            return new TextComponentString("<UNKNOWN>");
+            return new StringTextComponent("<UNKNOWN>");
         }
 
         final Integer citizenData = getCitizensByRequest().get(request.getId());
-        return new TextComponentString(this.getSchematicName() + " " + getColony().getCitizenManager().getCitizen(citizenData).getName());
+        return new StringTextComponent(this.getSchematicName() + " " + getColony().getCitizenManager().getCitizen(citizenData).getName());
     }
 
     @Override

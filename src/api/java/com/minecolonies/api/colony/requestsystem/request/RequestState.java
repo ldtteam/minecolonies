@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.requestsystem.request;
 
-import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.IntNBT;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -86,7 +86,7 @@ public enum RequestState
      * @param nbt The nbt to deserialize from.
      * @return The RequestState that is stored in the given NBT.
      */
-    public static RequestState deserializeNBT(final NBTTagInt nbt)
+    public static RequestState deserializeNBT(final IntNBT nbt)
     {
         return indexList.get(nbt.getInt());
     }
@@ -96,9 +96,9 @@ public enum RequestState
      *
      * @return The NBT representation of the state.
      */
-    public NBTTagInt serializeNBT()
+    public IntNBT serializeNBT()
     {
-        return new NBTTagInt(indexList.indexOf(this));
+        return new IntNBT(indexList.indexOf(this));
     }
 
 

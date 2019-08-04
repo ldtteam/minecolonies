@@ -13,7 +13,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -104,7 +104,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
         // Required argument: would never be null at this point.
         if (null == colony)
         {
-            sender.sendMessage(new TextComponentString("You are not allowed to do this"));
+            sender.sendMessage(new StringTextComponent("You are not allowed to do this"));
             return;
         }
 
@@ -131,7 +131,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
 
         if (null == colony)
         {
-            sender.sendMessage(new TextComponentString("You are not allowed to do this"));
+            sender.sendMessage(new StringTextComponent("You are not allowed to do this"));
             return;
         }
 
@@ -154,7 +154,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
             }
             return;
         }
-        sender.sendMessage(new TextComponentString("You are not allowed to do this"));
+        sender.sendMessage(new StringTextComponent("You are not allowed to do this"));
     }
 
     @NotNull

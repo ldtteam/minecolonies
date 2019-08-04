@@ -11,7 +11,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -69,7 +69,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
      * Has to be overwritten by the exact class.
      * @param furnace the furnace to retrieveSmeltableFromFurnace from.
      */
-    protected abstract void extractFromFurnace(final TileEntityFurnace furnace);
+    protected abstract void extractFromFurnace(final FurnaceTileEntity furnace);
 
     /**
      * Method called to detect if a certain stack is of the type we want to be put in the furnace.
@@ -99,9 +99,9 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         for (final BlockPos pos : ((AbstractBuildingFurnaceUser) getOwnBuilding()).getFurnaces())
         {
             final TileEntity entity = world.getTileEntity(pos);
-            if (entity instanceof TileEntityFurnace)
+            if (entity instanceof FurnaceTileEntity)
             {
-                final TileEntityFurnace furnace = (TileEntityFurnace) entity;
+                final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
                 final int countInResultSlot =
                         ItemStackUtils.isEmpty(furnace.getStackInSlot(RESULT_SLOT)) ? 0 : furnace.getStackInSlot(RESULT_SLOT).getCount();
                 if ((!furnace.isBurning() && countInResultSlot > 0)
@@ -207,9 +207,9 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         {
             final TileEntity entity = world.getTileEntity(pos);
 
-            if(entity instanceof TileEntityFurnace && !((TileEntityFurnace) entity).isBurning())
+            if(entity instanceof FurnaceTileEntity && !((FurnaceTileEntity) entity).isBurning())
             {
-                final TileEntityFurnace furnace = (TileEntityFurnace) entity;
+                final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
                 if ((amountOfFuel > 0 && hasSmeltableInFurnaceAndNoFuel(furnace))
                         || (amountOfSmeltable > 0 && hasFuelInFurnaceAndNoSmeltable(furnace))
                         || (amountOfFuel > 0 && amountOfSmeltable > 0 && hasNeitherFuelNorSmeltAble(furnace)))
@@ -277,8 +277,8 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         }
 
         final TileEntity entity = world.getTileEntity(walkTo);
-        if (!(entity instanceof TileEntityFurnace)
-                || (ItemStackUtils.isEmpty(((TileEntityFurnace) entity).getStackInSlot(RESULT_SLOT))))
+        if (!(entity instanceof FurnaceTileEntity)
+                || (ItemStackUtils.isEmpty(((FurnaceTileEntity) entity).getStackInSlot(RESULT_SLOT))))
         {
             walkTo = null;
             return START_WORKING;
@@ -286,7 +286,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
 
         walkTo = null;
 
-        extractFromFurnace((TileEntityFurnace) entity);
+        extractFromFurnace((FurnaceTileEntity) entity);
         incrementActionsDoneAndDecSaturation();
         setDelay(STANDARD_DELAY);
         return START_WORKING;
@@ -319,9 +319,9 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         }
 
         final TileEntity entity = world.getTileEntity(walkTo);
-        if (entity instanceof TileEntityFurnace)
+        if (entity instanceof FurnaceTileEntity)
         {
-            final TileEntityFurnace furnace = (TileEntityFurnace) entity;
+            final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
 
             if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), this::isSmeltable)
                     && (hasFuelInFurnaceAndNoSmeltable(furnace) || hasNeitherFuelNorSmeltAble(furnace)))

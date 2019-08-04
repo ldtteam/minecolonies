@@ -13,7 +13,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.EnumHand;
@@ -310,7 +310,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
     {
         for (final ItemStack stack : citizen.getArmorInventoryList())
         {
-            if (ItemStackUtils.isEmpty(stack) || !(stack.getItem() instanceof ItemArmor))
+            if (ItemStackUtils.isEmpty(stack) || !(stack.getItem() instanceof ArmorItem))
             {
                 continue;
             }

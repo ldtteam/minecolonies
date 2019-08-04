@@ -17,7 +17,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -453,7 +453,7 @@ public class InventoryCitizen implements IInventory
     @Override
     public ITextComponent getDisplayName()
     {
-        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
+        return this.hasCustomName() ? new StringTextComponent(this.getName()) : new TextComponentTranslation(this.getName());
     }
 
     /**
@@ -802,9 +802,9 @@ public class InventoryCitizen implements IInventory
         this.armorInventory.clear();
         this.offHandInventory.clear();
 
-        for (int i = 0; i < ListNBTIn.tagCount(); ++i)
+        for (int i = 0; i < ListNBTIn.size(); ++i)
         {
-            final CompoundNBT CompoundNBT = ListNBTIn.getCompoundTagAt(i);
+            final CompoundNBT CompoundNBT = ListNBTIn.getCompound(i);
             final int j = CompoundNBT.getByte("Slot") & 255;
             final ItemStack itemstack = new ItemStack(CompoundNBT);
 

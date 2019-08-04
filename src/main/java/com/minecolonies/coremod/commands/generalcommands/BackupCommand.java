@@ -8,7 +8,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -64,17 +64,17 @@ public class BackupCommand extends AbstractSingleCommand implements IActionComma
             {
                 if (BackUpHelper.backupColonyData())
                 {
-                    sender.sendMessage(new TextComponentString(BACKUP_SUCCESS_MESSAGE));
+                    sender.sendMessage(new StringTextComponent(BACKUP_SUCCESS_MESSAGE));
                 }
                 else
                 {
-                    sender.sendMessage(new TextComponentString(BACKUP_FAILURE_MESSAGE));
+                    sender.sendMessage(new StringTextComponent(BACKUP_FAILURE_MESSAGE));
                 }
             });
         }
         else
         {
-            sender.sendMessage(new TextComponentString(NO_PERMISSION_MESSAGE));
+            sender.sendMessage(new StringTextComponent(NO_PERMISSION_MESSAGE));
         }
     }
 

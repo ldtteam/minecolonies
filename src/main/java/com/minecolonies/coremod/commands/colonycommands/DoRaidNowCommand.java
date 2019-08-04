@@ -11,7 +11,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -25,9 +25,9 @@ public class DoRaidNowCommand extends AbstractSingleCommand implements IActionCo
 {
 
     public static final  String              DESC                       = "raid";
-    private static final TextComponentString NO_COLONY_FOUND_MESSAGE = new TextComponentString("No Colony found.");
-    private static final TextComponentString NO_ARGUMENTS               = new TextComponentString("Please define a colony to raid.");
-    private static final TextComponentString SUCCESSFUL                 = new TextComponentString("Command Successful");
+    private static final StringTextComponent NO_COLONY_FOUND_MESSAGE = new StringTextComponent("No Colony found.");
+    private static final StringTextComponent NO_ARGUMENTS               = new StringTextComponent("Please define a colony to raid.");
+    private static final StringTextComponent SUCCESSFUL                 = new StringTextComponent("Command Successful");
 
     /**
      * no-args constructor called by new CommandEntryPoint executer.
@@ -92,7 +92,7 @@ public class DoRaidNowCommand extends AbstractSingleCommand implements IActionCo
     {
         if (sender instanceof PlayerEntity && !isPlayerOpped(sender))
         {
-            sender.sendMessage(new TextComponentString("Must be OP to use command"));
+            sender.sendMessage(new StringTextComponent("Must be OP to use command"));
             return;
         }
 

@@ -17,7 +17,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
-import net.minecraft.item.ItemArmor.ArmorMaterial;
+import net.minecraft.item.ArmorItem.ArmorMaterial;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -318,18 +318,18 @@ public final class ItemStackUtils
         //todo: use 'better' version of this thing
         if (ToolType.HOE.equals(toolType))
         {
-            if (stack.getItem() instanceof ItemHoe)
+            if (stack.getItem() instanceof HoeItem)
             {
-                final ItemHoe itemHoe = (ItemHoe) stack.getItem();
-                return getToolLevel(itemHoe.getMaterialName());
+                final HoeItem HoeItem = (HoeItem) stack.getItem();
+                return getToolLevel(HoeItem.getMaterialName());
             }
         }
         else if (ToolType.SWORD.equals(toolType))
         {
-            if (stack.getItem() instanceof ItemSword)
+            if (stack.getItem() instanceof SwordItem)
             {
-                final ItemSword itemSword = (ItemSword) stack.getItem();
-                return getToolLevel(itemSword.getToolMaterialName());
+                final SwordItem SwordItem = (SwordItem) stack.getItem();
+                return getToolLevel(SwordItem.getToolMaterialName());
             }
             else if (Compatibility.isTinkersWeapon(stack))
             {
@@ -341,10 +341,10 @@ public final class ItemStackUtils
                    || ToolType.CHESTPLATE.equals(toolType)
                    || ToolType.LEGGINGS.equals(toolType))
         {
-            if (stack.getItem() instanceof ItemArmor)
+            if (stack.getItem() instanceof ArmorItem)
             {
-                final ItemArmor itemArmor = (ItemArmor) stack.getItem();
-                return getArmorLevel(itemArmor.getArmorMaterial());
+                final ArmorItem ArmorItem = (ArmorItem) stack.getItem();
+                return getArmorLevel(ArmorItem.getArmorMaterial());
             }
         }
         else if (!toolType.hasVariableMaterials())
@@ -380,43 +380,43 @@ public final class ItemStackUtils
         }
         else if (ToolType.HOE.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ItemHoe;
+            isATool = itemStack.getItem() instanceof HoeItem;
         }
         else if (ToolType.BOW.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ItemBow;
+            isATool = itemStack.getItem() instanceof BowItem;
         }
         else if (ToolType.SWORD.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ItemSword || Compatibility.isTinkersWeapon(itemStack);
+            isATool = itemStack.getItem() instanceof SwordItem || Compatibility.isTinkersWeapon(itemStack);
         }
         else if (ToolType.FISHINGROD.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ItemFishingRod;
+            isATool = itemStack.getItem() instanceof FishingRodItem;
         }
         else if (ToolType.SHEARS.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ItemShears;
+            isATool = itemStack.getItem() instanceof ShearsItem;
         }
         else if (ToolType.HELMET.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ItemArmor;
+            isATool = itemStack.getItem() instanceof ArmorItem;
         }
         else if (ToolType.LEGGINGS.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ItemArmor;
+            isATool = itemStack.getItem() instanceof ArmorItem;
         }
         else if (ToolType.CHESTPLATE.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ItemArmor;
+            isATool = itemStack.getItem() instanceof ArmorItem;
         }
         else if (ToolType.BOOTS.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ItemArmor;
+            isATool = itemStack.getItem() instanceof ArmorItem;
         }
         else if (ToolType.SHIELD.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ItemShield;
+            isATool = itemStack.getItem() instanceof ShieldItem;
         }
         return isATool;
     }
@@ -530,9 +530,9 @@ public final class ItemStackUtils
 
             if (ListNBT != null)
             {
-                for (int j = 0; j < ListNBT.tagCount(); ++j)
+                for (int j = 0; j < ListNBT.size(); ++j)
                 {
-                    final int level = ListNBT.getCompoundTagAt(j).getShort("lvl");
+                    final int level = ListNBT.getCompound(j).getShort("lvl");
                     maxLevel = level > maxLevel ? level : maxLevel;
                 }
             }
@@ -558,12 +558,12 @@ public final class ItemStackUtils
         {
             final ListNBT t = tool.getEnchantmentTagList();
 
-            for (int i = 0; i < t.tagCount(); i++)
+            for (int i = 0; i < t.size(); i++)
             {
-                final int id = t.getCompoundTagAt(i).getShort(NBT_TAG_ENCHANT_ID);
+                final int id = t.getCompound(i).getShort(NBT_TAG_ENCHANT_ID);
                 if (id == FORTUNE_ENCHANT_ID)
                 {
-                    fortune = t.getCompoundTagAt(i).getShort(NBT_TAG_ENCHANT_LEVEL);
+                    fortune = t.getCompound(i).getShort(NBT_TAG_ENCHANT_LEVEL);
                 }
             }
         }
@@ -581,9 +581,9 @@ public final class ItemStackUtils
         {
             final ListNBT t = tool.getEnchantmentTagList();
 
-            for (int i = 0; i < t.tagCount(); i++)
+            for (int i = 0; i < t.size(); i++)
             {
-                final int id = t.getCompoundTagAt(i).getShort(NBT_TAG_ENCHANT_ID);
+                final int id = t.getCompound(i).getShort(NBT_TAG_ENCHANT_ID);
                 if (id == SILK_TOUCH_ENCHANT_ID)
                 {
                     hasSilk = true;
@@ -601,7 +601,7 @@ public final class ItemStackUtils
      */
     public static boolean doesItemServeAsWeapon(@NotNull final ItemStack stack)
     {
-        return stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool || Compatibility.isTinkersWeapon(stack);
+        return stack.getItem() instanceof SwordItem || stack.getItem() instanceof ItemTool || Compatibility.isTinkersWeapon(stack);
     }
 
     /**
@@ -843,7 +843,7 @@ public final class ItemStackUtils
      * @param entity the furnace.
      * @return true if so.
      */
-    public static boolean hasSmeltableInFurnaceAndNoFuel(final TileEntityFurnace entity)
+    public static boolean hasSmeltableInFurnaceAndNoFuel(final FurnaceTileEntity entity)
     {
         return !ItemStackUtils.isEmpty(entity.getStackInSlot(SMELTABLE_SLOT))
                  && ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
@@ -855,7 +855,7 @@ public final class ItemStackUtils
      * @param entity the furnace.
      * @return true if so.
      */
-    public static boolean hasNeitherFuelNorSmeltAble(final TileEntityFurnace entity)
+    public static boolean hasNeitherFuelNorSmeltAble(final FurnaceTileEntity entity)
     {
         return ItemStackUtils.isEmpty(entity.getStackInSlot(SMELTABLE_SLOT))
                  && ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));
@@ -867,7 +867,7 @@ public final class ItemStackUtils
      * @param entity the furnace.
      * @return true if so.
      */
-    public static boolean hasFuelInFurnaceAndNoSmeltable(final TileEntityFurnace entity)
+    public static boolean hasFuelInFurnaceAndNoSmeltable(final FurnaceTileEntity entity)
     {
         return ItemStackUtils.isEmpty(entity.getStackInSlot(SMELTABLE_SLOT))
                  && !ItemStackUtils.isEmpty(entity.getStackInSlot(FUEL_SLOT));

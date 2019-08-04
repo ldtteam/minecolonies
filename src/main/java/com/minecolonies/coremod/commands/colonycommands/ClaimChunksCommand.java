@@ -11,7 +11,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +56,7 @@ public class ClaimChunksCommand implements IActionCommand
 
             if (range > Configurations.gameplay.workingRangeTownHallChunks * 2)
             {
-                sender.sendMessage(new TextComponentString(TOO_MANY_CHUNKS));
+                sender.sendMessage(new StringTextComponent(TOO_MANY_CHUNKS));
                 return;
             }
 
@@ -69,16 +69,16 @@ public class ClaimChunksCommand implements IActionCommand
 
             if (chunkManager.getAllChunkStorages().size() > CHUNKS_TO_CLAM_THRESHOLD)
             {
-                sender.sendMessage(new TextComponentString(TOO_MANY_CHUNKS_CLAIMED));
+                sender.sendMessage(new StringTextComponent(TOO_MANY_CHUNKS_CLAIMED));
                 return;
             }
 
             ChunkDataHelper.claimChunksInRange(colonyId, dimId, add == null || add, senderPos, range, 0, senderWorld);
-            sender.sendMessage(new TextComponentString(SUCCESFULLY_CLAIMED_CHUNKS));
+            sender.sendMessage(new StringTextComponent(SUCCESFULLY_CLAIMED_CHUNKS));
         }
         else
         {
-            sender.sendMessage(new TextComponentString(NO_PERMISSION_TO_CLAIM_MESSAGE));
+            sender.sendMessage(new StringTextComponent(NO_PERMISSION_TO_CLAIM_MESSAGE));
         }
     }
 }

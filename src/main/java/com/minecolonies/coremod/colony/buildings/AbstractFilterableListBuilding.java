@@ -50,17 +50,17 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
     {
         super.deserializeNBT(compound);
         final ListNBT filterableList = compound.getTagList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < filterableList.tagCount(); ++i)
+        for (int i = 0; i < filterableList.size(); ++i)
         {
             try
             {
-                final CompoundNBT listItem = filterableList.getCompoundTagAt(i);
+                final CompoundNBT listItem = filterableList.getCompound(i);
                 final String id = listItem.getString(TAG_ID);
                 final ListNBT filterableItems = listItem.getTagList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
                 final List<ItemStorage> items = new ArrayList<>();
-                for (int j = 0; j < filterableItems.tagCount(); ++j)
+                for (int j = 0; j < filterableItems.size(); ++j)
                 {
-                    items.add(new ItemStorage(new ItemStack(filterableItems.getCompoundTagAt(j))));
+                    items.add(new ItemStorage(new ItemStack(filterableItems.getCompound(j))));
                 }
                 if (!items.isEmpty())
                 {

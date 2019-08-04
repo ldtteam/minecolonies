@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.RSConstants.CONST_DEFAULT_RESOLVER_PRIORITY;
@@ -45,7 +45,7 @@ public abstract class AbstractRequestResolver<R extends IRequestable> implements
     @Override
     public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        return new TextComponentString("Request System");
+        return new StringTextComponent("Request System");
     }
 
     @Override

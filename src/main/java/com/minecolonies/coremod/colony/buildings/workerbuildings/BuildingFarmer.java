@@ -238,9 +238,9 @@ public class BuildingFarmer extends AbstractBuildingWorker
     {
         super.deserializeNBT(compound);
         final ListNBT fieldTagList = compound.getTagList(TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < fieldTagList.tagCount(); ++i)
+        for (int i = 0; i < fieldTagList.size(); ++i)
         {
-            final CompoundNBT fieldCompound = fieldTagList.getCompoundTagAt(i);
+            final CompoundNBT fieldCompound = fieldTagList.getCompound(i);
             final BlockPos fieldLocation = BlockPosUtil.readFromNBT(fieldCompound, TAG_FIELDS_BLOCKPOS);
             farmerFields.add(fieldLocation);
         }

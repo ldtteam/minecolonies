@@ -174,9 +174,9 @@ public class StackList implements IDeliverable
         final List<ItemStack> stacks = new ArrayList<>();
 
         final ListNBT neededResTagList = compound.getTagList(NBT_STACK_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < neededResTagList.tagCount(); ++i)
+        for (int i = 0; i < neededResTagList.size(); ++i)
         {
-            final CompoundNBT neededRes = neededResTagList.getCompoundTagAt(i);
+            final CompoundNBT neededRes = neededResTagList.getCompound(i);
             stacks.add(new ItemStack(neededRes));
         }
 

@@ -784,12 +784,12 @@ public final class ColonyManager implements IColonyManager
             if (!compound.keySet().contains(TAG_NEW_COLONIES))
             {
                 final ListNBT colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
-                for (int i = 0; i < colonyTags.tagCount(); ++i)
+                for (int i = 0; i < colonyTags.size(); ++i)
                 {
-                    final CompoundNBT colonyCompound = colonyTags.getCompoundTagAt(i);
+                    final CompoundNBT colonyCompound = colonyTags.getCompound(i);
                     final World colonyWorld = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyCompound.getInt(TAG_DIMENSION));
                     final IColonyManagerCapability cap = colonyWorld.getCapability(COLONY_MANAGER_CAP, null);
-                    @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i),
+                    @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompound(i),
                       FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(colonyCompound.getInt(TAG_DIMENSION)));
                     cap.addColony(colony);
                 }

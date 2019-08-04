@@ -82,9 +82,9 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         super.deserializeNBT(compound);
 
         final ListNBT containerTagList = compound.getTagList(TAG_CONTAINERS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < containerTagList.tagCount(); ++i)
+        for (int i = 0; i < containerTagList.size(); ++i)
         {
-            final CompoundNBT containerCompound = containerTagList.getCompoundTagAt(i);
+            final CompoundNBT containerCompound = containerTagList.getCompound(i);
             containerList.add(NBTUtil.getPosFromTag(containerCompound));
         }
         if (compound.keySet().contains(TAG_PRIO))

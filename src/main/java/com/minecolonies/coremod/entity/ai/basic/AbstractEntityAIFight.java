@@ -15,7 +15,7 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.IItemHandler;
@@ -241,7 +241,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
                 if (bestLevelChest > bestLevel)
                 {
                     final ItemStack armorStack = bestHandler.getStackInSlot(bestSlotChest).copy();
-                    if (armorStack.getItem() instanceof ItemArmor)
+                    if (armorStack.getItem() instanceof ArmorItem)
                     {
                         armorToWear.put(entry.getKey(), armorStack);
                     }
@@ -259,7 +259,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
                 else
                 {
                     final ItemStack armorStack = new InvWrapper(worker.getInventoryCitizen()).getStackInSlot(bestSlot).copy();
-                    if (armorStack.getItem() instanceof ItemArmor)
+                    if (armorStack.getItem() instanceof ArmorItem)
                     {
                         armorToWear.put(entry.getKey(), armorStack);
                     }
@@ -343,13 +343,13 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
                 final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
                 if (ItemStackUtils.isEmpty(stack))
                 {
-                    worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, ItemStackUtils.EMPTY);
+                    worker.setItemStackToSlot(((ArmorItem) stack.getItem()).getEquipmentSlot(), ItemStackUtils.EMPTY);
                     continue;
                 }
 
-                if (stack.getItem() instanceof ItemArmor)
+                if (stack.getItem() instanceof ArmorItem)
                 {
-                    worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
+                    worker.setItemStackToSlot(((ArmorItem) stack.getItem()).getEquipmentSlot(), stack);
                     requiredArmor.remove(armorStack.getKey());
                     cancelAsynchRequestForArmor(armorStack.getKey());
                 }

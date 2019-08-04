@@ -33,7 +33,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -143,7 +143,7 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
         final StructureName sn = new StructureName(message.structureName);
         if (!Structures.hasMD5(sn))
         {
-            player.sendMessage(new TextComponentString("Can not build " + message.workOrderName + ": schematic missing!"));
+            player.sendMessage(new StringTextComponent("Can not build " + message.workOrderName + ": schematic missing!"));
             return;
         }
         handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, message.rotation, message.pos, message.mirror, message.buildingId, message.state);

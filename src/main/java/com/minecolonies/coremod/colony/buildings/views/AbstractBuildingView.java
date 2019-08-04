@@ -23,7 +23,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -522,15 +522,15 @@ public abstract class AbstractBuildingView implements IBuildingView
         {
             if (getColony() == null || !getCitizensByRequest().containsKey(request.getId()) || getColony().getCitizen(getCitizensByRequest().get(request.getId())) == null)
             {
-                return new TextComponentString("<UNKNOWN>");
+                return new StringTextComponent("<UNKNOWN>");
             }
 
-            return new TextComponentString(getColony().getCitizen(getCitizensByRequest().get(request.getId())).getName());
+            return new StringTextComponent(getColony().getCitizen(getCitizensByRequest().get(request.getId())).getName());
         }
         catch (final Exception ex)
         {
             Log.getLogger().warn(ex);
-            return new TextComponentString("");
+            return new StringTextComponent("");
         }
     }
 

@@ -21,7 +21,7 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -284,7 +284,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
         {
             return super.getDisplayName();
         }
-        return new TextComponentString(LanguageHandler.format(blockType.getTranslationKey() + ".name"));
+        return new StringTextComponent(LanguageHandler.format(blockType.getTranslationKey() + ".name"));
     }
 
     /**

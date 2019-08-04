@@ -19,7 +19,7 @@ import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.ItemFishingRod;
+import net.minecraft.item.FishingRodItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
@@ -300,7 +300,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean hasRodButNotEquipped()
     {
-        return worker.getCitizenInventoryHandler().hasItemInInventory(Items.FISHING_ROD, -1) && worker.getHeldItemMainhand() != null && !(worker.getHeldItemMainhand().getItem() instanceof ItemFishingRod);
+        return worker.getCitizenInventoryHandler().hasItemInInventory(Items.FISHING_ROD, -1) && worker.getHeldItemMainhand() != null && !(worker.getHeldItemMainhand().getItem() instanceof FishingRodItem);
     }
 
     /**

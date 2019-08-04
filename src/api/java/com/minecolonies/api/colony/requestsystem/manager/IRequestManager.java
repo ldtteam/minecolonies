@@ -14,7 +14,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequ
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ITickable;
+import net.minecraft.client.renderer.texture.ITickable;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

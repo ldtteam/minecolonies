@@ -5,7 +5,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 public class TileEntityInfoPoster extends TileEntity
 {
     public final ITextComponent[] signText =
-      new ITextComponent[] {new TextComponentString(""), new TextComponentString(""), new TextComponentString(""), new TextComponentString("")};
+      new ITextComponent[] {new StringTextComponent(""), new StringTextComponent(""), new StringTextComponent(""), new StringTextComponent("")};
 
     private final CommandResultStats stats = new CommandResultStats();
 

@@ -4,7 +4,7 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ArmorItem;
 
 import net.minecraftforge.common.util.EnumHelper;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class handling the Pirate Gear.
  */
-public class ItemPirateGear extends ItemArmor
+public class ItemPirateGear extends ArmorItem
 {
     public static final ArmorMaterial PIRATE_ARMOR_1 =
       EnumHelper.addArmorMaterial("minecolonies:pirate", "minecolonies:pirate", 33, new int[] {3, 6, 8, 3}, 5, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 1F);

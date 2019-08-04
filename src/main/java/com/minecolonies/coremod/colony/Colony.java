@@ -439,9 +439,9 @@ public class Colony implements IColony
 
         // Waypoints
         final ListNBT wayPointTagList = compound.getTagList(TAG_WAYPOINT, NBT.TAG_COMPOUND);
-        for (int i = 0; i < wayPointTagList.tagCount(); ++i)
+        for (int i = 0; i < wayPointTagList.size(); ++i)
         {
-            final CompoundNBT blockAtPos = wayPointTagList.getCompoundTagAt(i);
+            final CompoundNBT blockAtPos = wayPointTagList.getCompound(i);
             final BlockPos pos = BlockPosUtil.readFromNBT(blockAtPos, TAG_WAYPOINT);
             final BlockState state = NBTUtil.readBlockState(blockAtPos);
             wayPoints.put(pos, state);
@@ -449,16 +449,16 @@ public class Colony implements IColony
 
         // Free blocks
         final ListNBT freeBlockTagList = compound.getTagList(TAG_FREE_BLOCKS, NBT.TAG_STRING);
-        for (int i = 0; i < freeBlockTagList.tagCount(); ++i)
+        for (int i = 0; i < freeBlockTagList.size(); ++i)
         {
             freeBlocks.add(Block.getBlockFromName(freeBlockTagList.getStringTagAt(i)));
         }
 
         // Free positions
         final ListNBT freePositionTagList = compound.getTagList(TAG_FREE_POSITIONS, NBT.TAG_COMPOUND);
-        for (int i = 0; i < freePositionTagList.tagCount(); ++i)
+        for (int i = 0; i < freePositionTagList.size(); ++i)
         {
-            final CompoundNBT blockTag = freePositionTagList.getCompoundTagAt(i);
+            final CompoundNBT blockTag = freePositionTagList.getCompound(i);
             final BlockPos block = BlockPosUtil.readFromNBT(blockTag, TAG_FREE_POSITIONS);
             freePositions.add(block);
         }

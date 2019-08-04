@@ -12,7 +12,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -83,7 +83,7 @@ public final class TeleportToColony
         }
         else
         {
-            sender.sendMessage(new TextComponentString(CANT_FIND_PLAYER));
+            sender.sendMessage(new StringTextComponent(CANT_FIND_PLAYER));
             return;
         }
 
@@ -92,7 +92,7 @@ public final class TeleportToColony
             teleportPlayer(playerToTeleport, colonyId, sender);
             return;
         }
-        sender.sendMessage(new TextComponentString("Please wait at least " + Configurations.gameplay.teleportBuffer + " seconds to teleport again"));
+        sender.sendMessage(new StringTextComponent("Please wait at least " + Configurations.gameplay.teleportBuffer + " seconds to teleport again"));
     }
 
     /**
@@ -108,7 +108,7 @@ public final class TeleportToColony
 
         if (townHall == null)
         {
-            sender.sendMessage(new TextComponentString(NO_TOWNHALL));
+            sender.sendMessage(new StringTextComponent(NO_TOWNHALL));
             return;
         }
 
@@ -119,15 +119,15 @@ public final class TeleportToColony
 
         if (colID < MIN_COLONY_ID)
         {
-            sender.sendMessage(new TextComponentString(CANT_FIND_COLONY));
+            sender.sendMessage(new StringTextComponent(CANT_FIND_COLONY));
             return;
         }
 
         final EntityPlayerMP entityPlayerMP = (EntityPlayerMP) sender;
         if (dimension != colonyDimension)
         {
-            playerToTeleport.sendMessage(new TextComponentString("We got places to go, kid..."));
-            playerToTeleport.sendMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
+            playerToTeleport.sendMessage(new StringTextComponent("We got places to go, kid..."));
+            playerToTeleport.sendMessage(new StringTextComponent("Buckle up buttercup, this ain't no joy ride!!!"));
             final MinecraftServer server = sender.getEntityWorld().getMinecraftServer();
             final WorldServer worldServer = server.getWorld(colonyDimension);
 
@@ -136,7 +136,7 @@ public final class TeleportToColony
             entityPlayerMP.addExperience(0);
             entityPlayerMP.setPlayerHealthUpdated();
 
-            playerToTeleport.sendMessage(new TextComponentString("Hold onto your pants, we're going Inter-Dimensional!"));
+            playerToTeleport.sendMessage(new StringTextComponent("Hold onto your pants, we're going Inter-Dimensional!"));
 
             worldServer.getMinecraftServer().getPlayerList()
                     .transferPlayerToDimension(entityPlayerMP, colonyDimension, new Teleporter(worldServer));

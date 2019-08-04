@@ -48,7 +48,7 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemNameTag;
-import net.minecraft.item.ItemShield;
+import net.minecraft.item.ShieldItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -455,7 +455,7 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     protected void damageShield(final float damage)
     {
-        if (getHeldItem(getActiveHand()).getItem() instanceof ItemShield)
+        if (getHeldItem(getActiveHand()).getItem() instanceof ShieldItem)
         {
             ICitizenItemHandler.damageItemInHand(this.getActiveHand(), (int) damage);
         }

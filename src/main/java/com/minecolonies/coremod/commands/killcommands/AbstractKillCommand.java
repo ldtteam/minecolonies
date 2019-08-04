@@ -7,7 +7,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -53,7 +53,7 @@ public abstract class AbstractKillCommand<T extends Entity> extends AbstractSing
     {
         if (sender instanceof PlayerEntity && !isPlayerOpped(sender))
         {
-            sender.sendMessage(new TextComponentString("Must be OP to use command"));
+            sender.sendMessage(new StringTextComponent("Must be OP to use command"));
             return;
         }
 
@@ -63,7 +63,7 @@ public abstract class AbstractKillCommand<T extends Entity> extends AbstractSing
             entity.setDead();
             entitiesKilled++;
         }
-        sender.sendMessage(new TextComponentString(entitiesKilled + " entities killed"));
+        sender.sendMessage(new StringTextComponent(entitiesKilled + " entities killed"));
     }
 
     /**

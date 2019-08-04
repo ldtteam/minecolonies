@@ -57,9 +57,9 @@ public class StatisticAchievementManager implements IStatisticAchievementManager
     {
         // Restore colony achievements
         /*final ListNBT achievementTagList = compound.getTagList(TAG_ACHIEVEMENT_LIST, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < achievementTagList.tagCount(); ++i)
+        for (int i = 0; i < achievementTagList.size(); ++i)
         {
-            final CompoundNBT achievementCompound = achievementTagList.getCompoundTagAt(i);
+            final CompoundNBT achievementCompound = achievementTagList.getCompound(i);
             final String achievementKey = achievementCompound.getString(TAG_ACHIEVEMENT);
 
             final StatBase statBase = StatList.getOneShotStat(achievementKey);

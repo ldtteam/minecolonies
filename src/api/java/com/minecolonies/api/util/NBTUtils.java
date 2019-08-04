@@ -45,13 +45,13 @@ public class NBTUtils
         @Override
         public boolean hasNext()
         {
-            return currentIndex < list.tagCount();
+            return currentIndex < list.size();
         }
 
         @Override
         public INBT next()
         {
-            return list.getCompoundTagAt(currentIndex++);
+            return list.getCompound(currentIndex++);
         }
     }
 }

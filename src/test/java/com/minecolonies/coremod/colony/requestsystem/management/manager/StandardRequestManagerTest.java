@@ -34,7 +34,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import org.jetbrains.annotations.NotNull;
@@ -560,7 +560,7 @@ public class StandardRequestManagerTest
         @Override
         public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
         {
-            return new TextComponentString("Test Requester");
+            return new StringTextComponent("Test Requester");
         }
     }
 

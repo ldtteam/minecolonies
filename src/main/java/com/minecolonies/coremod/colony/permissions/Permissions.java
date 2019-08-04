@@ -288,9 +288,9 @@ public class Permissions implements IPermissions
     {
         //  Owners
         final ListNBT ownerTagList = compound.getTagList(TAG_OWNERS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < ownerTagList.tagCount(); ++i)
+        for (int i = 0; i < ownerTagList.size(); ++i)
         {
-            final CompoundNBT ownerCompound = ownerTagList.getCompoundTagAt(i);
+            final CompoundNBT ownerCompound = ownerTagList.getCompound(i);
             @NotNull final UUID id = UUID.fromString(ownerCompound.getString(TAG_ID));
             String name = "";
             if (ownercompound.keySet().contains(TAG_NAME))
@@ -314,16 +314,16 @@ public class Permissions implements IPermissions
 
         //Permissions
         final ListNBT permissionsTagList = compound.getTagList(TAG_PERMISSIONS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < permissionsTagList.tagCount(); ++i)
+        for (int i = 0; i < permissionsTagList.size(); ++i)
         {
-            final CompoundNBT permissionsCompound = permissionsTagList.getCompoundTagAt(i);
+            final CompoundNBT permissionsCompound = permissionsTagList.getCompound(i);
             final Rank rank = Rank.valueOf(permissionsCompound.getString(TAG_RANK));
 
             final ListNBT flagsTagList = permissionsCompound.getTagList(TAG_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
 
             int flags = 0;
 
-            for (int j = 0; j < flagsTagList.tagCount(); ++j)
+            for (int j = 0; j < flagsTagList.size(); ++j)
             {
                 final String flag = flagsTagList.getStringTagAt(j);
                 flags = Utils.setFlag(flags, Action.valueOf(flag).getFlag());

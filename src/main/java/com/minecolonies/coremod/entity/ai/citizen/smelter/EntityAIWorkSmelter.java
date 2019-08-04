@@ -21,7 +21,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
-import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -226,18 +226,18 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     {
         int amount = 1;
         ItemStack material = ItemStackUtils.EMPTY;
-        if (stack.getItem() instanceof ItemSword)
+        if (stack.getItem() instanceof SwordItem)
         {
-            material = Item.ToolMaterial.valueOf(((ItemSword) stack.getItem()).getToolMaterialName()).getRepairItemStack();
+            material = Item.ToolMaterial.valueOf(((SwordItem) stack.getItem()).getToolMaterialName()).getRepairItemStack();
         }
         else if (stack.getItem() instanceof ItemTool)
         {
             material = Item.ToolMaterial.valueOf(((ItemTool) stack.getItem()).getToolMaterialName()).getRepairItemStack();
         }
-        else if (stack.getItem() instanceof ItemArmor)
+        else if (stack.getItem() instanceof ArmorItem)
         {
-            material = ((ItemArmor) stack.getItem()).getArmorMaterial().getRepairItemStack();
-            final EquipmentSlotType eq = ((ItemArmor) stack.getItem()).armorType;
+            material = ((ArmorItem) stack.getItem()).getArmorMaterial().getRepairItemStack();
+            final EquipmentSlotType eq = ((ArmorItem) stack.getItem()).getEquipmentSlot();
             if (eq == EquipmentSlotType.CHEST)
             {
                 amount = CHEST_MAT_AMOUNT;
@@ -263,7 +263,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
      *
      * @param furnace the furnace to retrieve from.
      */
-    protected void extractFromFurnace(final TileEntityFurnace furnace)
+    protected void extractFromFurnace(final FurnaceTileEntity furnace)
     {
         final ItemStack ingots = new InvWrapper(furnace).extractItem(RESULT_SLOT, STACKSIZE, false);
         final int multiplier = ((BuildingSmeltery) getOwnBuilding()).ingotMultiplier(worker.getCitizenData().getLevel(), worker.getRandom());
@@ -364,9 +364,9 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
      */
     private static boolean isSmeltableToolOrWeapon(final ItemStack stack)
     {
-        return !ItemStackUtils.isEmpty(stack) && (stack.getItem() instanceof ItemSword
+        return !ItemStackUtils.isEmpty(stack) && (stack.getItem() instanceof SwordItem
                                                     || stack.getItem() instanceof ItemTool
-                                                    || stack.getItem() instanceof ItemArmor)
+                                                    || stack.getItem() instanceof ArmorItem)
                  && !stack.getItem().isDamaged(stack);
     }
 

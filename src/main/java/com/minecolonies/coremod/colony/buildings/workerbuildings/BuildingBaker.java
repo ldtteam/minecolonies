@@ -22,7 +22,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -177,16 +177,16 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         super.deserializeNBT(compound);
 
         final ListNBT taskTagList = compound.getTagList(TAG_TASKS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < taskTagList.tagCount(); ++i)
+        for (int i = 0; i < taskTagList.size(); ++i)
         {
-            final CompoundNBT taskCompound = taskTagList.getCompoundTagAt(i);
+            final CompoundNBT taskCompound = taskTagList.getCompound(i);
             final ProductState state = ProductState.values()[taskCompound.getInt(TAG_STATE)];
             final List<BakingProduct> bakingProducts = new ArrayList<>();
 
             final ListNBT productTagList = taskCompound.getTagList(TAG_PRODUCTS, Constants.NBT.TAG_COMPOUND);
-            for (int j = 0; j < productTagList.tagCount(); ++j)
+            for (int j = 0; j < productTagList.size(); ++j)
             {
-                final CompoundNBT productCompound = taskTagList.getCompoundTagAt(i);
+                final CompoundNBT productCompound = taskTagList.getCompound(i);
                 final BakingProduct bakingProduct = BakingProduct.createFromNBT(productCompound);
                 bakingProducts.add(bakingProduct);
             }
@@ -195,9 +195,9 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         }
 
         final ListNBT furnaceTagList = compound.getTagList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < furnaceTagList.tagCount(); ++i)
+        for (int i = 0; i < furnaceTagList.size(); ++i)
         {
-            final CompoundNBT furnaceCompound = furnaceTagList.getCompoundTagAt(i);
+            final CompoundNBT furnaceCompound = furnaceTagList.getCompound(i);
             final BlockPos pos = BlockPosUtil.readFromNBT(furnaceCompound, TAG_FURNACE_POS);
             final BakingProduct bakingProduct = BakingProduct.createFromNBT(furnaceCompound);
             furnaces.put(pos, bakingProduct);
@@ -296,7 +296,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
             final BlockState furnace = worldObj.getBlockState(entry.getKey());
             if (!(furnace.getBlock() instanceof BlockFurnace))
             {
-                if (worldObj.getTileEntity(entry.getKey()) instanceof TileEntityFurnace)
+                if (worldObj.getTileEntity(entry.getKey()) instanceof FurnaceTileEntity)
                 {
                     return;
                 }

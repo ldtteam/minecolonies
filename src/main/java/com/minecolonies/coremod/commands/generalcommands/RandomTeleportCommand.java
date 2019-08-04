@@ -14,7 +14,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
@@ -89,13 +89,13 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
     {
         if (SPAWN_NO_TP >= LOWER_BOUNDS)
         {
-            sender.sendMessage(new TextComponentString("Please have an admin raise the maxDistanceFromWorldSpawn number in config."));
+            sender.sendMessage(new StringTextComponent("Please have an admin raise the maxDistanceFromWorldSpawn number in config."));
             return;
         }
 
         if (!canCommandSenderUseCommand(RTP) || sender.getEntityWorld().provider.getDimension() != 0)
         {
-            sender.sendMessage(new TextComponentString("Not happenin bro!!, ask an OP to TP you."));
+            sender.sendMessage(new StringTextComponent("Not happenin bro!!, ask an OP to TP you."));
             return;
         }
 
@@ -114,12 +114,12 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
               ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache()
                                               .getGameProfileForUsername(playerName).getId(), world);
 
-            sender.sendMessage(new TextComponentString("TPing Player: " + playerToTeleport.getName()));
+            sender.sendMessage(new StringTextComponent("TPing Player: " + playerToTeleport.getName()));
         }
 
         if (playerToTeleport == null)
         {
-            sender.sendMessage(new TextComponentString(CANT_FIND_PLAYER));
+            sender.sendMessage(new StringTextComponent(CANT_FIND_PLAYER));
             return;
         }
         teleportPlayer(sender, playerToTeleport);
@@ -172,7 +172,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
             {
                 if (MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
                 {
-                    playerToTeleport.sendMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
+                    playerToTeleport.sendMessage(new StringTextComponent("Buckle up buttercup, this ain't no joy ride!!!"));
                     playerToTeleport.setHealth(playerToTeleport.getMaxHealth());
                     playerToTeleport.setPositionAndUpdate(groundPosition.getX(), groundPosition.getY() + SAFETY_DROP, groundPosition.getZ());
                     playerToTeleport.setHealth(playerToTeleport.getMaxHealth());
@@ -183,12 +183,12 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
                 else
                 {
                     sender.sendMessage(
-                            new TextComponentString("Please wait at least " + Configurations.gameplay.teleportBuffer + " seconds to teleport again"));
+                            new StringTextComponent("Please wait at least " + Configurations.gameplay.teleportBuffer + " seconds to teleport again"));
                 }
                 return;
             }
         }
-        sender.sendMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
+        sender.sendMessage(new StringTextComponent("Couldn't find a safe spot.  Try again in a moment."));
     }
 
     /**

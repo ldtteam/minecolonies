@@ -20,7 +20,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemShield;
+import net.minecraft.item.ShieldItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -397,7 +397,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements ICo
     @Override
     public boolean isActiveItemStackBlocking()
     {
-        return getActiveItemStack().getItem() instanceof ItemShield;
+        return getActiveItemStack().getItem() instanceof ShieldItem;
     }
 
     /**

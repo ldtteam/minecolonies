@@ -11,7 +11,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.CommandBlockBaseLogic;
 import net.minecraft.tileentity.TileEntityCommandBlock;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,7 +51,7 @@ public class ScanCommand implements IActionCommand
 
         if (!name.matches("^[\\w]*"))
         {
-            sender.sendMessage(new TextComponentString(SPECIAL_CHARACTERS_ADVICE));
+            sender.sendMessage(new StringTextComponent(SPECIAL_CHARACTERS_ADVICE));
             return;
         }
 
@@ -81,23 +81,23 @@ public class ScanCommand implements IActionCommand
                 }
                 else
                 {
-                    sender.sendMessage(new TextComponentString(SCAN_FAILURE_MESSAGE));
+                    sender.sendMessage(new StringTextComponent(SCAN_FAILURE_MESSAGE));
                     return;
                 }
 
                 if (player == null)
                 {
-                    sender.sendMessage(new TextComponentString(SCAN_FAILURE_MESSAGE));
+                    sender.sendMessage(new StringTextComponent(SCAN_FAILURE_MESSAGE));
                     return;
                 }
 
                 ItemScanTool.saveStructure(world, from, to, player, name == null ? "" : name);
-                sender.sendMessage(new TextComponentString(SCAN_SUCCESS_MESSAGE));
+                sender.sendMessage(new StringTextComponent(SCAN_SUCCESS_MESSAGE));
             });
         }
         else
         {
-            sender.sendMessage(new TextComponentString(NO_PERMISSION_TO_SCAN_MESSAGE));
+            sender.sendMessage(new StringTextComponent(NO_PERMISSION_TO_SCAN_MESSAGE));
         }
     }
 }

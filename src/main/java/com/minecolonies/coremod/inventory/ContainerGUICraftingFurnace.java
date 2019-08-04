@@ -8,7 +8,7 @@ import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.network.play.server.SPacketSetSlot;
-import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +42,7 @@ public class ContainerGUICraftingFurnace extends Container
     public ContainerGUICraftingFurnace(final InventoryPlayer playerInventory, final World worldIn)
     {
         super();
-        this.furnaceInventory = new TileEntityFurnace();
+        this.furnaceInventory = new FurnaceTileEntity();
         this.worldObj = worldIn;
         this.player = playerInventory.player;
         this.addSlotToContainer(new Slot(furnaceInventory, 0 , 56, 17)

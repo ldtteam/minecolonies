@@ -10,7 +10,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -62,7 +62,7 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand impleme
         if (colony == null)
         {
             final String noColonyFoundMessage = String.format(NO_COLONY_FOUND_MESSAGE);
-            sender.sendMessage(new TextComponentString(noColonyFoundMessage));
+            sender.sendMessage(new StringTextComponent(noColonyFoundMessage));
             return;
         }
 
@@ -74,7 +74,7 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand impleme
     {
         if (args.length == 0)
         {
-            sender.sendMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.sendMessage(new StringTextComponent(NO_ARGUMENTS));
         }
 
         final int colonyId;
@@ -86,7 +86,7 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand impleme
         if (colony == null)
         {
             final String noColonyFoundMessage = String.format(NO_COLONY_WITH_ID_FOUND_MESSAGE, colonyId);
-            sender.sendMessage(new TextComponentString(noColonyFoundMessage));
+            sender.sendMessage(new StringTextComponent(noColonyFoundMessage));
             return;
         }
 
@@ -101,14 +101,14 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand impleme
 
         if (sender instanceof PlayerEntity && !isPlayerOpped(sender))
         {
-            sender.sendMessage(new TextComponentString("Must be OP to use this command"));
+            sender.sendMessage(new StringTextComponent("Must be OP to use this command"));
             return;
         }
 
         colony.getRaiderManager().setCanHaveRaiderEvents(canHaveBarbEvents);
         colony.markDirty();
 
-        sender.sendMessage(new TextComponentString("Colony \" Can have Barbarian Events \" now set to: " + colony.isCanHaveBarbEvents()));
+        sender.sendMessage(new StringTextComponent("Colony \" Can have Barbarian Events \" now set to: " + colony.isCanHaveBarbEvents()));
     }
 
     @NotNull

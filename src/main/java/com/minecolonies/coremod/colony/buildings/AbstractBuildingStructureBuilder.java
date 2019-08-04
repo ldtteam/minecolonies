@@ -133,9 +133,9 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     {
         super.deserializeNBT(compound);
         final ListNBT neededResTagList = compound.getTagList(TAG_RESOURCE_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < neededResTagList.tagCount(); ++i)
+        for (int i = 0; i < neededResTagList.size(); ++i)
         {
-            final CompoundNBT neededRes = neededResTagList.getCompoundTagAt(i);
+            final CompoundNBT neededRes = neededResTagList.getCompound(i);
             final ItemStack stack = new ItemStack(neededRes);
             final BuildingBuilderResource resource = new BuildingBuilderResource(stack, ItemStackUtils.getSize(stack));
             final int hashCode = stack.hasTagCompound() ? stack.getTagCompound().hashCode() : 0;

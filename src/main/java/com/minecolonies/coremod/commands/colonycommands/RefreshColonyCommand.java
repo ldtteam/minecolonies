@@ -11,7 +11,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -87,7 +87,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
 
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE));
+            sender.sendMessage(new StringTextComponent(NO_COLONY_FOUND_MESSAGE));
             return;
         }
 
@@ -129,11 +129,11 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
         {
             if (colonyId == -1 && args.length != 0)
             {
-                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_WITH_PLAYER_FOUND_MESSAGE, args[0])));
+                sender.sendMessage(new StringTextComponent(String.format(NO_COLONY_WITH_PLAYER_FOUND_MESSAGE, args[0])));
             }
             else
             {
-                sender.sendMessage(new TextComponentString(String.format(NO_COLONY_WITH_ID_FOUND_MESSAGE, colonyId)));
+                sender.sendMessage(new StringTextComponent(String.format(NO_COLONY_WITH_ID_FOUND_MESSAGE, colonyId)));
             }
             return;
         }
@@ -141,7 +141,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
         final IColony colony = IColonyManager.getInstance().getColonyByWorld(tempColony.getID(), server.getWorld(sender.getEntityWorld().provider.getDimension()));
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE));
+            sender.sendMessage(new StringTextComponent(NO_COLONY_FOUND_MESSAGE));
             return;
         }
 
@@ -155,12 +155,12 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
             final PlayerEntity senderPlayer = (EntityPlayer) sender.getCommandSenderEntity();
             if (!canPlayerUseCommand(senderPlayer, Commands.REFRESH_COLONY, colony.getID()))
             {
-                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new StringTextComponent(NOT_PERMITTED));
                 return;
             }
         }
 
-        sender.sendMessage(new TextComponentString(REFRESH));
+        sender.sendMessage(new StringTextComponent(REFRESH));
         colony.getPermissions().restoreOwnerIfNull();
         colony.markDirty();
     }

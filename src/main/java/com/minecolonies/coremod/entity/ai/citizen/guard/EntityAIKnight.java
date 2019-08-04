@@ -18,7 +18,7 @@ import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
+import net.minecraft.item.SwordItem;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.Direction;
@@ -220,9 +220,9 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
 
             if (ItemStackUtils.doesItemServeAsWeapon(heldItem))
             {
-                if (heldItem.getItem() instanceof ItemSword)
+                if (heldItem.getItem() instanceof SwordItem)
                 {
-                    addDmg += ((ItemSword) heldItem.getItem()).getAttackDamage();
+                    addDmg += ((SwordItem) heldItem.getItem()).getAttackDamage();
                 }
                 else
                 {

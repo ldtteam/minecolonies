@@ -8,7 +8,7 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -73,7 +73,7 @@ public class HomeTeleportCommand extends AbstractSingleCommand implements IActio
         }
         else
         {
-            sender.sendMessage(new TextComponentString("This is not allowed on this server."));
+            sender.sendMessage(new StringTextComponent("This is not allowed on this server."));
         }
     }
 

@@ -98,9 +98,9 @@ public class BuildingManager implements IBuildingManager
     {
         //  Buildings
         final ListNBT buildingTagList = compound.getTagList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < buildingTagList.tagCount(); ++i)
+        for (int i = 0; i < buildingTagList.size(); ++i)
         {
-            final CompoundNBT buildingCompound = buildingTagList.getCompoundTagAt(i);
+            final CompoundNBT buildingCompound = buildingTagList.getCompound(i);
             @Nullable final IBuilding b = BuildingRegistry.createFromNBT(colony, buildingCompound);
             if (b != null)
             {
@@ -112,9 +112,9 @@ public class BuildingManager implements IBuildingManager
         {
             // Fields before Buildings, because the Farmer needs them.
             final ListNBT fieldTagList = compound.getTagList(TAG_NEW_FIELDS, Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < fieldTagList.tagCount(); ++i)
+            for (int i = 0; i < fieldTagList.size(); ++i)
             {
-                addField(BlockPosUtil.readFromNBT(fieldTagList.getCompoundTagAt(i), TAG_POS));
+                addField(BlockPosUtil.readFromNBT(fieldTagList.getCompound(i), TAG_POS));
             }
         }
     }

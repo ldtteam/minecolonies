@@ -10,7 +10,7 @@ import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -82,11 +82,11 @@ public class CitizenChatHandler implements ICitizenChatHandler
             requiredItem = new TextComponentTranslation(key, msg);
         }
 
-        final TextComponentString citizenDescription = new TextComponentString(" ");
+        final StringTextComponent citizenDescription = new StringTextComponent(" ");
         citizenDescription.appendText(citizen.getCustomNameTag()).appendText(": ");
         if (citizen.getCitizenColonyHandler().getColony() != null)
         {
-            final TextComponentString colonyDescription = new TextComponentString(" at " + citizen.getCitizenColonyHandler().getColony().getName() + ":");
+            final StringTextComponent colonyDescription = new StringTextComponent(" at " + citizen.getCitizenColonyHandler().getColony().getName() + ":");
             final List<EntityPlayer> players = new ArrayList<>(citizen.getCitizenColonyHandler().getColony().getMessageEntityPlayers());
             final PlayerEntity owner = ServerUtils.getPlayerFromUUID(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
 

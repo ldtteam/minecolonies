@@ -12,7 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -68,7 +68,7 @@ public class AddOfficerCommand extends AbstractSingleCommand implements IActionC
     {
         if (args.length == 0)
         {
-            sender.sendMessage(new TextComponentString(NO_COLONY_OR_PLAYER));
+            sender.sendMessage(new StringTextComponent(NO_COLONY_OR_PLAYER));
             return;
         }
 
@@ -80,7 +80,7 @@ public class AddOfficerCommand extends AbstractSingleCommand implements IActionC
             final IColony colony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
             if (colony == null)
             {
-                sender.sendMessage(new TextComponentString(COLONY_X_NULL));
+                sender.sendMessage(new StringTextComponent(COLONY_X_NULL));
                 return;
             }
             colonyId = colony.getID();
@@ -90,7 +90,7 @@ public class AddOfficerCommand extends AbstractSingleCommand implements IActionC
 
         if (colony == null)
         {
-            sender.sendMessage(new TextComponentString(String.format(COLONY_X_NULL, colonyId)));
+            sender.sendMessage(new StringTextComponent(String.format(COLONY_X_NULL, colonyId)));
             return;
         }
 
@@ -117,13 +117,13 @@ public class AddOfficerCommand extends AbstractSingleCommand implements IActionC
             final PlayerEntity senderPlayer = (EntityPlayer) sender;
             if (!canPlayerUseCommand(senderPlayer, ADDOFFICER, colony.getID()))
             {
-                sender.sendMessage(new TextComponentString(NOT_PERMITTED));
+                sender.sendMessage(new StringTextComponent(NOT_PERMITTED));
                 return;
             }
         }
 
         colony.getPermissions().addPlayer(playerName, Rank.OFFICER, colony.getWorld());
-        sender.sendMessage(new TextComponentString(String.format(SUCCESS_MESSAGE_ADD_OFFICER, playerName, colony.getID())));
+        sender.sendMessage(new StringTextComponent(String.format(SUCCESS_MESSAGE_ADD_OFFICER, playerName, colony.getID())));
     }
 
     @NotNull

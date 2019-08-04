@@ -27,7 +27,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -158,17 +158,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.doesItemServeAsWeapon(itemStack), new Tuple<>(1, true));
 
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ItemArmor
-                                 && ((ItemArmor) itemStack.getItem()).armorType == EquipmentSlotType.CHEST, new Tuple<>(1, true));
+                                 && itemStack.getItem() instanceof ArmorItem
+                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlotType.CHEST, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ItemArmor
-                                 && ((ItemArmor) itemStack.getItem()).armorType == EquipmentSlotType.HEAD, new Tuple<>(1, true));
+                                 && itemStack.getItem() instanceof ArmorItem
+                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlotType.HEAD, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ItemArmor
-                                 && ((ItemArmor) itemStack.getItem()).armorType == EquipmentSlotType.LEGS, new Tuple<>(1, true));
+                                 && itemStack.getItem() instanceof ArmorItem
+                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlotType.LEGS, new Tuple<>(1, true));
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
-                                 && itemStack.getItem() instanceof ItemArmor
-                                 && ((ItemArmor) itemStack.getItem()).armorType == EquipmentSlotType.FEET, new Tuple<>(1, true));
+                                 && itemStack.getItem() instanceof ArmorItem
+                                 && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlotType.FEET, new Tuple<>(1, true));
     }
 
     //// ---- NBT Overrides ---- \\\\
@@ -273,17 +273,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         }
 
         final ListNBT wayPointTagList = compound.getTagList(NBT_PATROL_TARGETS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < wayPointTagList.tagCount(); ++i)
+        for (int i = 0; i < wayPointTagList.size(); ++i)
         {
-            final CompoundNBT blockAtPos = wayPointTagList.getCompoundTagAt(i);
+            final CompoundNBT blockAtPos = wayPointTagList.getCompound(i);
             final BlockPos pos = BlockPosUtil.readFromNBT(blockAtPos, NBT_TARGET);
             patrolTargets.add(pos);
         }
 
         final ListNBT mobsTagList = compound.getTagList(NBT_MOBS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < mobsTagList.tagCount(); i++)
+        for (int i = 0; i < mobsTagList.size(); i++)
         {
-            final CompoundNBT mobCompound = mobsTagList.getCompoundTagAt(i);
+            final CompoundNBT mobCompound = mobsTagList.getCompound(i);
             final MobEntryView mobEntry = MobEntryView.readFromNBT(mobCompound, NBT_MOB_VIEW);
             if (mobEntry.getEntityEntry() != null)
             {

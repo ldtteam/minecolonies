@@ -6,7 +6,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,7 +66,7 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
     public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final IColony colony, final int citizenId)
     {
         final ICitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
-        sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
+        sender.sendMessage(new StringTextComponent(String.format(CITIZEN_DESCRIPTION,
           citizenData.getId(),
           citizenData.getName())));
 
@@ -82,37 +82,37 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
         final AbstractEntityCitizen entityCitizen = optionalEntityCitizen.get();
 
         final BlockPos citizenPosition = entityCitizen.getPosition();
-        sender.sendMessage(new TextComponentString(String.format(CITIZEN_POSITION,
+        sender.sendMessage(new StringTextComponent(String.format(CITIZEN_POSITION,
           citizenPosition.getX(),
           citizenPosition.getY(),
           citizenPosition.getZ())));
         final BlockPos homePosition = entityCitizen.getHomePosition();
-        sender.sendMessage(new TextComponentString(String.format(CITIZEN_HOME_POSITION,
+        sender.sendMessage(new StringTextComponent(String.format(CITIZEN_HOME_POSITION,
           homePosition.getX(),
           homePosition.getY(),
           homePosition.getZ())));
         if (entityCitizen.getCitizenColonyHandler().getWorkBuilding() == null)
         {
-            sender.sendMessage(new TextComponentString(CITIZEN_WORK_POSITION_NULL));
+            sender.sendMessage(new StringTextComponent(CITIZEN_WORK_POSITION_NULL));
         }
         else
         {
             final BlockPos workingPosition = entityCitizen.getCitizenColonyHandler().getWorkBuilding().getPosition();
-            sender.sendMessage(new TextComponentString(String.format(CITIZEN_WORK_POSITION,
+            sender.sendMessage(new StringTextComponent(String.format(CITIZEN_WORK_POSITION,
               workingPosition.getX(),
               workingPosition.getY(),
               workingPosition.getZ())));
         }
 
-        sender.sendMessage(new TextComponentString(String.format(CITIZEN_HEALTH,
+        sender.sendMessage(new StringTextComponent(String.format(CITIZEN_HEALTH,
           entityCitizen.getHealth(),
           entityCitizen.getMaxHealth())));
 
-        sender.sendMessage(new TextComponentString(String.format(CITIZEN_LEVEL_AND_AGE,
+        sender.sendMessage(new StringTextComponent(String.format(CITIZEN_LEVEL_AND_AGE,
                 entityCitizen.getCitizenExperienceHandler().getLevel(),
                 entityCitizen.getGrowingAge(),
                 citizenData.getLevel())));
-        sender.sendMessage(new TextComponentString(String.format(CITIZEN_SKILLS,
+        sender.sendMessage(new StringTextComponent(String.format(CITIZEN_SKILLS,
                 citizenData.getCharisma(),
                 citizenData.getDexterity(),
                 citizenData.getEndurance(),
@@ -120,13 +120,13 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
                 citizenData.getStrength())));
         if (entityCitizen.getCitizenJobHandler().getColonyJob() == null)
         {
-            sender.sendMessage(new TextComponentString(CITIZEN_JOB_NULL));
-            sender.sendMessage(new TextComponentString(CITIZEN_NO_ACTIVITY));
+            sender.sendMessage(new StringTextComponent(CITIZEN_JOB_NULL));
+            sender.sendMessage(new StringTextComponent(CITIZEN_NO_ACTIVITY));
         }
         else if (entityCitizen.getCitizenColonyHandler().getWorkBuilding() != null)
         {
-            sender.sendMessage(new TextComponentString(String.format(CITIZEN_JOB, entityCitizen.getCitizenColonyHandler().getWorkBuilding().getJobName())));
-            sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESIRED_ACTIVITY,
+            sender.sendMessage(new StringTextComponent(String.format(CITIZEN_JOB, entityCitizen.getCitizenColonyHandler().getWorkBuilding().getJobName())));
+            sender.sendMessage(new StringTextComponent(String.format(CITIZEN_DESIRED_ACTIVITY,
               entityCitizen.getDesiredActivity(),
               entityCitizen.getCitizenJobHandler().getColonyJob().getNameTagDescription())));
         }

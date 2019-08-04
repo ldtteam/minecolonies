@@ -11,7 +11,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -75,7 +75,7 @@ public class WhoAmICommand extends AbstractSingleCommand implements IActionComma
         final String colonyName = colony.getName();
         final String playerName = sender.getDisplayName().getFormattedText();
         final String posString = "x: " + pos.getX() + " y: " + pos.getY() + " z: " + pos.getZ();
-        sender.sendMessage(new TextComponentString(String.format(TELL_HIM, playerName, colonyName, posString)));
+        sender.sendMessage(new StringTextComponent(String.format(TELL_HIM, playerName, colonyName, posString)));
     }
 
     @NotNull

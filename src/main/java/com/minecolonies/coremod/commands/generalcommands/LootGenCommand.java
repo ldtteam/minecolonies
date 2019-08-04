@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -88,7 +88,7 @@ public class LootGenCommand extends AbstractSingleCommand implements IActionComm
         }
         else
         {
-            sender.sendMessage(new TextComponentString(NO_PERMISSION_MESSAGE));
+            sender.sendMessage(new StringTextComponent(NO_PERMISSION_MESSAGE));
         }
     }
 

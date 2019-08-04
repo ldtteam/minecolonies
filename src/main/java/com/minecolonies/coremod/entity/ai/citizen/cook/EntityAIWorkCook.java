@@ -16,7 +16,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -105,7 +105,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
      * @param furnace the furnace to retrieve from.
      */
     @Override
-    protected void extractFromFurnace(final TileEntityFurnace furnace)
+    protected void extractFromFurnace(final FurnaceTileEntity furnace)
     {
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
                 new InvWrapper(furnace), RESULT_SLOT,

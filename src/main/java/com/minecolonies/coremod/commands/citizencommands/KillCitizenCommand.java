@@ -10,7 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
@@ -67,10 +67,10 @@ public class KillCitizenCommand extends AbstractCitizensCommands implements IAct
     {
         final ICitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
         citizenData.getCitizenEntity().ifPresent(entityCitizen -> {
-            sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
+            sender.sendMessage(new StringTextComponent(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
             final BlockPos position = entityCitizen.getPosition();
-            sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
-            sender.sendMessage(new TextComponentString(REMOVED_MESSAGE));
+            sender.sendMessage(new StringTextComponent(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+            sender.sendMessage(new StringTextComponent(REMOVED_MESSAGE));
             server.addScheduledTask(() -> entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE));
         });
     }
