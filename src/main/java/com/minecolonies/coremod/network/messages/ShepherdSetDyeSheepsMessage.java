@@ -6,9 +6,12 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingShepherd;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +34,7 @@ public class ShepherdSetDyeSheepsMessage implements IMessage
     }
 
     /**
-     * Creates object for the CowboySetMilk message.
+     * Creates object for the CowboySetMilk 
      *
      * @param building View of the building to read data from.
      */
@@ -62,22 +65,30 @@ public class ShepherdSetDyeSheepsMessage implements IMessage
         byteBuf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final ShepherdSetDyeSheepsMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
+            final PlayerEntity player = ctxIn.getSender();
             //Verify player has permission to change this huts settings
             if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
             {
                 return;
             }
 
-            @Nullable final BuildingShepherd building = colony.getBuildingManager().getBuilding(message.buildingId, BuildingShepherd.class);
+            @Nullable final BuildingShepherd building = colony.getBuildingManager().getBuilding(buildingId, BuildingShepherd.class);
             if (building != null)
             {
-                building.setDyeSheeps(message.dyeSheeps);
+                building.setDyeSheeps(dyeSheeps);
             }
         }
     }

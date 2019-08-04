@@ -4,8 +4,11 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.network.PacketUtils;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -36,17 +39,16 @@ public class ServerUUIDMessage implements IMessage
         PacketUtils.writeUUID(buf, IColonyManager.getInstance().getServerUUID());
     }
 
-    /**
-     * {@inheritDoc}
-     * <p>
-     * Set the server UUID.
-     *
-     * @param message Message
-     * @param ctx     Context
-     */
+    @Nullable
     @Override
-    protected void messageOnClientThread(final ServerUUIDMessage message, final MessageContext ctx)
+    public LogicalSide getExecutionSide()
     {
-        IColonyManager.getInstance().setServerUUID(message.serverUUID);
+        return LogicalSide.CLIENT;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        IColonyManager.getInstance().setServerUUID(serverUUID);
     }
 }

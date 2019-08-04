@@ -5,9 +5,13 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Creates the WorkOrderChangeMessage which is responsible for changes in priority or removal of workOrders.
@@ -35,7 +39,7 @@ public class WorkOrderChangeMessage implements IMessage
     private boolean removeWorkOrder;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
@@ -95,10 +99,18 @@ public class WorkOrderChangeMessage implements IMessage
         buf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final WorkOrderChangeMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
+        final PlayerEntity player = ctxIn.getSender();
         if (colony != null && colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             //Verify player has permission to change this huts settings
@@ -107,13 +119,13 @@ public class WorkOrderChangeMessage implements IMessage
                 return;
             }
 
-            if (message.removeWorkOrder)
+            if (removeWorkOrder)
             {
-                colony.getWorkManager().removeWorkOrder(message.workOrderId);
+                colony.getWorkManager().removeWorkOrder(workOrderId);
             }
             else
             {
-                colony.getWorkManager().getWorkOrder(message.workOrderId).setPriority(message.priority);
+                colony.getWorkManager().getWorkOrder(workOrderId).setPriority(priority);
             }
         }
     }

@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.util.math.BlockPos;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.concurrent.Future;
 
-public abstract class AbstractAdvancedPathNavigate extends PathNavigateGround
+public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
 {
     //  Parent class private members
     protected final LivingEntity ourEntity;

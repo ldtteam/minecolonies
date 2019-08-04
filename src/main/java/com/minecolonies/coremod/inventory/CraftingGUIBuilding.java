@@ -1,14 +1,20 @@
 package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.util.ItemStackUtils;
+import net.minecraft.block.CraftingTableBlock;
+import net.minecraft.client.gui.screen.inventory.CraftingScreen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.*;
+import net.minecraft.inventory.container.ClickType;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.CraftingResultSlot;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.network.play.server.SPacketSetSlot;
+import net.minecraft.network.play.server.SSetSlotPacket;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,12 +28,12 @@ public class CraftingGUIBuilding extends Container
     /**
      * The crafting matrix inventory (2x2).
      */
-    private final InventoryCrafting craftMatrix;
+    private final CraftingInventory craftMatrix;
 
     /**
      * The crafting result slot.
      */
-    private final InventoryCraftResult craftResult = new InventoryCraftResult();
+    private final CraftingInventory craftResult;
 
     /**
      * The world object.
@@ -58,14 +64,14 @@ public class CraftingGUIBuilding extends Container
         this.complete = complete;
         if(complete)
         {
-            craftMatrix = new InventoryCrafting(this, 3, 3);
+            craftMatrix = new CraftingInventory(this, 3, 3);
         }
         else
         {
-            craftMatrix = new InventoryCrafting(this, 2, 2);
+            craftMatrix = new CraftingInventory(this, 2, 2);
         }
 
-        this.addSlotToContainer(new SlotCrafting(playerInventory.player, this.craftMatrix, this.craftResult, 0, X_CRAFT_RESULT, Y_CRAFT_RESULT)
+        this.craftResult = this.addSlot(new CraftingResultSlot(playerInventory.player, this.craftMatrix, this, 0, X_CRAFT_RESULT, Y_CRAFT_RESULT)
         {
             @Override
             public boolean canTakeStack(final PlayerEntity playerIn)
@@ -78,7 +84,7 @@ public class CraftingGUIBuilding extends Container
         {
             for (int j = 0; j < craftMatrix.getHeight(); ++j)
             {
-                this.addSlotToContainer(new Slot(this.craftMatrix, j + i * (complete ? 3 : 2) , X_OFFSET_CRAFTING + j * INVENTORY_OFFSET_EACH, Y_OFFSET_CRAFTING + i * INVENTORY_OFFSET_EACH)
+                this.addSlot(new Slot(this.craftMatrix, j + i * (complete ? 3 : 2) , X_OFFSET_CRAFTING + j * INVENTORY_OFFSET_EACH, Y_OFFSET_CRAFTING + i * INVENTORY_OFFSET_EACH)
                 {
                     @Override
                     public int getSlotStackLimit()
@@ -122,7 +128,7 @@ public class CraftingGUIBuilding extends Container
         {
             for (int j = 0; j < INVENTORY_COLUMNS; j++)
             {
-                addSlotToContainer(new Slot(
+                addSlot(new Slot(
                         playerInventory,
                         j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
                         PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
@@ -133,7 +139,7 @@ public class CraftingGUIBuilding extends Container
 
         for (i = 0; i < INVENTORY_COLUMNS; i++)
         {
-            addSlotToContainer(new Slot(
+            addSlot(new Slot(
                     playerInventory, i,
                     PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
               PLAYER_INVENTORY_HOTBAR_OFFSET_CRAFTING
@@ -151,20 +157,20 @@ public class CraftingGUIBuilding extends Container
     {
         if (!worldObj.isRemote)
         {
-            final ServerPlayerEntity PlayerEntitymp = (ServerPlayerEntity) player;
+            final ServerPlayerEntity player = (ServerPlayerEntity) player;
             ItemStack itemstack = ItemStack.EMPTY;
-            final IRecipe irecipe = CraftingManager.findMatchingRecipe(craftMatrix, worldObj);
+            final IRecipe irecipe = CraftingManager.getRecipe(craftMatrix, worldObj);
             if (irecipe != null && (irecipe.isDynamic()
-                    || !worldObj.getGameRules().getBoolean("doLimitedCrafting")
-                    || ServerPlayerEntity.getRecipeBook().isUnlocked(irecipe)
-                    || ServerPlayerEntity.isCreative()))
+                    || !worldObj.getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING)
+                    || player.getRecipeBook().isUnlocked(irecipe)
+                    || player.isCreative()))
             {
                 this.craftResult.setRecipeUsed(irecipe);
                 itemstack = irecipe.getCraftingResult(this.craftMatrix);
             }
 
             this.craftResult.setInventorySlotContents(0, itemstack);
-            ServerPlayerEntity.connection.sendPacket(new SPacketSetSlot(this.windowId, 0, itemstack));
+            player.connection.sendPacket(new SSetSlotPacket(this.windowId, 0, itemstack));
         }
 
         super.onCraftMatrixChanged(inventoryIn);

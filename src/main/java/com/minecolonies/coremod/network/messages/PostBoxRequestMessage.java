@@ -7,11 +7,14 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Creates a request from the postbox.
@@ -34,12 +37,12 @@ public class PostBoxRequestMessage implements IMessage
     private ItemStack itemStack;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public PostBoxRequestMessage()
     {
@@ -47,7 +50,7 @@ public class PostBoxRequestMessage implements IMessage
     }
 
     /**
-     * Creates a Transfer Items request message.
+     * Creates a Transfer Items request 
      *
      * @param building  AbstractBuilding of the request.
      * @param itemStack to be take from the player for the building
@@ -81,23 +84,30 @@ public class PostBoxRequestMessage implements IMessage
         buf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final PostBoxRequestMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony == null)
         {
             Log.getLogger().warn("TransferItemsRequestMessage colony is null");
             return;
         }
 
-        final IBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
+        final IBuilding building = colony.getBuildingManager().getBuilding(buildingId);
         if (building == null)
         {
             Log.getLogger().warn("TransferItemsRequestMessage building is null");
             return;
         }
 
-        building.createRequest(new Stack(message.itemStack), false);
+        building.createRequest(new Stack(itemStack), false);
     }
 }

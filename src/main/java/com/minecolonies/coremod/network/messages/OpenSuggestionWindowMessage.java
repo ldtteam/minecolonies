@@ -2,16 +2,15 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.MineColonies;
+import net.minecraft.block.Block;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Open the suggestion window.
@@ -34,7 +33,7 @@ public class OpenSuggestionWindowMessage implements IMessage
     private ItemStack stack;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public OpenSuggestionWindowMessage()
     {
@@ -55,35 +54,32 @@ public class OpenSuggestionWindowMessage implements IMessage
         this.stack = stack;
     }
 
-    /**
-     * Reads this packet from a {@link ByteBuf}.
-     *
-     * @param buf The buffer begin read from.
-     */
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        state = NBTUtil.readBlockState(ByteBufUtils.readTag(buf));
+        state = Block.getStateById(buf.readInt());
         pos = buf.readBlockPos();
         stack = buf.readItemStack();
     }
 
-    /**
-     * Writes this packet to a {@link ByteBuf}.
-     *
-     * @param buf The buffer being written to.
-     */
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new CompoundNBT(), state));
+        buf.writeInt(Block.getStateId(state));
         buf.writeBlockPos(pos);
         buf.writeItemStack(stack);
     }
 
+    @Nullable
     @Override
-    protected void messageOnClientThread(final OpenSuggestionWindowMessage message, final MessageContext ctx)
+    public LogicalSide getExecutionSide()
     {
-        MineColonies.proxy.openSuggestionWindow(message.pos, message.state, message.stack);
+        return LogicalSide.CLIENT;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        MineColonies.proxy.openSuggestionWindow(pos, state, stack);
     }
 }

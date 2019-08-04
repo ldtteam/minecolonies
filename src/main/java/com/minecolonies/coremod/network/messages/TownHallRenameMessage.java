@@ -5,9 +5,14 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import com.minecolonies.coremod.Network;
+import net.minecraft.entity.player.PlayerEntity;
 
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Message to execute the renaiming of the townHall.
@@ -20,7 +25,7 @@ public class TownHallRenameMessage implements IMessage
     private String name;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
@@ -33,7 +38,7 @@ public class TownHallRenameMessage implements IMessage
     }
 
     /**
-     * Object creation for the town hall rename message.
+     * Object creation for the town hall rename 
      *
      * @param colony Colony the rename is going to occur in.
      * @param name   New name of the town hall.
@@ -61,21 +66,30 @@ public class TownHallRenameMessage implements IMessage
         buf.writeString(name);
         buf.writeInt(dimension);
     }
+    
+    @Nullable
+    @Override
+    public LogicalSide getExecutionSide()
+    {
+        return LogicalSide.SERVER;
+    }
 
     @Override
-    public void messageOnServerThread(final TownHallRenameMessage message, final ServerPlayerEntity player)
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
+            final PlayerEntity player = ctxIn.getSender();
+
             //Verify player has permission to change this huts settings
             if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
             {
                 return;
             }
-            message.name = (message.name.length() <= MAX_NAME_LENGTH) ? message.name : message.name.substring(0, SUBSTRING_LENGTH);
-            colony.setName(message.name);
-            Network.getNetwork().sendToAll(message);
+            name = (name.length() <= MAX_NAME_LENGTH) ? name : name.substring(0, SUBSTRING_LENGTH);
+            colony.setName(name);
+            Network.getNetwork().sendToEveryone(this);
         }
     }
 }

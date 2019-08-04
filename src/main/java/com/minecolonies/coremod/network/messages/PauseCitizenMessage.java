@@ -6,9 +6,13 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Message class which manages the messages hiring or firing of citizens.
@@ -74,20 +78,29 @@ public class PauseCitizenMessage implements IMessage
         buf.writeInt(citizenID);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final PauseCitizenMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.colonyDim);
-        
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, colonyDim);
+
         if (colony != null)
         {
+            final PlayerEntity player = ctxIn.getSender();
+
             //Verify player has permission to change this huts settings
             if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
             {
                 return;
             }
 
-            final ICitizenData citizen = colony.getCitizenManager().getCitizen(message.citizenID);
+            final ICitizenData citizen = colony.getCitizenManager().getCitizen(citizenID);
             citizen.setPaused(!citizen.isPaused());
         }
     }

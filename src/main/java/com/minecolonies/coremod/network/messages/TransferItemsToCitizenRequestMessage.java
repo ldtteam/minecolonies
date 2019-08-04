@@ -10,12 +10,15 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -45,12 +48,12 @@ public class TransferItemsToCitizenRequestMessage implements IMessage
     private int quantity;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public TransferItemsToCitizenRequestMessage()
     {
@@ -58,7 +61,7 @@ public class TransferItemsToCitizenRequestMessage implements IMessage
     }
 
     /**
-     * Creates a Transfer Items request message.
+     * Creates a Transfer Items request 
      *
      * @param citizenDataView Citizen of the request.
      * @param itemStack       to be take from the player for the building
@@ -72,7 +75,7 @@ public class TransferItemsToCitizenRequestMessage implements IMessage
         this.citizenId = citizenDataView.getId();
         this.itemStack = itemStack;
         this.quantity = quantity;
-        this.dimension = Minecraft.getInstance().world.world.getDimension().getType().getId();
+        this.dimension = Minecraft.getInstance().world.getDimension().getType().getId();
     }
 
     @Override
@@ -95,17 +98,24 @@ public class TransferItemsToCitizenRequestMessage implements IMessage
         buf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final TransferItemsToCitizenRequestMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony == null)
         {
             Log.getLogger().warn("TransferItemsRequestMessage colony is null");
             return;
         }
 
-        final ICitizenData citizenData = colony.getCitizenManager().getCitizen(message.citizenId);
+        final ICitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
         if (citizenData == null)
         {
             Log.getLogger().warn("TransferItemsRequestMessage citizenData is null");
@@ -119,26 +129,26 @@ public class TransferItemsToCitizenRequestMessage implements IMessage
             return;
         }
 
-        final boolean isCreative = player.capabilities.isCreativeMode;
-        if (message.quantity <= 0 && !isCreative)
+        final PlayerEntity player = ctxIn.getSender();
+        final boolean isCreative = player.isCreative();
+        if (quantity <= 0 && !isCreative)
         {
             Log.getLogger().warn("TransferItemsRequestMessage quantity below 0");
             return;
         }
 
-        final Item item = message.itemStack.getItem();
         final int amountToTake;
         if (isCreative)
         {
-            amountToTake = message.quantity;
+            amountToTake = quantity;
         }
         else
         {
-            amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage()));
+            amountToTake = Math.min(quantity, InventoryUtils.getItemCountInItemHandler(new InvWrapper(player.inventory), stack -> stack.isItemEqual(itemStack)));
         }
 
-        final ItemStack itemStackToTake = message.itemStack.copy();
-        ItemStackUtils.setSize(itemStackToTake, message.quantity);
+        final ItemStack itemStackToTake = itemStack.copy();
+        ItemStackUtils.setSize(itemStackToTake, quantity);
         final AbstractEntityCitizen citizen = optionalEntityCitizen.get();
         final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(citizen.getInventoryCitizen()), itemStackToTake);
         if (!isCreative)
@@ -146,7 +156,7 @@ public class TransferItemsToCitizenRequestMessage implements IMessage
             int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);
             while (amountToRemoveFromPlayer > 0)
             {
-                final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), stack -> stack.isItemEqual(message.itemStack));
+                final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), stack -> stack.isItemEqual(itemStack));
                 final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
                 amountToRemoveFromPlayer -= ItemStackUtils.getSize(itemsTaken);
             }

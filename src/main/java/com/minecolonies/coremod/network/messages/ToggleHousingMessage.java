@@ -5,9 +5,14 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Message class which manages the message to toggle automatic or manual housing allocation.
@@ -24,7 +29,7 @@ public class ToggleHousingMessage implements IMessage
     private boolean toggle;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
@@ -76,26 +81,28 @@ public class ToggleHousingMessage implements IMessage
         buf.writeInt(dimension);
     }
 
-    /**
-     * Executes the message on the server thread.
-     * Only if the player has the permission, toggle message.
-     *
-     * @param message the original message.
-     * @param player  the player associated.
-     */
+    @Nullable
     @Override
-    public void messageOnServerThread(final ToggleHousingMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
+            final PlayerEntity player = ctxIn.getSender();
+
             //Verify player has permission to change this huts settings
             if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
             {
                 return;
             }
 
-            colony.setManualHousing(message.toggle);
+            colony.setManualHousing(toggle);
         }
     }
 }

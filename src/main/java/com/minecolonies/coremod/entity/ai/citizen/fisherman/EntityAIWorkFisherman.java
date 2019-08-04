@@ -642,7 +642,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
 
         worker.setCanPickUpLoot(true);
-        worker.setCanCaptureDrops(true);
         retrieveRod();
         fishingSkill = worker.getCitizenExperienceHandler().getLevel();
         return true;
