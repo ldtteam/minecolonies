@@ -2,9 +2,9 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.Log;
-import com.minecolonies.blockout.controls.Button;
-import com.minecolonies.blockout.controls.TextField;
+import com.ldtteam.blockout.Log;
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.TextField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import org.jetbrains.annotations.NotNull;

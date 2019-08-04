@@ -1,7 +1,7 @@
-package com.minecolonies.blockout.controls;
+package com.ldtteam.blockout.controls;
 
-import com.minecolonies.blockout.Pane;
-import com.minecolonies.blockout.PaneParams;
+import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.PaneParams;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
@@ -13,7 +13,7 @@ import javax.imageio.stream.ImageInputStream;
 import java.io.IOException;
 import java.util.Iterator;
 
-import static com.minecolonies.blockout.Log.getLogger;
+import static com.ldtteam.blockout.Log.getLogger;
 
 /**
  * Simple image element.

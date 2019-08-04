@@ -1,4 +1,4 @@
-package com.minecolonies.blockout;
+package com.ldtteam.blockout;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.items;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
-import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.ChangeFreeToInteractBlockMessage;
 import net.minecraft.block.Block;

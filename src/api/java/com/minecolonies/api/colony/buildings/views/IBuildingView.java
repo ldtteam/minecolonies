@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.blockout.views.Window;
+import com.ldtteam.blockout.views.Window;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;

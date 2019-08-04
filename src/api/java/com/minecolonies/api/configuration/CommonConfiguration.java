@@ -11,287 +11,228 @@ import static com.minecolonies.api.util.constant.Constants.MAX_BARBARIAN_HORDE_S
  */
 public class CommonConfiguration extends AbstractConfiguration
 {
-    /**
-     * Should the default schematics be ignored (from the jar)?
-     */
-    public final ForgeConfigSpec.BooleanValue ignoreSchematicsFromJar;
-
-    /**
-     * Should player made schematics be allowed
-     */
-    public final ForgeConfigSpec.BooleanValue allowPlayerSchematics;
-
-    /**
-     * Max world operations per tick (Max blocks to place, remove or replace)
-     */
-    public final ForgeConfigSpec.IntValue maxOperationsPerTick;
-
-    /**
-     * Max amount of changes cached to be able to undo
-     */
-    public final ForgeConfigSpec.IntValue maxCachedChanges;
-
-    /**
-     * Max amount of schematics to be cached on the server
-     */
-    public final ForgeConfigSpec.IntValue maxCachedSchematics;
-
-    /**
-     * Max amount of blocks checked by a possible worker.
-     */
-    public final ForgeConfigSpec.IntValue maxBlocksChecked;
-
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Gameplay settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
-    public int initialCitizenAmount = 4;
+    public final ForgeConfigSpec.IntValue initialCitizenAmount;
 
-    public boolean builderPlaceConstructionTape = true;
+    public final ForgeConfigSpec.BooleanValue builderPlaceConstructionTape;
 
-    public boolean playerGetsGuidebookOnFirstJoin = true;
+    public final ForgeConfigSpec.BooleanValue playerGetsGuidebookOnFirstJoin;
 
-    public boolean supplyChests = true;
+    public final ForgeConfigSpec.BooleanValue supplyChests;
 
-    public boolean allowInfiniteSupplyChests = false;
+    public final ForgeConfigSpec.BooleanValue allowInfiniteSupplyChests;
 
-    public boolean allowInfiniteColonies = false;
+    public final ForgeConfigSpec.BooleanValue allowInfiniteColonies;
 
-    public boolean  allowOtherDimColonies = false;
+    public final ForgeConfigSpec.BooleanValue allowOtherDimColonies;
 
-    @Config.RangeInt(min = (CITIZEN_RESPAWN_INTERVAL_MIN), max = CITIZEN_RESPAWN_INTERVAL_MAX)
-    public int citizenRespawnInterval = 60;
+    public final ForgeConfigSpec.IntValue citizenRespawnInterval;
 
+    public final ForgeConfigSpec.IntValue maxCitizenPerColony;
 
-    @Config.Comment("Max citizens in one colony. [Default: 50]")
-    public int maxCitizenPerColony = 50;
+    public final ForgeConfigSpec.BooleanValue builderInfiniteResources;
 
-    @Config.Comment("Should builder and miner build without resources? (this also turns off what they produce). [Default: false]")
-    public boolean builderInfiniteResources = false;
+    public final ForgeConfigSpec.BooleanValue limitToOneWareHousePerColony;
 
-    @Config.Comment("Should there be at max 1 warehouse per colony?. [Default: true]")
-    public boolean limitToOneWareHousePerColony = true;
+    public final ForgeConfigSpec.IntValue builderBuildBlockDelay;
 
-    @Config.Comment("Delay after each block placement (Increasing it, increases the delay) [Default: 15]")
-    @Config.RangeInt(min = 1, max = 500)
-    public int builderBuildBlockDelay = 15;
+    public final ForgeConfigSpec.IntValue blockMiningDelayModifier;
 
-    @Config.Comment("Delay modifier to mine a block (Decreasing it, decreases the delay) [Default: 500]")
-    public int blockMiningDelayModifier = 500;
+    public final ForgeConfigSpec.IntValue maxBlocksCheckedByBuilder;
 
-    @Config.Comment("Amount of blocks the builder checks (to decrease lag by builder). [Default: 1000]")
-    public int maxBlocksCheckedByBuilder = 1000;
+    public final ForgeConfigSpec.IntValue chatFrequency;
 
-    @Config.Comment("Chat frequency of worker requests. [Default: 30]")
-    public int chatFrequency = 30;
+    public final ForgeConfigSpec.BooleanValue enableInDevelopmentFeatures;
 
-    @Config.Comment("Should in development features be enabled (might be buggy). [Default: false]")
-    public boolean enableInDevelopmentFeatures = false;
+    public final ForgeConfigSpec.BooleanValue alwaysRenderNameTag;
 
-    @Config.Comment("Should citizen name tags be rendered? [Default: true]")
-    public boolean alwaysRenderNameTag = true;
+    public final ForgeConfigSpec.DoubleValue growthModifier;
 
-    @Config.Comment("Child growth modifier, default on avg they take about 60min to grow (at 1.0x modifier). Setting to 5 = 5x as fast. [Default: 1]")
-    public double growthModifier = 1.0;
+    public final ForgeConfigSpec.BooleanValue workersAlwaysWorkInRain;
 
-    @Config.Comment("Should workers work during the rain? [Default: false]")
-    public boolean workersAlwaysWorkInRain = false;
+    public final ForgeConfigSpec.BooleanValue sendEnteringLeavingMessages;
 
-    @Config.Comment("Should Players be sent entering/leaving colony notifications? [Default: true]")
-    public boolean sendEnteringLeavingMessages = true;
+    public final ForgeConfigSpec.BooleanValue allowPlayerSchematics;
 
-    @Config.Comment("Should player made schematics be allowed [Default: false]")
-    public boolean allowPlayerSchematics = false;
+    public final ForgeConfigSpec.IntValue allowGlobalNameChanges;
 
-    @Config.Comment("Should players be allowed to change names? -1 for false, 0 for specific groups, 1 for true. [Default: 1]")
-    public int allowGlobalNameChanges = 1;
+    public final ForgeConfigSpec.BooleanValue holidayFeatures;
 
-    @Config.Comment("Should special holiday content be displayed? [Default: true]")
-    public boolean holidayFeatures = true;
+    public final ForgeConfigSpec.IntValue updateRate;
 
-    @Config.Comment("AI Update rate, increase to improve performance. [Default: 1]")
-    public int updateRate = 1;
+    public final ForgeConfigSpec.IntValue dirtFromCompost;
 
-    @Config.Comment("Quantity of dirt per Compost filling. [Default: 1]")
-    public int dirtFromCompost = 1;
+    public final ForgeConfigSpec.IntValue luckyBlockChance;
 
-    @Config.Comment("Chance to get a lucky block in percent. [Default: 1]")
-    public int luckyBlockChance = 1;
+    public final ForgeConfigSpec.BooleanValue fixOrphanedChunks;
 
-    @Config.Comment("Automatically fix orphaned chunks which were caused by chunk loading and saving issues. [Default: false]")
-    public boolean fixOrphanedChunks = false;
+    public final ForgeConfigSpec.BooleanValue restrictBuilderUnderground;
 
+    public final ForgeConfigSpec.DoubleValue fisherSpongeChance;
 
-    @Config.Comment("If the builder should be slower underground or as fast as anywhere else. [Default: true]")
-    public boolean restrictBuilderUnderground = true;
+    public final ForgeConfigSpec.IntValue minThLevelToTeleport;
 
-    @Config.Comment("Chance to get a sponge drop for the fisherman starting at level 4. [Default: 0.1]")
-    public double fisherSpongeChance = 0.1;
+    public final ForgeConfigSpec.BooleanValue suggestBuildToolPlacement;
 
-    @Config.Comment("The minimum level a townhall has to have to allow teleportation to other colonies. [Default: 3]")
-    public int minThLevelToTeleport = 3;
-
-    @Config.Comment("Suggest build tool usage when trying to place a building without build tool. [Default: true]")
-    public boolean suggestBuildToolPlacement = true;
-
-    @Config.Comment("Food consumption modifier (Min: 1.0). [Default: 1.0]")
-    public double foodModifier = 1;
+    public final ForgeConfigSpec.DoubleValue foodModifier;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
     @Config.Comment("Time until a next teleport can be executed (in seconds). [Default: 120]")
-    public int teleportBuffer = 120;
+    public final ForgeConfigSpec.IntValue teleportBuffer = 120;
 
     @Config.Comment("Which level counts as op level on the server. [Default: 3]")
-    public int opLevelForServer = 3;
+    public final ForgeConfigSpec.IntValue opLevelForServer = 3;
 
     @Config.Comment("Sets the amount of hours until a colony will be deleted after not seeing it's mayor, set to zero to disable. [Default: 0]")
-    public int autoDeleteColoniesInHours = 0;
+    public final ForgeConfigSpec.IntValue autoDeleteColoniesInHours = 0;
 
     @Config.Comment("Sets weither or not Colony structures are destroyed automatically. [Default: true]")
-    public boolean autoDestroyColonyBlocks = true;
+    public final ForgeConfigSpec.BooleanValue autoDestroyColonyBlocks = true;
 
     @Config.Comment("Should the player be allowed to use the '/mc rtp' command? [Default: true]")
-    public boolean canPlayerUseRTPCommand = true;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseRTPCommand = true;
 
     @Config.Comment("Should the player be allowed to use the '/mc colony teleport' command? [Default: false]")
-    public boolean canPlayerUseColonyTPCommand = false;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseColonyTPCommand = false;
 
     @Config.Comment("Should the player be allowed to use the '/mc home' command? [Default: true]")
-    public boolean canPlayerUseHomeTPCommand = true;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseHomeTPCommand = true;
 
     @Config.Comment("Should the player be allowed to use the '/mc citizens info' command? [Default: true]")
-    public boolean canPlayerUseCitizenInfoCommand = true;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseCitizenInfoCommand = true;
 
     @Config.Comment("Should the player be allowed to use the '/mc citizens list' command? [Default: true]")
-    public boolean canPlayerUseListCitizensCommand = true;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseListCitizensCommand = true;
 
     @Config.Comment("Should the player be allowed to use the '/mc citizens respawn' command? [Default: true]")
-    public boolean canPlayerRespawnCitizensCommand = true;
+    public final ForgeConfigSpec.BooleanValue canPlayerRespawnCitizensCommand = true;
 
     @Config.Comment("Should the player be allowed to use the '/mc colony info' command? [Default: true]")
-    public boolean canPlayerUseShowColonyInfoCommand = true;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseShowColonyInfoCommand = true;
 
     @Config.Comment("Should the player be allowed to use the '/mc citizens kill' command? [Default: true]")
-    public boolean canPlayerUseKillCitizensCommand = true;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseKillCitizensCommand = true;
 
     @Config.Comment("Should the player be allowed to use the '/mc colony addOfficer' command? [Default: true]")
-    public boolean canPlayerUseAddOfficerCommand = true;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseAddOfficerCommand = true;
 
     @Config.Comment("Should the player be allowed to use the '/mc colony delete' command? [Default: true]")
-    public boolean canPlayerUseDeleteColonyCommand = true;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseDeleteColonyCommand = true;
 
     @Config.Comment("Should the player be allowed to use the '/mc colony refresh' command? [Default: false]")
-    public boolean canPlayerUseRefreshColonyCommand = false;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseRefreshColonyCommand = false;
 
     @Config.Comment("Should the player be allowed to use the '/mc backup' command? [Default: false]")
-    public boolean canPlayerUseBackupCommand = false;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseBackupCommand = false;
 
     @Config.Comment("Amount of attempts to find a save rtp. [Default: 4]")
-    public int numberOfAttemptsForSafeTP = 4;
+    public final ForgeConfigSpec.IntValue numberOfAttemptsForSafeTP = 4;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Claim settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
     @Config.Comment("Max distance a colony can claim a chunk from the center, 0 if disable maximum.  [Default: 0]")
-    public int workingRangeTownHall = 0;
+    public final ForgeConfigSpec.IntValue workingRangeTownHall = 0;
 
     @Config.Comment("Colony size (radius in chunks around central colony chunk). Only for the static mode. [Default: 8]")
-    public int workingRangeTownHallChunks = 8;
+    public final ForgeConfigSpec.IntValue workingRangeTownHallChunks = 8;
 
     @Config.Comment("The minimum distances between town halls for dynamic colony sizes (used as default initial claim too). [Default: 3]")
-    public int minTownHallPadding = 3;
+    public final ForgeConfigSpec.IntValue minTownHallPadding = 3;
 
     @Config.Comment("Padding between colonies  - deprecated, don't use.  [Default: 20]")
-    public int townHallPadding = 20;
+    public final ForgeConfigSpec.IntValue townHallPadding = 20;
 
     @Config.Comment("Padding between colonies in chunks. [Default: 1]")
-    public int townHallPaddingChunk = 1;
+    public final ForgeConfigSpec.IntValue townHallPaddingChunk = 1;
 
     @Config.Comment("Should the min/max distance from spawn also affect colony placement? [Default: false]")
-    public boolean restrictColonyPlacement = false;
+    public final ForgeConfigSpec.BooleanValue restrictColonyPlacement = false;
 
     @Config.Comment("Should the colony have a fixed radius or should it be dynamic. [Default: false]")
-    public boolean enableDynamicColonySizes = false;
+    public final ForgeConfigSpec.BooleanValue enableDynamicColonySizes = false;
 
     @Config.Comment("Max distance from world spawn. [Default: 8000]")
-    public int maxDistanceFromWorldSpawn = 8000;
+    public final ForgeConfigSpec.IntValue maxDistanceFromWorldSpawn = 8000;
 
     @Config.Comment("Min distance from world spawn. [Default: 512]")
-    public int minDistanceFromWorldSpawn = 512;
+    public final ForgeConfigSpec.IntValue minDistanceFromWorldSpawn = 512;
 
     @Config.Comment("Should players be allowed to build their colonies over existing villages? [Default: false]")
-    public boolean protectVillages = false;
+    public final ForgeConfigSpec.BooleanValue protectVillages = false;
 
     /*  ------------------------------------------------------------------------- *
      *  ------------------- ######## Combat Settings ######## ------------------- *
      *  ------------------------------------------------------------------------- */
 
     @Config.Comment("Whether or not to spawn barbarians. [Default: true]")
-    public boolean doBarbariansSpawn = true;
+    public final ForgeConfigSpec.BooleanValue doBarbariansSpawn = true;
 
     @Config.RangeInt(min = (MIN_BARBARIAN_DIFFICULTY), max = MAX_BARBARIAN_DIFFICULTY)
     @Config.Comment("The difficulty setting for barbarians. [Default: 5]")
-    public int barbarianHordeDifficulty = 5;
+    public final ForgeConfigSpec.IntValue barbarianHordeDifficulty = 5;
 
     @Config.RangeInt(min = (MIN_SPAWN_BARBARIAN_HORDE_SIZE), max = MAX_SPAWN_BARBARIAN_HORDE_SIZE)
     @Config.Comment("The spawn size of a barbarian horde. [Default: 5]")
-    public int spawnBarbarianSize = 5;
+    public final ForgeConfigSpec.IntValue spawnBarbarianSize = 5;
 
     @Config.RangeInt(min = (MIN_BARBARIAN_HORDE_SIZE), max = MAX_BARBARIAN_HORDE_SIZE)
     @Config.Comment("The max size of a barbarian horde. [Default: 20]")
-    public int maxBarbarianSize = 20;
+    public final ForgeConfigSpec.IntValue maxBarbarianSize = 20;
 
     @Config.Comment("Whether or not to barbarians can break, scale, bridge obstacles. [Default: true]")
-    public boolean doBarbariansBreakThroughWalls = true;
+    public final ForgeConfigSpec.BooleanValue doBarbariansBreakThroughWalls = true;
 
     @Config.Comment("The average amount of nights between raids. [Default: 3]")
-    public int averageNumberOfNightsBetweenRaids = 3;
+    public final ForgeConfigSpec.IntValue averageNumberOfNightsBetweenRaids = 3;
 
     @Config.Comment("The minimum number of nights between raids. [Default: 1]")
-    public int minimumNumberOfNightsBetweenRaids = 1;
+    public final ForgeConfigSpec.IntValue minimumNumberOfNightsBetweenRaids = 1;
 
     // TODO: change to true over time
     @Config.Comment("Should Mobs attack citizens? [Default: false")
-    public boolean mobAttackCitizens = false;
+    public final ForgeConfigSpec.BooleanValue mobAttackCitizens = false;
 
     @Config.Comment("Should Citizens call guards for help when attacked? default:true")
-    public boolean citizenCallForHelp = true;
+    public final ForgeConfigSpec.BooleanValue citizenCallForHelp = true;
 
     @Config.Comment("Should Guard Rangers benefit from Power/Smite/Bane of Arthropods enchants? [Default: true]")
-    public boolean rangerEnchants = true;
+    public final ForgeConfigSpec.BooleanValue rangerEnchants = true;
 
     @Config.Comment("Damage multiplier for Ranger Guards. [Default: 1.0]")
-    public double rangerDamageMult = 1.0;
+    public final ForgeConfigSpec.DoubleValue rangerDamageMult = 1.0;
 
     @Config.Comment("Damage multiplier for Knight Guards. [Default: 1.0]")
-    public double knightDamageMult = 1.0;
+    public final ForgeConfigSpec.DoubleValue knightDamageMult = 1.0;
 
     @Config.Comment("Health multiplier for all Guards. [Default: 1.0]")
-    public double guardHealthMult = 1.0;
+    public final ForgeConfigSpec.DoubleValue guardHealthMult = 1.0;
 
     @Config.Comment("Turn on Minecolonies pvp mode, attention (colonies can be destroyed and can be griefed under certain conditions). [Default: false]")
-    public boolean pvp_mode = false;
+    public final ForgeConfigSpec.BooleanValue pvp_mode = false;
 
     @Config.Comment("Days until the pirate ships despawn again. [Default: 3]")
-    public int daysUntilPirateshipsDespawn = 3;
+    public final ForgeConfigSpec.IntValue daysUntilPirateshipsDespawn = 3;
 
     @Config.Comment("Max Y level for Barbarians to spawn. [Default: 200]")
-    public int maxYForBarbarians = 200;
+    public final ForgeConfigSpec.IntValue maxYForBarbarians = 200;
 
     /*  ----------------------------------------------------------------------------- *
      *  ------------------- ######## Permission Settings ######## ------------------- *
      *  ----------------------------------------------------------------------------- */
 
-
     @Config.Comment("Should the colony protection be enabled? [Default: true]")
-    public boolean enableColonyProtection = true;
+    public final ForgeConfigSpec.BooleanValue enableColonyProtection = true;
 
     @Config.Comment("Independent from the colony protection, should explosions be turned off? [Default: true]")
-    public boolean turnOffExplosionsInColonies = true;
+    public final ForgeConfigSpec.BooleanValue turnOffExplosionsInColonies = true;
 
     @Config.Comment("Players who have special permission (Patreons for example)")
     public String[] specialPermGroup = new String[]
@@ -299,15 +240,15 @@ public class CommonConfiguration extends AbstractConfiguration
                                            "_Raycoms_"
                                          };
 
-    @Config.Comment("Blocks players should be able to interact with in any colony (Ex vending machines)")
-    public String[] freeToInteractBlocks  = new String[]
-                                              {
-                                                "block:dirt",
-                                                "0 0 0"
-                                              };
+    @Config.Comment("Blocks players should be able to final ForgeConfigSpec.IntValueeract with in any colony (Ex vending machines)")
+    public String[] freeToInteractBlocks = new String[]
+                                             {
+                                               "block:dirt",
+                                               "0 0 0"
+                                             };
 
     @Config.Comment("Seconds between permission messages. [Default: 30]")
-    public int secondsBetweenPermissionMessages = 30;
+    public final ForgeConfigSpec.IntValue secondsBetweenPermissionMessages = 30;
 
     /*  -------------------------------------------------------------------------------- *
      *  ------------------- ######## Compatibility Settings ######## ------------------- *
@@ -347,7 +288,7 @@ public class CommonConfiguration extends AbstractConfiguration
                                                  "minecraft:red_flower",
                                                  "minecraft:brown_mushroom",
                                                  "minecraft:red_mushroom",
-                                                 "minecraft:double_plant",
+                                                 "minecraft:final ForgeConfigSpec.DoubleValue_plant",
                                                  "minecraft:feather",
                                                  "food",
                                                  "seed",
@@ -381,12 +322,11 @@ public class CommonConfiguration extends AbstractConfiguration
                                             "minecraft:sand!minecraft:clay"
                                           };
 
-
     @Config.Comment("The different meshes which can be bought in the building with durability")
     public String[] sifterMeshes = new String[]
                                      {
                                        "minecraft:string,0",
-                                       "minecraft:flint,0.1",
+                                       "minecraft:flfinal ForgeConfigSpec.IntValue,0.1",
                                        "minecraft:iron_ingot,0.1",
                                        "minecraft:diamond,0.1"
                                      };
@@ -410,7 +350,7 @@ public class CommonConfiguration extends AbstractConfiguration
                                       "0,0,minecraft:sapling:2,1",
                                       "0,0,minecraft:sapling:3,1",
 
-                                      //Dirt with flint mesh
+                                      //Dirt with flfinal ForgeConfigSpec.IntValue mesh
                                       "0,1,minecraft:wheat_seeds,50",
                                       "0,1,minecraft:sapling:0,5",
                                       "0,1,minecraft:sapling:1,5",
@@ -451,7 +391,7 @@ public class CommonConfiguration extends AbstractConfiguration
                                       "1,0,minecraft:cactus,2.5",
                                       "1,0,minecraft:reeds,2.5",
 
-                                      //Sand with flint mesh
+                                      //Sand with flfinal ForgeConfigSpec.IntValue mesh
                                       "1,1,minecraft:cactus,5",
                                       "1,1,minecraft:reeds,5",
                                       "1,1,minecraft:gold_nugget,5",
@@ -470,13 +410,13 @@ public class CommonConfiguration extends AbstractConfiguration
 
                                       //Gravel with string mesh
                                       "2,0,minecraft:iron_nugget,5",
-                                      "2,0,minecraft:flint,5",
+                                      "2,0,minecraft:flfinal ForgeConfigSpec.IntValue,5",
                                       "2,0,minecraft:coal,5",
 
-                                      //Gravel with flint mesh
+                                      //Gravel with flfinal ForgeConfigSpec.IntValue mesh
                                       "2,1,minecraft:redstone,10",
                                       "2,1,minecraft:iron_nugget,10",
-                                      "2,1,minecraft:flint,10",
+                                      "2,1,minecraft:flfinal ForgeConfigSpec.IntValue,10",
                                       "2,1,minecraft:coal,10",
 
                                       //Gravel with iron mesh
@@ -502,7 +442,7 @@ public class CommonConfiguration extends AbstractConfiguration
                                       "3,0,minecraft:nether_wart,5",
                                       "3,0,minecraft:quartz,5",
 
-                                      //Soulsand with flint mesh
+                                      //Soulsand with flfinal ForgeConfigSpec.IntValue mesh
                                       "3,1,minecraft:nether_wart,10",
                                       "3,1,minecraft:quartz,10",
                                       "3,1,minecraft:glowstone_dust,5",
@@ -524,48 +464,48 @@ public class CommonConfiguration extends AbstractConfiguration
                                     };
 
     @Config.Comment("Harvest trunk-size for dynamic trees:1-8. [Default: 5]")
-    public int dynamicTreeHarvestSize = 5;
+    public final ForgeConfigSpec.IntValue dynamicTreeHarvestSize = 5;
 
     /*  ------------------------------------------------------------------------------ *
      *  ------------------- ######## Pathfinding Settings ######## ------------------- *
      *  ------------------------------------------------------------------------------ */
 
     @Config.Comment("Draw pathfinding paths (might be laggy). [Default: false]")
-    public boolean pathfindingDebugDraw = false;
+    public final ForgeConfigSpec.BooleanValue pathfindingDebugDraw = false;
 
     @Config.Comment("Verbosity of pathfinding. [Default: 0]")
-    public int pathfindingDebugVerbosity = 0;
+    public final ForgeConfigSpec.IntValue pathfindingDebugVerbosity = 0;
 
     @Config.Comment("Amount of additional threads to be used for pathfinding. [Default: 2]")
-    public int pathfindingMaxThreadCount = 2;
+    public final ForgeConfigSpec.IntValue pathfindingMaxThreadCount = 2;
 
     @Config.Comment("Max amount of Nodes(positions) to map during pathfinding. Lowering increases performance, but might lead to pathing glitches. [Default: 5000]")
-    public int pathfindingMaxNodes = 5000;
+    public final ForgeConfigSpec.IntValue pathfindingMaxNodes = 5000;
 
     /*  --------------------------------------------------------------------------------- *
      *  ------------------- ######## Request System Settings ######## ------------------- *
      *  --------------------------------------------------------------------------------- */
 
-    @Config.Comment("Should the request system print out debug information? Useful in case of malfunctioning of set system. [Default: false]")
-    public boolean enableDebugLogging = false;
+    @Config.Comment("Should the request system prfinal ForgeConfigSpec.IntValue out debug information? Useful in case of malfunctioning of set system. [Default: false]")
+    public final ForgeConfigSpec.BooleanValue enableDebugLogging = false;
 
     @Config.Comment("The maximal amount of tries that the request system will perform for retryable requests. Higher increases server load. [Default: 3]")
-    public int maximalRetries = 3;
+    public final ForgeConfigSpec.IntValue maximalRetries = 3;
 
     @Config.Comment("The amount of ticks between retries of the request system for retryable requests. Lower increases server load. [Default: 1200]")
-    public int delayBetweenRetries = 1200;
+    public final ForgeConfigSpec.IntValue delayBetweenRetries = 1200;
 
     @Config.Comment("The maximal amount of buildings the Delivery Man should try to gather before attempting a drop off at the warehouse. [Default: 6]")
-    public int maximalBuildingsToGather = 6;
+    public final ForgeConfigSpec.IntValue maximalBuildingsToGather = 6;
 
     @Config.Comment("The minimal amount of buildings the Delivery Man should try to gather before attempting a drop off at the warehouse. [Default: 3]")
-    public int minimalBuildingsToGather = 3;
+    public final ForgeConfigSpec.IntValue minimalBuildingsToGather = 3;
 
     @Config.Comment("Should the request system creatively resolve (if possible) when the player is required to resolve a request. [Default: false]")
-    public boolean creativeResolve = false;
+    public final ForgeConfigSpec.BooleanValue creativeResolve = false;
 
     @Config.Comment("Should the player be allowed to use the '/mc colony rs reset' command? [Default: false]")
-    public boolean canPlayerUseResetCommand = false;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseResetCommand = false;
 
     /**
      * Builds common configuration.
@@ -576,8 +516,41 @@ public class CommonConfiguration extends AbstractConfiguration
     {
         createCategory(builder, "gameplay");
 
+        initialCitizenAmount = defineInteger(builder, "maxOperationsPerTick", 4, 1, 10);
+        builderPlaceConstructionTape = defineBoolean(builder, "ignoreSchematicsFromJar", true);
+        playerGetsGuidebookOnFirstJoin = defineBoolean(builder, "ignoreSchematicsFromJar", true);
+        supplyChests = defineBoolean(builder, "ignoreSchematicsFromJar", true);
+        allowInfiniteSupplyChests = defineBoolean(builder, "ignoreSchematicsFromJar", false);
+        allowInfiniteColonies = defineBoolean(builder, "ignoreSchematicsFromJar", false);
+        allowOtherDimColonies = defineBoolean(builder, "ignoreSchematicsFromJar", false);
+        citizenRespawnInterval = defineInteger(builder, "maxOperationsPerTick", 60, CITIZEN_RESPAWN_INTERVAL_MIN, CITIZEN_RESPAWN_INTERVAL_MAX);
+        maxCitizenPerColony = defineInteger(builder, "maxOperationsPerTick", 50, 4, 500);
+        builderInfiniteResources = defineBoolean(builder, "ignoreSchematicsFromJar", false);
+        limitToOneWareHousePerColony = defineBoolean(builder, "ignoreSchematicsFromJar", true);
+        builderBuildBlockDelay = defineInteger(builder, "maxOperationsPerTick", 15, 1, 500);
+        blockMiningDelayModifier = defineInteger(builder, "maxOperationsPerTick", 500, 1, 10000);
+        maxBlocksCheckedByBuilder = defineInteger(builder, "maxOperationsPerTick", 1000, 1000, 100000);
+        chatFrequency = defineInteger(builder, "maxOperationsPerTick", 30, 1, 100);
+        enableInDevelopmentFeatures = defineBoolean(builder, "ignoreSchematicsFromJar", false);
+        alwaysRenderNameTag = defineBoolean(builder, "ignoreSchematicsFromJar", true);
+        growthModifier = defineDouble(builder, "maxOperationsPerTick", 1, 1, 100);
+        workersAlwaysWorkInRain = defineBoolean(builder, "ignoreSchematicsFromJar", false);
+        sendEnteringLeavingMessages = defineBoolean(builder, "ignoreSchematicsFromJar", true);
+        allowPlayerSchematics = defineBoolean(builder, "ignoreSchematicsFromJar", false);
+        allowGlobalNameChanges = defineInteger(builder, "maxOperationsPerTick", 1, -1, 1);
+        holidayFeatures = defineBoolean(builder, "ignoreSchematicsFromJar", true);
+        updateRate = defineInteger(builder, "maxOperationsPerTick", 1, 0, 100);
+        dirtFromCompost = defineInteger(builder, "maxOperationsPerTick", 1, 0, 100);
+        luckyBlockChance = defineInteger(builder, "maxOperationsPerTick", 1, 0, 100);
+        fixOrphanedChunks = defineBoolean(builder, "ignoreSchematicsFromJar", false);
+        restrictBuilderUnderground = defineBoolean(builder, "ignoreSchematicsFromJar", true);
+        fisherSpongeChance = defineDouble(builder, "maxCachedChanges", 0.1, 0, 100);
+        minThLevelToTeleport = defineInteger(builder, "maxOperationsPerTick", 3, 0, 5);
+        suggestBuildToolPlacement = defineBoolean(builder, "ignoreSchematicsFromJar", true);
+        foodModifier = defineDouble(builder, "maxCachedChanges", 1.0, 0, 100);
+        
 
-        swapToCategory(builder, "claim");
+        swapToCategory(builder, "commands");
 
         swapToCategory(builder, "combat");
 
@@ -589,13 +562,6 @@ public class CommonConfiguration extends AbstractConfiguration
 
         swapToCategory(builder, "requestSystem");
 
-        finishCategory(builder);
-
-        ignoreSchematicsFromJar = defineBoolean(builder, "ignoreSchematicsFromJar", false);
-        allowPlayerSchematics = defineBoolean(builder, "allowPlayerSchematics", true);
-        maxOperationsPerTick = defineInteger(builder, "maxOperationsPerTick", 1000, 0, 100000);
-        maxCachedChanges = defineInteger(builder, "maxCachedChanges", 10, 0, 100);
-        maxCachedSchematics = defineInteger(builder, "maxCachedSchematics", 100, 0, 100000);
-        maxBlocksChecked = defineInteger(builder, "maxBlocksChecked", 1000, 0, 100000);
+        finishcategory(builder);
     }
 }

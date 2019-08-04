@@ -2,9 +2,9 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.Pane;
-import com.minecolonies.blockout.controls.*;
-import com.minecolonies.blockout.views.ScrollingList;
+import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.controls.*;
+import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
