@@ -215,13 +215,13 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         @NotNull final ListNBT tasksTagList = new ListNBT();
         for (@NotNull final Map.Entry<ProductState, List<BakingProduct>> entry : tasks.entrySet())
         {
-            if (!entry.get().isEmpty())
+            if (!entry.getValue().isEmpty())
             {
                 @NotNull final CompoundNBT taskCompound = new CompoundNBT();
                 taskCompound.putInt(TAG_STATE, entry.getKey().ordinal());
 
                 @NotNull final ListNBT productsTaskList = new ListNBT();
-                for (@NotNull final BakingProduct bakingProduct : entry.get())
+                for (@NotNull final BakingProduct bakingProduct : entry.getValue())
                 {
                     @NotNull final CompoundNBT productCompound = new CompoundNBT();
                     bakingProduct.write(productCompound);
@@ -238,9 +238,9 @@ public class BuildingBaker extends AbstractFilterableListBuilding
             @NotNull final CompoundNBT furnaceCompound = new CompoundNBT();
             BlockPosUtil.write(furnaceCompound, TAG_FURNACE_POS, entry.getKey());
 
-            if (entry.get() != null)
+            if (entry.getValue() != null)
             {
-                entry.get().write(furnaceCompound);
+                entry.getValue().write(furnaceCompound);
             }
             furnacesTagList.add(furnaceCompound);
         }
@@ -308,7 +308,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
                 continue;
             }
 
-            final BakingProduct bakingProduct = entry.get();
+            final BakingProduct bakingProduct = entry.getValue();
             if (bakingProduct != null && bakingProduct.getState() == ProductState.BAKING)
             {
                 bakingProduct.increaseBakingProgress();

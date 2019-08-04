@@ -367,7 +367,7 @@ public class CompatibilityManager implements ICompatibilityManager
           leavesToSaplingMap.entrySet()
             .stream()
             .filter(entry -> entry.getKey() != null)
-            .map(entry -> writeLeafSaplingEntryToNBT(entry.getKey().getState(), entry.get()))
+            .map(entry -> writeLeafSaplingEntryToNBT(entry.getKey().getState(), entry.getValue()))
             .collect(NBTUtils.toListNBT());
         compound.put(TAG_SAP_LEAF, saplingsLeavesTagList);
     }

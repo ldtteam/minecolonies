@@ -694,7 +694,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 final String job = entry.getKey();
                 final String labelJobKey = job.endsWith("man") ? job.replace("man", "men") : (job + "s");
                 final String numberOfWorkers = LanguageHandler.format(
-                    "com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.get());
+                    "com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.getValue());
                 label.setLabelText(numberOfWorkers);
                 jobCountMap.remove(entry.getKey());
             }

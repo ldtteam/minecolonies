@@ -577,7 +577,7 @@ public class Colony implements IColony
         {
             @NotNull final CompoundNBT wayPointCompound = new CompoundNBT();
             BlockPosUtil.write(wayPointCompound, TAG_WAYPOINT, entry.getKey());
-            NBTUtil.writeBlockState(wayPointCompound, entry.get());
+            NBTUtil.writeBlockState(wayPointCompound, entry.getValue());
 
             wayPointTagList.add(wayPointCompound);
         }

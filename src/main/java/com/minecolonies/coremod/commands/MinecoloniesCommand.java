@@ -80,7 +80,7 @@ public class MinecoloniesCommand extends AbstractSplitCommand
         final Map<UUID, Instant> mapCopy = new HashMap<>(commandExecutions);
         for (final Map.Entry<UUID, Instant> entry : mapCopy.entrySet())
         {
-            if (Instant.now().isAfter(entry.get()) && (Instant.now().getEpochSecond() - entry.get().getEpochSecond()) > MineColonies.getConfig().getCommon().gameplay.teleportBuffer)
+            if (Instant.now().isAfter(entry.getValue()) && (Instant.now().getEpochSecond() - entry.getValue().getEpochSecond()) > MineColonies.getConfig().getCommon().gameplay.teleportBuffer)
             {
                 commandExecutions.remove(entry.getKey());
             }
