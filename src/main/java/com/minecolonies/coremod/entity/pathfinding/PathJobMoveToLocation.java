@@ -48,7 +48,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
     @Override
     protected Path search()
     {
-        if (Configurations.pathfinding.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
+        if (MineColonies.getConfig().getCommon().pathfinding.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
         {
             Log.getLogger().info(String.format("Pathfinding from [%d,%d,%d] to [%d,%d,%d]",
               start.getX(), start.getY(), start.getZ(), destination.getX(), destination.getY(), destination.getZ()));

@@ -28,12 +28,12 @@ public class ConfigCondition implements IConditionFactory
     {
         final String value = JsonUtils.getString(json , "key");
 
-        if(!Configurations.gameplay.enableInDevelopmentFeatures && IN_DEV.equalsIgnoreCase(value))
+        if(!MineColonies.getConfig().getCommon().gameplay.enableInDevelopmentFeatures && IN_DEV.equalsIgnoreCase(value))
         {
             return () -> false;
         }
 
-        if(!Configurations.gameplay.supplyChests && SUPPLIES.equalsIgnoreCase(value))
+        if(!MineColonies.getConfig().getCommon().gameplay.supplyChests && SUPPLIES.equalsIgnoreCase(value))
         {
             return () -> false;
         }

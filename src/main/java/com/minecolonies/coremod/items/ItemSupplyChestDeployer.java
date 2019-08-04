@@ -77,7 +77,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     {
         if (worldIn.isRemote)
         {
-            if(!Configurations.gameplay.allowOtherDimColonies && worldIn.world.getDimension().getType().getId() != 0)
+            if(!MineColonies.getConfig().getCommon().gameplay.allowOtherDimColonies && worldIn.world.getDimension().getType().getId() != 0)
             {
                 return ActionResultType.FAIL;
             }
@@ -94,7 +94,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         final ItemStack stack = playerIn.getHeldItem(hand);
         if (worldIn.isRemote)
         {
-            if(!Configurations.gameplay.allowOtherDimColonies && worldIn.world.getDimension().getType().getId() != 0)
+            if(!MineColonies.getConfig().getCommon().gameplay.allowOtherDimColonies && worldIn.world.getDimension().getType().getId() != 0)
             {
                 LanguageHandler.sendPlayerMessage(playerIn, CANT_PLACE_COLONY_IN_OTHER_DIM);
                 return new ActionResult<>(ActionResultType.FAIL, stack);

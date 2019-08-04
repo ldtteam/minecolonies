@@ -88,7 +88,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         //Blast resistance for creepers etc. makes them explosion proof
         setResistance(RESISTANCE);
         //Hardness of 10 takes a long time to mine to not loose progress
-        setHardness(Configurations.gameplay.pvp_mode ? HARDNESS * HARDNESS_PVP_FACTOR : HARDNESS);
+        setHardness(MineColonies.getConfig().getCommon().gameplay.pvp_mode ? HARDNESS * HARDNESS_PVP_FACTOR : HARDNESS);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
     }
 

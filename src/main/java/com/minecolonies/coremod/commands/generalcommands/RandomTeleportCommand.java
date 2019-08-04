@@ -33,10 +33,10 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.R
 public class RandomTeleportCommand extends AbstractSingleCommand implements IActionCommand
 {
     public static final  String DESC             = "rtp";
-    private static final int    ATTEMPTS         = Configurations.gameplay.numberOfAttemptsForSafeTP;
-    private static final int    UPPER_BOUNDS     = Configurations.gameplay.maxDistanceFromWorldSpawn * 2;
-    private static final int    LOWER_BOUNDS     = Configurations.gameplay.maxDistanceFromWorldSpawn;
-    private static final int    SPAWN_NO_TP      = Configurations.gameplay.minDistanceFromWorldSpawn;
+    private static final int    ATTEMPTS         = MineColonies.getConfig().getCommon().gameplay.numberOfAttemptsForSafeTP;
+    private static final int    UPPER_BOUNDS     = MineColonies.getConfig().getCommon().gameplay.maxDistanceFromWorldSpawn * 2;
+    private static final int    LOWER_BOUNDS     = MineColonies.getConfig().getCommon().gameplay.maxDistanceFromWorldSpawn;
+    private static final int    SPAWN_NO_TP      = MineColonies.getConfig().getCommon().gameplay.minDistanceFromWorldSpawn;
     private static final int    STARTING_Y       = 250;
     private static final double SAFETY_DROP      = 6;
     private static final int    FALL_DISTANCE    = 5;
@@ -152,7 +152,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
 
             final IColony colony = IColonyManager.getInstance().getClosestColony(sender.getEntityWorld(), tpPos);
             /* Check for a close by colony*/
-            if (colony != null && BlockPosUtil.getDistance2D(colony.getCenter(), tpPos) < Configurations.gameplay.workingRangeTownHall * 2 + Configurations.gameplay.townHallPadding)
+            if (colony != null && BlockPosUtil.getDistance2D(colony.getCenter(), tpPos) < MineColonies.getConfig().getCommon().gameplay.workingRangeTownHall * 2 + MineColonies.getConfig().getCommon().gameplay.townHallPadding)
             {
                 continue;
             }
@@ -183,7 +183,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
                 else
                 {
                     sender.sendMessage(
-                            new StringTextComponent("Please wait at least " + Configurations.gameplay.teleportBuffer + " seconds to teleport again"));
+                            new StringTextComponent("Please wait at least " + MineColonies.getConfig().getCommon().gameplay.teleportBuffer + " seconds to teleport again"));
                 }
                 return;
             }

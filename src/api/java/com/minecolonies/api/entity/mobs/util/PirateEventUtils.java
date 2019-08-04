@@ -128,7 +128,7 @@ public final class PirateEventUtils
         world.setBlockState(location, Blocks.MOB_SPAWNER.getDefaultState());
         final TileEntityMobSpawner spawner = new TileEntityMobSpawner();
 
-        spawner.getSpawnerBaseLogic().activatingRangeFromPlayer = Configurations.gameplay.workingRangeTownHallChunks / SPAWNER_DISTANCE_DIVIDER * BLOCKS_PER_CHUNK;
+        spawner.getSpawnerBaseLogic().activatingRangeFromPlayer = MineColonies.getConfig().getCommon().gameplay.workingRangeTownHallChunks / SPAWNER_DISTANCE_DIVIDER * BLOCKS_PER_CHUNK;
         spawner.getSpawnerBaseLogic().setEntityId(mob);
 
         world.setTileEntity(location, spawner);

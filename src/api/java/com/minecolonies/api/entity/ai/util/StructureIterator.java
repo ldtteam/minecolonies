@@ -394,7 +394,7 @@ public class StructureIterator
     @NotNull
     private Result advanceBlocks(@NotNull final Supplier<Boolean> moveOneBlock, @NotNull final Function<StructureBlock, Boolean> checkIfApplies)
     {
-        for (int i = 0; i < Configurations.gameplay.maxBlocksCheckedByBuilder; i++)
+        for (int i = 0; i < MineColonies.getConfig().getCommon().gameplay.maxBlocksCheckedByBuilder; i++)
         {
             if (!moveOneBlock.get())
             {

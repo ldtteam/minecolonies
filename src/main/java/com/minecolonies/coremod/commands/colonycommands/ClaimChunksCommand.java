@@ -48,13 +48,13 @@ public class ClaimChunksCommand implements IActionCommand
             final int colonyId = actionMenuState.getIntForArgument("colony");
             final int dimId = actionMenuState.getIntForArgument("dimension");
 
-            final int range = actionMenuState.getIntValueForArgument("range", Configurations.gameplay.workingRangeTownHallChunks);
+            final int range = actionMenuState.getIntValueForArgument("range", MineColonies.getConfig().getCommon().gameplay.workingRangeTownHallChunks);
             final Boolean add = actionMenuState.getBooleanForArgument("add");
 
             final World senderWorld = sender.getEntityWorld();
             final BlockPos senderPos = sender.getPosition();
 
-            if (range > Configurations.gameplay.workingRangeTownHallChunks * 2)
+            if (range > MineColonies.getConfig().getCommon().gameplay.workingRangeTownHallChunks * 2)
             {
                 sender.sendMessage(new StringTextComponent(TOO_MANY_CHUNKS));
                 return;

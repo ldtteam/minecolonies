@@ -178,7 +178,7 @@ public class EventHandler
         if (entity instanceof ServerPlayerEntity)
         {
             final World world = entity.getEntityWorld();
-            Network.getNetwork().sendTo(new UpdateChunkRangeCapabilityMessage(world, event.getNewChunkX(), event.getNewChunkZ(), Configurations.gameplay.workingRangeTownHallChunks), (ServerPlayerEntity) event.getEntity());
+            Network.getNetwork().sendTo(new UpdateChunkRangeCapabilityMessage(world, event.getNewChunkX(), event.getNewChunkZ(), MineColonies.getConfig().getCommon().gameplay.workingRangeTownHallChunks), (ServerPlayerEntity) event.getEntity());
 
             final Chunk newChunk = world.getChunk(event.getNewChunkX(), event.getNewChunkZ());
             ChunkDataHelper.loadChunk(newChunk, entity.world);
@@ -242,7 +242,7 @@ public class EventHandler
     @SubscribeEvent
     public void onEvent(final EntityJoinWorldEvent event)
     {
-        if (Configurations.gameplay.mobAttackCitizens && (event.getEntity() instanceof EntityMob))
+        if (MineColonies.getConfig().getCommon().gameplay.mobAttackCitizens && (event.getEntity() instanceof EntityMob))
         {
             ((EntityMob) event.getEntity()).targetTasks.addTask(6, new EntityAINearestAttackableTarget((EntityMob) event.getEntity(), EntityCitizen.class, true));
             ((EntityMob) event.getEntity()).targetTasks.addTask(7, new EntityAINearestAttackableTarget((EntityMob) event.getEntity(), EntityMercenary.class, true));
@@ -257,7 +257,7 @@ public class EventHandler
     @SubscribeEvent
     public void onEnteringChunkEntity(@NotNull final EntityEvent.EnteringChunk event)
     {
-        if (Configurations.gameplay.pvp_mode && event.getEntity() instanceof EntityCitizen)
+        if (MineColonies.getConfig().getCommon().gameplay.pvp_mode && event.getEntity() instanceof EntityCitizen)
         {
             if (event.getEntity().world != null && !event.getEntity().world.isBlockLoaded(new BlockPos(event.getNewChunkX() * BLOCKS_PER_CHUNK,
               70,
@@ -412,7 +412,7 @@ public class EventHandler
                 return;
             }
 
-            if (Configurations.gameplay.suggestBuildToolPlacement)
+            if (MineColonies.getConfig().getCommon().gameplay.suggestBuildToolPlacement)
             {
                 final ItemStack stack = event.getPlayer().getHeldItem(event.getHand());
                 if (!stack.isEmpty() && !world.isRemote)
@@ -467,7 +467,7 @@ public class EventHandler
         {
             if (event.getWorld().isRemote)
             {
-                event.setCanceled(Configurations.gameplay.suggestBuildToolPlacement);
+                event.setCanceled(MineColonies.getConfig().getCommon().gameplay.suggestBuildToolPlacement);
             }
             else
             {
@@ -488,7 +488,7 @@ public class EventHandler
      */
     public static boolean onBlockHutPlaced(@NotNull final World world, @NotNull final PlayerEntity player, final Block block, final BlockPos pos)
     {
-        if (!Configurations.gameplay.allowOtherDimColonies && world.world.getDimension().getType().getId() != 0)
+        if (!MineColonies.getConfig().getCommon().gameplay.allowOtherDimColonies && world.world.getDimension().getType().getId() != 0)
         {
             LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_IN_OTHER_DIM);
             return false;
@@ -516,22 +516,22 @@ public class EventHandler
             return canOwnerPlaceTownHallHere(world, player, colony, pos);
         }
 
-        if (Configurations.gameplay.restrictColonyPlacement)
+        if (MineColonies.getConfig().getCommon().gameplay.restrictColonyPlacement)
         {
             final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, world.getSpawnPoint()));
-            if (spawnDistance < Configurations.gameplay.minDistanceFromWorldSpawn)
+            if (spawnDistance < MineColonies.getConfig().getCommon().gameplay.minDistanceFromWorldSpawn)
             {
                 if (!world.isRemote)
                 {
-                    LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, Configurations.gameplay.minDistanceFromWorldSpawn);
+                    LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, MineColonies.getConfig().getCommon().gameplay.minDistanceFromWorldSpawn);
                 }
                 return false;
             }
-            else if (spawnDistance > Configurations.gameplay.maxDistanceFromWorldSpawn)
+            else if (spawnDistance > MineColonies.getConfig().getCommon().gameplay.maxDistanceFromWorldSpawn)
             {
                 if (!world.isRemote)
                 {
-                    LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, Configurations.gameplay.maxDistanceFromWorldSpawn);
+                    LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, MineColonies.getConfig().getCommon().gameplay.maxDistanceFromWorldSpawn);
                 }
                 return false;
             }
@@ -552,7 +552,7 @@ public class EventHandler
         if (onBlockHutPlaced(world, player, pos))
         {
             final IColony colony = IColonyManager.getInstance().getClosestIColony(world, pos);
-            if (colony != null && (!Configurations.gameplay.limitToOneWareHousePerColony || !colony.hasWarehouse()))
+            if (colony != null && (!MineColonies.getConfig().getCommon().gameplay.limitToOneWareHousePerColony || !colony.hasWarehouse()))
             {
                 return true;
             }
@@ -602,7 +602,7 @@ public class EventHandler
             return false;
         }
 
-        if (!colony.isCoordInColony(world, pos) && (!Configurations.gameplay.enableDynamicColonySizes || colony.hasTownHall()))
+        if (!colony.isCoordInColony(world, pos) && (!MineColonies.getConfig().getCommon().gameplay.enableDynamicColonySizes || colony.hasTownHall()))
         {
             if (!world.isRemote)
             {
@@ -612,7 +612,7 @@ public class EventHandler
                                                           String.format(DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED,
                                                             colony.getID(), true
                                                           ))));
-                if (Configurations.gameplay.allowInfiniteColonies)
+                if (MineColonies.getConfig().getCommon().gameplay.allowInfiniteColonies)
                 {
                     final ITextComponent abandonButton = new TextComponentTranslation("tile.blockHutTownHall.abandonMessageLink")
                                                            .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD)
@@ -685,8 +685,8 @@ public class EventHandler
 
 
         if (!world.isRemote
-              && Configurations.gameplay.protectVillages
-                  && world.getVillageCollection().getNearestVillage(pos, Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK) != null)
+              && MineColonies.getConfig().getCommon().gameplay.protectVillages
+                  && world.getVillageCollection().getNearestVillage(pos, MineColonies.getConfig().getCommon().gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK) != null)
         {
                 Log.getLogger().warn("Village close by!");
                 LanguageHandler.sendPlayerMessage(player,

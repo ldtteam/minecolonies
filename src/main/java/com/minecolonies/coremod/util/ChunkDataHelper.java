@@ -34,7 +34,7 @@ public final class ChunkDataHelper
     /**
      * If colony is farther away from a capability then this times the default colony distance it will delete the capability.
      */
-    private static final int DISTANCE_TO_DELETE = Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK * 2 * 5;
+    private static final int DISTANCE_TO_DELETE = MineColonies.getConfig().getCommon().gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK * 2 * 5;
 
     /**
      * Private constructor to hide implicit one.
@@ -76,7 +76,7 @@ public final class ChunkDataHelper
             }
             else
             {
-                if (Configurations.gameplay.fixOrphanedChunks)
+                if (MineColonies.getConfig().getCommon().gameplay.fixOrphanedChunks)
                 {
                     final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null);
                     if (closeCap != null)
@@ -171,8 +171,8 @@ public final class ChunkDataHelper
      */
     public static void claimColonyChunks(final World world, final boolean add, final int id, final BlockPos center, final int dimension)
     {
-        final int range = Configurations.gameplay.workingRangeTownHallChunks;
-        final int buffer = Configurations.gameplay.townHallPaddingChunk;
+        final int range = MineColonies.getConfig().getCommon().gameplay.workingRangeTownHallChunks;
+        final int buffer = MineColonies.getConfig().getCommon().gameplay.townHallPaddingChunk;
 
         claimChunksInRange(id, dimension, add, center, range, buffer, world);
     }
@@ -286,7 +286,7 @@ public final class ChunkDataHelper
             for (int j = chunkZ - range; j <= chunkZ + range; j++)
             {
                 final BlockPos pos = new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK);
-                if (Configurations.gameplay.workingRangeTownHall != 0 && pos.distanceSq(colony.getCenter()) > Math.pow(Configurations.gameplay.workingRangeTownHall, 2))
+                if (MineColonies.getConfig().getCommon().gameplay.workingRangeTownHall != 0 && pos.distanceSq(colony.getCenter()) > Math.pow(MineColonies.getConfig().getCommon().gameplay.workingRangeTownHall, 2))
                 {
                     continue;
                 }

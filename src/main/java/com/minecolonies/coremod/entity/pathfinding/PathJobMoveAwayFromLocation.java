@@ -110,7 +110,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     @Override
     protected Path search()
     {
-        if (Configurations.pathfinding.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
+        if (MineColonies.getConfig().getCommon().pathfinding.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
         {
             Log.getLogger().info(String.format("Pathfinding from [%d,%d,%d] away from [%d,%d,%d]",
               start.getX(), start.getY(), start.getZ(), avoid.getX(), avoid.getY(), avoid.getZ()));

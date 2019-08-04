@@ -465,7 +465,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         {
             this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("fish");
             playCaughtFishSound();
-            if (getOwnBuilding().getBuildingLevel() > LEVEL_FOR_SPONGE && random.nextInt(ONE_HUNDRED_PERCENT) < Configurations.gameplay.fisherSpongeChance)
+            if (getOwnBuilding().getBuildingLevel() > LEVEL_FOR_SPONGE && random.nextInt(ONE_HUNDRED_PERCENT) < MineColonies.getConfig().getCommon().gameplay.fisherSpongeChance)
             {
                 InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(Blocks.SPONGE));
             }

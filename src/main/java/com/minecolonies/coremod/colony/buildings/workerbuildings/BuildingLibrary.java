@@ -88,7 +88,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
     {
         final List<StudyItem> studyItemList = new ArrayList<>();
 
-        for (final String entry : Configurations.gameplay.configListStudyItems)
+        for (final String entry : MineColonies.getConfig().getCommon().gameplay.configListStudyItems)
         {
 
             try

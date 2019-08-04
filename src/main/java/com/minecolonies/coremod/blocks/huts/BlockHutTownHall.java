@@ -33,7 +33,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     public BlockHutTownHall()
     {
         super();
-        if (Configurations.gameplay.pvp_mode)
+        if (MineColonies.getConfig().getCommon().gameplay.pvp_mode)
         {
             setHardness(PVP_MODE_HARDNESS);
         }
@@ -75,7 +75,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
 
             if (colony == null || !IColonyManager.getInstance().isTooCloseToColony(worldIn, pos))
             {
-                if (Configurations.gameplay.enableDynamicColonySizes)
+                if (MineColonies.getConfig().getCommon().gameplay.enableDynamicColonySizes)
                 {
                     IColony ownedColony = IColonyManager.getInstance().getIColonyByOwner(worldIn, (PlayerEntity) placer);
 

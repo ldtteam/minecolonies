@@ -174,7 +174,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void onPlacement()
     {
-        if (Configurations.gameplay.enableDynamicColonySizes)
+        if (MineColonies.getConfig().getCommon().gameplay.enableDynamicColonySizes)
         {
             ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), getPosition(), colony.getDimension(), getClaimRadius(getBuildingLevel()));
         }
@@ -245,7 +245,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             world.updateComparatorOutputLevel(this.getPosition(), block);
         }
 
-        if (Configurations.gameplay.enableDynamicColonySizes)
+        if (MineColonies.getConfig().getCommon().gameplay.enableDynamicColonySizes)
         {
             ChunkDataHelper.claimColonyChunks(world, false, colony.getID(), this.getID(), colony.getDimension(), getClaimRadius(getBuildingLevel()));
         }
@@ -611,7 +611,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
-        if (Configurations.gameplay.enableDynamicColonySizes)
+        if (MineColonies.getConfig().getCommon().gameplay.enableDynamicColonySizes)
         {
             ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), this.getID(), colony.getDimension(), this.getClaimRadius(newLevel));
         }

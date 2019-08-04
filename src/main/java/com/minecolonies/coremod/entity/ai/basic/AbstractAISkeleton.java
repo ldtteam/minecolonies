@@ -72,7 +72,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
         stateMachine = new TickRateStateMachine(AIWorkerState.INIT, this::onException);
 
         // Start at a random tickcounter to spread AI updates over all ticks
-        tickCounter = new Random().nextInt(Configurations.gameplay.updateRate) + 1;
+        tickCounter = new Random().nextInt(MineColonies.getConfig().getCommon().gameplay.updateRate) + 1;
     }
 
     /**
@@ -141,7 +141,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
     @Override
     public final void updateTask()
     {
-        if (tickCounter < Configurations.gameplay.updateRate)
+        if (tickCounter < MineColonies.getConfig().getCommon().gameplay.updateRate)
         {
             tickCounter++;
         }

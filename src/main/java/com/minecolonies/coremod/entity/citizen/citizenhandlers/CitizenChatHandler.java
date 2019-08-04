@@ -108,7 +108,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
         //Only check if there are messages and once a second
         if (statusMessages.size() > 0 && citizen.ticksExisted % TICKS_20 == 0)
         {
-            statusMessages.entrySet().removeIf(stringIntegerEntry -> citizen.ticksExisted - stringIntegerEntry.getValue() > TICKS_20 * Configurations.gameplay.chatFrequency);
+            statusMessages.entrySet().removeIf(stringIntegerEntry -> citizen.ticksExisted - stringIntegerEntry.getValue() > TICKS_20 * MineColonies.getConfig().getCommon().gameplay.chatFrequency);
         }
     }
 

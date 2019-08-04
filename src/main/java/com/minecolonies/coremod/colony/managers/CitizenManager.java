@@ -321,7 +321,7 @@ public class CitizenManager implements ICitizenManager
     @Override
     public int getMaxCitizens()
     {
-        return Math.min(maxCitizens, Configurations.gameplay.maxCitizenPerColony);
+        return Math.min(maxCitizens, MineColonies.getConfig().getCommon().gameplay.maxCitizenPerColony);
     }
 
     /**
@@ -442,9 +442,9 @@ public class CitizenManager implements ICitizenManager
         }
 
         //  Spawn initial Citizens
-        if (colony.hasTownHall() && getCitizens().size() < Configurations.gameplay.initialCitizenAmount)
+        if (colony.hasTownHall() && getCitizens().size() < MineColonies.getConfig().getCommon().gameplay.initialCitizenAmount)
         {
-            int respawnInterval = Configurations.gameplay.citizenRespawnInterval * TICKS_SECOND;
+            int respawnInterval = MineColonies.getConfig().getCommon().gameplay.citizenRespawnInterval * TICKS_SECOND;
             respawnInterval -= (SECONDS_A_MINUTE * colony.getBuildingManager().getTownHall().getBuildingLevel());
 
             if ((event.world.getTotalWorldTime() + 1) % (respawnInterval + 1) == 0)

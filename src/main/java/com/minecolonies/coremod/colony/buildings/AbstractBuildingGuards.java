@@ -81,7 +81,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * The health modifier which changes the HP
      */
-    private final AttributeModifier healthModConfig = new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME, Configurations.gameplay.guardHealthMult - 1, 1);
+    private final AttributeModifier healthModConfig = new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME, MineColonies.getConfig().getCommon().gameplay.guardHealthMult - 1, 1);
 
     /**
      * Vision range per building level.
@@ -788,7 +788,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             }
             else
             {
-                for (final String location : Configurations.gameplay.guardResourceLocations)
+                for (final String location : MineColonies.getConfig().getCommon().gameplay.guardResourceLocations)
                 {
                     if (entry.getRegistryName() != null && entry.getRegistryName().toString().equals(location))
                     {

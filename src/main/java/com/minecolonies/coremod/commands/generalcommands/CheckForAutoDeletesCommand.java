@@ -97,8 +97,8 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand implements
         {
             final IColony colony = colonies.get(index);
 
-            if (colony.canBeAutoDeleted() && Configurations.gameplay.autoDeleteColoniesInHours != 0
-                  && colony.getLastContactInHours() >= Configurations.gameplay.autoDeleteColoniesInHours)
+            if (colony.canBeAutoDeleted() && MineColonies.getConfig().getCommon().gameplay.autoDeleteColoniesInHours != 0
+                  && colony.getLastContactInHours() >= MineColonies.getConfig().getCommon().gameplay.autoDeleteColoniesInHours)
             {
                 coloniesToDelete.add(colony);
             }
@@ -109,7 +109,7 @@ public class CheckForAutoDeletesCommand extends AbstractSingleCommand implements
             sender.sendMessage(new StringTextComponent("Successful"));
             for (final IColony col : coloniesToDelete)
             {
-                server.addScheduledTask(() -> IColonyManager.getInstance().deleteColonyByWorld(col.getID(), Configurations.gameplay.autoDestroyColonyBlocks, col.getWorld()));
+                server.addScheduledTask(() -> IColonyManager.getInstance().deleteColonyByWorld(col.getID(), MineColonies.getConfig().getCommon().gameplay.autoDestroyColonyBlocks, col.getWorld()));
             }
         }
         else

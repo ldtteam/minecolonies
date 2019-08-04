@@ -18,7 +18,7 @@ public final class LogHandler
      */
     public static void log(final String logEntry)
     {
-        if (Configurations.requestSystem.enableDebugLogging)
+        if (MineColonies.getConfig().getCommon().requestSystem.enableDebugLogging)
         {
             logger.info(logEntry);
         }

@@ -112,7 +112,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     {
         super.serializeToView(buf);
 
-        buf.writeBoolean(Configurations.gameplay.canPlayerUseColonyTPCommand);
+        buf.writeBoolean(MineColonies.getConfig().getCommon().gameplay.canPlayerUseColonyTPCommand);
         buf.writeInt(permissionEvents.size());
         for(final PermissionEvent event: permissionEvents)
         {
@@ -123,9 +123,9 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     @Override
     public int getClaimRadius(final int newLevel)
     {
-        if (newLevel + 1 < Configurations.gameplay.minTownHallPadding)
+        if (newLevel + 1 < MineColonies.getConfig().getCommon().gameplay.minTownHallPadding)
         {
-            return Configurations.gameplay.minTownHallPadding;
+            return MineColonies.getConfig().getCommon().gameplay.minTownHallPadding;
         }
         return newLevel + 1;
     }

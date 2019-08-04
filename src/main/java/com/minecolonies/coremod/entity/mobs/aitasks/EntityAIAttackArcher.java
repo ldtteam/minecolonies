@@ -146,7 +146,7 @@ public class EntityAIAttackArcher extends EntityAIBase
      */
     protected int getAttackDelay()
     {
-        return MAX_ATTACK_DELAY - Configurations.gameplay.barbarianHordeDifficulty * 4;
+        return MAX_ATTACK_DELAY - MineColonies.getConfig().getCommon().gameplay.barbarianHordeDifficulty * 4;
     }
 
     /**

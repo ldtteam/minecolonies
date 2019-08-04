@@ -50,7 +50,7 @@ public class CommandEntryPointNew extends AbstractCommandParser
         {
             if (sender instanceof PlayerEntity)
             {
-                return AbstractSingleCommand.isPlayerOpped(sender) || Configurations.gameplay.opLevelForServer <= 0;
+                return AbstractSingleCommand.isPlayerOpped(sender) || MineColonies.getConfig().getCommon().gameplay.opLevelForServer <= 0;
             }
             return true;
         }

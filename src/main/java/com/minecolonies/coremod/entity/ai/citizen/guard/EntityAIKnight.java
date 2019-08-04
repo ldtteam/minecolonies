@@ -190,7 +190,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
             }
 
             final DamageSource source = new EntityDamageSource(worker.getName(), worker);
-            if (Configurations.gameplay.pvp_mode && target instanceof PlayerEntity)
+            if (MineColonies.getConfig().getCommon().gameplay.pvp_mode && target instanceof PlayerEntity)
             {
                 source.setDamageBypassesArmor();
             }
@@ -232,9 +232,9 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
             }
 
             addDmg += getLevelDamage();
-            return (int) ((BASE_PHYSICAL_DAMAGE + addDmg) * Configurations.gameplay.knightDamageMult);
+            return (int) ((BASE_PHYSICAL_DAMAGE + addDmg) * MineColonies.getConfig().getCommon().gameplay.knightDamageMult);
         }
-        return (int) (BASE_PHYSICAL_DAMAGE * Configurations.gameplay.knightDamageMult);
+        return (int) (BASE_PHYSICAL_DAMAGE * MineColonies.getConfig().getCommon().gameplay.knightDamageMult);
     }
 
     @Override

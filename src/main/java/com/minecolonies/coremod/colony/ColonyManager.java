@@ -120,7 +120,7 @@ public final class ColonyManager implements IColonyManager
             return;
         }
 
-        if (Configurations.gameplay.enableDynamicColonySizes)
+        if (MineColonies.getConfig().getCommon().gameplay.enableDynamicColonySizes)
         {
             ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension(), 2);
         }
@@ -179,7 +179,7 @@ public final class ColonyManager implements IColonyManager
         final World world = colony.getWorld();
         try
         {
-            if (!Configurations.gameplay.enableDynamicColonySizes)
+            if (!MineColonies.getConfig().getCommon().gameplay.enableDynamicColonySizes)
             {
                 ChunkDataHelper.claimColonyChunks(world, false, id, colony.getCenter(), colony.getDimension());
             }
@@ -344,9 +344,9 @@ public final class ColonyManager implements IColonyManager
     @Override
     public boolean isTooCloseToColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        if (Configurations.gameplay.enableDynamicColonySizes)
+        if (MineColonies.getConfig().getCommon().gameplay.enableDynamicColonySizes)
         {
-            return !ChunkDataHelper.canClaimChunksInRange(w, pos, Configurations.gameplay.minTownHallPadding);
+            return !ChunkDataHelper.canClaimChunksInRange(w, pos, MineColonies.getConfig().getCommon().gameplay.minTownHallPadding);
         }
         final IChunkmanagerCapability worldCapability = w.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
         if (worldCapability == null)
@@ -717,7 +717,7 @@ public final class ColonyManager implements IColonyManager
     public int getMinimumDistanceBetweenTownHalls()
     {
         //  [TownHall](Radius)+(Padding)+(Radius)[TownHall]
-        return (2 * Configurations.gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK) + Configurations.gameplay.townHallPaddingChunk * BLOCKS_PER_CHUNK;
+        return (2 * MineColonies.getConfig().getCommon().gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK) + MineColonies.getConfig().getCommon().gameplay.townHallPaddingChunk * BLOCKS_PER_CHUNK;
     }
 
     /**
@@ -775,8 +775,8 @@ public final class ColonyManager implements IColonyManager
     {
         if (!compound.keySet().contains(TAG_DISTANCE))
         {
-            Configurations.gameplay.workingRangeTownHallChunks =
-              (int) ((Math.cos(45.0 / HALF_A_CIRCLE * Math.PI) * Configurations.gameplay.workingRangeTownHall) / BLOCKS_PER_CHUNK);
+            MineColonies.getConfig().getCommon().gameplay.workingRangeTownHallChunks =
+              (int) ((Math.cos(45.0 / HALF_A_CIRCLE * Math.PI) * MineColonies.getConfig().getCommon().gameplay.workingRangeTownHall) / BLOCKS_PER_CHUNK);
         }
 
         if (!compound.keySet().contains(TAG_CAP_COLONIES))
