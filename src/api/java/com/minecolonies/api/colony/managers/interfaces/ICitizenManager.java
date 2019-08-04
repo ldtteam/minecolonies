@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.minecolonies.api.colony.ICitizenData;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -34,9 +34,9 @@ public interface ICitizenManager
      * @param subscribers all subscribers
      */
     void sendPackets(
-            @NotNull final Set<EntityPlayerMP> oldSubscribers,
+            @NotNull final Set<ServerPlayerEntity> oldSubscribers,
             final boolean hasNewSubscribers,
-            @NotNull final Set<EntityPlayerMP> subscribers);
+            @NotNull final Set<ServerPlayerEntity> subscribers);
 
     /**
      * Spawn a brand new Citizen.

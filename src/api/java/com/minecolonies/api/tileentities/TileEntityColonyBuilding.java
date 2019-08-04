@@ -1,5 +1,6 @@
 package com.minecolonies.api.tileentities;
 
+import com.ldtteam.structurize.api.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -9,15 +10,14 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -25,6 +25,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -187,7 +188,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
                 final TileEntity entity = getWorld().getTileEntity(pos);
                 if ((entity instanceof AbstractTileEntityRack
                        && ((AbstractTileEntityRack) entity).hasItemStack(notEmptyPredicate))
-                      || (entity instanceof TileEntityChest
+                      || (entity instanceof ChestTileEntity
                             && isInTileEntity(entity, notEmptyPredicate)))
                 {
                     return pos;
@@ -221,11 +222,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     }
 
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket()
+    public SUpdateTileEntityPacket getUpdatePacket()
     {
         final CompoundNBT compound = new CompoundNBT();
         compound.putInt(TAG_COLONY, colonyId);
-        return new SPacketUpdateTileEntity(this.getPosition(), 0, compound);
+        return new SUpdateTileEntityPacket(this.getPosition(), 0, compound);
     }
 
     @NotNull
@@ -236,14 +237,14 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     }
 
     @Override
-    public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
+    public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
     {
         final CompoundNBT compound = packet.getNbtCompound();
         colonyId = compound.getInt(TAG_COLONY);
     }
 
     @Override
-    public void onChunkUnload()
+    public void onLoad()
     {
         if (building != null)
         {
@@ -280,11 +281,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     @Override
     public ITextComponent getDisplayName()
     {
-        if (blockType == null)
+        if (getBlockState() == null)
         {
             return super.getDisplayName();
         }
-        return new StringTextComponent(LanguageHandler.format(blockType.getTranslationKey() + ".name"));
+        return new StringTextComponent(LanguageHandler.format(getBlockState().getBlock().getTranslationKey() + ".name"));
     }
 
     /**
@@ -295,7 +296,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     @Override
     public IBuildingView getBuildingView()
     {
-        final IColonyView c = IColonyManager.getInstance().getColonyView(colonyId, world.provider.getDimension());
+        final IColonyView c = IColonyManager.getInstance().getColonyView(colonyId, world.getDimension().getType().getId());
         return c == null ? null : c.getBuilding(getPosition());
     }
 
@@ -325,9 +326,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     }
 
     @Override
-    public void update()
+    public void tick()
     {
-        super.update();
+        super.tick();
 
         if (!getWorld().isRemote && colonyId == 0)
         {
@@ -409,17 +410,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     }
 
     @Override
-    public boolean hasCapability(@NotNull final Capability<?> capability, final Direction facing)
-    {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-        {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
-    public <T> T getCapability(@NotNull final Capability<T> capability, final Direction facing)
+    public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getBuilding() != null)
         {
@@ -440,7 +431,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
                 final List<IItemHandler> handlers = providers.stream()
                                                       .flatMap(provider -> InventoryUtils.getItemHandlersFromProvider(provider).stream())
                                                       .collect(Collectors.toList());
-                final T cap = super.getCapability(capability, facing);
+                final T cap = super.getCapability(capability).orElseGet(null);
                 if (cap instanceof IItemHandler)
                 {
                     handlers.add((IItemHandler) cap);
@@ -454,8 +445,8 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
                                                                                           .toArray(IItemHandlerModifiable[]::new));
             }
 
-            return (T) this.combinedInv;
+            return LazyOptional.of(new NonNullSupplier<T>(this.combinedInv));
         }
-        return super.getCapability(capability, facing);
+        return super.getCapability(capability);
     }
 }

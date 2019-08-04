@@ -10,7 +10,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.util.AchievementUtils;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTTagString;
@@ -626,7 +626,7 @@ public class Permissions implements IPermissions
     /**
      * Checks if the player has the permission of an action.
      *
-     * @param player {@link EntityPlayer} player.
+     * @param player {@link PlayerEntity} player.
      * @param action {@link Action} action.
      * @return true if player has permissionMap, otherwise false.
      */
@@ -816,7 +816,7 @@ public class Permissions implements IPermissions
     /**
      * Checks if a user is a subscriber.
      *
-     * @param player {@link EntityPlayer} to check for subscription.
+     * @param player {@link PlayerEntity} to check for subscription.
      * @return True is subscriber, otherwise false.
      */
     public boolean isSubscriber(@NotNull final PlayerEntity player)
@@ -825,7 +825,7 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * See {@link #isSubscriber(EntityPlayer)}.
+     * See {@link #isSubscriber(PlayerEntity)}.
      *
      * @param player {@link UUID} of the player.
      * @return True if subscriber, otherwise false.

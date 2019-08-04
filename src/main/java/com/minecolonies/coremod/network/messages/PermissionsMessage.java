@@ -12,7 +12,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -142,7 +142,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void messageOnServerThread(final Permission message, final EntityPlayerMP player)
+        public void messageOnServerThread(final Permission message, final ServerPlayerEntity player)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
             if (colony == null)
@@ -246,7 +246,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void messageOnServerThread(final AddPlayer message, final EntityPlayerMP player)
+        public void messageOnServerThread(final AddPlayer message, final ServerPlayerEntity player)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
 
@@ -318,7 +318,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void messageOnServerThread(final AddPlayerOrFakePlayer message, final EntityPlayerMP player)
+        public void messageOnServerThread(final AddPlayerOrFakePlayer message, final ServerPlayerEntity player)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
 
@@ -399,7 +399,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void messageOnServerThread(final ChangePlayerRank message, final EntityPlayerMP player)
+        public void messageOnServerThread(final ChangePlayerRank message, final ServerPlayerEntity player)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
 
@@ -477,7 +477,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void messageOnServerThread(final RemovePlayer message, final EntityPlayerMP player)
+        public void messageOnServerThread(final RemovePlayer message, final ServerPlayerEntity player)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
 

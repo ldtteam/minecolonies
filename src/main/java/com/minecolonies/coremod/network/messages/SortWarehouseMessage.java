@@ -11,7 +11,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.util.SortingUtils;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -80,7 +80,7 @@ public class SortWarehouseMessage extends AbstractMessage<SortWarehouseMessage, 
     }
 
     @Override
-    public void messageOnServerThread(final SortWarehouseMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final SortWarehouseMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony == null)

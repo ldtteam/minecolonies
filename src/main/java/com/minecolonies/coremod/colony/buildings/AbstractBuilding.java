@@ -42,12 +42,12 @@ import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -278,27 +278,27 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         final WorkOrderBuildBuilding workOrderBuildBuilding = new WorkOrderBuildBuilding(this, level);
         if (!canBeBuiltByBuilder(level) && !workOrderBuildBuilding.canBeResolved(colony, level))
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
               "entity.builder.messageBuilderNecessary", Integer.toString(level));
             return;
         }
 
         if (workOrderBuildBuilding.tooFarFromAnyBuilder(colony, level) && builder.equals(BlockPos.ORIGIN))
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
               "entity.builder.messageBuildersTooFar");
             return;
         }
         
         if(getPosition().getY() + getHeight() >= 256)
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
               "entity.builder.messageBuildTooHigh");
             return;
         }
         else if(getPosition().getY() <= 1)
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
               "entity.builder.messageBuildTooLow");
             return;
         }
@@ -312,7 +312,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
              }
              else
              {
-                 LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(),
                    "entity.builder.messageBuilderNecessary", Integer.toString(level));
                  return;
              }
@@ -321,7 +321,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         colony.getWorkManager().addWorkOrder(workOrderBuildBuilding, false);
         colony.getProgressManager().progressWorkOrderPlacement(workOrderBuildBuilding);
 
-        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
+        LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), "com.minecolonies.coremod.workOrderAdded");
         markDirty();
     }
 
@@ -699,7 +699,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             for (final BlockPos pos : containerList)
             {
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if (tempTileEntity instanceof TileEntityChest && !InventoryUtils.isProviderFull(tempTileEntity))
+                if (tempTileEntity instanceof ChestTileEntity && !InventoryUtils.isProviderFull(tempTileEntity))
                 {
                     return forceItemStackToProvider(tempTileEntity, stack);
                 }

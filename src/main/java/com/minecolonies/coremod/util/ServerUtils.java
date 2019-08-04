@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.colony.permissions.Player;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,22 +51,22 @@ public final class ServerUtils
      *
      * @param world the world the players are in.
      * @param ids   List of UUIDs
-     * @return list of EntityPlayers
+     * @return list of PlayerEntitys
      */
     @NotNull
-    public static List<EntityPlayer> getPlayersFromUUID(@Nullable final World world, @NotNull final Collection<UUID> ids)
+    public static List<PlayerEntity> getPlayersFromUUID(@Nullable final World world, @NotNull final Collection<UUID> ids)
     {
         if (world == null)
         {
             return Collections.emptyList();
         }
-        @NotNull final List<EntityPlayer> players = new ArrayList<>();
+        @NotNull final List<PlayerEntity> players = new ArrayList<>();
 
         for (final Object o : world.playerEntities)
         {
-            if (o instanceof EntityPlayer)
+            if (o instanceof PlayerEntity)
             {
-                @NotNull final PlayerEntity player = (EntityPlayer) o;
+                @NotNull final PlayerEntity player = (PlayerEntity) o;
                 if (ids.contains(player.getGameProfile().getId()))
                 {
                     players.add(player);
@@ -85,19 +85,19 @@ public final class ServerUtils
      * <p>
      * The {@link Player} is a wrapper around a {@link UUID} of
      * minecraft players. The List will simply be converted into an {@link
-     * EntityPlayer} type.
+     * PlayerEntity} type.
      * <p>
      * Uses {@link ServerUtils#getPlayerFromPermPlayer(Player,
      * World)}.
      *
      * @param players The list of players to convert.
      * @param world   an instance of the world.
-     * @return A list of {@link EntityPlayer}s
+     * @return A list of {@link PlayerEntity}s
      */
     @NotNull
-    public static List<EntityPlayer> getPlayersFromPermPlayer(@NotNull final List<Player> players, @NotNull final World world)
+    public static List<PlayerEntity> getPlayersFromPermPlayer(@NotNull final List<Player> players, @NotNull final World world)
     {
-        @NotNull final List<EntityPlayer> playerList = new ArrayList<>();
+        @NotNull final List<PlayerEntity> playerList = new ArrayList<>();
 
         for (@NotNull final Player player : players)
         {
@@ -117,7 +117,7 @@ public final class ServerUtils
      *
      * @param player The {@link Player} to convert
      * @param world  an instance of the world.
-     * @return The {@link EntityPlayer} reference.
+     * @return The {@link PlayerEntity} reference.
      */
     @Nullable
     public static PlayerEntity getPlayerFromPermPlayer(@NotNull final Player player, @NotNull final World world)
@@ -141,8 +141,8 @@ public final class ServerUtils
         {
             return null;
         }
-        final List<EntityPlayerMP> allPlayers = world.getMinecraftServer().getPlayerList().getPlayers();
-        for (@NotNull final EntityPlayerMP player : allPlayers)
+        final List<ServerPlayerEntity> allPlayers = world.getMinecraftServer().getPlayerList().getPlayers();
+        for (@NotNull final ServerPlayerEntity player : allPlayers)
         {
             if (player.getUniqueID().equals(uuid))
             {

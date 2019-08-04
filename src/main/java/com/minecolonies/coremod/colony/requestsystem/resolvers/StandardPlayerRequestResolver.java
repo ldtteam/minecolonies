@@ -24,7 +24,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.util.ServerUtils;
 import com.minecolonies.coremod.util.text.NonSiblingFormattingTextComponent;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -116,7 +116,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                 }
             }
 
-            final List<EntityPlayer> players = new ArrayList<>(colony.getMessageEntityPlayers());
+            final List<PlayerEntity> players = new ArrayList<>(colony.getMessagePlayerEntitys());
             final PlayerEntity owner = ServerUtils.getPlayerFromUUID(colony.getWorld(), ((Colony) colony).getPermissions().getOwner());
             final StringTextComponent colonyDescription = new StringTextComponent(colony.getName() + ":");
 

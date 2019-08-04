@@ -55,6 +55,6 @@ public class ColonyViewRemoveBuildingMessage extends AbstractMessage<ColonyViewR
     @Override
     protected void messageOnClientThread(final ColonyViewRemoveBuildingMessage message, final MessageContext ctx)
     {
-        IColonyManager.getInstance().handleColonyViewRemoveBuildingMessage(message.colonyId, message.buildingId, Minecraft.getMinecraft().world.provider.getDimension());
+        IColonyManager.getInstance().handleColonyViewRemoveBuildingMessage(message.colonyId, message.buildingId, Minecraft.getMinecraft().world.world.getDimension().getType().getId());
     }
 }

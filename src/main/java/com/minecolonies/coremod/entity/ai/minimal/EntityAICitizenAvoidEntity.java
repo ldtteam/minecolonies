@@ -9,7 +9,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
@@ -146,7 +146,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
      */
     private Entity getClosestToAvoid()
     {
-        if (targetEntityClass == EntityPlayer.class)
+        if (targetEntityClass == PlayerEntity.class)
         {
             return CompatibilityUtils.getWorldFromCitizen(citizen).getClosestPlayerToEntity(citizen, (double) distanceFromEntity);
         }

@@ -7,7 +7,7 @@ import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
@@ -61,9 +61,9 @@ public class RSResetAllCommand extends AbstractSingleCommand implements IActionC
 
     private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender) throws CommandException
     {
-        if (sender instanceof EntityPlayer)
+        if (sender instanceof PlayerEntity)
         {
-            final PlayerEntity player = (EntityPlayer) sender;
+            final PlayerEntity player = (PlayerEntity) sender;
             if (!isPlayerOpped(player))
             {
                 sender.sendMessage(new StringTextComponent(NOT_PERMITTED));

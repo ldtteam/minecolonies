@@ -3,7 +3,7 @@ package com.minecolonies.coremod.tileentities;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import org.jetbrains.annotations.NotNull;
@@ -122,9 +122,9 @@ public class TileEntityDecorationController extends TileEntity
 
     @Nullable
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket()
+    public SUpdateTileEntityPacket getUpdatePacket()
     {
-        return new SPacketUpdateTileEntity(this.pos, 0x9, this.getUpdateTag());
+        return new SUpdateTileEntityPacket(this.pos, 0x9, this.getUpdateTag());
     }
 
     @NotNull
@@ -135,7 +135,7 @@ public class TileEntityDecorationController extends TileEntity
     }
 
     @Override
-    public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
+    public void onDataPacket(final NetworkManager net, final SUpdateTileEntityPacket packet)
     {
         final CompoundNBT compound = packet.getNbtCompound();
         this.read(compound);

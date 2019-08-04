@@ -12,7 +12,7 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
@@ -190,7 +190,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
             }
 
             final DamageSource source = new EntityDamageSource(worker.getName(), worker);
-            if (Configurations.gameplay.pvp_mode && target instanceof EntityPlayer)
+            if (Configurations.gameplay.pvp_mode && target instanceof PlayerEntity)
             {
                 source.setDamageBypassesArmor();
             }

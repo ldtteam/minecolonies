@@ -8,7 +8,7 @@ import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -85,18 +85,18 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
         final Integer page = getIthArgument(args, 1, 1);
 
         IColony colony = null;
-        if (sender instanceof EntityPlayer)
+        if (sender instanceof PlayerEntity)
         {
             if (colonyId == -1)
             {
-                final IColony icolony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
+                final IColony icolony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), (PlayerEntity) sender);
                 if (icolony != null)
                 {
                     colonyId = icolony.getID();
                 }
             }
         }
-        colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().world.getDimension().getType().getId()));
 
         executeShared(server, sender, colony, page);
     }
@@ -113,9 +113,9 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
             page = 1;
         }
 
-        if (sender instanceof EntityPlayer)
+        if (sender instanceof PlayerEntity)
         {
-            final PlayerEntity player = (EntityPlayer) sender;
+            final PlayerEntity player = (PlayerEntity) sender;
             if ((null != colony) && !canPlayerUseCommand(player, LISTCITIZENS, colony.getID()))
             {
                 sender.sendMessage(new StringTextComponent("Not happenin bro!!, You are not permitted to do that!"));

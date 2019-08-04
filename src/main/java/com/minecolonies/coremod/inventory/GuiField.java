@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
+import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.PlayerInventory;
@@ -40,7 +40,7 @@ public class GuiField extends GuiContainer
     /**
      * Tile entity of the scarecrow.
      */
-    private final TileEntityScarecrow tileEntity;
+    private final ScarecrowTileEntity tileEntity;
 
     /**
      * Constructor of the GUI.
@@ -50,7 +50,7 @@ public class GuiField extends GuiContainer
      * @param world              the world the field is in.
      * @param location           the location the field is at.
      */
-    protected GuiField(final PlayerInventory parPlayerInventory, final TileEntityScarecrow tileEntity, final World world, final BlockPos location)
+    protected GuiField(final PlayerInventory parPlayerInventory, final ScarecrowTileEntity tileEntity, final World world, final BlockPos location)
     {
         super(new ContainerField(tileEntity, parPlayerInventory, world, location));
         this.tileEntity = tileEntity;

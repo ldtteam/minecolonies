@@ -107,7 +107,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
      */
     public WindowCitizen(final ICitizenDataView citizen)
     {
-        super(citizen.getWorkBuilding(),Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX, IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getMinecraft().world.provider.getDimension()));
+        super(citizen.getWorkBuilding(),Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX, IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getMinecraft().world.world.getDimension().getType().getId()));
         this.citizen = citizen;
     }
 

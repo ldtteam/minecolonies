@@ -70,10 +70,10 @@ public class TownHallRecipe extends ShapedRecipes
                 if (playerField.isPresent())
                 {
                     playerField.get().setAccessible(true);
-                    final PlayerEntity player = (EntityPlayer) playerField.get().get(inventoryCrafting.eventHandler);
-                    if (player instanceof EntityPlayerMP)
+                    final PlayerEntity player = (PlayerEntity) playerField.get().get(inventoryCrafting.eventHandler);
+                    if (player instanceof ServerPlayerEntity)
                     {
-                        return ((EntityPlayerMP) player).getStatFile().readStat(Objects.requireNonNull(StatList.getObjectUseStats(ModItems.supplyChest))) > 0
+                        return ((ServerPlayerEntity) player).getStatFile().readStat(Objects.requireNonNull(StatList.getObjectUseStats(ModItems.supplyChest))) > 0
                                  && hasSufficientResources(inventoryCrafting);
                     }
                     else

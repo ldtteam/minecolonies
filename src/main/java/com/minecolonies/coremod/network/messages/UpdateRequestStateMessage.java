@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.Colony;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -97,7 +97,7 @@ public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStat
     }
 
     @Override
-    public void messageOnServerThread(final UpdateRequestStateMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final UpdateRequestStateMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony instanceof Colony)

@@ -3,7 +3,7 @@ package com.minecolonies.api.colony.buildings;
 import com.minecolonies.api.colony.buildings.views.MobEntryView;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 

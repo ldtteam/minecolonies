@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -177,7 +177,7 @@ public interface IColony
     void removeVisitingPlayer(final PlayerEntity player);
 
     @NotNull
-    List<EntityPlayer> getMessageEntityPlayers();
+    List<PlayerEntity> getMessagePlayerEntitys();
 
     void onBuildingUpgradeComplete(@Nullable IBuilding building, int level);
 

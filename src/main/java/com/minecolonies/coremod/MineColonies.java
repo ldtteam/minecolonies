@@ -151,8 +151,6 @@ public class MineColonies
     {
         initializeNetwork();
 
-        proxy.registerTileEntities();
-
         proxy.registerEvents();
 
         proxy.registerTileEntityRendering();

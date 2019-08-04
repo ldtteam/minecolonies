@@ -3,6 +3,7 @@ package com.minecolonies.api.tileentities;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.client.renderer.texture.ITickable;
+import net.minecraft.tileentity.TileEntityType;
 
 public abstract class AbstractTileEntityBarrel extends TileEntity implements ITickable
 {
@@ -10,6 +11,11 @@ public abstract class AbstractTileEntityBarrel extends TileEntity implements ITi
      * The number of items it needs to start composting
      */
     public static final int MAX_ITEMS = 64;
+
+    public AbstractTileEntityBarrel(final TileEntityType<?> tileEntityTypeIn)
+    {
+        super(tileEntityTypeIn);
+    }
 
     /**
      * Returns the number of items that the block contains

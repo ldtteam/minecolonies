@@ -64,7 +64,7 @@ public final class MobEventsUtils
         if (Configurations.gameplay.enableInDevelopmentFeatures)
         {
             LanguageHandler.sendPlayersMessage(
-              colony.getMessageEntityPlayers(),
+              colony.getMessagePlayerEntitys(),
               "Horde Spawn Point: " + targetSpawnPoint);
         }
         colony.getRaiderManager().addRaiderSpawnPoint(targetSpawnPoint);
@@ -247,7 +247,7 @@ public final class MobEventsUtils
                 if (Configurations.gameplay.enableInDevelopmentFeatures)
                 {
                     LanguageHandler.sendPlayersMessage(
-                      colony.getMessageEntityPlayers(),
+                      colony.getMessagePlayerEntitys(),
                       "Will raid tonight: " + raid);
                 }
                 colony.getRaiderManager().setWillRaidTonight(raid);
@@ -261,7 +261,7 @@ public final class MobEventsUtils
             if (Configurations.gameplay.enableInDevelopmentFeatures)
             {
                 LanguageHandler.sendPlayersMessage(
-                  colony.getMessageEntityPlayers(),
+                  colony.getMessagePlayerEntitys(),
                   "Night reached: raiding");
             }
             return true;

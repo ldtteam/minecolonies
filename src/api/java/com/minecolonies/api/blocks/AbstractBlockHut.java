@@ -19,7 +19,7 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntityBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -222,7 +222,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
          */
         if (worldIn.isRemote)
         {
-            @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.provider.getDimension(), pos);
+            @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.world.getDimension().getType().getId(), pos);
 
             if (building != null
                   && building.getColony() != null

@@ -9,8 +9,8 @@ import com.minecolonies.coremod.commands.AbstractCommandParser.ModuleContext;
 import com.minecolonies.coremod.commands.CommandEntryPointNew.MineColonyDataProvider;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.BlockPos;
@@ -75,11 +75,11 @@ public enum ActionArgumentType
     private static List<String> getAllPlayerNames(@NotNull final MinecraftServer server)
     {
         final PlayerList playerList = server.getPlayerList();
-        final List<EntityPlayerMP> allPlayersList = playerList.getPlayers();
+        final List<ServerPlayerEntity> allPlayersList = playerList.getPlayers();
         final List<String> playerNames = new ArrayList<>(allPlayersList.size());
-        for (final EntityPlayerMP entityPlayerMP : allPlayersList)
+        for (final ServerPlayerEntity ServerPlayerEntity : allPlayersList)
         {
-            final String playerName = entityPlayerMP.getName();
+            final String playerName = ServerPlayerEntity.getName();
             if (!playerNames.contains(playerName))
             {
                 playerNames.add(playerName);
@@ -422,7 +422,7 @@ public enum ActionArgumentType
     }
 
     @Nullable
-    private EntityPlayerMP parseOnlinePlayerValue(@NotNull final MinecraftServer server, final String potentialArgumentValue)
+    private ServerPlayerEntity parseOnlinePlayerValue(@NotNull final MinecraftServer server, final String potentialArgumentValue)
     {
         final List<String> playerNameStrings = getOnlinePlayerNames(server);
         if (playerNameStrings.contains(potentialArgumentValue))
@@ -433,14 +433,14 @@ public enum ActionArgumentType
         {
             if (ABANDONED_FAKE_PLAYER_NAME.equals(potentialArgumentValue))
             {
-                return new FakePlayer(server.getWorld(server.getEntityWorld().provider.getDimension()), new GameProfile(UUID.randomUUID(), ABANDONED_FAKE_PLAYER_NAME));
+                return new FakePlayer(server.getWorld(server.getEntityWorld().world.getDimension().getType().getId()), new GameProfile(UUID.randomUUID(), ABANDONED_FAKE_PLAYER_NAME));
             }
             return null;
         }
     }
 
     @Nullable
-    private EntityPlayerMP parseAnyPlayerValue(@NotNull final MinecraftServer server, final String potentialArgumentValue)
+    private ServerPlayerEntity parseAnyPlayerValue(@NotNull final MinecraftServer server, final String potentialArgumentValue)
     {
         final List<String> playerNameStrings = getAllPlayerNames(server);
         if (playerNameStrings.contains(potentialArgumentValue))
@@ -467,7 +467,7 @@ public enum ActionArgumentType
             int colonyNumber = result.intValue();
             if (sender instanceof PlayerEntity && colonyNumber == -1)
             {
-                final IColony icolony = mineColonyDataProvider.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
+                final IColony icolony = mineColonyDataProvider.getIColonyByOwner(sender.getEntityWorld(), (PlayerEntity) sender);
                 if (icolony != null)
                 {
                     colonyNumber = icolony.getID();
@@ -475,7 +475,7 @@ public enum ActionArgumentType
             }
             if (colonyNumberStrings.contains(String.valueOf(colonyNumber)))
             {
-                return mineColonyDataProvider.getColony(colonyNumber, sender.getEntityWorld().provider.getDimension());
+                return mineColonyDataProvider.getColony(colonyNumber, sender.getEntityWorld().world.getDimension().getType().getId());
             }
             return null;
         }

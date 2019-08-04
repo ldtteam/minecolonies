@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.colony.permissions.ForgePermissionNodes;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -48,7 +48,7 @@ public class CommandEntryPointNew extends AbstractCommandParser
         @Override
         public boolean canUseCommands(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender)
         {
-            if (sender instanceof EntityPlayer)
+            if (sender instanceof PlayerEntity)
             {
                 return AbstractSingleCommand.isPlayerOpped(sender) || Configurations.gameplay.opLevelForServer <= 0;
             }

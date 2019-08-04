@@ -8,7 +8,7 @@ import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
@@ -72,7 +72,7 @@ public class DoRaidNowCommand extends AbstractSingleCommand implements IActionCo
         IColony colony = null;
         if (args.length != 0)
         {
-            colony = IColonyManager.getInstance().getColonyByWorld(Integer.parseInt(args[0]), server.getWorld(sender.getEntityWorld().provider.getDimension()));
+            colony = IColonyManager.getInstance().getColonyByWorld(Integer.parseInt(args[0]), server.getWorld(sender.getEntityWorld().world.getDimension().getType().getId()));
             if (colony == null)
             {
                 sender.sendMessage(NO_COLONY_FOUND_MESSAGE);

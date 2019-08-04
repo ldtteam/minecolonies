@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,7 +76,7 @@ public class RestartCitizenMessage extends AbstractMessage<RestartCitizenMessage
     }
 
     @Override
-    public void messageOnServerThread(final RestartCitizenMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final RestartCitizenMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.colonyDim);
         if (colony != null)

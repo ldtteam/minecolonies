@@ -21,8 +21,8 @@ import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -152,7 +152,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
     }
 
     @Override
-    public void messageOnServerThread(final BuildToolPlaceMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final BuildToolPlaceMessage message, final ServerPlayerEntity player)
     {
         final StructureName sn = new StructureName(message.structureName);
         if (!Structures.hasMD5(sn))

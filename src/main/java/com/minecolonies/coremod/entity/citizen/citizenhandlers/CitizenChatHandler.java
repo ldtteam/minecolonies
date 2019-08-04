@@ -7,7 +7,7 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.ServerUtils;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -87,7 +87,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
         if (citizen.getCitizenColonyHandler().getColony() != null)
         {
             final StringTextComponent colonyDescription = new StringTextComponent(" at " + citizen.getCitizenColonyHandler().getColony().getName() + ":");
-            final List<EntityPlayer> players = new ArrayList<>(citizen.getCitizenColonyHandler().getColony().getMessageEntityPlayers());
+            final List<PlayerEntity> players = new ArrayList<>(citizen.getCitizenColonyHandler().getColony().getMessagePlayerEntitys());
             final PlayerEntity owner = ServerUtils.getPlayerFromUUID(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
 
             if (owner != null)
@@ -126,12 +126,12 @@ public class CitizenChatHandler implements ICitizenChatHandler
             {
                 final ITextComponent component = new TextComponentTranslation("tile.blockHutTownHall.messageWorkerDead", new TextComponentTranslation(job.getName()), citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY, (int) citizen.posZ, damageSource.damageType);
                 LanguageHandler.sendPlayersMessage(
-                  citizen.getCitizenColonyHandler().getColony().getMessageEntityPlayers(), component);
+                  citizen.getCitizenColonyHandler().getColony().getMessagePlayerEntitys(), component);
             }
             else
             {
                 LanguageHandler.sendPlayersMessage(
-                  citizen.getCitizenColonyHandler().getColony().getMessageEntityPlayers(),
+                  citizen.getCitizenColonyHandler().getColony().getMessagePlayerEntitys(),
                   "tile.blockHutTownHall.messageColonistDead",
                   citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY, (int) citizen.posZ, damageSource.damageType);
             }

@@ -27,7 +27,7 @@ import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
@@ -995,7 +995,7 @@ public final class ColonyView implements IColonyView
 
     @NotNull
     @Override
-    public List<EntityPlayer> getMessageEntityPlayers()
+    public List<PlayerEntity> getMessagePlayerEntitys()
     {
         return null;
     }

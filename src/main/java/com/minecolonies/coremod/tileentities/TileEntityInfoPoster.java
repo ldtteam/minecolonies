@@ -2,7 +2,7 @@ package com.minecolonies.coremod.tileentities;
 
 import net.minecraft.command.CommandResultStats;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -55,9 +55,9 @@ public class TileEntityInfoPoster extends TileEntity
 
     @Nullable
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket()
+    public SUpdateTileEntityPacket getUpdatePacket()
     {
-        return new SPacketUpdateTileEntity(this.pos, 0x9, this.getUpdateTag());
+        return new SUpdateTileEntityPacket(this.pos, 0x9, this.getUpdateTag());
     }
 
     @Override

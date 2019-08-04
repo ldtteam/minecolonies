@@ -10,7 +10,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -88,7 +88,7 @@ public class DecorationBuildRequestMessage extends AbstractMessage<DecorationBui
     }
 
     @Override
-    public void messageOnServerThread(final DecorationBuildRequestMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final DecorationBuildRequestMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromDim(message.dimension, message.pos);
         if (colony == null)

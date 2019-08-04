@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -73,7 +73,7 @@ public class GuardScepterMessage extends AbstractMessage<GuardScepterMessage, IM
     }
 
     @Override
-    public void messageOnServerThread(final GuardScepterMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final GuardScepterMessage message, final ServerPlayerEntity player)
     {
         final ItemStack scepter;
         boolean giveToPlayer = true;

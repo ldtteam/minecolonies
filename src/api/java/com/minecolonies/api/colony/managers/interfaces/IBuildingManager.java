@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -52,7 +52,7 @@ public interface IBuildingManager
      * @param hasNewSubscribers if there are new ones.
      * @param subscribers all the subs.
      */
-    void sendPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers, final Set<EntityPlayerMP> subscribers);
+    void sendPackets(Set<ServerPlayerEntity> oldSubscribers, boolean hasNewSubscribers, final Set<ServerPlayerEntity> subscribers);
 
     /**
      * Tick the buildings on world tick.
@@ -143,7 +143,7 @@ public interface IBuildingManager
      *
      * @param building IBuilding to remove.
      */
-    void removeBuilding(@NotNull final IBuilding building, final Set<EntityPlayerMP> subscribers);
+    void removeBuilding(@NotNull final IBuilding building, final Set<ServerPlayerEntity> subscribers);
 
     /**
      * Marks building data dirty.

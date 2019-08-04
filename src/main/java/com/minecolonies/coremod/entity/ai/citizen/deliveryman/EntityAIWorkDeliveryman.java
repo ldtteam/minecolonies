@@ -31,7 +31,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
@@ -624,9 +624,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         final TileEntity tileEntity = world.getTileEntity(location.getInDimensionLocation());
-        if (tileEntity instanceof TileEntityChest && !(tileEntity instanceof TileEntityColonyBuilding))
+        if (tileEntity instanceof ChestTileEntity && !(tileEntity instanceof TileEntityColonyBuilding))
         {
-            if (((TileEntityChest) tileEntity).numPlayersUsing == 0)
+            if (((ChestTileEntity) tileEntity).numPlayersUsing == 0)
             {
                 this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 1);
                 this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType(), true);

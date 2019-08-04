@@ -10,7 +10,7 @@ import com.minecolonies.coremod.util.TeleportToColony;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
@@ -80,7 +80,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
                 IColony iColony = IColonyManager.getInstance().getIColonyByOwner(server.getEntityWorld(), player);
                 if (null == iColony)
                 {
-                    if (sender instanceof EntityPlayer)
+                    if (sender instanceof PlayerEntity)
                     {
                         final Entity senderEntity = sender.getCommandSenderEntity();
                         if (senderEntity != null)
@@ -96,7 +96,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
 
                 if (null != iColony)
                 {
-                    colony = IColonyManager.getInstance().getColonyByWorld(iColony.getID(), server.getWorld(sender.getEntityWorld().provider.getDimension()));
+                    colony = IColonyManager.getInstance().getColonyByWorld(iColony.getID(), server.getWorld(sender.getEntityWorld().world.getDimension().getType().getId()));
                 }
             }
         }
@@ -121,7 +121,7 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
             try
             {
                 final int colonyId = Integer.parseInt(args[0]);
-                colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+                colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().world.getDimension().getType().getId()));
             }
             catch (final NumberFormatException e)
             {
@@ -141,14 +141,14 @@ public final class ColonyTeleportCommand extends AbstractSingleCommand implement
     private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final IColony colony)
     {
         //see if player is allowed to use in the configs
-        if ((sender instanceof EntityPlayer) && canPlayerUseCommand((EntityPlayer) sender, COLONYTP, colony.getID()))
+        if ((sender instanceof PlayerEntity) && canPlayerUseCommand((PlayerEntity) sender, COLONYTP, colony.getID()))
         {
-            final IColony colonyIn = IColonyManager.getInstance().getColonyByPosFromWorld(server.getWorld(sender.getEntityWorld().provider.getDimension()), sender.getPosition());
+            final IColony colonyIn = IColonyManager.getInstance().getColonyByPosFromWorld(server.getWorld(sender.getEntityWorld().world.getDimension().getType().getId()), sender.getPosition());
             if (isPlayerOpped(sender)
                     || (colonyIn != null
                     && colonyIn.hasTownHall()
-                    && colonyIn.getPermissions().hasPermission((EntityPlayer) sender, Action.TELEPORT_TO_COLONY)
-                    && ((EntityPlayer) sender).getDistanceSq(colonyIn.getBuildingManager().getTownHall().getPosition()) < MIN_DISTANCE_TO_TH))
+                    && colonyIn.getPermissions().hasPermission((PlayerEntity) sender, Action.TELEPORT_TO_COLONY)
+                    && ((PlayerEntity) sender).getDistanceSq(colonyIn.getBuildingManager().getTownHall().getPosition()) < MIN_DISTANCE_TO_TH))
             {
                 TeleportToColony.colonyTeleport(server, sender, String.valueOf(colony.getID()));
             }

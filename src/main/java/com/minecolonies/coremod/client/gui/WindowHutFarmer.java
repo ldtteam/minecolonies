@@ -10,7 +10,7 @@ import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
-import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
+import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.tileentity.TileEntity;
@@ -124,17 +124,17 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         final int row = fieldList.getListElementIndexByPane(button);
         final BlockPos field = fields.get(row);
         final TileEntity entity = world.getTileEntity(field);
-        if (entity instanceof TileEntityScarecrow)
+        if (entity instanceof ScarecrowTileEntity)
         {
             if (button.getLabel().equals(RED_X))
             {
                 button.setLabel(APPROVE);
-                building.changeFields(field, false, (TileEntityScarecrow) entity);
+                building.changeFields(field, false, (ScarecrowTileEntity) entity);
             }
             else
             {
                 button.setLabel(RED_X);
-                building.changeFields(field, true, (TileEntityScarecrow) entity);
+                building.changeFields(field, true, (ScarecrowTileEntity) entity);
             }
 
             pullLevelsFromHut();
@@ -200,12 +200,12 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
                 @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field, building.getPosition())));
                 final String direction = BlockPosUtil.calcDirection(building.getPosition(), field);
                 final TileEntity entity = world.getTileEntity(field);
-                if (entity instanceof TileEntityScarecrow)
+                if (entity instanceof ScarecrowTileEntity)
                 {
                     @NotNull final String owner =
-                      ((TileEntityScarecrow) entity).getOwner().isEmpty()
+                      ((ScarecrowTileEntity) entity).getOwner().isEmpty()
                                     ? ("<" + LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED) + ">")
-                        : ((TileEntityScarecrow) entity).getOwner();
+                        : ((ScarecrowTileEntity) entity).getOwner();
 
                     rowPane.findPaneOfTypeByID(TAG_WORKER, Label.class).setLabelText(owner);
                     rowPane.findPaneOfTypeByID(TAG_DISTANCE, Label.class).setLabelText(distance + "m");
@@ -216,7 +216,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
 
                     assignButton.setEnabled(building.assignFieldManually());
 
-                    if (((TileEntityScarecrow) entity).isTaken())
+                    if (((ScarecrowTileEntity) entity).isTaken())
                     {
                         assignButton.setLabel(RED_X);
                     }
@@ -229,9 +229,9 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
                         }
                     }
 
-                    if (((TileEntityScarecrow) entity).getSeed() != null)
+                    if (((ScarecrowTileEntity) entity).getSeed() != null)
                     {
-                        rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(((TileEntityScarecrow) entity).getSeed());
+                        rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(((ScarecrowTileEntity) entity).getSeed());
                     }
                 }
             }

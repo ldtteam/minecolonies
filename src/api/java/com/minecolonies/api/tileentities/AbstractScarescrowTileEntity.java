@@ -2,14 +2,14 @@ package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.colony.IColonyView;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractScarescrowTileEntity extends TileEntityChest
+public abstract class AbstractScarescrowTileEntity extends ChestTileEntity
 {
     /**
      * Getter of the name of the tileEntity.
@@ -178,5 +178,5 @@ public abstract class AbstractScarescrowTileEntity extends TileEntityChest
      *
      * @return the enum type.
      */
-    public abstract ScareCrowType getType();
+    public abstract ScareCrowType getScarecrowType();
 }

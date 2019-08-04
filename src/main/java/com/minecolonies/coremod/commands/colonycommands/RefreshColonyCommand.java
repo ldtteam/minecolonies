@@ -8,7 +8,7 @@ import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
@@ -67,7 +67,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
                 IColony iColony = IColonyManager.getInstance().getIColonyByOwner(server.getEntityWorld(), player);
                 if (null == iColony)
                 {
-                    if (sender instanceof EntityPlayer)
+                    if (sender instanceof PlayerEntity)
                     {
                         final Entity senderEntity = sender.getCommandSenderEntity();
                         if (senderEntity != null)
@@ -80,7 +80,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
 
                 if (null != iColony)
                 {
-                    colony = IColonyManager.getInstance().getColonyByWorld(iColony.getID(), server.getWorld(sender.getEntityWorld().provider.getDimension()));
+                    colony = IColonyManager.getInstance().getColonyByWorld(iColony.getID(), server.getWorld(sender.getEntityWorld().world.getDimension().getType().getId()));
                 }
             }
         }
@@ -99,7 +99,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
     {
         final int colonyId;
         colonyId = getIthArgument(args, 0, -1);
-        IColony tempColony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        IColony tempColony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().world.getDimension().getType().getId()));
 
         if (colonyId == -1 && args.length >= 1)
         {
@@ -110,7 +110,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
             }
         }
 
-        if (sender instanceof EntityPlayer)
+        if (sender instanceof PlayerEntity)
         {
             final Entity senderEntity = sender.getCommandSenderEntity();
             if (senderEntity == null)
@@ -138,7 +138,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
             return;
         }
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(tempColony.getID(), server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(tempColony.getID(), server.getWorld(sender.getEntityWorld().world.getDimension().getType().getId()));
         if (colony == null)
         {
             sender.sendMessage(new StringTextComponent(NO_COLONY_FOUND_MESSAGE));
@@ -150,9 +150,9 @@ public class RefreshColonyCommand extends AbstractSingleCommand implements IActi
 
     private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final IColony colony)
     {
-        if (sender instanceof EntityPlayer)
+        if (sender instanceof PlayerEntity)
         {
-            final PlayerEntity senderPlayer = (EntityPlayer) sender.getCommandSenderEntity();
+            final PlayerEntity senderPlayer = (PlayerEntity) sender.getCommandSenderEntity();
             if (!canPlayerUseCommand(senderPlayer, Commands.REFRESH_COLONY, colony.getID()))
             {
                 sender.sendMessage(new StringTextComponent(NOT_PERMITTED));

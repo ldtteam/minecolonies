@@ -9,7 +9,7 @@ import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
@@ -75,9 +75,9 @@ public class AddOfficerCommand extends AbstractSingleCommand implements IActionC
         final Entity senderEntity = sender.getCommandSenderEntity();
 
         int colonyId = getIthArgument(args, 0, -1);
-        if (colonyId == -1 && senderEntity instanceof EntityPlayer)
+        if (colonyId == -1 && senderEntity instanceof PlayerEntity)
         {
-            final IColony colony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
+            final IColony colony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), ((PlayerEntity) sender).getUniqueID());
             if (colony == null)
             {
                 sender.sendMessage(new StringTextComponent(COLONY_X_NULL));
@@ -112,9 +112,9 @@ public class AddOfficerCommand extends AbstractSingleCommand implements IActionC
             throws CommandException
     {
         final Entity senderEntity = sender.getCommandSenderEntity();
-        if (senderEntity instanceof EntityPlayer)
+        if (senderEntity instanceof PlayerEntity)
         {
-            final PlayerEntity senderPlayer = (EntityPlayer) sender;
+            final PlayerEntity senderPlayer = (PlayerEntity) sender;
             if (!canPlayerUseCommand(senderPlayer, ADDOFFICER, colony.getID()))
             {
                 sender.sendMessage(new StringTextComponent(NOT_PERMITTED));

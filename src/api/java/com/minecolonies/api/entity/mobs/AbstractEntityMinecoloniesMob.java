@@ -14,14 +14,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -301,7 +301,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
     @Override
     protected void onDeathUpdate()
     {
-        if (!(this.getAttackingEntity() instanceof EntityPlayer) && (this.recentlyHit > 0 && this.canDropLoot() && world.getGameRules().getBoolean("doMobLoot")))
+        if (!(this.getAttackingEntity() instanceof PlayerEntity) && (this.recentlyHit > 0 && this.canDropLoot() && world.getGameRules().getBoolean("doMobLoot")))
         {
             final int experience = EntityXPOrb.getXPSplit(BARBARIAN_EXP_DROP);
             CompatibilityUtils.addEntity(world, new EntityXPOrb(world, this.posX, this.posY, this.posZ, experience));
@@ -338,7 +338,7 @@ public abstract class AbstractEntityMinecoloniesMob extends EntityMob
         super.onDeath(cause);
         if (!world.isRemote && getColony() != null)
         {
-            getColony().getRaiderManager().unregisterRaider(this, (WorldServer) world);
+            getColony().getRaiderManager().unregisterRaider(this, (ServerWorld) world);
         }
     }
 

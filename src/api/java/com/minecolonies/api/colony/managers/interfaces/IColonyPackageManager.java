@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -26,7 +26,7 @@ public interface IColonyPackageManager
      * Get all subscribers.
      * @return a copy of the hashset.
      */
-    Set<EntityPlayerMP> getSubscribers();
+    Set<ServerPlayerEntity> getSubscribers();
 
     /**
      * Update Subscribers with Colony, Citizen, and AbstractBuilding Views.
@@ -38,7 +38,7 @@ public interface IColonyPackageManager
      * @param oldSubscribers the old subs.
      * @param hasNewSubscribers if there are new subs.
      */
-    void sendColonyViewPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers);
+    void sendColonyViewPackets(@NotNull final Set<ServerPlayerEntity> oldSubscribers, final boolean hasNewSubscribers);
 
     /**
      * Sends packages to update the permissions.
@@ -46,7 +46,7 @@ public interface IColonyPackageManager
      * @param oldSubscribers    the existing subscribers.
      * @param hasNewSubscribers the new subscribers.
      */
-    void sendPermissionsPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers);
+    void sendPermissionsPackets(@NotNull final Set<ServerPlayerEntity> oldSubscribers, final boolean hasNewSubscribers);
 
 
     /**
@@ -55,7 +55,7 @@ public interface IColonyPackageManager
      * @param oldSubscribers    the existing subscribers.
      * @param hasNewSubscribers the new subscribers.
      */
-    void sendWorkOrderPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers);
+    void sendWorkOrderPackets(@NotNull final Set<ServerPlayerEntity> oldSubscribers, final boolean hasNewSubscribers);
 
 
     /**
@@ -74,11 +74,11 @@ public interface IColonyPackageManager
      * Add a new subsriber to the colony.
      * @param subscriber the subscriber to add.
      */
-    void addSubscribers(@NotNull final EntityPlayerMP subscriber);
+    void addSubscribers(@NotNull final ServerPlayerEntity subscriber);
 
     /**
      * Remove an old subsriber from the colony.
      * @param player the subscriber to remove.
      */
-    void removeSubscriber(@NotNull final EntityPlayerMP player);
+    void removeSubscriber(@NotNull final ServerPlayerEntity player);
 }

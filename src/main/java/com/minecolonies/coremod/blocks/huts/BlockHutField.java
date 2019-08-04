@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
+import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.BlockState;
@@ -178,13 +178,13 @@ public class BlockHutField extends AbstractBlockMinecoloniesBlockHutField<BlockH
             return;
         }
 
-        if (placer instanceof EntityPlayer)
+        if (placer instanceof PlayerEntity)
         {
             @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
 
             if (colony != null)
             {
-                final TileEntityScarecrow scareCrow = (TileEntityScarecrow) worldIn.getTileEntity(pos);
+                final ScarecrowTileEntity scareCrow = (ScarecrowTileEntity) worldIn.getTileEntity(pos);
                 if (scareCrow != null)
                 {
                     colony.getBuildingManager().addNewField(scareCrow, pos, worldIn);
@@ -245,7 +245,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesBlockHutField<BlockH
     @Override
     public TileEntity createNewTileEntity(final World worldIn, final int meta)
     {
-        return new TileEntityScarecrow();
+        return new ScarecrowTileEntity();
     }
     // =======================================================================
     // ===================== END of Rendering & Meta-Data ====================

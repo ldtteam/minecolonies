@@ -5,7 +5,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -82,14 +82,14 @@ public interface IRaiderManager
      * @param raider the raider to unregister.
      * @param world the serverWorld.
      */
-    void unregisterRaider(@NotNull final AbstractEntityMinecoloniesMob raider, final WorldServer world);
+    void unregisterRaider(@NotNull final AbstractEntityMinecoloniesMob raider, final ServerWorld world);
 
     /**
      * Gets the horde of raiders approaching the colony.
      * @param world the serverWorld.
      * @return the list of entities.
      */
-    List<AbstractEntityMinecoloniesMob> getHorde(final WorldServer world);
+    List<AbstractEntityMinecoloniesMob> getHorde(final ServerWorld world);
 
     /**
      * Register a certain raider origin schematic to the colony..

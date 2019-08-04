@@ -5,8 +5,8 @@ import com.minecolonies.coremod.commands.IActionCommand;
 import com.ldtteam.structurize.items.ItemScanTool;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.CommandBlockBaseLogic;
 import net.minecraft.tileentity.TileEntityCommandBlock;
@@ -75,9 +75,9 @@ public class ScanCommand implements IActionCommand
                         player = world.getPlayerEntityByName(playerArgument);
                     }
                 }
-                else if (sender instanceof EntityPlayer)
+                else if (sender instanceof PlayerEntity)
                 {
-                    player = (EntityPlayerMP) sender;
+                    player = (ServerPlayerEntity) sender;
                 }
                 else
                 {

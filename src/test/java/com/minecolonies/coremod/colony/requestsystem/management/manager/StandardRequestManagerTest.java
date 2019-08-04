@@ -100,7 +100,7 @@ public class StandardRequestManagerTest
         when(colony.getID()).thenReturn(1);
         when(colony.getBuildingManager()).thenReturn(manager);
         when(manager.getBuildings()).thenReturn(new HashMap<>());
-        when(worldProvider.getDimension()).thenReturn(1);
+        when(worldworld.getDimension().getType().getId()).thenReturn(1);
         ReflectionUtil.setFinalField(world, "provider", worldProvider);
         when(colony.getCenter()).thenReturn(center);
 

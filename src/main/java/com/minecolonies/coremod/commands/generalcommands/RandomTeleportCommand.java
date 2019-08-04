@@ -11,7 +11,7 @@ import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
@@ -93,7 +93,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
             return;
         }
 
-        if (!canCommandSenderUseCommand(RTP) || sender.getEntityWorld().provider.getDimension() != 0)
+        if (!canCommandSenderUseCommand(RTP) || sender.getEntityWorld().world.getDimension().getType().getId() != 0)
         {
             sender.sendMessage(new StringTextComponent("Not happenin bro!!, ask an OP to TP you."));
             return;
@@ -101,9 +101,9 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
 
         PlayerEntity playerToTeleport = null;
 
-        if (sender instanceof EntityPlayer)
+        if (sender instanceof PlayerEntity)
         {
-            playerToTeleport = (EntityPlayer) sender;
+            playerToTeleport = (PlayerEntity) sender;
         }
 
         //If the arguments aren't empty, the sender probably wants to teleport another player.
@@ -170,7 +170,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand implements IAct
 
             if (foundPosition)
             {
-                if (MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
+                if (MinecoloniesCommand.canExecuteCommand((PlayerEntity) sender))
                 {
                     playerToTeleport.sendMessage(new StringTextComponent("Buckle up buttercup, this ain't no joy ride!!!"));
                     playerToTeleport.setHealth(playerToTeleport.getMaxHealth());

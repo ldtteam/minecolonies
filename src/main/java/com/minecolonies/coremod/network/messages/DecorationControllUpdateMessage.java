@@ -5,7 +5,7 @@ import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Rotation;
@@ -70,7 +70,7 @@ public class DecorationControllUpdateMessage extends AbstractMessage<DecorationC
     }
 
     @Override
-    public void messageOnServerThread(final DecorationControllUpdateMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final DecorationControllUpdateMessage message, final ServerPlayerEntity player)
     {
         final TileEntity tileEntity = player.getServerWorld().getTileEntity(message.pos);
         if (tileEntity instanceof TileEntityDecorationController)

@@ -3,7 +3,7 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.test.ReflectionUtil;
 import com.mojang.authlib.GameProfile;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
@@ -56,7 +56,7 @@ public class ColonyTest
     public void setUp() throws NoSuchFieldException, IllegalAccessException
     {
         final ColonyList<Colony> list = new ColonyList<>();
-        when(worldProvider.getDimension()).thenReturn(1);
+        when(worldworld.getDimension().getType().getId()).thenReturn(1);
         when(player.getGameProfile()).thenReturn(new GameProfile(id, "ray"));
         ReflectionUtil.setFinalField(world, "provider", worldProvider);
         ReflectionUtil.setStaticFinalField(MinecraftForge.class, "EVENT_BUS", eventBus);

@@ -11,7 +11,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -67,7 +67,7 @@ public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage
     }
 
     @Override
-    public void messageOnServerThread(final RecallTownhallMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final RecallTownhallMessage message, final ServerPlayerEntity player)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)

@@ -5,7 +5,7 @@ import com.minecolonies.api.tileentities.ScareCrowType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.huts.BlockHutField;
 import com.minecolonies.coremod.client.model.ModelScarecrowBoth;
-import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
+import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.Direction;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  * Class to render the scarecrow.
  */
 @SideOnly(Side.CLIENT)
-public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<TileEntityScarecrow>
+public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<ScarecrowTileEntity>
 {
     /**
      * Offset to the block middle.
@@ -80,7 +80,7 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<TileE
     }
 
     @Override
-    public void render(final TileEntityScarecrow te, final double x, final double y, final double z, final float partialTicks, final int destroyStage, final float alpha)
+    public void render(final ScarecrowTileEntity te, final double x, final double y, final double z, final float partialTicks, final int destroyStage, final float alpha)
     {
         //Store the transformation
         GlStateManager.pushMatrix();
@@ -125,7 +125,7 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<TileE
      * @return the location.
      */
     @NotNull
-    private static ResourceLocation getResourceLocation(@NotNull final TileEntityScarecrow tileEntity)
+    private static ResourceLocation getResourceLocation(@NotNull final ScarecrowTileEntity tileEntity)
     {
         final String loc;
 

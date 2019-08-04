@@ -27,8 +27,8 @@ import com.minecolonies.coremod.event.EventHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Mirror;
@@ -138,7 +138,7 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
     }
 
     @Override
-    public void messageOnServerThread(final BuildingMoveMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final BuildingMoveMessage message, final ServerPlayerEntity player)
     {
         final StructureName sn = new StructureName(message.structureName);
         if (!Structures.hasMD5(sn))
@@ -289,7 +289,7 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
 
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildRemoval(oldBuilding, oldBuilding.getBuildingLevel()), false);
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildBuilding(building, building.getBuildingLevel()), false);
-            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), "com.minecolonies.coremod.workOrderAdded");
         }
     }
 }

@@ -2,7 +2,7 @@ package com.minecolonies.coremod.util;
 
 import com.ldtteam.structures.helpers.Structure;
 import com.minecolonies.api.util.BlockPosUtil;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -33,9 +33,9 @@ public final class ColonyUtils
      * @param subscribers    all subscribers.
      * @return true if so.
      */
-    public static boolean hasNewSubscribers(@NotNull final Set<EntityPlayerMP> oldSubscribers, @NotNull final Set<EntityPlayerMP> subscribers)
+    public static boolean hasNewSubscribers(@NotNull final Set<ServerPlayerEntity> oldSubscribers, @NotNull final Set<ServerPlayerEntity> subscribers)
     {
-        for (final EntityPlayerMP player : subscribers)
+        for (final ServerPlayerEntity player : subscribers)
         {
             if (!oldSubscribers.contains(player))
             {

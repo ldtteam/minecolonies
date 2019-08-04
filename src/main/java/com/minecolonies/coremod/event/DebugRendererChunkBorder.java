@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -37,29 +37,29 @@ public class DebugRendererChunkBorder
         final double partialTicks = event.getPartialTicks();
         final PlayerEntity PlayerEntity = Minecraft.getMinecraft().player;
 
-        if (entityplayer.getHeldItem(Hand.MAIN_HAND).getItem() != ModItems.buildTool)
+        if (PlayerEntity.getHeldItem(Hand.MAIN_HAND).getItem() != ModItems.buildTool)
         {
             return;
         }
 
         final World world = Minecraft.getMinecraft().world;
-        final IColonyView view = IColonyManager.getInstance().getClosestColonyView(world, entityplayer.getPosition());
+        final IColonyView view = IColonyManager.getInstance().getClosestColonyView(world, PlayerEntity.getPosition());
 
         if (view == null)
         {
             return;
         }
 
-        if (!center.equals(new Tuple<>(entityplayer.chunkCoordX, entityplayer.chunkCoordZ)))
+        if (!center.equals(new Tuple<>(PlayerEntity.chunkCoordX, PlayerEntity.chunkCoordZ)))
         {
-            center = new Tuple<>(entityplayer.chunkCoordX, entityplayer.chunkCoordZ);
+            center = new Tuple<>(PlayerEntity.chunkCoordX, PlayerEntity.chunkCoordZ);
             colonies.clear();
             final int range = Configurations.gameplay.workingRangeTownHallChunks;
             for (int incX = -range; incX <= range; incX += 1)
             {
                 for (int incZ = -range; incZ <= range; incZ += 1)
                 {
-                    final Chunk chunk = world.getChunk(entityplayer.chunkCoordX + incX, entityplayer.chunkCoordZ + incZ);
+                    final Chunk chunk = world.getChunk(PlayerEntity.chunkCoordX + incX, PlayerEntity.chunkCoordZ + incZ);
                     final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
                     if (cap != null)
                     {
@@ -71,19 +71,19 @@ public class DebugRendererChunkBorder
 
         final Tessellator tessellator = Tessellator.getInstance();
         final BufferBuilder bufferbuilder = tessellator.getBuffer();
-        final double relPlayerX = entityplayer.lastTickPosX + (entityplayer.posX - entityplayer.lastTickPosX) * partialTicks;
-        final double relPlayerY = entityplayer.lastTickPosY + (entityplayer.posY - entityplayer.lastTickPosY) * partialTicks;
-        final double relPlayerZ = entityplayer.lastTickPosZ + (entityplayer.posZ - entityplayer.lastTickPosZ) * partialTicks;
+        final double relPlayerX = PlayerEntity.lastTickPosX + (PlayerEntity.posX - PlayerEntity.lastTickPosX) * partialTicks;
+        final double relPlayerY = PlayerEntity.lastTickPosY + (PlayerEntity.posY - PlayerEntity.lastTickPosY) * partialTicks;
+        final double relPlayerZ = PlayerEntity.lastTickPosZ + (PlayerEntity.posZ - PlayerEntity.lastTickPosZ) * partialTicks;
         final double lowerYLimit = 5 - relPlayerY;
         final double upperYLimit = 255 - relPlayerY;
 
-        final double lowerYLimitSmaller = Math.max(lowerYLimit, entityplayer.posY - 30 - relPlayerY);
+        final double lowerYLimitSmaller = Math.max(lowerYLimit, PlayerEntity.posY - 30 - relPlayerY);
 
         GlStateManager.disableTexture2D();
         GlStateManager.disableBlend();
 
-        final double chunkCoordX = ((double) (entityplayer.chunkCoordX << 4) - relPlayerX);
-        final double chunkCoordZ = ((double) (entityplayer.chunkCoordZ << 4) - relPlayerZ);
+        final double chunkCoordX = ((double) (PlayerEntity.chunkCoordX << 4) - relPlayerX);
+        final double chunkCoordZ = ((double) (PlayerEntity.chunkCoordZ << 4) - relPlayerZ);
 
         GlStateManager.glLineWidth(1.0F);
         bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);

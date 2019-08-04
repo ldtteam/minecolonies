@@ -34,7 +34,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -258,9 +258,9 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         if (block instanceof BlockContainer || block instanceof BlockMinecoloniesRack)
         {
             final TileEntity entity = world.getTileEntity(pos);
-            if (entity instanceof TileEntityChest)
+            if (entity instanceof ChestTileEntity)
             {
-                handleBuildingOverChest(pos, (TileEntityChest) entity, world);
+                handleBuildingOverChest(pos, (ChestTileEntity) entity, world);
             }
             if (entity instanceof TileEntityRack)
             {
@@ -277,7 +277,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      * @param chest the entity.
      * @param world the world.
      */
-    public static void handleBuildingOverChest(@NotNull final BlockPos pos, final TileEntityChest chest, final World world)
+    public static void handleBuildingOverChest(@NotNull final BlockPos pos, final ChestTileEntity chest, final World world)
     {
         final List<ItemStack> inventory = new ArrayList<>();
         final int size = chest.getSingleChestHandler().getSlots();

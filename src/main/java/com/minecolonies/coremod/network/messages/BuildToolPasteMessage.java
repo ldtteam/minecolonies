@@ -23,8 +23,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -180,7 +180,7 @@ public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage
     }
 
     @Override
-    public void messageOnServerThread(final BuildToolPasteMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final BuildToolPasteMessage message, final ServerPlayerEntity player)
     {
         final StructureName sn = new StructureName(message.structureName);
         if (!Structures.hasMD5(sn))

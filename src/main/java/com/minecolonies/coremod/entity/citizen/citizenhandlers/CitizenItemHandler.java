@@ -186,7 +186,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
             {
                 MineColonies.getNetwork().sendToAllAround(
                   new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
-                  new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorldFromCitizen(citizen).provider.getDimension(),
+                  new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorldFromCitizen(citizen).world.getDimension().getType().getId(),
                     blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
             }
             CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
@@ -208,7 +208,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
 
                 MineColonies.getNetwork().sendToAllAround(
                   new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), facing.ordinal()),
-                  new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorldFromCitizen(citizen).provider.getDimension(), blockPos.getX(),
+                  new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorldFromCitizen(citizen).world.getDimension().getType().getId(), blockPos.getX(),
                     blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE));
             }
             CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,

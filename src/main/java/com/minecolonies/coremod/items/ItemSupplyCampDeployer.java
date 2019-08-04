@@ -8,7 +8,7 @@ import com.minecolonies.api.configuration.Configurations;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -74,7 +74,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     {
         if (worldIn.isRemote)
         {
-            if(!Configurations.gameplay.allowOtherDimColonies && worldIn.provider.getDimension() != 0)
+            if(!Configurations.gameplay.allowOtherDimColonies && worldIn.world.getDimension().getType().getId() != 0)
             {
                 LanguageHandler.sendPlayerMessage(playerIn, CANT_PLACE_COLONY_IN_OTHER_DIM);
                 return ActionResultType.FAIL;
@@ -92,7 +92,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         final ItemStack stack = playerIn.getHeldItem(hand);
         if (worldIn.isRemote)
         {
-            if(!Configurations.gameplay.allowOtherDimColonies && worldIn.provider.getDimension() != 0)
+            if(!Configurations.gameplay.allowOtherDimColonies && worldIn.world.getDimension().getType().getId() != 0)
             {
                 LanguageHandler.sendPlayerMessage(playerIn, CANT_PLACE_COLONY_IN_OTHER_DIM);
                 return new ActionResult<>(ActionResultType.FAIL, stack);

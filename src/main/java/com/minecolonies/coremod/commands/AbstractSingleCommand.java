@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.configuration.Configurations;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -99,10 +99,10 @@ public abstract class AbstractSingleCommand implements ISubCommand
     @NotNull
     public static boolean isPlayerOpped(@NotNull final ICommandSender sender)
     {
-        if (sender instanceof EntityPlayer)
+        if (sender instanceof PlayerEntity)
         {
             return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
-                     .canSendCommands(((EntityPlayer) sender).getGameProfile());
+                     .canSendCommands(((PlayerEntity) sender).getGameProfile());
         }
         return true;
     }

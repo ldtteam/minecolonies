@@ -1,5 +1,7 @@
 package com.minecolonies.api.blocks;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Class to create the modBlocks.
  * References to the blocks can be made here
@@ -62,5 +64,40 @@ public final class ModBlocks
      */
     private ModBlocks()
     {
+    }
+
+    @NotNull
+    public static AbstractBlockHut[] getHuts()
+    {
+        return new AbstractBlockHut[] {
+          (AbstractBlockHut) blockHutStoneSmeltery,
+          (AbstractBlockHut) blockHutStonemason,
+          (AbstractBlockHut) blockHutGuardTower,
+          (AbstractBlockHut) blockHutArchery,
+          (AbstractBlockHut) blockHutBaker,
+          (AbstractBlockHut) blockHutBarracks,
+          (AbstractBlockHut) blockHutBarracksTower,
+          (AbstractBlockHut) blockHutBlacksmith,
+          (AbstractBlockHut) blockHutBuilder,
+          (AbstractBlockHut) blockHutChickenHerder,
+          (AbstractBlockHut) blockHutCitizen,
+          (AbstractBlockHut) blockHutCombatAcademy,
+          (AbstractBlockHut) blockHutComposter,
+          (AbstractBlockHut) blockHutCook,
+          (AbstractBlockHut) blockHutCowboy,
+          (AbstractBlockHut) blockHutCrusher,
+          (AbstractBlockHut) blockHutArchery,
+          (AbstractBlockHut) blockHutDeliveryman,
+          (AbstractBlockHut) blockHutFarmer,
+          (AbstractBlockHut) blockHutFisherman,
+          (AbstractBlockHut) blockHutLibrary,
+          (AbstractBlockHut) blockHutLumberjack,
+          (AbstractBlockHut) blockHutMiner,
+          (AbstractBlockHut) blockHutSawmill,
+          (AbstractBlockHut) blockHutSifter,
+          (AbstractBlockHut) blockHutShepherd,
+          (AbstractBlockHut) blockHutSmeltery,
+          (AbstractBlockHut) blockHutSwineHerder,
+          (AbstractBlockHut) blockHutTownHall};
     }
 }

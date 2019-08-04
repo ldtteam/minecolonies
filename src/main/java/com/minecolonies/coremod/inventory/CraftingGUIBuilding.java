@@ -107,7 +107,7 @@ public class CraftingGUIBuilding extends Container
                     }
 
                     @Override
-                    public boolean canTakeStack(final PlayerEntity par1EntityPlayer)
+                    public boolean canTakeStack(final PlayerEntity par1PlayerEntity)
                     {
                         return false;
                     }
@@ -151,20 +151,20 @@ public class CraftingGUIBuilding extends Container
     {
         if (!worldObj.isRemote)
         {
-            final EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
+            final ServerPlayerEntity ServerPlayerEntity = (ServerPlayerEntity) player;
             ItemStack itemstack = ItemStack.EMPTY;
             final IRecipe irecipe = CraftingManager.findMatchingRecipe(craftMatrix, worldObj);
             if (irecipe != null && (irecipe.isDynamic()
                     || !worldObj.getGameRules().getBoolean("doLimitedCrafting")
-                    || entityplayermp.getRecipeBook().isUnlocked(irecipe)
-                    || entityplayermp.isCreative()))
+                    || ServerPlayerEntity.getRecipeBook().isUnlocked(irecipe)
+                    || ServerPlayerEntity.isCreative()))
             {
                 this.craftResult.setRecipeUsed(irecipe);
                 itemstack = irecipe.getCraftingResult(this.craftMatrix);
             }
 
             this.craftResult.setInventorySlotContents(0, itemstack);
-            entityplayermp.connection.sendPacket(new SPacketSetSlot(this.windowId, 0, itemstack));
+            ServerPlayerEntity.connection.sendPacket(new SPacketSetSlot(this.windowId, 0, itemstack));
         }
 
         super.onCraftMatrixChanged(inventoryIn);

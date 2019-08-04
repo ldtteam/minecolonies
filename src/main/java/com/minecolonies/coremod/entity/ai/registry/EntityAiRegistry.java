@@ -15,7 +15,7 @@ import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -45,9 +45,9 @@ public class EntityAiRegistry implements IEntityAIRegistry
         registry
           .registerNewAiTaskForMobs(PRIORITY_ZERO, EntityAISwimming::new)
           .registerNewAiTaskForMobs(PRIORITY_FOUR, mob -> new EntityAIWalkToRandomHuts(mob, AI_MOVE_SPEED))
-          .registerNewAiTargetTaskForMobs(PRIORITY_TWO, mob -> new EntityAINearestAttackableTarget<>(mob, EntityPlayer.class, true))
+          .registerNewAiTargetTaskForMobs(PRIORITY_TWO, mob -> new EntityAINearestAttackableTarget<>(mob, PlayerEntity.class, true))
           .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new EntityAINearestAttackableTarget<>(mob, EntityCitizen.class, true))
-          .registerNewAiTaskForMobs(PRIORITY_FIVE, mob -> new EntityAIWatchClosest(mob, EntityPlayer.class, MAX_WATCH_DISTANCE))
+          .registerNewAiTaskForMobs(PRIORITY_FIVE, mob -> new EntityAIWatchClosest(mob, PlayerEntity.class, MAX_WATCH_DISTANCE))
           .registerNewAiTaskForMobs(PRIORITY_SIX, mob -> new EntityAIWatchClosest(mob, EntityCitizen.class, MAX_WATCH_DISTANCE))
           .registerNewAiTaskForMobs(PRIORITY_ONE, EntityAIAttackArcher::new, mob -> mob instanceof IArcherMobEntity)
           .registerNewAiTaskForMobs(PRIORITY_ONE, EntityAIRaiderAttackMelee::new, mob -> !(mob instanceof IArcherMobEntity));
