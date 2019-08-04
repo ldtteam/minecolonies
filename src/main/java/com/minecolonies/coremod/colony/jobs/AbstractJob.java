@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.NBTUtils;
-import com.ldtteam.blockout.Log;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;

@@ -14,7 +14,7 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.ldtteam.blockout.Log;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;

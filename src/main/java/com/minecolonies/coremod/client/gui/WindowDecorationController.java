@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.ldtteam.blockout.Log;
+import com.minecolonies.api.util.Log;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonHandler;
 import com.ldtteam.blockout.controls.Label;

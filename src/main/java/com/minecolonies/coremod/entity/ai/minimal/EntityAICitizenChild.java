@@ -11,7 +11,7 @@ import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.ldtteam.blockout.Log;
+import com.minecolonies.api.util.Log;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.ai.EntityAIBase;

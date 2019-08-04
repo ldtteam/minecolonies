@@ -13,7 +13,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.ldtteam.blockout.Log;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;

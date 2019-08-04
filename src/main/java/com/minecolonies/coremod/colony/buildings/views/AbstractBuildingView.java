@@ -14,7 +14,7 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.ldtteam.blockout.Log;
+import com.minecolonies.api.util.Log;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.HutRenameMessage;

@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.event;
 
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityBarbarian;
-import com.ldtteam.blockout.Log;
+import com.minecolonies.api.util.Log;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
