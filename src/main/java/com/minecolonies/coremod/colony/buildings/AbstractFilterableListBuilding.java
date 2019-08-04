@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.crafting.ItemStorage;
-import com.ldtteam.blockout.Log;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;

@@ -9,7 +9,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.InstantStructurePlacer;
 import com.minecolonies.api.util.NBTUtils;
-import com.ldtteam.blockout.Log;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
