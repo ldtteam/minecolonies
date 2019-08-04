@@ -1,14 +1,16 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutLumberjack;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
@@ -57,7 +59,7 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
      * @param c the colony.
      * @param l the position.
      */
-    public BuildingLumberjack(final Colony c, final BlockPos l)
+    public BuildingLumberjack(final IColony c, final BlockPos l)
     {
         super(c, l);
 
@@ -105,6 +107,12 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
         }
 
         return toKeep;
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.lumberjack;
     }
 
     /**

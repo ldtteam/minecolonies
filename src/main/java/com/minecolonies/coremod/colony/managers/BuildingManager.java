@@ -16,7 +16,7 @@ import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
+import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistryOld;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -101,7 +101,7 @@ public class BuildingManager implements IBuildingManager
         for (int i = 0; i < buildingTagList.size(); ++i)
         {
             final CompoundNBT buildingCompound = buildingTagList.getCompound(i);
-            @Nullable final IBuilding b = BuildingRegistry.createFromNBT(colony, buildingCompound);
+            @Nullable final IBuilding b = BuildingRegistryOld.createFromNBT(colony, buildingCompound);
             if (b != null)
             {
                 addBuilding(b);
@@ -320,7 +320,7 @@ public class BuildingManager implements IBuildingManager
         tileEntity.setColony(colony);
         if (!buildings.containsKey(tileEntity.getPosition()))
         {
-            @Nullable final IBuilding building = BuildingRegistry.create(colony, tileEntity);
+            @Nullable final IBuilding building = BuildingRegistryOld.create(colony, tileEntity);
             if (building != null)
             {
                 addBuilding(building);

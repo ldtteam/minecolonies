@@ -11,7 +11,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.AVERAGE_SATURA
 import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
 
 /**
- * Class containing the baker sounds.
+ * Class containing the bakery sounds.
  */
 public final class BakerSounds extends AbstractWorkerSounds
 {
@@ -26,21 +26,21 @@ public final class BakerSounds extends AbstractWorkerSounds
     private static final Random rand = new Random();
 
     /**
-     * Containing the female baker sounds.
+     * Containing the female bakery sounds.
      */
     public static final class Female
     {
-        public static final SoundEvent generalPhrases    = ModSoundEvents.getSoundID("mob.baker.female.generalPhrases");
-        public static final SoundEvent noises            = ModSoundEvents.getSoundID("mob.baker.female.noise");
-        public static final SoundEvent hostile           = ModSoundEvents.getSoundID("mob.baker.female.hostile");
-        public static final SoundEvent offToBed          = ModSoundEvents.getSoundID("mob.baker.female.offToBed");
-        public static final SoundEvent badWeather        = ModSoundEvents.getSoundID("mob.baker.female.badWeather");
-        public static final SoundEvent saturationVeryLow = ModSoundEvents.getSoundID("mob.baker.female.saturationVeryLow");
-        public static final SoundEvent saturationLow     = ModSoundEvents.getSoundID("mob.baker.female.saturationLow");
-        public static final SoundEvent saturationHigh    = ModSoundEvents.getSoundID("mob.baker.female.saturationHigh");
-        public static final SoundEvent greeting          = ModSoundEvents.getSoundID("mob.baker.female.greeting");
-        public static final SoundEvent farewell          = ModSoundEvents.getSoundID("mob.baker.female.farewell");
-        public static final SoundEvent interaction       = ModSoundEvents.getSoundID("mob.baker.female.interaction");
+        public static final SoundEvent generalPhrases    = ModSoundEvents.getSoundID("mob.bakery.female.generalPhrases");
+        public static final SoundEvent noises            = ModSoundEvents.getSoundID("mob.bakery.female.noise");
+        public static final SoundEvent hostile           = ModSoundEvents.getSoundID("mob.bakery.female.hostile");
+        public static final SoundEvent offToBed          = ModSoundEvents.getSoundID("mob.bakery.female.offToBed");
+        public static final SoundEvent badWeather        = ModSoundEvents.getSoundID("mob.bakery.female.badWeather");
+        public static final SoundEvent saturationVeryLow = ModSoundEvents.getSoundID("mob.bakery.female.saturationVeryLow");
+        public static final SoundEvent saturationLow     = ModSoundEvents.getSoundID("mob.bakery.female.saturationLow");
+        public static final SoundEvent saturationHigh    = ModSoundEvents.getSoundID("mob.bakery.female.saturationHigh");
+        public static final SoundEvent greeting          = ModSoundEvents.getSoundID("mob.bakery.female.greeting");
+        public static final SoundEvent farewell          = ModSoundEvents.getSoundID("mob.bakery.female.farewell");
+        public static final SoundEvent interaction       = ModSoundEvents.getSoundID("mob.bakery.female.interaction");
 
         /**
          * Private constructor to hide the implicit public one.
@@ -54,7 +54,7 @@ public final class BakerSounds extends AbstractWorkerSounds
     }
 
     /**
-     * Containing the male baker sounds.
+     * Containing the male bakery sounds.
      */
     public static final class Male
     {
@@ -70,7 +70,7 @@ public final class BakerSounds extends AbstractWorkerSounds
     }
 
     /**
-     * Plays baker sounds.
+     * Plays bakery sounds.
      * Suppressing Sonar Rule squid:S109
      * This rule wants to prevent magic numbers
      * But in this case the rule does not apply because its not a magic number its a % chance.

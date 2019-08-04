@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.ICitizenAssignable;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -40,7 +39,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      * @param pos
      * @param colony
      */
-    public AbstractCitizenAssignable(final BlockPos pos, final Colony colony)
+    public AbstractCitizenAssignable(final BlockPos pos, final IColony colony)
     {
         super(pos);
         this.colony = colony;

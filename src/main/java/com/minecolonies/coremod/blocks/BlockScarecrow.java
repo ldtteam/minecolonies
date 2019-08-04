@@ -1,6 +1,6 @@
-package com.minecolonies.coremod.blocks.huts;
+package com.minecolonies.coremod.blocks;
 
-import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesBlockHutField;
+import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
@@ -37,13 +37,13 @@ import static net.minecraft.util.Direction.fromAngle;
 /**
  * The class handling the fieldBlocks, placement and activation.
  */
-public class BlockHutField extends AbstractBlockMinecoloniesBlockHutField<BlockHutField>
+public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarecrow>
 {
 
     /**
      * Constructor called on block placement.
      */
-    public BlockHutField()
+    public BlockScarecrow()
     {
         super(Material.WOOD);
         initBlock();

@@ -7,6 +7,7 @@ import com.minecolonies.api.util.InventoryFunctions;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
@@ -125,4 +126,11 @@ public abstract class AbstractTileEntityColonyBuilding extends ChestTileEntity
      * @param style the style to set.
      */
     public abstract void setStyle(String style);
+
+    /**
+     * Get the building name that this {@link AbstractTileEntityColonyBuilding} belongs to.
+     *
+     * @return The buildings name.
+     */
+    public abstract ResourceLocation getBuildingName();
 }

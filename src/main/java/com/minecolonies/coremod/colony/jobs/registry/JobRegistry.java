@@ -4,6 +4,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.JobConstants;
 import com.minecolonies.api.util.constant.NbtTagConstants;

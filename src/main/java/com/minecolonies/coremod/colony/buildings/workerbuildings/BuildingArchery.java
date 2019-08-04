@@ -1,13 +1,15 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
 import net.minecraft.block.Block;
@@ -58,7 +60,7 @@ public class BuildingArchery extends AbstractBuildingWorker
      * @param c the colony
      * @param l the position
      */
-    public BuildingArchery(@NotNull final Colony c, final BlockPos l)
+    public BuildingArchery(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -168,8 +170,14 @@ public class BuildingArchery extends AbstractBuildingWorker
         return null;
     }
 
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.archery;
+    }
+
     /**
-     * The client view for the baker building.
+     * The client view for the bakery building.
      */
     public static class View extends AbstractBuildingWorker.View
     {

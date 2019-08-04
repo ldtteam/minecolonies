@@ -1,8 +1,11 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.compatibility.Compatibility;
@@ -11,7 +14,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobBlacksmith;
 import net.minecraft.item.*;
@@ -37,7 +39,7 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
      * @param c the colony.
      * @param l the location.
      */
-    public BuildingBlacksmith(final Colony c, final BlockPos l)
+    public BuildingBlacksmith(final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -103,6 +105,12 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
 
         final ItemStack output = storage.getPrimaryOutput();
         return output.getItem() instanceof ItemTool || output.getItem() instanceof SwordItem || output.getItem() instanceof ArmorItem || output.getItem() instanceof HoeItem || Compatibility.isTinkersWeapon(output) || ingots == size;
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.blacksmith;
     }
 
     /**

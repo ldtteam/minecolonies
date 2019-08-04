@@ -3,15 +3,17 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.ldtteam.structurize.blocks.decorative.BlockShingle;
 import com.ldtteam.structurize.blocks.decorative.BlockShingleSlab;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobSawmill;
 import net.minecraft.item.Item;
@@ -44,7 +46,7 @@ public class BuildingSawmill extends AbstractBuildingCrafter
      * @param c the colony.
      * @param l the location
      */
-    public BuildingSawmill(final Colony c, final BlockPos l)
+    public BuildingSawmill(final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -121,6 +123,12 @@ public class BuildingSawmill extends AbstractBuildingCrafter
         }
 
         return amountOfValidBlocks > 0 && amountOfValidBlocks/blocks > MIN_PERCENTAGE_TO_CRAFT;
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.sawmill;
     }
 
     /**

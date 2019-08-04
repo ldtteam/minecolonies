@@ -6,11 +6,12 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.configuration.Configuration;
-import com.minecolonies.apiimp.MinecoloniesApiImpl;
-import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.apiimp.MinecoloniesAPIImpl;
+import com.minecolonies.coremod.achievements.ModAchievements;
+import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
@@ -90,7 +91,7 @@ public class MineColonies
     @SubscribeEvent
     public void preInit(@NotNull final FMLCommonSetupEvent event)
     {
-        MinecoloniesAPIProxy.getInstance().setApiInstance(MinecoloniesApiImpl.getInstance());
+        MinecoloniesAPIProxy.getInstance().setApiInstance(MinecoloniesAPIImpl.getInstance());
 
         StructureLoadingUtils.originFolders.add(Constants.MOD_ID);
         CapabilityManager.INSTANCE.register(IColonyTagCapability.class, new IColonyTagCapability.Storage(), IColonyTagCapability.Impl::new);

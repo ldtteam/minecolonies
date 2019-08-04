@@ -1,7 +1,10 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -11,7 +14,6 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutFarmer;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.network.messages.AssignFieldMessage;
@@ -111,7 +113,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      * @param c the colony the building is in.
      * @param l the position it has been placed (it's id).
      */
-    public BuildingFarmer(final Colony c, final BlockPos l)
+    public BuildingFarmer(final IColony c, final BlockPos l)
     {
         super(c, l);
         final ItemStack stackSeed = new ItemStack(Items.WHEAT_SEEDS);
@@ -326,6 +328,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
             }
         }
         return toKeep;
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.farmer;
     }
 
     @Override

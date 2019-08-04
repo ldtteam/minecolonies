@@ -1,6 +1,9 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
@@ -8,7 +11,6 @@ import com.minecolonies.api.configuration.Configurations;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowTownHall;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
@@ -47,7 +49,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
      * @param c the colony.
      * @param l the location.
      */
-    public BuildingTownHall(final Colony c, final BlockPos l)
+    public BuildingTownHall(final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -78,6 +80,12 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         {
             this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeTownhallMax);
         }
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.townHall;
     }
 
     /**

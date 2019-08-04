@@ -3,6 +3,8 @@ package com.minecolonies.coremod.blocks.huts;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
@@ -42,6 +44,12 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     public String getName()
     {
         return "blockHutTownHall";
+    }
+
+    @Override
+    public BuildingEntry getBuildingEntry()
+    {
+        return ModBuildings.townHall;
     }
 
     @Override
