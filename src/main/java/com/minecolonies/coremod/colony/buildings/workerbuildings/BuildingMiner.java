@@ -229,7 +229,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
         startingLevelNode = compound.getInt(TAG_SN);
 
-        final ListNBT levelTagList = compound.getTagList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT levelTagList = compound.getList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < levelTagList.size(); i++)
         {
             this.levels.add(new Level(levelTagList.getCompound(i)));

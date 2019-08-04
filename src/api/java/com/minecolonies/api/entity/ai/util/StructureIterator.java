@@ -436,7 +436,7 @@ public class StructureIterator
 
     private boolean isAtPos(@NotNull final CompoundNBT entityData, final BlockPos pos)
     {
-        final ListNBT list = entityData.getTagList("Pos", 6);
+        final ListNBT list = entityData.getList("Pos", 6);
         final int x = (int) list.getDoubleAt(0);
         final int y = (int) list.getDoubleAt(1);
         final int z = (int) list.getDoubleAt(2);

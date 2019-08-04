@@ -176,14 +176,14 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         tasks.clear();
         super.deserializeNBT(compound);
 
-        final ListNBT taskTagList = compound.getTagList(TAG_TASKS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT taskTagList = compound.getList(TAG_TASKS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < taskTagList.size(); ++i)
         {
             final CompoundNBT taskCompound = taskTagList.getCompound(i);
             final ProductState state = ProductState.values()[taskCompound.getInt(TAG_STATE)];
             final List<BakingProduct> bakingProducts = new ArrayList<>();
 
-            final ListNBT productTagList = taskCompound.getTagList(TAG_PRODUCTS, Constants.NBT.TAG_COMPOUND);
+            final ListNBT productTagList = taskCompound.getList(TAG_PRODUCTS, Constants.NBT.TAG_COMPOUND);
             for (int j = 0; j < productTagList.size(); ++j)
             {
                 final CompoundNBT productCompound = taskTagList.getCompound(i);
@@ -194,7 +194,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
             tasks.put(state, bakingProducts);
         }
 
-        final ListNBT furnaceTagList = compound.getTagList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
+        final ListNBT furnaceTagList = compound.getList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < furnaceTagList.size(); ++i)
         {
             final CompoundNBT furnaceCompound = furnaceTagList.getCompound(i);

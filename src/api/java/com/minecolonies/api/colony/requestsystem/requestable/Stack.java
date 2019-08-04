@@ -3,9 +3,11 @@ package com.minecolonies.api.colony.requestsystem.requestable;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraft.tags.Tag;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -163,7 +165,14 @@ public class Stack implements IDeliverable
     {
         if (matchOreDic)
         {
-            return OreDictionary.itemMatches(getStack(), stack, matchMeta);
+            for (final ResourceLocation tag: getStack().getItem().getTags())
+            {
+                final Tag<Item> theTag = new Tag<>(tag);
+                if (theTag.contains(stack.getItem()));
+                {
+                    return true;
+                }
+            }
         }
 
         return ItemStackUtils.compareItemStacksIgnoreStackSize(getStack(), stack, matchMeta, matchNBT);

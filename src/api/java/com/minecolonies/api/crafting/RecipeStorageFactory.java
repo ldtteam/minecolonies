@@ -83,7 +83,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
     public RecipeStorage deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
         final List<ItemStack> input = new ArrayList<>();
-        final ListNBT inputTagList = nbt.getTagList(INPUT_TAG, Constants.NBT.TAG_COMPOUND);
+        final ListNBT inputTagList = nbt.getList(INPUT_TAG, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < inputTagList.size(); ++i)
         {
             final CompoundNBT inputTag = inputTagList.getCompound(i);

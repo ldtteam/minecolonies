@@ -339,7 +339,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         {
             try
             {
-                final ListNBT workersTagList = compound.getTagList(TAG_WORKER, Constants.NBT.TAG_COMPOUND);
+                final ListNBT workersTagList = compound.getList(TAG_WORKER, Constants.NBT.TAG_COMPOUND);
                 for (int i = 0; i < workersTagList.size(); ++i)
                 {
                     final ICitizenData data;
@@ -373,7 +373,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         this.hiringMode = HiringMode.values()[compound.getInt(TAG_HIRING_MODE)];
 
         recipes.clear();
-        final ListNBT recipesTags = compound.getTagList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
+        final ListNBT recipesTags = compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
         recipes.addAll(NBTUtils.streamCompound(recipesTags)
                          .map(recipeCompound -> (IToken) StandardFactoryController.getInstance().deserialize(recipeCompound))
                          .collect(Collectors.toList()));

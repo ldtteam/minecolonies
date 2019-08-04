@@ -237,7 +237,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        final ListNBT fieldTagList = compound.getTagList(TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT fieldTagList = compound.getList(TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < fieldTagList.size(); ++i)
         {
             final CompoundNBT fieldCompound = fieldTagList.getCompound(i);

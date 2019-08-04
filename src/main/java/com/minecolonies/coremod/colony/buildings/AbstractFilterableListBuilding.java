@@ -49,14 +49,14 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        final ListNBT filterableList = compound.getTagList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
+        final ListNBT filterableList = compound.getList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < filterableList.size(); ++i)
         {
             try
             {
                 final CompoundNBT listItem = filterableList.getCompound(i);
                 final String id = listItem.getString(TAG_ID);
-                final ListNBT filterableItems = listItem.getTagList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
+                final ListNBT filterableItems = listItem.getList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
                 final List<ItemStorage> items = new ArrayList<>();
                 for (int j = 0; j < filterableItems.size(); ++j)
                 {

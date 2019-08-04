@@ -112,7 +112,7 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
         public StandardRequestSystemDeliveryManJobDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt) throws Throwable
         {
             final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
-            final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getTagList(TAG_LIST, Constants.NBT.TAG_COMPOUND))
+            final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getList(TAG_LIST, Constants.NBT.TAG_COMPOUND))
                                           .map(CompoundNBT -> (IToken<?>) controller.deserialize(CompoundNBT))
                                           .collect(Collectors.toCollection(LinkedList<IToken<?>>::new));
             final boolean returning = nbt.getBoolean(TAG_VALUE);

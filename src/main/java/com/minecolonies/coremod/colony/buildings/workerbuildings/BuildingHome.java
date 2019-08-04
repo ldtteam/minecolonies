@@ -110,7 +110,7 @@ public class BuildingHome extends AbstractBuilding
             }
         }
 
-        final ListNBT bedTagList = compound.getTagList(TAG_BEDS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT bedTagList = compound.getList(TAG_BEDS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < bedTagList.size(); ++i)
         {
             final CompoundNBT bedCompound = bedTagList.getCompound(i);

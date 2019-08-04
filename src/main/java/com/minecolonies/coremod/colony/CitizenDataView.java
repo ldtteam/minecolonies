@@ -427,7 +427,7 @@ public class CitizenDataView implements ICitizenDataView
 
         final CompoundNBT compound = ByteBufUtils.readTag(buf);
         inventory = new InventoryCitizen(this.name, true);
-        final ListNBT ListNBT = compound.getTagList("inventory", 10);
+        final ListNBT ListNBT = compound.getList("inventory", 10);
         this.inventory.readFromNBT(ListNBT);
         this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInt(TAG_HELD_ITEM_SLOT));
         this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));

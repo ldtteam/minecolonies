@@ -76,7 +76,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
     @Optional.Method(modid = DYNAMIC_MODID)
     protected boolean checkForDynamicTreeBlock(@NotNull final Block block)
     {
-        return (block instanceof BlockBranch);
+        return false;
     }
 
     /**
@@ -98,7 +98,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
     @Optional.Method(modid = DYNAMIC_MODID)
     protected boolean checkForDynamicLeavesBlock(final Block block)
     {
-        return block instanceof BlockDynamicLeaves;
+        return false;
     }
 
     /**
@@ -121,7 +121,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
     @Optional.Method(modid = DYNAMIC_MODID)
     protected boolean checkForDynamicTrunkShellBlock(final Block block)
     {
-        return block instanceof BlockTrunkShell;
+        return false;
     }
 
     /**

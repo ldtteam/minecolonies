@@ -146,7 +146,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
         this.asyncRequests.clear();
         if (compound.keySet().contains(TAG_ASYNC_REQUESTS))
         {
-            this.asyncRequests.addAll(NBTUtils.streamCompound(compound.getTagList(TAG_ASYNC_REQUESTS, Constants.NBT.TAG_COMPOUND))
+            this.asyncRequests.addAll(NBTUtils.streamCompound(compound.getList(TAG_ASYNC_REQUESTS, Constants.NBT.TAG_COMPOUND))
                                         .map(StandardFactoryController.getInstance()::deserialize)
                                         .map(o -> (IToken) o)
                                         .collect(Collectors.toSet()));

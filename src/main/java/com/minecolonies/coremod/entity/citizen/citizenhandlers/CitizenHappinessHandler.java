@@ -559,7 +559,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         numberOfDaysWithoutJob = tagCompound.getInt(NbtTagConstants.TAG_NUMBER_OF_DAYS_JOB);
         hasNoFields = tagCompound.getBoolean(NbtTagConstants.TAG_HAS_NO_FIELDS);
 
-        final ListNBT fieldTagList = tagCompound.getTagList(NbtTagConstants.TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT fieldTagList = tagCompound.getList(NbtTagConstants.TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < fieldTagList.size(); ++i)
         {
             final FieldDataModifier field = new FieldDataModifier();
@@ -567,13 +567,13 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             field.setInactiveDays(containerCompound.getInt(NbtTagConstants.TAG_FIELD_DAYS_INACTIVE));
             field.isCanFarm(containerCompound.getBoolean(NbtTagConstants.TAG_FIELD_CAN_FARM));
 
-            final ListNBT blockPosTagList = containerCompound.getTagList(NbtTagConstants.TAG_ID, Constants.NBT.TAG_COMPOUND);
+            final ListNBT blockPosTagList = containerCompound.getList(NbtTagConstants.TAG_ID, Constants.NBT.TAG_COMPOUND);
             final CompoundNBT blockPoCompound = blockPosTagList.getCompound(0);
             final BlockPos pos = NBTUtil.getPosFromTag(blockPoCompound);
             fieldModifier.put(pos, field);
         }
 
-        final ListNBT noToolsTagList = tagCompound.getTagList(NbtTagConstants.TAG_NO_TOOLS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT noToolsTagList = tagCompound.getList(NbtTagConstants.TAG_NO_TOOLS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < noToolsTagList.size(); ++i)
         {
             final CompoundNBT containerCompound = noToolsTagList.getCompound(i);

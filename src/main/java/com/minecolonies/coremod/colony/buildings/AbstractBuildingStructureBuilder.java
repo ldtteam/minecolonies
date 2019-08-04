@@ -132,7 +132,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        final ListNBT neededResTagList = compound.getTagList(TAG_RESOURCE_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+        final ListNBT neededResTagList = compound.getList(TAG_RESOURCE_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < neededResTagList.size(); ++i)
         {
             final CompoundNBT neededRes = neededResTagList.getCompound(i);

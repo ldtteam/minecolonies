@@ -2,7 +2,6 @@ package com.minecolonies.api.colony.requestsystem.requestable;
 
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +55,7 @@ public class Food implements IDeliverable
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        return stack.getItem() instanceof ItemFood;
+        return stack.getItem().isFood();
     }
 
     @Override

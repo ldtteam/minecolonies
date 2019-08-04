@@ -272,7 +272,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             tightGrouping = true;
         }
 
-        final ListNBT wayPointTagList = compound.getTagList(NBT_PATROL_TARGETS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT wayPointTagList = compound.getList(NBT_PATROL_TARGETS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < wayPointTagList.size(); ++i)
         {
             final CompoundNBT blockAtPos = wayPointTagList.getCompound(i);
@@ -280,7 +280,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             patrolTargets.add(pos);
         }
 
-        final ListNBT mobsTagList = compound.getTagList(NBT_MOBS, Constants.NBT.TAG_COMPOUND);
+        final ListNBT mobsTagList = compound.getList(NBT_MOBS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < mobsTagList.size(); i++)
         {
             final CompoundNBT mobCompound = mobsTagList.getCompound(i);

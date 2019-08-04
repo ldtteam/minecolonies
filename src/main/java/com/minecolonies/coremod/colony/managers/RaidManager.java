@@ -304,7 +304,7 @@ public class RaidManager implements IRaiderManager
         if (compound.keySet().contains(TAG_RAID_MANAGER))
         {
             final CompoundNBT raiderCompound = compound.getCompound(TAG_RAID_MANAGER);
-            final ListNBT raiderTags = raiderCompound.getTagList(TAG_SCHEMATIC_LIST, Constants.NBT.TAG_COMPOUND);
+            final ListNBT raiderTags = raiderCompound.getList(TAG_SCHEMATIC_LIST, Constants.NBT.TAG_COMPOUND);
             schematicMap.putAll(NBTUtils.streamCompound(raiderTags)
                                       .collect(Collectors.toMap(raiderTagCompound -> BlockPosUtil.readFromNBT(raiderTagCompound, TAG_POS), raiderTagCompound ->  new Tuple<>(raiderTagCompound.getString(TAG_NAME), raiderTagCompound.getLong(TAG_TIME)))));
         }

@@ -77,7 +77,7 @@ public class StandardRecipeManager implements IRecipeManager
     @Override
     public void readFromNBT(@NotNull final CompoundNBT compound)
     {
-        recipes.putAll(NBTUtils.streamCompound(compound.getTagList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND))
+        recipes.putAll(NBTUtils.streamCompound(compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND))
                 .map(recipeCompound -> (IRecipeStorage) StandardFactoryController.getInstance().deserialize(recipeCompound))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(IRecipeStorage::getToken, recipe -> recipe)));
