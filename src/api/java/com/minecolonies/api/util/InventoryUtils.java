@@ -2401,7 +2401,7 @@ public class InventoryUtils
               for (Map.Entry<ItemStack, Integer> entry : inventoryCounts.entrySet())
               {
                   ItemStack containedStack = entry.getKey();
-                  Integer containedCount = entry.get();
+                  Integer containedCount = entry.getValue();
                   if (ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, containedStack))
                   {
                       remainingCount -= containedCount;
@@ -2461,7 +2461,7 @@ public class InventoryUtils
               for (Map.Entry<ItemStack, Integer> entry : inventoryCounts.entrySet())
               {
                   ItemStack containedStack = entry.getKey();
-                  final Integer containedCount = entry.get();
+                  final Integer containedCount = entry.getValue();
                   if (ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, containedStack))
                   {
                       remainingCount -= containedCount;

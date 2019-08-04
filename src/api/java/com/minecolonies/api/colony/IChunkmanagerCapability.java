@@ -97,7 +97,7 @@ public interface IChunkmanagerCapability
         public INBT writeNBT(@NotNull final Capability<IChunkmanagerCapability> capability, @NotNull final IChunkmanagerCapability instance, @Nullable final Direction side)
         {
             final CompoundNBT compound = new CompoundNBT();
-            compound.put(TAG_ALL_CHUNK_STORAGES, instance.getAllChunkStorages().entrySet().stream().map(entry -> write(entry.getKey(), entry.get())).collect(NBTUtils.toListNBT()));
+            compound.put(TAG_ALL_CHUNK_STORAGES, instance.getAllChunkStorages().entrySet().stream().map(entry -> write(entry.getKey(), entry.getValue())).collect(NBTUtils.toListNBT()));
             return compound;
         }
 

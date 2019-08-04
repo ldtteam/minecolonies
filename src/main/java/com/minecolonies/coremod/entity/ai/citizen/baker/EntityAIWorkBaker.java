@@ -167,12 +167,12 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         boolean emptyFurnace = false;
         for (final Map.Entry<BlockPos, BakingProduct> entry : getOwnBuilding().getFurnacesWithProduct().entrySet())
         {
-            if (entry.get() == null)
+            if (entry.getValue() == null)
             {
                 emptyFurnace = true;
                 currentFurnace = entry.getKey();
             }
-            else if (entry.get().getState() == ProductState.BAKED)
+            else if (entry.getValue().getState() == ProductState.BAKED)
             {
                 currentFurnace = entry.getKey();
                 return BAKER_TAKE_OUT_OF_OVEN;

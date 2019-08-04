@@ -657,7 +657,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     {
         for (final Map.Entry<Predicate<ItemStack>, Tuple<Integer, Boolean>> entry : getRequiredItemsAndAmount().entrySet())
         {
-            if (inventory && !entry.get().getB())
+            if (inventory && !entry.getValue().getB())
             {
                 continue;
             }
@@ -665,7 +665,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             if (entry.getKey().test(stack))
             {
                 final ItemStorage kept = ItemStorage.getItemStackOfListMatchingPredicate(localAlreadyKept, entry.getKey());
-                final int toKeep = entry.get().getA();
+                final int toKeep = entry.getValue().getA();
                 int rest = stack.getCount() - toKeep;
                 if (kept != null)
                 {

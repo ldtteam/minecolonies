@@ -20,6 +20,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
@@ -104,7 +105,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         int freeSlots = inventory.getSlots();
         for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
         {
-            final double slotsNeeded = (double) entry.get() / entry.getKey().getItemStack().getMaxStackSize();
+            final double slotsNeeded = (double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize();
             freeSlots -= (int) Math.ceil(slotsNeeded);
         }
         return freeSlots;
@@ -195,7 +196,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             if (predicate.test(entry.getKey().getItemStack()))
             {
-                return entry.get();
+                return entry.getValue();
             }
         }
         return 0;

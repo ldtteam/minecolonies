@@ -448,7 +448,7 @@ public class Permissions implements IPermissions
     {
         for (@NotNull final Map.Entry<UUID, Player> entry : players.entrySet())
         {
-            if (entry.get().getRank().equals(Rank.OWNER))
+            if (entry.getValue().getRank().equals(Rank.OWNER))
             {
                 return entry;
             }
@@ -529,7 +529,7 @@ public class Permissions implements IPermissions
             @NotNull final ListNBT flagsTagList = new ListNBT();
             for (@NotNull final Action action : Action.values())
             {
-                if (Utils.testFlag(entry.get(), action.getFlag()))
+                if (Utils.testFlag(entry.getValue(), action.getFlag()))
                 {
                     flagsTagList.add(new NBTTagString(action.name()));
                 }
@@ -877,7 +877,7 @@ public class Permissions implements IPermissions
         for (@NotNull final Map.Entry<Rank, Integer> entry : permissionMap.entrySet())
         {
             buf.writeString(entry.getKey().name());
-            buf.writeInt(entry.get());
+            buf.writeInt(entry.getValue());
         }
     }
 

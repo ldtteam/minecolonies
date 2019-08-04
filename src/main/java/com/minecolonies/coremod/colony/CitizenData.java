@@ -868,8 +868,8 @@ public class CitizenData implements ICitizenData
         {
             @NotNull final CompoundNBT levelCompound = new CompoundNBT();
             levelCompound.putString(TAG_NAME, entry.getKey());
-            levelCompound.putInt(TAG_LEVEL, entry.get().getA());
-            levelCompound.putDouble(TAG_EXPERIENCE, entry.get().getB());
+            levelCompound.putInt(TAG_LEVEL, entry.getValue().getA());
+            levelCompound.putDouble(TAG_EXPERIENCE, entry.getValue().getB());
             levelTagList.add(levelCompound);
         }
         compound.put(TAG_LEVEL_MAP, levelTagList);
