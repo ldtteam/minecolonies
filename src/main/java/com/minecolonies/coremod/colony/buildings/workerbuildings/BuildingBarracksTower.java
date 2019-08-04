@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -83,23 +82,6 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         {
             player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.worker.needBarracks"));
         }
-    }
-
-    @Override
-    public boolean assignCitizen(final CitizenData citizen)
-    {
-        final boolean assignalResult = super.assignCitizen(citizen);
-        if (citizen != null && assignalResult)
-        {
-            final AbstractBuilding building = citizen.getHomeBuilding();
-            if (building != null && !(building instanceof AbstractBuildingGuards))
-            {
-                building.removeCitizen(citizen);
-            }
-            citizen.setHomeBuilding(this);
-            citizen.setWorkBuilding(this);
-        }
-        return assignalResult;
     }
 
     @Override
