@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.inventory;
 
+import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.tileentities.AbstractTileEntityRack;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;

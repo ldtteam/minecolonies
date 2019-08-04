@@ -1,23 +1,21 @@
 package com.minecolonies.coremod.entity.ai.citizen.fisherman;
 
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.pathfinding.WaterPathResult;
+import com.minecolonies.api.sounds.FishermanSounds;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFisherman;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.pathfinding.WaterPathResult;
-import com.minecolonies.coremod.sounds.FishermanSounds;
-import com.minecolonies.coremod.util.SoundUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
@@ -33,9 +31,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Fisherman AI class.
@@ -532,7 +530,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         if (!world.isRemote)
         {
             WorkerUtil.faceBlock(job.getWater(), worker);
-            world.playSound((EntityPlayer) null,
+            world.playSound(null,
               this.worker.getPosition(),
               SoundEvents.ENTITY_BOBBER_THROW,
               SoundCategory.NEUTRAL,
@@ -668,7 +666,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * @return citizen object.
      */
     @Nullable
-    public IEntityCitizen getCitizen()
+    public AbstractEntityCitizen getCitizen()
     {
         return worker;
     }

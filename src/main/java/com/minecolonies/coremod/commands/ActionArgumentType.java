@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.commands;
 
 import com.google.common.primitives.Ints;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.coremod.commands.AbstractCommandParser.ModuleContext;
 import com.minecolonies.coremod.commands.CommandEntryPointNew.MineColonyDataProvider;
 import com.mojang.authlib.GameProfile;
@@ -403,7 +403,7 @@ public enum ActionArgumentType
     {
         if (potentialArgumentValue.isEmpty())
         {
-            return Arrays.asList(new String[] {"true", "false" });
+            return Arrays.asList("true", "false");
         }
         if (("true".startsWith(potentialArgumentValue))
             || ("yes".startsWith(potentialArgumentValue))

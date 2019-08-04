@@ -1,27 +1,29 @@
 package com.minecolonies.coremod.colony;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.HappinessData;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
+import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.mobs.util.MobEventsUtils;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.managers.*;
-import com.minecolonies.coremod.colony.managers.interfaces.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
-import com.minecolonies.coremod.colony.workorders.IWorkManager;
 import com.minecolonies.coremod.colony.workorders.WorkManager;
-import com.minecolonies.coremod.entity.IEntityCitizen;
-import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.coremod.util.ServerUtils;
@@ -1440,11 +1442,50 @@ public class Colony implements IColony
     }
 
     /**
+     * Is player part of a wave trying to invade the colony?
+     *
+     * @param player the player to check..
+     * @return true if so.
+     */
+    public boolean isValidAttackingPlayer(final EntityPlayer player)
+    {
+        if (packageManager.getLastContactInHours() > 1)
+        {
+            return false;
+        }
+
+        for (final AttackingPlayer attackingPlayer : attackingPlayers)
+        {
+            if (attackingPlayer.getPlayer().equals(player))
+            {
+                return attackingPlayer.isValidAttack(this);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if attack of guard is valid.
+     *
+     * @param entity the guard entity.
+     * @return true if so.
+     */
+    public boolean isValidAttackingGuard(final AbstractEntityCitizen entity)
+    {
+        if (packageManager.getLastContactInHours() > 1)
+        {
+            return false;
+        }
+
+        return AttackingPlayer.isValidAttack(entity, this);
+    }
+
+    /**
      * Add a guard to the list of attacking guards.
      *
      * @param IEntityCitizen the citizen to add.
      */
-    public void addGuardToAttackers(final IEntityCitizen IEntityCitizen, final EntityPlayer player)
+    public void addGuardToAttackers(final AbstractEntityCitizen IEntityCitizen, final EntityPlayer player)
     {
         if (player == null)
         {
@@ -1474,45 +1515,6 @@ public class Colony implements IColony
                 LanguageHandler.sendPlayersMessage(getMessageEntityPlayers(), "Beware, " + visitingPlayer.getName() + " is attacking you and he brought guards.");
             }
         }
-    }
-
-    /**
-     * Is player part of a wave trying to invade the colony?
-     *
-     * @param player the player to check..
-     * @return true if so.
-     */
-    public boolean isValidAttackingPlayer(final EntityPlayer player)
-    {
-        if (packageManager.getLastContactInHours() > 1)
-        {
-            return false;
-        }
-
-        for (final AttackingPlayer attackingPlayer : attackingPlayers)
-        {
-            if (attackingPlayer.getPlayer().equals(player))
-            {
-                return attackingPlayer.isValidAttack(this);
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Check if attack of guard is valid.
-     *
-     * @param entity the guard entity.
-     * @return true if so.
-     */
-    public boolean isValidAttackingGuard(final IEntityCitizen entity)
-    {
-        if (packageManager.getLastContactInHours() > 1)
-        {
-            return false;
-        }
-
-        return AttackingPlayer.isValidAttack(entity, this);
     }
 
     /**

@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.*;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -111,7 +113,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
             return;
         }
 
-        final Optional<IEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
+        final Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
         if (!optionalEntityCitizen.isPresent())
         {
             Log.getLogger().warn("TransferItemsRequestMessage entity citizen is null");
@@ -138,7 +140,7 @@ public class TransferItemsToCitizenRequestMessage extends AbstractMessage<Transf
 
         final ItemStack itemStackToTake = message.itemStack.copy();
         ItemStackUtils.setSize(itemStackToTake, message.quantity);
-        final IEntityCitizen citizen = optionalEntityCitizen.get();
+        final AbstractEntityCitizen citizen = optionalEntityCitizen.get();
         final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(citizen.getInventoryCitizen()), itemStackToTake);
         if (!isCreative)
         {

@@ -1,11 +1,10 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.BipedModelType;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.api.client.render.BipedModelType;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.sounds.FarmerSounds;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.EntityAIWorkFarmer;
-import com.minecolonies.coremod.sounds.FarmerSounds;
 import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.achievements;
 
+import com.minecolonies.api.achievements.IMineColoniesAchievement;
 import net.minecraft.advancements.Advancement;
 
 /**
@@ -15,87 +16,6 @@ public class MineColoniesAchievementPage
 
     /**
      * Create a new achievement page.
-     *  @param name         The name this page should have
-     * @param achievementGetSupply
-     * @param achievementWandOfbuilding
-     * @param achievementTownhall
-     * @param achievementBuildingTownhall
-     * @param achievementUpgradeTownhallMax
-     * @param achievementBuildingBuilder
-     * @param achievementBuildingColonist
-     * @param achievementBuildingLumberjack
-     * @param achievementBuildingMiner
-     * @param achievementBuildingFisher
-     * @param achievementSizeSettlement
-     * @param achievementSizeTown
-     * @param achievementSizeCity
-     * @param achievementUpgradeColonistMax
-     * @param achievementUpgradeBuilderMax
-     * @param achievementUpgradeLumberjackMax
-     * @param achievementUpgradeMinerMax
-     * @param achievementUpgradeFisherMax
-     * @param achievementSizeMetropolis
-     * @param achievementBuildingFarmer
-     * @param achievementUpgradeFarmerMax
-     * @param achievementBuildingGuard
-     * @param achievementUpgradeGuardMax
-     * @param achievementKillOneMob
-     * @param achievementKill25Mobs
-     * @param achievementKill100Mobs
-     * @param achievementKill500Mobs
-     * @param achievementKill1000Mobs
-     * @param achievementMineOneOre
-     * @param achievementMine25Ores
-     * @param achievementMine100Ores
-     * @param achievementMine500Ores
-     * @param achievementMine1000Ores
-     * @param achievementMineOneDiamond
-     * @param achievementMine25Diamonds
-     * @param achievementMine100Diamonds
-     * @param achievementMine500Diamonds
-     * @param achievementMine1000Diamonds
-     * @param achievementBuildOneHut
-     * @param achievementBuild25Huts
-     * @param achievementBuild100Huts
-     * @param achievementBuild500Huts
-     * @param achievementBuild1000Huts
-     * @param achievementCatchOneFish
-     * @param achievementCatch25Fish
-     * @param achievementCatch100Fish
-     * @param achievementCatch500Fish
-     * @param achievementCatch1000Fish
-     * @param achievementHarvestOneCarrot
-     * @param achievementHarvest25Carrots
-     * @param achievementHarvest100Carrots
-     * @param achievementHarvest500Carrots
-     * @param achievementHarvest1000Carrots
-     * @param achievementHarvestOnePotato
-     * @param achievementHarvest25Potatoes
-     * @param achievementHarvest100Potatoes
-     * @param achievementHarvest500Potatoes
-     * @param achievementHarvest1000Potatoes
-     * @param achievementHarvestOneWheat
-     * @param achievementHarvest25Wheat
-     * @param achievementHarvest100Wheat
-     * @param achievementHarvest500Wheat
-     * @param achievementHarvest1000Wheat
-     * @param achievementFellOneTree
-     * @param achievementFell25Trees
-     * @param achievementFell100Trees
-     * @param achievementFell500Trees
-     * @param achievementFell1000Trees
-     * @param achievementPlantOneSapling
-     * @param achievementPlant25Saplings
-     * @param achievementPlant100Saplings
-     * @param achievementPlant500Saplings
-     * @param achievementPlant1000Saplings
-     * @param achievementMinerDeathLava
-     * @param achievementMinerDeathFall
-     * @param achievementLumberjackDeathTree
-     * @param achievementFisherDeathGuardian
-     * @param achievementGuardDeathEnderman
-     * @param achievementPlayerDeathGuard
-     * @param achievements A list of achievements to display
      */
     public MineColoniesAchievementPage(
             final String name,

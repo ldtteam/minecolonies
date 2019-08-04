@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity;
 
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.MathUtils;
 import net.minecraft.block.material.Material;
@@ -108,35 +109,35 @@ public final class EntityFishHook extends Entity
      * entity creation time.
      * Used to check it the hook got stuck.
      */
-    private final long          creationTime;
+    private final long                  creationTime;
     /**
      * The citizen who threw this rod.
      */
-    private       IEntityCitizen citizen;
+    private       AbstractEntityCitizen citizen;
     /**
      * The fishing speed enchantment level on the rod that threw this hook.
      */
-    private       int           fishingSpeedEnchantment;
+    private       int                   fishingSpeedEnchantment;
     /**
      * The fishing loot enchantment level on the rod that threw this hook.
      */
-    private       int           fishingLootEnchantment;
+    private       int                   fishingLootEnchantment;
     /**
      * If this hook is in the ground.
      */
-    private       boolean       inGround;
+    private       boolean               inGround;
     /**
      * A counter for at what position in the shaking movement the hook is.
      */
-    private       int           shake;
-    private       int           countdownNoFish;
-    private       int           countdownFishNear;
-    private       int           countdownFishBites;
-    private       double        relativeRotation;
+    private       int                   shake;
+    private       int                   countdownNoFish;
+    private       int                   countdownFishNear;
+    private       int                   countdownFishBites;
+    private       double                relativeRotation;
     /**
      * When a fish is on the hook, this will be true.
      */
-    private boolean isFishCaugth = false;
+    private       boolean               isFishCaugth = false;
 
     /**
      * Constructor for throwing out a hook.
@@ -144,7 +145,7 @@ public final class EntityFishHook extends Entity
      * @param world   the world the hook lives in.
      * @param citizen the citizen throwing the hook.
      */
-    public EntityFishHook(final World world, @NotNull final IEntityCitizen citizen)
+    public EntityFishHook(final World world, @NotNull final AbstractEntityCitizen citizen)
     {
         this(world);
         this.citizen = citizen;
@@ -206,7 +207,7 @@ public final class EntityFishHook extends Entity
      *
      * @return a citizen.
      */
-    public IEntityCitizen getCitizen()
+    public AbstractEntityCitizen getCitizen()
     {
         return citizen;
     }
@@ -633,7 +634,7 @@ public final class EntityFishHook extends Entity
      * @param citizen the fisherman fishing.
      * @return the number of damage points to be deducted.
      */
-    public int getDamage(@NotNull final IEntityCitizen citizen)
+    public int getDamage(@NotNull final AbstractEntityCitizen citizen)
     {
         if (CompatibilityUtils.getWorldFromEntity(this).isRemote)
         {
@@ -665,7 +666,7 @@ public final class EntityFishHook extends Entity
      *
      * @param citizen the fisherman getting the loot.
      */
-    private void spawnLootAndExp(@NotNull final IEntityCitizen citizen)
+    private void spawnLootAndExp(@NotNull final AbstractEntityCitizen citizen)
     {
         final double citizenPosX = citizen.getPosX();
         final double citizenPosY = citizen.getPosY();
@@ -695,7 +696,7 @@ public final class EntityFishHook extends Entity
      * @param citizen the fisherman getting the loot.
      * @return an ItemStack randomly from the loot table.
      */
-    private ItemStack getFishingLoot(final IEntityCitizen citizen)
+    private ItemStack getFishingLoot(final AbstractEntityCitizen citizen)
     {
         //Reduce random to get more fish drops
         final int random = CompatibilityUtils.getWorldFromEntity(this).rand.nextInt(INCREASE_RARENESS_MODIFIER);

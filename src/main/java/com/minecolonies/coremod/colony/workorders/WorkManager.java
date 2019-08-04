@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.colony.workorders;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.workorders.IWorkManager;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
@@ -27,7 +29,7 @@ public class WorkManager implements IWorkManager
     /**
      * The Colony the workManager takes part of.
      */
-    private final      Colony                   colony;
+    private final        Colony                   colony;
     @NotNull
     private final        Map<Integer, IWorkOrder> workOrders      = new LinkedHashMap<>();
     private              int                      topWorkOrderId  = 0;

@@ -1,21 +1,23 @@
 package com.minecolonies.coremod.proxy;
 
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
+import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.entity.mobs.barbarians.IChiefBarbarianEntity;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.apiimp.initializer.ModBlockInitializer;
+import com.minecolonies.apiimp.initializer.ModBlocksInitializer;
+import com.minecolonies.apiimp.initializer.ModItemsInitializer;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ICitizenDataView;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
-import com.minecolonies.coremod.entity.ai.mobs.EntityMercenary;
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityArcherPirate;
-import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityCaptainPirate;
-import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityPirate;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import com.minecolonies.coremod.entity.mobs.EntityMercenary;
+import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
+import com.minecolonies.coremod.entity.mobs.barbarians.EntityBarbarian;
+import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
+import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
+import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
+import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.inventory.GuiHandler;
-import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.tileentities.*;
 import com.minecolonies.coremod.util.TownHallRecipe;
 import net.minecraft.block.Block;
@@ -101,7 +103,7 @@ public abstract class CommonProxy implements IProxy
     @SubscribeEvent
     public static void registerBlocks(@NotNull final RegistryEvent.Register<Block> event)
     {
-        ModBlockInitializer.init(event.getRegistry());
+        ModBlocksInitializer.init(event.getRegistry());
     }
 
     /**
@@ -123,8 +125,8 @@ public abstract class CommonProxy implements IProxy
     @SubscribeEvent
     public static void registerItems(@NotNull final RegistryEvent.Register<Item> event)
     {
-        ModItems.init(event.getRegistry());
-        ModBlockInitializer.registerItemBlock(event.getRegistry());
+        ModItemsInitializer.init(event.getRegistry());
+        ModBlocksInitializer.registerItemBlock(event.getRegistry());
     }
 
     @Override
@@ -137,7 +139,7 @@ public abstract class CommonProxy implements IProxy
     public void registerTileEntities()
     {
         GameRegistry.registerTileEntity(TileEntityColonyBuilding.class, new ResourceLocation(Constants.MOD_ID, "colonybuilding"));
-        GameRegistry.registerTileEntity(ScarecrowTileEntity.class, new ResourceLocation(Constants.MOD_ID, "scarecrow"));
+        GameRegistry.registerTileEntity(TileEntityScarecrow.class, new ResourceLocation(Constants.MOD_ID, "scarecrow"));
         GameRegistry.registerTileEntity(TileEntityWareHouse.class, new ResourceLocation(Constants.MOD_ID, "warehouse"));
         GameRegistry.registerTileEntity(TileEntityRack.class, new ResourceLocation(Constants.MOD_ID, "rack"));
         GameRegistry.registerTileEntity(TileEntityInfoPoster.class, new ResourceLocation(Constants.MOD_ID, "infoposter"));
@@ -246,7 +248,7 @@ public abstract class CommonProxy implements IProxy
         //Register Barbarian loot tables.
         LootTableList.register(EntityBarbarian.LOOT_TABLE);
         LootTableList.register(EntityArcherBarbarian.LOOT_TABLE);
-        LootTableList.register(EntityChiefBarbarian.LOOT_TABLE);
+        LootTableList.register(IChiefBarbarianEntity.LOOT_TABLE);
 
         //Register Pirate loot tables.
         LootTableList.register(EntityPirate.LOOT_TABLE);

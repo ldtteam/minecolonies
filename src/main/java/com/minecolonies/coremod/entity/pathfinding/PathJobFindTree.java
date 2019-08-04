@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.pathfinding;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.api.entity.pathfinding.TreePathResult;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

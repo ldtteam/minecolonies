@@ -6,7 +6,9 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.PlacementSettings;
-import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -20,10 +22,10 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
@@ -36,13 +38,11 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestRe
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
-import com.minecolonies.coremod.tileentities.ITileEntityColonyBuilding;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -233,13 +233,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void onDestroyed()
     {
-        final ITileEntityColonyBuilding tileEntityNew = this.getTileEntity();
+        final AbstractTileEntityColonyBuilding tileEntityNew = this.getTileEntity();
         final World world = colony.getWorld();
         final Block block = world.getBlockState(this.getPosition()).getBlock();
 
         if (tileEntityNew != null)
         {
-            InventoryHelper.dropInventoryItems(world, this.getPosition(), (IInventory) tileEntityNew);
+            InventoryHelper.dropInventoryItems(world, this.getPosition(), tileEntityNew);
             world.updateComparatorOutputLevel(this.getPosition(), block);
         }
 
@@ -997,15 +997,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         getCompletedRequests(data).forEach(request -> getColony().getRequestManager().updateRequestState(request.getId(), RequestState.RECEIVED));
 
-        if (getOpenRequestsByCitizen().containsKey(data.getId()))
-        {
-            getOpenRequestsByCitizen().remove(data.getId());
-        }
+        getOpenRequestsByCitizen().remove(data.getId());
 
-        if (getCompletedRequestsByCitizen().containsKey(data.getId()))
-        {
-            getCompletedRequestsByCitizen().remove(data.getId());
-        }
+        getCompletedRequestsByCitizen().remove(data.getId());
 
         markDirty();
     }

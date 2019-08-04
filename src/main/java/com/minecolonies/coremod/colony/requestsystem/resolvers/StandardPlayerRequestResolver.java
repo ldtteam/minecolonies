@@ -3,7 +3,9 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -17,11 +19,8 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.util.ServerUtils;
 import com.minecolonies.coremod.util.text.NonSiblingFormattingTextComponent;
@@ -164,10 +163,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest completedRequest)
     {
         //This is not what this method is for, but this is the closest we are getting right now, so why not.
-        if (assignedRequests.contains(completedRequest.getId()))
-        {
-            assignedRequests.remove(completedRequest.getId());
-        }
+        assignedRequests.remove(completedRequest.getId());
 
         return null;
     }

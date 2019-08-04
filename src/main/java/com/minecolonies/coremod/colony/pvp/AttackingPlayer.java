@@ -3,14 +3,13 @@ package com.minecolonies.coremod.colony.pvp;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.IEntityCitizen;
-import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import net.minecraft.entity.player.EntityPlayer;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -26,7 +25,7 @@ public class AttackingPlayer
     /**
      * The guards coming with him.
      */
-    private final List<IEntityCitizen> guards = new ArrayList<>();
+    private final List<AbstractEntityCitizen> guards = new ArrayList<>();
 
     /**
      * Creates a new Attacking player.
@@ -47,10 +46,34 @@ public class AttackingPlayer
     }
 
     /**
+     * Check if guard is part of valid attack.
+     *
+     * @param citizen the attacking guard.
+     * @param colony  the colony.
+     * @return true if so.
+     */
+    public static boolean isValidAttack(final AbstractEntityCitizen citizen, final Colony colony)
+    {
+        final IColony guardColony = citizen.getCitizenColonyHandler().getColony();
+        if (guardColony == null)
+        {
+            return false;
+        }
+
+        if (colony.getPermissions().getRank(guardColony.getPermissions().getOwner()) == Rank.HOSTILE)
+        {
+            return true;
+        }
+
+        return guardColony.getPermissions().getRank(colony.getPermissions().getOwner()) == Rank.HOSTILE
+                 && MobEventsUtils.getColonyRaidLevel(guardColony) <= MobEventsUtils.getColonyRaidLevel(colony) * 2;
+    }
+
+    /**
      * Getter for a copy of the guard list.
      * @return an immutable copy the list.
      */
-    public List<IEntityCitizen> getGuards()
+    public List<AbstractEntityCitizen> getGuards()
     {
         return ImmutableList.copyOf(guards);
     }
@@ -59,7 +82,7 @@ public class AttackingPlayer
      * Adds a new guard to the list.
      * @param guard the guard to add.
      */
-    public boolean addGuard(final IEntityCitizen guard)
+    public boolean addGuard(final AbstractEntityCitizen guard)
     {
         if (!guards.contains(guard))
         {
@@ -67,15 +90,6 @@ public class AttackingPlayer
             return true;
         }
         return false;
-    }
-
-    /**
-     * Removes a guard to the list.
-     * @param guard the guard to remove.
-     */
-    public void removeGuard(final IEntityCitizen guard)
-    {
-        guards.add(guard);
     }
 
     /**
@@ -93,25 +107,12 @@ public class AttackingPlayer
     }
 
     /**
-     * Check if guard is part of valid attack.
-     * @param citizen the attacking guard.
-     * @param colony the colony.
-     * @return true if so.
+     * Removes a guard to the list.
+     * @param guard the guard to remove.
      */
-    public static boolean isValidAttack(final IEntityCitizen citizen, final Colony colony)
+    public void removeGuard(final AbstractEntityCitizen guard)
     {
-        final IColony guardColony = citizen.getCitizenColonyHandler().getColony();
-        if (guardColony == null)
-        {
-            return false;
-        }
-
-        if (colony.getPermissions().getRank(guardColony.getPermissions().getOwner()) == Rank.HOSTILE)
-        {
-            return true;
-        }
-
-        return guardColony.getPermissions().getRank(colony.getPermissions().getOwner()) == Rank.HOSTILE && MobEventsUtils.getColonyRaidLevel(guardColony) <= MobEventsUtils.getColonyRaidLevel(colony) * 2;
+        guards.add(guard);
     }
 
     /**
@@ -119,7 +120,7 @@ public class AttackingPlayer
      */
     public void refreshList(final Colony colony)
     {
-        for (final IEntityCitizen citizen : new ArrayList<>(guards))
+        for (final AbstractEntityCitizen citizen : new ArrayList<>(guards))
         {
             if (citizen.isDead() || !colony.isCoordInColony(colony.getWorld(), citizen.getPosition()))
             {

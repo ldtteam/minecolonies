@@ -2,21 +2,18 @@ package com.minecolonies.coremod.colony.buildings.registry;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockPostBox;
 import com.minecolonies.coremod.blocks.huts.*;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
-import com.minecolonies.coremod.tileentities.ITileEntityColonyBuilding;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -211,7 +208,7 @@ public class BuildingRegistry
      * @return {@link AbstractBuilding} instance, without NBTTags applied.
      */
     @Nullable
-    public static IBuilding create(final Colony colony, @NotNull final ITileEntityColonyBuilding parent)
+    public static IBuilding create(final Colony colony, @NotNull final AbstractTileEntityColonyBuilding parent)
     {
         @Nullable IBuilding building = null;
         final Class<?> oclass;

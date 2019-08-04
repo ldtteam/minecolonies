@@ -2,8 +2,10 @@ package com.minecolonies.coremod.event;
 
 import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structurize.items.ModItems;
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -11,16 +13,13 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.blocks.huts.BlockHutField;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
-import com.minecolonies.coremod.colony.*;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.mobs.EntityMercenary;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesChunkCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldCapabilityProvider;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesWorldColonyManagerCapabilityProvider;
@@ -278,7 +277,7 @@ public class EventHandler
                     final IColony colony = IColonyManager.getInstance().getColonyByWorld(chunkCapability.getOwningColony(), entityCitizen.world);
                     if (colony != null)
                     {
-                        colony.addGuardToAttackers(entityCitizen, ((AbstractBuildingGuards) entityCitizen.getCitizenColonyHandler().getWorkBuilding()).getFollowPlayer());
+                        colony.addGuardToAttackers(entityCitizen, ((IGuardBuilding) entityCitizen.getCitizenColonyHandler().getWorkBuilding()).getFollowPlayer());
                     }
                 }
             }

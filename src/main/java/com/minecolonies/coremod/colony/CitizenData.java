@@ -1,30 +1,28 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.configuration.NameConfiguration;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.IJob;
-import com.minecolonies.coremod.colony.jobs.registry.JobRegistry;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.IEntityCitizen;
+import com.minecolonies.coremod.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
-import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler;
-import com.minecolonies.coremod.inventory.InventoryCitizen;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -169,7 +167,7 @@ public class CitizenData implements ICitizenData
      * Its entitity.
      */
     @NotNull
-    private WeakReference<IEntityCitizen> entity;
+    private WeakReference<AbstractEntityCitizen> entity;
 
     /**
      * Attributes, which influence the workers behaviour.
@@ -253,7 +251,7 @@ public class CitizenData implements ICitizenData
 
         if (compound.hasKey("job"))
         {
-            setJob(JobRegistry.createFromNBT(this, compound.getCompoundTag("job")));
+            setJob(IJobRegistry.getInstance().createFromNBT(this, compound.getCompoundTag("job")));
         }
 
         //  Attributes
@@ -307,14 +305,14 @@ public class CitizenData implements ICitizenData
      */
     @Override
     @NotNull
-    public Optional<IEntityCitizen> getCitizenEntity()
+    public Optional<AbstractEntityCitizen> getCitizenEntity()
     {
         if (entity == null)
         {
             return Optional.empty();
         }
 
-        final IEntityCitizen citizen = entity.get();
+        final AbstractEntityCitizen citizen = entity.get();
         return Optional.ofNullable(citizen);
     }
 
@@ -324,7 +322,7 @@ public class CitizenData implements ICitizenData
      * @param citizen {@link EntityCitizen} instance of the citizen data.
      */
     @Override
-    public void setCitizenEntity(@Nullable final IEntityCitizen citizen)
+    public void setCitizenEntity(@Nullable final AbstractEntityCitizen citizen)
     {
         if (entity != null)
         {
@@ -751,11 +749,11 @@ public class CitizenData implements ICitizenData
     @Override
     public void updateCitizenEntityIfNecessary()
     {
-        final List<IEntityCitizen> list = colony.getWorld()
+        final List<AbstractEntityCitizen> list = colony.getWorld()
                                             .getLoadedEntityList()
                                             .stream()
-                                            .filter(e -> e instanceof IEntityCitizen)
-                                            .map(e -> (IEntityCitizen) e)
+                                                   .filter(e -> e instanceof AbstractEntityCitizen)
+                                                   .map(e -> (AbstractEntityCitizen) e)
                                             .filter(
                                               entityCitizen -> entityCitizen.getCitizenColonyHandler().getColonyId() == colony.getID()
                                                                  && entityCitizen.getCitizenData().getId() == getId()).collect(Collectors.toList());
@@ -768,7 +766,7 @@ public class CitizenData implements ICitizenData
             for (int i = 1; i < list.size(); i++)
             {
                 Log.getLogger().warn("Removing duplicate entity:" + list.get(i).getName());
-                colony.getWorld().removeEntity((Entity) list.get(i));
+                colony.getWorld().removeEntity(list.get(i));
             }
             return;
         }
@@ -918,7 +916,7 @@ public class CitizenData implements ICitizenData
         ByteBufUtils.writeUTF8String(buf, name);
         buf.writeBoolean(female);
 
-        buf.writeInt(getCitizenEntity().map(IEntityCitizen::getEntityId).orElse(-1));
+        buf.writeInt(getCitizenEntity().map(AbstractEntityCitizen::getEntityId).orElse(-1));
 
         buf.writeBoolean(paused);
 
@@ -941,8 +939,8 @@ public class CitizenData implements ICitizenData
         buf.writeDouble(getExperience());
 
         // If the entity is not present we assumes standard values.
-        buf.writeFloat(getCitizenEntity().map(IEntityCitizen::getHealth).orElse(MAX_HEALTH));
-        buf.writeFloat(getCitizenEntity().map(IEntityCitizen::getMaxHealth).orElse(MAX_HEALTH));
+        buf.writeFloat(getCitizenEntity().map(AbstractEntityCitizen::getHealth).orElse(MAX_HEALTH));
+        buf.writeFloat(getCitizenEntity().map(AbstractEntityCitizen::getMaxHealth).orElse(MAX_HEALTH));
 
         buf.writeInt(getStrength());
         buf.writeInt(getEndurance());
@@ -974,7 +972,7 @@ public class CitizenData implements ICitizenData
      */
     private void writeStatusToBuffer(@NotNull final ByteBuf buf)
     {
-        final Optional<IEntityCitizen> optionalEntityCitizen = getCitizenEntity();
+        final Optional<AbstractEntityCitizen> optionalEntityCitizen = getCitizenEntity();
         buf.writeInt(optionalEntityCitizen.map(entityCitizen -> entityCitizen.getCitizenStatusHandler().getLatestStatus().length).orElse(0));
 
         optionalEntityCitizen.ifPresent(entityCitizen -> {

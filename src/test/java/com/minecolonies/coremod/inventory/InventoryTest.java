@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.inventory;
 
+import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.ITownHall;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

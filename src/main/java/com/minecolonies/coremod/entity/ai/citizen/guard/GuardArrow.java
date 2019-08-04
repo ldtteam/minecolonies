@@ -1,11 +1,9 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityTippedArrow;
@@ -36,9 +34,9 @@ public class GuardArrow extends EntityTippedArrow
      * @param worldIn the world this is shot in.
      * @param shooter the guard shooting
      */
-    public GuardArrow(final World worldIn, final IEntityCitizen shooter)
+    public GuardArrow(final World worldIn, final AbstractEntityCitizen shooter)
     {
-        super(worldIn, (EntityLivingBase) shooter);
+        super(worldIn, shooter);
         this.colony = shooter.getCitizenColonyHandler().getColony();
     }
 

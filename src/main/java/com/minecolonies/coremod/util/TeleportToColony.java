@@ -1,10 +1,9 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;

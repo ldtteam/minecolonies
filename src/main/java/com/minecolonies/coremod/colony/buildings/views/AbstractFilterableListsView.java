@@ -1,9 +1,8 @@
 package com.minecolonies.coremod.colony.buildings.views;
 
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.AssignFilterableItemMessage;
 import io.netty.buffer.ByteBuf;

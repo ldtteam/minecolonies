@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.items;
 
+import com.ldtteam.structurize.client.gui.WindowBuildTool;
+import com.ldtteam.structurize.management.Structures;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.ldtteam.structurize.client.gui.WindowBuildTool;
-import com.ldtteam.structurize.management.Structures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;

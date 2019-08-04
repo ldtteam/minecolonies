@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.inventory;
 
+import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.tileentities.AbstractTileEntityRack;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;

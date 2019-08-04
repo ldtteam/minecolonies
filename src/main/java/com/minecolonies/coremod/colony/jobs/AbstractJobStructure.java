@@ -1,14 +1,11 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.ldtteam.structures.helpers.Structure;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.Constants;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**

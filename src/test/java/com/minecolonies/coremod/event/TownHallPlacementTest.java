@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.event;
 
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.test.AbstractMockStaticsTest;
 import com.mojang.authlib.GameProfile;

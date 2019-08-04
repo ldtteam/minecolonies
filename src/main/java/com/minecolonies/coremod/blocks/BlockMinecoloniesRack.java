@@ -1,15 +1,16 @@
 package com.minecolonies.coremod.blocks;
 
+import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
+import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.creativetab.ModCreativeTabs;
+import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.blocks.types.RackType;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.tileentities.AbstractTileEntityRack;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;

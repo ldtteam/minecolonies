@@ -1,12 +1,10 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.IColonyManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -18,7 +16,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.util.Random;
 
 /**
@@ -54,7 +51,7 @@ public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessa
         private final int  index;
         private final Item item;
 
-        private BuyCitizenType(final int index, final Item item)
+        BuyCitizenType(final int index, final Item item)
         {
             this.index = index;
             this.item = item;

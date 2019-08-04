@@ -1,8 +1,9 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.coremod.colony.*;
-import com.minecolonies.coremod.entity.ai.mobs.EntityMercenary;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;

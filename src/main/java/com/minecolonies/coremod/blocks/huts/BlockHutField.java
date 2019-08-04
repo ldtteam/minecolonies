@@ -1,13 +1,12 @@
 package com.minecolonies.coremod.blocks.huts;
 
+import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesBlockHutField;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.blocks.AbstractBlockMinecoloniesContainer;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -32,7 +31,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
-import static com.minecolonies.coremod.blocks.huts.AbstractBlockMinecoloniesBlockHutField.*;
 import static net.minecraft.util.EnumFacing.NORTH;
 import static net.minecraft.util.EnumFacing.fromAngle;
 
@@ -186,7 +184,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesBlockHutField<BlockH
 
             if (colony != null)
             {
-                final ScarecrowTileEntity scareCrow = (ScarecrowTileEntity) worldIn.getTileEntity(pos);
+                final TileEntityScarecrow scareCrow = (TileEntityScarecrow) worldIn.getTileEntity(pos);
                 if (scareCrow != null)
                 {
                     colony.getBuildingManager().addNewField(scareCrow, pos, worldIn);
@@ -247,7 +245,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesBlockHutField<BlockH
     @Override
     public TileEntity createNewTileEntity(final World worldIn, final int meta)
     {
-        return new ScarecrowTileEntity();
+        return new TileEntityScarecrow();
     }
     // =======================================================================
     // ===================== END of Rendering & Meta-Data ====================

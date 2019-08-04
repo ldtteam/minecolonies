@@ -1,12 +1,11 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.workorders.IWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import io.netty.buffer.ByteBuf;

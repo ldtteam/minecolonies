@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.proxy;
 
-import com.minecolonies.coremod.colony.CitizenDataView;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
-import com.minecolonies.coremod.colony.ICitizenDataView;
+import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.coremod.colony.CitizenDataView;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

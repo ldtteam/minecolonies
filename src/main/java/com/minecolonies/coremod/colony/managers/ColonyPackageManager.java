@@ -1,22 +1,20 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.ldtteam.structurize.management.Structures;
+import com.minecolonies.api.colony.managers.interfaces.IColonyPackageManager;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.workorders.IWorkManager;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.IColonyView;
-import com.minecolonies.coremod.colony.managers.interfaces.IColonyPackageManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.colony.workorders.IWorkManager;
-import com.minecolonies.coremod.colony.workorders.IWorkOrder;
-import com.minecolonies.coremod.colony.workorders.WorkManager;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewWorkOrderMessage;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.util.ColonyUtils;
-import com.ldtteam.structurize.management.Structures;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
@@ -276,10 +274,7 @@ public class ColonyPackageManager implements IColonyPackageManager
     @Override
     public void addSubscribers(@NotNull final EntityPlayerMP subscriber)
     {
-        if(!subscribers.contains(subscriber))
-        {
-            subscribers.add(subscriber);
-        }
+        subscribers.add(subscriber);
     }
 
     @Override

@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.sounds.ArcherSounds;
+import com.minecolonies.api.sounds.KnightSounds;
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
-import com.minecolonies.coremod.sounds.ArcherSounds;
-import com.minecolonies.coremod.sounds.KnightSounds;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
@@ -37,7 +37,7 @@ public abstract class AbstractJobGuard extends AbstractJob
     }
 
     @Override
-    public void triggerDeathAchievement(final DamageSource source, final IEntityCitizen citizen)
+    public void triggerDeathAchievement(final DamageSource source, final AbstractEntityCitizen citizen)
     {
         super.triggerDeathAchievement(source, citizen);
         if (source.getTrueSource() instanceof EntityEnderman && citizen.getCitizenColonyHandler().getColony() != null)

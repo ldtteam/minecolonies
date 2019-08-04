@@ -1,13 +1,14 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
+import com.minecolonies.api.blocks.AbstractBlockBarrel;
+import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
+import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesBlockHutField;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.blocks.AbstractBlockBarrel;
-import com.minecolonies.coremod.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
-import com.minecolonies.coremod.blocks.huts.AbstractBlockMinecoloniesBlockHutField;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -94,33 +95,33 @@ public abstract class AbstractPathJob implements Callable<Path>
     private static final int SHIFT_Y_BY = 12;
 
     @Nullable
-    protected static Set<Node>    lastDebugNodesVisited;
+    protected static Set<Node>          lastDebugNodesVisited;
     @Nullable
-    protected static Set<Node>    lastDebugNodesNotVisited;
+    protected static Set<Node>          lastDebugNodesNotVisited;
     @Nullable
-    protected static Set<Node>    lastDebugNodesPath;
+    protected static Set<Node>          lastDebugNodesPath;
     @NotNull
-    protected final  BlockPos     start;
+    protected final  BlockPos           start;
     @NotNull
-    protected final  IBlockAccess world;
-    protected final  PathResult   result;
-    private final    int          maxRange;
-    private final Queue<Node>        nodesOpen                    = new PriorityQueue<>(500);
-    private final Map<Integer, Node> nodesVisited                 = new HashMap<>();
+    protected final  IBlockAccess       world;
+    protected final  PathResult         result;
+    private final    int                maxRange;
+    private final    Queue<Node>        nodesOpen                    = new PriorityQueue<>(500);
+    private final    Map<Integer, Node> nodesVisited                 = new HashMap<>();
     //  Debug Rendering
-    protected     boolean            debugDrawEnabled             = false;
+    protected        boolean            debugDrawEnabled             = false;
     @Nullable
-    protected     Set<Node>          debugNodesVisited            = null;
+    protected        Set<Node>          debugNodesVisited            = null;
     @Nullable
-    protected     Set<Node>          debugNodesNotVisited         = null;
+    protected        Set<Node>          debugNodesNotVisited         = null;
     @Nullable
-    protected     Set<Node>          debugNodesPath               = null;
+    protected        Set<Node>          debugNodesPath               = null;
     //  Job rules/configuration
-    private       boolean            allowSwimming                = true;
+    private          boolean            allowSwimming                = true;
     //  May be faster, but can produce strange results
-    private       boolean            allowJumpPointSearchTypeWalk = false;
-    private       int                totalNodesAdded              = 0;
-    private       int                totalNodesVisited            = 0;
+    private          boolean            allowJumpPointSearchTypeWalk = false;
+    private          int                totalNodesAdded              = 0;
+    private          int                totalNodesVisited            = 0;
 
     /**
      * The entity this job belongs to.
@@ -953,10 +954,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (parent != null)
         {
             final IBlockState hereState = world.getBlockState(parent.pos.down());
-            if (hereState.getMaterial().isLiquid() && !isPassable(pos))
-            {
-                return true;
-            }
+            return hereState.getMaterial().isLiquid() && !isPassable(pos);
         }
         return false;
     }
@@ -978,9 +976,9 @@ public abstract class AbstractPathJob implements Callable<Path>
                          || block.getBlock() instanceof AbstractBlockMinecoloniesConstructionTape
                          || block.getBlock() instanceof BlockPressurePlate;
             }
-            else if (block.getMaterial().isLiquid())
+            else
             {
-                return false;
+                return !block.getMaterial().isLiquid();
             }
         }
 

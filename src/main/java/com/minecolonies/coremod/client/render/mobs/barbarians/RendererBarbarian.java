@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.client.render.mobs.barbarians;
 
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.AbstractEntityBarbarian;
+import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 

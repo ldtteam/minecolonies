@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.blocks.huts;
 
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;

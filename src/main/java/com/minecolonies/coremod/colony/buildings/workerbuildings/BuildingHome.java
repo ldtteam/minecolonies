@@ -1,14 +1,16 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutCitizen;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.state.IBlockState;
@@ -485,7 +487,7 @@ public class BuildingHome extends AbstractBuilding
             this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeColonistMax);
         }
 
-        for (final Optional<IEntityCitizen> entityCitizen : getAssignedEntities())
+        for (final Optional<AbstractEntityCitizen> entityCitizen : getAssignedEntities())
         {
             if (entityCitizen.isPresent() && entityCitizen.get().getCitizenJobHandler().getColonyJob() == null)
             {

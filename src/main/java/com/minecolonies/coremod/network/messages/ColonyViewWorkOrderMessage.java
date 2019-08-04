@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.workorders.IWorkOrder;
-import com.minecolonies.coremod.colony.workorders.WorkOrderView;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
