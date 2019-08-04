@@ -1,13 +1,15 @@
 package com.minecolonies.api.tileentities;
 
-import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
@@ -40,13 +42,27 @@ public abstract class AbstractTileEntityRack extends TileEntity
     /**
      * The inventory of the tileEntity.
      */
-    protected IItemHandlerModifiable inventory = new ItemStackHandler(DEFAULT_SIZE)
+    protected RackInventory inventory = new RackInventory(DEFAULT_SIZE);
+
+    public AbstractTileEntityRack(final TileEntityType<?> tileEntityTypeIn)
     {
+        super(tileEntityTypeIn);
+    }
+
+    /**
+     * Rack inventory type.
+     */
+    public class RackInventory extends ItemStackHandler implements NonNullSupplier
+    {
+        public RackInventory(final int defaultSize)
+        {
+            super(defaultSize);
+        }
+
         @Override
         protected void onContentsChanged(final int slot)
         {
             updateItemStorage();
-
             super.onContentsChanged(slot);
         }
 
@@ -62,7 +78,7 @@ public abstract class AbstractTileEntityRack extends TileEntity
                 if (colony != null && colony.getRequestManager() != null)
                 {
                     colony.getRequestManager()
-                            .onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(stack));
+                      .onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(stack));
                 }
             }
         }
@@ -75,7 +91,14 @@ public abstract class AbstractTileEntityRack extends TileEntity
             updateItemStorage();
             return result;
         }
-    };
+
+        @Nonnull
+        @Override
+        public Object get()
+        {
+            return this;
+        }
+    }
 
     public abstract boolean hasItemStack(ItemStack stack);
 
@@ -125,7 +148,7 @@ public abstract class AbstractTileEntityRack extends TileEntity
     {
         final TileEntity entity = world.getTileEntity(newNeighbor);
 
-        if (relativeNeighbor == null && world.getBlockState(newNeighbor).getBlock() == ModBlocks.blockRack
+        if (relativeNeighbor == null && world.getBlockState(newNeighbor).getBlock() instanceof AbstractBlockMinecoloniesRack
               && !(entity instanceof AbstractTileEntityRack && ((AbstractTileEntityRack) entity).getOtherChest() != null))
         {
             this.relativeNeighbor = this.pos.subtract(newNeighbor);
@@ -145,7 +168,7 @@ public abstract class AbstractTileEntityRack extends TileEntity
             updateItemStorage();
             this.markDirty();
         }
-        else if (relativeNeighbor != null && this.pos.subtract(relativeNeighbor).equals(newNeighbor) && !(world.getBlockState(newNeighbor) == ModBlocks.blockRack))
+        else if (relativeNeighbor != null && this.pos.subtract(relativeNeighbor).equals(newNeighbor) && !(world.getBlockState(newNeighbor).getBlock() instanceof AbstractBlockMinecoloniesRack))
         {
             this.relativeNeighbor = null;
             single = true;

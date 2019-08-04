@@ -4,16 +4,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.IntNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.IWorldNameable;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
@@ -22,8 +21,7 @@ import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 /**
  * Abstract class wrapping around multiple IItemHandler.
  */
-public class CombinedItemHandler
-  implements IItemHandlerModifiable, INBTSerializable<CompoundNBT>, IWorldNameableModifiable
+public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializable<CompoundNBT>, IWorldNameableModifiable, NonNullSupplier
 {
 
     ///NBT Constants
@@ -32,10 +30,12 @@ public class CombinedItemHandler
     private static final String NBT_KEY_NAME               = "Name";
 
     private final IItemHandlerModifiable[] handlers;
+
     @NotNull
-    private final String                   defaultName;
-    @Nullable
-    private       String                   customName;
+    private String defaultName = "";
+
+    @NotNull
+    private String customName = "";
 
     /**
      * Method to create a new {@link CombinedItemHandler}.
@@ -88,7 +88,7 @@ public class CombinedItemHandler
 
         compound.put(NBT_KEY_HANDLERS, handlerList);
 
-        if (hasCustomName())
+        if (customName != null)
         {
             compound.putString(NBT_KEY_NAME, customName);
         }
@@ -108,7 +108,7 @@ public class CombinedItemHandler
             for (int i = 0; i < handlerList.size(); i++)
             {
                 final CompoundNBT handlerCompound = handlerList.getCompound(i);
-                final IItemHandlerModifiable modifiable = handlers[indexList.getIntAt(i)];
+                final IItemHandlerModifiable modifiable = handlers[indexList.getInt(i)];
                 if (modifiable instanceof INBTSerializable)
                 {
                     final INBTSerializable serializable = (INBTSerializable) modifiable;
@@ -117,7 +117,7 @@ public class CombinedItemHandler
             }
         }
 
-        setName(nbt.hasKey(NBT_KEY_NAME) ? nbt.getString(NBT_KEY_NAME) : null);
+        setName(nbt.keySet().contains(NBT_KEY_NAME) ? nbt.getString(NBT_KEY_NAME) : null);
     }
 
     /**
@@ -150,6 +150,7 @@ public class CombinedItemHandler
 
     /**
      * Get last index of the current itemHandler a slot belongs to.
+     *
      * @param slot the slot of an itemHandler.
      */
     public int getLastIndex(final int slot)
@@ -217,15 +218,6 @@ public class CombinedItemHandler
     }
 
     /**
-     * Get the name of this object. For players this returns their username.
-     */
-    @Override
-    public String getName()
-    {
-        return hasCustomName() ? customName : defaultName;
-    }
-
-    /**
      * Inserts an ItemStack into the given slot and return the remainder.
      * The ItemStack should not be modified in this function!
      * Note: This behaviour is subtly different from IFluidHandlers.fill()
@@ -279,7 +271,7 @@ public class CombinedItemHandler
                 continue;
             }
             final int activeSlot = slot - checkedSlots;
-            if(activeSlot < modifiable.getSlots())
+            if (activeSlot < modifiable.getSlots())
             {
                 return modifiable.extractItem(activeSlot, amount, simulate);
             }
@@ -296,7 +288,7 @@ public class CombinedItemHandler
         {
             if (slotIndex >= modifiable.getSlots())
             {
-                slotIndex-=modifiable.getSlots();
+                slotIndex -= modifiable.getSlots();
             }
             else
             {
@@ -307,41 +299,28 @@ public class CombinedItemHandler
         return 0;
     }
 
-    protected IItemHandlerModifiable[] getHandlers()
+    @Override
+    public boolean isItemValid(final int slot, @Nonnull final ItemStack stack)
     {
-        return handlers;
+        return false;
     }
 
-
-
-    /**
-     * Method to set the name of this {@link IWorldNameable}.
-     *
-     * @param name The new name of this {@link IWorldNameable}, or null to reset
-     *             it to its default.
-     */
     @Override
     public void setName(@Nullable final String name)
     {
-        this.customName = name;
+        this.customName = name == null ? "" : name;
     }
 
-    /**
-     * Returns true if this thing is named.
-     */
-    @Override
-    public boolean hasCustomName()
+    @NotNull
+    private String getCustomName()
     {
-        return customName != null;
+        return customName.isEmpty() ? defaultName : customName;
     }
 
-    /**
-     * Get the formatted ChatComponent that will be used for the sender's
-     * username in chat.
-     */
+    @Nonnull
     @Override
-    public ITextComponent getDisplayName()
+    public Object get()
     {
-        return new StringTextComponent(getName());
+        return this;
     }
 }
