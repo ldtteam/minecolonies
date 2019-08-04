@@ -191,7 +191,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutBaker);
         createCustomModel(ModBlocks.blockHutBlacksmith);
         createCustomModel(ModBlocks.blockHutBuilder);
-        createCustomModel(ModBlocks.blockHutCitizen);
+        createCustomModel(ModBlocks.blockHutHome);
         createCustomModel(ModBlocks.blockHutFarmer);
         createCustomModel(ModBlocks.blockHutFisherman);
         createCustomModel(ModBlocks.blockHutLumberjack);
@@ -201,7 +201,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutWareHouse);
         createCustomModel(ModBlocks.blockHutDeliveryman);
         createCustomModel(ModBlocks.blockBarracksTowerSubstitution);
-        createCustomModel(ModBlocks.blockHutField);
+        createCustomModel(ModBlocks.blockScarecrow);
         createCustomModel(ModBlocks.blockHutGuardTower);
         createCustomModel(ModBlocks.blockHutBarracks);
         createCustomModel(ModBlocks.blockHutBarracksTower);

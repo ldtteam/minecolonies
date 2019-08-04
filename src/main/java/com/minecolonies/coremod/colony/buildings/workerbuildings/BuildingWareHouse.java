@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
@@ -19,7 +21,6 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.huts.BlockHutDeliveryman;
 import com.minecolonies.coremod.client.gui.WindowHutWareHouse;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -96,7 +97,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      * @param c the colony.
      * @param l the location
      */
-    public BuildingWareHouse(final Colony c, final BlockPos l)
+    public BuildingWareHouse(final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -317,6 +318,12 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
                                                   getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.wareHouse;
     }
 
     /**

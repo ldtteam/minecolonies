@@ -6,19 +6,17 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
-
 import net.minecraft.item.ItemStack;
-
 import org.jetbrains.annotations.NotNull;
-
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BAKER;
 
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_BAKER;
+
 /**
- * Baker window class. Specifies the extras the baker has for its list.
+ * Baker window class. Specifies the extras the bakery has for its list.
  */
 public class WindowHutBaker extends AbstractHutFilterableLists
 {
@@ -33,7 +31,7 @@ public class WindowHutBaker extends AbstractHutFilterableLists
     private static final String PAGE_ITEMS_VIEW = "recipes";
 
     /**
-     * Constructor for the window of the baker.
+     * Constructor for the window of the bakery.
      *
      * @param building {@link BuildingBaker.View}.
      */
@@ -44,7 +42,7 @@ public class WindowHutBaker extends AbstractHutFilterableLists
           this,
           building,
 
-          LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.baker.recipes"),
+          LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.bakery.recipes"),
           PAGE_ITEMS_VIEW,
           false);
         views.put(PAGE_ITEMS_VIEW, window);

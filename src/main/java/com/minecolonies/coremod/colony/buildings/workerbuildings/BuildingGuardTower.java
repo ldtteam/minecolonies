@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +31,7 @@ public class BuildingGuardTower extends AbstractBuildingGuards
      * @param c the colony
      * @param l the position
      */
-    public BuildingGuardTower(@NotNull final Colony c, final BlockPos l)
+    public BuildingGuardTower(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -64,8 +66,14 @@ public class BuildingGuardTower extends AbstractBuildingGuards
         return Math.max(0, newLevel - 1);
     }
 
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.guardTower;
+    }
+
     /**
-     * The client view for the baker building.
+     * The client view for the bakery building.
      */
     public static class View extends AbstractBuildingGuards.View
     {

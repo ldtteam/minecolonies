@@ -1,7 +1,10 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -35,17 +38,17 @@ import java.util.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
- * Building for the baker.
+ * Building for the bakery.
  */
 public class BuildingBaker extends AbstractFilterableListBuilding
 {
     /**
-     * General baker description key.
+     * General bakery description key.
      */
     private static final String BAKER = "Baker";
 
     /**
-     * Max hut level of the baker.
+     * Max hut level of the bakery.
      */
     private static final int BAKER_HUT_MAX_LEVEL = 5;
 
@@ -91,17 +94,17 @@ public class BuildingBaker extends AbstractFilterableListBuilding
      */
     private final Map<BlockPos, BakingProduct> furnaces = new HashMap<>();
     /**
-     * Map of tasks for the baker to work on.
+     * Map of tasks for the bakery to work on.
      */
     private final Map<ProductState, List<BakingProduct>> tasks = new EnumMap<>(ProductState.class);
 
     /**
-     * Constructor for the baker building.
+     * Constructor for the bakery building.
      *
      * @param c Colony the building is in.
      * @param l Location of the building.
      */
-    public BuildingBaker(final Colony c, final BlockPos l)
+    public BuildingBaker(final IColony c, final BlockPos l)
     {
         super(c, l);
         for (final IRecipeStorage storage : BakerRecipes.getRecipes())
@@ -126,9 +129,9 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     /**
-     * Gets the max level of the baker's hut.
+     * Gets the max level of the bakery's hut.
      *
-     * @return The max level of the baker's hut.
+     * @return The max level of the bakery's hut.
      */
     @Override
     public int getMaxBuildingLevel()
@@ -247,9 +250,9 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     /**
-     * The name of the baker's job.
+     * The name of the bakery's job.
      *
-     * @return The name of the baker's job.
+     * @return The name of the bakery's job.
      */
     @NotNull
     @Override
@@ -275,7 +278,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     /**
-     * Checks the furnaces of the baker if they're ready.
+     * Checks the furnaces of the bakery if they're ready.
      */
     private void checkFurnaces()
     {
@@ -367,7 +370,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     }
 
     /**
-     * Get the map of current tasks in the baker.
+     * Get the map of current tasks in the bakery.
      *
      * @return the map of states and products.
      */
@@ -433,13 +436,19 @@ public class BuildingBaker extends AbstractFilterableListBuilding
         return true;
     }
 
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.bakery;
+    }
+
     /**
-     * The client view for the baker building.
+     * The client view for the bakery building.
      */
     public static class View extends AbstractFilterableListsView
     {
         /**
-         * The client view constructor for the baker building.
+         * The client view constructor for the bakery building.
          *
          * @param c The ColonyView the building is in.
          * @param l The location of the building.

@@ -19,6 +19,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -83,11 +84,18 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     private CombinedItemHandler combinedInv;
 
     /**
-     * Empty standard constructor.
+     * The name of the building location.
      */
-    public TileEntityColonyBuilding()
+    private ResourceLocation registryName;
+
+    /**
+     * Empty standard constructor.
+     * @param registryName the registry name of the building.
+     */
+    public TileEntityColonyBuilding(final ResourceLocation registryName)
     {
         super();
+        this.registryName = registryName;
     }
 
     /**
@@ -406,6 +414,12 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     public void setStyle(final String style)
     {
         this.style = style;
+    }
+
+    @Override
+    public ResourceLocation getBuildingName()
+    {
+        return registryName;
     }
 
     @Override

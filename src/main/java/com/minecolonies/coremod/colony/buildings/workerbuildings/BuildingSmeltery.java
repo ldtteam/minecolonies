@@ -1,13 +1,15 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutSmelter;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
@@ -52,7 +54,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
      * @param c the colony.
      * @param l the location
      */
-    public BuildingSmeltery(final Colony c, final BlockPos l)
+    public BuildingSmeltery(final IColony c, final BlockPos l)
     {
         super(c, l);
         keepX.put(IColonyManager.getInstance().getCompatibilityManager()::isOre, new Tuple<>(Integer.MAX_VALUE, true));
@@ -106,6 +108,12 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
             default:
                 return 1;
         }
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.smeltery;
     }
 
     /**

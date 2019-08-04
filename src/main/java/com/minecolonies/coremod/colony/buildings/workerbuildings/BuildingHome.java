@@ -1,8 +1,11 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.blockout.views.Window;
@@ -84,7 +87,7 @@ public class BuildingHome extends AbstractBuilding
      * @param c the colony.
      * @param l the location.
      */
-    public BuildingHome(final Colony c, final BlockPos l)
+    public BuildingHome(final IColony c, final BlockPos l)
     {
         super(c, l);
         final Random rand = new Random();
@@ -494,6 +497,12 @@ public class BuildingHome extends AbstractBuilding
                 entityCitizen.get().getCitizenJobHandler().setModelDependingOnJob(null);
             }
         }
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.home;
     }
 
     @Override
