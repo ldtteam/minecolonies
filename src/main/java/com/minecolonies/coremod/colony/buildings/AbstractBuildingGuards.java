@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.IGuardType;
 import com.minecolonies.api.colony.buildings.registry.IGuardTypeRegistry;
@@ -233,6 +234,15 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                   .setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue() + getDefenceBonus());
             }
             colony.getCitizenManager().calculateMaxCitizens();
+
+            // Set new home, since guards are housed at their workerbuilding.
+            final IBuilding building = citizen.getHomeBuilding();
+            if (building != null && !building.getID().equals(this.getID()))
+            {
+                building.removeCitizen(citizen);
+            }
+            citizen.setHomeBuilding(this);
+
             return true;
         }
         return false;
