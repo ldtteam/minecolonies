@@ -86,23 +86,6 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     }
 
     @Override
-    public boolean assignCitizen(final ICitizenData citizen)
-    {
-        final boolean assignalResult = super.assignCitizen(citizen);
-        if (citizen != null && assignalResult)
-        {
-            final IBuilding building = citizen.getHomeBuilding();
-            if (building != null && !(building instanceof AbstractBuildingGuards))
-            {
-                building.removeCitizen(citizen);
-            }
-            citizen.setHomeBuilding(this);
-            citizen.setWorkBuilding(this);
-        }
-        return assignalResult;
-    }
-
-    @Override
     public void deserializeNBT(final NBTTagCompound compound)
     {
         super.deserializeNBT(compound);
