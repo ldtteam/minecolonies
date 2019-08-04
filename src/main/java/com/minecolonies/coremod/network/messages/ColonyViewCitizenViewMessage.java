@@ -6,8 +6,11 @@ import com.minecolonies.coremod.colony.Colony;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Add or Update a ColonyView on the client.
@@ -24,7 +27,7 @@ public class ColonyViewCitizenViewMessage implements IMessage
     private int dimension;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public ColonyViewCitizenViewMessage()
     {
@@ -64,9 +67,16 @@ public class ColonyViewCitizenViewMessage implements IMessage
         buf.writeBytes(citizenBuffer);
     }
 
+    @Nullable
     @Override
-    protected void messageOnClientThread(final ColonyViewCitizenViewMessage message, final MessageContext ctx)
+    public LogicalSide getExecutionSide()
     {
-        IColonyManager.getInstance().handleColonyViewCitizensMessage(message.colonyId, message.citizenId, message.citizenBuffer, message.dimension);
+        return LogicalSide.CLIENT;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        IColonyManager.getInstance().handleColonyViewCitizensMessage(colonyId, citizenId, citizenBuffer, dimension);
     }
 }

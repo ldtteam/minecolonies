@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.configuration.Configurations;
 import com.ldtteam.structurize.management.Structures;
-import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import com.minecolonies.coremod.MineColonies;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ public class ColonyStylesMessage implements IMessage
     private Map<String, String> md5Map;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public ColonyStylesMessage()
     {
@@ -35,7 +35,7 @@ public class ColonyStylesMessage implements IMessage
     }
 
     @NotNull
-    private static Map<String, String> readMD5MapFromByteBuf(@NotNull final ByteBuf buf)
+    private static Map<String, String> readMD5MapFromByteBuf(@NotNull final PacketBuffer buf)
     {
         @NotNull final Map<String, String> map = new HashMap<>();
 
@@ -52,11 +52,11 @@ public class ColonyStylesMessage implements IMessage
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        buf.writeBoolean(Configurations.gameplay.allowPlayerSchematics);
+        buf.writeBoolean(MineColonies.getConfig().getCommon().allowPlayerSchematics.get());
         writeMD5MapToByteBuf(buf);
     }
 
-    private static void writeMD5MapToByteBuf(@NotNull final ByteBuf buf)
+    private static void writeMD5MapToByteBuf(@NotNull final PacketBuffer buf)
     {
         final Map<String, String> md5s = Structures.getMD5s();
         buf.writeInt(md5s.size());
@@ -67,18 +67,17 @@ public class ColonyStylesMessage implements IMessage
         }
     }
 
-    /**
-     * {@inheritDoc}
-     * <p>
-     * Sets the styles of the huts to the given value in the message
-     *
-     * @param message Message
-     * @param ctx     Context
-     */
+    @Nullable
     @Override
-    protected void messageOnClientThread(final ColonyStylesMessage message, final MessageContext ctx)
+    public LogicalSide getExecutionSide()
     {
-        Structures.setAllowPlayerSchematics(message.allowPlayerSchematics);
-        Structures.setMD5s(message.md5Map);
+        return LogicalSide.CLIENT;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        Structures.setAllowPlayerSchematics(allowPlayerSchematics);
+        Structures.setMD5s(md5Map);
     }
 }

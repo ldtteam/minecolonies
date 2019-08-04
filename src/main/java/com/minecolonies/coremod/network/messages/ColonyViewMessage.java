@@ -5,8 +5,12 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import io.netty.buffer.ByteBuf;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Add or Update a ColonyView on the client.
@@ -34,7 +38,7 @@ public class ColonyViewMessage implements IMessage
     private int dim;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public ColonyViewMessage()
     {
@@ -75,12 +79,16 @@ public class ColonyViewMessage implements IMessage
         buf.writeBytes(colonyBuffer);
     }
 
+    @Nullable
     @Override
-    protected void messageOnClientThread(final ColonyViewMessage message, final MessageContext ctx)
+    public LogicalSide getExecutionSide()
     {
-        if (MineColonies.proxy.getWorldFromMessage(ctx) != null)
-        {
-            IColonyManager.getInstance().handleColonyViewMessage(message.colonyId, message.colonyBuffer, MineColonies.proxy.getWorldFromMessage(ctx), message.isNewSubscription, message.dim);
-        }
+        return LogicalSide.CLIENT;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        IColonyManager.getInstance().handleColonyViewMessage(colonyId, colonyBuffer, Minecraft.getInstance().world, isNewSubscription, dim);
     }
 }

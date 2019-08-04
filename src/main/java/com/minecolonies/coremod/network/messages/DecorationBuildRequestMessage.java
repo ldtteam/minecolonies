@@ -3,20 +3,22 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.workorders.IWorkOrder;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
+import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.coremod.colony.workorders.IWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.LogicalSide;
 
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Optional;
@@ -47,7 +49,7 @@ public class DecorationBuildRequestMessage implements IMessage
     private int dimension;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public DecorationBuildRequestMessage()
     {
@@ -87,14 +89,22 @@ public class DecorationBuildRequestMessage implements IMessage
         buf.writeInt(this.dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final DecorationBuildRequestMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByPosFromDim(message.dimension, message.pos);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByPosFromDim(dimension, pos);
         if (colony == null)
         {
             return;
         }
+        final PlayerEntity player = ctxIn.getSender();
 
         //Verify player has permission to change this huts settings
         if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
@@ -102,20 +112,20 @@ public class DecorationBuildRequestMessage implements IMessage
             return;
         }
 
-        final TileEntity entity = player.getServerWorld().getTileEntity(message.pos);
+        final TileEntity entity = player.getEntityWorld().getTileEntity(pos);
         if (entity instanceof TileEntityDecorationController)
         {
             final Optional<Map.Entry<Integer, IWorkOrder>> wo = colony.getWorkManager().getWorkOrders().entrySet().stream()
                   .filter(entry -> entry.getValue() instanceof WorkOrderBuildDecoration)
-                  .filter(entry -> ((WorkOrderBuildDecoration) entry.getValue()).getBuildingLocation().equals(message.pos)).findFirst();
+                  .filter(entry -> ((WorkOrderBuildDecoration) entry.getValue()).getBuildingLocation().equals(pos)).findFirst();
 
             if (wo.isPresent())
             {
                 colony.getWorkManager().removeWorkOrder(wo.get().getKey());
                 return;
             }
-            final BlockState state = player.getServerWorld().getBlockState(message.pos);
-            final Direction facing = state.getValue(BlockDecorationController.FACING);
+            final BlockState state = player.getEntityWorld().getBlockState(pos);
+            final Direction facing = state.get(BlockDecorationController.HORIZONTAL_FACING);
             final Direction basic = ((TileEntityDecorationController) entity).getBasicFacing();
             int difference = facing.getHorizontalIndex() - basic.getHorizontalIndex();
             if (difference < 0)
@@ -123,13 +133,13 @@ public class DecorationBuildRequestMessage implements IMessage
                 difference += 4;
             }
 
-            final WorkOrderBuildDecoration order = new WorkOrderBuildDecoration(message.name + message.level,
-              message.name + message.level,
+            final WorkOrderBuildDecoration order = new WorkOrderBuildDecoration(name + level,
+              name + level,
               difference,
-              message.pos,
-              state.getValue(BlockDecorationController.MIRROR));
+              pos,
+              state.get(BlockDecorationController.MIRROR));
 
-            if (message.level != ((TileEntityDecorationController) entity).getLevel())
+            if (level != ((TileEntityDecorationController) entity).getLevel())
             {
                 order.setLevelUp();
             }

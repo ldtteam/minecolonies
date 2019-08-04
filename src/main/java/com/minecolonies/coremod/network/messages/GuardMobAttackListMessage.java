@@ -5,11 +5,13 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.MobEntryView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import io.netty.buffer.ByteBuf;
+import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -49,7 +51,7 @@ public class GuardMobAttackListMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(final ByteBuf byteBuf)
+    public void fromBytes(final PacketBuffer byteBuf)
     {
         this.colonyId = byteBuf.readInt();
         this.buildingId = BlockPosUtil.readFromByteBuf(byteBuf);
@@ -63,7 +65,7 @@ public class GuardMobAttackListMessage implements IMessage
     }
 
     @Override
-    public void toBytes(final ByteBuf byteBuf)
+    public void toBytes(final PacketBuffer byteBuf)
     {
         byteBuf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(byteBuf, buildingId);
@@ -75,18 +77,25 @@ public class GuardMobAttackListMessage implements IMessage
         }
     }
 
+    @Nullable
     @Override
-    protected void messageOnClientThread(final GuardMobAttackListMessage message, final MessageContext ctx)
+    public LogicalSide getExecutionSide()
     {
-        final IColonyView iColonyView = IColonyManager.getInstance().getColonyView(message.colonyId, Minecraft.getMinecraft().world.world.getDimension().getType().getId());
+        return LogicalSide.CLIENT;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColonyView IColonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimension().getType().getId());
 
         if (IColonyView != null)
         {
-            @Nullable final AbstractBuildingGuards.View buildingView = (AbstractBuildingGuards.View) IColonyView.getBuilding(message.buildingId);
+            @Nullable final AbstractBuildingGuards.View buildingView = (AbstractBuildingGuards.View) IColonyView.getBuilding(buildingId);
 
             if (buildingView != null)
             {
-                buildingView.setMobsToAttack(message.mobsToAttack);
+                buildingView.setMobsToAttack(mobsToAttack);
             }
         }
     }

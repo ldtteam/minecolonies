@@ -1,15 +1,17 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.util.BlockPosUtil;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
@@ -29,7 +31,7 @@ public class CompostParticleMessage implements IMessage
     private BlockPos pos;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public CompostParticleMessage()
     {
@@ -59,13 +61,19 @@ public class CompostParticleMessage implements IMessage
         buf.writeBlockPos(pos);
     }
 
+    @Nullable
     @Override
-    protected void messageOnClientThread(final CompostParticleMessage message, final MessageContext ctx)
+    public LogicalSide getExecutionSide()
     {
-        final WorldClient world = ctx.getClientHandler().world;
+        return LogicalSide.CLIENT;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final ClientWorld world = Minecraft.getInstance().world;
         final int amount = random.nextInt(15) + 1;
-        final BlockPos pos = message.pos;
-        final BlockState BlockState = world.getBlockState(pos);
+        final BlockState iblockstate = world.getBlockState(pos);
         double d0;
         double d1;
         double d2;
@@ -76,9 +84,9 @@ public class CompostParticleMessage implements IMessage
                 d0 = random.nextGaussian() * 0.02D;
                 d1 = random.nextGaussian() * 0.02D;
                 d2 = random.nextGaussian() * 0.02D;
-                world.spawnParticle(EnumParticleTypes.VILLAGER_HAPPY,
+                world.addParticle(ParticleTypes.HAPPY_VILLAGER,
                   (double) ((float) pos.getX() + random.nextFloat()),
-                  (double) pos.getY() + (double) random.nextFloat() * BlockState.getBoundingBox(world, pos).maxY,
+                  (double) pos.getY() + (double) random.nextFloat() * iblockstate.getShape(world, pos).getBoundingBox().maxY,
                   (double) ((float) pos.getZ() + random.nextFloat()),
                   d0,
                   d1,
@@ -93,7 +101,7 @@ public class CompostParticleMessage implements IMessage
                 d0 = random.nextGaussian() * 0.02D;
                 d1 = random.nextGaussian() * 0.02D;
                 d2 = random.nextGaussian() * 0.02D;
-                world.spawnParticle(EnumParticleTypes.VILLAGER_HAPPY,
+                world.addParticle(ParticleTypes.HAPPY_VILLAGER,
                   (double) ((float) pos.getX() + random.nextFloat()),
                   (double) pos.getY() + (double) random.nextFloat() * 1.0D,
                   (double) ((float) pos.getZ() + random.nextFloat()),
