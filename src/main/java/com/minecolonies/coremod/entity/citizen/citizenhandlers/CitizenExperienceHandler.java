@@ -184,7 +184,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             {
                 final int j = EntityXPOrb.getXPSplit(experience);
                 experience -= j;
-                CompatibilityUtils.getWorldFromCitizen(citizen).spawnEntity(new EntityXPOrb(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.posX, citizen.posY, citizen.posZ, j));
+                CompatibilityUtils.getWorldFromCitizen(citizen).addEntity(new EntityXPOrb(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.posX, citizen.posY, citizen.posZ, j));
             }
         }
 

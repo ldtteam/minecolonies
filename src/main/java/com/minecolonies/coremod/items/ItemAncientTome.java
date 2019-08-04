@@ -34,15 +34,15 @@ public class ItemAncientTome extends AbstractItemMinecolonies
         super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
         final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, entityIn.getPosition());
 
-        if (stack.getTagCompound() == null)
+        if (stack.getTag() == null)
             stack.putCompound(new CompoundNBT());
 
-        stack.getTagCompound().putBoolean(NbtTagConstants.TAG_RAID_WILL_HAPPEN, colony.getRaiderManager().willRaidTonight());
+        stack.getTag().putBoolean(NbtTagConstants.TAG_RAID_WILL_HAPPEN, colony.getRaiderManager().willRaidTonight());
     }
 
     @SideOnly(Side.CLIENT)
     public boolean hasEffect(final ItemStack stack)
     {
-        return stack.getTagCompound() != null && stack.getTagCompound().hasKey(NbtTagConstants.TAG_RAID_WILL_HAPPEN) && stack.getTagCompound().getBoolean(NbtTagConstants.TAG_RAID_WILL_HAPPEN);
+        return stack.getTag() != null && stack.getTag().hasKey(NbtTagConstants.TAG_RAID_WILL_HAPPEN) && stack.getTag().getBoolean(NbtTagConstants.TAG_RAID_WILL_HAPPEN);
     }
 }

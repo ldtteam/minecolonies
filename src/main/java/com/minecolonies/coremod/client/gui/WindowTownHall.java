@@ -741,7 +741,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final IColonyView IColonyView = allies.get(index);
+                final IColonyView iColonyView = allies.get(index);
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(IColonyView.getName());
                 final long distance = BlockPosUtil.getDistance2D(IColonyView.getCenter(), building.getPosition());
                 rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText((int) distance + "b");
@@ -769,7 +769,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final IColonyView IColonyView = feuds.get(index);
+                final IColonyView iColonyView = feuds.get(index);
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(IColonyView.getName());
                 final long distance = BlockPosUtil.getDistance2D(IColonyView.getCenter(), building.getPosition());
                 rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText(String.valueOf((int) distance));

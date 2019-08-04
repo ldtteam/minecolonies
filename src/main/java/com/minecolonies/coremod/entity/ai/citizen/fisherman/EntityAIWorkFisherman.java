@@ -21,7 +21,7 @@ import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.FishingRodItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -610,7 +610,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private void equipRod()
     {
-        worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, getRodSlot());
+        worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, getRodSlot());
     }
 
     /**
@@ -656,7 +656,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         worker.swingArm(worker.getActiveHand());
         final int i = entityFishHook.getDamage(this.getCitizen());
-        worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, i);
+        worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, i);
         entityFishHook = null;
     }
 

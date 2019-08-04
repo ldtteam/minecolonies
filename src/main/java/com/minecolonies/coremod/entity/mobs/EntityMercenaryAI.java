@@ -14,7 +14,7 @@ import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 
@@ -167,7 +167,7 @@ public class EntityMercenaryAI extends EntityAIBase
 
                     if (!ItemStackUtils.isEmpty(stack))
                     {
-                        entity.swingArm(EnumHand.OFF_HAND);
+                        entity.swingArm(Hand.OFF_HAND);
                         LanguageHandler.sendPlayersMessage(entity.getColony().getMessageEntityPlayers(),
                           "com.minecolonies.coremod.mercenary.stealBuilding",
                           stack.getDisplayName());
@@ -227,7 +227,7 @@ public class EntityMercenaryAI extends EntityAIBase
 
         if (attackPath == null || !attackPath.isInProgress())
         {
-            entity.getNavigator().moveToEntityLiving(entity.getAttackTarget(), 1);
+            entity.getNavigator().moveToLivingEntity(entity.getAttackTarget(), 1);
             entity.getLookHelper().setLookPositionWithEntity(entity.getAttackTarget(), 180f, 180f);
         }
 
@@ -236,7 +236,7 @@ public class EntityMercenaryAI extends EntityAIBase
         // Check if we can attack
         if (distance < MELEE_ATTACK_DIST && attacktimer == 0)
         {
-            entity.swingArm(EnumHand.MAIN_HAND);
+            entity.swingArm(Hand.MAIN_HAND);
             entity.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, 0.55f, 1.0f);
             entity.getAttackTarget().attackEntityFrom(new EntityDamageSource(entity.getName(), entity), 15);
             entity.getAttackTarget().setFire(3);

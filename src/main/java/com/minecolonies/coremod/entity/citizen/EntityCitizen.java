@@ -36,8 +36,8 @@ import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.util.PermissionUtils;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.LivingEntityBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIOpenDoor;
 import net.minecraft.entity.ai.EntityAISwimming;
@@ -57,7 +57,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -247,7 +247,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityPlayer.class, WATCH_CLOSEST2, 1.0F));
         this.tasks.addTask(++priority, new EntityAIWatchClosest2(this, EntityCitizen.class, WATCH_CLOSEST2_FAR, WATCH_CLOSEST2_FAR_CHANCE));
         this.tasks.addTask(++priority, new EntityAICitizenWander(this, DEFAULT_SPEED, 1.0D));
-        this.tasks.addTask(++priority, new EntityAIWatchClosest(this, EntityLiving.class, WATCH_CLOSEST));
+        this.tasks.addTask(++priority, new EntityAIWatchClosest(this, LivingEntity.class, WATCH_CLOSEST));
         this.tasks.addTask(++priority, new EntityAIMournCitizen(this, DEFAULT_SPEED));
 
         citizenJobHandler.onJobChanged(citizenJobHandler.getColonyJob());
@@ -381,9 +381,9 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.avoiding"));
 
         // Environmental damage
-        if (!(attacker instanceof EntityLivingBase))
+        if (!(attacker instanceof LivingEntityBase))
         {
-            moveAwayPath = this.getNavigator().moveAwayFromEntityLiving(this, 5, INITIAL_RUN_SPEED_AVOID);
+            moveAwayPath = this.getNavigator().moveAwayFromLivingEntity(this, 5, INITIAL_RUN_SPEED_AVOID);
             return;
         }
 
@@ -401,7 +401,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             callForHelp(attacker, MAX_GUARD_CALL_RANGE);
         }
 
-        moveAwayPath = this.getNavigator().moveAwayFromEntityLiving(attacker, 15, INITIAL_RUN_SPEED_AVOID);
+        moveAwayPath = this.getNavigator().moveAwayFromLivingEntity(attacker, 15, INITIAL_RUN_SPEED_AVOID);
     }
 
     /**
@@ -510,7 +510,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     public void callForHelp(final Entity attacker, final int guardHelpRange)
     {
-        if (!(attacker instanceof EntityLivingBase) || !Configurations.gameplay.citizenCallForHelp || callForHelpCooldown != 0)
+        if (!(attacker instanceof LivingEntityBase) || !Configurations.gameplay.citizenCallForHelp || callForHelpCooldown != 0)
         {
             return;
         }
@@ -540,7 +540,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (guard != null)
         {
-            ((AbstractEntityAIGuard) guard.getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (EntityLivingBase) attacker);
+            ((AbstractEntityAIGuard) guard.getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntityBase) attacker);
         }
     }
 
@@ -587,9 +587,9 @@ public class EntityCitizen extends AbstractEntityCitizen
      * @return If citizen should interact or not.
      */
     @Override
-    public boolean processInteract(final PlayerEntity player, @NotNull final EnumHand hand)
+    public boolean processInteract(final PlayerEntity player, @NotNull final Hand hand)
     {
-        final IColonyView IColonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), player.world.provider.getDimension());
+        final IColonyView iColonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), player.world.provider.getDimension());
         if (IColonyView != null && !IColonyView.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
         {
             return false;
@@ -784,12 +784,12 @@ public class EntityCitizen extends AbstractEntityCitizen
             this.getCitizenData().getInventory().read(ListNBT);
             if (dataBackup.hasKey(TAG_HELD_ITEM_SLOT))
             {
-                this.getCitizenData().getInventory().setHeldItem(EnumHand.MAIN_HAND, dataBackup.getInt(TAG_HELD_ITEM_SLOT));
+                this.getCitizenData().getInventory().setHeldItem(Hand.MAIN_HAND, dataBackup.getInt(TAG_HELD_ITEM_SLOT));
             }
 
             if (dataBackup.hasKey(TAG_OFFHAND_HELD_ITEM_SLOT))
             {
-                this.getCitizenData().getInventory().setHeldItem(EnumHand.OFF_HAND, dataBackup.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));
+                this.getCitizenData().getInventory().setHeldItem(Hand.OFF_HAND, dataBackup.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));
             }
 
             dataBackup = null;

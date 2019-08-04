@@ -40,7 +40,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -293,10 +293,10 @@ public class EventHandler
     @SubscribeEvent
     public void onBlockBreak(@NotNull final BlockEvent.BreakEvent event)
     {
-        if (event.getPlayer() != null && event.getPlayer().getHeldItem(EnumHand.MAIN_HAND).getItem() == ModItems.scanTool)
+        if (event.getPlayer() != null && event.getPlayer().getHeldItem(Hand.MAIN_HAND).getItem() == ModItems.scanTool)
         {
-            final ItemStack itemstack = event.getPlayer().getHeldItem(EnumHand.MAIN_HAND);
-            if (!itemstack.hasTagCompound())
+            final ItemStack itemstack = event.getPlayer().getHeldItem(Hand.MAIN_HAND);
+            if (!itemstack.hasTag())
             {
                 itemstack.put(new CompoundNBT());
             }
@@ -325,7 +325,7 @@ public class EventHandler
         BlockPos bedBlockPos = event.getPos();
 
         //Only execute for the main hand our colony events.
-        if (event.getHand() == EnumHand.MAIN_HAND)
+        if (event.getHand() == Hand.MAIN_HAND)
         {
             // this was the simple way of doing it, minecraft calls onBlockActivated
             // and uses that return value, but I didn't want to call it twice
@@ -380,7 +380,7 @@ public class EventHandler
         }
 
 
-        if (event.getHand() == EnumHand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool)
+        if (event.getHand() == Hand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool)
         {
             if (event.getWorld().isRemote)
             {
@@ -428,7 +428,7 @@ public class EventHandler
     @SubscribeEvent
     public void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickItem event)
     {
-        if (event.getHand() == EnumHand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote)
+        if (event.getHand() == Hand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote)
         {
             final IColonyView view = IColonyManager.getInstance().getClosestColonyView(event.getWorld(), event.getPos());
             if (view != null && Settings.instance.getStyle().isEmpty())

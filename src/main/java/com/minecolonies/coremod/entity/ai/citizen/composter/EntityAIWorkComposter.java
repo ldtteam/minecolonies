@@ -15,7 +15,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -128,11 +128,11 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         );
         if(slot >= 0)
         {
-            worker.setHeldItem(EnumHand.MAIN_HAND, worker.getInventoryCitizen().getStackInSlot(slot));
+            worker.setHeldItem(Hand.MAIN_HAND, worker.getInventoryCitizen().getStackInSlot(slot));
             return START_WORKING;
         }
 
-        worker.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+        worker.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
 
         if(!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()))
         {
@@ -207,14 +207,14 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_FILLING));
 
-        if(worker.getHeldItem(EnumHand.MAIN_HAND) == ItemStack.EMPTY)
+        if(worker.getHeldItem(Hand.MAIN_HAND) == ItemStack.EMPTY)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
                             new InvWrapper(worker.getInventoryCitizen()), stack -> getOwnBuilding(BuildingComposter.class).isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack)));
 
             if(slot >= 0)
             {
-                worker.setHeldItem(EnumHand.MAIN_HAND, worker.getInventoryCitizen().getStackInSlot(slot));
+                worker.setHeldItem(Hand.MAIN_HAND, worker.getInventoryCitizen().getStackInSlot(slot));
             }
             else
             {
@@ -233,10 +233,10 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             final TileEntityBarrel barrel = (TileEntityBarrel) world.getTileEntity(currentTarget);
 
             worker.getCitizenItemHandler().hitBlockWithToolInHand(currentTarget);
-            barrel.addItem(worker.getHeldItem(EnumHand.MAIN_HAND));
+            barrel.addItem(worker.getHeldItem(Hand.MAIN_HAND));
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
             this.incrementActionsDoneAndDecSaturation();
-            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+            worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
 
             incrementActionsDone();
 

@@ -17,7 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
@@ -129,7 +129,7 @@ public class BlockHutField extends AbstractBlockMinecoloniesBlockHutField<BlockH
                                      final BlockPos pos,
                                      final BlockState state,
                                      final PlayerEntity playerIn,
-                                     final EnumHand hand,
+                                     final Hand hand,
                                      final Direction facing,
                                      final float hitX,
                                      final float hitY,

@@ -17,7 +17,7 @@ import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -169,7 +169,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
         final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.BOW, 0, buildingGuards.getMaxToolLevel());
         if (bowSlot != -1)
         {
-            worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, bowSlot);
+            worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, bowSlot);
         }
     }
 
@@ -310,7 +310,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
             else if (canSee && sqDistanceToEntity < sqAttackRange)
             {
                 worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
-                worker.swingArm(EnumHand.MAIN_HAND);
+                worker.swingArm(Hand.MAIN_HAND);
 
                 final EntityTippedArrow arrow = new GuardArrow(world, worker);
                 final double xVector = target.posX - worker.getPosX();
@@ -320,7 +320,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 double damage = getRangedAttackDamage();
 
                 // Add bow enchant effects: Knocback and fire
-                final ItemStack bow = worker.getHeldItem(EnumHand.MAIN_HAND);
+                final ItemStack bow = worker.getHeldItem(Hand.MAIN_HAND);
 
                 if (EnchantmentHelper.getEnchantmentLevel(Enchantments.FLAME, bow) > 0)
                 {
@@ -354,7 +354,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 timeCanSee = 0;
                 target.setRevengeTarget(worker);
                 currentAttackDelay = getAttackDelay();
-                worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
+                worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
                 worker.resetActiveHand();
                 worker.decreaseSaturationForContinuousAction();
             }
@@ -377,7 +377,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
             reduceAttackDelay(10);
             if (currentAttackDelay <= 0)
             {
-                worker.setActiveHand(EnumHand.MAIN_HAND);
+                worker.setActiveHand(Hand.MAIN_HAND);
             }
         }
         lastDistance = sqDistanceToEntity;
@@ -413,7 +413,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
             int enchantDmg = 0;
             if (Configurations.gameplay.rangerEnchants)
             {
-                final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
+                final ItemStack heldItem = worker.getHeldItem(Hand.MAIN_HAND);
                 // Normalize to +1 dmg
                 enchantDmg += EnchantmentHelper.getModifierForCreature(heldItem, target.getCreatureAttribute()) / 2.5;
                 enchantDmg += EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, heldItem);

@@ -27,7 +27,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -274,8 +274,8 @@ public class CitizenData implements ICitizenData
         {
             final ListNBT ListNBT = compound.getList(TAG_INVENTORY, 10);
             this.inventory.read(ListNBT);
-            this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInt(TAG_HELD_ITEM_SLOT));
-            this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));
+            this.inventory.setHeldItem(Hand.MAIN_HAND, compound.getInt(TAG_HELD_ITEM_SLOT));
+            this.inventory.setHeldItem(Hand.OFF_HAND, compound.getInt(TAG_OFFHAND_HELD_ITEM_SLOT));
         }
 
         if (name.isEmpty())
@@ -893,8 +893,8 @@ public class CitizenData implements ICitizenData
         }
 
         compound.put(TAG_INVENTORY, inventory.write(new ListNBT()));
-        compound.putInt(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.MAIN_HAND));
-        compound.putInt(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.OFF_HAND));
+        compound.putInt(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(Hand.MAIN_HAND));
+        compound.putInt(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(Hand.OFF_HAND));
 
         BlockPosUtil.write(compound, TAG_POS, bedPos);
         compound.putBoolean(TAG_ASLEEP, isAsleep);

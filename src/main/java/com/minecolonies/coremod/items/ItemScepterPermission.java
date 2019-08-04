@@ -8,13 +8,13 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.ChangeFreeToInteractBlockMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -57,35 +57,35 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     }
 
     @NotNull
-    private static EnumActionResult handleAddBlockType(
+    private static ActionResultType handleAddBlockType(
                                                         final PlayerEntity playerIn,
                                                         final World worldIn,
                                                         final BlockPos pos,
-                                                        final IColonyView IColonyView)
+                                                        final IColonyView iColonyView)
     {
         final BlockState blockState = worldIn.getBlockState(pos);
         final Block block = blockState.getBlock();
 
         final ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(
-          IColonyView,
+          iColonyView,
                                                                                                block,
                                                                                                ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
         MineColonies.getNetwork().sendToServer(message);
 
-        return EnumActionResult.SUCCESS;
+        return ActionResultType.SUCCESS;
     }
 
     @NotNull
-    private static EnumActionResult handleAddLocation(
+    private static ActionResultType handleAddLocation(
                                                        final PlayerEntity playerIn,
                                                        final World worldIn,
                                                        final BlockPos pos,
-                                                       final IColonyView IColonyView)
+                                                       final IColonyView iColonyView)
     {
         final ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(IColonyView, pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
         MineColonies.getNetwork().sendToServer(message);
 
-        return EnumActionResult.SUCCESS;
+        return ActionResultType.SUCCESS;
     }
 
     /**
@@ -103,11 +103,11 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
      */
     @Override
     @NotNull
-    public EnumActionResult onItemUse(
+    public ActionResultType onItemUse(
                                        final PlayerEntity playerIn,
                                        final World worldIn,
                                        final BlockPos pos,
-                                       final EnumHand hand,
+                                       final Hand hand,
                                        final Direction facing,
                                        final float hitX,
                                        final float hitY,
@@ -115,21 +115,21 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     {
         if (!worldIn.isRemote)
         {
-            return EnumActionResult.SUCCESS;
+            return ActionResultType.SUCCESS;
         }
         final ItemStack scepter = playerIn.getHeldItem(hand);
-        if (!scepter.hasTagCompound())
+        if (!scepter.hasTag())
         {
-            scepter.put(new CompoundNBT());
+            scepter.setTag(new CompoundNBT());
         }
 
-        final IColonyView IColonyView = IColonyManager.getInstance().getClosestColonyView(worldIn, pos);
-        if (IColonyView == null)
+        final IColonyView iColonyView = IColonyManager.getInstance().getClosestColonyView(worldIn, pos);
+        if (iColonyView == null)
         {
-            return EnumActionResult.FAIL;
+            return ActionResultType.FAIL;
         }
-        final CompoundNBT compound = scepter.getTagCompound();
-        return handleItemAction(compound, playerIn, worldIn, pos, IColonyView);
+        final CompoundNBT compound = scepter.getTag();
+        return handleItemAction(compound, playerIn, worldIn, pos, iColonyView);
     }
 
     /**
@@ -145,22 +145,22 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     public ActionResult<ItemStack> onItemRightClick(
                                                      final World worldIn,
                                                      final PlayerEntity playerIn,
-                                                     final EnumHand hand)
+                                                     final Hand hand)
     {
         final ItemStack scepter = playerIn.getHeldItem(hand);
         if (worldIn.isRemote)
         {
-            return new ActionResult<>(EnumActionResult.SUCCESS, scepter);
+            return new ActionResult<>(ActionResultType.SUCCESS, scepter);
         }
-        if (!scepter.hasTagCompound())
+        if (!scepter.hasTag())
         {
-            scepter.put(new CompoundNBT());
+            scepter.setTag(new CompoundNBT());
         }
         final CompoundNBT compound = scepter.getTag();
 
         toggleItemMode(playerIn, compound);
 
-        return new ActionResult<>(EnumActionResult.SUCCESS, scepter);
+        return new ActionResult<>(ActionResultType.SUCCESS, scepter);
     }
 
     private static void toggleItemMode(final PlayerEntity playerIn, final CompoundNBT compound)
@@ -184,24 +184,24 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     }
 
     @NotNull
-    private static EnumActionResult handleItemAction(
+    private static ActionResultType handleItemAction(
                                                final CompoundNBT compound,
                                                final PlayerEntity playerIn,
                                                final World worldIn,
                                                final BlockPos pos,
-                                               final IColonyView IColonyView)
+                                               final IColonyView iColonyView)
     {
         final String tagItemMode = compound.getString(TAG_ITEM_MODE);
 
         switch (tagItemMode)
         {
             case TAG_VALUE_MODE_BLOCK:
-                return handleAddBlockType(playerIn, worldIn, pos, IColonyView);
+                return handleAddBlockType(playerIn, worldIn, pos, iColonyView);
             case TAG_VALUE_MODE_LOCATION:
-                return handleAddLocation(playerIn, worldIn, pos, IColonyView);
+                return handleAddLocation(playerIn, worldIn, pos, iColonyView);
             default:
                 toggleItemMode(playerIn, compound);
-                return handleItemAction(compound, playerIn, worldIn, pos, IColonyView);
+                return handleItemAction(compound, playerIn, worldIn, pos, iColonyView);
         }
     }
 }

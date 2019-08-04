@@ -13,7 +13,7 @@ import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -224,7 +224,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             return DECIDE;
         }
 
-        if (!equipTool(EnumHand.MAIN_HAND, ToolType.AXE))
+        if (!equipTool(Hand.MAIN_HAND, ToolType.AXE))
         {
             return START_WORKING;
         }
@@ -286,7 +286,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             return DECIDE;
         }
 
-        if (!equipItem(EnumHand.MAIN_HAND, getBreedingItem()))
+        if (!equipItem(Hand.MAIN_HAND, getBreedingItem()))
         {
             return START_WORKING;
         }
@@ -420,7 +420,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
             {
                 //noinspection ConstantConditions
                 animal.setInLove(null);
-                worker.swingArm(EnumHand.MAIN_HAND);
+                worker.swingArm(Hand.MAIN_HAND);
                 InventoryUtils.reduceStackInItemHandler(new InvWrapper(worker.getInventoryCitizen()), getBreedingItem());
                 worker.decreaseSaturationForAction();
             }
@@ -459,7 +459,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      * @param toolType the {@link ToolType} we want to equip
      * @return true if the tool was equipped.
      */
-    public boolean equipTool(final EnumHand hand, final ToolType toolType)
+    public boolean equipTool(final Hand hand, final ToolType toolType)
     {
         if (getToolSlot(toolType) != -1)
         {
@@ -496,7 +496,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
      * @param itemStack the {@link ItemStack} to equip.
      * @return true if the item was equipped.
      */
-    public boolean equipItem(final EnumHand hand, final ItemStack itemStack)
+    public boolean equipItem(final Hand hand, final ItemStack itemStack)
     {
         if (checkIfRequestForItemExistOrCreateAsynch(itemStack))
         {
@@ -527,7 +527,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends En
         worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_HERDER_BUTCHERING));
         if (animal != null && !walkingToAnimal(animal) && !ItemStackUtils.isEmpty(worker.getHeldItemMainhand()))
         {
-            worker.swingArm(EnumHand.MAIN_HAND);
+            worker.swingArm(Hand.MAIN_HAND);
             animal.attackEntityFrom(new EntityDamageSource(worker.getName(), worker), (float) BUTCHERING_ATTACK_DAMAGE);
             worker.getHeldItemMainhand().damageItem(1, animal);
             worker.decreaseSaturationForAction();

@@ -62,7 +62,7 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
     /**
      * Colony View of the colony.
      */
-    private final IColonyView IColonyView;
+    private final IColonyView iColonyView;
 
     /**
      * Creates the Window object.

@@ -30,7 +30,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -513,7 +513,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 equipHoe();
                 worker.swingArm(worker.getActiveHand());
                 world.setBlockState(position, Blocks.FARMLAND.getDefaultState());
-                worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
+                worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
                 worker.decreaseSaturationForContinuousAction();
                 return true;
             }
@@ -565,7 +565,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private void equipHoe()
     {
-        worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, getHoeSlot());
+        worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, getHoeSlot());
     }
 
     /**

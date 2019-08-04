@@ -11,9 +11,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -55,11 +55,11 @@ public class ItemClipBoard extends AbstractItemMinecolonies
      */
     @Override
     @NotNull
-    public EnumActionResult onItemUse(
+    public ActionResultType onItemUse(
                                        final PlayerEntity playerIn,
                                        final World worldIn,
                                        final BlockPos pos,
-                                       final EnumHand hand,
+                                       final Hand hand,
                                        final Direction facing,
                                        final float hitX,
                                        final float hitY,
@@ -87,7 +87,7 @@ public class ItemClipBoard extends AbstractItemMinecolonies
             }
         }
 
-        return EnumActionResult.SUCCESS;
+        return ActionResultType.SUCCESS;
     }
 
     /**
@@ -103,13 +103,13 @@ public class ItemClipBoard extends AbstractItemMinecolonies
     public ActionResult<ItemStack> onItemRightClick(
                                                      final World worldIn,
                                                      final PlayerEntity playerIn,
-                                                     final EnumHand hand)
+                                                     final Hand hand)
     {
         final ItemStack cllipboard = playerIn.getHeldItem(hand);
 
         if (!worldIn.isRemote)
         {
-            return new ActionResult<>(EnumActionResult.SUCCESS, cllipboard);
+            return new ActionResult<>(ActionResultType.SUCCESS, cllipboard);
         }
 
         final CompoundNBT compound = checkForCompound(cllipboard);
@@ -124,7 +124,7 @@ public class ItemClipBoard extends AbstractItemMinecolonies
             LanguageHandler.sendPlayerMessage(playerIn, TranslationConstants.COM_MINECOLONIES_CLIPBOARD_NEED_COLONY);
         }
 
-        return new ActionResult<>(EnumActionResult.SUCCESS, cllipboard);
+        return new ActionResult<>(ActionResultType.SUCCESS, cllipboard);
     }
 
     /**
@@ -135,7 +135,7 @@ public class ItemClipBoard extends AbstractItemMinecolonies
      */
     private static CompoundNBT checkForCompound(final ItemStack scepter)
     {
-        if (!scepter.hasTagCompound())
+        if (!scepter.hasTag())
         {
             scepter.put(new CompoundNBT());
         }

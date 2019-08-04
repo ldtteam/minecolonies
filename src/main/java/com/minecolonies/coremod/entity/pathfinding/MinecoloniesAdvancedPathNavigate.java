@@ -10,7 +10,7 @@ import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
@@ -43,7 +43,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      * @param entity the ourEntity.
      * @param world  the world it is in.
      */
-    public MinecoloniesAdvancedPathNavigate(@NotNull final EntityLiving entity, final World world)
+    public MinecoloniesAdvancedPathNavigate(@NotNull final LivingEntity entity, final World world)
     {
         super(entity, world, entity);
 
@@ -224,7 +224,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Override
-    public boolean tryMoveToEntityLiving(@NotNull final Entity e, final double speed)
+    public boolean tryMoveToLivingEntity(@NotNull final Entity e, final double speed)
     {
         return tryMoveToBlockPos(e.getPosition(), speed);
     }
@@ -480,7 +480,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      * @return the result.
      */
     @Nullable
-    public PathResult moveToEntityLiving(@NotNull final Entity e, final double speed)
+    public PathResult moveToLivingEntity(@NotNull final Entity e, final double speed)
     {
         return moveToXYZ(e.posX, e.posY, e.posZ, speed);
     }
@@ -494,7 +494,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      * @return the result of the pathing.
      */
     @Nullable
-    public PathResult moveAwayFromEntityLiving(@NotNull final Entity e, final double distance, final double speed)
+    public PathResult moveAwayFromLivingEntity(@NotNull final Entity e, final double distance, final double speed)
     {
         return moveAwayFromXYZ(e.getPosition(), distance, speed);
     }

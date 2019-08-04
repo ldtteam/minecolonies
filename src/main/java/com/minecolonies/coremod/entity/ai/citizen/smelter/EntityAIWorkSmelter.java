@@ -22,7 +22,7 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.tileentity.FurnaceTileEntity;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -143,7 +143,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
             return getState();
         }
 
-        if (ItemStackUtils.isEmpty(worker.getHeldItem(EnumHand.MAIN_HAND)))
+        if (ItemStackUtils.isEmpty(worker.getHeldItem(Hand.MAIN_HAND)))
         {
             progress = 0;
             if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableToolOrWeapon) <= 0)
@@ -165,7 +165,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
                 return START_WORKING;
             }
 
-            worker.getCitizenItemHandler().setHeldItem(EnumHand.MAIN_HAND, slot);
+            worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, slot);
         }
 
         worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
@@ -178,7 +178,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
 
             if (slot == -1)
             {
-                worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+                worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
                 return START_WORKING;
             }
 
@@ -207,7 +207,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
 
             worker.decreaseSaturationForAction();
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
-            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+            worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
             return START_WORKING;
         }
 

@@ -5,7 +5,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -458,7 +458,7 @@ public final class BlockPosUtil
      */
     public static boolean tryMoveBaseCitizenEntityToXYZ(@NotNull final AbstractEntityCitizen living, @NotNull final BlockPos destination)
     {
-        if (!(living instanceof EntityLiving))
+        if (!(living instanceof LivingEntity))
         {
             return false;
         }
@@ -467,13 +467,13 @@ public final class BlockPosUtil
     }
 
     /**
-     * {@link EntityUtils#tryMoveLivingToXYZ(EntityLiving, int, int, int)}.
+     * {@link EntityUtils#tryMoveLivingToXYZ(LivingEntity, int, int, int)}.
      *
      * @param living      A living entity.
      * @param destination chunk coordinates to check moving to.
      * @return True when XYZ is found, an set moving to, otherwise false.
      */
-    public static boolean tryMoveLivingToXYZ(@NotNull final EntityLiving living, @NotNull final BlockPos destination)
+    public static boolean tryMoveLivingToXYZ(@NotNull final LivingEntity living, @NotNull final BlockPos destination)
     {
         return EntityUtils.tryMoveLivingToXYZ(living, destination.getX(), destination.getY(), destination.getZ());
     }

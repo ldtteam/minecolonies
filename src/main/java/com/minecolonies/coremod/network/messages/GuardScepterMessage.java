@@ -87,7 +87,7 @@ public class GuardScepterMessage extends AbstractMessage<GuardScepterMessage, IM
             scepter = new ItemStack(ModItems.scepterGuard);
         }
 
-        if (!scepter.hasTagCompound())
+        if (!scepter.hasTag())
         {
             scepter.put(new CompoundNBT());
         }
