@@ -744,7 +744,7 @@ public final class ColonyManager implements IColonyManager
      * @param compound NBT-Tag.
      */
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         //Get the colonies NBT tags and store them in a ListNBT.
         if (serverUUID != null)
@@ -753,12 +753,12 @@ public final class ColonyManager implements IColonyManager
         }
 
         final CompoundNBT compCompound = new CompoundNBT();
-        compatibilityManager.writeToNBT(compCompound);
+        compatibilityManager.write(compCompound);
         compound.put(TAG_COMPATABILITY_MANAGER, compCompound);
 
         compound.putBoolean(TAG_DISTANCE, true);
         final CompoundNBT recipeCompound = new CompoundNBT();
-        recipeManager.writeToNBT(recipeCompound);
+        recipeManager.write(recipeCompound);
         compound.put(RECIPE_MANAGER_TAG, recipeCompound);
         compound.putBoolean(TAG_ALL_CHUNK_STORAGES, true);
         compound.putBoolean(TAG_NEW_COLONIES, true);
@@ -771,7 +771,7 @@ public final class ColonyManager implements IColonyManager
      * @param compound NBT Tag.
      */
     @Override
-    public void readFromNBT(@NotNull final CompoundNBT compound, @NotNull final World world)
+    public void read(@NotNull final CompoundNBT compound, @NotNull final World world)
     {
         if (!compound.keySet().contains(TAG_DISTANCE))
         {
@@ -824,11 +824,11 @@ public final class ColonyManager implements IColonyManager
 
         if (compound.keySet().contains(TAG_COMPATABILITY_MANAGER))
         {
-            compatibilityManager.readFromNBT(compound.getCompound(TAG_COMPATABILITY_MANAGER));
+            compatibilityManager.read(compound.getCompound(TAG_COMPATABILITY_MANAGER));
         }
 
         final CompoundNBT recipeCompound = compound.getCompound(RECIPE_MANAGER_TAG);
-        recipeManager.readFromNBT(recipeCompound);
+        recipeManager.read(recipeCompound);
 
         if (!compound.keySet().contains(TAG_ALL_CHUNK_STORAGES))
         {
@@ -893,7 +893,7 @@ public final class ColonyManager implements IColonyManager
                 @Nullable final CompoundNBT data = BackUpHelper.loadNBTFromPath(file);
                 if (data != null)
                 {
-                    readFromNBT(data, world);
+                    read(data, world);
                 }
 
                 if (serverUUID == null)

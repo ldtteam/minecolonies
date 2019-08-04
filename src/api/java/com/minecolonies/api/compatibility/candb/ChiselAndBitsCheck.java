@@ -48,21 +48,18 @@ public final class ChiselAndBitsCheck extends AbstractChiselAndBitsProxy
     }
 
     @Override
-    @Optional.Method(modid = CANDB)
     public boolean checkForChiselAndBitsBlock(@NotNull final BlockState blockState)
     {
         return false;
     }
 
     @Override
-    @Optional.Method(modid = CANDB)
     public boolean checkForChiselAndBitsTileEntity(@NotNull final TileEntity tileEntity)
     {
         return false;
     }
 
     @Override
-    @Optional.Method(modid = CANDB)
     public List<ItemStack> getChiseledStacks(@NotNull final TileEntity tileEntity)
     {
         return Collections.emptyList();

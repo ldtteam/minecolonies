@@ -88,14 +88,14 @@ public interface IWorkManager
      *
      * @param compound Compound to save to.
      */
-    void writeToNBT(@NotNull CompoundNBT compound);
+    void write(@NotNull CompoundNBT compound);
 
     /**
      * Restore the Work Manager.
      *
      * @param compound Compound to read from.
      */
-    void readFromNBT(@NotNull CompoundNBT compound);
+    void read(@NotNull CompoundNBT compound);
 
     /**
      * Adds work order to the work manager.

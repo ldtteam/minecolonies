@@ -17,7 +17,7 @@ public interface IWorkOrder
      *  @param compound NBT Tag compound
      * @param manager the workManager calling this method.
      */
-    void readFromNBT(@NotNull CompoundNBT compound, IWorkManager manager);
+    void read(@NotNull CompoundNBT compound, IWorkManager manager);
 
     /**
      * Getter for the priority.
@@ -99,7 +99,7 @@ public interface IWorkOrder
      *
      * @param compound NBT tag compount
      */
-    void writeToNBT(@NotNull CompoundNBT compound);
+    void write(@NotNull CompoundNBT compound);
 
     /**
      * Is this WorkOrder still valid?  If not, it will be deleted.

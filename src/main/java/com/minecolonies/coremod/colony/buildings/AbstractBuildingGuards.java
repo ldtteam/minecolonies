@@ -276,7 +276,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         for (int i = 0; i < wayPointTagList.size(); ++i)
         {
             final CompoundNBT blockAtPos = wayPointTagList.getCompound(i);
-            final BlockPos pos = BlockPosUtil.readFromNBT(blockAtPos, NBT_TARGET);
+            final BlockPos pos = BlockPosUtil.read(blockAtPos, NBT_TARGET);
             patrolTargets.add(pos);
         }
 
@@ -284,7 +284,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         for (int i = 0; i < mobsTagList.size(); i++)
         {
             final CompoundNBT mobCompound = mobsTagList.getCompound(i);
-            final MobEntryView mobEntry = MobEntryView.readFromNBT(mobCompound, NBT_MOB_VIEW);
+            final MobEntryView mobEntry = MobEntryView.read(mobCompound, NBT_MOB_VIEW);
             if (mobEntry.getEntityEntry() != null)
             {
                 mobsToAttack.add(mobEntry);
@@ -310,7 +310,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         for (@NotNull final BlockPos pos : patrolTargets)
         {
             @NotNull final CompoundNBT wayPointCompound = new CompoundNBT();
-            BlockPosUtil.writeToNBT(wayPointCompound, NBT_TARGET, pos);
+            BlockPosUtil.write(wayPointCompound, NBT_TARGET, pos);
 
             wayPointTagList.add(wayPointCompound);
         }
@@ -320,7 +320,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         for (@NotNull final MobEntryView entry : mobsToAttack)
         {
             @NotNull final CompoundNBT mobCompound = new CompoundNBT();
-            MobEntryView.writeToNBT(mobCompound, NBT_MOB_VIEW, entry);
+            MobEntryView.write(mobCompound, NBT_MOB_VIEW, entry);
             mobsTagList.add(mobCompound);
         }
         compound.put(NBT_MOBS, mobsTagList);

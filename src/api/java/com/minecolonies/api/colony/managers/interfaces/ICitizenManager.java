@@ -19,13 +19,13 @@ public interface ICitizenManager
      * Read the citizens from nbt.
      * @param compound the compound to read it from.
      */
-    void readFromNBT(@NotNull final CompoundNBT compound);
+    void read(@NotNull final CompoundNBT compound);
 
     /**
      * Write the citizens to nbt.
      * @param citizenCompound the compound to write it to.
      */
-    void writeToNBT(@NotNull final CompoundNBT citizenCompound);
+    void write(@NotNull final CompoundNBT citizenCompound);
 
     /**
      * Sends packages to update the citizens.

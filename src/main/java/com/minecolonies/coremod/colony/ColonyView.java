@@ -380,13 +380,13 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public CompoundNBT writeToNBT(final CompoundNBT colonyCompound)
+    public CompoundNBT write(final CompoundNBT colonyCompound)
     {
         return new CompoundNBT();
     }
 
     @Override
-    public void readFromNBT(final CompoundNBT compound)
+    public void read(final CompoundNBT compound)
     {
         //Noop
     }

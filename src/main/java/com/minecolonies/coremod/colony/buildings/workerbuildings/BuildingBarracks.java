@@ -136,7 +136,7 @@ public class BuildingBarracks extends AbstractBuilding
         super.deserializeNBT(compound);
         towers.clear();
         towers.addAll(NBTUtils.streamCompound(compound.getList(TAG_TOWERS, Constants.NBT.TAG_COMPOUND))
-                        .map(resultCompound -> BlockPosUtil.readFromNBT(resultCompound, TAG_POS))
+                        .map(resultCompound -> BlockPosUtil.read(resultCompound, TAG_POS))
                         .collect(Collectors.toList()));
     }
 
@@ -144,7 +144,7 @@ public class BuildingBarracks extends AbstractBuilding
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = super.serializeNBT();
-        final ListNBT towerTagList = towers.stream().map(pos -> BlockPosUtil.writeToNBT(new CompoundNBT(), TAG_POS, pos)).collect(NBTUtils.toListNBT());
+        final ListNBT towerTagList = towers.stream().map(pos -> BlockPosUtil.write(new CompoundNBT(), TAG_POS, pos)).collect(NBTUtils.toListNBT());
         compound.put(TAG_TOWERS, towerTagList);
 
         return compound;

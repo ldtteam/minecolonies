@@ -170,7 +170,7 @@ public class BuildingRegistry
 
             if (oclass != null)
             {
-                @NotNull final BlockPos pos = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
+                @NotNull final BlockPos pos = BlockPosUtil.read(compound, TAG_LOCATION);
                 final Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
                 building = (AbstractBuilding) constructor.newInstance(colony, pos);
             }

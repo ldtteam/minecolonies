@@ -67,7 +67,7 @@ public class StandardRecipeManager implements IRecipeManager
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         @NotNull final ListNBT recipesTagList =
                 recipes.entrySet().stream().map(entry ->  StandardFactoryController.getInstance().serialize(entry.getValue())).collect(NBTUtils.toListNBT());
@@ -75,7 +75,7 @@ public class StandardRecipeManager implements IRecipeManager
     }
 
     @Override
-    public void readFromNBT(@NotNull final CompoundNBT compound)
+    public void read(@NotNull final CompoundNBT compound)
     {
         recipes.putAll(NBTUtils.streamCompound(compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND))
                 .map(recipeCompound -> (IRecipeStorage) StandardFactoryController.getInstance().deserialize(recipeCompound))

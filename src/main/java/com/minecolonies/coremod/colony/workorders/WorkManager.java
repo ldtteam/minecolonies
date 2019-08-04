@@ -178,14 +178,14 @@ public class WorkManager implements IWorkManager
      * @param compound Compound to save to.
      */
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         //  Work Orders
         @NotNull final ListNBT list = new ListNBT();
         for (@NotNull final IWorkOrder o : workOrders.values())
         {
             @NotNull final CompoundNBT orderCompound = new CompoundNBT();
-            o.writeToNBT(orderCompound);
+            o.write(orderCompound);
             list.add(orderCompound);
         }
         compound.put(TAG_WORK_ORDERS, list);
@@ -197,7 +197,7 @@ public class WorkManager implements IWorkManager
      * @param compound Compound to read from.
      */
     @Override
-    public void readFromNBT(@NotNull final CompoundNBT compound)
+    public void read(@NotNull final CompoundNBT compound)
     {
         //  Work Orders
         final ListNBT list = compound.getList(TAG_WORK_ORDERS, NBT.TAG_COMPOUND);

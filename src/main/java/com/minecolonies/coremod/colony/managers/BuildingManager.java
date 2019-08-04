@@ -94,7 +94,7 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void readFromNBT(@NotNull final CompoundNBT compound)
+    public void read(@NotNull final CompoundNBT compound)
     {
         //  Buildings
         final ListNBT buildingTagList = compound.getList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND);
@@ -114,13 +114,13 @@ public class BuildingManager implements IBuildingManager
             final ListNBT fieldTagList = compound.getList(TAG_NEW_FIELDS, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < fieldTagList.size(); ++i)
             {
-                addField(BlockPosUtil.readFromNBT(fieldTagList.getCompound(i), TAG_POS));
+                addField(BlockPosUtil.read(fieldTagList.getCompound(i), TAG_POS));
             }
         }
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         //  Buildings
         @NotNull final ListNBT buildingTagList = new ListNBT();
@@ -136,7 +136,7 @@ public class BuildingManager implements IBuildingManager
         for (@NotNull final BlockPos pos : fields)
         {
             @NotNull final CompoundNBT fieldCompound = new CompoundNBT();
-            BlockPosUtil.writeToNBT(fieldCompound, TAG_POS, pos);
+            BlockPosUtil.write(fieldCompound, TAG_POS, pos);
             fieldTagList.add(fieldCompound);
         }
         compound.put(TAG_NEW_FIELDS, fieldTagList);

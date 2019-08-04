@@ -90,9 +90,9 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
      * @param manager
      */
     @Override
-    public void readFromNBT(@NotNull final CompoundNBT compound, final IWorkManager manager)
+    public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
     {
-        super.readFromNBT(compound, manager);
+        super.read(compound, manager);
         upgradeLevel = compound.getInt(TAG_UPGRADE_LEVEL);
         upgradeName = compound.getString(TAG_UPGRADE_NAME);
     }
@@ -103,9 +103,9 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
      * @param compound NBT tag compound.
      */
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
+        super.write(compound);
         compound.putInt(TAG_UPGRADE_LEVEL, upgradeLevel);
         compound.putString(TAG_UPGRADE_NAME, upgradeName);
     }

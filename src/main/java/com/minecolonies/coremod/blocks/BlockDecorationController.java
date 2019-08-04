@@ -8,7 +8,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.BooleanProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -50,7 +50,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     /**
      * If the block is mirrored.
      */
-    public static PropertyBool MIRROR = PropertyBool.create("mirror");
+    public static BooleanProperty MIRROR = BooleanProperty.create("mirror");
 
     /**
      * The bounding boxes.

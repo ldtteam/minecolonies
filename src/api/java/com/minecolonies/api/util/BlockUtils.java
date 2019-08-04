@@ -2,7 +2,7 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import net.minecraft.block.*;
-import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.BooleanProperty;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.init.Items;
@@ -43,7 +43,7 @@ public final class BlockUtils
         (block, BlockState) -> block.equals(Blocks.GRASS),
         (block, BlockState) -> block instanceof DoorBlock
                                   && BlockState != null
-                                  && BlockState.getValue(PropertyBool.create("upper"))
+                                  && BlockState.getValue(BooleanProperty.create("upper"))
 
       );
 
@@ -373,7 +373,7 @@ public final class BlockUtils
         }
 
         Block block = blockState.getBlock();
-        if (item instanceof ItemBlock)
+        if (item instanceof BlockItem)
         {
             block = Block.getBlockFromItem(item);
         }

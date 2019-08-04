@@ -186,7 +186,7 @@ public class ProgressManager implements IProgressManager
     }
 
     @Override
-    public void readFromNBT(@NotNull final CompoundNBT compound)
+    public void read(@NotNull final CompoundNBT compound)
     {
         final CompoundNBT progressCompound = compound.getCompound(TAG_PROGRESS_MANAGER);
         final ListNBT progressTags = progressCompound.getList(TAG_PROGRESS_LIST, Constants.NBT.TAG_COMPOUND);
@@ -197,7 +197,7 @@ public class ProgressManager implements IProgressManager
     }
 
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         final CompoundNBT progressCompound = new CompoundNBT();
         @NotNull final ListNBT progressTagList = notifiedProgress.stream()

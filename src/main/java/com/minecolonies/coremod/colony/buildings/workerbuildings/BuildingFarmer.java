@@ -241,14 +241,14 @@ public class BuildingFarmer extends AbstractBuildingWorker
         for (int i = 0; i < fieldTagList.size(); ++i)
         {
             final CompoundNBT fieldCompound = fieldTagList.getCompound(i);
-            final BlockPos fieldLocation = BlockPosUtil.readFromNBT(fieldCompound, TAG_FIELDS_BLOCKPOS);
+            final BlockPos fieldLocation = BlockPosUtil.read(fieldCompound, TAG_FIELDS_BLOCKPOS);
             farmerFields.add(fieldLocation);
         }
         shouldAssignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
 
         if (compound.keySet().contains(LAST_FIELD_TAG))
         {
-            final BlockPos pos = BlockPosUtil.readFromNBT(compound, LAST_FIELD_TAG);
+            final BlockPos pos = BlockPosUtil.read(compound, LAST_FIELD_TAG);
             lastField = pos;
         }
     }
@@ -261,7 +261,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         for (@NotNull final BlockPos f : farmerFields)
         {
             @NotNull final CompoundNBT fieldCompound = new CompoundNBT();
-            BlockPosUtil.writeToNBT(fieldCompound, TAG_FIELDS_BLOCKPOS, f);
+            BlockPosUtil.write(fieldCompound, TAG_FIELDS_BLOCKPOS, f);
             fieldTagList.add(fieldCompound);
         }
         compound.put(TAG_FIELDS, fieldTagList);
@@ -269,7 +269,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
         if (lastField != null)
         {
-            BlockPosUtil.writeToNBT(compound, LAST_FIELD_TAG, lastField);
+            BlockPosUtil.write(compound, LAST_FIELD_TAG, lastField);
         }
 
         return compound;

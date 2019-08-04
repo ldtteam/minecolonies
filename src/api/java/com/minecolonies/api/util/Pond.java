@@ -188,9 +188,9 @@ public final class Pond
      * @return new Pond instance.
      */
     @NotNull
-    public static Pond readFromNBT(@NotNull final CompoundNBT compound)
+    public static Pond read(@NotNull final CompoundNBT compound)
     {
-        return new Pond(BlockPosUtil.readFromNBT(compound, TAG_LOCATION));
+        return new Pond(BlockPosUtil.read(compound, TAG_LOCATION));
     }
 
     @Override
@@ -221,8 +221,8 @@ public final class Pond
      *
      * @param compound nbt tag compound to write to.
      */
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
+        BlockPosUtil.write(compound, TAG_LOCATION, location);
     }
 }

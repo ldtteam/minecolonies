@@ -463,10 +463,10 @@ public class Tree
      * @return a new tree object.
      */
     @NotNull
-    public static Tree readFromNBT(@NotNull final CompoundNBT compound)
+    public static Tree read(@NotNull final CompoundNBT compound)
     {
         @NotNull final Tree tree = new Tree();
-        tree.location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
+        tree.location = BlockPosUtil.read(compound, TAG_LOCATION);
 
         tree.woodBlocks = new LinkedList<>();
         final ListNBT logs = compound.getList(TAG_LOGS, Constants.NBT.TAG_COMPOUND);
@@ -482,7 +482,7 @@ public class Tree
             tree.stumpLocations.add(BlockPosUtil.readFromListNBT(stumps, i));
         }
 
-        tree.topLog = BlockPosUtil.readFromNBT(compound, TAG_TOP_LOG);
+        tree.topLog = BlockPosUtil.read(compound, TAG_TOP_LOG);
 
         tree.slimeTree = compound.getBoolean(TAG_IS_SLIME_TREE);
         tree.dynamicTree = compound.getBoolean(TAG_DYNAMIC_TREE);
@@ -796,14 +796,14 @@ public class Tree
      *
      * @param compound the compound of the tree.
      */
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         if (!isTree)
         {
             return;
         }
 
-        BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
+        BlockPosUtil.write(compound, TAG_LOCATION, location);
 
         @NotNull final ListNBT logs = new ListNBT();
         for (@NotNull final BlockPos log : woodBlocks)
@@ -819,7 +819,7 @@ public class Tree
         }
         compound.put(TAG_STUMPS, stumps);
 
-        BlockPosUtil.writeToNBT(compound, TAG_TOP_LOG, topLog);
+        BlockPosUtil.write(compound, TAG_TOP_LOG, topLog);
 
         compound.putBoolean(TAG_IS_SLIME_TREE, slimeTree);
         compound.putBoolean(TAG_DYNAMIC_TREE, dynamicTree);

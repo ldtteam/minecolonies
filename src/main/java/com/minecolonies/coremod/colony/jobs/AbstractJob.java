@@ -162,7 +162,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
      *
      * @param compound CompoundNBT to save the Job to.
      */
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
 
     }
@@ -172,7 +172,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
      *
      * @param compound CompoundNBT containing saved Job data.
      */
-    public void readFromNBT(@NotNull final CompoundNBT compound)
+    public void read(@NotNull final CompoundNBT compound)
     {
 
     }

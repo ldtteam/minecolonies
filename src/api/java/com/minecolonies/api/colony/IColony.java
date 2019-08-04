@@ -298,9 +298,9 @@ public interface IColony
 
     void setManualHiring(boolean manualHiring);
 
-    CompoundNBT writeToNBT(CompoundNBT colonyCompound);
+    CompoundNBT write(CompoundNBT colonyCompound);
 
-    void readFromNBT(CompoundNBT compound);
+    void read(CompoundNBT compound);
 
     void setMoveIn(boolean newMoveIn);
 

@@ -110,7 +110,7 @@ public class ClientEventHandler
                 return;
             }
 
-            final BlockPos guardTower = BlockPosUtil.readFromNBT(compound, TAG_POS);
+            final BlockPos guardTower = BlockPosUtil.read(compound, TAG_POS);
             final IBuildingView hut = colony.getBuilding(guardTower);
 
             if (partolPointTemplate == null)

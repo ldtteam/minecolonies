@@ -17,7 +17,7 @@ import net.minecraft.block.BlockHardenedClay;
 import net.minecraft.block.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.util.math.BlockPos;
@@ -104,9 +104,9 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
     public boolean isBlockForThisSmelter(final ItemStack stack)
     {
         final Item item = stack.getItem();
-        if (item instanceof ItemBlock)
+        if (item instanceof BlockItem)
         {
-            final Block block = ((ItemBlock) item).getBlock();
+            final Block block = ((BlockItem) item).getBlock();
             if (block == Blocks.STONE
                   || block == Blocks.STONEBRICK
                   || block instanceof BlockGlazedTerracotta

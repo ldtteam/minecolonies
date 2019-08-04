@@ -55,10 +55,10 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
      * @param manager
      */
     @Override
-    public void readFromNBT(@NotNull final CompoundNBT compound, final IWorkManager manager)
+    public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
     {
-        super.readFromNBT(compound, manager);
-        minerBuilding = BlockPosUtil.readFromNBT(compound, TAG_POS);
+        super.read(compound, manager);
+        minerBuilding = BlockPosUtil.read(compound, TAG_POS);
     }
 
     /**
@@ -67,10 +67,10 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
      * @param compound NBT tag compound.
      */
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
-        super.writeToNBT(compound);
-        BlockPosUtil.writeToNBT(compound, TAG_POS, minerBuilding);
+        super.write(compound);
+        BlockPosUtil.write(compound, TAG_POS, minerBuilding);
     }
 
     @Override

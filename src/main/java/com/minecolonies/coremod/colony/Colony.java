@@ -335,9 +335,9 @@ public class Colony implements IColony
             final int id = compound.getInt(TAG_ID);
             @NotNull final Colony c = new Colony(id, world);
             c.name = compound.getString(TAG_NAME);
-            c.center = BlockPosUtil.readFromNBT(compound, TAG_CENTER);
+            c.center = BlockPosUtil.read(compound, TAG_CENTER);
             c.setRequestManager();
-            c.readFromNBT(compound);
+            c.read(compound);
 
             if (c.getProgressManager().isPrintingProgress() && (c.getBuildingManager().getBuildings().size() > BUILDING_LIMIT_FOR_HELP
                                                                   || c.getCitizenManager().getCitizens().size() > CITIZEN_LIMIT_FOR_HELP))
@@ -366,7 +366,7 @@ public class Colony implements IColony
      *
      * @param compound compound to read from.
      */
-    public void readFromNBT(@NotNull final CompoundNBT compound)
+    public void read(@NotNull final CompoundNBT compound)
     {
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
         dimensionId = compound.getInt(TAG_DIMENSION);
@@ -390,37 +390,37 @@ public class Colony implements IColony
 
         if (compound.keySet().contains(TAG_CITIZEN_MANAGER))
         {
-            citizenManager.readFromNBT(compound.getCompound(TAG_CITIZEN_MANAGER));
+            citizenManager.read(compound.getCompound(TAG_CITIZEN_MANAGER));
         }
         else
         {
             //Compatability with old version!
-            citizenManager.readFromNBT(compound);
+            citizenManager.read(compound);
         }
 
         if (compound.keySet().contains(TAG_BUILDING_MANAGER))
         {
-            buildingManager.readFromNBT(compound.getCompound(TAG_BUILDING_MANAGER));
+            buildingManager.read(compound.getCompound(TAG_BUILDING_MANAGER));
         }
         else
         {
             //Compatability with old version!
-            buildingManager.readFromNBT(compound);
+            buildingManager.read(compound);
         }
 
         if (compound.keySet().contains(TAG_STATS_MANAGER))
         {
-            statsManager.readFromNBT(compound.getCompound(TAG_STATS_MANAGER));
+            statsManager.read(compound.getCompound(TAG_STATS_MANAGER));
         }
         else
         {
             //Compatability with old version!
-            statsManager.readFromNBT(compound);
+            statsManager.read(compound);
         }
 
         if (compound.keySet().contains(TAG_PROGRESS_MANAGER))
         {
-            progressManager.readFromNBT(compound);
+            progressManager.read(compound);
         }
 
         if (compound.keySet().contains(TAG_HAPPINESS_MODIFIER))
@@ -432,17 +432,17 @@ public class Colony implements IColony
             colonyHappinessManager.setLockedHappinessModifier(Optional.empty());
         }
 
-        raidManager.readFromNBT(compound);
+        raidManager.read(compound);
 
         //  Workload
-        workManager.readFromNBT(compound.getCompound(TAG_WORK));
+        workManager.read(compound.getCompound(TAG_WORK));
 
         // Waypoints
         final ListNBT wayPointTagList = compound.getList(TAG_WAYPOINT, NBT.TAG_COMPOUND);
         for (int i = 0; i < wayPointTagList.size(); ++i)
         {
             final CompoundNBT blockAtPos = wayPointTagList.getCompound(i);
-            final BlockPos pos = BlockPosUtil.readFromNBT(blockAtPos, TAG_WAYPOINT);
+            final BlockPos pos = BlockPosUtil.read(blockAtPos, TAG_WAYPOINT);
             final BlockState state = NBTUtil.readBlockState(blockAtPos);
             wayPoints.put(pos, state);
         }
@@ -459,11 +459,11 @@ public class Colony implements IColony
         for (int i = 0; i < freePositionTagList.size(); ++i)
         {
             final CompoundNBT blockTag = freePositionTagList.getCompound(i);
-            final BlockPos block = BlockPosUtil.readFromNBT(blockTag, TAG_FREE_POSITIONS);
+            final BlockPos block = BlockPosUtil.read(blockTag, TAG_FREE_POSITIONS);
             freePositions.add(block);
         }
 
-        happinessData.readFromNBT(compound);
+        happinessData.read(compound);
         packageManager.setLastContactInHours(compound.getInt(TAG_ABANDONED));
         manualHousing = compound.getBoolean(TAG_MANUAL_HOUSING);
 
@@ -524,7 +524,7 @@ public class Colony implements IColony
      *
      * @param compound compound to write to.
      */
-    public CompoundNBT writeToNBT(@NotNull final CompoundNBT compound)
+    public CompoundNBT write(@NotNull final CompoundNBT compound)
     {
         //  Core attributes
         compound.putInt(TAG_ID, id);
@@ -532,7 +532,7 @@ public class Colony implements IColony
 
         //  Basic data
         compound.putString(TAG_NAME, name);
-        BlockPosUtil.writeToNBT(compound, TAG_CENTER, center);
+        BlockPosUtil.write(compound, TAG_CENTER, center);
 
         compound.putBoolean(TAG_MANUAL_HIRING, manualHiring);
         compound.putBoolean(TAG_NEED_TO_MOURN, needToMourn);
@@ -547,33 +547,33 @@ public class Colony implements IColony
         permissions.savePermissions(compound);
 
         final CompoundNBT buildingCompound = new CompoundNBT();
-        buildingManager.writeToNBT(buildingCompound);
+        buildingManager.write(buildingCompound);
         compound.put(TAG_BUILDING_MANAGER, buildingCompound);
 
         final CompoundNBT citizenCompound = new CompoundNBT();
-        citizenManager.writeToNBT(citizenCompound);
+        citizenManager.write(citizenCompound);
         compound.put(TAG_CITIZEN_MANAGER, citizenCompound);
 
         colonyHappinessManager.getLockedHappinessModifier().ifPresent(d -> compound.setDouble(TAG_HAPPINESS_MODIFIER, d));
 
         final CompoundNBT statsCompound = new CompoundNBT();
-        statsManager.writeToNBT(statsCompound);
+        statsManager.write(statsCompound);
         compound.put(TAG_STATS_MANAGER, statsCompound);
 
         //  Workload
         @NotNull final CompoundNBT workManagerCompound = new CompoundNBT();
-        workManager.writeToNBT(workManagerCompound);
+        workManager.write(workManagerCompound);
         compound.put(TAG_WORK, workManagerCompound);
 
-        progressManager.writeToNBT(compound);
-        raidManager.writeToNBT(compound);
+        progressManager.write(compound);
+        raidManager.write(compound);
 
         // Waypoints
         @NotNull final ListNBT wayPointTagList = new ListNBT();
         for (@NotNull final Map.Entry<BlockPos, BlockState> entry : wayPoints.entrySet())
         {
             @NotNull final CompoundNBT wayPointCompound = new CompoundNBT();
-            BlockPosUtil.writeToNBT(wayPointCompound, TAG_WAYPOINT, entry.getKey());
+            BlockPosUtil.write(wayPointCompound, TAG_WAYPOINT, entry.getKey());
             NBTUtil.writeBlockState(wayPointCompound, entry.getValue());
 
             wayPointTagList.add(wayPointCompound);
@@ -593,12 +593,12 @@ public class Colony implements IColony
         for (@NotNull final BlockPos pos : freePositions)
         {
             @NotNull final CompoundNBT wayPointCompound = new CompoundNBT();
-            BlockPosUtil.writeToNBT(wayPointCompound, TAG_FREE_POSITIONS, pos);
+            BlockPosUtil.write(wayPointCompound, TAG_FREE_POSITIONS, pos);
             freePositionsTagList.add(wayPointCompound);
         }
         compound.put(TAG_FREE_POSITIONS, freePositionsTagList);
 
-        happinessData.writeToNBT(compound);
+        happinessData.write(compound);
         compound.putInt(TAG_ABANDONED, packageManager.getLastContactInHours());
         compound.putBoolean(TAG_MANUAL_HOUSING, manualHousing);
         compound.putBoolean(TAG_MOVE_IN, moveIn);
@@ -1371,7 +1371,7 @@ public class Colony implements IColony
         {
             if (this.colonyTag == null || this.isActive)
             {
-                this.writeToNBT(new CompoundNBT());
+                this.write(new CompoundNBT());
             }
         }
         catch (final Exception e)

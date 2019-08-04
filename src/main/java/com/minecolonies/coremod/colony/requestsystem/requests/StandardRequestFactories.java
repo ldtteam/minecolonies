@@ -583,7 +583,7 @@ public final class StandardRequestFactories
         compound.put(NBT_CHILDREN, childrenCompound);
 
         final ListNBT deliveriesList = new ListNBT();
-        request.getDeliveries().forEach(itemStack -> deliveriesList.add(itemStack.writeToNBT(new CompoundNBT())));
+        request.getDeliveries().forEach(itemStack -> deliveriesList.add(itemStack.write(new CompoundNBT())));
 
         return compound;
     }

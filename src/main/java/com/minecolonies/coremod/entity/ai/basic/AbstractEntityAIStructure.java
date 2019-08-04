@@ -31,7 +31,7 @@ import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.block.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Mirror;
@@ -528,7 +528,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream().anyMatch(target -> target.isItemEqual(itemStack)));
         }
-        itemList.removeIf(itemstack -> itemstack.getItem() instanceof ItemBlock && isBlockFree(((ItemBlock) itemstack.getItem()).getBlock(), itemstack.getMetadata()));
+        itemList.removeIf(itemstack -> itemstack.getItem() instanceof BlockItem && isBlockFree(((BlockItem) itemstack.getItem()).getBlock(), itemstack.getMetadata()));
 
         final Map<ItemStorage, Integer> list = new HashMap<>();
         for (final ItemStack stack : itemList)

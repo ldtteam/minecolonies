@@ -70,50 +70,50 @@ public final class ModBlocksInitializer
     }
 
     /**
-     * Initializes the registry with the relevant {@link net.minecraft.item.ItemBlock} produced by the relevant blocks.
+     * Initializes the registry with the relevant {@link net.minecraft.item.BlockItem} produced by the relevant blocks.
      *
      * @param registry The item registry to add the items too.
      */
-    public static void registerItemBlock(final IForgeRegistry<Item> registry)
+    public static void registerBlockItem(final IForgeRegistry<Item> registry)
     {
-        ModBlocks.blockHutBaker.registerItemBlock(registry);
-        ModBlocks.blockHutBlacksmith.registerItemBlock(registry);
-        ModBlocks.blockHutBuilder.registerItemBlock(registry);
-        ModBlocks.blockHutCitizen.registerItemBlock(registry);
-        ModBlocks.blockHutDeliveryman.registerItemBlock(registry);
-        ModBlocks.blockHutFarmer.registerItemBlock(registry);
-        ModBlocks.blockHutField.registerItemBlock(registry);
-        ModBlocks.blockHutFisherman.registerItemBlock(registry);
-        ModBlocks.blockHutGuardTower.registerItemBlock(registry);
-        ModBlocks.blockHutLumberjack.registerItemBlock(registry);
-        ModBlocks.blockHutMiner.registerItemBlock(registry);
-        ModBlocks.blockHutStonemason.registerItemBlock(registry);
-        ModBlocks.blockHutTownHall.registerItemBlock(registry);
-        ModBlocks.blockHutWareHouse.registerItemBlock(registry);
-        ModBlocks.blockHutShepherd.registerItemBlock(registry);
-        ModBlocks.blockHutCowboy.registerItemBlock(registry);
-        ModBlocks.blockHutSwineHerder.registerItemBlock(registry);
-        ModBlocks.blockHutChickenHerder.registerItemBlock(registry);
-        ModBlocks.blockHutBarracksTower.registerItemBlock(registry);
-        ModBlocks.blockHutBarracks.registerItemBlock(registry);
-        ModBlocks.blockHutCook.registerItemBlock(registry);
-        ModBlocks.blockHutSmeltery.registerItemBlock(registry);
-        ModBlocks.blockHutComposter.registerItemBlock(registry);
-        ModBlocks.blockHutLibrary.registerItemBlock(registry);
-        ModBlocks.blockHutArchery.registerItemBlock(registry);
-        ModBlocks.blockHutCombatAcademy.registerItemBlock(registry);
-        ModBlocks.blockHutSawmill.registerItemBlock(registry);
-        ModBlocks.blockHutStoneSmeltery.registerItemBlock(registry);
-        ModBlocks.blockHutCrusher.registerItemBlock(registry);
-        ModBlocks.blockHutSifter.registerItemBlock(registry);
+        ModBlocks.blockHutBaker.registerBlockItem(registry);
+        ModBlocks.blockHutBlacksmith.registerBlockItem(registry);
+        ModBlocks.blockHutBuilder.registerBlockItem(registry);
+        ModBlocks.blockHutCitizen.registerBlockItem(registry);
+        ModBlocks.blockHutDeliveryman.registerBlockItem(registry);
+        ModBlocks.blockHutFarmer.registerBlockItem(registry);
+        ModBlocks.blockHutField.registerBlockItem(registry);
+        ModBlocks.blockHutFisherman.registerBlockItem(registry);
+        ModBlocks.blockHutGuardTower.registerBlockItem(registry);
+        ModBlocks.blockHutLumberjack.registerBlockItem(registry);
+        ModBlocks.blockHutMiner.registerBlockItem(registry);
+        ModBlocks.blockHutStonemason.registerBlockItem(registry);
+        ModBlocks.blockHutTownHall.registerBlockItem(registry);
+        ModBlocks.blockHutWareHouse.registerBlockItem(registry);
+        ModBlocks.blockHutShepherd.registerBlockItem(registry);
+        ModBlocks.blockHutCowboy.registerBlockItem(registry);
+        ModBlocks.blockHutSwineHerder.registerBlockItem(registry);
+        ModBlocks.blockHutChickenHerder.registerBlockItem(registry);
+        ModBlocks.blockHutBarracksTower.registerBlockItem(registry);
+        ModBlocks.blockHutBarracks.registerBlockItem(registry);
+        ModBlocks.blockHutCook.registerBlockItem(registry);
+        ModBlocks.blockHutSmeltery.registerBlockItem(registry);
+        ModBlocks.blockHutComposter.registerBlockItem(registry);
+        ModBlocks.blockHutLibrary.registerBlockItem(registry);
+        ModBlocks.blockHutArchery.registerBlockItem(registry);
+        ModBlocks.blockHutCombatAcademy.registerBlockItem(registry);
+        ModBlocks.blockHutSawmill.registerBlockItem(registry);
+        ModBlocks.blockHutStoneSmeltery.registerBlockItem(registry);
+        ModBlocks.blockHutCrusher.registerBlockItem(registry);
+        ModBlocks.blockHutSifter.registerBlockItem(registry);
 
-        ModBlocks.blockConstructionTape.registerItemBlock(registry);
-        ModBlocks.blockBarracksTowerSubstitution.registerItemBlock(registry);
-        ModBlocks.blockRack.registerItemBlock(registry);
-        ModBlocks.blockWayPoint.registerItemBlock(registry);
-        ModBlocks.blockInfoPoster.registerItemBlock(registry);
-        ModBlocks.blockBarrel.registerItemBlock(registry);
-        ModBlocks.blockPostBox.registerItemBlock(registry);
-        ModBlocks.blockDecorationPlaceholder.registerItemBlock(registry);
+        ModBlocks.blockConstructionTape.registerBlockItem(registry);
+        ModBlocks.blockBarracksTowerSubstitution.registerBlockItem(registry);
+        ModBlocks.blockRack.registerBlockItem(registry);
+        ModBlocks.blockWayPoint.registerBlockItem(registry);
+        ModBlocks.blockInfoPoster.registerBlockItem(registry);
+        ModBlocks.blockBarrel.registerBlockItem(registry);
+        ModBlocks.blockPostBox.registerBlockItem(registry);
+        ModBlocks.blockDecorationPlaceholder.registerBlockItem(registry);
     }
 }

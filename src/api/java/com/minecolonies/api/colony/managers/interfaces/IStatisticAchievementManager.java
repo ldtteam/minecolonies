@@ -13,13 +13,13 @@ public interface IStatisticAchievementManager
      * Reads all stats from nbt.
      * @param compound the compound.
      */
-    void readFromNBT(@NotNull final CompoundNBT compound);
+    void read(@NotNull final CompoundNBT compound);
 
     /**
      * Write all stats to nbt.
      * @param statsCompound the compound.
      */
-    void writeToNBT(@NotNull final CompoundNBT statsCompound);
+    void write(@NotNull final CompoundNBT statsCompound);
 
     /**
      * Check all achievements.

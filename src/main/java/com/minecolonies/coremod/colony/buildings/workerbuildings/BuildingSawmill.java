@@ -15,7 +15,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobSawmill;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.oredict.OreDictionary;
@@ -92,7 +92,7 @@ public class BuildingSawmill extends AbstractBuildingCrafter
         }
 
         final Item item = storage.getPrimaryOutput().getItem();
-        if (item instanceof ItemBlock && (((ItemBlock) item).getBlock() instanceof BlockShingle || ((ItemBlock) item).getBlock() instanceof BlockShingleSlab))
+        if (item instanceof BlockItem && (((BlockItem) item).getBlock() instanceof BlockShingle || ((BlockItem) item).getBlock() instanceof BlockShingleSlab))
         {
             return true;
         }

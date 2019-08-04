@@ -155,7 +155,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
             {
                 order.setPriority(compound.getInt(TAG_TH_PRIORITY));
             }
-            order.readFromNBT(compound, manager);
+            order.read(compound, manager);
         }
         catch (final RuntimeException ex)
         {
@@ -173,7 +173,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param manager the workManager calling this method.
      */
     @Override
-    public void readFromNBT(@NotNull final CompoundNBT compound, final IWorkManager manager)
+    public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
     {
         id = compound.getInt(TAG_ID);
         if (compound.keySet().contains(TAG_TH_PRIORITY))
@@ -195,9 +195,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         }
         else if (compound.keySet().contains(TAG_CLAIMED_BY_BUILDING))
         {
-            claimedBy = BlockPosUtil.readFromNBT(compound, TAG_CLAIMED_BY_BUILDING);
+            claimedBy = BlockPosUtil.read(compound, TAG_CLAIMED_BY_BUILDING);
         }
-        buildingLocation = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
+        buildingLocation = BlockPosUtil.read(compound, TAG_BUILDING);
     }
 
     /**
@@ -360,7 +360,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param compound NBT tag compount
      */
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         final String s = nameToClassBiMap.inverse().get(this.getClass());
 
@@ -374,9 +374,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         compound.putInt(TAG_ID, id);
         if (claimedBy != null)
         {
-            BlockPosUtil.writeToNBT(compound, TAG_CLAIMED_BY_BUILDING, claimedBy);
+            BlockPosUtil.write(compound, TAG_CLAIMED_BY_BUILDING, claimedBy);
         }
-        BlockPosUtil.writeToNBT(compound, TAG_BUILDING, buildingLocation);
+        BlockPosUtil.write(compound, TAG_BUILDING, buildingLocation);
     }
 
     /**

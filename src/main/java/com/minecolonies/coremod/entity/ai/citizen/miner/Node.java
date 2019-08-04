@@ -142,7 +142,7 @@ public class Node
      *
      * @param compound Compound to write to
      */
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
         compound.putInt(TAG_X, x);
         compound.putInt(TAG_Z, z);

@@ -71,7 +71,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         if (entity instanceof TileEntityColonyBuilding)
         {
             compound.putInt(TAG_COLONY_ID, ((AbstractTileEntityColonyBuilding) entity).getColonyId());
-            BlockPosUtil.writeToNBT(compound, TAG_BUILDER, ((AbstractTileEntityColonyBuilding) entity).getPosition());
+            BlockPosUtil.write(compound, TAG_BUILDER, ((AbstractTileEntityColonyBuilding) entity).getPosition());
 
             if (!worldIn.isRemote)
             {
@@ -81,7 +81,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         else if (compound.keySet().contains(TAG_COLONY_ID) && compound.keySet().contains(TAG_BUILDER) && worldIn.isRemote)
         {
             final int colonyId = compound.getInt(TAG_COLONY_ID);
-            final BlockPos builderPos = BlockPosUtil.readFromNBT(compound, TAG_BUILDER);
+            final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
             MineColonies.proxy.openResourceScrollWindow(colonyId, builderPos);
         }
 
@@ -115,7 +115,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         if (compound.keySet().contains(TAG_COLONY_ID) && compound.keySet().contains(TAG_BUILDER))
         {
             final int colonyId = compound.getInt(TAG_COLONY_ID);
-            final BlockPos builderPos = BlockPosUtil.readFromNBT(compound, TAG_BUILDER);
+            final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
             MineColonies.proxy.openResourceScrollWindow(colonyId, builderPos);
         }
         else

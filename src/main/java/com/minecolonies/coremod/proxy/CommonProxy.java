@@ -126,7 +126,7 @@ public abstract class CommonProxy implements IProxy
     public static void registerItems(@NotNull final RegistryEvent.Register<Item> event)
     {
         ModItemsInitializer.init(event.getRegistry());
-        ModBlocksInitializer.registerItemBlock(event.getRegistry());
+        ModBlocksInitializer.registerBlockItem(event.getRegistry());
     }
 
     @Override

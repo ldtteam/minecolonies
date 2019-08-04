@@ -63,13 +63,13 @@ public class JobFisherman extends AbstractJob
      * @param compound CompoundNBT containing saved Job data.
      */
     @Override
-    public void readFromNBT(@NotNull final CompoundNBT compound)
+    public void read(@NotNull final CompoundNBT compound)
     {
-        super.readFromNBT(compound);
+        super.read(compound);
 
         if (compound.keySet().contains(TAG_WATER))
         {
-            water = BlockPosUtil.readFromNBT(compound, TAG_WATER);
+            water = BlockPosUtil.read(compound, TAG_WATER);
         }
 
         ponds = new ArrayList<>();
@@ -110,7 +110,7 @@ public class JobFisherman extends AbstractJob
      * @param compound CompoundNBT to save the Job to.
      */
     @Override
-    public void writeToNBT(@NotNull final CompoundNBT compound)
+    public void write(@NotNull final CompoundNBT compound)
     {
 
     }
@@ -123,7 +123,7 @@ public class JobFisherman extends AbstractJob
         @NotNull final CompoundNBT waterTag = new CompoundNBT();
         if (water != null)
         {
-            BlockPosUtil.writeToNBT(waterTag, TAG_WATER, water);
+            BlockPosUtil.write(waterTag, TAG_WATER, water);
         }
 
         @NotNull final ListNBT lakes = new ListNBT();
@@ -139,11 +139,11 @@ public class JobFisherman extends AbstractJob
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
-        super.readFromNBT(compound);
+        super.read(compound);
 
         if (compound.keySet().contains(TAG_WATER))
         {
-            water = BlockPosUtil.readFromNBT(compound, TAG_WATER);
+            water = BlockPosUtil.read(compound, TAG_WATER);
         }
 
         ponds = new ArrayList<>();

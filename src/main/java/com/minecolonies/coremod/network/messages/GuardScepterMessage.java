@@ -101,7 +101,7 @@ public class GuardScepterMessage extends AbstractMessage<GuardScepterMessage, IM
         compound.putInt("task", message.taskId);
 
         final int emptySlot = player.inventory.getFirstEmptyStack();
-        BlockPosUtil.writeToNBT(compound, TAG_POS, message.buildingId);
+        BlockPosUtil.write(compound, TAG_POS, message.buildingId);
         compound.putInt(TAG_ID, message.colonyId);
 
         if (giveToPlayer)

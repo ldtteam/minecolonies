@@ -5,6 +5,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -32,7 +33,7 @@ public class ItemStorage
     /**
      * The creative tab index of the storage.
      */
-    private final int creativeTabIndex;
+    private final List<Integer> creativeTabIndex = new ArrayList<>();
 
     /**
      * Amount of the storage.
@@ -52,7 +53,7 @@ public class ItemStorage
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = ignoreDamageValue;
         this.amount = amount;
-        this.creativeTabIndex = stack.getItem().getCreativeTab() != null ? stack.getItem().getCreativeTab().index : 0;
+        this.creativeTabIndex = stack.getItem().creat() != null ? stack.getItem().getCreativeTab().index : 0;
     }
 
     /**
