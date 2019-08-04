@@ -37,14 +37,14 @@ public class HireMercenaryMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(final ByteBuf byteBuf)
+    public void fromBytes(final PacketBuffer byteBuf)
     {
         colonyID = byteBuf.readInt();
         dimension = byteBuf.readInt();
     }
 
     @Override
-    public void toBytes(final ByteBuf byteBuf)
+    public void toBytes(final PacketBuffer byteBuf)
     {
         byteBuf.writeInt(colonyID);
         byteBuf.writeInt(dimension);

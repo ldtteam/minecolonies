@@ -45,7 +45,7 @@ public class ShepherdSetDyeSheepsMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(final ByteBuf byteBuf)
+    public void fromBytes(final PacketBuffer byteBuf)
     {
         colonyId = byteBuf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(byteBuf);
@@ -54,7 +54,7 @@ public class ShepherdSetDyeSheepsMessage implements IMessage
     }
 
     @Override
-    public void toBytes(final ByteBuf byteBuf)
+    public void toBytes(final PacketBuffer byteBuf)
     {
         byteBuf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(byteBuf, buildingId);
