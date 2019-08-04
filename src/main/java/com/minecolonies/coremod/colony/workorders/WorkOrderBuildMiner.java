@@ -1,13 +1,11 @@
 package com.minecolonies.coremod.colony.workorders;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 

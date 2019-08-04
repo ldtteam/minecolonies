@@ -3,17 +3,16 @@ package com.minecolonies.coremod.entity.ai.citizen.cook;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.JobCook;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -29,9 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.HUNGRY_INV_FULL;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Cook AI class.
@@ -66,7 +65,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     /**
      * The citizen the worker is currently trying to serve.
      */
-    private final List<IEntityCitizen> citizenToServe = new ArrayList<>();
+    private final List<AbstractEntityCitizen> citizenToServe = new ArrayList<>();
 
     /**
      * The citizen the worker is currently trying to serve.
@@ -159,7 +158,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             return START_WORKING;
         }
 
-        final Entity living = citizenToServe.isEmpty() ? playerToServe.get(0) : (Entity) citizenToServe.get(0);
+        final Entity living = citizenToServe.isEmpty() ? playerToServe.get(0) : citizenToServe.get(0);
 
         if (range == null)
         {
@@ -249,10 +248,10 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
         }
 
         citizenToServe.clear();
-        final List<IEntityCitizen> citizenList = world.getEntitiesWithinAABB(Entity.class, range)
+        final List<AbstractEntityCitizen> citizenList = world.getEntitiesWithinAABB(Entity.class, range)
           .stream()
-          .filter(e -> e instanceof IEntityCitizen)
-          .map(e -> (IEntityCitizen) e)
+                                                          .filter(e -> e instanceof AbstractEntityCitizen)
+                                                          .map(e -> (AbstractEntityCitizen) e)
           .filter(cit -> !(cit.getCitizenJobHandler().getColonyJob() instanceof JobCook) && cit.shouldBeFed())
           .collect(Collectors.toList());
 

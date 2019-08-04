@@ -1,12 +1,11 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.entity.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
-import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;

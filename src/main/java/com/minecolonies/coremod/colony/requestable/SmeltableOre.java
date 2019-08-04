@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.colony.requestable;
 
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.IColonyManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;

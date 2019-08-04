@@ -1,18 +1,18 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
+import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
+import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
+import com.minecolonies.api.entity.ai.util.ChatSpamFilter;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.coremod.colony.jobs.IJob;
-import com.minecolonies.coremod.entity.IEntityCitizen;
-import com.minecolonies.coremod.entity.ai.statemachine.AIOneTimeEventTarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
-import com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
-import com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.TickingTransition;
-import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -30,14 +30,14 @@ import java.util.Random;
 public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
 {
 
-    private static final int            MUTEX_MASK = 3;
+    private static final int                   MUTEX_MASK = 3;
     @NotNull
-    protected final      J              job;
+    protected final      J                     job;
     @NotNull
-    protected final      IEntityCitizen worker;
-    protected final      World          world;
+    protected final      AbstractEntityCitizen worker;
+    protected final      World                 world;
     @NotNull
-    protected final      ChatSpamFilter chatSpamFilter;
+    protected final      ChatSpamFilter        chatSpamFilter;
 
     /**
      * The statemachine this AI uses

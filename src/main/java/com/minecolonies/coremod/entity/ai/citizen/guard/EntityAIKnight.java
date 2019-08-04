@@ -3,17 +3,15 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardGear;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
@@ -30,9 +28,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PHYSICAL;
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PROTECT;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PHYSICAL;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_PROTECT;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
@@ -191,7 +189,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
                 damageToBeDealt *= 2;
             }
 
-            final DamageSource source = new EntityDamageSource(worker.getName(), (Entity) worker);
+            final DamageSource source = new EntityDamageSource(worker.getName(), worker);
             if (Configurations.gameplay.pvp_mode && target instanceof EntityPlayer)
             {
                 source.setDamageBypassesArmor();
@@ -204,7 +202,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
             }
 
             target.attackEntityFrom(source, (float) damageToBeDealt);
-            target.setRevengeTarget((EntityLivingBase) worker);
+            target.setRevengeTarget(worker);
             worker.decreaseSaturationForContinuousAction();
 
             worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);

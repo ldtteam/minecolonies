@@ -1,22 +1,19 @@
 package com.minecolonies.coremod.commands;
 
-import java.util.List;
-
-import com.minecolonies.coremod.colony.IColonyManager;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import org.jetbrains.annotations.NotNull;
-
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.permissions.ForgePermissionNodes;
-
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.server.permission.PermissionAPI;
 import net.minecraftforge.server.permission.context.PlayerContext;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Command entry point to make minecraft inheritance happy.

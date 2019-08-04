@@ -1,9 +1,8 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.HappinessData;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.HappinessData;
-import com.minecolonies.coremod.colony.IColonyManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

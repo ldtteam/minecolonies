@@ -1,7 +1,7 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.coremod.entity.IBaseEntityCitizen;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -335,7 +335,7 @@ public final class EntityUtils
                  .anyMatch(ent -> ent.posX == entity.posX && ent.posY == entity.posY && ent.posZ == entity.posZ && ItemStackUtils.getListOfStackForEntity(entity, placer).equals(existingReq));
     }
 
-    public static boolean isEntityAtPosition(final Entity entity, final World world, final IBaseEntityCitizen entityCitizen)
+    public static boolean isEntityAtPosition(final Entity entity, final World world, final AbstractEntityCitizen entityCitizen)
     {
         if (entity instanceof Entity)
         {

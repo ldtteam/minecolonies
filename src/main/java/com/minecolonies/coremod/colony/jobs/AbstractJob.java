@@ -1,18 +1,18 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.api.client.render.BipedModelType;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.blockout.Log;
-import com.minecolonies.coremod.client.render.BipedModelType;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.jobs.registry.JobRegistry;
-import com.minecolonies.coremod.entity.IEntityCitizen;
+import com.minecolonies.coremod.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,8 +26,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_JOB_TYPE;
 import static com.minecolonies.api.util.constant.Suppression.CLASSES_SHOULD_NOT_ACCESS_STATIC_MEMBERS_OF_THEIR_OWN_SUBCLASSES_DURING_INITIALIZATION;
-import static com.minecolonies.coremod.colony.jobs.registry.JobRegistry.TAG_TYPE;
 
 /**
  * Basic job information.
@@ -126,14 +126,14 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     {
         final NBTTagCompound compound = new NBTTagCompound();
 
-        final String s = JobRegistry.getClassToNameMap().get(this.getClass());
+        final String s = IJobRegistry.getInstance().getClassToNameMap().get(this.getClass());
 
         if (s == null)
         {
             throw new IllegalStateException(this.getClass() + " is missing a mapping! This is a bug!");
         }
 
-        compound.setString(TAG_TYPE, s);
+        compound.setString(TAG_JOB_TYPE, s);
         compound.setTag(TAG_ASYNC_REQUESTS, getAsyncRequests().stream().map(StandardFactoryController.getInstance()::serialize).collect(NBTUtils.toNBTTagList()));
         compound.setInteger(TAG_ACTIONS_DONE, actionsDone);
 
@@ -302,7 +302,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
      * @param citizen which just died
      */
     @Override
-    public void triggerDeathAchievement(final DamageSource source, final IEntityCitizen citizen)
+    public void triggerDeathAchievement(final DamageSource source, final AbstractEntityCitizen citizen)
     {
 
     }
@@ -326,10 +326,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
 
         if (getCitizen().getHomeBuilding() != null)
         {
-            if (getCitizen().getHomeBuilding().overruleNextOpenRequestOfCitizenWithStack(getCitizen(), pickedUpStack.copy()))
-            {
-                return true;
-            }
+            return getCitizen().getHomeBuilding().overruleNextOpenRequestOfCitizenWithStack(getCitizen(), pickedUpStack.copy());
         }
 
         return false;

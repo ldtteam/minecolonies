@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.blocks.huts;
 
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;

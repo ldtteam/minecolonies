@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.Lists;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.ICitizenAssignable;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -157,7 +158,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      * @return the EntityCitizen of that worker.
      */
     @Override
-    public Optional<IEntityCitizen> getMainCitizenEntity()
+    public Optional<AbstractEntityCitizen> getMainCitizenEntity()
     {
         if (assignedCitizen.isEmpty())
         {
@@ -184,7 +185,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
      */
     @Override
     @Nullable
-    public List<Optional<IEntityCitizen>> getAssignedEntities()
+    public List<Optional<AbstractEntityCitizen>> getAssignedEntities()
     {
         return assignedCitizen.stream().filter(Objects::nonNull).map(ICitizenData::getCitizenEntity).collect(Collectors.toList());
     }

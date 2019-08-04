@@ -1,18 +1,15 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -95,7 +92,7 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
             {
                 for (int i = 0; i < building.getAssignedEntities().size(); i++)
                 {
-                    Optional<IEntityCitizen> optionalEntityCitizen = building.getAssignedEntities().get(i);
+                    Optional<AbstractEntityCitizen> optionalEntityCitizen = building.getAssignedEntities().get(i);
                     final ICitizenData citizenData = building.getAssignedCitizen().get(i);
                     if (!optionalEntityCitizen.isPresent())
                     {
@@ -113,11 +110,11 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                     }
                     else if (optionalEntityCitizen.get().getTicksExisted() == 0)
                     {
-                        final IEntityCitizen oldCitizen = optionalEntityCitizen.get();
-                        final List<IEntityCitizen> list = player.getServerWorld().getLoadedEntityList().stream()
-                          .filter(e -> e instanceof IEntityCitizen)
+                        final AbstractEntityCitizen oldCitizen = optionalEntityCitizen.get();
+                        final List<AbstractEntityCitizen> list = player.getServerWorld().getLoadedEntityList().stream()
+                                                                   .filter(e -> e instanceof AbstractEntityCitizen)
                           .filter(e -> e.equals(oldCitizen))
-                          .map(e -> (IEntityCitizen) e)
+                                                                   .map(e -> (AbstractEntityCitizen) e)
                           .collect(Collectors.toList());
 
                         if (list.isEmpty())

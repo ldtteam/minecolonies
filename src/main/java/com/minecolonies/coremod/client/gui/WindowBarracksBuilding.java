@@ -1,15 +1,16 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
-import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracks;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;

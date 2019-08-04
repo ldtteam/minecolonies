@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.buildings.IBuildingContainer;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.tileentities.ITileEntityColonyBuilding;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
@@ -55,7 +55,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     /**
      * The tileEntity of the building.
      */
-    private ITileEntityColonyBuilding tileEntity;
+    private AbstractTileEntityColonyBuilding tileEntity;
 
     /**
      * Priority of the building in the pickUpList.
@@ -267,23 +267,12 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     }
 
     /**
-     * Sets the tile entity for the building.
-     *
-     * @param te {@link ITileEntityColonyBuilding} that will fill the {@link #tileEntity} field.
-     */
-    @Override
-    public void setTileEntity(final ITileEntityColonyBuilding te)
-    {
-        tileEntity = te;
-    }
-
-    /**
      * Returns the tile entity that belongs to the colony building.
      *
      * @return {@link TileEntityColonyBuilding} object of the building.
      */
     @Override
-    public ITileEntityColonyBuilding getTileEntity()
+    public AbstractTileEntityColonyBuilding getTileEntity()
     {
         if ((tileEntity == null || tileEntity.isInvalid())
                 && colony != null
@@ -311,6 +300,17 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         }
 
         return tileEntity;
+    }
+
+    /**
+     * Sets the tile entity for the building.
+     *
+     * @param te {@link AbstractTileEntityColonyBuilding} that will fill the {@link #tileEntity} field.
+     */
+    @Override
+    public void setTileEntity(final AbstractTileEntityColonyBuilding te)
+    {
+        tileEntity = te;
     }
 
     //------------------------- !Start! Capabilities handling for minecolonies buildings -------------------------//

@@ -1,15 +1,14 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
+import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.ITownHall;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.ITownHallView;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -86,7 +85,7 @@ public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage
                 final World world = colony.getWorld();
                 for (final ICitizenData citizenData : colony.getCitizenManager().getCitizens())
                 {
-                    Optional<IEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
+                    Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
                     if (!optionalEntityCitizen.isPresent())
                     {
                         Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));

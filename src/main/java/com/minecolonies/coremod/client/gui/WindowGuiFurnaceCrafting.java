@@ -5,7 +5,6 @@ import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.inventory.ContainerGUICraftingFurnace;
 import com.minecolonies.coremod.network.messages.AddRemoveRecipeMessage;
 import net.minecraft.client.gui.GuiButton;
@@ -124,7 +123,7 @@ public class WindowGuiFurnaceCrafting extends GuiContainer
     @Override
     protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
     {
-        this.fontRenderer.drawString(I18n.format("container.furnace", new Object[0]), X_OFFSET, Y_OFFSET, GUI_COLOR);
+        this.fontRenderer.drawString(I18n.format("container.furnace"), X_OFFSET, Y_OFFSET, GUI_COLOR);
     }
 
     /**

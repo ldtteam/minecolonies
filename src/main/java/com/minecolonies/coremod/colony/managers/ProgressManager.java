@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ColonyProgressType;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.managers.interfaces.IProgressManager;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
-import com.minecolonies.coremod.colony.managers.interfaces.IProgressManager;
-import com.minecolonies.coremod.colony.workorders.IWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;

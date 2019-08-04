@@ -1,17 +1,16 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.ldtteam.structurize.management.StructureName;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InstantStructurePlacer;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
-import com.minecolonies.coremod.colony.managers.interfaces.IRaiderManager;
-import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.coremod.entity.ai.mobs.IBaseMinecoloniesMob;
-import com.minecolonies.coremod.util.InstantStructurePlacer;
-import com.ldtteam.structurize.management.StructureName;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -189,13 +188,13 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public void registerRaider(@NotNull final IBaseMinecoloniesMob raider)
+    public void registerRaider(@NotNull final AbstractEntityMinecoloniesMob raider)
     {
         this.horde.add(raider.getUniqueID());
     }
 
     @Override
-    public void unregisterRaider(@NotNull final IBaseMinecoloniesMob raider, final WorldServer world)
+    public void unregisterRaider(@NotNull final AbstractEntityMinecoloniesMob raider, final WorldServer world)
     {
         for(final UUID uuid : new ArrayList<>(horde))
         {
@@ -273,9 +272,9 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public List<IBaseMinecoloniesMob> getHorde(final WorldServer world)
+    public List<AbstractEntityMinecoloniesMob> getHorde(final WorldServer world)
     {
-        final List<IBaseMinecoloniesMob> raiders = new ArrayList<>();
+        final List<AbstractEntityMinecoloniesMob> raiders = new ArrayList<>();
         for (final UUID uuid : new ArrayList<>(horde))
         {
             final Entity raider = world.getEntityFromUuid(uuid);
@@ -286,7 +285,7 @@ public class RaidManager implements IRaiderManager
             }
             else
             {
-                raiders.add((IBaseMinecoloniesMob) raider);
+                raiders.add((AbstractEntityMinecoloniesMob) raider);
             }
 
         }

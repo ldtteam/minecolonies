@@ -1,19 +1,18 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.CMC_GUI_TOWNHALL_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Manage windows associated with Buildings.

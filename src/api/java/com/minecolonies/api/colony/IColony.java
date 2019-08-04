@@ -1,14 +1,12 @@
 package com.minecolonies.api.colony;
 
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
-import com.minecolonies.coremod.colony.HappinessData;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
-import com.minecolonies.coremod.colony.managers.interfaces.*;
-import com.minecolonies.coremod.colony.workorders.IWorkManager;
-import com.minecolonies.coremod.colony.workorders.IWorkOrder;
-import com.minecolonies.coremod.entity.IEntityCitizen;
+import com.minecolonies.api.colony.workorders.IWorkManager;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -278,7 +276,7 @@ public interface IColony
 
     boolean isValidAttackingPlayer(EntityPlayer entity);
 
-    boolean isValidAttackingGuard(IEntityCitizen entity);
+    boolean isValidAttackingGuard(AbstractEntityCitizen entity);
 
     void setColonyColor(TextFormatting color);
 
@@ -286,7 +284,7 @@ public interface IColony
 
     void addWayPoint(BlockPos pos, IBlockState newWayPointState);
 
-    void addGuardToAttackers(IEntityCitizen entityCitizen, EntityPlayer followPlayer);
+    void addGuardToAttackers(AbstractEntityCitizen entityCitizen, EntityPlayer followPlayer);
 
     void addFreePosition(BlockPos pos);
 

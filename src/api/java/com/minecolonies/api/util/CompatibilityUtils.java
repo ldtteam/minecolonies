@@ -1,6 +1,6 @@
 package com.minecolonies.api.util;
 
-import com.minecolonies.coremod.entity.IBaseEntityCitizen;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
@@ -30,9 +30,9 @@ public final class CompatibilityUtils
         return entity.world;
     }
 
-    public static World getWorldFromCitizen(final IBaseEntityCitizen baseEntityCitizen)
+    public static World getWorldFromCitizen(final AbstractEntityCitizen baseEntityCitizen)
     {
-        return getWorldFromEntity((Entity) baseEntityCitizen);
+        return getWorldFromEntity(baseEntityCitizen);
     }
 
     /**

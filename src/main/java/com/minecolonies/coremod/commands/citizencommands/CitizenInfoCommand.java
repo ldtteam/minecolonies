@@ -1,10 +1,8 @@
 package com.minecolonies.coremod.commands.citizencommands;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.IEntityCitizen;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -72,7 +70,7 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
           citizenData.getId(),
           citizenData.getName())));
 
-        final Optional<IEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
+        final Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
 
         if (!optionalEntityCitizen.isPresent())
         {
@@ -81,7 +79,7 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
         }
 
 
-        final IEntityCitizen entityCitizen = optionalEntityCitizen.get();
+        final AbstractEntityCitizen entityCitizen = optionalEntityCitizen.get();
 
         final BlockPos citizenPosition = entityCitizen.getPosition();
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_POSITION,

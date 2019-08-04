@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.minecolonies.coremod.achievements.IMineColoniesAchievement;
+import com.minecolonies.api.achievements.IMineColoniesAchievement;
+import com.minecolonies.api.colony.managers.interfaces.IStatisticAchievementManager;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.TriggerColonyAchievements;
-import com.minecolonies.coremod.colony.managers.interfaces.IStatisticAchievementManager;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;

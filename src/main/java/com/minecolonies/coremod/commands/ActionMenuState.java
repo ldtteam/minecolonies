@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.commands;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
 import net.minecraft.entity.player.EntityPlayerMP;
 import org.jetbrains.annotations.NotNull;
 
@@ -285,11 +284,7 @@ public class ActionMenuState
         {
             return false;
         }
-        if (!argumentStateByActionArgumentNameMap.equals(other.argumentStateByActionArgumentNameMap))
-        {
-            return false;
-        }
-        return true;
+        return argumentStateByActionArgumentNameMap.equals(other.argumentStateByActionArgumentNameMap);
     }
 
     @Override

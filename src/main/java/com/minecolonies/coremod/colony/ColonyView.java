@@ -1,28 +1,27 @@
 package com.minecolonies.coremod.colony;
 
-import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
+import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
+import com.minecolonies.api.colony.workorders.IWorkManager;
+import com.minecolonies.api.colony.workorders.WorkOrderView;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.BlockStateUtils;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.ITownHallView;
-import com.minecolonies.coremod.colony.managers.interfaces.*;
 import com.minecolonies.coremod.colony.permissions.PermissionsView;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
-import com.minecolonies.coremod.colony.workorders.IWorkManager;
-import com.minecolonies.coremod.colony.workorders.WorkOrderView;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
 import io.netty.buffer.ByteBuf;
@@ -56,29 +55,28 @@ public final class ColonyView implements IColonyView
     private static final int MAX_BYTES_NBTCOMPOUND = (int) 1e6;
 
     //  General Attributes
-    private final int id;
-    private final Map<Integer, WorkOrderView>         workOrders  = new HashMap<>();
+    private final int                                 id;
+    private final Map<Integer, WorkOrderView>         workOrders    = new HashMap<>();
     //  Administration/permissions
     @NotNull
-    private final PermissionsView                     permissions = new PermissionsView();
+    private final PermissionsView                     permissions   = new PermissionsView();
     @NotNull
-    private final Map<BlockPos, AbstractBuildingView> buildings   = new HashMap<>();
+    private final Map<BlockPos, AbstractBuildingView> buildings     = new HashMap<>();
     //  Citizenry
     @NotNull
-    private final Map<Integer, ICitizenDataView>       citizens    = new HashMap<>();
-    private       String                              name        = "Unknown";
-    private int      dimensionId;
-    private BlockPos center = BlockPos.ORIGIN;
+    private final Map<Integer, ICitizenDataView>      citizens      = new HashMap<>();
+    /**
+     * Datas about the happiness of a colony
+     */
+    private final HappinessData                       happinessData = new HappinessData();
+    private       String                              name          = "Unknown";
+    private       int                                 dimensionId;
 
     /**
      * Colony team color.
      */
     private TextFormatting teamColonyColor = TextFormatting.WHITE;
-
-    /**
-     * Datas about the happiness of a colony
-     */
-    private final HappinessData                       happinessData      = new HappinessData();
+    private BlockPos       center          = BlockPos.ORIGIN;
 
     /**
      * Defines if workers are hired manually or automatically.
@@ -422,9 +420,9 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void addGuardToAttackers(final IEntityCitizen entityCitizen, final EntityPlayer followPlayer)
+    public boolean isValidAttackingGuard(final AbstractEntityCitizen entity)
     {
-
+        return false;
     }
 
     /**
@@ -1140,9 +1138,9 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public boolean isValidAttackingGuard(final IEntityCitizen entity)
+    public void addGuardToAttackers(final AbstractEntityCitizen entityCitizen, final EntityPlayer followPlayer)
     {
-        return false;
+
     }
 
     @Override

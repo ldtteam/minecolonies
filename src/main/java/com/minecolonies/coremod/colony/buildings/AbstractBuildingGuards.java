@@ -1,7 +1,15 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IGuardBuilding;
+import com.minecolonies.api.colony.buildings.IGuardType;
+import com.minecolonies.api.colony.buildings.registry.IGuardTypeRegistry;
+import com.minecolonies.api.colony.buildings.views.MobEntryView;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
@@ -10,10 +18,7 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
-import com.minecolonies.coremod.colony.*;
-import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
-import com.minecolonies.coremod.colony.jobs.*;
-import com.minecolonies.coremod.entity.IEntityCitizen;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.network.messages.GuardMobAttackListMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -26,9 +31,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -46,11 +53,11 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
  * Abstract class for Guard huts.
  */
 @SuppressWarnings({"squid:MaximumInheritanceDepth", "squid:S1448"})
-public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
+public abstract class AbstractBuildingGuards extends AbstractBuildingWorker implements IGuardBuilding
 {
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_TASK           = "TASK";
-    private static final String NBT_JOB            = "job";
+    private static final String NBT_JOB            = "guardType";
     private static final String NBT_ASSIGN         = "assign";
     private static final String NBT_RETRIEVE       = "retrieve";
     private static final String NBT_PATROL         = "patrol";
@@ -64,39 +71,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     ////// --------------------------- GuardJob Enum --------------------------- \\\\\\
-    public enum GuardJob
-    {
-        RANGER("com.minecolonies.coremod.job.Ranger", "com.minecolonies.coremod.gui.workerHuts.ranger"),
-        KNIGHT("com.minecolonies.coremod.job.Knight", "com.minecolonies.coremod.gui.workerHuts.knight");
-
-        public final String jobName;
-        public final String buttonName;
-
-        GuardJob(final String name, final String buttonName)
-        {
-            this.jobName = name;
-            this.buttonName = buttonName;
-        }
-
-        public AbstractJobGuard getGuardJob(final ICitizenData citizen)
-        {
-            if (this == RANGER)
-            {
-                return new JobRanger(citizen);
-            }
-            else if (this == KNIGHT)
-            {
-                return new JobKnight(citizen);
-            }
-            return new JobRanger(citizen);
-        }
-    }
-    ////// --------------------------- GuardJob Enum --------------------------- \\\\\\
-    /**
-     * Worker gets this distance times building level away from his/her hut to
-     * patrol.
-     */
-    public static final int PATROL_DISTANCE = 40;
 
     /**
      * The Bonus Health for each building level
@@ -114,7 +88,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     private static final int VISION_RANGE_PER_LEVEL = 5;
 
     /**
-     * Whether the job will be assigned manually.
+     * Whether the guardType will be assigned manually.
      */
     private boolean assignManually = false;
 
@@ -144,9 +118,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     private BlockPos guardPos = this.getID();
 
     /**
-     * The job of the guard, Any possible {@link GuardJob}.
+     * The guardType of the guard, Any possible {@link EnumGuardType}.
      */
-    private GuardJob job = null;
+    private IGuardType job = null;
 
     /**
      * The list of manual patrol targets.
@@ -198,14 +172,84 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
 
     //// ---- NBT Overrides ---- \\\\
 
+    /**
+     * We use this to set possible health multipliers and give achievements.
+     *
+     * @param newLevel The new level.
+     */
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        getGuardType();
+
+        if (getAssignedEntities() != null)
+        {
+            for (final Optional<AbstractEntityCitizen> optCitizen : getAssignedEntities())
+            {
+                if (optCitizen.isPresent())
+                {
+                    optCitizen.get().removeHealthModifier(GUARD_HEALTH_MOD_BUILDING_NAME);
+
+                    final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), 0);
+                    optCitizen.get().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(healthModBuildingHP);
+                }
+            }
+        }
+
+        super.onUpgradeComplete(newLevel);
+
+        if (newLevel == ACHIEVEMENT_LEVEL)
+        {
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingGuard);
+        }
+        if (newLevel >= this.getMaxBuildingLevel())
+        {
+            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeGuardMax);
+        }
+    }
+
+    @Override
+    public boolean assignCitizen(final ICitizenData citizen)
+    {
+        // Only change HP values if assign successful
+        if (super.assignCitizen(citizen) && citizen != null)
+        {
+            final Optional<AbstractEntityCitizen> optCitizen = citizen.getCitizenEntity();
+            if (optCitizen.isPresent())
+            {
+                final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), 0);
+                optCitizen.get().increaseHPForGuards();
+                optCitizen
+                  .get()
+                  .getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
+                  .applyModifier(healthModBuildingHP);
+                optCitizen
+                  .get()
+                  .getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
+                  .applyModifier(healthModConfig);
+                optCitizen
+                  .get()
+                  .getEntityAttribute(SharedMonsterAttributes.ARMOR)
+                  .setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue() + getDefenceBonus());
+            }
+            colony.getCitizenManager().calculateMaxCitizens();
+            return true;
+        }
+        return false;
+    }
+
+    //// ---- NBT Overrides ---- \\\\
+
+    //// ---- Overrides ---- \\\\
+
     @Override
     public void deserializeNBT(final NBTTagCompound compound)
     {
         super.deserializeNBT(compound);
 
         task = GuardTask.values()[compound.getInteger(NBT_TASK)];
-        final int jobId = compound.getInteger(NBT_JOB);
-        job = jobId == -1 ? null : GuardJob.values()[jobId];
+        final ResourceLocation jobName = new ResourceLocation(compound.getString(NBT_JOB));
+        job = IGuardTypeRegistry.getInstance().getFromName(jobName);
         assignManually = compound.getBoolean(NBT_ASSIGN);
         retrieveOnLowHealth = compound.getBoolean(NBT_RETRIEVE);
         patrolManually = compound.getBoolean(NBT_PATROL);
@@ -246,7 +290,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         final NBTTagCompound compound = super.serializeNBT();
 
         compound.setInteger(NBT_TASK, task.ordinal());
-        compound.setInteger(NBT_JOB, job == null ? -1 : job.ordinal());
+        compound.setString(NBT_JOB, job == null ? "" : job.getRegistryName().toString());
         compound.setBoolean(NBT_ASSIGN, assignManually);
         compound.setBoolean(NBT_RETRIEVE, retrieveOnLowHealth);
         compound.setBoolean(NBT_PATROL, patrolManually);
@@ -276,9 +320,26 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         return compound;
     }
 
-    //// ---- NBT Overrides ---- \\\\
-
-    //// ---- Overrides ---- \\\\
+    @Override
+    public void removeCitizen(final ICitizenData citizen)
+    {
+        if (citizen != null)
+        {
+            final Optional<AbstractEntityCitizen> optCitizen = citizen.getCitizenEntity();
+            if (optCitizen.isPresent())
+            {
+                optCitizen.get().removeAllHealthModifiers();
+                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
+                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.OFFHAND, ItemStackUtils.EMPTY);
+            }
+        }
+        colony.getCitizenManager().calculateMaxCitizens();
+        super.removeCitizen(citizen);
+    }
 
     @Override
     public void serializeToView(@NotNull final ByteBuf buf)
@@ -289,7 +350,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         buf.writeBoolean(patrolManually);
         buf.writeBoolean(tightGrouping);
         buf.writeInt(task.ordinal());
-        buf.writeInt(job == null ? -1 : job.ordinal());
+        ByteBufUtils.writeUTF8String(buf, job == null ? "" : job.getRegistryName().toString());
         buf.writeInt(patrolTargets.size());
 
         for (final BlockPos pos : patrolTargets)
@@ -317,19 +378,45 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         }
     }
 
-    @NotNull
+    /**
+     * Get the guard's {@link GuardTask}.
+     *
+     * @return The task of the guard.
+     */
     @Override
-    public IJob createJob(final ICitizenData citizen)
+    public GuardTask getTask()
     {
-        return getJob().getGuardJob(citizen);
+        return this.task;
     }
 
-    @NotNull
+    /**
+     * Set the guard's {@link GuardTask}.
+     *
+     * @param task The task to set.
+     */
     @Override
-    public String getJobName()
+    public void setTask(final GuardTask task)
     {
-        return getJob().jobName;
+        this.task = task;
+        this.markDirty();
     }
+
+    /**
+     * Entity of player to follow.
+     *
+     * @return the entityPlayer reference.
+     */
+    @Override
+    public EntityPlayer getFollowPlayer()
+    {
+        return followPlayer;
+    }
+
+    //// ---- Overrides ---- \\\\
+
+    //// ---- Abstract Methods ---- \\\\
+
+    //// ---- Abstract Methods ---- \\\\
 
     /**
      * Returns a patrolTarget to patrol to.
@@ -337,6 +424,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      * @param currentPatrolTarget previous target.
      * @return the position of the next target.
      */
+    @Override
     @Nullable
     public BlockPos getNextPatrolTarget(final BlockPos currentPatrolTarget)
     {
@@ -382,142 +470,39 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     /**
-     * We use this to set possible health multipliers and give achievements.
-     *
-     * @param newLevel The new level.
-     */
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        getJob();
-
-        if (getAssignedEntities() != null)
-        {
-            for (final Optional<IEntityCitizen> optCitizen : getAssignedEntities())
-            {
-                if (optCitizen.isPresent())
-                {
-                    optCitizen.get().removeHealthModifier(GUARD_HEALTH_MOD_BUILDING_NAME);
-
-                    final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), 0);
-                    optCitizen.get().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(healthModBuildingHP);
-                }
-            }
-        }
-
-        super.onUpgradeComplete(newLevel);
-
-        if (newLevel == ACHIEVEMENT_LEVEL)
-        {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingGuard);
-        }
-        if (newLevel >= this.getMaxBuildingLevel())
-        {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeGuardMax);
-        }
-    }
-
-    @Override
-    public void removeCitizen(final ICitizenData citizen)
-    {
-        if (citizen != null)
-        {
-            final Optional<IEntityCitizen> optCitizen = citizen.getCitizenEntity();
-            if (optCitizen.isPresent())
-            {
-                optCitizen.get().removeAllHealthModifiers();
-                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
-                optCitizen.get().setItemStackToSlot(EntityEquipmentSlot.OFFHAND, ItemStackUtils.EMPTY);
-            }
-        }
-        colony.getCitizenManager().calculateMaxCitizens();
-        super.removeCitizen(citizen);
-    }
-
-    @Override
-    public boolean assignCitizen(final ICitizenData citizen)
-    {
-        // Only change HP values if assign successful
-        if (super.assignCitizen(citizen) && citizen != null)
-        {
-            final Optional<IEntityCitizen> optCitizen = citizen.getCitizenEntity();
-            if (optCitizen.isPresent())
-            {
-                final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), 0);
-                optCitizen.get().increaseHPForGuards();
-                optCitizen
-                  .get()
-                  .getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
-                  .applyModifier(healthModBuildingHP);
-                optCitizen
-                  .get()
-                  .getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
-                  .applyModifier(healthModConfig);
-                optCitizen
-                  .get()
-                  .getEntityAttribute(SharedMonsterAttributes.ARMOR)
-                  .setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue() + getDefenceBonus());
-            }
-            colony.getCitizenManager().calculateMaxCitizens();
-            return true;
-        }
-        return false;
-    }
-
-    //// ---- Overrides ---- \\\\
-
-    //// ---- Abstract Methods ---- \\\\
-
-    /**
-     * Get an Defence bonus related to the building.
-     *
-     * @return an Integer.
-     */
-    public abstract int getDefenceBonus();
-
-    /**
-     * Get an Offence bonus related to the building.
-     *
-     * @return an Integer.
-     */
-    public abstract int getOffenceBonus();
-
-    //// ---- Abstract Methods ---- \\\\
-
-    /**
      * Getter for the patrol distance the guard currently has.
      *
      * @return The distance in whole numbers.
      */
+    @Override
     public int getPatrolDistance()
     {
         return this.getBuildingLevel() * PATROL_DISTANCE;
     }
 
     /**
-     * Get the guard's {@link GuardJob}.
+     * Get the guard's {@link EnumGuardType}.
      *
-     * @return The job of the guard.
+     * @return The guardType of the guard.
      */
-    public GuardJob getJob()
+    @Override
+    public IGuardType getGuardType()
     {
         if (job == null)
         {
-            job = new Random().nextBoolean() ? GuardJob.KNIGHT : GuardJob.RANGER;
+            final List<IGuardType> guardTypes = new ArrayList<>(IGuardTypeRegistry.getInstance().getRegisteredTypes().values());
+            job = guardTypes.get(new Random().nextInt(guardTypes.size()));
         }
         return this.job;
     }
 
     /**
-     * Set the guard's {@link GuardJob}.
+     * Set the guard's {@link EnumGuardType}.
      *
-     * @param job The job to set.
+     * @param job The guardType to set.
      */
-    public void setJob(final GuardJob job)
+    @Override
+    public void setGuardType(final IGuardType job)
     {
         this.job = job;
         for (final ICitizenData citizen : getAssignedCitizen())
@@ -527,27 +512,21 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         this.markDirty();
     }
 
-    /**
-     * Get the guard's {@link GuardTask}.
-     *
-     * @return The task of the guard.
-     */
-    public GuardTask getTask()
+    @NotNull
+    @Override
+    public IJob createJob(final ICitizenData citizen)
     {
-        return this.task;
+        return getGuardType().getGuardJob(citizen);
     }
 
-    /**
-     * Set the guard's {@link GuardTask}.
-     *
-     * @param task The task to set.
-     */
-    public void setTask(final GuardTask task)
+    @NotNull
+    @Override
+    public String getJobName()
     {
-        this.task = task;
-        this.markDirty();
+        return getGuardType().getJobName();
     }
 
+    @Override
     public List<BlockPos> getPatrolTargets()
     {
         return new ArrayList<>(patrolTargets);
@@ -558,6 +537,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      *
      * @return if so.
      */
+    @Override
     public boolean shallRetrieveOnLowHealth()
     {
         return retrieveOnLowHealth;
@@ -568,6 +548,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      *
      * @param retrieve true if retrieve.
      */
+    @Override
     public void setRetrieveOnLowHealth(final boolean retrieve)
     {
         this.retrieveOnLowHealth = retrieve;
@@ -578,6 +559,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      *
      * @return if so.
      */
+    @Override
     public boolean shallPatrolManually()
     {
         return patrolManually;
@@ -588,6 +570,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      *
      * @param patrolManually true if manual.
      */
+    @Override
     public void setPatrolManually(final boolean patrolManually)
     {
         this.patrolManually = patrolManually;
@@ -598,6 +581,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      *
      * @return true if so
      */
+    @Override
     public boolean shallAssignManually()
     {
         return assignManually;
@@ -608,6 +592,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      *
      * @param assignManually true if so
      */
+    @Override
     public void setAssignManually(final boolean assignManually)
     {
         this.assignManually = assignManually;
@@ -618,6 +603,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      *
      * @return whether tight grouping is being used.
      */
+    @Override
     public boolean isTightGrouping()
     {
         return tightGrouping;
@@ -628,6 +614,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      *
      * @param tightGrouping - indicates if you are using tight grouping
      */
+    @Override
     public void setTightGrouping(final boolean tightGrouping)
     {
         this.tightGrouping = tightGrouping;
@@ -638,6 +625,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      *
      * @return the {@link BlockPos} of the guard position.
      */
+    @Override
     public BlockPos getGuardPos()
     {
         return guardPos;
@@ -648,6 +636,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      *
      * @param guardPos the {@link BlockPos} to guard.
      */
+    @Override
     public void setGuardPos(final BlockPos guardPos)
     {
         this.guardPos = guardPos;
@@ -658,6 +647,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      *
      * @return the map.
      */
+    @Override
     public List<MobEntryView> getMobsToAttack()
     {
         mobsToAttack.sort(Comparator.comparing(MobEntryView::getPriority, Comparator.reverseOrder()));
@@ -669,6 +659,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      *
      * @param list The new map.
      */
+    @Override
     public void setMobsToAttack(final List<MobEntryView> list)
     {
         this.mobsToAttack.clear();
@@ -676,20 +667,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     }
 
     /**
-     * Entity of player to follow.
-     *
-     * @return the entityPlayer reference.
-     */
-    public EntityPlayer getFollowPlayer()
-    {
-        return followPlayer;
-    }
-
-    /**
      * Gets the player to follow.
      *
      * @return the entity player.
      */
+    @Override
     public BlockPos getPlayerToFollow()
     {
         if (task.equals(GuardTask.FOLLOW) && followPlayer != null)
@@ -706,6 +688,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      *
      * @param player the player to follow.
      */
+    @Override
     public void setPlayerToFollow(final EntityPlayer player)
     {
         if (this.getColony().getWorld() != null)
@@ -747,6 +730,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      *
      * @param target the target to add
      */
+    @Override
     public void addPatrolTargets(final BlockPos target)
     {
         this.patrolTargets.add(target);
@@ -756,6 +740,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     /**
      * Resets the patrolTargets list.
      */
+    @Override
     public void resetPatrolTargets()
     {
         this.patrolTargets = new ArrayList<>();
@@ -767,6 +752,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      *
      * @return an integer for the additional range.
      */
+    @Override
     public int getBonusVision()
     {
         return getBuildingLevel() * VISION_RANGE_PER_LEVEL;
@@ -777,6 +763,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
      *
      * @return the list of MobEntrys to attack.
      */
+    @Override
     public List<MobEntryView> calculateMobs()
     {
         final List<MobEntryView> mobs = new ArrayList<>();
@@ -812,20 +799,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         return mobs;
     }
 
-    /**
-     * Check if a guard should take damage by a player..
-     *
-     * @param citizen the citizen.
-     * @param player  the player.
-     * @return false if in follow mode and following the player.
-     */
-    public static boolean checkIfGuardShouldTakeDamage(final IEntityCitizen citizen, final EntityPlayer player)
-    {
-        final IBuildingWorker buildingWorker = citizen.getCitizenColonyHandler().getWorkBuilding();
-        return !(buildingWorker instanceof AbstractBuildingGuards) || ((AbstractBuildingGuards) buildingWorker).task != GuardTask.FOLLOW
-                 || !player.equals(((AbstractBuildingGuards) buildingWorker).followPlayer);
-    }
-
     @Override
     public boolean canWorkDuringTheRain()
     {
@@ -839,7 +812,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
     {
 
         /**
-         * Assign the job manually, knight, guard, or *Other* (Future usage)
+         * Assign the guardType manually, knight, guard, or *Other* (Future usage)
          */
         private boolean assignManually = false;
 
@@ -864,9 +837,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         private BlockPos guardPos = this.getID();
 
         /**
-         * The {@link GuardJob} of the guard
+         * The {@link EnumGuardType} of the guard
          */
-        private GuardJob job = null;
+        private IGuardType guardType = null;
 
         /**
          * Indicates whether tight grouping is use or
@@ -929,9 +902,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             retrieveOnLowHealth = buf.readBoolean();
             patrolManually = buf.readBoolean();
             tightGrouping = buf.readBoolean();
+
+
             task = GuardTask.values()[buf.readInt()];
-            final int jobId = buf.readInt();
-            job = jobId == -1 ? null : GuardJob.values()[jobId];
+            final ResourceLocation jobId = new ResourceLocation(ByteBufUtils.readUTF8String(buf));
+            guardType = IGuardTypeRegistry.getInstance().getFromName(jobId);
 
             final int targetSize = buf.readInt();
             patrolTargets = new ArrayList<>();
@@ -961,28 +936,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
         @Override
         public Skill getPrimarySkill()
         {
-            if (GuardJob.KNIGHT.equals(job))
-            {
-                return Skill.STRENGTH;
-            }
-            else
-            {
-                return Skill.INTELLIGENCE;
-            }
+            return getGuardType().getPrimarySkill();
         }
 
         @NotNull
         @Override
         public Skill getSecondarySkill()
         {
-            if (GuardJob.KNIGHT.equals(job))
-            {
-                return Skill.ENDURANCE;
-            }
-            else
-            {
-                return Skill.STRENGTH;
-            }
+            return getGuardType().getSecondarySkill();
         }
 
         public void setAssignManually(final boolean assignManually)
@@ -1056,14 +1017,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker
             return guardPos;
         }
 
-        public void setJob(final GuardJob job)
+        public IGuardType getGuardType()
         {
-            this.job = job;
+            return guardType;
         }
 
-        public GuardJob getJob()
+        public void setGuardType(final IGuardType job)
         {
-            return job;
+            this.guardType = job;
         }
 
         public List<BlockPos> getPatrolTargets()

@@ -2,23 +2,30 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
+import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.AbstractTileEntityRack;
+import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.blocks.huts.BlockHutDeliveryman;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.blocks.huts.BlockHutDeliveryman;
 import com.minecolonies.coremod.client.gui.WindowHutWareHouse;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
-import com.minecolonies.coremod.tileentities.*;
+import com.minecolonies.coremod.tileentities.TileEntityRack;
+import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -34,7 +41,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Class of the warehouse building.
@@ -74,7 +83,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     /**
      * The tileEntity of the building.
      */
-    private ITileEntityWareHouse tileEntity;
+    private AbstractTileEntityWareHouse tileEntity;
 
     /**
      * Storage upgrade level.
@@ -224,10 +233,10 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      * @return {@link TileEntityColonyBuilding} object of the building.
      */
     @Override
-    public ITileEntityWareHouse getTileEntity()
+    public AbstractTileEntityWareHouse getTileEntity()
     {
-        final ITileEntityColonyBuilding entity = super.getTileEntity();
-        return !(entity instanceof TileEntityWareHouse) ? null : (ITileEntityWareHouse) entity;
+        final AbstractTileEntityColonyBuilding entity = super.getTileEntity();
+        return !(entity instanceof TileEntityWareHouse) ? null : (AbstractTileEntityWareHouse) entity;
     }
 
     @Override

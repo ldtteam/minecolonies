@@ -1,11 +1,10 @@
 package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -45,7 +44,8 @@ public class ContainerField extends Container
      * @param world               the world.
      * @param location            the position of the field.
      */
-    public ContainerField(@NotNull final ScarecrowTileEntity scarecrowTileEntity,
+    public ContainerField(
+      @NotNull final TileEntityScarecrow scarecrowTileEntity,
             final InventoryPlayer playerInventory,
             @NotNull final World world,
             @NotNull final BlockPos location)

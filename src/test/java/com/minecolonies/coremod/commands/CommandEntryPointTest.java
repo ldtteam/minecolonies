@@ -1,25 +1,10 @@
 package com.minecolonies.coremod.commands;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import org.assertj.core.api.Fail;
-import org.jetbrains.annotations.NotNull;
-import org.junit.After;
-import org.junit.Before;
-
+import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.coremod.commands.AbstractCommandParser.ModuleContext;
 import com.minecolonies.coremod.commands.AbstractCommandParser.PermissionsChecker;
 import com.minecolonies.coremod.commands.CommandEntryPointNew.MineColonyDataProvider;
@@ -30,14 +15,26 @@ import com.minecolonies.coremod.commands.colonycommands.DeleteColonyCommand;
 import com.minecolonies.coremod.commands.colonycommands.ListColoniesCommand;
 import com.minecolonies.coremod.commands.generalcommands.CheckForAutoDeletesCommand;
 import com.minecolonies.coremod.commands.generalcommands.ScanCommand;
-
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.BlockPos;
+import org.assertj.core.api.Fail;
+import org.jetbrains.annotations.NotNull;
+import org.junit.After;
+import org.junit.Before;
 import scala.actors.threadpool.Arrays;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @SuppressWarnings({"PMD.MethodNamingConventions", "PMD.JUnitTestsShouldIncludeAssert", "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveImports"})
 public class CommandEntryPointTest
@@ -1534,11 +1531,11 @@ public class CommandEntryPointTest
                 final IColony colony = actionMenuState.getColonyForArgument("colony");
                 assertThat(colony).as("colony").isNotNull();
                 assertThat(colony.getID()).as("colony.getID()").isEqualTo(1);
-                final Boolean canDestroyBoolean = (Boolean) actionMenuState.getBooleanForArgument("canDestroy");
+                final Boolean canDestroyBoolean = actionMenuState.getBooleanForArgument("canDestroy");
                 assertThat(canDestroyBoolean).as("canDestroyBoolean").isTrue();
                 final boolean canDestroy = actionMenuState.getBooleanValueForArgument("canDestroy", false);
                 assertThat(canDestroy).as("canDestroy").isTrue();
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isTrue();
                 final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", false);
                 assertThat(confirmDelete).as("confirmDelete").isTrue();
@@ -1574,11 +1571,11 @@ public class CommandEntryPointTest
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN, ActionArgumentType.COLONY);
                 final IColony colony = actionMenuState.getColonyForArgument("colony");
                 assertThat(colony.getID()).as("colony.getID()").isEqualTo(1);
-                final Boolean canDestroyBoolean = (Boolean) actionMenuState.getBooleanForArgument("canDestroy");
+                final Boolean canDestroyBoolean = actionMenuState.getBooleanForArgument("canDestroy");
                 assertThat(canDestroyBoolean).as("canDestroyBoolean").isNull();
                 final boolean canDestroy = actionMenuState.getBooleanValueForArgument("canDestroy", false);
                 assertThat(canDestroy).as("canDestroy").isFalse();
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isNull();
                 final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", false);
                 assertThat(confirmDelete).as("confirmDelete").isFalse();
@@ -1612,11 +1609,11 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("page", "abandonedSinceTimeInHours");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.INTEGER);
-                final Integer pageInteger = (Integer) actionMenuState.getIntegerForArgument("page");
+                final Integer pageInteger = actionMenuState.getIntegerForArgument("page");
                 assertThat(pageInteger).as("pageInteger").isEqualTo(2);
                 final int page = actionMenuState.getIntValueForArgument("page", 1);
                 assertThat(page).as("page").isEqualTo(2);
-                final Integer abandonedSinceTimeInHoursInteger = (Integer) actionMenuState.getIntegerForArgument("abandonedSinceTimeInHours");
+                final Integer abandonedSinceTimeInHoursInteger = actionMenuState.getIntegerForArgument("abandonedSinceTimeInHours");
                 assertThat(abandonedSinceTimeInHoursInteger).as("abandonedSinceTimeInHoursInteger").isEqualTo(3);
                 final int abandonedSinceTimeInHours = actionMenuState.getIntValueForArgument("abandonedSinceTimeInHours", 1);
                 assertThat(abandonedSinceTimeInHours).as("abandonedSinceTimeInHours").isEqualTo(3);
@@ -1650,11 +1647,11 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("page", "abandonedSinceTimeInHours");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.INTEGER);
-                final Integer pageInteger = (Integer) actionMenuState.getIntegerForArgument("page");
+                final Integer pageInteger = actionMenuState.getIntegerForArgument("page");
                 assertThat(pageInteger).as("pageInteger").isEqualTo(2);
                 final int page = actionMenuState.getIntValueForArgument("page", 1);
                 assertThat(page).as("page").isEqualTo(2);
-                final Integer abandonedSinceTimeInHoursInteger = (Integer) actionMenuState.getIntegerForArgument("abandonedSinceTimeInHours");
+                final Integer abandonedSinceTimeInHoursInteger = actionMenuState.getIntegerForArgument("abandonedSinceTimeInHours");
                 assertThat(abandonedSinceTimeInHoursInteger).as("abandonedSinceTimeInHoursInteger").isNull();
                 final int abandonedSinceTimeInHours = actionMenuState.getIntValueForArgument("abandonedSinceTimeInHours", 1);
                 assertThat(abandonedSinceTimeInHours).as("abandonedSinceTimeInHours").isEqualTo(1);
@@ -1688,7 +1685,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isTrue();
                 final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", false);
                 assertThat(confirmDelete).as("confirmDelete").isTrue();
@@ -1722,7 +1719,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isTrue();
                 final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", false);
                 assertThat(confirmDelete).as("confirmDelete").isTrue();
@@ -1756,7 +1753,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isTrue();
                 final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", false);
                 assertThat(confirmDelete).as("confirmDelete").isTrue();
@@ -1790,7 +1787,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isTrue();
                 final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", false);
                 assertThat(confirmDelete).as("confirmDelete").isTrue();
@@ -1824,7 +1821,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isTrue();
                 final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", false);
                 assertThat(confirmDelete).as("confirmDelete").isTrue();
@@ -1858,7 +1855,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isFalse();
                 final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", true);
                 assertThat(confirmDelete).as("confirmDelete").isFalse();
@@ -1892,7 +1889,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isFalse();
                 final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", true);
                 assertThat(confirmDelete).as("confirmDelete").isFalse();
@@ -1926,7 +1923,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isFalse();
                 final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", true);
                 assertThat(confirmDelete).as("confirmDelete").isFalse();
@@ -1960,7 +1957,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isFalse();
                 final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", true);
                 assertThat(confirmDelete).as("confirmDelete").isFalse();
@@ -1993,7 +1990,7 @@ public class CommandEntryPointTest
                 final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
                 assertThat(actionArgumentList).as("actionArgumentList name").extracting("name").containsExactlyInAnyOrder("confirmDelete");
                 assertThat(actionArgumentList).as("actionArgumentList type").extracting("type").containsOnly(ActionArgumentType.BOOLEAN);
-                final Boolean confirmDeleteBoolean = (Boolean) actionMenuState.getBooleanForArgument("confirmDelete");
+                final Boolean confirmDeleteBoolean = actionMenuState.getBooleanForArgument("confirmDelete");
                 assertThat(confirmDeleteBoolean).as("confirmDeleteBoolean").isFalse();
                 final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", true);
                 assertThat(confirmDelete).as("confirmDelete").isFalse();

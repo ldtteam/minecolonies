@@ -1,18 +1,17 @@
 package com.minecolonies.coremod.placementhandlers;
 
+import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
+import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
-import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
-import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -28,9 +27,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.Constants.UPDATE_FLAG;
 import static com.ldtteam.structurize.placementhandlers.PlacementHandlers.getItemsFromTileEntity;
 import static com.ldtteam.structurize.placementhandlers.PlacementHandlers.handleTileEntityPlacement;
+import static com.minecolonies.api.util.constant.Constants.UPDATE_FLAG;
 
 /**
  * Contains all Minecolonies specific placement handlers.

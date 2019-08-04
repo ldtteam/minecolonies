@@ -4,10 +4,10 @@ import com.google.common.collect.Lists;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.entity.IBaseEntityCitizen;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityArmorStand;
@@ -209,7 +209,7 @@ public final class ItemStackUtils
      * @param placer     the entity placer.
      * @return a list of stacks.
      */
-    public static List<ItemStorage> getListOfStackForEntityInfo(final NBTTagCompound entityData, final World world, final IBaseEntityCitizen placer)
+    public static List<ItemStorage> getListOfStackForEntityInfo(final NBTTagCompound entityData, final World world, final AbstractEntityCitizen placer)
     {
         if (placer instanceof Entity)
         {

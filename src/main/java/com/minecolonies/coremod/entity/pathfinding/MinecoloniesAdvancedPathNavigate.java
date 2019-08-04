@@ -2,17 +2,19 @@ package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
+import com.minecolonies.api.entity.pathfinding.*;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.entity.IEntityCitizen;
-import com.minecolonies.coremod.entity.ai.mobs.pirates.AbstractEntityPirate;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.pathfinding.*;
+import net.minecraft.pathfinding.Path;
+import net.minecraft.pathfinding.PathFinder;
+import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.pathfinding.WalkNodeProcessor;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -33,7 +35,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     private static final double PIRATE_SWIM_BONUS        = 20;
 
     @Nullable
-    private       PathResult   pathResult;
+    private PathResult pathResult;
 
     /**
      * Instantiates the navigation of an ourEntity.
@@ -428,28 +430,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     /**
-     * Used to find a tree.
-     *
-     * @param range      in the range.
-     * @param speed      walking speed.
-     * @param treesToCut the trees which should be cut.
-     * @return the result of the search.
-     */
-    public TreePathResult moveToTree(final int range, final double speed, final List<ItemStorage> treesToCut, final IColony colony)
-    {
-        @NotNull BlockPos start = AbstractPathJob.prepareStart(ourEntity);
-        final BlockPos buildingPos = ((IEntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getPosition();
-
-        if (BlockPosUtil.getDistance2D(buildingPos, entity.getPosition()) > range * 4)
-        {
-            start = buildingPos;
-        }
-
-        return (TreePathResult) setPathJob(
-          new PathJobFindTree(CompatibilityUtils.getWorldFromEntity(entity), start, buildingPos, range, treesToCut, colony, ourEntity), null, speed);
-    }
-
-    /**
      * Used to find a water.
      *
      * @param range in the range.
@@ -464,10 +444,32 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         return (WaterPathResult) setPathJob(
           new PathJobFindWater(CompatibilityUtils.getWorldFromEntity(ourEntity),
             start,
-            ((IEntityCitizen) ourEntity).getCitizenColonyHandler().getWorkBuilding().getPosition(),
+            ((AbstractEntityCitizen) ourEntity).getCitizenColonyHandler().getWorkBuilding().getPosition(),
             range,
             ponds,
             ourEntity), null, speed);
+    }
+
+    /**
+     * Used to find a tree.
+     *
+     * @param range      in the range.
+     * @param speed      walking speed.
+     * @param treesToCut the trees which should be cut.
+     * @return the result of the search.
+     */
+    public TreePathResult moveToTree(final int range, final double speed, final List<ItemStorage> treesToCut, final IColony colony)
+    {
+        @NotNull BlockPos start = AbstractPathJob.prepareStart(ourEntity);
+        final BlockPos buildingPos = ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getPosition();
+
+        if (BlockPosUtil.getDistance2D(buildingPos, entity.getPosition()) > range * 4)
+        {
+            start = buildingPos;
+        }
+
+        return (TreePathResult) setPathJob(
+          new PathJobFindTree(CompatibilityUtils.getWorldFromEntity(entity), start, buildingPos, range, treesToCut, colony, ourEntity), null, speed);
     }
 
     /**

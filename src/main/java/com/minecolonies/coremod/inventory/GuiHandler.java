@@ -1,12 +1,18 @@
 package com.minecolonies.coremod.inventory;
 
-import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.AbstractTileEntityRack;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.client.gui.WindowGuiCrafting;
 import com.minecolonies.coremod.client.gui.WindowGuiFurnaceCrafting;
-import com.minecolonies.coremod.colony.*;
-import com.minecolonies.coremod.colony.buildings.*;
-import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
-import com.minecolonies.coremod.tileentities.*;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.tileentities.TileEntityRack;
+import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -27,9 +33,9 @@ public class GuiHandler implements IGuiHandler
         {
             final BlockPos pos = new BlockPos(x, y, z);
             final TileEntity tileEntity = world.getTileEntity(pos);
-            if (tileEntity instanceof ScarecrowTileEntity)
+            if (tileEntity instanceof TileEntityScarecrow)
             {
-                return new ContainerField((ScarecrowTileEntity) tileEntity, player.inventory, world, pos);
+                return new ContainerField((TileEntityScarecrow) tileEntity, player.inventory, world, pos);
             }
             else if (tileEntity instanceof TileEntityRack)
             {
@@ -82,9 +88,9 @@ public class GuiHandler implements IGuiHandler
         {
             final BlockPos pos = new BlockPos(x, y, z);
             final TileEntity tileEntity = world.getTileEntity(pos);
-            if (tileEntity instanceof ScarecrowTileEntity)
+            if (tileEntity instanceof TileEntityScarecrow)
             {
-                return new GuiField(player.inventory, (ScarecrowTileEntity) tileEntity, world, pos);
+                return new GuiField(player.inventory, (TileEntityScarecrow) tileEntity, world, pos);
             }
             else if (tileEntity instanceof TileEntityRack)
             {
@@ -108,7 +114,7 @@ public class GuiHandler implements IGuiHandler
             final TileEntity entity = world.getTileEntity(new BlockPos(x, y, z));
             if (entity instanceof TileEntityColonyBuilding)
             {
-                final ITileEntityColonyBuilding ITileEntityColonyBuilding = (ITileEntityColonyBuilding) entity;
+                final AbstractTileEntityColonyBuilding ITileEntityColonyBuilding = (AbstractTileEntityColonyBuilding) entity;
                 return new GuiChest(player.inventory, ITileEntityColonyBuilding);
             }
         }

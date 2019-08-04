@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.controls.Button;
@@ -9,7 +10,6 @@ import com.minecolonies.blockout.controls.Text;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.network.messages.HireMercenaryMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.SoundEvents;

@@ -1,22 +1,22 @@
 package com.minecolonies.coremod.permissions;
 
+import com.ldtteam.structurize.items.ItemScanTool;
+import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.colony.permissions.PermissionEvent;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.ldtteam.structurize.items.ItemScanTool;
-import com.minecolonies.coremod.entity.IEntityCitizen;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
@@ -610,7 +610,7 @@ public class ColonyPermissionEventHandler
             final Permissions perms = colony.getPermissions();
             if (event.getTarget() instanceof EntityCitizen)
             {
-                final IEntityCitizen citizen = (IEntityCitizen) event.getTarget();
+                final AbstractEntityCitizen citizen = (AbstractEntityCitizen) event.getTarget();
                 if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && perms.hasPermission(event.getEntityPlayer(), Action.GUARDS_ATTACK))
                 {
                     return;

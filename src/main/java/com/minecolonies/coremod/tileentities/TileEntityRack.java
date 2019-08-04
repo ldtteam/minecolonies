@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
+import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import com.minecolonies.coremod.blocks.AbstractBlockMinecoloniesRack;
-import com.minecolonies.coremod.blocks.types.RackType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -178,7 +179,7 @@ public class TileEntityRack extends AbstractTileEntityRack
 
         if (main && combinedHandler == null && getOtherChest() != null)
         {
-            combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().inventory);
+            combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
         }
     }
 
@@ -466,17 +467,17 @@ public class TileEntityRack extends AbstractTileEntityRack
             }
             else if (getOtherChest() != null)
             {
-                if (main)
+                if (isMain())
                 {
                     if (combinedHandler == null)
                     {
-                        combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().inventory);
+                        combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
                     }
                     return (T) combinedHandler;
                 }
                 else
                 {
-                    if (getOtherChest().main)
+                    if (getOtherChest().isMain())
                     {
                         return (T) getOtherChest().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
                     }
@@ -486,7 +487,7 @@ public class TileEntityRack extends AbstractTileEntityRack
 
                         if (combinedHandler == null)
                         {
-                            combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().inventory);
+                            combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
                         }
                         markDirty();
                         return (T) combinedHandler;
