@@ -6,10 +6,13 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Send a message to the server to mark the building as dirty.
@@ -29,12 +32,12 @@ public class MarkBuildingDirtyMessage implements IMessage
     private int      colonyId;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public MarkBuildingDirtyMessage()
     {
@@ -42,7 +45,7 @@ public class MarkBuildingDirtyMessage implements IMessage
     }
 
     /**
-     * Creates a mark building dirty request message.
+     * Creates a mark building dirty request 
      *
      * @param building AbstractBuilding of the request.
      */
@@ -70,17 +73,24 @@ public class MarkBuildingDirtyMessage implements IMessage
         buf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final MarkBuildingDirtyMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony == null)
         {
             Log.getLogger().warn("MarkBuildingDirtyMessage colony is null");
             return;
         }
 
-        final IBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
+        final IBuilding building = colony.getBuildingManager().getBuilding(buildingId);
         if (building == null || building.getTileEntity() == null)
         {
             Log.getLogger().warn("MarkBuildingDirtyMessage building or tileEntity is null");

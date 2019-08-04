@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenHappinessHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -206,7 +206,7 @@ public interface ICitizenData extends INBTSerializable<CompoundNBT>
      *
      * @param buf Buffer to write to.
      */
-    void serializeViewNetworkData(@NotNull ByteBuf buf);
+    void serializeViewNetworkData(@NotNull PacketBuffer buf);
 
     /**
      * Returns the levels of the citizen.

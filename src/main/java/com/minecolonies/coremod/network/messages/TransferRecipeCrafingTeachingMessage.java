@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.inventory.CraftingGUIBuilding;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 
@@ -45,7 +45,7 @@ public class TransferRecipeCrafingTeachingMessage implements IMessage
     }
 
     @Override
-    public void fromBytes(final ByteBuf buf)
+    public void fromBytes(final PacketBuffer buf)
     {
         itemStacks.clear();
         final int count = buf.readInt();
@@ -57,7 +57,7 @@ public class TransferRecipeCrafingTeachingMessage implements IMessage
     }
 
     @Override
-    public void toBytes(final ByteBuf buf)
+    public void toBytes(final PacketBuffer buf)
     {
         buf.writeInt(itemStacks.size());
         itemStacks.forEach((slot, stack) ->

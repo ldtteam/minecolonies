@@ -27,7 +27,7 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestRe
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import com.minecolonies.coremod.network.messages.BuildingHiringModeMessage;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -479,7 +479,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
     }
 
     @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
+    public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
 
@@ -622,7 +622,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         }
 
         @Override
-        public void deserialize(@NotNull final ByteBuf buf)
+        public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
             final int size = buf.readInt();

@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony;
 
 import com.minecolonies.api.IMinecoloniesAPI;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,5 +31,5 @@ public interface ICitizenDataManager
      * @param networkBuffer The network buffer to read from.
      * @return The citizen data view.
      */
-    ICitizenDataView createFromNetworkData(@NotNull final int id, @NotNull final ByteBuf networkBuffer);
+    ICitizenDataView createFromNetworkData(@NotNull final int id, @NotNull final PacketBuffer networkBuffer);
 }

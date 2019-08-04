@@ -27,7 +27,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.item.ItemStack;
@@ -247,7 +247,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     }
 
     @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
+    public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
         buf.writeBoolean(storageUpgrade < MAX_STORAGE_UPGRADE);
@@ -384,7 +384,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         }
 
         @Override
-        public void deserialize(@NotNull final ByteBuf buf)
+        public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
             allowUpgrade = buf.readBoolean();

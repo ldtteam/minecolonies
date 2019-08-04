@@ -14,7 +14,7 @@ import com.minecolonies.coremod.client.gui.WindowHutCitizen;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
@@ -506,7 +506,7 @@ public class BuildingHome extends AbstractBuilding
     }
 
     @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
+    public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
 
@@ -604,7 +604,7 @@ public class BuildingHome extends AbstractBuilding
         }
 
         @Override
-        public void deserialize(@NotNull final ByteBuf buf)
+        public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
 

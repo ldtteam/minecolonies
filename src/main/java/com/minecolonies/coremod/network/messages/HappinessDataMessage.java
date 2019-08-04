@@ -6,8 +6,11 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.client.Minecraft;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Class handling the messages about updating happiness
@@ -67,15 +70,16 @@ public class HappinessDataMessage implements IMessage
         happinessData.toBytes(byteBuf);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param message the original message.
-     * @param ctx     the context associated.
-     */
+    @Nullable
     @Override
-    protected void messageOnClientThread(final HappinessDataMessage message, final MessageContext ctx)
+    public LogicalSide getExecutionSide()
     {
-        IColonyManager.getInstance().handleHappinessDataMessage(message.colonyId, message.happinessData, Minecraft.getInstance().world.world.getDimension().getType().getId());
+        return LogicalSide.CLIENT;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        IColonyManager.getInstance().handleHappinessDataMessage(colonyId, happinessData, Minecraft.getInstance().world.getDimension().getType().getId());
     }
 }

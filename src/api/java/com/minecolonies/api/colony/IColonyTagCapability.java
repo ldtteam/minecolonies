@@ -226,7 +226,7 @@ public interface IColonyTagCapability
         public void readNBT(@NotNull final Capability<IColonyTagCapability> capability, @NotNull final IColonyTagCapability instance,
                 @Nullable final Direction side, @NotNull final INBT nbt)
         {
-            if(nbt instanceof CompoundNBT && ((CompoundNBT) nbt).hasKey(TAG_ID))
+            if(nbt instanceof CompoundNBT && ((CompoundNBT) nbt).keySet().contains(TAG_ID))
             {
                 instance.setOwningColony(((CompoundNBT) nbt).getInt(TAG_ID));
                 NBTUtils.streamCompound(((CompoundNBT) nbt).getList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))

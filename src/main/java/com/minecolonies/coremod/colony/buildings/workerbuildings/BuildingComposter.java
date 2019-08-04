@@ -14,7 +14,7 @@ import com.minecolonies.coremod.client.gui.WindowHutComposter;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -156,7 +156,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     }
 
     @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
+    public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
         buf.writeBoolean(retrieveDirtFromCompostBin);
@@ -209,7 +209,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
         }
 
         @Override
-        public void deserialize(@NotNull final ByteBuf buf)
+        public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
             retrieveDirtFromCompostBin = buf.readBoolean();

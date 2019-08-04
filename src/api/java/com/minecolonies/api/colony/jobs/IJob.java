@@ -5,8 +5,8 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAITasks;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public interface IJob<AI extends EntityAIBase> extends INBTSerializable<CompoundNBT>
+public interface IJob<AI extends GoalSelector> extends INBTSerializable<CompoundNBT>
 {
     /**
      * Return a Localization textContent for the Job.
@@ -58,7 +58,7 @@ public interface IJob<AI extends EntityAIBase> extends INBTSerializable<Compound
      *
      * @param tasks EntityAITasks list to add tasks to.
      */
-    void addWorkerAIToTaskList(@NotNull EntityAITasks tasks);
+    void addWorkerAIToTaskList(@NotNull Goal tasks);
 
     /**
      * Generate your AI class to register.

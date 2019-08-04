@@ -332,7 +332,7 @@ public class RaidManager implements IRaiderManager
         final CompoundNBT compound = new CompoundNBT();
         BlockPosUtil.write(compound, TAG_POS, entry.getKey());
         compound.putString(TAG_NAME, entry.getValue().getA());
-        compound.setLong(TAG_TIME, entry.getValue().getB());
+        compound.putLong(TAG_TIME, entry.getValue().getB());
 
         return compound;
     }

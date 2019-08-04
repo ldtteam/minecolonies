@@ -7,9 +7,13 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +39,7 @@ public class LumberjackReplantSaplingToggleMessage implements IMessage
     private boolean shouldReplant;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
@@ -83,22 +87,30 @@ public class LumberjackReplantSaplingToggleMessage implements IMessage
         buf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final LumberjackReplantSaplingToggleMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
+            final PlayerEntity player = ctxIn.getSender();
             //Verify player has permission to change this hut's settings
             if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
             {
                 return;
             }
 
-            @Nullable final IBuildingWorker building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingWorker.class);
+            @Nullable final IBuildingWorker building = colony.getBuildingManager().getBuilding(buildingId, AbstractBuildingWorker.class);
             if (building instanceof BuildingLumberjack)
             {
-                ((BuildingLumberjack) building).setShouldReplant(message.shouldReplant);
+                ((BuildingLumberjack) building).setShouldReplant(shouldReplant);
             }
 
         }

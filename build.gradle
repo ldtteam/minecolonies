@@ -87,6 +87,9 @@ dependencies {
 
     contained "com.ldtteam:structurize:${config.structurize_version}"
     compileClasspath "com.ldtteam:structurize:${config.structurize_version}"
+    apiCompileOnly "com.ldtteam:structurize:${config.structurize_version}"
+
+
 
     testCompile 'junit:junit:4.12'
     testCompile "org.mockito:mockito-core:1.+"

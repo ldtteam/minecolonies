@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.Colony;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 
@@ -22,7 +22,7 @@ public class ColonyViewWorkOrderMessage implements IMessage
 {
     private int     colonyId;
     private int     workOrderId;
-    private ByteBuf workOrderBuffer;
+    private PacketBuffer workOrderBuffer;
 
     /**
      * Empty constructor used when registering the 
@@ -49,7 +49,7 @@ public class ColonyViewWorkOrderMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        final ByteBuf newbuf = buf.retain();
+        final PacketBuffer newbuf = buf.retain();
         colonyId = newbuf.readInt();
         workOrderId = newbuf.readInt();
         workOrderBuffer = newbuf;

@@ -2,7 +2,7 @@ package com.minecolonies.api.colony.workorders;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -119,7 +119,7 @@ public interface IWorkOrder
      *
      * @param buf Buffer to write to
      */
-    void serializeViewNetworkData(@NotNull ByteBuf buf);
+    void serializeViewNetworkData(@NotNull PacketBuffer buf);
 
     /**
      * Executed when a work order is added.

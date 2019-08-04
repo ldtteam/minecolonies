@@ -43,7 +43,7 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.InventoryHelper;
@@ -430,10 +430,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * 2) building level.
      * 3) max building level.
      *
-     * @param buf ByteBuf to write to.
+     * @param buf PacketBuffer to write to.
      */
     @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
+    public void serializeToView(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(this.getClass().getName().hashCode());
         buf.writeInt(getBuildingLevel());

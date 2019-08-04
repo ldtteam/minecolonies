@@ -12,7 +12,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -207,7 +207,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @return View object of the workOrder
      */
     @Nullable
-    public static WorkOrderView createWorkOrderView(final ByteBuf buf)
+    public static WorkOrderView createWorkOrderView(final PacketBuffer buf)
     {
         @Nullable WorkOrderView workOrderView = new WorkOrderView();
 
@@ -402,7 +402,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param buf Buffer to write to
      */
     @Override
-    public void serializeViewNetworkData(@NotNull final ByteBuf buf)
+    public void serializeViewNetworkData(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(id);
         buf.writeInt(priority);

@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.Colony;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import io.netty.buffer.Unpooled;
 
 import net.minecraft.network.PacketBuffer;
@@ -20,7 +20,7 @@ public class ColonyViewCitizenViewMessage implements IMessage
 {
     private int     colonyId;
     private int     citizenId;
-    private ByteBuf citizenBuffer;
+    private PacketBuffer citizenBuffer;
 
     /**
      * The dimension the citizen is in.

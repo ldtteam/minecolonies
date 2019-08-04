@@ -17,7 +17,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.BuildingMoveMessage;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -333,7 +333,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
     {
         if (Settings.instance.getActiveStructure() != null)
         {
-            final ByteBuf buffer = Unpooled.buffer();
+            final PacketBuffer buffer = Unpooled.buffer();
             Settings.instance.toBytes(buffer);
             Structurize.getNetwork().sendToServer(new LSStructureDisplayerMessage(buffer, true));
         }

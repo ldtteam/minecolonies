@@ -2,7 +2,7 @@ package com.minecolonies.api.colony.permissions;
 
 import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.BlockPosUtil;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.Nullable;
@@ -55,7 +55,7 @@ public class PermissionEvent
      * Constructor for permissionevents. to load them from a ByteBuf.
      * @param buf the ByteBuf.
      */
-    public PermissionEvent(final ByteBuf buf)
+    public PermissionEvent(final PacketBuffer buf)
     {
         final UUID uuid = PacketUtils.readUUID(buf);
         if(uuid.equals(UUID.fromString("1-2-3-4-5")))
@@ -112,7 +112,7 @@ public class PermissionEvent
      * Serialize the PermissioNEvent to a ByteBuf.
      * @param buf the buffer.
      */
-    public void serialize(final ByteBuf buf)
+    public void serialize(final PacketBuffer buf)
     {
         if(id == null)
         {

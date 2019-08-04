@@ -16,9 +16,9 @@ public final class ModBuildingsInitializer
         throw new IllegalStateException("Tried to initialize: ModBuildingsInitializer but this is a Utility class.");
     }
 
-    public static void init(final RegistryEvent.Register<BuildingEntry> event)
+    public static void init(final RegistryEvent.Register event)
     {
-        final IForgeRegistry<BuildingEntry> reg = event.getRegistry();
+        final IForgeRegistry reg = event.getRegistry();
 
         ModBuildings.archery = new BuildingEntry.Builder()
                                  .setBuildingBlock(ModBlocks.blockHutArchery)

@@ -2,15 +2,18 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.item.EnumAction;
-import net.minecraft.item.Item;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.item.UseAction;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.particles.ItemParticleData;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.Vec3d;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
@@ -52,7 +55,7 @@ public class ItemParticleEffectMessage implements IMessage
     private double posZ;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public ItemParticleEffectMessage()
     {
@@ -104,45 +107,37 @@ public class ItemParticleEffectMessage implements IMessage
         buf.writeDouble(eyeHeight);
     }
 
+    @Nullable
     @Override
-    protected void messageOnClientThread(final ItemParticleEffectMessage message, final MessageContext ctx)
+    public LogicalSide getExecutionSide()
     {
-        final WorldClient world = Minecraft.getInstance().world;
-        final ItemStack localStack = message.stack;
-        if (localStack.getItemUseAction() == EnumAction.EAT)
+        return LogicalSide.CLIENT;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final ClientWorld world = Minecraft.getInstance().world;
+        final ItemStack localStack = stack;
+        if (localStack.getUseAction() == UseAction.EAT)
         {
             for (int i = 0; i < 5; ++i)
             {
                 Vec3d randomPos = new Vec3d((RAND.nextDouble() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
-                randomPos = randomPos.rotatePitch((float) (-message.rotationPitch * 0.017453292F));
-                randomPos = randomPos.rotateYaw((float) (-message.rotationYaw * 0.017453292F));
+                randomPos = randomPos.rotatePitch((float) (-rotationPitch * 0.017453292F));
+                randomPos = randomPos.rotateYaw((float) (-rotationYaw * 0.017453292F));
                 final double d0 =  -RAND.nextDouble() * 0.6D - 0.3D;
                 Vec3d randomOffset = new Vec3d((RAND.nextDouble() - 0.5D) * 0.3D, d0, 0.6D);
-                randomOffset = randomOffset.rotatePitch((float) (-message.rotationPitch * 0.017453292F));
-                randomOffset = randomOffset.rotateYaw((float) (-message.rotationYaw * 0.017453292F));
-                randomOffset = randomOffset.add(message.posX, message.posY + message.eyeHeight, message.posZ);
-                if (localStack.getHasSubtypes())
-                {
-                    world.spawnParticle(EnumParticleTypes.ITEM_CRACK,
+                randomOffset = randomOffset.rotatePitch((float) (-rotationPitch * 0.017453292F));
+                randomOffset = randomOffset.rotateYaw((float) (-rotationYaw * 0.017453292F));
+                randomOffset = randomOffset.add(posX, posY + eyeHeight, posZ);
+                    world.addParticle(new ItemParticleData(ParticleTypes.ITEM, localStack),
                       randomOffset.x,
                       randomOffset.y,
                       randomOffset.z,
                       randomPos.x,
                       randomPos.y + 0.05D,
-                      randomPos.z,
-                      Item.getIdFromItem(localStack.getItem()), localStack.getMetadata());
-                }
-                else
-                {
-                    world.spawnParticle(EnumParticleTypes.ITEM_CRACK,
-                      randomOffset.x,
-                      randomOffset.y,
-                      randomOffset.z,
-                      randomPos.x,
-                      randomPos.y + 0.05D,
-                      randomPos.z,
-                      Item.getIdFromItem(localStack.getItem()));
-                }
+                      randomPos.z);
             }
         }
     }

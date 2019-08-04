@@ -6,8 +6,8 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
@@ -23,13 +23,13 @@ public interface IBuildingDataManager
     }
 
     /**
-     * Creates a new entry from a given {@link IColony} and the data passed in as {@link NBTTagCompound}.
+     * Creates a new entry from a given {@link IColony} and the data passed in as {@link CompoundNBT}.
      *
      * @param colony   The {@link IColony} to which the new {@link IBuilding} belongs.
-     * @param compound The data from which to load new {@link IBuilding} stored in a {@link NBTTagCompound}.
-     * @return The {@link IBuilding} with the data loaded from {@link NBTTagCompound}.
+     * @param compound The data from which to load new {@link IBuilding} stored in a {@link CompoundNBT}.
+     * @return The {@link IBuilding} with the data loaded from {@link CompoundNBT}.
      */
-    IBuilding createFrom(final IColony colony, final NBTTagCompound compound);
+    IBuilding createFrom(final IColony colony, final CompoundNBT compound);
 
     /**
      * Creates a new entry from a given {@link IColony} and the data passed in as {@link AbstractTileEntityColonyBuilding}.
@@ -58,5 +58,5 @@ public interface IBuildingDataManager
      * @param networkBuffer The data from which to load the new {@link IBuildingView} stored in the networks {@link ByteBuf}.
      * @return The {@link IBuildingView} with the data loaded from the {@link ByteBuf}.
      */
-    IBuildingView createViewFrom(final IColonyView colony, final BlockPos position, final ByteBuf networkBuffer);
+    IBuildingView createViewFrom(final IColonyView colony, final BlockPos position, final PacketBuffer networkBuffer);
 }

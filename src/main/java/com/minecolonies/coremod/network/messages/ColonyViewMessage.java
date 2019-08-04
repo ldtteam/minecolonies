@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.Colony;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
@@ -30,7 +30,7 @@ public class ColonyViewMessage implements IMessage
     /**
      * The buffer with the data.
      */
-    private ByteBuf colonyBuffer;
+    private PacketBuffer colonyBuffer;
 
     /**
      * The dimension of the colony.
@@ -52,7 +52,7 @@ public class ColonyViewMessage implements IMessage
      * @param buf               the bytebuffer.
      * @param isNewSubscription Boolean whether or not this is a new subscription.
      */
-    public ColonyViewMessage(@NotNull final Colony colony, final ByteBuf buf, final boolean isNewSubscription)
+    public ColonyViewMessage(@NotNull final Colony colony, final PacketBuffer buf, final boolean isNewSubscription)
     {
         this.colonyId = colony.getID();
         this.isNewSubscription = isNewSubscription;
@@ -63,7 +63,7 @@ public class ColonyViewMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        final ByteBuf newBuf = buf.retain();
+        final PacketBuffer newBuf = buf.retain();
         colonyId = newBuf.readInt();
         isNewSubscription = newBuf.readBoolean();
         dim = newBuf.readInt();

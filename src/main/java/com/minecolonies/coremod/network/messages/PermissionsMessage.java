@@ -11,7 +11,7 @@ import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.ServerPlayerEntity;
 
@@ -47,7 +47,7 @@ public class PermissionsMessage
     public static class View implements IMessage
     {
         private int     colonyID;
-        private ByteBuf data;
+        private PacketBuffer data;
 
         /**
          * The dimension of the message.
@@ -79,7 +79,7 @@ public class PermissionsMessage
         @Override
         public void fromBytes(@NotNull final PacketBuffer buf)
         {
-            final ByteBuf newBuf = buf.retain();
+            final PacketBuffer newBuf = buf.retain();
             colonyID = newBuf.readInt();
             dimension = newBuf.readInt();
             data = newBuf;

@@ -15,7 +15,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
@@ -207,7 +207,7 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
     }
 
     @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
+    public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
         buf.writeBoolean(replant);
@@ -253,7 +253,7 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
         }
 
         @Override
-        public void deserialize(@NotNull final ByteBuf buf)
+        public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
             shouldReplant = buf.readBoolean();

@@ -21,7 +21,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
 import com.minecolonies.coremod.network.messages.GuardMobAttackListMessage;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityMob;
@@ -352,7 +352,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     }
 
     @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
+    public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
         buf.writeBoolean(assignManually);
@@ -905,7 +905,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         }
 
         @Override
-        public void deserialize(@NotNull final ByteBuf buf)
+        public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
             assignManually = buf.readBoolean();

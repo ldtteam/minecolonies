@@ -24,7 +24,7 @@ import com.minecolonies.coremod.colony.requestsystem.management.manager.Standard
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -197,7 +197,7 @@ public final class ColonyView implements IColonyView
      * @param buf               {@link ByteBuf} to write data in.
      * @param hasNewSubscribers true if there is a new subscription.
      */
-    public static void serializeNetworkData(@NotNull Colony colony, @NotNull ByteBuf buf, boolean hasNewSubscribers)
+    public static void serializeNetworkData(@NotNull Colony colony, @NotNull PacketBuffer buf, boolean hasNewSubscribers)
     {
         //  General Attributes
         buf.writeString(colony.getName());
@@ -598,7 +598,7 @@ public final class ColonyView implements IColonyView
      */
     @Override
     @Nullable
-    public IMessage handleColonyViewMessage(@NotNull final ByteBuf buf, @NotNull final World world, final boolean isNewSubscription)
+    public IMessage handleColonyViewMessage(@NotNull final PacketBuffer buf, @NotNull final World world, final boolean isNewSubscription)
     {
         this.world = world;
         //  General Attributes
@@ -679,7 +679,7 @@ public final class ColonyView implements IColonyView
      */
     @Override
     @Nullable
-    public IMessage handlePermissionsViewMessage(@NotNull final ByteBuf buf)
+    public IMessage handlePermissionsViewMessage(@NotNull final PacketBuffer buf)
     {
         permissions.deserialize(buf);
         return null;
@@ -695,7 +695,7 @@ public final class ColonyView implements IColonyView
      */
     @Override
     @Nullable
-    public IMessage handleColonyViewWorkOrderMessage(final ByteBuf buf)
+    public IMessage handleColonyViewWorkOrderMessage(final PacketBuffer buf)
     {
         @Nullable final WorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
         if (workOrder != null)
@@ -717,7 +717,7 @@ public final class ColonyView implements IColonyView
      */
     @Override
     @Nullable
-    public IMessage handleColonyViewCitizensMessage(final int id, final ByteBuf buf)
+    public IMessage handleColonyViewCitizensMessage(final int id, final PacketBuffer buf)
     {
         final ICitizenDataView citizen = ICitizenDataManager.getInstance().createFromNetworkData(id, buf);
         if (citizen != null)
@@ -786,7 +786,7 @@ public final class ColonyView implements IColonyView
      */
     @Override
     @Nullable
-    public IMessage handleColonyBuildingViewMessage(final BlockPos buildingId, @NotNull final ByteBuf buf)
+    public IMessage handleColonyBuildingViewMessage(final BlockPos buildingId, @NotNull final PacketBuffer buf)
     {
         @Nullable final IBuildingView building = IBuildingDataManager.getInstance().createViewFrom(this, buildingId, buf);
         if (building != null)

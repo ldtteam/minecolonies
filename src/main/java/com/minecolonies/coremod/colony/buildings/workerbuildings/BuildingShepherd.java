@@ -12,7 +12,7 @@ import com.minecolonies.coremod.client.gui.WindowHutShepherd;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobShepherd;
 import com.minecolonies.coremod.network.messages.ShepherdSetDyeSheepsMessage;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -80,7 +80,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
     }
 
     @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
+    public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
         buf.writeBoolean(dyeSheeps);
@@ -189,7 +189,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
         }
 
         @Override
-        public void deserialize(@NotNull final ByteBuf buf)
+        public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
             dyeSheeps = buf.readBoolean();

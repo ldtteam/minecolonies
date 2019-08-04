@@ -7,11 +7,12 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +30,7 @@ public class GuardTaskMessage implements IMessage
     private int              task;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
@@ -47,7 +48,7 @@ public class GuardTaskMessage implements IMessage
     }
 
     /**
-     * Creates an instance of the guard task message.
+     * Creates an instance of the guard task 
      *
      * @param building       the building.
      * @param job            the new job.
@@ -83,7 +84,7 @@ public class GuardTaskMessage implements IMessage
     {
         colonyId = buf.readInt();
         buildingId = buf.readBlockPos();
-        job = buf.readInt();
+        job = buf.readResourceLocation();
         assignmentMode = buf.readBoolean();
         patrollingMode = buf.readBoolean();
         tightGrouping = buf.readBoolean();
@@ -96,7 +97,7 @@ public class GuardTaskMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
-        buf.writeInt(job);
+        buf.writeResourceLocation(job);
         buf.writeBlockPos(buildingId);
         buf.writeBoolean(assignmentMode);
         buf.writeBoolean(patrollingMode);
@@ -106,27 +107,35 @@ public class GuardTaskMessage implements IMessage
         buf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final GuardTaskMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
+            final PlayerEntity player = ctxIn.getSender();
             //Verify player has permission to change this huts settings
             if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
             {
                 return;
             }
 
-            @Nullable final AbstractBuildingGuards building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingGuards.class);
+            @Nullable final AbstractBuildingGuards building = colony.getBuildingManager().getBuilding(buildingId, AbstractBuildingGuards.class);
             if (building != null)
             {
                 building.setGuardType(IGuardTypeRegistry.getInstance().getFromName(job));
-                building.setAssignManually(message.assignmentMode);
-                building.setPatrolManually(message.patrollingMode);
-                building.setTightGrouping(message.tightGrouping);
-                building.setRetrieveOnLowHealth(message.retrieval);
-                building.setTask(GuardTask.values()[message.task]);
+                building.setAssignManually(assignmentMode);
+                building.setPatrolManually(patrollingMode);
+                building.setTightGrouping(tightGrouping);
+                building.setRetrieveOnLowHealth(retrieval);
+                building.setTask(GuardTask.values()[task]);
 
                 if (building.getTask().equals(GuardTask.FOLLOW))
                 {

@@ -32,7 +32,7 @@ import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockSilverfish;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.PlayerEntitySP;
-import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.multiplayer.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.monster.EntityMob;
@@ -100,7 +100,7 @@ public class EventHandler
             final Minecraft mc = Minecraft.getInstance();
             if (mc.gameSettings.showDebugInfo)
             {
-                final WorldClient world = mc.world;
+                final ClientWorld world = mc.world;
                 final PlayerEntitySP player = mc.player;
                 IColony colony = IColonyManager.getInstance().getIColony(world, player.getPosition());
                 if (colony == null)

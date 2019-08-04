@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.IColonyManager;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -20,7 +20,7 @@ public class ColonyViewBuildingViewMessage implements IMessage
 {
     private int      colonyId;
     private BlockPos buildingId;
-    private ByteBuf  buildingData;
+    private PacketBuffer  buildingData;
 
     /**
      * Dimension of the colony.

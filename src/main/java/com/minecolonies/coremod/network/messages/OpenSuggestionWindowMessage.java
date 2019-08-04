@@ -2,7 +2,7 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.MineColonies;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;

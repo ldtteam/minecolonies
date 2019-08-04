@@ -22,7 +22,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.util.TeleportHelper;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.INBT;
 import net.minecraft.entity.Entity;
@@ -869,13 +869,13 @@ public class CitizenData implements ICitizenData
             @NotNull final CompoundNBT levelCompound = new CompoundNBT();
             levelCompound.putString(TAG_NAME, entry.getKey());
             levelCompound.putInt(TAG_LEVEL, entry.getValue().getA());
-            levelCompound.setDouble(TAG_EXPERIENCE, entry.getValue().getB());
+            levelCompound.putDouble(TAG_EXPERIENCE, entry.getValue().getB());
             levelTagList.add(levelCompound);
         }
         compound.put(TAG_LEVEL_MAP, levelTagList);
 
-        compound.setDouble(TAG_HEALTH, health);
-        compound.setDouble(TAG_MAX_HEALTH, maxHealth);
+        compound.putDouble(TAG_HEALTH, health);
+        compound.putDouble(TAG_MAX_HEALTH, maxHealth);
 
 
         @NotNull final CompoundNBT nbtTagSkillsCompound = new CompoundNBT();
@@ -885,7 +885,7 @@ public class CitizenData implements ICitizenData
         nbtTagSkillsCompound.putInt(TAG_SKILL_INTELLIGENCE, intelligence);
         nbtTagSkillsCompound.putInt(TAG_SKILL_DEXTERITY, dexterity);
         compound.put(TAG_SKILLS, nbtTagSkillsCompound);
-        compound.setDouble(TAG_SATURATION, saturation);
+        compound.putDouble(TAG_SATURATION, saturation);
 
         if (job != null)
         {
@@ -912,7 +912,7 @@ public class CitizenData implements ICitizenData
      * @param buf Buffer to write to.
      */
     @Override
-    public void serializeViewNetworkData(@NotNull final ByteBuf buf)
+    public void serializeViewNetworkData(@NotNull final PacketBuffer buf)
     {
         buf.writeString(name);
         buf.writeBoolean(female);
@@ -971,7 +971,7 @@ public class CitizenData implements ICitizenData
      *
      * @param buf the buffer.
      */
-    private void writeStatusToBuffer(@NotNull final ByteBuf buf)
+    private void writeStatusToBuffer(@NotNull final PacketBuffer buf)
     {
         final Optional<AbstractEntityCitizen> optionalEntityCitizen = getCitizenEntity();
         buf.writeInt(optionalEntityCitizen.map(entityCitizen -> entityCitizen.getCitizenStatusHandler().getLatestStatus().length).orElse(0));

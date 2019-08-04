@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony.workorders;
 
 import com.minecolonies.api.util.BlockPosUtil;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
@@ -130,7 +130,7 @@ public class WorkOrderView
      *
      * @param buf Byte buffer to deserialize.
      */
-    public void deserialize(@NotNull final ByteBuf buf)
+    public void deserialize(@NotNull final PacketBuffer buf)
     {
         id = buf.readInt();
         priority = buf.readInt();

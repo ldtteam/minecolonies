@@ -12,10 +12,10 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -120,9 +120,9 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
      * 2) building level.
      * 3) max building level.
      *
-     * @param buf ByteBuf to write to.
+     * @param buf PacketBuffer to write to.
      */
-    void serializeToView(@NotNull ByteBuf buf);
+    void serializeToView(@NotNull PacketBuffer buf);
 
     /**
      * Check if a building is being gathered.

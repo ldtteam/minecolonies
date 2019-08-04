@@ -3,7 +3,7 @@ package com.minecolonies.coremod.colony.buildings.views;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -55,7 +55,7 @@ public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorker
     }
 
     @Override
-    public void deserialize(@NotNull final ByteBuf buf)
+    public void deserialize(@NotNull final PacketBuffer buf)
     {
         super.deserialize(buf);
 

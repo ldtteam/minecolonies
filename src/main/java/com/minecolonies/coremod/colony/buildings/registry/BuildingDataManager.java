@@ -10,8 +10,8 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
@@ -21,10 +21,10 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LOCATION;
 public class BuildingDataManager implements IBuildingDataManager
 {
     @Override
-    public IBuilding createFrom(final IColony colony, final NBTTagCompound compound)
+    public IBuilding createFrom(final IColony colony, final CompoundNBT compound)
     {
         final ResourceLocation type = new ResourceLocation(compound.getString(TAG_BUILDING_TYPE));
-        final BlockPos pos = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
+        final BlockPos pos = BlockPosUtil.read(compound, TAG_LOCATION);
 
         IBuilding building = this.createFrom(colony, pos, type);
 
@@ -64,7 +64,7 @@ public class BuildingDataManager implements IBuildingDataManager
 
     @Override
     public IBuildingView createViewFrom(
-      final IColonyView colony, final BlockPos position, final ByteBuf networkBuffer)
+      final IColonyView colony, final BlockPos position, final PacketBuffer networkBuffer)
     {
         return null;
     }

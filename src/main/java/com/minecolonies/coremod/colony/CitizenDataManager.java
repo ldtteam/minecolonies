@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.Log;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +23,7 @@ public class CitizenDataManager implements ICitizenDataManager
     }
 
     @Override
-    public ICitizenDataView createFromNetworkData(@NotNull final int id, @NotNull final ByteBuf networkBuffer)
+    public ICitizenDataView createFromNetworkData(@NotNull final int id, @NotNull final PacketBuffer networkBuffer)
     {
         CitizenDataView citizenDataView = new CitizenDataView(id);
 

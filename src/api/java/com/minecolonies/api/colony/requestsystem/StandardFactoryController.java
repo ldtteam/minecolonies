@@ -12,7 +12,7 @@ import com.minecolonies.api.colony.requestsystem.factory.ITypeOverrideHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.Suppression;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -286,16 +286,16 @@ public final class StandardFactoryController implements IFactoryController
     }
 
     @Override
-    public <OUTPUT> void writeToBuffer(@NotNull final ByteBuf buffer, @NotNull final OUTPUT object) throws IllegalArgumentException
+    public <OUTPUT> void writeToBuffer(@NotNull final PacketBuffer buffer, @NotNull final OUTPUT object) throws IllegalArgumentException
     {
         final CompoundNBT bufferCompound = serialize(object);
-        ByteBufUtils.writeTag(buffer, bufferCompound);
+        buffer.writeCompoundTag(bufferCompound);
     }
 
     @Override
-    public <OUTPUT> OUTPUT readFromBuffer(@NotNull final ByteBuf buffer) throws IllegalArgumentException
+    public <OUTPUT> OUTPUT readFromBuffer(@NotNull final PacketBuffer buffer) throws IllegalArgumentException
     {
-        final CompoundNBT bufferCompound = ByteBufUtils.readTag(buffer);
+        final CompoundNBT bufferCompound = buffer.readCompoundTag();
         return deserialize(bufferCompound);
     }
 

@@ -1,13 +1,10 @@
 package com.minecolonies.api.colony.buildings.views;
 
-import com.minecolonies.api.configuration.Configurations;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.EntityList;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.registry.EntityEntry;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -41,12 +38,12 @@ public class MobEntryView
     }
 
     /**
-     * Writes the Location, Attack, and Priority to a {@link ByteBuf}.
+     * Writes the Location, Attack, and Priority to a {@link PacketBuffer}.
      *
      * @param buf Buf to write to.
      * @param entry Entry to write.
      */
-    public static void writeToByteBuf(@NotNull final ByteBuf buf, @NotNull final MobEntryView entry)
+    public static void writeToByteBuf(@NotNull final PacketBuffer buf, @NotNull final MobEntryView entry)
     {
         buf.writeString(entry.getLocation().toString());
         buf.writeBoolean(entry.hasAttack());
@@ -54,13 +51,13 @@ public class MobEntryView
     }
 
     /**
-     * Reads the Location, Attack, and Priority from a {@link ByteBuf} to create a MobEntryView
+     * Reads the Location, Attack, and Priority from a {@link PacketBuffer} to create a MobEntryView
      *
      * @param buf Buf to read from.
      * @return MobEntryView that was created.
      */
     @NotNull
-    public static MobEntryView readFromByteBuf(@NotNull final ByteBuf buf)
+    public static MobEntryView readFromByteBuf(@NotNull final PacketBuffer buf)
     {
         final ResourceLocation location = new ResourceLocation(buf.readString());
         final Boolean attack = buf.readBoolean();
@@ -169,14 +166,14 @@ public class MobEntryView
      */
     public String getName()
     {
-        if (Configurations.gameplay.enableInDevelopmentFeatures)
+        if (Minecolonies.gameplay.enableInDevelopmentFeatures)
         {
-            return (EntityList.getTranslationName(this.location) + ": " + this.priority);
+            return (EntityType.getTranslationName(this.location) + ": " + this.priority);
         }
         return EntityList.getTranslationName(this.location);
     }
 
-    public EntityEntry getEntityEntry()
+    public EntityType<?> getEntityEntry()
     {
         return ForgeRegistries.ENTITIES.getValue(this.getLocation());
     }

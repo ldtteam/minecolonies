@@ -15,7 +15,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobSifter;
 import com.minecolonies.coremod.network.messages.SifterSettingsMessage;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
@@ -261,13 +261,13 @@ public class BuildingSifter extends AbstractBuildingWorker
         final CompoundNBT meshTAG = new CompoundNBT();
         sifterMesh.getA().getItemStack().write(meshTAG);
         compound.put(TAG_MESH, meshTAG);
-        compound.setDouble(TAG_MESH_PROB, sifterMesh.getB());
+        compound.putDouble(TAG_MESH_PROB, sifterMesh.getB());
 
         return compound;
     }
 
     @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
+    public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
         buf.writeInt(dailyQuantity);
@@ -336,7 +336,7 @@ public class BuildingSifter extends AbstractBuildingWorker
         }
 
         @Override
-        public void deserialize(@NotNull final ByteBuf buf)
+        public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
             dailyQuantity = buf.readInt();

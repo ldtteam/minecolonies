@@ -15,7 +15,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.multiplayer.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -76,7 +76,7 @@ public class ClientEventHandler
         Pathfinding.debugDraw(event.getPartialTicks());
 
         final Structure structure = Settings.instance.getActiveStructure();
-        final WorldClient world = Minecraft.getInstance().world;
+        final ClientWorld world = Minecraft.getInstance().world;
         final PlayerEntity player = Minecraft.getInstance().player;
         if (structure != null)
         {

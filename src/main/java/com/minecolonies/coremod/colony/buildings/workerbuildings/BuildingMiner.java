@@ -19,7 +19,7 @@ import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -309,7 +309,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * @param buf the used ByteBuffer.
      */
     @Override
-    public void serializeToView(@NotNull final ByteBuf buf)
+    public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
         buf.writeInt(currentLevel);
@@ -654,7 +654,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         }
 
         @Override
-        public void deserialize(@NotNull final ByteBuf buf)
+        public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
             current = buf.readInt();
