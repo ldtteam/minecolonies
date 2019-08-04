@@ -2,10 +2,10 @@ package com.minecolonies.coremod;
 
 import com.ldtteam.structurize.Network;
 import com.ldtteam.structurize.Structurize;
-import com.ldtteam.structurize.config.Configuration;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.apiimp.MinecoloniesApiImpl;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
@@ -15,9 +15,6 @@ import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializ
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
 import com.minecolonies.coremod.commands.CommandEntryPointNew;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.EntityFishHook;
-import com.minecolonies.coremod.entity.ai.mobs.EntityMercenary;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
 import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
@@ -25,16 +22,14 @@ import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.event.*;
-import com.minecolonies.coremod.event.LifecycleSubscriber;
-import com.minecolonies.coremod.fixers.TileEntityIdFixer;
-import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.placementhandlers.MinecoloniesPlacementHandlers;
 import com.minecolonies.coremod.proxy.ClientProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
 import com.minecolonies.coremod.util.RecipeHandler;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.item.Item;
+import net.minecraft.stats.StatType;
+import net.minecraft.util.registry.Registry;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -48,8 +43,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-
-import static com.minecolonies.api.util.constant.ColonyConstants.*;
 
 @Mod(com.ldtteam.structurize.api.util.constant.Constants.MOD_ID)
 public class MineColonies
@@ -218,5 +211,14 @@ public class MineColonies
     public static Logger getLogger()
     {
         return logger;
+    }
+
+    /**
+     * Get the config handler.
+     * @return the config handler.
+     */
+    public static Configuration getConfig()
+    {
+        return config;
     }
 }

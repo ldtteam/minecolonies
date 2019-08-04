@@ -5,12 +5,14 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.util.BlockPosUtil;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Adds a entry to the builderRequired map.
@@ -46,7 +48,7 @@ public class BuildRequestMessage implements IMessage
     private int      mode;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
@@ -57,7 +59,7 @@ public class BuildRequestMessage implements IMessage
 
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public BuildRequestMessage()
     {
@@ -65,7 +67,7 @@ public class BuildRequestMessage implements IMessage
     }
 
     /**
-     * Creates a build request message.
+     * Creates a build request 
      *
      * @param building AbstractBuilding of the request.
      * @param mode     Mode of the request, 1 is repair, 0 is build.
@@ -100,16 +102,23 @@ public class BuildRequestMessage implements IMessage
         buf.writeBlockPos(builder);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final BuildRequestMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony == null)
         {
             return;
         }
-
-        final IBuilding building = colony.getBuildingManager().getBuilding(message.buildingId);
+        final PlayerEntity player = ctxIn.getSender();
+        final IBuilding building = colony.getBuildingManager().getBuilding(buildingId);
         if (building == null)
         {
             return;
@@ -127,13 +136,13 @@ public class BuildRequestMessage implements IMessage
         }
         else
         {
-            switch (message.mode)
+            switch (mode)
             {
                 case BUILD:
-                    building.requestUpgrade(player, message.builder);
+                    building.requestUpgrade(player, builder);
                     break;
                 case REPAIR:
-                    building.requestRepair(message.builder);
+                    building.requestRepair(builder);
                     break;
                 default:
                     break;

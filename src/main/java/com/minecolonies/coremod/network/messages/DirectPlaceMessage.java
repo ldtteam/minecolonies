@@ -3,20 +3,22 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.*;
+import com.minecolonies.coremod.colony.IColonyManager;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.LogicalSide;
 
+import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Place a building directly without buildtool.
@@ -39,7 +41,7 @@ public class DirectPlaceMessage implements IMessage
     private ItemStack stack;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public DirectPlaceMessage()
     {
@@ -68,7 +70,7 @@ public class DirectPlaceMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        state = NBTUtil.readBlockState(ByteBufUtils.readTag(buf));
+        state = Block.getStateById(buf.readInt());
         pos = buf.readBlockPos();
         stack = buf.readItemStack();
     }
@@ -81,21 +83,29 @@ public class DirectPlaceMessage implements IMessage
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new CompoundNBT(), state));
+        buf.writeInt(Block.getStateId(state));
         buf.writeBlockPos(pos);
         buf.writeItemStack(stack);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final DirectPlaceMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final World world = player.getServerWorld();
-        final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, message.pos);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final PlayerEntity player = ctxIn.getSender();
+        final World world = player.getEntityWorld();
+        final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
         if (colony == null || colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
         {
-            player.getServerWorld().setBlockState(message.pos, message.state);
-            InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.inventory), message.stack);
-            message.state.getBlock().onBlockPlacedBy(world, message.pos, message.state, player, message.stack);
+            player.getEntityWorld().setBlockState(pos, state);
+            InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.inventory), stack);
+            state.getBlock().onBlockPlacedBy(world, pos, state, player, stack);
         }
     }
 }

@@ -8,8 +8,11 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Add or Update a ColonyView on the client.
@@ -21,7 +24,7 @@ public class ColonyViewWorkOrderMessage implements IMessage
     private ByteBuf workOrderBuffer;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public ColonyViewWorkOrderMessage()
     {
@@ -59,10 +62,17 @@ public class ColonyViewWorkOrderMessage implements IMessage
         buf.writeBytes(workOrderBuffer);
     }
 
+    @Nullable
     @Override
-    protected void messageOnClientThread(final ColonyViewWorkOrderMessage message, final MessageContext ctx)
+    public LogicalSide getExecutionSide()
     {
-        IColonyManager.getInstance().handleColonyViewWorkOrderMessage(message.colonyId, message.workOrderBuffer, Minecraft.getMinecraft().world.world.getDimension().getType().getId());
+        return LogicalSide.CLIENT;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        IColonyManager.getInstance().handleColonyViewWorkOrderMessage(colonyId, workOrderBuffer, Minecraft.getInstance().world.getDimension().getType().getId());
     }
 }
 

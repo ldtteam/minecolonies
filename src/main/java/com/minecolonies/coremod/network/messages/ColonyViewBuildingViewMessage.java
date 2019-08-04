@@ -1,14 +1,17 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.IColonyManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Add or Update a AbstractBuilding.View to a ColonyView on the client.
@@ -25,7 +28,7 @@ public class ColonyViewBuildingViewMessage implements IMessage
     private int dimension;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public ColonyViewBuildingViewMessage()
     {
@@ -65,9 +68,16 @@ public class ColonyViewBuildingViewMessage implements IMessage
         buf.writeBytes(buildingData);
     }
 
+    @Nullable
     @Override
-    protected void messageOnClientThread(final ColonyViewBuildingViewMessage message, final MessageContext ctx)
+    public LogicalSide getExecutionSide()
     {
-        IColonyManager.getInstance().handleColonyBuildingViewMessage(message.colonyId, message.buildingId, message.buildingData, message.dimension);
+        return LogicalSide.CLIENT;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        IColonyManager.getInstance().handleColonyBuildingViewMessage(colonyId, buildingId, buildingData, dimension);
     }
 }
