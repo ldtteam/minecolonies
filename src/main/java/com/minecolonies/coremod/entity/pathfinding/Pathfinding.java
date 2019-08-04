@@ -60,7 +60,7 @@ public final class Pathfinding
             return;
         }
 
-        final Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
+        final Entity entity = Minecraft.getInstance().getRenderViewEntity();
         final double dx = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * frame;
         final double dy = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * frame;
         final double dz = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * frame;
@@ -118,7 +118,7 @@ public final class Pathfinding
         GlStateManager.pushMatrix();
         GlStateManager.translate((double) n.pos.getX() + 0.375, (double) n.pos.getY() + 0.375, (double) n.pos.getZ() + 0.375);
 
-        final Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
+        final Entity entity = Minecraft.getInstance().getRenderViewEntity();
         final double dx = n.pos.getX() - entity.posX;
         final double dy = n.pos.getY() - entity.posY;
         final double dz = n.pos.getZ() - entity.posZ;
@@ -192,13 +192,13 @@ public final class Pathfinding
     {
         final String s1 = String.format("F: %.3f [%d]", n.getCost(), n.getCounterAdded());
         final String s2 = String.format("G: %.3f [%d]", n.getScore(), n.getCounterVisited());
-        final FontRenderer fontrenderer = Minecraft.getMinecraft().fontRenderer;
+        final FontRenderer fontrenderer = Minecraft.getInstance().fontRenderer;
         GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
         GlStateManager.translate(0.0F, 0.75F, 0.0F);
         GlStateManager.glNormal3f(0.0F, 1.0F, 0.0F);
 
-        final RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+        final RenderManager renderManager = Minecraft.getInstance().getRenderManager();
         GlStateManager.rotate(-renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
         GlStateManager.scale(-0.014F, -0.014F, 0.014F);

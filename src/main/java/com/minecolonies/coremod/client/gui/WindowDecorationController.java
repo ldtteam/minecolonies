@@ -53,12 +53,12 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
     /**
      * The world the player of the GUI is in.
      */
-    private final World world = Minecraft.getMinecraft().world;
+    private final World world = Minecraft.getInstance().world;
 
     /**
      * If the player opening the GUI is an isCreative.
      */
-    private boolean isCreative = Minecraft.getMinecraft().player.isCreative();
+    private boolean isCreative = Minecraft.getInstance().player.isCreative();
 
     /**
      * Constructor for a hut rename entry window.
@@ -162,7 +162,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
             if (name.length() > MAX_NAME_LENGTH)
             {
                 name = name.substring(0, MAX_NAME_LENGTH);
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.gui.name.tooLong", name);
+                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "com.minecolonies.coremod.gui.name.tooLong", name);
             }
 
             final String levelString = findPaneOfTypeByID(INPUT_LEVEL, TextField.class).getText();

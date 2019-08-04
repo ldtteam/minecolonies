@@ -35,14 +35,14 @@ public class DebugRendererChunkBorder
     public void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
     {
         final double partialTicks = event.getPartialTicks();
-        final PlayerEntity PlayerEntity = Minecraft.getMinecraft().player;
+        final PlayerEntity entityplayer = Minecraft.getInstance().player;
 
         if (PlayerEntity.getHeldItem(Hand.MAIN_HAND).getItem() != ModItems.buildTool)
         {
             return;
         }
 
-        final World world = Minecraft.getMinecraft().world;
+        final World world = Minecraft.getInstance().world;
         final IColonyView view = IColonyManager.getInstance().getClosestColonyView(world, PlayerEntity.getPosition());
 
         if (view == null)

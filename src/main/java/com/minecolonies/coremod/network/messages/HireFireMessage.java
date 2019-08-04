@@ -76,7 +76,7 @@ public class HireFireMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
-        buildingId = BlockPosUtil.readFromByteBuf(buf);
+        buildingId = buf.readBlockPos();
         hire = buf.readBoolean();
         citizenID = buf.readInt();
         dimension = buf.readInt();
@@ -91,7 +91,7 @@ public class HireFireMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeBlockPos(buildingId);
         buf.writeBoolean(hire);
         buf.writeInt(citizenID);
         buf.writeInt(dimension);

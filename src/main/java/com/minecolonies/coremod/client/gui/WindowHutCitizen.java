@@ -115,7 +115,7 @@ public class WindowHutCitizen extends AbstractWindowBuilding<BuildingHome.View>
         {
             if (building.getBuildingLevel() == 0)
             {
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0);
+                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0);
                 return;
             }
 

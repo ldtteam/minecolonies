@@ -67,7 +67,7 @@ public class HutRenameMessage implements IMessage
         colonyId = buf.readInt();
         name = buf.readString();
         dimension = buf.readInt();
-        buildingId = BlockPosUtil.readFromByteBuf(buf);
+        buildingId = buf.readBlockPos();
     }
 
     @Override
@@ -76,7 +76,7 @@ public class HutRenameMessage implements IMessage
         buf.writeInt(colonyId);
         buf.writeString(name);
         buf.writeInt(dimension);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeBlockPos(buildingId);
     }
 
     @Override

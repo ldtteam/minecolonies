@@ -26,12 +26,14 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHal
 import com.minecolonies.coremod.network.messages.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.RoundingMode;
@@ -276,7 +278,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
         for (final Player player : colony.getPermissions().getPlayersByRank(Rank.OFFICER))
         {
-            final IColony col = IColonyManager.getInstance().getIColonyByOwner(Minecraft.getMinecraft().world, player.getID());
+            final IColony col = IColonyManager.getInstance().getIColonyByOwner(Minecraft.getInstance().world, player.getID());
             if (col instanceof ColonyView)
             {
                 for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
@@ -299,7 +301,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final IColony colony = building.getColony();
         for (final Player player : colony.getPermissions().getPlayersByRank(Rank.HOSTILE))
         {
-            final IColony col = IColonyManager.getInstance().getIColonyByOwner(Minecraft.getMinecraft().world, player.getID());
+            final IColony col = IColonyManager.getInstance().getIColonyByOwner(Minecraft.getInstance().world, player.getID());
             if (col instanceof ColonyView)
             {
                 for (final Player owner : colony.getPermissions().getPlayersByRank(Rank.OWNER))
@@ -327,7 +329,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                                             new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + ally.getID())
                                           ));
 
-        Minecraft.getMinecraft().player.sendMessage(teleport);
+        Minecraft.getInstance().player.sendMessage(teleport);
     }
 
     /**
@@ -482,7 +484,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final TextField input = findPaneOfTypeByID(INPUT_BLOCK_NAME, TextField.class);
         final String inputText = input.getText();
 
-        final Block block = Block.getBlockFromName(inputText);
+        final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(inputText));
 
         if (block != null)
         {

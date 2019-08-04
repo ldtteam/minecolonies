@@ -62,7 +62,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
             }
         }
 
-        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.gui.resourcescroll.nobuilder");
+        LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "com.minecolonies.coremod.gui.resourcescroll.nobuilder");
         this.builder = null;
     }
 

@@ -29,14 +29,16 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.LogicalSide;
 
+import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,7 +67,7 @@ public class BuildingMoveMessage implements IMessage
     private boolean  mirror;
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public BuildingMoveMessage()
     {
@@ -113,11 +115,11 @@ public class BuildingMoveMessage implements IMessage
     {
         structureName = buf.readString();
         workOrderName = buf.readString();
-        pos = BlockPosUtil.readFromByteBuf(buf);
+        pos = buf.readBlockPos();
         rotation = buf.readInt();
         mirror = buf.readBoolean();
-        buildingId = BlockPosUtil.readFromByteBuf(buf);
-        state = NBTUtil.readBlockState(ByteBufUtils.readTag(buf));
+        buildingId = buf.readBlockPos();
+        state = Block.getStateById(buf.readInt());
     }
 
     /**
@@ -130,23 +132,31 @@ public class BuildingMoveMessage implements IMessage
     {
         buf.writeString(structureName);
         buf.writeString(workOrderName);
-        BlockPosUtil.writeToByteBuf(buf, pos);
+        buf.writeBlockPos(pos);
         buf.writeInt(rotation);
         buf.writeBoolean(mirror);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
-        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new CompoundNBT(), state));
+        buf.writeBlockPos(buildingId);
+        buf.writeInt(Block.getStateId(state));
+    }
+
+    @Nullable
+    @Override
+    public LogicalSide getExecutionSide()
+    {
+        return LogicalSide.SERVER;
     }
 
     @Override
-    public void messageOnServerThread(final BuildingMoveMessage message, final ServerPlayerEntity player)
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        final StructureName sn = new StructureName(message.structureName);
+        final ServerPlayerEntity player = ctxIn.getSender();
+        final StructureName sn = new StructureName(structureName);
         if (!Structures.hasMD5(sn))
         {
-            player.sendMessage(new StringTextComponent("Can not build " + message.workOrderName + ": schematic missing!"));
+            player.sendMessage(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!"));
             return;
         }
-        handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, message.rotation, message.pos, message.mirror, message.buildingId, message.state);
+        handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, buildingId, state);
     }
 
     /**
@@ -167,7 +177,8 @@ public class BuildingMoveMessage implements IMessage
       final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockPos oldBuildingId, final BlockState state)
     {
         final String hut = sn.getSection();
-        final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
+
+        final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(Constants.MOD_ID, "blockHut" + hut));
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (tempColony != null
               && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
@@ -196,7 +207,7 @@ public class BuildingMoveMessage implements IMessage
             world.destroyBlock(oldBuildingId, false);
             world.destroyBlock(buildPos, true);
 
-            world.setBlockState(buildPos, state.withRotation(BlockPosUtil.getRotationFromRotations(rotation)));
+            world.setBlockState(buildPos, state.rotate(BlockPosUtil.getRotationFromRotations(rotation)));
             ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
             setupBuilding(world, player, sn, rotation, buildPos, mirror, oldBuilding);
         }
@@ -289,7 +300,7 @@ public class BuildingMoveMessage implements IMessage
 
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildRemoval(oldBuilding, oldBuilding.getBuildingLevel()), false);
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildBuilding(building, building.getBuildingLevel()), false);
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), "com.minecolonies.coremod.workOrderAdded");
+            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
         }
     }
 }

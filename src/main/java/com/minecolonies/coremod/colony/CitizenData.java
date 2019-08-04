@@ -926,13 +926,13 @@ public class CitizenData implements ICitizenData
         buf.writeBoolean(homeBuilding != null);
         if (homeBuilding != null)
         {
-            BlockPosUtil.writeToByteBuf(buf, homeBuilding.getID());
+            buf.writeBlockPos(homeBuilding.getID());
         }
 
         buf.writeBoolean(workBuilding != null);
         if (workBuilding != null)
         {
-            BlockPosUtil.writeToByteBuf(buf, workBuilding.getID());
+            buf.writeBlockPos(workBuilding.getID());
         }
 
         //  Attributes
@@ -963,7 +963,7 @@ public class CitizenData implements ICitizenData
         compound.put("inventory", inventory.write(new ListNBT()));
         ByteBufUtils.writeTag(buf, compound);
 
-        BlockPosUtil.writeToByteBuf(buf, lastPosition);
+        buf.writeBlockPos(lastPosition);
     }
 
     /**

@@ -78,7 +78,7 @@ public class ChangeRecipePriorityMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         this.colonyId = buf.readInt();
-        this.buildingId = BlockPosUtil.readFromByteBuf(buf);
+        this.buildingId = buf.readBlockPos();
         this.recipeLocation = buf.readInt();
         this.up = buf.readBoolean();
         dimension = buf.readInt();
@@ -93,7 +93,7 @@ public class ChangeRecipePriorityMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(this.colonyId);
-        BlockPosUtil.writeToByteBuf(buf, this.buildingId);
+        buf.writeBlockPos(this.buildingId);
         buf.writeInt(this.recipeLocation);
         buf.writeBoolean(this.up);
         buf.writeInt(dimension);

@@ -64,7 +64,7 @@ public class OpenCraftingGUIMessage implements IMessage
     {
         this.gridSize = buf.readInt();
         this.colonyId = buf.readInt();
-        this.buildingId = BlockPosUtil.readFromByteBuf(buf);
+        this.buildingId = buf.readBlockPos();
         dimension = buf.readInt();
     }
 
@@ -73,7 +73,7 @@ public class OpenCraftingGUIMessage implements IMessage
     {
         buf.writeInt(this.gridSize);
         buf.writeInt(this.colonyId);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeBlockPos(buildingId);
         buf.writeInt(dimension);
     }
 

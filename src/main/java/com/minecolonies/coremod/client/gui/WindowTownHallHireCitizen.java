@@ -59,7 +59,7 @@ public class WindowTownHallHireCitizen extends Window implements ButtonHandler
     public void onOpened()
     {
         // Player inventory
-        final IItemHandler playerInv = new InvWrapper(Minecraft.getMinecraft().player.inventory);
+        final IItemHandler playerInv = new InvWrapper(Minecraft.getInstance().player.inventory);
 
         // Cost of new packages, basecost 1
         final int buyCitizenCost = colony.getBoughtCitizenCost() + 1;

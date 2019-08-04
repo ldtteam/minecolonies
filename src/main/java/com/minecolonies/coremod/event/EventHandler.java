@@ -97,7 +97,7 @@ public class EventHandler
     {
         if (FMLCommonHandler.instance().getEffectiveSide().isClient())
         {
-            final Minecraft mc = Minecraft.getMinecraft();
+            final Minecraft mc = Minecraft.getInstance();
             if (mc.gameSettings.showDebugInfo)
             {
                 final WorldClient world = mc.world;

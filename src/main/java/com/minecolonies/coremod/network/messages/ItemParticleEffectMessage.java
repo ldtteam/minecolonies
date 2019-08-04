@@ -108,7 +108,7 @@ public class ItemParticleEffectMessage implements IMessage
     @Override
     protected void messageOnClientThread(final ItemParticleEffectMessage message, final MessageContext ctx)
     {
-        final WorldClient world = Minecraft.getMinecraft().world;
+        final WorldClient world = Minecraft.getInstance().world;
         final ItemStack localStack = message.stack;
         if (localStack.getItemUseAction() == EnumAction.EAT)
         {

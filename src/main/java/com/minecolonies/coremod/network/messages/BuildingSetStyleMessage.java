@@ -10,8 +10,9 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.LogicalSide;
 
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,13 +37,13 @@ public class BuildingSetStyleMessage implements IMessage
     private String style;
 
     /**
-     * The dimension of the message.
+     * The dimension of the 
      */
     private int dimension;
 
 
     /**
-     * Empty constructor used when registering the message.
+     * Empty constructor used when registering the 
      */
     public BuildingSetStyleMessage()
     {
@@ -68,7 +69,7 @@ public class BuildingSetStyleMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
-        buildingId = BlockPosUtil.readFromByteBuf(buf);
+        buildingId = buf.readBlockPos();
         style = buf.readString();
         dimension = buf.readInt();
     }
@@ -77,30 +78,38 @@ public class BuildingSetStyleMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeBlockPos(buildingId);
         buf.writeString(style);
         buf.writeInt(dimension);
     }
 
+    @Nullable
     @Override
-    public void messageOnServerThread(final BuildingSetStyleMessage message, final ServerPlayerEntity player)
+    public LogicalSide getExecutionSide()
     {
-        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
+        return LogicalSide.SERVER;
+    }
+
+    @Override
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    {
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
+            final PlayerEntity player = ctxIn.getSender();
             //Verify player has permission to change this huts settings
             if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
             {
                 return;
             }
 
-            @Nullable final IBuilding building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuilding.class);
+            @Nullable final IBuilding building = colony.getBuildingManager().getBuilding(buildingId, AbstractBuilding.class);
             if (building != null)
             {
-                building.setStyle(message.style);
+                building.setStyle(style);
                 if(building.getTileEntity() != null)
                 {
-                    building.getTileEntity().setStyle(message.style);
+                    building.getTileEntity().setStyle(style);
                     if(building.getBuildingLevel() > 0)
                     {
                         building.onUpgradeComplete(building.getBuildingLevel());

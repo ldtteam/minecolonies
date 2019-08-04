@@ -92,7 +92,7 @@ public class ChangeFreeToInteractBlockMessage implements IMessage
     {
         colonyId = buf.readInt();
         block = Block.getBlockFromName(buf.readString());
-        pos = BlockPosUtil.readFromByteBuf(buf);
+        pos = buf.readBlockPos();
         type = MessageType.values()[buf.readInt()];
         mode = MessageMode.values()[buf.readInt()];
         dimension = buf.readInt();
@@ -103,7 +103,7 @@ public class ChangeFreeToInteractBlockMessage implements IMessage
     {
         buf.writeInt(colonyId);
         buf.writeString(block.getRegistryName().toString());
-        BlockPosUtil.writeToByteBuf(buf, pos);
+        buf.writeBlockPos(pos);
         buf.writeInt(type.ordinal());
         buf.writeInt(mode.ordinal());
         buf.writeInt(dimension);

@@ -72,7 +72,7 @@ public class DecorationBuildRequestMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        this.pos = BlockPosUtil.readFromByteBuf(buf);
+        this.pos = buf.readBlockPos();
         this.name = buf.readString();
         this.level = buf.readInt();
         this.dimension = buf.readInt();
@@ -81,7 +81,7 @@ public class DecorationBuildRequestMessage implements IMessage
     @Override
     public void toBytes(@NotNull final PacketBuffer buf)
     {
-        BlockPosUtil.writeToByteBuf(buf, this.pos);
+        buf.writeBlockPos(this.pos);
         buf.writeString(this.name);
         buf.writeInt(this.level);
         buf.writeInt(this.dimension);

@@ -91,7 +91,7 @@ public class SifterSettingsMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
-        buildingId = BlockPosUtil.readFromByteBuf(buf);
+        buildingId = buf.readBlockPos();
         dimension = buf.readInt();
         quantity = buf.readInt();
         block = buf.readItemStack();
@@ -103,7 +103,7 @@ public class SifterSettingsMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeBlockPos(buildingId);
         buf.writeInt(dimension);
         buf.writeInt(quantity);
         buf.writeItemStack(block);
