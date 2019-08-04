@@ -3,6 +3,7 @@ package com.minecolonies.api.blocks;
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.configuration.Configurations;
@@ -101,8 +102,15 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public TileEntity createNewTileEntity(final World world, final int meta)
     {
         //Creates a tile entity for our building
-        return new TileEntityColonyBuilding();
+        return new TileEntityColonyBuilding(getBuildingEntry().getRegistryName());
     }
+
+    /**
+     * Method to get the building registry entry.
+     *
+     * @return The building entry.
+     */
+    public abstract BuildingEntry getBuildingEntry();
 
     /**
      * @deprecated (Remove this as soon as minecraft offers anything better).

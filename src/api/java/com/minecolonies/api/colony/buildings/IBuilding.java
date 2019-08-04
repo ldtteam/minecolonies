@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -55,6 +56,9 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
      */
     void onRestart(ICitizenData citizen);
 
+    /**
+     * Called when the building is placed in the world.
+     */
     void onPlacement();
 
     /**
@@ -292,4 +296,6 @@ public interface IBuilding extends ISchematicProvider, ICitizenAssignable, IBuil
     IRequester getRequester();
 
     Optional<ICitizenData> getCitizenForRequest(@NotNull IToken token);
+
+    BuildingEntry getBuildingRegistryEntry();
 }

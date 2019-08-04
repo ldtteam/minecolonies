@@ -31,10 +31,10 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutBaker = new BlockHutBaker().registerBlock(registry);
         ModBlocks.blockHutBlacksmith = new BlockHutBlacksmith().registerBlock(registry);
         ModBlocks.blockHutBuilder = new BlockHutBuilder().registerBlock(registry);
-        ModBlocks.blockHutCitizen = new BlockHutCitizen().registerBlock(registry);
+        ModBlocks.blockHutHome = new BlockHutCitizen().registerBlock(registry);
         ModBlocks.blockHutDeliveryman = new BlockHutDeliveryman().registerBlock(registry);
         ModBlocks.blockHutFarmer = new BlockHutFarmer().registerBlock(registry);
-        ModBlocks.blockHutField = new BlockHutField().registerBlock(registry);
+        ModBlocks.blockScarecrow = new BlockScarecrow().registerBlock(registry);
         ModBlocks.blockHutFisherman = new BlockHutFisherman().registerBlock(registry);
         ModBlocks.blockHutGuardTower = new BlockHutGuardTower().registerBlock(registry);
         ModBlocks.blockHutLumberjack = new BlockHutLumberjack().registerBlock(registry);
@@ -79,10 +79,10 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutBaker.registerItemBlock(registry);
         ModBlocks.blockHutBlacksmith.registerItemBlock(registry);
         ModBlocks.blockHutBuilder.registerItemBlock(registry);
-        ModBlocks.blockHutCitizen.registerItemBlock(registry);
+        ModBlocks.blockHutHome.registerItemBlock(registry);
         ModBlocks.blockHutDeliveryman.registerItemBlock(registry);
         ModBlocks.blockHutFarmer.registerItemBlock(registry);
-        ModBlocks.blockHutField.registerItemBlock(registry);
+        ModBlocks.blockScarecrow.registerItemBlock(registry);
         ModBlocks.blockHutFisherman.registerItemBlock(registry);
         ModBlocks.blockHutGuardTower.registerItemBlock(registry);
         ModBlocks.blockHutLumberjack.registerItemBlock(registry);

@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
+import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistryOld;
 import com.minecolonies.coremod.util.BuildingUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Tuple;
@@ -82,7 +82,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     public NBTTagCompound serializeNBT()
     {
         final NBTTagCompound compound = new NBTTagCompound();
-        final String s = BuildingRegistry.getNameToClassMap().inverse().get(this.getClass());
+        //TODO: Patch this into the right damn class!!!!!
+        final String s = BuildingRegistryOld.getNameToClassMap().inverse().get(this.getClass());
 
         if (s == null)
         {

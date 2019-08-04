@@ -13,38 +13,36 @@ public final class ModBlocks
      * Creating objects for all blocks in the mod.
      * References can be made to here.
      */
-
-    public static AbstractBlockMinecolonies blockHutTownHall;
-    public static AbstractBlockMinecolonies blockHutCitizen;
-    public static AbstractBlockMinecolonies blockHutMiner;
-    public static AbstractBlockMinecolonies blockHutLumberjack;
-    public static AbstractBlockMinecolonies blockHutBaker;
-    public static AbstractBlockMinecolonies blockHutBuilder;
-    public static AbstractBlockMinecolonies blockHutDeliveryman;
-    public static AbstractBlockMinecolonies blockHutBlacksmith;
-    public static AbstractBlockMinecolonies blockHutStonemason;
-    public static AbstractBlockMinecolonies blockHutFarmer;
-    public static AbstractBlockMinecolonies blockHutFisherman;
-    public static AbstractBlockMinecolonies blockBarracksTowerSubstitution;
-    public static AbstractBlockMinecolonies blockHutField;
-    public static AbstractBlockMinecolonies blockHutGuardTower;
-    public static AbstractBlockMinecolonies blockHutWareHouse;
-    public static AbstractBlockMinecolonies blockHutShepherd;
-    public static AbstractBlockMinecolonies blockHutCowboy;
-    public static AbstractBlockMinecolonies blockHutSwineHerder;
-    public static AbstractBlockMinecolonies blockHutChickenHerder;
-    public static AbstractBlockMinecolonies blockHutBarracks;
-    public static AbstractBlockMinecolonies blockHutBarracksTower;
-    public static AbstractBlockMinecolonies blockHutCook;
-    public static AbstractBlockMinecolonies blockHutSmeltery;
-    public static AbstractBlockMinecolonies blockHutComposter;
-    public static AbstractBlockMinecolonies blockHutLibrary;
-    public static AbstractBlockMinecolonies blockHutArchery;
-    public static AbstractBlockMinecolonies blockHutCombatAcademy;
-    public static AbstractBlockMinecolonies blockHutSawmill;
-    public static AbstractBlockMinecolonies blockHutStoneSmeltery;
-    public static AbstractBlockMinecolonies blockHutCrusher;
-    public static AbstractBlockMinecolonies blockHutSifter;
+    public static AbstractBlockHut blockHutTownHall;
+    public static AbstractBlockHut blockHutHome;
+    public static AbstractBlockHut blockHutMiner;
+    public static AbstractBlockHut blockHutLumberjack;
+    public static AbstractBlockHut blockHutBaker;
+    public static AbstractBlockHut blockHutBuilder;
+    public static AbstractBlockHut blockHutDeliveryman;
+    public static AbstractBlockHut blockHutBlacksmith;
+    public static AbstractBlockHut blockHutStonemason;
+    public static AbstractBlockHut blockHutFarmer;
+    public static AbstractBlockHut blockHutFisherman;
+    public static AbstractBlockHut blockHutGuardTower;
+    public static AbstractBlockHut blockHutWareHouse;
+    public static AbstractBlockHut blockHutShepherd;
+    public static AbstractBlockHut blockHutCowboy;
+    public static AbstractBlockHut blockHutSwineHerder;
+    public static AbstractBlockHut blockHutChickenHerder;
+    public static AbstractBlockHut blockHutBarracks;
+    public static AbstractBlockHut blockHutBarracksTower;
+    public static AbstractBlockHut blockHutCook;
+    public static AbstractBlockHut blockHutSmeltery;
+    public static AbstractBlockHut blockHutComposter;
+    public static AbstractBlockHut blockHutLibrary;
+    public static AbstractBlockHut blockHutArchery;
+    public static AbstractBlockHut blockHutCombatAcademy;
+    public static AbstractBlockHut blockHutSawmill;
+    public static AbstractBlockHut blockHutStoneSmeltery;
+    public static AbstractBlockHut blockHutCrusher;
+    public static AbstractBlockHut blockHutSifter;
+    public static AbstractBlockHut blockPostBox;
 
     /**
      * Utility blocks.
@@ -54,8 +52,9 @@ public final class ModBlocks
     public static AbstractBlockMinecolonies           blockWayPoint;
     public static AbstractBlockMinecolonies           blockInfoPoster;
     public static AbstractBlockBarrel                 blockBarrel;
-    public static AbstractBlockMinecolonies           blockPostBox;
     public static AbstractBlockMinecoloniesHorizontal blockDecorationPlaceholder;
+    public static AbstractBlockMinecolonies           blockScarecrow;
+    public static AbstractBlockMinecolonies           blockBarracksTowerSubstitution;
 
     /**
      * Private constructor to hide the implicit public one.

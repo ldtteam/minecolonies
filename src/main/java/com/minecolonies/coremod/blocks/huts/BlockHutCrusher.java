@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.blocks.huts;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,5 +16,11 @@ public class BlockHutCrusher extends AbstractBlockHut<BlockHutCrusher>
     public String getName()
     {
         return "blockHutCrusher";
+    }
+
+    @Override
+    public BuildingEntry getBuildingEntry()
+    {
+        return ModBuildings.crusher;
     }
 }
