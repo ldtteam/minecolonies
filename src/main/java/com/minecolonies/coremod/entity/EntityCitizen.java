@@ -32,7 +32,7 @@ import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.util.PermissionUtils;
 import com.minecolonies.coremod.util.SoundUtils;
-import com.minecolonies.coremod.util.TeleportHelper;
+import com.minecolonies.coremod.util.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
