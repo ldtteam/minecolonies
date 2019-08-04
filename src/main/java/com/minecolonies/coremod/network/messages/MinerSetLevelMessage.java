@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message to set the level of the miner from the GUI.
  */
-public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, IMessage>
+public class MinerSetLevelMessage implements IMessage
 {
     private int      colonyId;
     private BlockPos buildingId;

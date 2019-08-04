@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message to set the hiring mode of a building.
  */
-public class BuildingHiringModeMessage extends AbstractMessage<BuildingHiringModeMessage, IMessage>
+public class BuildingHiringModeMessage implements IMessage
 {
     /**
      * The colony id.

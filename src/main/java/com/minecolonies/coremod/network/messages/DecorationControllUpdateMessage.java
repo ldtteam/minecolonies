@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to update the decoration control block.
  */
-public class DecorationControllUpdateMessage extends AbstractMessage<DecorationControllUpdateMessage, IMessage>
+public class DecorationControllUpdateMessage implements IMessage
 {
     /**
      * The position of the block.

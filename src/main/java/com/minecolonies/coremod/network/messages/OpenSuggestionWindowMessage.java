@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Open the suggestion window.
  */
-public class OpenSuggestionWindowMessage extends AbstractMessage<OpenSuggestionWindowMessage, IMessage>
+public class OpenSuggestionWindowMessage implements IMessage
 {
     /**
      * The state to be placed..

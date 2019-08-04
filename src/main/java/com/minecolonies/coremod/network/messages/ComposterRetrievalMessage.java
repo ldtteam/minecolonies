@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Class used for setting whether dirt or compost should be retrived from the bin.
  */
-public class ComposterRetrievalMessage extends AbstractMessage<ComposterRetrievalMessage, IMessage>
+public class ComposterRetrievalMessage implements IMessage
 {
     /**
      * The colony id

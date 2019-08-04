@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message to change the behavior of the guards..
  */
-public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage>
+public class GuardTaskMessage implements IMessage
 {
     private int              colonyId;
     private BlockPos         buildingId;

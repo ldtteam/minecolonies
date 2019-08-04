@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Sort the warehouse if level bigger than 3.
  */
-public class SortWarehouseMessage extends AbstractMessage<SortWarehouseMessage, IMessage>
+public class SortWarehouseMessage implements IMessage
 {
     /**
      * The required level to sort a warehouse.

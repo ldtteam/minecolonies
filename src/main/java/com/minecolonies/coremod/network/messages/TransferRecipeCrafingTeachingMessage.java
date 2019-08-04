@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Creates a message to get jei recipes.
  */
-public class TransferRecipeCrafingTeachingMessage extends AbstractMessage<TransferRecipeCrafingTeachingMessage, IMessage>
+public class TransferRecipeCrafingTeachingMessage implements IMessage
 {
     /**
      * if the recipe is complete.

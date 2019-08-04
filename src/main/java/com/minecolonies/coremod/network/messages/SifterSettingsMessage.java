@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message to set the sifter mode from the GUI.
  */
-public class SifterSettingsMessage extends AbstractMessage<SifterSettingsMessage, IMessage>
+public class SifterSettingsMessage implements IMessage
 {
     /**
      * The colony id.

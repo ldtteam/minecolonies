@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author xavierh
  */
-public class MarkBuildingDirtyMessage extends AbstractMessage<MarkBuildingDirtyMessage, IMessage>
+public class MarkBuildingDirtyMessage implements IMessage
 {
     /**
      * The id of the building.

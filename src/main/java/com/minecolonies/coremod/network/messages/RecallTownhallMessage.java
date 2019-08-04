@@ -23,7 +23,7 @@ import java.util.Optional;
 /**
  * Used to handle citizen recalls to the townhall.
  */
-public class RecallTownhallMessage extends AbstractMessage<RecallTownhallMessage, IMessage>
+public class RecallTownhallMessage implements IMessage
 {
     private int colonyId;
 

@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to execute the renaiming of the townHall.
  */
-public class HutRenameMessage extends AbstractMessage<HutRenameMessage, IMessage>
+public class HutRenameMessage implements IMessage
 {
     /**
      * The colony id.

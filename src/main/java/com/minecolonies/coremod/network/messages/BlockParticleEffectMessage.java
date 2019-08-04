@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Colton
  */
-public class BlockParticleEffectMessage extends AbstractMessage<BlockParticleEffectMessage, IMessage>
+public class BlockParticleEffectMessage implements IMessage
 {
     public static final int BREAK_BLOCK = -1;
 

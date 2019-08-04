@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Message to remove an entity from the world.
  */
-public class RemoveEntityMessage extends AbstractMessage<RemoveEntityMessage, IMessage>
+public class RemoveEntityMessage implements IMessage
 {
     /**
      * Position to scan from.

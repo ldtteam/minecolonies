@@ -47,7 +47,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PASTEABLE;
  *
  * @author Colton
  */
-public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage, IMessage>
+public class BuildToolPlaceMessagev
 {
     /**
      * Language key for missing hut message.

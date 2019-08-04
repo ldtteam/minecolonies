@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Transfer the current state of automatical sheep dyeing (true = enabled)
  */
-public class ShepherdSetDyeSheepsMessage extends AbstractMessage<ShepherdSetDyeSheepsMessage, IMessage>
+public class ShepherdSetDyeSheepsMessage implements IMessage
 {
     private int      colonyId;
     private BlockPos buildingId;

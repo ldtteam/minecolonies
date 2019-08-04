@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message to set the style of a building.
  */
-public class BuildingSetStyleMessage extends AbstractMessage<BuildingSetStyleMessage, IMessage>
+public class BuildingSetStyleMessage implements IMessage
 {
     /**
      * The colony id.

@@ -16,8 +16,8 @@ import com.minecolonies.coremod.commands.colonycommands.ListColoniesCommand;
 import com.minecolonies.coremod.commands.generalcommands.CheckForAutoDeletesCommand;
 import com.minecolonies.coremod.commands.generalcommands.ScanCommand;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.math.BlockPos;
@@ -1461,7 +1461,7 @@ public class CommandEntryPointTest
 //
 //        // Sender is a player
 //        // TODO: make this playerSender the owner of a colony
-//        final ServerPlayerEntity playerSender = mockBlank(ServerPlayerEntity.class);
+//        final ServerPlayerEntity playerSender = mock(ServerPlayerEntity.class);
 //
 //        // DO:
 //

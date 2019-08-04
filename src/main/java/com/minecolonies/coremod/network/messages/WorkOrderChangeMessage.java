@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Creates the WorkOrderChangeMessage which is responsible for changes in priority or removal of workOrders.
  */
-public class WorkOrderChangeMessage extends AbstractMessage<WorkOrderChangeMessage, IMessage>
+public class WorkOrderChangeMessage implements IMessage
 {
     /**
      * The Colony ID.

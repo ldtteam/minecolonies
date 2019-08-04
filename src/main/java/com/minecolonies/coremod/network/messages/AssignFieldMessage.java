@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message which handles the assignment of fields to farmers.
  */
-public class AssignFieldMessage extends AbstractMessage<AssignFieldMessage, IMessage>
+public class AssignFieldMessage implements IMessage
 {
 
     private int      colonyId;

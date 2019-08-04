@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Add or Update a AbstractBuilding.View to a ColonyView on the client.
  */
-public class ColonyViewBuildingViewMessage extends AbstractMessage<ColonyViewBuildingViewMessage, IMessage>
+public class ColonyViewBuildingViewMessage implements IMessage
 {
     private int      colonyId;
     private BlockPos buildingId;

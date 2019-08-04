@@ -48,7 +48,7 @@ import java.util.List;
 /**
  * Send build tool data to the server. Verify the data on the server side and then place the building.
  */
-public class BuildToolPasteMessage extends AbstractMessage<BuildToolPasteMessage, IMessage>
+public class BuildToolPasteMessage implements IMessage
 {
     /**
      * Height of the chest in the supplyship to be placed.

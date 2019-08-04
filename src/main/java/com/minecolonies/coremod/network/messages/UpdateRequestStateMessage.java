@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Updates the request state of a request.
  */
-public class UpdateRequestStateMessage extends AbstractMessage<UpdateRequestStateMessage, IMessage>
+public class UpdateRequestStateMessage implements IMessage
 {
     /**
      * The id of the colony.

@@ -16,7 +16,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 /**
  * Message to set the guard scepter in the player inventory.
  */
-public class GuardScepterMessage extends AbstractMessage<GuardScepterMessage, IMessage>
+public class GuardScepterMessage implements IMessage
 {
     /**
      * The id of the task.

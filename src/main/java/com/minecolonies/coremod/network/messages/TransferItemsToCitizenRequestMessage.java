@@ -23,7 +23,7 @@ import java.util.Optional;
 /**
  * Transfer some items from the player inventory to the Workers's Inventory.
  */
-public class TransferItemsToCitizenRequestMessage extends AbstractMessage<TransferItemsToCitizenRequestMessage, IMessage>
+public class TransferItemsToCitizenRequestMessage implements IMessage
 {
     /**
      * The id of the building.

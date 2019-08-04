@@ -6,6 +6,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.Log;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;

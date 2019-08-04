@@ -13,7 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 
-public class ChangeDeliveryPriorityStateMessage extends AbstractMessage<ChangeDeliveryPriorityStateMessage, IMessage>
+public class ChangeDeliveryPriorityStateMessage implements IMessage
 {
     /**
      * The Colony ID.

@@ -18,7 +18,7 @@ import java.util.Random;
 /**
  * Handles spawning item particle effects on top of a block..
  */
-public class LocalizedParticleEffectMessage extends AbstractMessage<LocalizedParticleEffectMessage, IMessage>
+public class LocalizedParticleEffectMessage implements IMessage
 {
     /**
      * Random obj.

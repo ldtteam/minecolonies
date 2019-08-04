@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Add or Update a ColonyView on the client.
  */
-public class ColonyViewWorkOrderMessage extends AbstractMessage<ColonyViewWorkOrderMessage, IMessage>
+public class ColonyViewWorkOrderMessage implements IMessage
 {
     private int     colonyId;
     private int     workOrderId;

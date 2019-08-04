@@ -44,7 +44,7 @@ public class PermissionsMessage
     /**
      * Client side presentation of the message.
      */
-    public static class View extends AbstractMessage<View, IMessage>
+    public static class View implements IMessage
     {
         private int     colonyID;
         private ByteBuf data;
@@ -103,7 +103,7 @@ public class PermissionsMessage
     /**
      * Permission message class.
      */
-    public static class Permission extends AbstractMessage<Permission, IMessage>
+    public static class Permission implements IMessage
     {
         private int         colonyID;
         private MessageType type;
@@ -197,7 +197,7 @@ public class PermissionsMessage
     /**
      * Message class for adding a player to a permission set.
      */
-    public static class AddPlayer extends AbstractMessage<AddPlayer, IMessage>
+    public static class AddPlayer implements IMessage
     {
         private int    colonyID;
         private String playerName;
@@ -264,7 +264,7 @@ public class PermissionsMessage
     /**
      * Message class for adding a player or fakePlayer to a permission set.
      */
-    public static class AddPlayerOrFakePlayer extends AbstractMessage<AddPlayerOrFakePlayer, IMessage>
+    public static class AddPlayerOrFakePlayer implements IMessage
     {
         private int    colonyID;
         private String playerName;
@@ -336,7 +336,7 @@ public class PermissionsMessage
     /**
      * Message class for setting a player rank in the permissions.
      */
-    public static class ChangePlayerRank extends AbstractMessage<ChangePlayerRank, IMessage>
+    public static class ChangePlayerRank implements IMessage
     {
         private int  colonyID;
         private UUID playerID;
@@ -428,7 +428,7 @@ public class PermissionsMessage
     /**
      * Message class for removing a player from a permission set.
      */
-    public static class RemovePlayer extends AbstractMessage<RemovePlayer, IMessage>
+    public static class RemovePlayer implements IMessage
     {
         private int  colonyID;
         private UUID playerID;

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message class which manages the message to toggle automatic or manual job allocation.
  */
-public class ToggleJobMessage extends AbstractMessage<ToggleJobMessage, IMessage>
+public class ToggleJobMessage implements IMessage
 {
     /**
      * The Colony ID.

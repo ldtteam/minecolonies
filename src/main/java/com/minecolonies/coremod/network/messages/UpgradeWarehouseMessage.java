@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Issues the upgrade of the warehouse pos level 5.
  */
-public class UpgradeWarehouseMessage extends AbstractMessage<UpgradeWarehouseMessage, IMessage>
+public class UpgradeWarehouseMessage implements IMessage
 {
     /**
      * The id of the building.

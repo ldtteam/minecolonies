@@ -12,7 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.Nullable;
 
-public class GuardRecalculateMessage extends AbstractMessage<GuardRecalculateMessage, IMessage>
+public class GuardRecalculateMessage implements IMessage
 {
     /**
      * The position of the building.

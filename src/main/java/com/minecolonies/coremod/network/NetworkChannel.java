@@ -1,9 +1,8 @@
 package com.minecolonies.coremod.network;
 
 import com.ldtteam.structurize.Structurize;
-import com.ldtteam.structurize.api.util.Utils;
 import com.ldtteam.structurize.api.util.constant.Constants;
-import com.ldtteam.structurize.network.messages.*;
+import com.minecolonies.coremod.network.messages.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
@@ -45,21 +44,96 @@ public class NetworkChannel
     public void registerCommonMessages()
     {
         int idx = 0;
-        registerMessage(++idx, MultiBlockChangeMessage.class);
-        registerMessage(++idx, BuildToolPasteMessage.class);
-        registerMessage(++idx, GenerateAndPasteMessage.class);
-        registerMessage(++idx, LSStructureDisplayerMessage.class);
-        registerMessage(++idx, RemoveBlockMessage.class);
-        registerMessage(++idx, RemoveEntityMessage.class);
-        registerMessage(++idx, SaveScanMessage.class);
-        registerMessage(++idx, ReplaceBlockMessage.class);
-        registerMessage(++idx, ScanOnServerMessage.class);
-        registerMessage(++idx, SchematicRequestMessage.class);
-        registerMessage(++idx, SchematicSaveMessage.class);
         registerMessage(++idx, ServerUUIDMessage.class);
-        registerMessage(++idx, StructurizeStylesMessage.class);
-        registerMessage(++idx, UndoMessage.class);
-        registerMessage(++idx, UpdateScanToolMessage.class);
+
+        //  ColonyView messages
+        registerMessage(++idx, ColonyViewMessage.class);
+        registerMessage(++idx, ColonyViewCitizenViewMessage.class);
+        registerMessage(++idx, ColonyViewRemoveCitizenMessage.class);
+        registerMessage(++idx, ColonyViewBuildingViewMessage.class);
+        registerMessage(++idx, ColonyViewRemoveBuildingMessage.class);
+        registerMessage(++idx, PermissionsMessage.View.class);
+        registerMessage(++idx, ColonyStylesMessage.class);
+        registerMessage(++idx, ColonyViewWorkOrderMessage.class);
+        registerMessage(++idx, ColonyViewRemoveWorkOrderMessage.class);
+        registerMessage(++idx, UpdateChunkCapabilityMessage.class);
+        registerMessage(++idx, GuardMobAttackListMessage.class);
+        registerMessage(++idx, HappinessDataMessage.class);
+
+        //  Permission Request messages
+        registerMessage(++idx, PermissionsMessage.Permission.class);
+        registerMessage(++idx, PermissionsMessage.AddPlayer.class);
+        registerMessage(++idx, PermissionsMessage.RemovePlayer.class);
+        registerMessage(++idx, PermissionsMessage.ChangePlayerRank.class);
+        registerMessage(++idx, PermissionsMessage.AddPlayerOrFakePlayer.class);
+
+        //  Colony Request messages
+        registerMessage(++idx, BuildRequestMessage.class);
+        registerMessage(++idx, OpenInventoryMessage.class);
+        registerMessage(++idx, TownHallRenameMessage.class);
+        registerMessage(++idx, MinerSetLevelMessage.class);
+        registerMessage(++idx, RecallCitizenMessage.class);
+        registerMessage(++idx, BuildToolPlaceMessage.class);
+        registerMessage(++idx, ToggleJobMessage.class);
+        registerMessage(++idx, HireFireMessage.class);
+        registerMessage(++idx, WorkOrderChangeMessage.class);
+        registerMessage(++idx, AssignFieldMessage.class);
+        registerMessage(++idx, AssignmentModeMessage.class);
+        registerMessage(++idx, GuardTaskMessage.class);
+        registerMessage(++idx, GuardRecalculateMessage.class);
+        registerMessage(++idx, MobEntryChangeMessage.class);
+        registerMessage(++idx, GuardScepterMessage.class);
+        registerMessage(++idx, RecallTownhallMessage.class);
+        registerMessage(++idx, TransferItemsRequestMessage.class);
+        registerMessage(++idx, MarkBuildingDirtyMessage.class);
+        registerMessage(++idx, ChangeFreeToInteractBlockMessage.class);
+        registerMessage(++idx, LumberjackReplantSaplingToggleMessage.class);
+        registerMessage(++idx, ToggleHousingMessage.class);
+        registerMessage(++idx, ToggleMoveInMessage.class);
+        registerMessage(++idx, AssignUnassignMessage.class);
+        registerMessage(++idx, OpenCraftingGUIMessage.class);
+        registerMessage(++idx, AddRemoveRecipeMessage.class);
+        registerMessage(++idx, ChangeRecipePriorityMessage.class);
+        registerMessage(++idx, ChangeDeliveryPriorityMessage.class);
+        registerMessage(++idx, ChangeDeliveryPriorityStateMessage.class);
+        registerMessage(++idx, UpgradeWarehouseMessage.class);
+        registerMessage(++idx, BuildToolPasteMessage.class);
+        registerMessage(++idx, TransferItemsToCitizenRequestMessage.class);
+        registerMessage(++idx, UpdateRequestStateMessage.class);
+        registerMessage(++idx, BuildingSetStyleMessage.class);
+        registerMessage(++idx, CowboySetMilkCowsMessage.class);
+        registerMessage(++idx, BuildingMoveMessage.class);
+        registerMessage(++idx, RecallSingleCitizenMessage.class);
+        registerMessage(++idx, RemoveEntityMessage.class);
+        registerMessage(++idx, AssignFilterableItemMessage.class);
+        registerMessage(++idx, TeamColonyColorChangeMessage.class);
+        registerMessage(++idx, ToggleHelpMessage.class);
+        registerMessage(++idx, PauseCitizenMessage.class);
+        registerMessage(++idx, RestartCitizenMessage.class);
+        registerMessage(++idx, SortWarehouseMessage.class);
+        registerMessage(++idx, PostBoxRequestMessage.class);
+        registerMessage(++idx, ComposterRetrievalMessage.class);
+        registerMessage(++idx, CrusherSetModeMessage.class);
+        registerMessage(++idx, BuyCitizenMessage.class);
+        registerMessage(++idx, HireMercenaryMessage.class);
+        registerMessage(++idx, ShepherdSetDyeSheepsMessage.class);
+        registerMessage(++idx, SifterSettingsMessage.class);
+        registerMessage(++idx, HutRenameMessage.class);
+        registerMessage(++idx, BuildingHiringModeMessage.class);
+        registerMessage(++idx, DecorationBuildRequestMessage.class);
+        registerMessage(++idx, DecorationControllUpdateMessage.class);
+        registerMessage(++idx, DirectPlaceMessage.class);
+
+        //Client side only
+        registerMessage(++idx, BlockParticleEffectMessage.class);
+        registerMessage(++idx, CompostParticleMessage.class);
+        registerMessage(++idx, ItemParticleEffectMessage.class);
+        registerMessage(++idx, LocalizedParticleEffectMessage.class);
+        registerMessage(++idx, UpdateChunkRangeCapabilityMessage.class);
+        registerMessage(++idx, OpenSuggestionWindowMessage.class);
+
+        //JEI Messages
+        registerMessage(++idx, TransferRecipeCrafingTeachingMessage.class);
     }
 
     /**

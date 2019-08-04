@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Creates a message for changing MobEntry priorities
  */
-public class MobEntryChangeMessage extends AbstractMessage<MobEntryChangeMessage, IMessage>
+public class MobEntryChangeMessage implements IMessage
 {
     private int      colonyId;
     private BlockPos buildingId;

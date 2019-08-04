@@ -18,7 +18,7 @@ import java.util.Random;
 /**
  * Handles spawning item particle effects close to an entity.
  */
-public class ItemParticleEffectMessage extends AbstractMessage<ItemParticleEffectMessage, IMessage>
+public class ItemParticleEffectMessage implements IMessage
 {
     /**
      * Random obj.

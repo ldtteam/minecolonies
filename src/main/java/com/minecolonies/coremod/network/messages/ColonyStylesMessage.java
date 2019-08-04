@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Class handling the colony styles messages.
  */
-public class ColonyStylesMessage extends AbstractMessage<ColonyStylesMessage, IMessage>
+public class ColonyStylesMessage implements IMessage
 {
     private boolean             allowPlayerSchematics;
     private Map<String, String> md5Map;

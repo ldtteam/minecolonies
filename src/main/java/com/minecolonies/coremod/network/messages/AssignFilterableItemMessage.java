@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message which handles the assignment of items to filterable item lists.
  */
-public class AssignFilterableItemMessage extends AbstractMessage<AssignFilterableItemMessage, IMessage>
+public class AssignFilterableItemMessage implements IMessage
 {
     /**
      * The id of the colony.
