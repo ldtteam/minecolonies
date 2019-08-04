@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
+import com.ldtteam.blockout.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;

@@ -2,7 +2,7 @@ package com.minecolonies.coremod.compatibility.jei.transer;
 
 import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.inventory.CraftingGUIBuilding;

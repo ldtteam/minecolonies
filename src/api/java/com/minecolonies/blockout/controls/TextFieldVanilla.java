@@ -1,6 +1,6 @@
-package com.minecolonies.blockout.controls;
+package com.ldtteam.blockout.controls;
 
-import com.minecolonies.blockout.PaneParams;
+import com.ldtteam.blockout.PaneParams;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ChatAllowedCharacters;
 

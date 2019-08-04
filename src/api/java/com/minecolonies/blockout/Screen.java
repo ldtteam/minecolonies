@@ -1,6 +1,6 @@
-package com.minecolonies.blockout;
+package com.ldtteam.blockout;
 
-import com.minecolonies.blockout.views.Window;
+import com.ldtteam.blockout.views.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;

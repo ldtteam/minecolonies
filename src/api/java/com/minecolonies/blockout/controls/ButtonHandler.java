@@ -1,4 +1,4 @@
-package com.minecolonies.blockout.controls;
+package com.ldtteam.blockout.controls;
 
 import java.util.function.Consumer;
 

@@ -11,7 +11,7 @@ import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.util.ChunkLoadStorage;
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRecipeManager;

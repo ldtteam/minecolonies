@@ -1,8 +1,8 @@
-package com.minecolonies.blockout.controls;
+package com.ldtteam.blockout.controls;
 
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.blockout.Pane;
-import com.minecolonies.blockout.PaneParams;
+import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.PaneParams;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;

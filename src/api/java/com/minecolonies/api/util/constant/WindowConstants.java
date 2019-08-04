@@ -1,6 +1,6 @@
 package com.minecolonies.api.util.constant;
 
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import net.minecraft.util.ResourceLocation;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;

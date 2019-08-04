@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.blockout.views.Window;
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;

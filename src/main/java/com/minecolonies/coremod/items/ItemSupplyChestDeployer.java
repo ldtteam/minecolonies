@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.BlockUtils;
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

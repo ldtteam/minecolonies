@@ -1,14 +1,11 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.blockout.Pane;
-import com.minecolonies.blockout.controls.Button;
-import com.minecolonies.blockout.controls.ItemIcon;
-import com.minecolonies.blockout.controls.Label;
-import com.minecolonies.blockout.controls.TextField;
-import com.minecolonies.blockout.views.ScrollingList;
-import com.minecolonies.blockout.views.View;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.controls.*;
+import com.ldtteam.blockout.views.ScrollingList;
+import com.ldtteam.blockout.views.View;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;

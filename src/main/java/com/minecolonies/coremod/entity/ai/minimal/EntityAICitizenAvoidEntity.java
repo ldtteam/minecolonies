@@ -4,7 +4,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.blockout.Log;
+import com.ldtteam.blockout.Log;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.Entity;

@@ -1,6 +1,6 @@
-package com.minecolonies.blockout;
+package com.ldtteam.blockout;
 
-import com.minecolonies.blockout.views.View;
+import com.ldtteam.blockout.views.View;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.minecolonies.blockout.Log.getLogger;
+import static com.ldtteam.blockout.Log.getLogger;
 
 /**
  * Special parameters for the panes.

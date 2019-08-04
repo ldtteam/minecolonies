@@ -2,9 +2,9 @@ package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColonyManager;
+import com.ldtteam.blockout.controls.Button;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.blockout.controls.Button;
-import com.minecolonies.blockout.views.View;
+import com.ldtteam.blockout.views.View;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;

@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowHutShepherd;
 import com.minecolonies.coremod.colony.Colony;

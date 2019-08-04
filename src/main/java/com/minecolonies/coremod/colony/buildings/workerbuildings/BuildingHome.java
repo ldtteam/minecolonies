@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutCitizen;
 import com.minecolonies.coremod.colony.Colony;

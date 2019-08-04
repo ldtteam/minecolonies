@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.util.Log;
-import com.minecolonies.blockout.controls.Button;
-import com.minecolonies.blockout.controls.ButtonHandler;
-import com.minecolonies.blockout.controls.Label;
-import com.minecolonies.blockout.views.SwitchView;
-import com.minecolonies.blockout.views.Window;
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.ButtonHandler;
+import com.ldtteam.blockout.controls.Label;
+import com.ldtteam.blockout.views.SwitchView;
+import com.ldtteam.blockout.views.Window;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

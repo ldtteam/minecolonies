@@ -1,4 +1,4 @@
-package com.minecolonies.blockout;
+package com.ldtteam.blockout;
 
 import java.util.HashMap;
 import java.util.Locale;

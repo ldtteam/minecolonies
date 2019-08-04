@@ -6,7 +6,7 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.blockout.Log;
+import com.ldtteam.blockout.Log;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.block.Block;

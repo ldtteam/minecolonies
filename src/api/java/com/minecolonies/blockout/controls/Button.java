@@ -1,7 +1,7 @@
-package com.minecolonies.blockout.controls;
+package com.ldtteam.blockout.controls;
 
-import com.minecolonies.blockout.Pane;
-import com.minecolonies.blockout.PaneParams;
+import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.PaneParams;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.init.SoundEvents;
 import org.jetbrains.annotations.NotNull;

@@ -1,7 +1,7 @@
-package com.minecolonies.blockout.views;
+package com.ldtteam.blockout.views;
 
-import com.minecolonies.blockout.PaneParams;
-import com.minecolonies.blockout.Render;
+import com.ldtteam.blockout.PaneParams;
+import com.ldtteam.blockout.Render;
 import org.jetbrains.annotations.NotNull;
 
 /**

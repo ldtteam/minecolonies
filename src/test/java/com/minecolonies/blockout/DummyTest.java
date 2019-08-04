@@ -1,4 +1,4 @@
-package com.minecolonies.blockout;
+package com.ldtteam.blockout;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -12,7 +12,7 @@ import com.minecolonies.api.configuration.NameConfiguration;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;

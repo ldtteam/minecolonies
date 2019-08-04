@@ -1,8 +1,8 @@
-package com.minecolonies.blockout.views;
+package com.ldtteam.blockout.views;
 
-import com.minecolonies.blockout.Pane;
-import com.minecolonies.blockout.PaneParams;
-import com.minecolonies.blockout.controls.*;
+import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.PaneParams;
+import com.ldtteam.blockout.controls.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;

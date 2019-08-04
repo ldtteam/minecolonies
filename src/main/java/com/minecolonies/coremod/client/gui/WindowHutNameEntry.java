@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.blockout.controls.Button;
-import com.minecolonies.blockout.controls.ButtonHandler;
-import com.minecolonies.blockout.controls.TextField;
-import com.minecolonies.blockout.views.Window;
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.ButtonHandler;
+import com.ldtteam.blockout.controls.TextField;
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;

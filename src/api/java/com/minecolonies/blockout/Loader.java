@@ -1,7 +1,7 @@
-package com.minecolonies.blockout;
+package com.ldtteam.blockout;
 
-import com.minecolonies.blockout.controls.*;
-import com.minecolonies.blockout.views.*;
+import com.ldtteam.blockout.controls.*;
+import com.ldtteam.blockout.views.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
