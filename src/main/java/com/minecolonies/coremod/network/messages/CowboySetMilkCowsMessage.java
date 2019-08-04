@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CowboySetMilkCowsMessage extends AbstractMessage<CowboySetMilkCowsMessage, IMessage>
+public class CowboySetMilkCowsMessage implements IMessage
 {
     private int      colonyId;
     private BlockPos buildingId;

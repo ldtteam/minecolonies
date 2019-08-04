@@ -20,7 +20,7 @@ import java.util.Optional;
 /**
  * Recalls the citizen to the location.
  */
-public class RecallSingleCitizenMessage extends AbstractMessage<RecallSingleCitizenMessage, IMessage>
+public class RecallSingleCitizenMessage implements IMessage
 {
     /**
      * The colony id.

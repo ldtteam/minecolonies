@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message to change the assignmentMode of the fields of the farmer.
  */
-public class AssignmentModeMessage extends AbstractMessage<AssignmentModeMessage, IMessage>
+public class AssignmentModeMessage implements IMessage
 {
 
     private int      colonyId;

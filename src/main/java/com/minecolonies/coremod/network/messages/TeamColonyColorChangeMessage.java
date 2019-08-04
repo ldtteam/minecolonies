@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message class which manages changing the team color of the colony.
  */
-public class TeamColonyColorChangeMessage extends AbstractMessage<TeamColonyColorChangeMessage, IMessage>
+public class TeamColonyColorChangeMessage implements IMessage
 {
     /**
      * The Colony ID.

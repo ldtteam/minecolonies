@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to execute the renaiming of the townHall.
  */
-public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFreeToInteractBlockMessage, IMessage>
+public class ChangeFreeToInteractBlockMessage implements IMessage
 {
 
     /**

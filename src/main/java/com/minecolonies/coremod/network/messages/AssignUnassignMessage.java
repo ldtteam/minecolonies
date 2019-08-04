@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message class which manages the messages assigning or unassigning of citizens.
  */
-public class AssignUnassignMessage extends AbstractMessage<AssignUnassignMessage, IMessage>
+public class AssignUnassignMessage implements IMessage
 {
     /**
      * The Colony ID.

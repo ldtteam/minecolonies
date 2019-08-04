@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message class which manages the messages hiring or firing of citizens.
  */
-public class PauseCitizenMessage extends AbstractMessage<PauseCitizenMessage, IMessage>
+public class PauseCitizenMessage implements IMessage
 {
     /**
      * The Colony ID.

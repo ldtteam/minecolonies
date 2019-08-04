@@ -25,6 +25,7 @@ import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.INBT;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Hand;

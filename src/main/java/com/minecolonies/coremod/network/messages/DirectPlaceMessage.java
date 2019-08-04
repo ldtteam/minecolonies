@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Place a building directly without buildtool.
  */
-public class DirectPlaceMessage extends AbstractMessage<DirectPlaceMessage, IMessage>
+public class DirectPlaceMessage implements IMessage
 {
     /**
      * The state to be placed..

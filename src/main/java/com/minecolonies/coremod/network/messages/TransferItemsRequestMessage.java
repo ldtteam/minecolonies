@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author xavierh
  */
-public class TransferItemsRequestMessage extends AbstractMessage<TransferItemsRequestMessage, IMessage>
+public class TransferItemsRequestMessage implements IMessage
 {
     /**
      * The id of the building.

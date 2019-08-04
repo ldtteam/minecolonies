@@ -24,7 +24,7 @@ import java.util.Optional;
 /**
  * Adds a entry to the builderRequired map.
  */
-public class DecorationBuildRequestMessage extends AbstractMessage<DecorationBuildRequestMessage, IMessage>
+public class DecorationBuildRequestMessage implements IMessage
 {
     /**
      * The id of the building.

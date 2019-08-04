@@ -21,7 +21,7 @@ import java.util.Random;
 /**
  * Message for the hire citizen action
  */
-public class BuyCitizenMessage extends AbstractMessage<BuyCitizenMessage, IMessage>
+public class BuyCitizenMessage implements IMessage
 {
     /**
      * ID of the colony

@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Class used for setting whether saplings should be planted after lj chops a tree.
  */
-public class LumberjackReplantSaplingToggleMessage extends AbstractMessage<LumberjackReplantSaplingToggleMessage, IMessage>
+public class LumberjackReplantSaplingToggleMessage implements IMessage
 {
 
     /**

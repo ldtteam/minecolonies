@@ -2,6 +2,7 @@ package com.minecolonies.coremod.commands;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.coremod.colony.ICitizenData;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import org.jetbrains.annotations.NotNull;
 

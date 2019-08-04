@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message sent to open an inventory.
  */
-public class OpenCraftingGUIMessage extends AbstractMessage<OpenCraftingGUIMessage, IMessage>
+public class OpenCraftingGUIMessage implements IMessage
 {
     /**
      * The position of the inventory block/entity.

@@ -46,7 +46,7 @@ import java.util.Map;
 /**
  * Move a building to another location.
  */
-public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IMessage>
+public class BuildingMoveMessage implements IMessage
 {
     /**
      * Position of building.

@@ -77,7 +77,7 @@ public enum ActionArgumentType
         final PlayerList playerList = server.getPlayerList();
         final List<ServerPlayerEntity> allPlayersList = playerList.getPlayers();
         final List<String> playerNames = new ArrayList<>(allPlayersList.size());
-        for (final ServerPlayerEntity ServerPlayerEntity : allPlayersList)
+        for (final ServerPlayerEntity entityPlayerMP : allPlayersList)
         {
             final String playerName = ServerPlayerEntity.getName();
             if (!playerNames.contains(playerName))

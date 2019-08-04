@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message to set the crusher mode from the GUI.
  */
-public class CrusherSetModeMessage extends AbstractMessage<CrusherSetModeMessage, IMessage>
+public class CrusherSetModeMessage implements IMessage
 {
     /**
      * The colony id.

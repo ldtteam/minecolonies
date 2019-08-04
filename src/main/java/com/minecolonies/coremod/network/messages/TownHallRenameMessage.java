@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to execute the renaiming of the townHall.
  */
-public class TownHallRenameMessage extends AbstractMessage<TownHallRenameMessage, IMessage>
+public class TownHallRenameMessage implements IMessage
 {
     private static final int MAX_NAME_LENGTH  = 25;
     private static final int SUBSTRING_LENGTH = MAX_NAME_LENGTH - 1;

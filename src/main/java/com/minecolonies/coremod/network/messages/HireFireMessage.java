@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message class which manages the messages hiring or firing of citizens.
  */
-public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
+public class HireFireMessage implements IMessage
 {
     /**
      * The Colony ID.

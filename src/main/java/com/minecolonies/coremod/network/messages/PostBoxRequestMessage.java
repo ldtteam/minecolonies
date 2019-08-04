@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Creates a request from the postbox.
  */
-public class PostBoxRequestMessage extends AbstractMessage<PostBoxRequestMessage, IMessage>
+public class PostBoxRequestMessage implements IMessage
 {
     /**
      * The id of the building.

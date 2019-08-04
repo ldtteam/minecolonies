@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message class which manages the messages hiring or firing of citizens.
  */
-public class RestartCitizenMessage extends AbstractMessage<RestartCitizenMessage, IMessage>
+public class RestartCitizenMessage implements IMessage
 {
     /**
      * The Colony ID.

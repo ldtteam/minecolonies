@@ -151,7 +151,7 @@ public class CraftingGUIBuilding extends Container
     {
         if (!worldObj.isRemote)
         {
-            final ServerPlayerEntity ServerPlayerEntity = (ServerPlayerEntity) player;
+            final ServerPlayerEntity entityplayermp = (ServerPlayerEntity) player;
             ItemStack itemstack = ItemStack.EMPTY;
             final IRecipe irecipe = CraftingManager.findMatchingRecipe(craftMatrix, worldObj);
             if (irecipe != null && (irecipe.isDynamic()

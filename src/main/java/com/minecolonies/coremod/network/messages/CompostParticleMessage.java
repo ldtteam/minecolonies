@@ -16,7 +16,7 @@ import java.util.Random;
 /**
  * Handles the server causing compost particle effects.
  */
-public class CompostParticleMessage extends AbstractMessage<CompostParticleMessage, IMessage>
+public class CompostParticleMessage implements IMessage
 {
     /**
      * Random obj for values.

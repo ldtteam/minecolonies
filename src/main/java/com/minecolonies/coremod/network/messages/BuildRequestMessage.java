@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Colton
  */
-public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IMessage>
+public class BuildRequestMessage implements IMessage
 {
     /**
      * The int mode for a build job.

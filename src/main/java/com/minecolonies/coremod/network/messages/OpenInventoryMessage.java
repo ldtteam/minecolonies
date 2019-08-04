@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message sent to open an inventory.
  */
-public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, IMessage>
+public class OpenInventoryMessage implements IMessage
 {
     /***
      * The inventory name.

@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  *
  * @author Colton
  */
-public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, IMessage>
+public class RecallCitizenMessage implements IMessage
 {
     private int      colonyId;
     private BlockPos buildingId;

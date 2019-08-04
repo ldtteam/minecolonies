@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message class which manages the message to toggle the help messages.
  */
-public class ToggleHelpMessage extends AbstractMessage<ToggleHelpMessage, IMessage>
+public class ToggleHelpMessage implements IMessage
 {
     /**
      * The Colony ID.

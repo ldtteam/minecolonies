@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 /**
  * The message sent when activating mercenaries
  */
-public class HireMercenaryMessage extends AbstractMessage<HireMercenaryMessage, IMessage>
+public class HireMercenaryMessage implements IMessage
 {
     /**
      * Colony id for the mercenary event

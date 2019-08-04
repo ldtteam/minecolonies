@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message class which manages the message to toggle automatic or manual housing allocation.
  */
-public class ToggleMoveInMessage extends AbstractMessage<ToggleMoveInMessage, IMessage>
+public class ToggleMoveInMessage implements IMessage
 {
     /**
      * The Colony ID.

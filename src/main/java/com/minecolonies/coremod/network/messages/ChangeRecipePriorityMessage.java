@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to change priorities of recipes.
  */
-public class ChangeRecipePriorityMessage extends AbstractMessage<ChangeRecipePriorityMessage, IMessage>
+public class ChangeRecipePriorityMessage implements IMessage
 {
     /**
      * The Colony ID.
