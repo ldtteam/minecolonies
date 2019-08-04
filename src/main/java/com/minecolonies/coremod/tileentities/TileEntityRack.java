@@ -3,6 +3,7 @@ package com.minecolonies.coremod.tileentities;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -15,15 +16,13 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,7 +54,12 @@ public class TileEntityRack extends AbstractTileEntityRack
     /**
      * The combined inv wrapper for double racks.
      */
-    private CombinedInvWrapper combinedHandler;
+    private CombinedItemHandler combinedHandler;
+
+    public TileEntityRack(final TileEntityType<?> tileEntityTypeIn)
+    {
+        super(tileEntityTypeIn);
+    }
 
     /**
      * Check if a certain itemstack is present in the inventory.
@@ -160,16 +164,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     public void upgradeItemStorage()
     {
         ++size;
-        final IItemHandlerModifiable tempInventory = new ItemStackHandler(DEFAULT_SIZE + size * SLOT_PER_LINE)
-        {
-            @Override
-            protected void onContentsChanged(final int slot)
-            {
-                updateItemStorage();
-                super.onContentsChanged(slot);
-            }
-        };
-
+        final RackInventory tempInventory = new RackInventory(DEFAULT_SIZE + size * SLOT_PER_LINE);
         for (int slot = 0; slot < inventory.getSlots(); slot++)
         {
             tempInventory.setStackInSlot(slot, inventory.getStackInSlot(slot));
@@ -181,7 +176,7 @@ public class TileEntityRack extends AbstractTileEntityRack
 
         if (main && combinedHandler == null && getOtherChest() != null)
         {
-            combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
+            combinedHandler = new CombinedItemHandler("rack", inventory, getOtherChest().getInventory());
         }
     }
 
@@ -331,7 +326,7 @@ public class TileEntityRack extends AbstractTileEntityRack
             size = compound.getInt(TAG_SIZE);
             if (size > 0)
             {
-                inventory = new ItemStackHandler(DEFAULT_SIZE + size * SLOT_PER_LINE)
+                inventory = new RackInventory(DEFAULT_SIZE + size * SLOT_PER_LINE)
                 {
                     @Override
                     protected void onContentsChanged(final int slot)
@@ -456,7 +451,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             if (single)
             {
-                return (T) inventory;
+                return LazyOptional.of(inventory);
             }
             else if (getOtherChest() != null)
             {
@@ -464,15 +459,15 @@ public class TileEntityRack extends AbstractTileEntityRack
                 {
                     if (combinedHandler == null)
                     {
-                        combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
+                        combinedHandler = new CombinedItemHandler("Rack", inventory, getOtherChest().getInventory());
                     }
-                    return (T) combinedHandler;
+                    return LazyOptional.of(combinedHandler);
                 }
                 else
                 {
                     if (getOtherChest().isMain())
                     {
-                        return (T) getOtherChest().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                        return (LazyOptional<T>) getOtherChest().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
                     }
                     else
                     {
@@ -480,10 +475,10 @@ public class TileEntityRack extends AbstractTileEntityRack
 
                         if (combinedHandler == null)
                         {
-                            combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
+                            combinedHandler = new CombinedItemHandler("Rack", inventory, getOtherChest().getInventory());
                         }
                         markDirty();
-                        return (T) combinedHandler;
+                        return LazyOptional.of(combinedHandler);
                     }
                 }
             }

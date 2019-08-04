@@ -1,6 +1,6 @@
 package com.minecolonies.api.tileentities;
 
-import com.ldtteam.structurize.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -18,8 +18,6 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -287,6 +285,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
         building = b;
     }
 
+    @NotNull
     @Override
     public ITextComponent getDisplayName()
     {
@@ -310,7 +309,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     }
 
     @Override
-    public void read(final CompoundNBT compound)
+    public void read(@NotNull final CompoundNBT compound)
     {
         super.read(compound);
         if (compound.keySet().contains(TAG_COLONY))
@@ -356,7 +355,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     }
 
     @Override
-    public boolean isUsableByPlayer(final PlayerEntity player)
+    public boolean isUsableByPlayer(@NotNull final PlayerEntity player)
     {
         return super.isUsableByPlayer(player) && this.hasAccessPermission(player);
     }
@@ -460,7 +459,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
                                                                                           .toArray(IItemHandlerModifiable[]::new));
             }
 
-            return LazyOptional.of(new NonNullSupplier<T>(this.combinedInv));
+            return LazyOptional.of(this.combinedInv);
         }
         return super.getCapability(capability);
     }

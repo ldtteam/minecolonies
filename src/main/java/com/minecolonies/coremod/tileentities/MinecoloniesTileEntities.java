@@ -39,7 +39,7 @@ public class MinecoloniesTileEntities
     public static void registerTileEntity(final RegistryEvent.Register<TileEntityType<?>> event)
     {
         SCARECROW = TileEntityType.Builder.create(ScarecrowTileEntity::new,
-          ModBlocks.blockHutField).build(null).setRegistryName(Constants.MOD_ID, "scarecrow");
+          ModBlocks.blockScarecrow).build(null).setRegistryName(Constants.MOD_ID, "scarecrow");
 
         BARREL = TileEntityType.Builder.create(TileEntityBarrel::new,
           ModBlocks.blockBarrel).build(null).setRegistryName(Constants.MOD_ID, "barrel");
@@ -48,7 +48,7 @@ public class MinecoloniesTileEntities
           ModBlocks.getHuts()).build(null).setRegistryName(Constants.MOD_ID, "colonybuilding");
 
         DECO_CONTROLLER = TileEntityType.Builder.create(TileEntityDecorationController::new,
-          ModBlocks.blockDecorationPlacerholder).build(null).setRegistryName(Constants.MOD_ID, "decorationcontroller");
+          ModBlocks.blockDecorationPlaceholder).build(null).setRegistryName(Constants.MOD_ID, "decorationcontroller");
 
         INFO_POSTER = TileEntityType.Builder.create(TileEntityInfoPoster::new,
           ModBlocks.blockInfoPoster).build(null).setRegistryName(Constants.MOD_ID, "infoposter");
