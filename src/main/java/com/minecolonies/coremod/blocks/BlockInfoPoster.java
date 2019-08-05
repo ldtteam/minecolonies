@@ -3,9 +3,9 @@ package com.minecolonies.coremod.blocks;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesContainer;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
-import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.properties.DirectionProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.LivingEntityBase;
@@ -30,7 +30,7 @@ import static net.minecraft.util.Direction.fromAngle;
  */
 public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInfoPoster>
 {
-    public static final PropertyDirection FACING = BlockHorizontal.FACING;
+    public static final DirectionProperty FACING = HorizontalBlock.FACING;
 
     /**
      * This blocks name.

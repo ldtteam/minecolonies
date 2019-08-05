@@ -9,7 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +41,7 @@ public abstract class AbstractTileEntityRack extends TileEntity
     /**
      * The inventory of the tileEntity.
      */
-    protected RackInventory inventory = new RackInventory(DEFAULT_SIZE);
+    protected ItemStackHandler inventory = new RackInventory(DEFAULT_SIZE);
 
     public AbstractTileEntityRack(final TileEntityType<?> tileEntityTypeIn)
     {
@@ -52,7 +51,7 @@ public abstract class AbstractTileEntityRack extends TileEntity
     /**
      * Rack inventory type.
      */
-    public class RackInventory extends ItemStackHandler implements NonNullSupplier
+    public class RackInventory extends ItemStackHandler
     {
         public RackInventory(final int defaultSize)
         {
@@ -77,8 +76,7 @@ public abstract class AbstractTileEntityRack extends TileEntity
 
                 if (colony != null && colony.getRequestManager() != null)
                 {
-                    colony.getRequestManager()
-                      .onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(stack));
+                    colony.getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(stack));
                 }
             }
         }
@@ -90,13 +88,6 @@ public abstract class AbstractTileEntityRack extends TileEntity
             final ItemStack result = super.extractItem(slot, amount, simulate);
             updateItemStorage();
             return result;
-        }
-
-        @Nonnull
-        @Override
-        public Object get()
-        {
-            return this;
         }
     }
 

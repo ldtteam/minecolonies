@@ -3,22 +3,15 @@ package com.minecolonies.api.blocks;
 import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.MapColor;
-import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.item.BlockItem;
 import net.minecraftforge.registries.IForgeRegistry;
 
 public abstract class AbstractBlockMinecolonies<B extends AbstractBlockMinecolonies<B>> extends Block implements IBlockMinecolonies<B>
 {
-    public AbstractBlockMinecolonies(final Material blockMaterialIn, final MapColor blockMapColorIn)
+    public AbstractBlockMinecolonies(final Properties properties)
     {
-        super(blockMaterialIn, blockMapColorIn);
-    }
-
-    public AbstractBlockMinecolonies(final Material materialIn)
-    {
-        super(materialIn);
+        super(properties);
     }
 
     /**
@@ -40,8 +33,8 @@ public abstract class AbstractBlockMinecolonies<B extends AbstractBlockMinecolon
      * @param registry the registry to use.
      */
     @Override
-    public void registerBlockItem(final IForgeRegistry<Item> registry)
+    public void registerBlockItem(final IForgeRegistry<Item> registry, final Item.Properties properties)
     {
-        registry.register((new BlockItem(this)).setRegistryName(this.getRegistryName()));
+        registry.register((new BlockItem(this, properties)).setRegistryName(this.getRegistryName()));
     }
 }

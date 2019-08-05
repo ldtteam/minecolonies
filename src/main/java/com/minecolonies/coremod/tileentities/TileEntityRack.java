@@ -3,7 +3,6 @@ package com.minecolonies.coremod.tileentities;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -19,7 +18,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -54,7 +52,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     /**
      * The combined inv wrapper for double racks.
      */
-    private CombinedItemHandler combinedHandler;
+    private CombinedInvWrapper combinedHandler;
 
     public TileEntityRack(final TileEntityType<?> tileEntityTypeIn)
     {
@@ -176,7 +174,7 @@ public class TileEntityRack extends AbstractTileEntityRack
 
         if (main && combinedHandler == null && getOtherChest() != null)
         {
-            combinedHandler = new CombinedItemHandler("rack", inventory, getOtherChest().getInventory());
+            combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
         }
     }
 
@@ -428,12 +426,6 @@ public class TileEntityRack extends AbstractTileEntityRack
     }
 
     @Override
-    public boolean shouldRefresh(final World world, final BlockPos pos, @NotNull final BlockState oldState, @NotNull final BlockState newState)
-    {
-        return oldState.getBlock() != newState.getBlock();
-    }
-
-    @Override
     public void rotate(final Rotation rotationIn)
     {
         super.rotate(rotationIn);
@@ -451,7 +443,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         {
             if (single)
             {
-                return LazyOptional.of(inventory);
+                return LazyOptional.of(() -> (T) inventory);
             }
             else if (getOtherChest() != null)
             {
@@ -459,9 +451,9 @@ public class TileEntityRack extends AbstractTileEntityRack
                 {
                     if (combinedHandler == null)
                     {
-                        combinedHandler = new CombinedItemHandler("Rack", inventory, getOtherChest().getInventory());
+                        combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
                     }
-                    return LazyOptional.of(combinedHandler);
+                    return LazyOptional.of(() -> (T) combinedHandler);
                 }
                 else
                 {
@@ -475,10 +467,10 @@ public class TileEntityRack extends AbstractTileEntityRack
 
                         if (combinedHandler == null)
                         {
-                            combinedHandler = new CombinedItemHandler("Rack", inventory, getOtherChest().getInventory());
+                            combinedHandler = new CombinedInvWrapper(inventory, getOtherChest().getInventory());
                         }
                         markDirty();
-                        return LazyOptional.of(combinedHandler);
+                        return LazyOptional.of(() -> (T) combinedHandler);
                     }
                 }
             }

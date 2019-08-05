@@ -3,30 +3,28 @@ package com.minecolonies.api.blocks;
 import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.blocks.types.BarrelType;
 import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
-import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.BlockState;
+import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.EnumProperty;
 
 public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> extends AbstractBlockMinecoloniesHorizontal<B> implements IBlockMinecolonies<B>, ITileEntityProvider
 {
-    public static final PropertyEnum<BarrelType> VARIANT = PropertyEnum.create("variant", BarrelType.class);
+    public static final EnumProperty<BarrelType> VARIANT = EnumProperty.create("variant", BarrelType.class);
+
     /**
      * The position it faces.
      */
-    public static final PropertyDirection        FACING  = BlockHorizontal.FACING;
+    public static final DirectionProperty        FACING  = HorizontalBlock.HORIZONTAL_FACING;
 
     public AbstractBlockBarrel(final Material blockMaterialIn)
     {
         super(blockMaterialIn);
     }
 
-    public static BlockState changeStateOverFullness(
-      AbstractTileEntityBarrel entity,
-      BlockState blockState
-    )
+    public static BlockState changeStateOverFullness(AbstractTileEntityBarrel entity, BlockState blockState)
     {
 
         final AbstractTileEntityBarrel te = entity;

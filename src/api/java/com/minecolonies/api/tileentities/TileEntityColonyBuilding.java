@@ -336,7 +336,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
         compound.putInt(TAG_COLONY, colonyId);
         compound.putBoolean(TAG_MIRROR, mirror);
         compound.putString(TAG_STYLE, style);
-        compound.setString(TAG_BUILDING_TYPE, registryName.toString());
+        compound.putString(TAG_BUILDING_TYPE, registryName.toString());
         return compound;
     }
 
@@ -466,7 +466,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
                                                                                           .toArray(IItemHandlerModifiable[]::new));
             }
 
-            return LazyOptional.of(this.combinedInv);
+            return LazyOptional.of(() -> (T) this.combinedInv);
         }
         return super.getCapability(capability);
     }

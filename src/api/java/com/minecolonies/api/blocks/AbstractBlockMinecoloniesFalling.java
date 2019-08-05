@@ -3,17 +3,16 @@ package com.minecolonies.api.blocks;
 import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFalling;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.FallingBlock;
 import net.minecraft.item.Item;
 import net.minecraft.item.BlockItem;
 import net.minecraftforge.registries.IForgeRegistry;
 
-public abstract class AbstractBlockMinecoloniesFalling<B extends AbstractBlockMinecoloniesFalling<B>> extends BlockFalling implements IBlockMinecolonies<B>
+public abstract class AbstractBlockMinecoloniesFalling<B extends AbstractBlockMinecoloniesFalling<B>> extends FallingBlock implements IBlockMinecolonies<B>
 {
-    public AbstractBlockMinecoloniesFalling(final Material materialIn)
+    public AbstractBlockMinecoloniesFalling(final Properties properties)
     {
-        super(materialIn);
+        super(properties);
     }
 
     /**
@@ -35,8 +34,8 @@ public abstract class AbstractBlockMinecoloniesFalling<B extends AbstractBlockMi
      * @param registry the registry to use.
      */
     @Override
-    public void registerBlockItem(final IForgeRegistry<Item> registry)
+    public void registerBlockItem(final IForgeRegistry<Item> registry, final Item.Properties properties)
     {
-        registry.register((new BlockItem(this)).setRegistryName(this.getRegistryName()));
+        registry.register((new BlockItem(this, properties)).setRegistryName(this.getRegistryName()));
     }
 }

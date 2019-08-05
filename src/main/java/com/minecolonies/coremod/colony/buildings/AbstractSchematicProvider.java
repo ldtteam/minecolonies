@@ -80,7 +80,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     @Override
     public CompoundNBT serializeNBT()
     {
-        final NBTTagCompound compound = new NBTTagCompound();
+        final CompoundNBT compound = new CompoundNBT();
         BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
         final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
         if (Structures.hasMD5(structureName))

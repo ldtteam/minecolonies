@@ -6,7 +6,6 @@ import net.minecraft.nbt.IntNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +20,7 @@ import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 /**
  * Abstract class wrapping around multiple IItemHandler.
  */
-public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializable<CompoundNBT>, IWorldNameableModifiable, NonNullSupplier
+public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializable<CompoundNBT>, IWorldNameableModifiable
 {
 
     ///NBT Constants
@@ -315,12 +314,5 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
     private String getCustomName()
     {
         return customName.isEmpty() ? defaultName : customName;
-    }
-
-    @Nonnull
-    @Override
-    public Object get()
-    {
-        return this;
     }
 }

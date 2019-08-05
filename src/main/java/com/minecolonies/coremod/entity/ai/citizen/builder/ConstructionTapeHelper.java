@@ -7,8 +7,8 @@ import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockHorizontal;
-import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.HorizontalBlock;
+import net.minecraft.block.properties.DirectionProperty;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Direction;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class ConstructionTapeHelper
 {
-    public static final PropertyDirection FACING    = BlockHorizontal.FACING;
+    public static final DirectionProperty FACING    = HorizontalBlock.FACING;
     public static final int               MINHEIGHT = 1;
     public static final int               MAXHEIGHT = 256;
 

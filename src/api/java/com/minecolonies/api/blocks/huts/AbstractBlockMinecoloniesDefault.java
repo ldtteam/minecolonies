@@ -2,17 +2,15 @@ package com.minecolonies.api.blocks.huts;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesContainer;
 import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
-import net.minecraft.block.BlockHorizontal;
-import net.minecraft.block.material.MapColor;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.HorizontalBlock;
+import net.minecraft.state.DirectionProperty;
 
 public abstract class AbstractBlockMinecoloniesDefault<B extends AbstractBlockMinecoloniesDefault<B>> extends AbstractBlockMinecoloniesContainer<B> implements IBlockMinecolonies<B>
 {
     /**
      * The position it faces.
      */
-    public static final PropertyDirection FACING           = BlockHorizontal.FACING;
+    public static final DirectionProperty FACING           = HorizontalBlock.HORIZONTAL_FACING;
     /**
      * Hardness of the block.
      */
@@ -42,13 +40,8 @@ public abstract class AbstractBlockMinecoloniesDefault<B extends AbstractBlockMi
      */
     public static final String            REGISTRY_NAME    = "blockHutField";
 
-    public AbstractBlockMinecoloniesDefault(final Material blockMaterialIn, final MapColor blockMapColorIn)
+    public AbstractBlockMinecoloniesDefault(final Properties properties)
     {
-        super(blockMaterialIn, blockMapColorIn);
-    }
-
-    public AbstractBlockMinecoloniesDefault(final Material materialIn)
-    {
-        super(materialIn);
+        super(properties);
     }
 }

@@ -3,19 +3,20 @@ package com.minecolonies.coremod.blocks.decorative;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.TallGrassBlock;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.BlockState;
-import net.minecraft.entity.LivingEntityBase;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.Item;
+import net.minecraft.state.StateContainer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -206,48 +207,17 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         setLightOpacity(LIGHT_OPACITY);
     }
 
-    /**
-     * Convert the given metadata into a BlockState for this Block.
-     *
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @SuppressWarnings(DEPRECATION)
-    @NotNull
-    @Override
-    @Deprecated
-    public BlockState getStateFromMeta(final int meta)
-    {
-        Direction Direction = byIndex(meta);
-
-        if (Direction.getAxis() == Direction.Axis.Y)
-        {
-            Direction = NORTH;
-        }
-
-        return this.getDefaultState().with(FACING, Direction);
-    }
 
     @Override
-    public int getMetaFromState(@NotNull final BlockState state)
-    {
-        return state.get(FACING).getIndex();
-    }
-
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @SuppressWarnings(DEPRECATION)
-    @Override
-    @Deprecated
-    public boolean isFullCube(final BlockState state)
+    public boolean doesSideBlockRendering(final BlockState state, final IEnviromentBlockReader world, final BlockPos pos, final Direction face)
     {
         return false;
     }
 
+    @NotNull
     @Override
-    public boolean isPassable(final IBlockAccess worldIn, final BlockPos pos)
-    {
-        return true;
+    public BlockRenderLayer getRenderLayer() {
+        return BlockRenderLayer.CUTOUT;
     }
 
     /**
@@ -354,18 +324,6 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
     @SuppressWarnings(DEPRECATION)
-    @SideOnly(Side.CLIENT)
-    @Override
-    @Deprecated
-    public boolean shouldSideBeRendered(final BlockState blockState, final IBlockAccess blockAccess, final BlockPos pos, final Direction side)
-    {
-        return true;
-    }
-
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @SuppressWarnings(DEPRECATION)
     @Nullable
     @Deprecated
     @Override
@@ -374,57 +332,22 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         return null;
     }
 
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @SuppressWarnings(DEPRECATION)
     @Override
-    @Deprecated
-    public boolean isOpaqueCube(final BlockState state)
-    {
-        return false;
+    public boolean propagatesSkylightDown(final BlockState state, @NotNull final IBlockReader reader, @NotNull final BlockPos pos) {
+        return true;
     }
 
     @Nullable
     @Override
-    public Item getItemDropped(final BlockState state, final Random rand, final int fortune)
+    public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
-        return null;
-    }
-
-    @NotNull
-    @Override
-    @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getRenderLayer()
-    {
-        return BlockRenderLayer.SOLID;
-    }
-
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @SuppressWarnings(DEPRECATION)
-    @NotNull
-    @Override
-    @Deprecated
-    public BlockState getStateForPlacement(
-                                             final World worldIn,
-                                             final BlockPos pos,
-                                             final Direction facing,
-                                             final float hitX,
-                                             final float hitY,
-                                             final float hitZ,
-                                             final int meta,
-                                             final LivingEntityBase placer)
-    {
-        @NotNull final Direction Direction = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
+        TallGrassBlock
+        @NotNull final Direction Direction = (context.getPlayer() == null) ? NORTH : fromAngle(context.getPlayer().rotationYaw);
         return this.getDefaultState().with(FACING, Direction);
     }
 
-    @NotNull
     @Override
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, FACING, VARIANT);
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(FACING, VARIANT);
     }
 }
