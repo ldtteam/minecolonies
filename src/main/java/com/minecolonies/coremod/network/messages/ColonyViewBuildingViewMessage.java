@@ -28,7 +28,7 @@ public class ColonyViewBuildingViewMessage implements IMessage
     private int dimension;
 
     /**
-     * Empty constructor used when registering the 
+     * Empty constructor used when registering the
      */
     public ColonyViewBuildingViewMessage()
     {
@@ -54,6 +54,7 @@ public class ColonyViewBuildingViewMessage implements IMessage
     {
         colonyId = buf.readInt();
         buildingId = buf.readBlockPos();
+        dimension = buf.readInt();
         dimension = buf.readInt();
         buildingData = Unpooled.buffer(buf.readableBytes());
         buf.readBytes(buildingData, buf.readableBytes());

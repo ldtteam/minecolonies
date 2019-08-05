@@ -30,7 +30,7 @@ public class GuardTaskMessage implements IMessage
     private int              task;
 
     /**
-     * The dimension of the 
+     * The dimension of the
      */
     private int dimension;
 
@@ -48,7 +48,7 @@ public class GuardTaskMessage implements IMessage
     }
 
     /**
-     * Creates an instance of the guard task 
+     * Creates an instance of the guard task
      *
      * @param building       the building.
      * @param job            the new job.

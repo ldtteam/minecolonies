@@ -77,7 +77,7 @@ public class RenderFishHook extends Render<EntityFishHook>
         {
             for (@NotNull final Object citizenX : CompatibilityUtils.getWorldFromEntity(entity).getEntitiesWithinAABB(EntityCitizen.class, entity.getEntityBoundingBox().expand(10, 10, 10)))
             {
-                if (((EntityCitizen) citizenX).getModelID().textureBase.contains("Fisherman"))
+                if (((EntityCitizen) citizenX).getModelType().getTextureBase().contains("Fisherman"))
                 {
                     citizen = (EntityCitizen) citizenX;
                     break;

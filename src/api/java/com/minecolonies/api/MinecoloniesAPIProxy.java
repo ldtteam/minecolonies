@@ -1,5 +1,6 @@
 package com.minecolonies.api;
 
+import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
@@ -46,9 +47,16 @@ public class MinecoloniesAPIProxy implements IMinecoloniesAPI
     }
 
     @Override
-    public IEntityAIRegistry getEntityAIRegistry()
+    public IMobAIRegistry getMobAIRegistry()
     {
-        return apiInstance.getEntityAIRegistry();
+        return apiInstance.getMobAIRegistry();
+    }
+
+
+    @Override
+    public IGuardTypeRegistry getGuardTypeRegistry()
+    {
+        return apiInstance.getGuardTypeRegistry();
     }
 
     @Override
@@ -91,6 +99,12 @@ public class MinecoloniesAPIProxy implements IMinecoloniesAPI
     public IForgeRegistry<GuardType> getGuardTypeRegistry()
     {
         return apiInstance.getGuardTypeRegistry();
+    }
+
+    @Override
+    public IModelTypeRegistry getModelTypeRegistry()
+    {
+        return apiInstance.getModelTypeRegistry();
     }
 
     @Override

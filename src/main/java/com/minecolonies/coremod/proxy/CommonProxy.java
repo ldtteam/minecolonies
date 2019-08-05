@@ -129,6 +129,24 @@ public abstract class CommonProxy implements IProxy
         MinecoloniesAPIImpl.getInstance().onRegistryNewRegistry(event);
     }
 
+    @SubscribeEvent
+    public static void registerBuildingTypes(@NotNull final RegistryEvent.Register<BuildingEntry> event)
+    {
+        ModBuildingsInitializer.init(event);
+    }
+
+    @SubscribeEvent
+    public static void registerJobTypes(final RegistryEvent.Register<JobEntry> event)
+    {
+        ModJobsInitializer.init(event);
+    }
+
+    @SubscribeEvent
+    public static void onRegistryNewRegistry(final RegistryEvent.NewRegistry event)
+    {
+        MinecoloniesAPIImpl.getInstance().onRegistryNewRegistry(event);
+    }
+
     @Override
     public boolean isClient()
     {
