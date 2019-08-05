@@ -1,6 +1,7 @@
 package com.minecolonies.apiimp;
 
 import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
@@ -10,14 +11,15 @@ import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.api.entity.ai.registry.IEntityAIRegistry;
+import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.client.render.modeltype.registry.ModelTypeRegistry;
 import com.minecolonies.coremod.colony.CitizenDataManager;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingDataManager;
 import com.minecolonies.coremod.colony.jobs.registry.JobDataManager;
-import com.minecolonies.coremod.entity.ai.registry.EntityAiRegistry;
+import com.minecolonies.coremod.entity.ai.registry.MobAIRegistry;
 import com.minecolonies.coremod.entity.pathfinding.registry.PathNavigateRegistry;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -31,7 +33,7 @@ public class MinecoloniesAPIImpl implements IMinecoloniesAPI
 
     private final IColonyManager                colonyManager        = new ColonyManager();
     private final ICitizenDataManager           citizenDataManager   = new CitizenDataManager();
-    private final IEntityAIRegistry             entityAIRegistry     = new EntityAiRegistry();
+    private final IMobAIRegistry                mobAIRegistry        = new MobAIRegistry();
     private final IPathNavigateRegistry         pathNavigateRegistry = new PathNavigateRegistry();
     private       IForgeRegistry<BuildingEntry> buildingRegistry;
     private final IBuildingDataManager          buildingDataManager  = new BuildingDataManager();
@@ -39,6 +41,7 @@ public class MinecoloniesAPIImpl implements IMinecoloniesAPI
     private final IGuardTypeDataManager         guardTypeDataManager = new com.minecolonies.coremod.colony.buildings.registry.GuardTypeDataManager();
     private       IForgeRegistry<JobEntry>      jobRegistry;
     private       IForgeRegistry<GuardType>     guardTypeRegistry;
+    private final IModelTypeRegistry            modelTypeRegistry    = new ModelTypeRegistry();
 
     private MinecoloniesAPIImpl()
     {
@@ -65,9 +68,9 @@ public class MinecoloniesAPIImpl implements IMinecoloniesAPI
 
     @Override
     @NotNull
-    public IEntityAIRegistry getEntityAIRegistry()
+    public IMobAIRegistry getMobAIRegistry()
     {
-        return entityAIRegistry;
+        return mobAIRegistry;
     }
 
     @Override
@@ -113,6 +116,12 @@ public class MinecoloniesAPIImpl implements IMinecoloniesAPI
     public IForgeRegistry<GuardType> getGuardTypeRegistry()
     {
         return guardTypeRegistry;
+    }
+
+    @Override
+    public IModelTypeRegistry getModelTypeRegistry()
+    {
+        return modelTypeRegistry;
     }
 
     public void onRegistryNewRegistry(final RegistryEvent.NewRegistry event)

@@ -1,9 +1,9 @@
-package com.minecolonies.api.client.render;
+package com.minecolonies.api.client.render.modeltype;
 
 /**
  * Enum with possible citizens.
  */
-public enum BipedModelType
+public enum BipedModelType implements IModelType
 {
     SETTLER("Settler", 3),
     CITIZEN("Citizen", 3),
@@ -35,16 +35,34 @@ public enum BipedModelType
      * Used by the renderer.
      * Starts with a capital, and does not contain spaces or other special characters.
      */
-    public final String textureBase;
+    private final String textureBase;
 
     /**
      * Amount of different textures available for the renderer.
      */
-    public final int numTextures;
+    private final int numTextures;
 
     BipedModelType(final String textureBase, final int numTextures)
     {
         this.textureBase = textureBase;
         this.numTextures = numTextures;
+    }
+
+    @Override
+    public String getName()
+    {
+        return this.name();
+    }
+
+    @Override
+    public String getTextureBase()
+    {
+        return textureBase;
+    }
+
+    @Override
+    public int getNumTextures()
+    {
+        return numTextures;
     }
 }

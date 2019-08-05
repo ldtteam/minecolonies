@@ -1,5 +1,6 @@
 package com.minecolonies.api;
 
+import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
@@ -8,6 +9,7 @@ import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.entity.ai.registry.IEntityAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
@@ -24,7 +26,7 @@ public interface IMinecoloniesAPI
 
     ICitizenDataManager getCitizenDataManager();
 
-    IEntityAIRegistry getEntityAIRegistry();
+    IMobAIRegistry getMobAIRegistry();
 
     IPathNavigateRegistry getPathNavigateRegistry();
 
@@ -39,6 +41,8 @@ public interface IMinecoloniesAPI
     IGuardTypeDataManager getGuardTypeDataManager();
 
     IForgeRegistry<GuardType> getGuardTypeRegistry();
+
+    IModelTypeRegistry getModelTypeRegistry();
 
     Configuration getConfig();
 }
