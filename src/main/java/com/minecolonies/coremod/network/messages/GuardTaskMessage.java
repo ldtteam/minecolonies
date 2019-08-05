@@ -2,7 +2,7 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.registry.IGuardTypeRegistry;
+import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.network.IMessage;
@@ -130,8 +130,8 @@ public class GuardTaskMessage implements IMessage
             @Nullable final AbstractBuildingGuards building = colony.getBuildingManager().getBuilding(buildingId, AbstractBuildingGuards.class);
             if (building != null)
             {
-                building.setGuardType(IGuardTypeRegistry.getInstance().getFromName(job));
                 building.setAssignManually(assignmentMode);
+                building.setGuardType(IGuardTypeRegistry.getInstance().getValue(job));
                 building.setPatrolManually(patrollingMode);
                 building.setTightGrouping(tightGrouping);
                 building.setRetrieveOnLowHealth(retrieval);

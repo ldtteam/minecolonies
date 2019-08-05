@@ -5,16 +5,18 @@ import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
-import com.minecolonies.api.colony.buildings.registry.IGuardTypeRegistry;
-import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
+import com.minecolonies.api.colony.guardtype.GuardType;
+import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
+import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
+import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.ai.registry.IEntityAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.CitizenDataManager;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingDataManager;
-import com.minecolonies.coremod.colony.buildings.registry.GuardTypeRegistry;
-import com.minecolonies.coremod.colony.jobs.registry.JobRegistry;
+import com.minecolonies.coremod.colony.jobs.registry.JobDataManager;
 import com.minecolonies.coremod.entity.ai.registry.EntityAiRegistry;
 import com.minecolonies.coremod.entity.pathfinding.registry.PathNavigateRegistry;
 import net.minecraft.util.ResourceLocation;
@@ -26,15 +28,17 @@ import org.jetbrains.annotations.NotNull;
 public class MinecoloniesAPIImpl implements IMinecoloniesAPI
 {
     private static MinecoloniesAPIImpl  ourInstance         = new MinecoloniesAPIImpl();
-    private final  IBuildingDataManager buildingDataManager = new BuildingDataManager();
 
     private final IColonyManager                colonyManager        = new ColonyManager();
     private final ICitizenDataManager           citizenDataManager   = new CitizenDataManager();
     private final IEntityAIRegistry             entityAIRegistry     = new EntityAiRegistry();
-    private final IGuardTypeRegistry            guardTypeRegistry    = new GuardTypeRegistry();
     private final IPathNavigateRegistry         pathNavigateRegistry = new PathNavigateRegistry();
-    private final IJobRegistry                  jobRegistry          = new JobRegistry();
     private       IForgeRegistry<BuildingEntry> buildingRegistry;
+    private final IBuildingDataManager          buildingDataManager  = new BuildingDataManager();
+    private final IJobDataManager               jobDataManager       = new JobDataManager();
+    private final IGuardTypeDataManager         guardTypeDataManager = new com.minecolonies.coremod.colony.buildings.registry.GuardTypeDataManager();
+    private       IForgeRegistry<JobEntry>      jobRegistry;
+    private       IForgeRegistry<GuardType>     guardTypeRegistry;
 
     private MinecoloniesAPIImpl()
     {
@@ -68,23 +72,9 @@ public class MinecoloniesAPIImpl implements IMinecoloniesAPI
 
     @Override
     @NotNull
-    public IGuardTypeRegistry getGuardTypeRegistry()
-    {
-        return guardTypeRegistry;
-    }
-
-    @Override
-    @NotNull
     public IPathNavigateRegistry getPathNavigateRegistry()
     {
         return pathNavigateRegistry;
-    }
-
-    @Override
-    @NotNull
-    public IJobRegistry getJobRegistry()
-    {
-        return jobRegistry;
     }
 
     @Override
@@ -101,15 +91,59 @@ public class MinecoloniesAPIImpl implements IMinecoloniesAPI
         return buildingRegistry;
     }
 
+    @Override
+    public IJobDataManager getJobDataManager()
+    {
+        return jobDataManager;
+    }
+
+    @Override
+    public IForgeRegistry<JobEntry> getJobRegistry()
+    {
+        return jobRegistry;
+    }
+
+    @Override
+    public IGuardTypeDataManager getGuardTypeDataManager()
+    {
+        return guardTypeDataManager;
+    }
+
+    @Override
+    public IForgeRegistry<GuardType> getGuardTypeRegistry()
+    {
+        return guardTypeRegistry;
+    }
+
     public void onRegistryNewRegistry(final RegistryEvent.NewRegistry event)
     {
         buildingRegistry = new RegistryBuilder<BuildingEntry>()
                              .setName(new ResourceLocation(Constants.MOD_ID, "buildings"))
                              .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
                              .disableSaving()
+                             .allowModification()
                              .setType(BuildingEntry.class)
                              .setIDRange(0, Integer.MAX_VALUE - 1)
                              .create();
+
+        jobRegistry = new RegistryBuilder<JobEntry>()
+                        .setName(new ResourceLocation(Constants.MOD_ID, "jobs"))
+                        .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                        .disableSaving()
+                        .allowModification()
+                        .setType(JobEntry.class)
+                        .setIDRange(0, Integer.MAX_VALUE - 1)
+                        .create();
+
+        guardTypeRegistry = new RegistryBuilder<GuardType>()
+                              .setName(new ResourceLocation(Constants.MOD_ID, "guardTypes"))
+                              .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
+                              .disableSaving()
+                              .allowModification()
+                              .setDefaultKey(ModGuardTypes.KNIGHT_ID)
+                              .setType(GuardType.class)
+                              .setIDRange(0, Integer.MAX_VALUE - 1)
+                              .create();
     }
 }
 

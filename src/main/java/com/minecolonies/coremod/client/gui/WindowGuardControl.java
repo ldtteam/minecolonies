@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.buildings.IGuardType;
+import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
@@ -66,7 +66,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
     /**
      * The GuardJob of the guard.
      */
-    private IGuardType job = null;
+    private GuardType job = null;
 
     /**
      * The list of manual patrol targets.

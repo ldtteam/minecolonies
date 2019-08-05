@@ -2,6 +2,8 @@ package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.client.render.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.herders.EntityAIWorkSwineHerder;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +22,12 @@ public class JobSwineHerder extends AbstractJob
     public JobSwineHerder(final ICitizenData entity)
     {
         super(entity);
+    }
+
+    @Override
+    public JobEntry getJobRegistryEntry()
+    {
+        return ModJobs.swineHerder;
     }
 
     @NotNull
