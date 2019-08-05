@@ -28,7 +28,7 @@
     <list id="resources" size="80% 80%" pos="30 20">
         <box size="100% 30" linewidth="2">
             <itemicon id="resourceIcon" size="24 24" pos="3 3"/>
-            <label id="registryName" size="140 12" pos="33 9" color="white"/>
+            <label id="resourceName" size="140 12" pos="33 9" color="white"/>
             <label id="resourceQuantity" align="MIDDLE_RIGHT" size="12 12" pos="20 0" color="white"/>
         </box>
     </list>
