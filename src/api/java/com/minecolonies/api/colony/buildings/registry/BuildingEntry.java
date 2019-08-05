@@ -120,7 +120,7 @@ public class BuildingEntry extends IForgeRegistryEntry.Impl<BuildingEntry> imple
             Validate.notNull(buildingViewProducer);
             Validate.notNull(registryName);
 
-            return new BuildingEntry(buildingBlock, buildingProducer, buildingViewProducer);
+            return new BuildingEntry(buildingBlock, buildingProducer, buildingViewProducer).setRegistryName(registryName);
         }
     }
 }

@@ -746,7 +746,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 final long distance = BlockPosUtil.getDistance2D(IColonyView.getCenter(), building.getPosition());
                 rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText((int) distance + "b");
                 final Button button = rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class);
-                if (townHall.getBuildingLevel() < Configurations.gameplay.minThLevelToTeleport || !townHall.canCanPlayerUseTP())
+                if (townHall.getBuildingLevel() < Configurations.gameplay.minThLevelToTeleport || !townHall.canPlayerUseTP())
                 {
                     button.setLabel(LanguageHandler.format(TH_TOO_LOW));
                     button.disable();
@@ -1002,7 +1002,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 //Searches citizen of id x
                 for (@NotNull final IBuildingView buildingView : building.getColony().getBuildings())
                 {
-                    if (buildingView.getLocation().equals(workOrder.getClaimedBy()) && buildingView instanceof AbstractBuildingBuilderView)
+                    if (buildingView.getPosition().equals(workOrder.getClaimedBy()) && buildingView instanceof AbstractBuildingBuilderView)
                     {
                         claimingCitizen = ((AbstractBuildingBuilderView) buildingView).getWorkerName();
                         break;

@@ -438,7 +438,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void serializeToView(@NotNull final ByteBuf buf)
     {
-        buf.writeInt(this.getClass().getName().hashCode());
+        ByteBufUtils.writeUTF8String(buf, getBuildingRegistryEntry().getRegistryName().toString());
         buf.writeInt(getBuildingLevel());
         buf.writeInt(getMaxBuildingLevel());
         buf.writeInt(getPickUpPriority());
