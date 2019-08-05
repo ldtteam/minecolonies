@@ -1,6 +1,5 @@
-/**
- * This package contains views to be used in a BlockOut GUI.
- * <p>Views are components that contain other components.
- * Views are used to organize information and controls onto a GUI.
- */
+@API(owner = Constants.MOD_ID, apiVersion = Constants.VERSION, provides = "minecolonies-blockout|views")
 package com.minecolonies.blockout.views;
+
+import com.minecolonies.api.util.constant.Constants;
+import net.minecraftforge.fml.common.API;
