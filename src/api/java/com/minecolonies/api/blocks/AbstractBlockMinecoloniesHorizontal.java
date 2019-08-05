@@ -3,18 +3,16 @@ package com.minecolonies.api.blocks;
 import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.HorizontalBlock;
-import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.item.BlockItem;
 import net.minecraftforge.registries.IForgeRegistry;
 
 public abstract class AbstractBlockMinecoloniesHorizontal<B extends AbstractBlockMinecoloniesHorizontal<B>> extends HorizontalBlock implements IBlockMinecolonies<B>
 {
-    public AbstractBlockMinecoloniesHorizontal(final Material blockMaterialIn)
+    public AbstractBlockMinecoloniesHorizontal(final Properties properties)
     {
-        super(blockMaterialIn);
+        super(properties);
     }
 
     /**
@@ -37,8 +35,8 @@ public abstract class AbstractBlockMinecoloniesHorizontal<B extends AbstractBloc
      * @param registry the registry to use.
      */
     @Override
-    public void registerBlockItem(final IForgeRegistry<Item> registry)
+    public void registerBlockItem(final IForgeRegistry<Item> registry, final Item.Properties properties)
     {
-        registry.register((new BlockItem(this)).setRegistryName(this.getRegistryName()));
+        registry.register((new BlockItem(this, properties)).setRegistryName(this.getRegistryName()));
     }
 }

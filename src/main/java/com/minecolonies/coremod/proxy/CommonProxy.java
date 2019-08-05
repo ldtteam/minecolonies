@@ -90,18 +90,6 @@ public abstract class CommonProxy implements IProxy
     }
 
     /**
-     * Called when registering blocks,
-     * we have to register all our modblocks here.
-     *
-     * @param event the registery event for blocks.
-     */
-    @SubscribeEvent
-    public static void registerBlocks(@NotNull final RegistryEvent.Register<Block> event)
-    {
-        ModBlocksInitializer.init(event.getRegistry());
-    }
-
-    /**
      * Called when registering recipes.
      * @param event the registery event for recipes.
      */
@@ -121,7 +109,6 @@ public abstract class CommonProxy implements IProxy
     public static void registerItems(@NotNull final RegistryEvent.Register<Item> event)
     {
         ModItemsInitializer.init(event.getRegistry());
-        ModBlocksInitializer.registerBlockItem(event.getRegistry());
     }
 
     @SubscribeEvent

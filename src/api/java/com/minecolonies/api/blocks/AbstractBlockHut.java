@@ -1,40 +1,35 @@
 package com.minecolonies.api.blocks;
 
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.BlockState;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
 /**
  * Abstract class for all minecolonies blocks.
@@ -53,7 +48,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     /**
      * The direction the block is facing.
      */
-    public static final  PropertyDirection FACING     = BlockHorizontal.FACING;
+    public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
 
     /**
      * The default hardness.
@@ -73,23 +68,9 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      */
     public AbstractBlockHut()
     {
-        super(Material.WOOD);
-        initBlock();
-    }
-
-    /**
-     * Initiates the basic block variables.
-     */
-    private void initBlock()
-    {
-        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + getName());
-        setTranslationKey(Constants.MOD_ID.toLowerCase() + "." + getName());
-        setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        //Blast resistance for creepers etc. makes them explosion proof
-        setResistance(RESISTANCE);
-        //Hardness of 10 takes a long time to mine to not loose progress
-        setHardness(MineColonies.getConfig().getCommon().gameplay.pvp_mode ? HARDNESS * HARDNESS_PVP_FACTOR : HARDNESS);
-        this.setDefaultState(this.blockState.getBaseState().with(FACING, EnumFacing.NORTH));
+        super(Properties.create(Material.WOOD).hardnessAndResistance(MinecoloniesAPIProxy.getInstance().getConfig().getCommon().pvp_mode.get() ? HARDNESS * HARDNESS_PVP_FACTOR : HARDNESS, RESISTANCE));
+        setRegistryName(getName());
+        this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH));
     }
 
     /**
@@ -99,11 +80,10 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      */
     public abstract String getName();
 
-    @NotNull
+    @Nullable
     @Override
-    public TileEntity createNewTileEntity(final World world, final int meta)
+    public TileEntity createTileEntity(final BlockState state, final IBlockReader world)
     {
-        //Creates a tile entity for our building
         return new TileEntityColonyBuilding(getBuildingEntry().getRegistryName());
     }
 
@@ -114,151 +94,32 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      */
     public abstract BuildingEntry getBuildingEntry();
 
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @SuppressWarnings(DEPRECATION)
     @Override
-    @Deprecated
-    public boolean isFullBlock(final BlockState state)
-    {
-        return false;
-    }
-
-    /**
-     * Convert the given metadata into a BlockState for this Block.
-     *
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @SuppressWarnings(DEPRECATION)
-    @NotNull
-    @Override
-    @Deprecated
-    public BlockState getStateFromMeta(final int meta)
-    {
-        EnumFacing enumfacing = EnumFacing.byIndex(meta);
-
-        if (enumfacing.getAxis() == EnumFacing.Axis.Y)
-        {
-            enumfacing = EnumFacing.NORTH;
-        }
-
-        return this.getDefaultState().with(FACING, enumfacing);
-    }
-
-    // =======================================================================
-    // ======================= Rendering & BlockState =======================
-    // =======================================================================
-
-    /**
-     * Convert the BlockState into the correct metadata value.
-     */
-    @Override
-    public int getMetaFromState(final BlockState state)
-    {
-        return state.get(FACING).getIndex();
-    }
-
-    /**
-     * Convert the BlockState into the correct metadata value.
-     *
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @SuppressWarnings(DEPRECATION)
-    @NotNull
-    @Override
-    @Deprecated
-    public BlockState withRotation(@NotNull final BlockState state, final Rotation rot)
-    {
-        return state.with(FACING, rot.rotate(state.get(FACING)));
-    }
-
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @SuppressWarnings(DEPRECATION)
-    @NotNull
-    @Override
-    @Deprecated
-    public BlockState withMirror(@NotNull final BlockState state, final Mirror mirrorIn)
-    {
-        return state.withRotation(mirrorIn.toRotation(state.get(FACING)));
-    }
-
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @SuppressWarnings(DEPRECATION)
-    @Override
-    @Deprecated
-    public boolean isFullCube(final BlockState state)
-    {
-        return false;
-    }
-
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @SuppressWarnings(DEPRECATION)
-    @Override
-    @Deprecated
-    public boolean isOpaqueCube(final BlockState state)
-    {
-        return false;
-    }
-
-    @NotNull
-    @Override
-    @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getRenderLayer()
-    {
-        return BlockRenderLayer.SOLID;
-    }
-
-    @Override
-    public boolean onBlockActivated(
-                                     final World worldIn,
-                                     final BlockPos pos,
-                                     final BlockState state,
-                                     final PlayerEntity playerIn,
-                                     final EnumHand hand,
-                                     final EnumFacing facing,
-                                     final float hitX,
-                                     final float hitY,
-                                     final float hitZ)
+    public boolean onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos, final PlayerEntity player, final Hand handIn, final BlockRayTraceResult hit)
     {
         /*
         If the world is client, open the gui of the building
          */
         if (worldIn.isRemote)
         {
-            @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.provider.getDimension(), pos);
+            @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.getDimension().getType().getId(), pos);
 
             if (building != null
                   && building.getColony() != null
-                  && building.getColony().getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS))
+                  && building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS))
             {
-                building.openGui(playerIn.isSneaking());
+                building.openGui(player.isSneaking());
             }
         }
         return true;
     }
 
-    @SuppressWarnings(DEPRECATION)
-    @NotNull
+    @Nullable
     @Override
-    public BlockState getStateForPlacement(
-                                             final World worldIn,
-                                             final BlockPos pos,
-                                             final EnumFacing facing,
-                                             final float hitX,
-                                             final float hitY,
-                                             final float hitZ,
-                                             final int meta,
-                                             final LivingEntity placer)
+    public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
-        @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
-        return this.getDefaultState().with(FACING, enumFacing);
+        @NotNull final Direction facing = (context.getPlayer() == null) ? Direction.NORTH : Direction.fromAngle(context.getPlayer().rotationYaw);
+        return this.getDefaultState().with(FACING, facing);
     }
 
     /**
@@ -301,11 +162,21 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         }
     }
 
+    @Override
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
+    }
+
+    @Override
+    public boolean doesSideBlockRendering(final BlockState state, final IEnviromentBlockReader world, final BlockPos pos, final Direction face)
+    {
+        return false;
+    }
+
     @NotNull
     @Override
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, FACING);
+    public BlockRenderLayer getRenderLayer() {
+        return BlockRenderLayer.CUTOUT;
     }
 
     @Override
@@ -316,12 +187,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
             return true;
         }
         return super.canRenderInLayer(state, layer);
-    }
-
-    @Override
-    public boolean doesSideBlockRendering(final BlockState state, final IBlockAccess world, final BlockPos pos, final EnumFacing face)
-    {
-        return false;
     }
 
     /**
@@ -352,8 +217,4 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
 
         onBlockPlacedBy(worldIn, pos, state, placer, stack);
     }
-
-    // =======================================================================
-    // ===================== END of Rendering & Meta-Data ====================
-    // =======================================================================
 }

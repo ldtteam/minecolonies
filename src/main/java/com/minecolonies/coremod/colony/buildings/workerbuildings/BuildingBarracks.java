@@ -13,7 +13,7 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowBarracksBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.nbt.CompoundNBT;
@@ -101,7 +101,7 @@ public class BuildingBarracks extends AbstractBuilding
         {
             if (world.getBlockState(pos).getBlock() != ModBlocks.blockHutBarracksTower)
             {
-                world.setBlockState(pos, ModBlocks.blockHutBarracksTower.getDefaultState().with(BlockHorizontal.FACING, block.get(BlockHorizontal.FACING)));
+                world.setBlockState(pos, ModBlocks.blockHutBarracksTower.getDefaultState().with(HorizontalBlock.FACING, block.get(HorizontalBlock.FACING)));
                 getColony().getBuildingManager().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(pos), world);
             }
             final IBuilding building = getColony().getBuildingManager().getBuilding(pos);

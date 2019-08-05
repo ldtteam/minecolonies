@@ -2,29 +2,28 @@ package com.minecolonies.api.blocks.decorative;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesFalling;
 import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
-import net.minecraft.block.BlockHorizontal;
-import net.minecraft.block.material.MapColor;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.HorizontalBlock;
+import net.minecraft.block.material.MaterialColor;
+import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.EnumProperty;
 import net.minecraft.util.IStringSerializable;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractBlockMinecoloniesConstructionTape<B extends AbstractBlockMinecoloniesConstructionTape<B>> extends AbstractBlockMinecoloniesFalling<B> implements
-  IBlockMinecolonies<B>
+public abstract class AbstractBlockMinecoloniesConstructionTape<B extends AbstractBlockMinecoloniesConstructionTape<B>> extends AbstractBlockMinecoloniesFalling<B> implements IBlockMinecolonies<B>
 {
     /**
      * The variants of the shingle slab.
      */
-    public static final PropertyEnum<ConstructionTapeType> VARIANT = PropertyEnum.create("variant", ConstructionTapeType.class);
+    public static final EnumProperty<ConstructionTapeType> VARIANT = EnumProperty.create("variant", ConstructionTapeType.class);
+
     /**
      * The position it faces.
      */
-    public static final PropertyDirection                  FACING  = BlockHorizontal.FACING;
+    public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
 
-    public AbstractBlockMinecoloniesConstructionTape(final Material materialIn)
+    public AbstractBlockMinecoloniesConstructionTape(final Properties properties)
     {
-        super(materialIn);
+        super(properties);
     }
 
     /**
@@ -32,8 +31,8 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
      */
     public enum ConstructionTapeType implements IStringSerializable
     {
-        STRAIGHT(0, "straight", MapColor.WOOD),
-        CORNER(1, "corner", MapColor.OBSIDIAN);
+        STRAIGHT(0, "straight", MaterialColor.WOOD),
+        CORNER(1, "corner", MaterialColor.OBSIDIAN);
 
         private static final ConstructionTapeType[] META_LOOKUP = new ConstructionTapeType[values().length];
         static
@@ -43,20 +42,20 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
                 META_LOOKUP[enumtype.getMetadata()] = enumtype;
             }
         }
-        private final int      meta;
-        private final String   name;
-        private final String   unlocalizedName;
+        private final int           meta;
+        private final String        name;
+        private final String        unlocalizedName;
         /**
          * The color that represents this entry on a map.
          */
-        private final MapColor mapColor;
+        private final MaterialColor mapColor;
 
-        ConstructionTapeType(final int metaIn, final String nameIn, final MapColor mapColorIn)
+        ConstructionTapeType(final int metaIn, final String nameIn, final MaterialColor mapColorIn)
         {
             this(metaIn, nameIn, nameIn, mapColorIn);
         }
 
-        ConstructionTapeType(final int metaIn, final String nameIn, final String unlocalizedNameIn, final MapColor mapColorIn)
+        ConstructionTapeType(final int metaIn, final String nameIn, final String unlocalizedNameIn, final MaterialColor mapColorIn)
         {
             this.meta = metaIn;
             this.name = nameIn;
@@ -83,7 +82,7 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
         /**
          * The color which represents this entry on a map.
          */
-        public MapColor getMapColor()
+        public MaterialColor getMaterialColor()
         {
             return this.mapColor;
         }

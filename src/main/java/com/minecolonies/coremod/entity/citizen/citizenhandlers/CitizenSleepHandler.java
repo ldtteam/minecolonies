@@ -5,7 +5,7 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSleepHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.block.BlockBed;
-import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Direction;
@@ -204,7 +204,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         final BlockState state = citizen.world.isBlockLoaded(getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, getBedLocation(), citizen);
-        final Direction Direction = isBed && state.getBlock() instanceof BlockHorizontal ? state.get(BlockHorizontal.FACING) : null;
+        final Direction Direction = isBed && state.getBlock() instanceof HorizontalBlock ? state.get(HorizontalBlock.FACING) : null;
 
         if (Direction == null)
         {
@@ -228,7 +228,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         final BlockState state = citizen.world.isBlockLoaded(getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, getBedLocation(), citizen);
-        final Direction Direction = isBed && state.getBlock() instanceof BlockHorizontal ? state.get(BlockHorizontal.FACING) : null;
+        final Direction Direction = isBed && state.getBlock() instanceof HorizontalBlock ? state.get(HorizontalBlock.FACING) : null;
 
         if (Direction == null)
         {

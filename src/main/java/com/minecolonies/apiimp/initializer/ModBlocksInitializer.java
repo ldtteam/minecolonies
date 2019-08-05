@@ -1,5 +1,6 @@
 package com.minecolonies.apiimp.initializer;
 
+import com.ldtteam.structurize.api.util.constant.Constants;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
@@ -8,17 +9,29 @@ import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.ObjectHolder;
 
 /**
  * This class deals with the initialization of blocks and their items.
  */
+@ObjectHolder(Constants.MOD_ID)
+@Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class ModBlocksInitializer
 {
 
     private ModBlocksInitializer()
     {
         throw new IllegalStateException("Tried to initialize: ModBlockInitializer but this is a Utility class.");
+    }
+
+    @SubscribeEvent
+    public static void registerBlocks(RegistryEvent.Register<Block> event)
+    {
+        ModBlocksInitializer.init(event.getRegistry());
     }
 
     /**
@@ -67,6 +80,12 @@ public final class ModBlocksInitializer
         ModBlocks.blockPostBox = new BlockPostBox().registerBlock(registry);
         ModBlocks.blockDecorationPlaceholder = new BlockDecorationController(Material.WOOD).registerBlock(registry);
         ModBlocks.blockBarrel = new BlockBarrel().registerBlock(registry);
+    }
+
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event)
+    {
+        ModBlocksInitializer.registerBlockItem(event.getRegistry());
     }
 
     /**

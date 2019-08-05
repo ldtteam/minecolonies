@@ -13,7 +13,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
@@ -217,7 +217,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         if (state.getBlock() instanceof BlockMinecoloniesRack)
         {
             final TileEntity rack = worldIn.getTileEntity(pos);
-            for (final Direction offsetFacing : BlockHorizontal.FACING.getAllowedValues())
+            for (final Direction offsetFacing : HorizontalBlock.FACING.getAllowedValues())
             {
                 final BlockPos neighbor = pos.offset(offsetFacing);
                 final Block block = worldIn.getBlockState(neighbor).getBlock();
