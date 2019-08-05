@@ -1,5 +1,5 @@
-/**
- * Created by marcf on 3/25/2017.
- */
+@API(owner = Constants.MOD_ID, apiVersion = Constants.VERSION, provides = "minecolonies-api|inventory|api")
 package com.minecolonies.api.inventory.api;
-//TODO: Move this package to its own API-Module.
+
+import com.minecolonies.api.util.constant.Constants;
+import net.minecraftforge.fml.common.API;

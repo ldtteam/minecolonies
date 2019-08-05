@@ -1,5 +1,5 @@
-/**
- * The BlockOut GUI library for creating data driven GUI's.
- * <p>More info can be found in the README.md file found in this directory.
- */
+@API(owner = Constants.MOD_ID, apiVersion = Constants.VERSION, provides = "minecolonies-blockout")
 package com.minecolonies.blockout;
+
+import com.minecolonies.api.util.constant.Constants;
+import net.minecraftforge.fml.common.API;
