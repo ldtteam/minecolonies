@@ -293,7 +293,7 @@ public interface IColonyManager
      * Sends view message to the right view.
      *
      * @param colonyId          ID of the colony.
-     * @param colonyData        {@link ByteBuf} with colony data.
+     * @param colonyData        {@link PacketBuffer} with colony data.
      * @param isNewSubscription whether this is a new subscription or not.
      * @param dim               the dimension.
      */
@@ -309,35 +309,35 @@ public interface IColonyManager
     IColonyView getColonyView(int id, int dimension);
 
     /**
-     * Returns result of {@link IColonyView#handlePermissionsViewMessage(ByteBuf)}
+     * Returns result of {@link IColonyView#handlePermissionsViewMessage(PacketBuffer)}
      * if {@link #getColonyView(int, int)}. gives a not-null result. If {@link
      * #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyID ID of the colony.
-     * @param data     {@link ByteBuf} with colony data.
+     * @param data     {@link PacketBuffer} with colony data.
      * @param dim      the dimension.
      */
     void handlePermissionsViewMessage(int colonyID, @NotNull PacketBuffer data, int dim);
 
     /**
      * Returns result of {@link IColonyView#handleColonyViewCitizensMessage(int,
-     * ByteBuf)} if {@link #getColonyView(int, int)} gives a not-null result. If
+     * PacketBuffer)} if {@link #getColonyView(int, int)} gives a not-null result. If
      * {@link #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyId  ID of the colony.
      * @param citizenId ID of the citizen.
-     * @param buf       {@link ByteBuf} with colony data.
+     * @param buf       {@link PacketBuffer} with colony data.
      * @param dim       the dimension.
      */
     void handleColonyViewCitizensMessage(int colonyId, int citizenId, PacketBuffer buf, int dim);
 
     /**
-     * Returns result of {@link IColonyView#handleColonyViewWorkOrderMessage(ByteBuf)}
+     * Returns result of {@link IColonyView#handleColonyViewWorkOrderMessage(PacketBuffer)}
      * (int, ByteBuf)} if {@link #getColonyView(int, int)} gives a not-null result.
      * If {@link #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyId ID of the colony.
-     * @param buf      {@link ByteBuf} with colony data.
+     * @param buf      {@link PacketBuffer} with colony data.
      * @param dim      the dimension.
      */
     void handleColonyViewWorkOrderMessage(int colonyId, PacketBuffer buf, int dim);
@@ -355,12 +355,12 @@ public interface IColonyManager
 
     /**
      * Returns result of {@link IColonyView#handleColonyBuildingViewMessage(BlockPos,
-     * ByteBuf)} if {@link #getColonyView(int, int)} gives a not-null result. If
+     * PacketBuffer)} if {@link #getColonyView(int, int)} gives a not-null result. If
      * {@link #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyId   ID of the colony.
      * @param buildingId ID of the building.
-     * @param buf        {@link ByteBuf} with colony data.
+     * @param buf        {@link PacketBuffer} with colony data.
      * @param dim        the dimension.
      */
     void handleColonyBuildingViewMessage(int colonyId, BlockPos buildingId, @NotNull PacketBuffer buf, int dim);

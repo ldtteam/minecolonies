@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.util.ItemStackUtils;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -18,7 +19,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SIZE;
 
-public abstract class AbstractTileEntityRack extends TileEntity
+public abstract class AbstractTileEntityRack extends TileEntity implements INamedContainerProvider
 {
     /**
      * Variable which determines if it is a single or doublechest.
