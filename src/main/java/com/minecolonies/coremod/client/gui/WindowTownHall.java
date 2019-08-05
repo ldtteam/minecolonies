@@ -1004,7 +1004,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 //Searches citizen of id x
                 for (@NotNull final IBuildingView buildingView : building.getColony().getBuildings())
                 {
-                    if (buildingView.getLocation().equals(workOrder.getClaimedBy()) && buildingView instanceof AbstractBuildingBuilderView)
+                    if (buildingView.getPosition().equals(workOrder.getClaimedBy()) && buildingView instanceof AbstractBuildingBuilderView)
                     {
                         claimingCitizen = ((AbstractBuildingBuilderView) buildingView).getWorkerName();
                         break;

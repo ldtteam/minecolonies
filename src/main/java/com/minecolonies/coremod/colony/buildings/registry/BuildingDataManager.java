@@ -14,6 +14,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TYPE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LOCATION;
@@ -66,6 +67,22 @@ public class BuildingDataManager implements IBuildingDataManager
     public IBuildingView createViewFrom(
       final IColonyView colony, final BlockPos position, final PacketBuffer networkBuffer)
     {
-        return null;
+        final ResourceLocation buildingName = new ResourceLocation(ByteBufUtils.readUTF8String(networkBuffer));
+        final BuildingEntry entry = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(buildingName);
+
+        if (entry == null)
+        {
+            Log.getLogger().error(String.format("Unknown building type '%s'.", buildingName));
+            return null;
+        }
+
+        final IBuildingView view = entry.getBuildingViewProducer().apply(colony, position);
+
+        if (view != null)
+        {
+            view.deserialize(networkBuffer);
+        }
+
+        return view;
     }
 }
