@@ -51,8 +51,8 @@ public class ColonyViewBuildingViewMessage extends AbstractMessage<ColonyViewBui
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
-        buildingData = Unpooled.buffer(buf.readableBytes());
         dimension = buf.readInt();
+        buildingData = Unpooled.buffer(buf.readableBytes());
         buf.readBytes(buildingData, buf.readableBytes());
     }
 

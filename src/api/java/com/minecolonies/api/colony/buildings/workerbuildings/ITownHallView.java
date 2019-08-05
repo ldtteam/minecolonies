@@ -13,4 +13,6 @@ public interface ITownHallView extends IBuildingView
      * @return a copy of the list of events.
      */
     List<PermissionEvent> getPermissionEvents();
+
+    boolean canPlayerUseTP();
 }
