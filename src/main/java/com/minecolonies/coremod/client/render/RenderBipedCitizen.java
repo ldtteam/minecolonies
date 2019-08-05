@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.render;
 
-import com.minecolonies.api.client.render.BipedModelType;
-import com.minecolonies.coremod.client.model.*;
+import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
+import com.minecolonies.coremod.client.model.ModelEntityCitizenFemaleCitizen;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
@@ -14,9 +14,6 @@ import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import static com.minecolonies.api.util.constant.Constants.BED_HEIGHT;
 
 /**
@@ -24,54 +21,10 @@ import static com.minecolonies.api.util.constant.Constants.BED_HEIGHT;
  */
 public class RenderBipedCitizen<C extends EntityCitizen> extends RenderBiped<C>
 {
-    private static final ModelBiped                      defaultModelMale   = new ModelBiped();
-    private static final ModelBiped                      defaultModelFemale = new ModelEntityCitizenFemaleCitizen();
-    private static final Map<BipedModelType, ModelBiped> idToMaleModelMap   = new EnumMap<>(BipedModelType.class);
-    private static final Map<BipedModelType, ModelBiped> idToFemaleModelMap = new EnumMap<>(BipedModelType.class);
-    private static final double                          SHADOW_SIZE        = 0.5F;
-    private static final int                             THREE_QUARTERS     = 270;
-
-    static
-    {
-        idToMaleModelMap.put(BipedModelType.DELIVERYMAN, new ModelEntityDeliverymanMale());
-        idToMaleModelMap.put(BipedModelType.LUMBERJACK, new ModelEntityLumberjackMale());
-        idToMaleModelMap.put(BipedModelType.FARMER, new ModelEntityFarmerMale());
-        idToMaleModelMap.put(BipedModelType.FISHERMAN, new ModelEntityFishermanMale());
-        idToMaleModelMap.put(BipedModelType.BAKER, new ModelEntityBakerMale());
-        idToMaleModelMap.put(BipedModelType.COMPOSTER, new ModelEntityComposterMale());
-        idToMaleModelMap.put(BipedModelType.COOK, new ModelEntityCookMale());
-        idToMaleModelMap.put(BipedModelType.CHICKEN_FARMER, new ModelEntityChickenFarmerMale());
-        idToMaleModelMap.put(BipedModelType.SHEEP_FARMER, new ModelEntitySheepFarmerMale());
-        idToMaleModelMap.put(BipedModelType.PIG_FARMER, new ModelEntityPigFarmerMale());
-        idToMaleModelMap.put(BipedModelType.COW_FARMER, new ModelEntityCowFarmerMale());
-        idToMaleModelMap.put(BipedModelType.SMELTER, new ModelEntitySmelterMale());
-        idToMaleModelMap.put(BipedModelType.STUDENT, new ModelEntityStudentMale());
-        idToMaleModelMap.put(BipedModelType.CRAFTER, new ModelEntityCrafterMale());
-        idToMaleModelMap.put(BipedModelType.BLACKSMITH, new ModelEntityBlacksmithMale());
-
-        idToFemaleModelMap.put(BipedModelType.NOBLE, new ModelEntityCitizenFemaleNoble());
-        idToFemaleModelMap.put(BipedModelType.ARISTOCRAT, new ModelEntityCitizenFemaleAristocrat());
-        idToFemaleModelMap.put(BipedModelType.BUILDER, new ModelEntityBuilderFemale());
-        idToFemaleModelMap.put(BipedModelType.DELIVERYMAN, new ModelEntityDeliverymanFemale());
-        idToFemaleModelMap.put(BipedModelType.MINER, new ModelEntityMinerFemale());
-        idToFemaleModelMap.put(BipedModelType.LUMBERJACK, new ModelEntityLumberjackFemale());
-        idToFemaleModelMap.put(BipedModelType.FARMER, new ModelEntityFarmerFemale());
-        idToFemaleModelMap.put(BipedModelType.FISHERMAN, new ModelEntityFishermanFemale());
-        idToFemaleModelMap.put(BipedModelType.ARCHER_GUARD, new ModelBiped());
-        idToFemaleModelMap.put(BipedModelType.KNIGHT_GUARD, new ModelBiped());
-        idToFemaleModelMap.put(BipedModelType.BAKER, new ModelEntityBakerFemale());
-        idToFemaleModelMap.put(BipedModelType.COMPOSTER, new ModelEntityComposterFemale());
-        idToFemaleModelMap.put(BipedModelType.COOK, new ModelEntityCookFemale());
-        idToFemaleModelMap.put(BipedModelType.CHICKEN_FARMER, new ModelEntityChickenFarmerFemale());
-        idToFemaleModelMap.put(BipedModelType.COW_FARMER, new ModelEntityCowFarmerFemale());
-        idToFemaleModelMap.put(BipedModelType.PIG_FARMER, new ModelEntityPigFarmerFemale());
-        idToFemaleModelMap.put(BipedModelType.SHEEP_FARMER, new ModelEntitySheepFarmerFemale());
-        idToFemaleModelMap.put(BipedModelType.SMELTER, new ModelEntitySmelterFemale());
-        idToFemaleModelMap.put(BipedModelType.STUDENT, new ModelEntityStudentFemale());
-        idToFemaleModelMap.put(BipedModelType.CRAFTER, new ModelEntityCrafterFemale());
-        idToFemaleModelMap.put(BipedModelType.BLACKSMITH, new ModelEntityBlacksmithFemale());
-
-    }
+    private static final ModelBiped defaultModelMale   = new ModelBiped();
+    private static final ModelBiped defaultModelFemale = new ModelEntityCitizenFemaleCitizen();
+    private static final double     SHADOW_SIZE        = 0.5F;
+    private static final int        THREE_QUARTERS     = 270;
 
     /**
      * Renders model, see {@link RenderBiped}.
@@ -89,8 +42,8 @@ public class RenderBipedCitizen<C extends EntityCitizen> extends RenderBiped<C>
     {
 
         mainModel = citizen.isFemale()
-                      ? idToFemaleModelMap.get(citizen.getModelID())
-                      : idToMaleModelMap.get(citizen.getModelID());
+                      ? IModelTypeRegistry.getInstance().getFemaleMap().get(citizen.getModelType())
+                      : IModelTypeRegistry.getInstance().getMaleMap().get(citizen.getModelType());
 
         if (mainModel == null)
         {
