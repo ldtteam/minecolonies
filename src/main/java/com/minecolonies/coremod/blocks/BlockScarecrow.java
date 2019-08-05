@@ -3,32 +3,27 @@ package com.minecolonies.coremod.blocks;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.creativetab.ModCreativeTabs;
-import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.BlockState;
-import net.minecraft.entity.LivingEntityBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.world.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Locale;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 import static net.minecraft.util.Direction.NORTH;
@@ -45,132 +40,77 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
      */
     public BlockScarecrow()
     {
-        super(Material.WOOD);
-        initBlock();
-    }
+        super(Properties.create(Material.WOOD).hardnessAndResistance(HARDNESS, RESISTANCE));
+        setRegistryName(REGISTRY_NAME);
+        this.setDefaultState(this.getDefaultState().with(FACING, NORTH));
 
-    /**
-     * Method called by constructor.
-     * Sets basic details of the block.
-     */
-    private void initBlock()
-    {
-        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + REGISTRY_NAME);
-        setTranslationKey(Constants.MOD_ID.toLowerCase(Locale.ENGLISH) + "." + REGISTRY_NAME);
-        setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        //Blast resistance for creepers etc. makes them explosion proof.
-        setResistance(RESISTANCE);
-        //Hardness of 10 takes a long time to mine to not loose progress.
-        setHardness(HARDNESS);
-        this.setDefaultState(this.blockState.getBaseState().with(FACING, NORTH));
     }
 
     @NotNull
     @Override
     @SuppressWarnings(DEPRECATION)
-    public EnumBlockRenderType getRenderType(final BlockState state)
+    public BlockRenderType getRenderType(final BlockState state)
     {
-        return EnumBlockRenderType.INVISIBLE;
+        return BlockRenderType.INVISIBLE;
     }
 
     @Override
-    public int getMetaFromState(@NotNull final BlockState state)
+    public VoxelShape getShape(
+      final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
     {
-        return state.get(FACING).getIndex();
+        return Block.makeCuboidShape((float) START_COLLISION,
+          (float) BOTTOM_COLLISION,
+          (float) START_COLLISION,
+          (float) END_COLLISION,
+          (float) HEIGHT_COLLISION,
+          (float) END_COLLISION);
     }
 
-    //todo: remove once we no longer need to support this
-    @SuppressWarnings(DEPRECATION)
+    @Nullable
     @Override
-    public boolean isFullCube(final BlockState state)
+    public TileEntity createTileEntity(final BlockState state, final IBlockReader world)
     {
-        return false;
+        return new ScarecrowTileEntity();
     }
 
     @Override
-    public boolean isPassable(final IBlockAccess worldIn, final BlockPos pos)
-    {
-        return false;
-    }
-
-    //todo: remove once we no longer need to support this
-    @NotNull
-    @SuppressWarnings(DEPRECATION)
-    @Override
-    public AxisAlignedBB getBoundingBox(final BlockState state, final IBlockAccess source, final BlockPos pos)
-    {
-        return new AxisAlignedBB((float) START_COLLISION,
-                                  (float) BOTTOM_COLLISION,
-                                  (float) START_COLLISION,
-                                  (float) END_COLLISION,
-                                  (float) HEIGHT_COLLISION,
-                                  (float) END_COLLISION);
-    }
-
-    //todo: remove once we no longer need to support this
-    @SuppressWarnings(DEPRECATION)
-    @Override
-    public boolean isOpaqueCube(final BlockState state)
+    public boolean doesSideBlockRendering(final BlockState state, final IEnviromentBlockReader world, final BlockPos pos, final Direction face)
     {
         return false;
     }
 
     @NotNull
     @Override
-    @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getRenderLayer()
-    {
-        return BlockRenderLayer.SOLID;
+    public BlockRenderLayer getRenderLayer() {
+        return BlockRenderLayer.CUTOUT;
     }
 
     @Override
-    public boolean onBlockActivated(
-                                     final World worldIn,
-                                     final BlockPos pos,
-                                     final BlockState state,
-                                     final PlayerEntity playerIn,
-                                     final Hand hand,
-                                     final Direction facing,
-                                     final float hitX,
-                                     final float hitY,
-                                     final float hitZ)
+    public boolean onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos, final PlayerEntity player, final Hand handIn, final BlockRayTraceResult hit)
     {
         //If the world is server, open the inventory of the field.
         if (!worldIn.isRemote)
         {
-            @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
-            if (colony != null)
+            final TileEntity entity = worldIn.getTileEntity(pos);
+            if (entity instanceof ScarecrowTileEntity)
             {
-                playerIn.openGui(MineColonies.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
+                player.openContainer((ScarecrowTileEntity) entity);
                 return true;
             }
         }
         return false;
     }
 
-    // =======================================================================
-    // ======================= Rendering & BlockState =======================
-    // =======================================================================
-
-    @SuppressWarnings(DEPRECATION)
-    @NotNull
+    @javax.annotation.Nullable
     @Override
-    public BlockState getStateForPlacement(
-                                             final World worldIn,
-                                             final BlockPos pos,
-                                             final Direction facing,
-                                             final float hitX,
-                                             final float hitY,
-                                             final float hitZ,
-                                             final int meta,
-                                             final LivingEntityBase placer)
+    public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
-        @NotNull final Direction Direction = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
+        @NotNull final Direction Direction = (context.getPlayer() == null) ? NORTH : fromAngle(context.getPlayer().rotationYaw);
         return this.getDefaultState().with(FACING, Direction);
     }
 
     @Override
-    public void onBlockPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntityBase placer, final ItemStack stack)
+    public void onBlockPlacedBy(final World worldIn, final BlockPos pos, final BlockState state, @Nullable final LivingEntity placer, final ItemStack stack)
     {
         //Only work on server side.
         if (worldIn.isRemote)
@@ -201,14 +141,14 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     }
 
     @Override
-    public void onBlockHarvested(final World worldIn, final BlockPos pos, final BlockState state, final PlayerEntity player)
+    public void onBlockHarvested(final World worldIn, @NotNull final BlockPos pos, final BlockState state, @NotNull final PlayerEntity player)
     {
         notifyColonyAboutDestruction(worldIn, pos);
         super.onBlockHarvested(worldIn, pos, state, player);
     }
 
     @Override
-    public void onPlayerDestroy(final World worldIn, final BlockPos pos, final BlockState state)
+    public void onPlayerDestroy(final IWorld worldIn, final BlockPos pos, final BlockState state)
     {
         notifyColonyAboutDestruction(worldIn, pos);
         super.onPlayerDestroy(worldIn, pos, state);
@@ -219,20 +159,21 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
      * @param worldIn the world.
      * @param pos the position.
      */
-    private static void notifyColonyAboutDestruction(final World worldIn, final BlockPos pos)
+    private static void notifyColonyAboutDestruction(final IWorld worldIn, final BlockPos pos)
     {
-        @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
-        if (colony != null)
+        if (!worldIn.isRemote())
         {
-            colony.getBuildingManager().removeField(pos);
+            @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld((World) worldIn, pos);
+            if (colony != null)
+            {
+                colony.getBuildingManager().removeField(pos);
+            }
         }
     }
 
-    @NotNull
     @Override
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, FACING);
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
     }
 
     @Override
@@ -240,14 +181,4 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     {
         return true;
     }
-
-    @NotNull
-    @Override
-    public TileEntity createNewTileEntity(final World worldIn, final int meta)
-    {
-        return new ScarecrowTileEntity();
-    }
-    // =======================================================================
-    // ===================== END of Rendering & Meta-Data ====================
-    // =======================================================================
 }

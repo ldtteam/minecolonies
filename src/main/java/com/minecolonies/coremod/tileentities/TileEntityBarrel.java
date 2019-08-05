@@ -11,7 +11,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -43,9 +43,9 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
      */
     private static final int                        AVERAGE_TICKS  = 20;
 
-    public TileEntityBarrel(final TileEntityType<?> tileEntityTypeIn)
+    public TileEntityBarrel()
     {
-        super(tileEntityTypeIn);
+        super(MinecoloniesTileEntities.BARREL);
     }
 
     /**
@@ -60,7 +60,6 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
         {
             this.updateTick(world, this.getPos(), world.getBlockState(this.getPos()), new Random());
         }
-
     }
 
     /**

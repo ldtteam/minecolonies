@@ -5,15 +5,17 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.block.state.BlockState;
-import net.minecraft.entity.LivingEntityBase;
+import com.minecolonies.coremod.MineColonies;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -32,11 +34,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
 
     public BlockHutTownHall()
     {
-        super();
-        if (MineColonies.getConfig().getCommon().gameplay.pvp_mode)
-        {
-            setHardness(PVP_MODE_HARDNESS);
-        }
+        super(Properties.create(Material.WOOD).hardnessAndResistance(MineColonies.getConfig().getCommon().pvp_mode.get() ? PVP_MODE_HARDNESS : HARDNESS, RESISTANCE));
     }
 
     @NotNull
@@ -53,7 +51,8 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     }
 
     @Override
-    public void onBlockPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntityBase placer, final ItemStack stack)
+    public void onBlockPlacedBy(
+      @NotNull final World worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack)
     {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 
@@ -75,7 +74,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
 
             if (colony == null || !IColonyManager.getInstance().isTooCloseToColony(worldIn, pos))
             {
-                if (MineColonies.getConfig().getCommon().gameplay.enableDynamicColonySizes)
+                if (MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
                 {
                     IColony ownedColony = IColonyManager.getInstance().getIColonyByOwner(worldIn, (PlayerEntity) placer);
 

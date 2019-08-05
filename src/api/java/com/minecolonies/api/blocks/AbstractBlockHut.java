@@ -13,7 +13,6 @@ import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -38,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * All AbstractBlockHut[something] should extend this class.
  */
-public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBlockMinecolonies<B> implements ITileEntityProvider, IBuilderUndestroyable, IAnchorBlock
+public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBlockMinecolonies<B> implements IBuilderUndestroyable, IAnchorBlock
 {
     /**
      * Hardness factor of the pvp mode.
@@ -53,15 +52,15 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     /**
      * The default hardness.
      */
-    private static final float             HARDNESS   = 10F;
+    public static final float HARDNESS   = 10F;
 
     /**
      * The default resistance (against explosions).
      */
-    private static final float             RESISTANCE = Float.POSITIVE_INFINITY;
+    public static final float RESISTANCE = Float.POSITIVE_INFINITY;
 
     /**
-     * Constructor for a block using the minecolonies mod.
+     * Constructor for a hut block.
      * <p>
      * Registers the block, sets the creative tab, as well as the resistance and
      * the hardness.
@@ -69,6 +68,20 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public AbstractBlockHut()
     {
         super(Properties.create(Material.WOOD).hardnessAndResistance(MinecoloniesAPIProxy.getInstance().getConfig().getCommon().pvp_mode.get() ? HARDNESS * HARDNESS_PVP_FACTOR : HARDNESS, RESISTANCE));
+        setRegistryName(getName());
+        this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH));
+    }
+
+    /**
+     * Constructor for a hut block.
+     * <p>
+     * Registers the block, sets the creative tab, as well as the resistance and
+     * the hardness.
+     * @param properties custom properties.
+     */
+    public AbstractBlockHut(final Properties properties)
+    {
+        super(properties);
         setRegistryName(getName());
         this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH));
     }

@@ -1,20 +1,19 @@
 package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
-import com.minecolonies.api.creativetab.ModCreativeTabs;
-import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.DirectionProperty;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.BlockState;
-import net.minecraft.entity.LivingEntityBase;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
+import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.StateContainer;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IEnviromentBlockReader;
 import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
 
 import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
@@ -24,7 +23,7 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     /**
      * Our Substitution bock's Facing.
      */
-    public static final DirectionProperty FACING = HorizontalBlock.FACING;
+    public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
 
     /**
      * The hardness this block has.
@@ -47,52 +46,9 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
      */
     public BlockBarracksTowerSubstitution()
     {
-        super(Material.WOOD);
-        initBlock();
-    }
-
-    /**
-     * initialize the block
-     * sets the creative tab, as well as the resistance and the hardness.
-     */
-    private void initBlock()
-    {
-        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + BLOCK_NAME);
-        setTranslationKey(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
-        setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        setHardness(BLOCK_HARDNESS);
-        setResistance(RESISTANCE);
-        this.setDefaultState(this.blockState.getBaseState().with(FACING, Direction.NORTH));
-    }
-
-    /**
-     * Convert the given metadata into a BlockState for this Block.
-     *
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @SuppressWarnings(DEPRECATION)
-    @NotNull
-    @Override
-    @Deprecated
-    public BlockState getStateFromMeta(final int meta)
-    {
-        Direction Direction = Direction.byIndex(meta);
-
-        if (Direction.getAxis() == Direction.Axis.Y)
-        {
-            Direction = Direction.NORTH;
-        }
-
-        return this.getDefaultState().with(FACING, Direction);
-    }
-
-    /**
-     * Convert the BlockState into the correct metadata value.
-     */
-    @Override
-    public int getMetaFromState(final BlockState state)
-    {
-        return state.get(FACING).getIndex();
+        super(Properties.create(Material.WOOD).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE));
+        setRegistryName(BLOCK_NAME);
+        this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH));
     }
 
     /**
@@ -104,7 +60,7 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     @NotNull
     @Override
     @Deprecated
-    public BlockState withRotation(@NotNull final BlockState state, final Rotation rot)
+    public BlockState rotate(@NotNull final BlockState state, final Rotation rot)
     {
         return state.with(FACING, rot.rotate(state.get(FACING)));
     }
@@ -116,46 +72,33 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     @NotNull
     @Override
     @Deprecated
-    public BlockState withMirror(@NotNull final BlockState state, final Mirror mirrorIn)
+    public BlockState mirror(@NotNull final BlockState state, final Mirror mirrorIn)
     {
-        return state.withRotation(mirrorIn.toRotation(state.get(FACING)));
+        return state.rotate(mirrorIn.toRotation(state.get(FACING)));
     }
 
-    @SuppressWarnings(DEPRECATION)
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(final BlockItemUseContext context)
+    {
+        @NotNull final Direction direction = (context.getPlayer() == null) ? Direction.NORTH : Direction.fromAngle(context.getPlayer().rotationYaw);
+        return this.getDefaultState().with(FACING, direction);
+    }
+
+    @Override
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
+    }
+
+    @Override
+    public boolean doesSideBlockRendering(final BlockState state, final IEnviromentBlockReader world, final BlockPos pos, final Direction face)
+    {
+        return false;
+    }
+
     @NotNull
     @Override
-    public BlockState getStateForPlacement(
-      final World worldIn,
-      final BlockPos pos,
-      final Direction facing,
-      final float hitX,
-      final float hitY,
-      final float hitZ,
-      final int meta,
-      final LivingEntityBase placer)
-    {
-        @NotNull final Direction Direction = (placer == null) ? Direction.NORTH : Direction.fromAngle(placer.rotationYaw);
-        return this.getDefaultState().with(FACING, Direction);
-    }
-
-    @NotNull
-    @Override
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, FACING);
-    }
-
-    /**
-     * Used to determine ambient occlusion and culling when rebuilding chunks
-     * for render.
-     *
-     * @return true
-     */
-    //todo: remove once we no longer need to support this
-    @SuppressWarnings(DEPRECATION)
-    @Override
-    public boolean isOpaqueCube(final BlockState state)
-    {
-        return true;
+    public BlockRenderLayer getRenderLayer() {
+        return BlockRenderLayer.CUTOUT;
     }
 }

@@ -1,29 +1,22 @@
 package com.minecolonies.coremod.blocks.decorative;
 
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
-import com.minecolonies.api.creativetab.ModCreativeTabs;
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.TallGrassBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.Item;
 import net.minecraft.state.StateContainer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IEnviromentBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Locale;
-import java.util.Random;
-
-import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 import static net.minecraft.util.Direction.*;
 
 /**
@@ -178,35 +171,15 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     private static final double E_END_COLLISION_Z = 0.6375;
 
     /**
-     * How much light goes through the block.
-     */
-    private static final int    LIGHT_OPACITY    = 0;
-
-    /**
      * Constructor for the Substitution block.
      * sets the creative tab, as well as the resistance and the hardness.
      */
     public BlockConstructionTape()
     {
-        super(Material.VINE);
-        initBlock();
+        super(Properties.create(Material.ORGANIC).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE).doesNotBlockMovement());
+        setRegistryName(BLOCK_NAME);
+        this.setDefaultState(this.getDefaultState().with(FACING, NORTH));
     }
-
-    /**
-     * initialize the block
-     * sets the creative tab, as well as the resistance and the hardness.
-     */
-    private void initBlock()
-    {
-        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + BLOCK_NAME);
-        setTranslationKey(String.format("%s.%s", Constants.MOD_ID.toLowerCase(Locale.ENGLISH), BLOCK_NAME));
-        setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        this.setDefaultState(this.blockState.getBaseState().with(FACING, NORTH));
-        setHardness(BLOCK_HARDNESS);
-        setResistance(RESISTANCE);
-        setLightOpacity(LIGHT_OPACITY);
-    }
-
 
     @Override
     public boolean doesSideBlockRendering(final BlockState state, final IEnviromentBlockReader world, final BlockPos pos, final Direction face)
@@ -220,83 +193,75 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         return BlockRenderLayer.CUTOUT;
     }
 
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @SuppressWarnings(DEPRECATION)
+    @NotNull
     @Override
-    @Deprecated
-    public AxisAlignedBB getBoundingBox(final BlockState stateIn, final IBlockAccess source, final BlockPos pos)
+    public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
     {
-        final BlockState state = getActualState(stateIn, source, pos);
         if(state.get(VARIANT).equals(AbstractBlockMinecoloniesConstructionTape.ConstructionTapeType.CORNER))
         {
             if (state.get(FACING).equals(NORTH))
             {
-                return new AxisAlignedBB((float) N_START_COLLISION_X,
-                        (float) BOTTOM_COLLISION,
-                        (float) N_START_COLLISION_Z,
-                        (float) N_END_COLLISION_X,
-                        (float) HEIGHT_COLLISION,
-                        (float) N_END_COLLISION_Z);
+                return Block.makeCuboidShape((float) N_START_COLLISION_X,
+                  (float) BOTTOM_COLLISION,
+                  (float) N_START_COLLISION_Z,
+                  (float) N_END_COLLISION_X,
+                  (float) HEIGHT_COLLISION,
+                  (float) N_END_COLLISION_Z);
             }
             if (state.get(FACING).equals(WEST))
             {
-                return new AxisAlignedBB((float) W_START_COLLISION_X,
-                        (float) BOTTOM_COLLISION,
-                        (float) W_START_COLLISION_Z,
-                        (float) W_END_COLLISION_X,
-                        (float) HEIGHT_COLLISION,
-                        (float) W_END_COLLISION_Z);
+                return Block.makeCuboidShape((float) W_START_COLLISION_X,
+                  (float) BOTTOM_COLLISION,
+                  (float) W_START_COLLISION_Z,
+                  (float) W_END_COLLISION_X,
+                  (float) HEIGHT_COLLISION,
+                  (float) W_END_COLLISION_Z);
             }
             if (state.get(FACING).equals(SOUTH))
             {
-                return new AxisAlignedBB((float) S_START_COLLISION_X,
-                        (float) BOTTOM_COLLISION,
-                        (float) S_START_COLLISION_Z,
-                        (float) S_END_COLLISION_X,
-                        (float) HEIGHT_COLLISION,
-                        (float) S_END_COLLISION_Z);
+                return Block.makeCuboidShape((float) S_START_COLLISION_X,
+                  (float) BOTTOM_COLLISION,
+                  (float) S_START_COLLISION_Z,
+                  (float) S_END_COLLISION_X,
+                  (float) HEIGHT_COLLISION,
+                  (float) S_END_COLLISION_Z);
             }
             else
             {
-                return new AxisAlignedBB((float) E_START_COLLISION_X,
-                        (float) BOTTOM_COLLISION,
-                        (float) E_START_COLLISION_Z,
-                        (float) E_END_COLLISION_X,
-                        (float) HEIGHT_COLLISION,
-                        (float) E_END_COLLISION_Z);
+                return Block.makeCuboidShape((float) E_START_COLLISION_X,
+                  (float) BOTTOM_COLLISION,
+                  (float) E_START_COLLISION_Z,
+                  (float) E_END_COLLISION_X,
+                  (float) HEIGHT_COLLISION,
+                  (float) E_END_COLLISION_Z);
             }
         }
 
         if (state.get(FACING).equals(EAST) || state.get(FACING).equals(WEST))
         {
-            return new AxisAlignedBB((float) WE_START_COLLISION_X,
-                                      (float) BOTTOM_COLLISION,
-                                      (float) WE_START_COLLISION_Z,
-                                      (float) WE_END_COLLISION_X,
-                                      (float) HEIGHT_COLLISION,
-                                      (float) WE_END_COLLISION_Z);
+            return Block.makeCuboidShape((float) WE_START_COLLISION_X,
+              (float) BOTTOM_COLLISION,
+              (float) WE_START_COLLISION_Z,
+              (float) WE_END_COLLISION_X,
+              (float) HEIGHT_COLLISION,
+              (float) WE_END_COLLISION_Z);
         }
         else
         {
-            return new AxisAlignedBB((float) SN_START_COLLISION_X,
-                                      (float) BOTTOM_COLLISION,
-                                      (float) SN_START_COLLISION_Z,
-                                      (float) SN_END_COLLISION_X,
-                                      (float) HEIGHT_COLLISION,
-                                      (float) SN_END_COLLISION_Z);
+            return Block.makeCuboidShape((float) SN_START_COLLISION_X,
+              (float) BOTTOM_COLLISION,
+              (float) SN_START_COLLISION_Z,
+              (float) SN_END_COLLISION_X,
+              (float) HEIGHT_COLLISION,
+              (float) SN_END_COLLISION_Z);
         }
     }
 
-    /**
-     * @deprecated remove when minecraft invents something better.
-     */
-    @Deprecated
+    @NotNull
     @Override
-    public BlockState getActualState(@NotNull final BlockState state, @NotNull final IBlockAccess worldIn, @NotNull final BlockPos pos)
+    public BlockState updatePostPlacement(@NotNull final BlockState stateIn, final Direction HORIZONTAL_FACING, final BlockState HORIZONTAL_FACINGState, final IWorld worldIn, @NotNull final BlockPos currentPos, final BlockPos HORIZONTAL_FACINGPos)
     {
-        return getTapeShape(state, worldIn, pos);
+        return getTapeShape(stateIn, worldIn, currentPos);
     }
 
     /**
@@ -306,7 +271,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
      * @param position the position.Re
      * @return the blockState to use.
      */
-    private static BlockState getTapeShape(@NotNull final BlockState state, @NotNull final IBlockAccess world, @NotNull final BlockPos position)
+    private static BlockState getTapeShape(@NotNull final BlockState state, @NotNull final IWorld world, @NotNull final BlockPos position)
     {
         final boolean[] connectors = new boolean[]{world.getBlockState(position.east()).getBlock() instanceof BlockConstructionTape,
                 world.getBlockState(position.west()).getBlock() instanceof BlockConstructionTape,
@@ -320,18 +285,6 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         return state.with(VARIANT, AbstractBlockMinecoloniesConstructionTape.ConstructionTapeType.STRAIGHT);
     }
 
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @SuppressWarnings(DEPRECATION)
-    @Nullable
-    @Deprecated
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox(final BlockState blockState, final IBlockAccess worldIn, final BlockPos pos)
-    {
-        return null;
-    }
-
     @Override
     public boolean propagatesSkylightDown(final BlockState state, @NotNull final IBlockReader reader, @NotNull final BlockPos pos) {
         return true;
@@ -341,9 +294,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     @Override
     public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
-        TallGrassBlock
-        @NotNull final Direction Direction = (context.getPlayer() == null) ? NORTH : fromAngle(context.getPlayer().rotationYaw);
-        return this.getDefaultState().with(FACING, Direction);
+        return getTapeShape(getDefaultState(), context.getWorld(), context.getPos());
     }
 
     @Override
