@@ -1,10 +1,11 @@
 package com.minecolonies.api.colony.buildings.views;
 
-import net.minecraft.network.PacketBuffer;
+import com.minecolonies.api.IMinecoloniesAPI;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -166,15 +167,15 @@ public class MobEntryView
      */
     public String getName()
     {
-        if (Minecolonies.gameplay.enableInDevelopmentFeatures)
+        if (IMinecoloniesAPI.getInstance().getConfig().getCommon().enableInDevelopmentFeatures.get())
         {
-            return (EntityType.getTranslationName(this.location) + ": " + this.priority);
+            return String.format("%s:%d", GameRegistry.findRegistry(EntityType.class).getValue(this.location).getTranslationKey(), this.priority);
         }
-        return EntityList.getTranslationName(this.location);
+        return GameRegistry.findRegistry(EntityType.class).getValue(this.location).getTranslationKey();
     }
 
     public EntityType<?> getEntityEntry()
     {
-        return ForgeRegistries.ENTITIES.get(this.getLocation());
+        return GameRegistry.findRegistry(EntityType.class).getValue(this.location);
     }
 }

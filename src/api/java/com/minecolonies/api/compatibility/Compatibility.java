@@ -10,9 +10,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -137,7 +137,7 @@ public final class Compatibility
      */
     public static boolean isPamsInstalled()
     {
-        return Loader.isModLoaded(HARVESTCRAFTMODID);
+        return ModList.get().isLoaded(HARVESTCRAFTMODID);
     }
 
     /**
@@ -194,7 +194,7 @@ public final class Compatibility
      * @param fortune    amount of fortune to use
      * @param leaf       The leaf to check
      */
-    public static NonNullList<ItemStack> getDropsForDynamicLeaf(final IBlockAccess world, final BlockPos pos, final BlockState blockState, final int fortune, final Block leaf)
+    public static NonNullList<ItemStack> getDropsForDynamicLeaf(final IWorld world, final BlockPos pos, final BlockState blockState, final int fortune, final Block leaf)
     {
         return DynamicTreeCompat.getDropsForLeafCompat(world, pos, blockState, fortune, leaf);
     }
@@ -254,7 +254,7 @@ public final class Compatibility
      * @param block2 Second blockpos to compare
      * @return true when same family
      */
-    public static boolean isDynamicFamilyFitting(final BlockPos block1, final BlockPos block2, final IBlockAccess world)
+    public static boolean isDynamicFamilyFitting(final BlockPos block1, final BlockPos block2, final IWorld world)
     {
         return DynamicTreeCompat.hasFittingTreeFamily(block1, block2, world);
     }

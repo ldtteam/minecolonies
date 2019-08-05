@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
