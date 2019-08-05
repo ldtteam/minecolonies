@@ -196,7 +196,8 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
          * Check if the player can use the teleport command.
          * @return true if so.
          */
-        public boolean canCanPlayerUseTP()
+        @Override
+        public boolean canPlayerUseTP()
         {
             return canPlayerUseTP;
         }

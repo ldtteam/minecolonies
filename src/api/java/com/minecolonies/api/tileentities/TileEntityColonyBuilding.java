@@ -40,6 +40,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.MIN_SLOTS_FOR_RECOGNITION;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TYPE;
 
 /**
  * Class which handles the tileEntity of our colonyBuildings.
@@ -87,6 +88,10 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
      * The name of the building location.
      */
     private ResourceLocation registryName;
+
+    public TileEntityColonyBuilding()
+    {
+    }
 
     /**
      * Empty standard constructor.
@@ -320,6 +325,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
         updateColonyReferences();
         mirror = compound.getBoolean(TAG_MIRROR);
         style = compound.getString(TAG_STYLE);
+        registryName = new ResourceLocation(compound.getString(TAG_BUILDING_TYPE));
     }
 
     @NotNull
@@ -330,6 +336,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
         compound.putInt(TAG_COLONY, colonyId);
         compound.putBoolean(TAG_MIRROR, mirror);
         compound.putString(TAG_STYLE, style);
+        compound.setString(TAG_BUILDING_TYPE, registryName.toString());
         return compound;
     }
 

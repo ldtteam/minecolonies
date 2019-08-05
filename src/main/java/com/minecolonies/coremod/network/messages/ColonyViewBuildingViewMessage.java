@@ -54,8 +54,8 @@ public class ColonyViewBuildingViewMessage implements IMessage
     {
         colonyId = buf.readInt();
         buildingId = buf.readBlockPos();
-        buildingData = Unpooled.buffer(buf.readableBytes());
         dimension = buf.readInt();
+        buildingData = Unpooled.buffer(buf.readableBytes());
         buf.readBytes(buildingData, buf.readableBytes());
     }
 
