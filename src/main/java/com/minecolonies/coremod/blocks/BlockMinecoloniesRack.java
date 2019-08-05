@@ -5,35 +5,33 @@ import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.block.Block;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.BlockState;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.LivingEntityBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.init.Blocks;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IEnviromentBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.world.storage.loot.LootContext;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,63 +65,28 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
 
     public BlockMinecoloniesRack()
     {
-        super(Material.WOOD);
-        initBlock();
-    }
-
-    /**
-     * initialize the block
-     * sets the creative tab, as well as the resistance and the hardness.
-     */
-    private void initBlock()
-    {
+        super(Properties.create(Material.WOOD).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE));
+        this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH).with(VARIANT, RackType.DEFAULT));
         setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + BLOCK_NAME);
-        setTranslationKey(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
-        setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        this.setDefaultState(this.blockState.getBaseState().with(FACING, Direction.NORTH).with(VARIANT, RackType.DEFAULT));
-        setHardness(BLOCK_HARDNESS);
-        setResistance(RESISTANCE);
-        setLightOpacity(LIGHT_OPACITY);
-    }
-
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-    @Override
-    @Deprecated
-    public boolean isFullBlock(final BlockState state)
-    {
-        return false;
-    }
-
-    /**
-     * @deprecated but we still need this because there is nothing better.
-     */
-    @Deprecated
-    @Override
-    public BlockState getStateFromMeta(final int meta)
-    {
-        final Direction Direction = Direction.byHorizontalIndex(meta);
-        return this.getDefaultState().with(FACING, Direction);
     }
 
     @Override
-    public int getMetaFromState(@NotNull final BlockState state)
-    {
-        return state.get(FACING).getHorizontalIndex();
+    public boolean propagatesSkylightDown(final BlockState state, @NotNull final IBlockReader reader, @NotNull final BlockPos pos) {
+        return true;
     }
 
-    /**
-     * @deprecated but we still need this because there is nothing better.
-     */
+    @Nullable
     @Override
-    public BlockState getActualState(final BlockState state, final IBlockAccess worldIn, final BlockPos pos)
+    public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
+        final World worldIn = context.getWorld();
+        final BlockPos pos = context.getPos();
+        final BlockState state = getDefaultState();
         final TileEntity entity = worldIn.getTileEntity(pos);
 
         if (!(entity instanceof TileEntityRack))
         {
-            return super.getActualState(state, worldIn, pos);
+            return super.getStateForPlacement(context);
         }
 
         final AbstractTileEntityRack rack = (AbstractTileEntityRack) entity;
@@ -133,7 +96,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
             {
                 if (rack.isMain())
                 {
-                     return state.with(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE).with(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
+                    return state.with(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE).with(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
                 }
                 else
                 {
@@ -174,7 +137,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     @NotNull
     @Override
     @Deprecated
-    public BlockState withRotation(@NotNull final BlockState state, final Rotation rot)
+    public BlockState rotate(@NotNull final BlockState state, final Rotation rot)
     {
         return state.with(FACING, rot.rotate(state.get(FACING)));
     }
@@ -185,103 +148,68 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     @NotNull
     @Override
     @Deprecated
-    public BlockState withMirror(@NotNull final BlockState state, final Mirror mirrorIn)
+    public BlockState mirror(@NotNull final BlockState state, final Mirror mirrorIn)
     {
-        return state.withRotation(mirrorIn.toRotation(state.get(FACING)));
+        return state.rotate(mirrorIn.toRotation(state.get(FACING)));
     }
 
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
     @Override
-    @Deprecated
-    public boolean isFullCube(final BlockState state)
+    public boolean doesSideBlockRendering(final BlockState state, final IEnviromentBlockReader world, final BlockPos pos, final Direction face)
     {
         return false;
     }
 
-    /**
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
+    @NotNull
     @Override
-    @Deprecated
-    public boolean isOpaqueCube(final BlockState state)
-    {
-        return false;
+    public BlockRenderLayer getRenderLayer() {
+        return BlockRenderLayer.CUTOUT;
     }
 
     @Override
-    @SuppressWarnings(DEPRECATION)
-    public void neighborChanged(final BlockState state, final World worldIn, final BlockPos pos, final Block blockIn, final BlockPos fromPos)
+    public BlockState updatePostPlacement(@NotNull final BlockState stateIn, final Direction facing, final BlockState state, final IWorld worldIn, final BlockPos currentPos, final BlockPos pos)
     {
         if (state.getBlock() instanceof BlockMinecoloniesRack)
         {
             final TileEntity rack = worldIn.getTileEntity(pos);
-            for (final Direction offsetFacing : HorizontalBlock.FACING.getAllowedValues())
+            for (final Direction offsetFacing : HorizontalBlock.HORIZONTAL_FACING.getAllowedValues())
             {
                 final BlockPos neighbor = pos.offset(offsetFacing);
                 final Block block = worldIn.getBlockState(neighbor).getBlock();
                 if (rack instanceof TileEntityRack && pos.getY() == neighbor.getY() && !pos.equals(neighbor) && !pos.equals(BlockPos.ZERO)
-                      && (block instanceof BlockMinecoloniesRack || blockIn instanceof BlockMinecoloniesRack))
+                      && (block instanceof BlockMinecoloniesRack || state.getBlock() instanceof BlockMinecoloniesRack))
                 {
                     ((AbstractTileEntityRack) rack).neighborChanged(neighbor);
                 }
             }
         }
-        super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
+        return super.updatePostPlacement(stateIn, facing, state, worldIn, currentPos, pos);
     }
 
+
     @Override
-    public void breakBlock(@NotNull final World worldIn, @NotNull final BlockPos pos, @NotNull final BlockState state)
+    public void spawnAdditionalDrops(final BlockState state, final World worldIn, final BlockPos pos, final ItemStack stack)
     {
         final TileEntity tileentity = worldIn.getTileEntity(pos);
-
         if (tileentity instanceof TileEntityRack)
         {
             final IItemHandler handler = ((AbstractTileEntityRack) tileentity).getInventory();
             InventoryUtils.dropItemHandler(handler, worldIn, pos.getX(), pos.getY(), pos.getZ());
         }
-
-        super.breakBlock(worldIn, pos, state);
-    }
-
-    @NotNull
-    @Override
-    @SuppressWarnings(DEPRECATION)
-    public BlockFaceShape getBlockFaceShape(final IBlockAccess worldIn, final BlockState state, final BlockPos pos, final Direction face)
-    {
-        return BlockFaceShape.CENTER_BIG;
-    }
-
-    @NotNull
-    @Override
-    @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getRenderLayer()
-    {
-        return BlockRenderLayer.SOLID;
+        super.spawnAdditionalDrops(state, worldIn, pos, stack);
     }
 
     @Override
-    public boolean onBlockActivated(
-                                     final World worldIn,
-                                     final BlockPos pos,
-                                     final BlockState state,
-                                     final PlayerEntity playerIn,
-                                     final Hand hand,
-                                     final Direction facing,
-                                     final float hitX,
-                                     final float hitY,
-                                     final float hitZ)
+    public boolean onBlockActivated(final BlockState state, final World worldIn, final BlockPos pos, final PlayerEntity player, final Hand handIn, final BlockRayTraceResult hit)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
 
-        if ((colony == null || colony.getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS))
+        if ((colony == null || colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
               && tileEntity instanceof TileEntityRack)
         {
             if (!worldIn.isRemote)
             {
-                playerIn.openGui(MineColonies.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
+                player.openContainer((AbstractTileEntityRack) tileEntity);
             }
             return true;
         }
@@ -289,37 +217,18 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     }
 
     @Override
-    public void onBlockPlacedBy(
-                                 final World worldIn, final BlockPos pos, final BlockState state, final LivingEntityBase placer, final ItemStack stack)
+    public void onBlockPlacedBy(final World worldIn, final BlockPos pos, final BlockState state, @Nullable final LivingEntity placer, final ItemStack stack)
     {
         BlockState tempState = state;
-        tempState = tempState.with(VARIANT, RackType.byMetadata(stack.getItemDamage()));
+        tempState = tempState.with(VARIANT, RackType.DEFAULT);
         tempState = tempState.with(FACING, placer.getHorizontalFacing().getOpposite());
 
         worldIn.setBlockState(pos, tempState, 2);
     }
 
-    /**
-     * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
-     */
     @Override
-    public void getSubBlocks(final CreativeTabs itemIn, final NonNullList<ItemStack> items)
-    {
-        items.add(new ItemStack(this, 1, RackType.DEFAULT.getMetadata()));
-    }
-
-    /**
-     * Convert the given metadata into a BlockState for this Block.
-     *
-     * @deprecated (Remove this as soon as minecraft offers anything better).
-     */
-
-    @NotNull
-    @Override
-    @Deprecated
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, FACING, VARIANT);
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(FACING, VARIANT);
     }
 
     @Override
@@ -328,45 +237,18 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         return true;
     }
 
+    @Nullable
     @Override
-    public TileEntity createTileEntity(final World world, final BlockState state)
+    public TileEntity createTileEntity(final BlockState state, final IBlockReader world)
     {
         return new TileEntityRack();
     }
 
-    /**
-     * This returns a complete list of items dropped from this block.
-     *
-     * @param world   The current world
-     * @param pos     Block position in world
-     * @param state   Current state
-     * @param fortune Breakers fortune level
-     * @return A ArrayList containing all items this block drops
-     */
     @Override
-    @SuppressWarnings(DEPRECATION)
-    public List<ItemStack> getDrops(final IBlockAccess world, final BlockPos pos, final BlockState state, final int fortune)
+    public List<ItemStack> getDrops(final BlockState state, final LootContext.Builder builder)
     {
         final List<ItemStack> drops = new ArrayList<>();
-
         drops.add(new ItemStack(this, 1));
-
         return drops;
-    }
-
-    /**
-     * Called when a user uses the creative pick block button on this block
-     *
-     * @param state  the state.
-     * @param target the target.
-     * @param world  the world.
-     * @param pos    the position.
-     * @param player the player.
-     * @return the block pick result.
-     */
-    @Override
-    public ItemStack getPickBlock(final BlockState state, final RayTraceResult target, final World world, final BlockPos pos, final PlayerEntity player)
-    {
-        return new ItemStack(this, 1);
     }
 }

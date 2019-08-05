@@ -2,8 +2,7 @@ package com.minecolonies.api.client.render.modeltype.registry;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.client.render.modeltype.IModelType;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.model.ModelBiped;
 
 import java.util.Map;
 
@@ -15,9 +14,9 @@ public interface IModelTypeRegistry
         return IMinecoloniesAPI.getInstance().getModelTypeRegistry();
     }
 
-    IModelTypeRegistry register(IModelType type, BipedModel<? extends AbstractEntityCitizen> maleModel, BipedModel<? extends AbstractEntityCitizen> femaleModel);
+    IModelTypeRegistry register(IModelType type, ModelBiped maleModel, ModelBiped femaleModel);
 
-    Map<IModelType, ? extends AbstractEntityCitizen> getMaleMap();
+    Map<IModelType, ModelBiped> getMaleMap();
 
-    Map<IModelType, ? extends AbstractEntityCitizen> getFemaleMap();
+    Map<IModelType, ModelBiped> getFemaleMap();
 }
