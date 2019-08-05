@@ -11,7 +11,7 @@
                    label="$(com.minecolonies.coremod.gui.warehouse.upgrade)"/>
             <box size="164 30" linewidth="2" pos="13 29">
                 <itemicon id="resourceIcon" size="16 16" pos="1 1"/>
-                <label id="resourceName" size="100 12" pos="20 3" textalign="MIDDLE_LEFT" color="black"/>
+                <label id="registryName" size="100 12" pos="20 3" textalign="MIDDLE_LEFT" color="black"/>
                 <label id="resourceMissing" size="50 12" pos="2 18" textalign="MIDDLE_LEFT" color="black"/>
                 <label id="resourceAvailableNeeded" size="100% 12" pos="0 18" textalign="MIDDLE" color="black"/>
                 <button id="resourceAdd" size="16 16" label="↥" pos="110 7"/>

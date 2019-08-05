@@ -5,9 +5,10 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
-import com.minecolonies.api.colony.buildings.IGuardType;
-import com.minecolonies.api.colony.buildings.registry.IGuardTypeRegistry;
 import com.minecolonies.api.colony.buildings.views.MobEntryView;
+import com.minecolonies.api.colony.guardtype.GuardType;
+import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
+import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
@@ -119,9 +120,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     private BlockPos guardPos = this.getID();
 
     /**
-     * The guardType of the guard, Any possible {@link EnumGuardType}.
+     * The guardType of the guard, Any possible {@link GuardType}.
      */
-    private IGuardType job = null;
+    private GuardType job = null;
 
     /**
      * The list of manual patrol targets.
@@ -259,7 +260,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
         task = GuardTask.values()[compound.getInt(NBT_TASK)];
         final ResourceLocation jobName = new ResourceLocation(compound.getString(NBT_JOB));
-        job = IGuardTypeRegistry.getInstance().getFromName(jobName);
+        job = IGuardTypeDataManager.getInstance().getFrom(jobName);
         assignManually = compound.getBoolean(NBT_ASSIGN);
         retrieveOnLowHealth = compound.getBoolean(NBT_RETRIEVE);
         patrolManually = compound.getBoolean(NBT_PATROL);
@@ -491,28 +492,261 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     }
 
     /**
-     * Get the guard's {@link EnumGuardType}.
+     * The client view for the Guard building.
+     */
+    public static class View extends AbstractBuildingWorker.View
+    {
+
+        /**
+         * Assign the guardType manually, knight, guard, or *Other* (Future usage)
+         */
+        private boolean assignManually = false;
+
+        /**
+         * Retrieve the guard on low health.
+         */
+        private boolean retrieveOnLowHealth = false;
+
+        /**
+         * Patrol manually or automatically.
+         */
+        private boolean patrolManually = false;
+
+        /**
+         * The {@link GuardTask} of the guard.
+         */
+        private GuardTask task = GuardTask.GUARD;
+
+        /**
+         * Position the guard should guard.
+         */
+        private BlockPos guardPos = this.getID();
+
+        /**
+         * The {@link GuardType} of the guard
+         */
+        private GuardType guardType = null;
+
+        /**
+         * Indicates whether tight grouping is use or
+         * lose grouping.
+         */
+        private boolean tightGrouping = true;
+
+        /**
+         * The list of manual patrol targets.
+         */
+        private List<BlockPos> patrolTargets = new ArrayList<>();
+
+        /**
+         * Hashmap of mobs we may or may not attack.
+         */
+        private List<MobEntryView> mobsToAttack = new ArrayList<>();
+
+        @NotNull
+        private final List<Integer> guards = new ArrayList<>();
+
+        /**
+         * The client view constructor for the AbstractGuardBuilding.
+         *
+         * @param c the colony.
+         * @param l the location.
+         */
+        public View(final IColonyView c, @NotNull final BlockPos l)
+        {
+            super(c, l);
+        }
+
+        /**
+         * Creates a new window for the building.
+         *
+         * @return a BlockOut window.
+         */
+        @NotNull
+        @Override
+        public Window getWindow()
+        {
+            return new WindowHutGuardTower(this);
+        }
+
+        /**
+         * Getter for the list of residents.
+         *
+         * @return an unmodifiable list.
+         */
+        @NotNull
+        public List<Integer> getGuards()
+        {
+            return Collections.unmodifiableList(guards);
+        }
+
+        @Override
+        public void deserialize(@NotNull final ByteBuf buf)
+        {
+            super.deserialize(buf);
+            assignManually = buf.readBoolean();
+            retrieveOnLowHealth = buf.readBoolean();
+            patrolManually = buf.readBoolean();
+            tightGrouping = buf.readBoolean();
+
+
+            task = GuardTask.values()[buf.readInt()];
+            final ResourceLocation jobId = new ResourceLocation(ByteBufUtils.readUTF8String(buf));
+            guardType = IGuardTypeRegistry.getInstance().getValue(jobId);
+
+            final int targetSize = buf.readInt();
+            patrolTargets = new ArrayList<>();
+
+            for (int i = 0; i < targetSize; i++)
+            {
+                patrolTargets.add(BlockPosUtil.readFromByteBuf(buf));
+            }
+
+            final int mobSize = buf.readInt();
+            for (int i = 0; i < mobSize; i++)
+            {
+                final MobEntryView mobEntry = MobEntryView.readFromByteBuf(buf);
+                mobsToAttack.add(mobEntry);
+            }
+
+            guardPos = BlockPosUtil.readFromByteBuf(buf);
+
+            final int numResidents = buf.readInt();
+            for (int i = 0; i < numResidents; ++i)
+            {
+                guards.add(buf.readInt());
+            }
+        }
+
+        @NotNull
+        @Override
+        public Skill getPrimarySkill()
+        {
+            return getGuardType().getPrimarySkill();
+        }
+
+        @NotNull
+        @Override
+        public Skill getSecondarySkill()
+        {
+            return getGuardType().getSecondarySkill();
+        }
+
+        public void setAssignManually(final boolean assignManually)
+        {
+            this.assignManually = assignManually;
+        }
+
+        public boolean isAssignManually()
+        {
+            return assignManually;
+        }
+
+        public void setRetrieveOnLowHealth(final boolean retrieveOnLowHealth)
+        {
+            this.retrieveOnLowHealth = retrieveOnLowHealth;
+        }
+
+        public boolean isRetrieveOnLowHealth()
+        {
+            return retrieveOnLowHealth;
+        }
+
+        /**
+         * Set whether to use tight grouping or lose grouping.
+         *
+         * @param tightGrouping - indicates if you are using tight grouping
+         */
+        public void setTightGrouping(final boolean tightGrouping)
+        {
+            this.tightGrouping = tightGrouping;
+        }
+
+        /**
+         * Returns whether tight grouping in Follow mode is being used.
+         *
+         * @return whether tight grouping is being used.
+         */
+        public boolean isTightGrouping()
+        {
+            return tightGrouping;
+        }
+
+        public void setPatrolManually(final boolean patrolManually)
+        {
+            this.patrolManually = patrolManually;
+        }
+
+        public void setMobsToAttack(final List<MobEntryView> mobsToAttack)
+        {
+            this.mobsToAttack = new ArrayList<>(mobsToAttack);
+        }
+
+        public boolean isPatrolManually()
+        {
+            return patrolManually;
+        }
+
+        public void setTask(final GuardTask task)
+        {
+            this.task = task;
+            this.getColony().markDirty();
+        }
+
+        public GuardTask getTask()
+        {
+            return task;
+        }
+
+        public BlockPos getGuardPos()
+        {
+            return guardPos;
+        }
+
+        public GuardType getGuardType()
+        {
+            return guardType;
+        }
+
+        public void setGuardType(final GuardType job)
+        {
+            this.guardType = job;
+        }
+
+        public List<BlockPos> getPatrolTargets()
+        {
+            return new ArrayList<>(patrolTargets);
+        }
+
+        public List<MobEntryView> getMobsToAttack()
+        {
+            return new ArrayList<>(mobsToAttack);
+        }
+    }
+
+    /**
+     * Get the guard's {@link GuardType}.
      *
      * @return The guardType of the guard.
      */
     @Override
-    public IGuardType getGuardType()
+    public GuardType getGuardType()
     {
         if (job == null)
         {
-            final List<IGuardType> guardTypes = new ArrayList<>(IGuardTypeRegistry.getInstance().getRegisteredTypes().values());
+            final List<GuardType> guardTypes = new ArrayList<>(IGuardTypeRegistry.getInstance().getValuesCollection());
             job = guardTypes.get(new Random().nextInt(guardTypes.size()));
         }
         return this.job;
     }
 
     /**
-     * Set the guard's {@link EnumGuardType}.
+     * Set the guard's {@link GuardType}.
      *
      * @param job The guardType to set.
      */
     @Override
-    public void setGuardType(final IGuardType job)
+    public void setGuardType(final GuardType job)
     {
         this.job = job;
         for (final ICitizenData citizen : getAssignedCitizen())
@@ -526,14 +760,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     @Override
     public IJob createJob(final ICitizenData citizen)
     {
-        return getGuardType().getGuardJob(citizen);
+        return getGuardType().getGuardJobProducer().apply(citizen);
     }
 
     @NotNull
     @Override
     public String getJobName()
     {
-        return getGuardType().getJobName();
+        return getGuardType().getJobTranslationKey();
     }
 
     @Override
@@ -815,236 +1049,5 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         return true;
     }
 
-    /**
-     * The client view for the Guard building.
-     */
-    public static class View extends AbstractBuildingWorker.View
-    {
 
-        /**
-         * Assign the guardType manually, knight, guard, or *Other* (Future usage)
-         */
-        private boolean assignManually = false;
-
-        /**
-         * Retrieve the guard on low health.
-         */
-        private boolean retrieveOnLowHealth = false;
-
-        /**
-         * Patrol manually or automatically.
-         */
-        private boolean patrolManually = false;
-
-        /**
-         * The {@link GuardTask} of the guard.
-         */
-        private GuardTask task = GuardTask.GUARD;
-
-        /**
-         * Position the guard should guard.
-         */
-        private BlockPos guardPos = this.getID();
-
-        /**
-         * The {@link EnumGuardType} of the guard
-         */
-        private IGuardType guardType = null;
-
-        /**
-         * Indicates whether tight grouping is use or
-         * lose grouping.
-         */
-        private boolean tightGrouping = true;
-
-        /**
-         * The list of manual patrol targets.
-         */
-        private List<BlockPos> patrolTargets = new ArrayList<>();
-
-        /**
-         * Hashmap of mobs we may or may not attack.
-         */
-        private List<MobEntryView> mobsToAttack = new ArrayList<>();
-
-        @NotNull
-        private final List<Integer> guards = new ArrayList<>();
-
-        /**
-         * The client view constructor for the AbstractGuardBuilding.
-         *
-         * @param c the colony.
-         * @param l the location.
-         */
-        public View(final IColonyView c, @NotNull final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        /**
-         * Creates a new window for the building.
-         *
-         * @return a BlockOut window.
-         */
-        @NotNull
-        @Override
-        public Window getWindow()
-        {
-            return new WindowHutGuardTower(this);
-        }
-
-        /**
-         * Getter for the list of residents.
-         *
-         * @return an unmodifiable list.
-         */
-        @NotNull
-        public List<Integer> getGuards()
-        {
-            return Collections.unmodifiableList(guards);
-        }
-
-        @Override
-        public void deserialize(@NotNull final PacketBuffer buf)
-        {
-            super.deserialize(buf);
-            assignManually = buf.readBoolean();
-            retrieveOnLowHealth = buf.readBoolean();
-            patrolManually = buf.readBoolean();
-            tightGrouping = buf.readBoolean();
-
-
-            task = GuardTask.values()[buf.readInt()];
-            final ResourceLocation jobId = new ResourceLocation(ByteBufUtils.readUTF8String(buf));
-            guardType = IGuardTypeRegistry.getInstance().getFromName(jobId);
-
-            final int targetSize = buf.readInt();
-            patrolTargets = new ArrayList<>();
-
-            for (int i = 0; i < targetSize; i++)
-            {
-                patrolTargets.add(BlockPosUtil.readFromByteBuf(buf));
-            }
-
-            final int mobSize = buf.readInt();
-            for (int i = 0; i < mobSize; i++)
-            {
-                final MobEntryView mobEntry = MobEntryView.readFromByteBuf(buf);
-                mobsToAttack.add(mobEntry);
-            }
-
-            guardPos = buf.readBlockPos();
-
-            final int numResidents = buf.readInt();
-            for (int i = 0; i < numResidents; ++i)
-            {
-                guards.add(buf.readInt());
-            }
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return getGuardType().getPrimarySkill();
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return getGuardType().getSecondarySkill();
-        }
-
-        public void setAssignManually(final boolean assignManually)
-        {
-            this.assignManually = assignManually;
-        }
-
-        public boolean isAssignManually()
-        {
-            return assignManually;
-        }
-
-        public void setRetrieveOnLowHealth(final boolean retrieveOnLowHealth)
-        {
-            this.retrieveOnLowHealth = retrieveOnLowHealth;
-        }
-
-        public boolean isRetrieveOnLowHealth()
-        {
-            return retrieveOnLowHealth;
-        }
-
-        /**
-         * Set whether to use tight grouping or lose grouping.
-         *
-         * @param tightGrouping - indicates if you are using tight grouping
-         */
-        public void setTightGrouping(final boolean tightGrouping)
-        {
-            this.tightGrouping = tightGrouping;
-        }
-
-        /**
-         * Returns whether tight grouping in Follow mode is being used.
-         *
-         * @return whether tight grouping is being used.
-         */
-        public boolean isTightGrouping()
-        {
-            return tightGrouping;
-        }
-
-        public void setPatrolManually(final boolean patrolManually)
-        {
-            this.patrolManually = patrolManually;
-        }
-
-        public void setMobsToAttack(final List<MobEntryView> mobsToAttack)
-        {
-            this.mobsToAttack = new ArrayList<>(mobsToAttack);
-        }
-
-        public boolean isPatrolManually()
-        {
-            return patrolManually;
-        }
-
-        public void setTask(final GuardTask task)
-        {
-            this.task = task;
-            this.getColony().markDirty();
-        }
-
-        public GuardTask getTask()
-        {
-            return task;
-        }
-
-        public BlockPos getGuardPos()
-        {
-            return guardPos;
-        }
-
-        public IGuardType getGuardType()
-        {
-            return guardType;
-        }
-
-        public void setGuardType(final IGuardType job)
-        {
-            this.guardType = job;
-        }
-
-        public List<BlockPos> getPatrolTargets()
-        {
-            return new ArrayList<>(patrolTargets);
-        }
-
-        public List<MobEntryView> getMobsToAttack()
-        {
-            return new ArrayList<>(mobsToAttack);
-        }
-    }
 }

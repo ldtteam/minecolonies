@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.jobs;
 import com.minecolonies.api.client.render.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.entity.ai.goal.Goal;
@@ -18,6 +19,14 @@ import java.util.Set;
 
 public interface IJob<AI extends GoalSelector> extends INBTSerializable<CompoundNBT>
 {
+
+    /**
+     * The {@link JobEntry} for this job.
+     *
+     * @return The {@link JobEntry}.
+     */
+    JobEntry getJobRegistryEntry();
+
     /**
      * Return a Localization textContent for the Job.
      *

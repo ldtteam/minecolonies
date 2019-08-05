@@ -4,7 +4,6 @@ import com.minecolonies.api.client.render.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
@@ -126,16 +125,9 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     {
         final CompoundNBT compound = new CompoundNBT();
 
-        final String s = IJobRegistry.getInstance().getClassToNameMap().get(this.getClass());
-
-        if (s == null)
-        {
-            throw new IllegalStateException(this.getClass() + " is missing a mapping! This is a bug!");
-        }
-
-        compound.putString(TAG_JOB_TYPE, s);
-        compound.put(TAG_ASYNC_REQUESTS, getAsyncRequests().stream().map(StandardFactoryController.getInstance()::serialize).collect(NBTUtils.toListNBT()));
-        compound.putInt(TAG_ACTIONS_DONE, actionsDone);
+        compound.setString(TAG_JOB_TYPE, getJobRegistryEntry().getRegistryName().toString());
+        compound.setTag(TAG_ASYNC_REQUESTS, getAsyncRequests().stream().map(StandardFactoryController.getInstance()::serialize).collect(NBTUtils.toNBTTagList()));
+        compound.setInteger(TAG_ACTIONS_DONE, actionsDone);
 
         return compound;
     }

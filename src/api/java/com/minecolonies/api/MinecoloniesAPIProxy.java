@@ -4,8 +4,10 @@ import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
-import com.minecolonies.api.colony.buildings.registry.IGuardTypeRegistry;
-import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
+import com.minecolonies.api.colony.guardtype.GuardType;
+import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
+import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.ai.registry.IEntityAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -49,21 +51,9 @@ public class MinecoloniesAPIProxy implements IMinecoloniesAPI
     }
 
     @Override
-    public IGuardTypeRegistry getGuardTypeRegistry()
-    {
-        return apiInstance.getGuardTypeRegistry();
-    }
-
-    @Override
     public IPathNavigateRegistry getPathNavigateRegistry()
     {
         return apiInstance.getPathNavigateRegistry();
-    }
-
-    @Override
-    public IJobRegistry getJobRegistry()
-    {
-        return apiInstance.getJobRegistry();
     }
 
     @Override
@@ -76,5 +66,29 @@ public class MinecoloniesAPIProxy implements IMinecoloniesAPI
     public IForgeRegistry<BuildingEntry> getBuildingRegistry()
     {
         return apiInstance.getBuildingRegistry();
+    }
+
+    @Override
+    public IJobDataManager getJobDataManager()
+    {
+        return apiInstance.getJobDataManager();
+    }
+
+    @Override
+    public IForgeRegistry<JobEntry> getJobRegistry()
+    {
+        return apiInstance.getJobRegistry();
+    }
+
+    @Override
+    public IGuardTypeDataManager getGuardTypeDataManager()
+    {
+        return apiInstance.getGuardTypeDataManager();
+    }
+
+    @Override
+    public IForgeRegistry<GuardType> getGuardTypeRegistry()
+    {
+        return apiInstance.getGuardTypeRegistry();
     }
 }
