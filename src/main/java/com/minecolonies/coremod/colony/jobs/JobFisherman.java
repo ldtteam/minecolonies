@@ -2,6 +2,8 @@ package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.client.render.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.sounds.FishermanSounds;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -78,6 +80,12 @@ public class JobFisherman extends AbstractJob
         {
             ponds.add(BlockPosUtil.readFromNBTTagList(listOfPonds, i));
         }
+    }
+
+    @Override
+    public JobEntry getJobRegistryEntry()
+    {
+        return ModJobs.fisherman;
     }
 
     /**

@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
+import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
@@ -251,7 +251,7 @@ public class CitizenData implements ICitizenData
 
         if (compound.hasKey("job"))
         {
-            setJob(IJobRegistry.getInstance().createFromNBT(this, compound.getCompoundTag("job")));
+            setJob(IJobDataManager.getInstance().createFrom(this, compound.getCompoundTag("job")));
         }
 
         //  Attributes

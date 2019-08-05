@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.colony.buildings.registry;
 
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
+import com.minecolonies.api.colony.buildings.registry.IBuildingRegistry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -52,7 +52,7 @@ public class BuildingDataManager implements IBuildingDataManager
     @Override
     public IBuilding createFrom(final IColony colony, final BlockPos position, final ResourceLocation buildingName)
     {
-        final BuildingEntry entry = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(buildingName);
+        final BuildingEntry entry = IBuildingRegistry.getInstance().getValue(buildingName);
 
         if (entry == null)
         {
@@ -68,7 +68,7 @@ public class BuildingDataManager implements IBuildingDataManager
       final IColonyView colony, final BlockPos position, final ByteBuf networkBuffer)
     {
         final ResourceLocation buildingName = new ResourceLocation(ByteBufUtils.readUTF8String(networkBuffer));
-        final BuildingEntry entry = IMinecoloniesAPI.getInstance().getBuildingRegistry().getValue(buildingName);
+        final BuildingEntry entry = IBuildingRegistry.getInstance().getValue(buildingName);
 
         if (entry == null)
         {

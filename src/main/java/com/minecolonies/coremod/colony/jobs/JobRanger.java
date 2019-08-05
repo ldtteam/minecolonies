@@ -2,6 +2,8 @@ package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.client.render.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIRanger;
 
@@ -36,6 +38,12 @@ public class JobRanger extends AbstractJobGuard
     public AbstractEntityAIGuard generateGuardAI()
     {
         return new EntityAIRanger(this);
+    }
+
+    @Override
+    public JobEntry getJobRegistryEntry()
+    {
+        return ModJobs.ranger;
     }
 
     /**
