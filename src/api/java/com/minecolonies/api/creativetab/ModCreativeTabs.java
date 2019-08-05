@@ -2,7 +2,7 @@ package com.minecolonies.api.creativetab;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -10,7 +10,7 @@ import net.minecraft.item.ItemStack;
  */
 public final class ModCreativeTabs
 {
-    public static final CreativeTabs MINECOLONIES = new CreativeTabs(Constants.MOD_ID)
+    public static final ItemGroup MINECOLONIES = new ItemGroup(Constants.MOD_ID)
     {
 
         @Override

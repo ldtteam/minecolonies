@@ -7,6 +7,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.BooleanProperty;
@@ -62,18 +63,16 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     /**
      * Constructor for the placerholder.
      *
-     * @param properties the properties.
      */
-    public BlockDecorationController(final Properties properties)
+    public BlockDecorationController()
     {
-        super(properties.hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE).doesNotBlockMovement());
+        super(Properties.create(Material.WOOD).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE).doesNotBlockMovement());
         this.setDefaultState(this.getDefaultState().with(HORIZONTAL_FACING, Direction.NORTH).with(MIRROR, false));
         setRegistryName(BLOCK_NAME);
     }
 
     @Override
-    public VoxelShape getShape(
-      final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
+    public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
     {
         Direction Direction = state.get(HORIZONTAL_FACING);
         switch (Direction)
