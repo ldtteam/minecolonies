@@ -215,6 +215,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = super.serializeNBT();
+        compound.setString(TAG_BUILDING_TYPE, this.getBuildingRegistryEntry().getRegistryName().toString());
         writeRequestSystemToNBT(compound);
         compound.putBoolean(TAG_IS_BUILT, isBuilt);
         compound.putString(TAG_CUSTOM_NAME, customName);
