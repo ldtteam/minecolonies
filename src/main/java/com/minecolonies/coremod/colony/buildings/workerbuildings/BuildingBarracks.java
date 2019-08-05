@@ -139,6 +139,12 @@ public class BuildingBarracks extends AbstractBuilding
     }
 
     @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.barracks;
+    }
+
+    @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);

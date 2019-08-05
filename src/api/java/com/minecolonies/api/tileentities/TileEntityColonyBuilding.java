@@ -431,6 +431,12 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     }
 
     @Override
+    public ResourceLocation getBuildingName()
+    {
+        return registryName;
+    }
+
+    @Override
     public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getBuilding() != null)

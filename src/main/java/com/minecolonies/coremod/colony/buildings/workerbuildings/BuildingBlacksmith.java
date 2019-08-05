@@ -113,6 +113,12 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
         return ModBuildings.blacksmith;
     }
 
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.blacksmith;
+    }
+
     /**
      * ClientSide representation of the building.
      */

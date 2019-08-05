@@ -94,7 +94,7 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
         //In the case of worldLags tileEntities may sometimes disappear.
         if (getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockScarecrow)
         {
-            final Direction facing = getWorld().getBlockState(te.getPos()).get(AbstractBlockMinecoloniesBlockHutField.FACING);
+            final Direction facing = getWorld().getBlockState(te.getPos()).get(AbstractBlockMinecoloniesDefault.FACING);
             switch (facing)
             {
                 case EAST:

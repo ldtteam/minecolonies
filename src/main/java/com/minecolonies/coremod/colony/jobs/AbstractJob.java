@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.api.client.render.BipedModelType;
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -104,7 +105,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
      * @return Model of the citizen.
      */
     @Override
-    public BipedModelType getModel()
+    public IModelType getModel()
     {
         return BipedModelType.CITIZEN;
     }
