@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistryOld;
 import com.minecolonies.coremod.util.BuildingUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
@@ -81,28 +80,17 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     @Override
     public CompoundNBT serializeNBT()
     {
-        final CompoundNBT compound = new CompoundNBT();
-        //TODO: Patch this into the right damn class!!!!!
-        final String s = BuildingRegistry.getNameToClassMap().inverse().get(this.getClass());
-
-        if (s == null)
+        final NBTTagCompound compound = new NBTTagCompound();
+        BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
+        final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
+        if (Structures.hasMD5(structureName))
         {
-            throw new IllegalStateException(this.getClass() + " is missing a mapping! This is a bug!");
-        }
-        else
-        {
-            compound.putString(TAG_BUILDING_TYPE, s);
-            BlockPosUtil.write(compound, TAG_LOCATION, location);
-            final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
-            if (Structures.hasMD5(structureName))
-            {
-                compound.putString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName.toString()));
-            }
+            compound.setString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName.toString()));
         }
 
-        compound.putInt(TAG_BUILDING_LEVEL, buildingLevel);
-        compound.putInt(TAG_ROTATION, rotation);
-        compound.putString(TAG_STYLE, style);
+        compound.setInteger(TAG_SCHEMATIC_LEVEL, buildingLevel);
+        compound.setInteger(TAG_ROTATION, rotation);
+        compound.setString(TAG_STYLE, style);
 
         compound.putBoolean(TAG_MIRROR, isBuildingMirrored);
 
@@ -119,7 +107,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
-        buildingLevel = compound.getInt(TAG_BUILDING_LEVEL);
+        buildingLevel = compound.getInteger(TAG_SCHEMATIC_LEVEL);
 
         rotation = compound.getInt(TAG_ROTATION);
         style = compound.getString(TAG_STYLE);
