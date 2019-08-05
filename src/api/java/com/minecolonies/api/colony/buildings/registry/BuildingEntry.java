@@ -5,13 +5,12 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import net.minecraft.block.BubbleColumnBlock;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
-import javax.annotation.Nullable;
 import java.util.function.BiFunction;
 
 /**
@@ -20,7 +19,7 @@ import java.util.function.BiFunction;
  * Used to lookup how to create {@link IBuilding} and {@link IBuildingView}.
  * Also links a given {@link IBuilding} to a given {@link AbstractBlockHut}.
  */
-public class BuildingEntry extends IForgeRegistryEntry.Impl<BuildingEntry> implements IForgeRegistryEntry<BuildingEntry>
+public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry> implements IForgeRegistryEntry<BuildingEntry>
 {
     private final AbstractBlockHut<?> buildingBlock;
 

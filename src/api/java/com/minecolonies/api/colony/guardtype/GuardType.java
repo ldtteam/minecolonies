@@ -4,11 +4,11 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.jobs.IJob;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import java.util.function.Function;
 
-public class GuardType extends IForgeRegistryEntry.Impl<GuardType>
+public class GuardType extends ForgeRegistryEntry<GuardType>
 {
 
     private final Function<ICitizenData, IJob> guardJobProducer;
