@@ -9,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public interface IEntityAIRegistry
+public interface IMobAIRegistry
 {
-    static IEntityAIRegistry getInstance() { return IMinecoloniesAPI.getInstance().getEntityAIRegistry(); }
+    static IMobAIRegistry getInstance() { return IMinecoloniesAPI.getInstance().getMobAIRegistry(); }
 
     /**
      * Method to get the AI tasks registered for a given mob.
@@ -31,7 +31,7 @@ public interface IEntityAIRegistry
      * @return The registry.
      */
     @NotNull
-    default IEntityAIRegistry registerNewAiTaskForMobs(final int priority, final Function<AbstractEntityMinecoloniesMob, EntityAIBase> aiTaskProducer)
+    default IMobAIRegistry registerNewAiTaskForMobs(final int priority, final Function<AbstractEntityMinecoloniesMob, EntityAIBase> aiTaskProducer)
     {
         return this.registerNewAiTaskForMobs(priority, aiTaskProducer, mob -> true);
     }
@@ -45,7 +45,7 @@ public interface IEntityAIRegistry
      * @return The registry.
      */
     @NotNull
-    IEntityAIRegistry registerNewAiTaskForMobs(
+    IMobAIRegistry registerNewAiTaskForMobs(
       final int priority,
       final Function<AbstractEntityMinecoloniesMob, EntityAIBase> aiTaskProducer,
       Predicate<AbstractEntityMinecoloniesMob> applyPredicate);
@@ -68,7 +68,7 @@ public interface IEntityAIRegistry
      * @return The registry.
      */
     @NotNull
-    default IEntityAIRegistry registerNewAiTargetTaskForMobs(final int priority, final Function<AbstractEntityMinecoloniesMob, EntityAIBase> aiTaskProducer)
+    default IMobAIRegistry registerNewAiTargetTaskForMobs(final int priority, final Function<AbstractEntityMinecoloniesMob, EntityAIBase> aiTaskProducer)
     {
         return this.registerNewAiTargetTaskForMobs(priority, aiTaskProducer, mob -> true);
     }
@@ -82,7 +82,7 @@ public interface IEntityAIRegistry
      * @return The registry.
      */
     @NotNull
-    IEntityAIRegistry registerNewAiTargetTaskForMobs(
+    IMobAIRegistry registerNewAiTargetTaskForMobs(
       final int priority,
       final Function<AbstractEntityMinecoloniesMob, EntityAIBase> aiTaskProducer,
       Predicate<AbstractEntityMinecoloniesMob> applyPredicate);

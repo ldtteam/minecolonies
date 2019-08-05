@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
-import com.minecolonies.api.client.render.BipedModelType;
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenJobHandler;
@@ -68,7 +68,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
             citizen.setModelId(job.getModel());
         }
 
-        citizen.getDataManager().set(DATA_MODEL, citizen.getModelID().name());
+        citizen.getDataManager().set(DATA_MODEL, citizen.getModelType().getName());
         citizen.setRenderMetadata("");
     }
 

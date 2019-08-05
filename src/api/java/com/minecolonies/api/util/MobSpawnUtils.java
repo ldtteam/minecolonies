@@ -46,10 +46,10 @@ public final class MobSpawnUtils
      */
     public static void setupMobAi(final AbstractEntityMinecoloniesMob mob)
     {
-        final Multimap<Integer, EntityAIBase> aiTasks = IMinecoloniesAPI.getInstance().getEntityAIRegistry().getEntityAiTasksForMobs(mob);
+        final Multimap<Integer, EntityAIBase> aiTasks = IMinecoloniesAPI.getInstance().getMobAIRegistry().getEntityAiTasksForMobs(mob);
         aiTasks.keySet().forEach(priority -> aiTasks.get(priority).forEach(task -> mob.tasks.addTask(priority, task)));
 
-        final Multimap<Integer, EntityAIBase> aiTargetTasks = IMinecoloniesAPI.getInstance().getEntityAIRegistry().getEntityAiTargetTasksForMobs(mob);
+        final Multimap<Integer, EntityAIBase> aiTargetTasks = IMinecoloniesAPI.getInstance().getMobAIRegistry().getEntityAiTargetTasksForMobs(mob);
         aiTargetTasks.keySet().forEach(priority -> aiTasks.get(priority).forEach(task -> mob.tasks.addTask(priority, task)));
     }
 
