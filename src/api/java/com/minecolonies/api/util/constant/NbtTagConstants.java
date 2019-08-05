@@ -121,7 +121,7 @@ public final class NbtTagConstants
     /**
      * The tag to store the level of the building.
      */
-    public static final String TAG_BUILDING_LEVEL = "level";
+    public static final String TAG_SCHEMATIC_LEVEL = "level";
 
     /**
      * The tag to store the rotation of the building.
