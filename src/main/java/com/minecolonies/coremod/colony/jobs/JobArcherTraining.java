@@ -3,6 +3,8 @@ package com.minecolonies.coremod.colony.jobs;
 import com.minecolonies.api.client.render.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.trainingcamps.EntityAIArcherTraining;
 
@@ -19,6 +21,12 @@ public class JobArcherTraining extends AbstractJob
     public JobArcherTraining(final ICitizenData entity)
     {
         super(entity);
+    }
+
+    @Override
+    public JobEntry getJobRegistryEntry()
+    {
+        return ModJobs.archer;
     }
 
     @Override

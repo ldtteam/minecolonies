@@ -7,23 +7,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-import java.util.function.Function;
-
-public interface IJobRegistry
+public interface IJobDataManager
 {
-    static IJobRegistry getInstance()
-    {
-        return IMinecoloniesAPI.getInstance().getJobRegistry();
-    }
 
-    /**
-     * Add a given Job mapping.
-     *
-     * @param name        name of job class.
-     * @param jobFunction class of job.
-     */
-    void registerNewJobMapping(String name, @NotNull Class<?> jobClass, @NotNull Function<ICitizenData, IJob<?>> jobFunction);
+    static IJobDataManager getInstance()
+    {
+        return IMinecoloniesAPI.getInstance().getJobDataManager();
+    }
 
     /**
      * Create a Job from saved NBTTagCompound data.
@@ -33,8 +23,5 @@ public interface IJobRegistry
      * @return New Job created from the data, or null.
      */
     @Nullable
-    IJob createFromNBT(ICitizenData citizen, @NotNull NBTTagCompound compound);
-
-    @NotNull
-    Map<Class<?>, String> getClassToNameMap();
+    IJob createFrom(ICitizenData citizen, @NotNull NBTTagCompound compound);
 }

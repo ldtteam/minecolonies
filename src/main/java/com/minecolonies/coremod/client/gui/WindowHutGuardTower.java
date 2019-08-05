@@ -1,9 +1,8 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.IMinecoloniesAPI;
-import com.minecolonies.api.colony.buildings.IGuardType;
-import com.minecolonies.api.colony.buildings.registry.IGuardTypeRegistry;
 import com.minecolonies.api.colony.buildings.views.MobEntryView;
+import com.minecolonies.api.colony.guardtype.GuardType;
+import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
@@ -79,7 +78,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     /**
      * The GuardJob of the guard.
      */
-    private IGuardType job = null;
+    private GuardType job = null;
 
     /**
      * The list of manual patrol targets.
@@ -265,7 +264,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
 
         if (job != null)
         {
-            buttonJob.setLabel(LanguageHandler.format(job.getButtonName()));
+            buttonJob.setLabel(LanguageHandler.format(job.getButtonTranslationKey()));
         }
 
         buttonJob.setEnabled(assignManually);
@@ -314,15 +313,15 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     {
         if (building.getGuardType() == null)
         {
-            final List<IGuardType> guardTypes = new ArrayList<>(IGuardTypeRegistry.getInstance().getRegisteredTypes().values());
+            final List<GuardType> guardTypes = new ArrayList<>(IGuardTypeRegistry.getInstance().getValuesCollection());
             job = guardTypes.get(new Random().nextInt(guardTypes.size()));
         }
         else
         {
-            final IGuardType guardType = building.getGuardType();
-            final List<IGuardType> possibleGuardTypes = new ArrayList<>(IMinecoloniesAPI.getInstance().getGuardTypeRegistry().getRegisteredTypes().values());
+            final GuardType guardType = building.getGuardType();
+            final List<GuardType> possibleGuardTypes = new ArrayList<>(IGuardTypeRegistry.getInstance().getValuesCollection());
             final int currentGuardTypeIndex = possibleGuardTypes.indexOf(guardType);
-            final IGuardType nextGuardType = possibleGuardTypes.get(currentGuardTypeIndex == possibleGuardTypes.size() - 1 ? 0 : currentGuardTypeIndex + 1);
+            final GuardType nextGuardType = possibleGuardTypes.get(currentGuardTypeIndex == possibleGuardTypes.size() - 1 ? 0 : currentGuardTypeIndex + 1);
 
             building.setGuardType(nextGuardType);
         }

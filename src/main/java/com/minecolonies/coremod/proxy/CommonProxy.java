@@ -3,6 +3,7 @@ package com.minecolonies.coremod.proxy;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.mobs.barbarians.IChiefBarbarianEntity;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.constant.Constants;
@@ -10,6 +11,7 @@ import com.minecolonies.apiimp.MinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.ModBlocksInitializer;
 import com.minecolonies.apiimp.initializer.ModBuildingsInitializer;
 import com.minecolonies.apiimp.initializer.ModItemsInitializer;
+import com.minecolonies.apiimp.initializer.ModJobsInitializer;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.EntityFishHook;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -136,6 +138,12 @@ public abstract class CommonProxy implements IProxy
     public static void registerBuildingTypes(@NotNull final RegistryEvent.Register<BuildingEntry> event)
     {
         ModBuildingsInitializer.init(event);
+    }
+
+    @SubscribeEvent
+    public static void registerJobTypes(final RegistryEvent.Register<JobEntry> event)
+    {
+        ModJobsInitializer.init(event);
     }
 
     @SubscribeEvent

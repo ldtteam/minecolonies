@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.buildings;
 
 import com.minecolonies.api.colony.buildings.views.MobEntryView;
+import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.entity.player.EntityPlayer;
@@ -83,18 +84,18 @@ public interface IGuardBuilding extends ISchematicProvider, ICitizenAssignable, 
     int getPatrolDistance();
 
     /**
-     * Get the guard's {@link IGuardType}.
+     * Get the guard's {@link GuardType}.
      *
      * @return The job of the guard.
      */
-    IGuardType getGuardType();
+    GuardType getGuardType();
 
     /**
-     * Set the guard's {@link IGuardType}.
+     * Set the guard's {@link GuardType}.
      *
      * @param job The job to set.
      */
-    void setGuardType(IGuardType job);
+    void setGuardType(GuardType job);
 
     List<BlockPos> getPatrolTargets();
 
