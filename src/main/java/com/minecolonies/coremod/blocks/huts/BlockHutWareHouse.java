@@ -4,9 +4,12 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
+import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Hut for the warehouse.
@@ -28,11 +31,10 @@ public class BlockHutWareHouse extends AbstractBlockHut<BlockHutWareHouse>
         return "blockHutWareHouse";
     }
 
-    @NotNull
+    @Nullable
     @Override
-    public TileEntity createNewTileEntity(final World world, final int meta)
+    public TileEntity createTileEntity(final BlockState state, final IBlockReader world)
     {
-        //Creates a tile entity for our building
         return new TileEntityWareHouse(getBuildingEntry().getRegistryName());
     }
 
