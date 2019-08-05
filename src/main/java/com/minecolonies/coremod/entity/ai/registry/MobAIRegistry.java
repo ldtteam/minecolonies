@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.ai.registry;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.minecolonies.api.entity.ai.registry.IEntityAIRegistry;
+import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.IArcherMobEntity;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -24,12 +24,12 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.RaiderConstants.*;
 
-public class EntityAiRegistry implements IEntityAIRegistry
+public class MobAIRegistry implements IMobAIRegistry
 {
     private final List<TaskInformationWrapper<AbstractEntityMinecoloniesMob>> mobAiTasks       = Lists.newArrayList();
     private final List<TaskInformationWrapper<AbstractEntityMinecoloniesMob>> mobAiTargetTasks = Lists.newArrayList();
 
-    public EntityAiRegistry()
+    public MobAIRegistry()
     {
         setupMobAiTasks(this);
     }
@@ -40,7 +40,7 @@ public class EntityAiRegistry implements IEntityAIRegistry
      *
      * @param registry The registry to register the AI tasks to.
      */
-    private static void setupMobAiTasks(IEntityAIRegistry registry)
+    private static void setupMobAiTasks(IMobAIRegistry registry)
     {
         registry
           .registerNewAiTaskForMobs(PRIORITY_ZERO, EntityAISwimming::new)
@@ -66,7 +66,7 @@ public class EntityAiRegistry implements IEntityAIRegistry
 
     @NotNull
     @Override
-    public IEntityAIRegistry registerNewAiTaskForMobs(
+    public IMobAIRegistry registerNewAiTaskForMobs(
       final int priority, final Function<AbstractEntityMinecoloniesMob, EntityAIBase> aiTaskProducer, final Predicate<AbstractEntityMinecoloniesMob> applyPredicate)
     {
         mobAiTasks.add(new TaskInformationWrapper<>(priority, aiTaskProducer, applyPredicate));
@@ -86,7 +86,7 @@ public class EntityAiRegistry implements IEntityAIRegistry
 
     @NotNull
     @Override
-    public IEntityAIRegistry registerNewAiTargetTaskForMobs(
+    public IMobAIRegistry registerNewAiTargetTaskForMobs(
       final int priority, final Function<AbstractEntityMinecoloniesMob, EntityAIBase> aiTaskProducer, final Predicate<AbstractEntityMinecoloniesMob> applyPredicate)
     {
         mobAiTargetTasks.add(new TaskInformationWrapper<>(priority, aiTaskProducer, applyPredicate));

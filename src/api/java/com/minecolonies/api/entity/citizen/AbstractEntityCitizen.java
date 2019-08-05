@@ -1,6 +1,7 @@
 package com.minecolonies.api.entity.citizen;
 
-import com.minecolonies.api.client.render.BipedModelType;
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.ai.DesiredActivity;
@@ -62,7 +63,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements ICo
     /**
      * The default model.
      */
-    private BipedModelType modelId = BipedModelType.SETTLER;
+    private IModelType modelId = BipedModelType.SETTLER;
 
     /**
      * The texture id.
@@ -184,13 +185,21 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements ICo
     }
 
     /**
-     * Get the model assigned to the citizen.
-     *
-     * @return the model.
+     * Sets the textures of all citizens and distinguishes between male and
+     * female.
      */
-    public BipedModelType getModelID()
+    public void setTexture()
     {
-        return modelId;
+        if (!CompatibilityUtils.getWorldFromCitizen(this).isRemote)
+        {
+            return;
+        }
+
+        final IModelType model = getModelType();
+
+        final String textureBase = "textures/entity/" + model.getTextureBase() + (female ? "Female" : "Male");
+        final int moddedTextureId = (textureId % model.getNumTextures()) + 1;
+        texture = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + renderMetadata + ".png");
     }
 
     /**
@@ -204,21 +213,13 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements ICo
     }
 
     /**
-     * Sets the textures of all citizens and distinguishes between male and
-     * female.
+     * Get the model assigned to the citizen.
+     *
+     * @return the model.
      */
-    public void setTexture()
+    public IModelType getModelType()
     {
-        if (!CompatibilityUtils.getWorldFromCitizen(this).isRemote)
-        {
-            return;
-        }
-
-        final BipedModelType model = getModelID();
-
-        final String textureBase = "textures/entity/" + model.textureBase + (female ? "Female" : "Male");
-        final int moddedTextureId = (textureId % model.numTextures) + 1;
-        texture = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + renderMetadata + ".png");
+        return modelId;
     }
 
     /**
@@ -312,7 +313,7 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements ICo
      *
      * @param model the model.
      */
-    public void setModelId(final BipedModelType model)
+    public void setModelId(final IModelType model)
     {
         this.modelId = model;
     }
