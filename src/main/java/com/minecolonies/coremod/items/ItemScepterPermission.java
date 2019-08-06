@@ -4,16 +4,17 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.ChangeFreeToInteractBlockMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -47,29 +48,25 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
      * - set creative tab
      * - set max stack size
      */
-    public ItemScepterPermission()
+    public ItemScepterPermission(final Item.Properties properties)
     {
-        super("scepterPermission");
-        this.setMaxDamage(2);
-
-        super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        maxStackSize = 1;
+        super("scepterPermission", properties.maxStackSize(1).maxDamage(2).group(ModCreativeTabs.MINECOLONIES));
     }
 
     @NotNull
     private static ActionResultType handleAddBlockType(
-                                                        final PlayerEntity playerIn,
-                                                        final World worldIn,
-                                                        final BlockPos pos,
-                                                        final IColonyView iColonyView)
+      final PlayerEntity playerIn,
+      final World worldIn,
+      final BlockPos pos,
+      final IColonyView iColonyView)
     {
-        final BlockState blockState = worldIn.getBlockState(pos);
+        final BlockState blockState = iColonyView.getWorld().getBlockState(pos);
         final Block block = blockState.getBlock();
 
         final ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(
           iColonyView,
-                                                                                               block,
-                                                                                               ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
+          block,
+          ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
         Network.getNetwork().sendToServer(message);
 
         return ActionResultType.SUCCESS;
@@ -77,12 +74,12 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
 
     @NotNull
     private static ActionResultType handleAddLocation(
-                                                       final PlayerEntity playerIn,
-                                                       final World worldIn,
-                                                       final BlockPos pos,
-                                                       final IColonyView iColonyView)
+      final PlayerEntity playerIn,
+      final World worldIn,
+      final BlockPos pos,
+      final IColonyView iColonyView)
     {
-        final ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(IColonyView, pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
+        final ChangeFreeToInteractBlockMessage message = new ChangeFreeToInteractBlockMessage(iColonyView, pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK);
         Network.getNetwork().sendToServer(message);
 
         return ActionResultType.SUCCESS;
@@ -91,45 +88,29 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     /**
      * Used when clicking on block in world.
      *
-     * @param playerIn the player
-     * @param worldIn  the world
-     * @param pos      the position
-     * @param hand     the hand
-     * @param facing   the facing hit
-     * @param hitX     the x coordinate
-     * @param hitY     the y coordinate
-     * @param hitZ     the z coordinate
      * @return the result
      */
     @Override
     @NotNull
-    public ActionResultType onItemUse(
-                                       final PlayerEntity playerIn,
-                                       final World worldIn,
-                                       final BlockPos pos,
-                                       final Hand hand,
-                                       final Direction facing,
-                                       final float hitX,
-                                       final float hitY,
-                                       final float hitZ)
+    public ActionResultType onItemUse(final ItemUseContext ctx)
     {
-        if (!worldIn.isRemote)
+        if (!ctx.getWorld().isRemote)
         {
             return ActionResultType.SUCCESS;
         }
-        final ItemStack scepter = playerIn.getHeldItem(hand);
+        final ItemStack scepter = ctx.getPlayer().getHeldItem(ctx.getHand());
         if (!scepter.hasTag())
         {
             scepter.setTag(new CompoundNBT());
         }
 
-        final IColonyView iColonyView = IColonyManager.getInstance().getClosestColonyView(worldIn, pos);
+        final IColonyView iColonyView = IColonyManager.getInstance().getClosestColonyView(ctx.getWorld(), ctx.getPos());
         if (iColonyView == null)
         {
             return ActionResultType.FAIL;
         }
         final CompoundNBT compound = scepter.getTag();
-        return handleItemAction(compound, playerIn, worldIn, pos, iColonyView);
+        return handleItemAction(compound, ctx.getPlayer(), ctx.getWorld(), ctx.getPos(), iColonyView);
     }
 
     /**
@@ -143,9 +124,9 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
     @Override
     @NotNull
     public ActionResult<ItemStack> onItemRightClick(
-                                                     final World worldIn,
-                                                     final PlayerEntity playerIn,
-                                                     final Hand hand)
+      final World worldIn,
+      final PlayerEntity playerIn,
+      final Hand hand)
     {
         final ItemStack scepter = playerIn.getHeldItem(hand);
         if (worldIn.isRemote)
@@ -185,11 +166,11 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
 
     @NotNull
     private static ActionResultType handleItemAction(
-                                               final CompoundNBT compound,
-                                               final PlayerEntity playerIn,
-                                               final World worldIn,
-                                               final BlockPos pos,
-                                               final IColonyView iColonyView)
+      final CompoundNBT compound,
+      final PlayerEntity playerIn,
+      final World worldIn,
+      final BlockPos pos,
+      final IColonyView iColonyView)
     {
         final String tagItemMode = compound.getString(TAG_ITEM_MODE);
 

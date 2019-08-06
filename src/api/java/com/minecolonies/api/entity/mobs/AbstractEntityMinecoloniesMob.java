@@ -12,8 +12,10 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.MobSpawnUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ILivingEntityData;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.PotionEffect;
@@ -33,7 +35,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.*;
 /**
  * Abstract for all Barbarian entities.
  */
-public abstract class AbstractEntityMinecoloniesMob extends EntityMob
+public abstract class AbstractEntityMinecoloniesMob extends MobEntity
 {
     /**
      * The New PathNavigate navigator.

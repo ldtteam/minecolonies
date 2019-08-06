@@ -18,22 +18,10 @@ public abstract class AbstractItemMinecolonies extends Item
      *
      * @param name The name of this item
      */
-    public AbstractItemMinecolonies(final String name)
+    public AbstractItemMinecolonies(final String name,final Item.Properties properties)
     {
-        super();
+        super(properties);
         this.name = name;
-
-        super.setTranslationKey(Constants.MOD_ID.toLowerCase() + "." + this.name);
         setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + this.name);
-    }
-
-    /**
-     * Returns the name of the item.
-     *
-     * @return Name of the item.
-     */
-    public final String getName()
-    {
-        return name;
     }
 }

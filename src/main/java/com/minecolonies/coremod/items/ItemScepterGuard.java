@@ -14,7 +14,9 @@ import com.minecolonies.coremod.client.gui.WindowGuardControl;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -40,50 +42,39 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
     /**
      * GuardScepter constructor. Sets max stack to 1, like other tools.
      */
-    public ItemScepterGuard()
+    public ItemScepterGuard(final Item.Properties properties)
     {
-        super("scepterGuard");
-        this.setMaxDamage(2);
-
-        maxStackSize = 1;
+        super("scepterGuard", properties.maxStackSize(1).maxDamage(2));
     }
 
     @NotNull
     @Override
-    public ActionResultType onItemUse(
-      final PlayerEntity playerIn,
-      final World worldIn,
-      final BlockPos pos,
-      final Hand hand,
-      final Direction facing,
-      final float hitX,
-      final float hitY,
-      final float hitZ)
+    public ActionResultType onItemUse(final ItemUseContext ctx)
     {
         // if server world, do nothing
-        if (worldIn.isRemote)
+        if (ctx.getWorld().isRemote)
         {
             return ActionResultType.FAIL;
         }
 
-        final ItemStack scepter = playerIn.getHeldItem(hand);
+        final ItemStack scepter = ctx.getPlayer().getHeldItem(ctx.getHand());
         if (!scepter.hasTag())
         {
-            scepter.put(new CompoundNBT());
+            scepter.setTag(new CompoundNBT());
         }
         final CompoundNBT compound = scepter.getTag();
 
         if (compound.keySet().contains(TAG_LAST_POS))
         {
             final BlockPos lastPos = BlockPosUtil.read(compound, TAG_LAST_POS);
-            if (lastPos.equals(pos))
+            if (lastPos.equals(ctx.getPos()))
             {
-                playerIn.inventory.removeStackFromSlot(playerIn.inventory.currentItem);
-                LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolDoubleClick");
+                ctx.getPlayer().inventory.removeStackFromSlot(ctx.getPlayer().inventory.currentItem);
+                LanguageHandler.sendPlayerMessage(ctx.getPlayer(), "com.minecolonies.coremod.job.guard.toolDoubleClick");
                 return ActionResultType.FAIL;
             }
         }
-        return handleItemUsage(worldIn, pos, compound, playerIn);
+        return handleItemUsage(ctx.getWorld(), ctx.getPos(), compound, ctx.getPlayer());
     }
 
     @NotNull
@@ -93,7 +84,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         final ItemStack stack = playerIn.getHeldItem(hand);
         if (!stack.hasTag())
         {
-            stack.put(new CompoundNBT());
+            stack.setTag(new CompoundNBT());
         }
         final CompoundNBT compound = stack.getTag();
 
@@ -103,7 +94,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             {
                 return ActionResult.newResult(ActionResultType.FAIL, stack);
             }
-            final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), Minecraft.getInstance().world.world.getDimension().getType().getId());
+            final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), Minecraft.getInstance().world.getDimension().getType().getId());
             if (colony == null)
             {
                 return ActionResult.newResult(ActionResultType.FAIL, stack);
