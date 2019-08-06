@@ -34,6 +34,9 @@ import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.util.PermissionUtils;
+import com.minecolonies.coremod.util.SoundUtils;
+import com.minecolonies.coremod.util.TeleportHelper;
+import com.minecolonies.api.util.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -317,6 +320,13 @@ public class EntityCitizen extends AbstractEntityCitizen
     @Override
     public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
     {
+        // TODO Remove workaround and fix
+        if (damageSource.getDamageType().equals(DamageSource.IN_WALL.getDamageType()))
+        {
+            TeleportHelper.teleportCitizen(this, world, getPosition().add(0, 1, 0));
+            return false;
+        }
+
         if (damageSource.getDamageType().equals(DamageSource.IN_WALL.getDamageType()) && ICitizenSleepHandler.isAsleep()
               || Compatibility.isDynTreePresent() && damageSource.damageType.equals(Compatibility.getDynamicTreeDamage()) || this.getIsInvulnerable())
         {
