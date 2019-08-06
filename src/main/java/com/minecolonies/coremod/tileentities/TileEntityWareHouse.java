@@ -1,16 +1,17 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.google.common.collect.Lists;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
+import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.ChestTileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -31,8 +32,10 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
  */
 public class TileEntityWareHouse extends AbstractTileEntityWareHouse
 {
-
-    public TileEntityWareHouse(final ResourceLocation resourceName) {super(resourceName);}
+    public TileEntityWareHouse()
+    {
+        super(MinecoloniesTileEntities.WAREHOUSE);
+    }
 
     /**
      * Method used to check if this warehouse holds any of the requested itemstacks.
@@ -119,7 +122,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                 LanguageHandler.sendPlayersMessage(getColony().getMessagePlayerEntitys(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL);
                 return;
             }
-            final IItemHandler handler = chest.getCapability(ITEM_HANDLER_CAPABILITY, null);
+            final IItemHandler handler = chest.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null);
             if (handler != null)
             {
                 InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(new InvWrapper(inventoryCitizen), i, handler);
@@ -136,7 +139,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     @Nullable
     private TileEntity searchRightChestForStack(@NotNull final ItemStack stack)
     {
-        if (InventoryUtils.findSlotInProviderNotFullWithItem(this, stack.getItem(), stack.getItemDamage(), ItemStackUtils.getSize(stack)) != -1)
+        if (InventoryUtils.findSlotInProviderNotFullWithItem(this, stack.getItem(), ItemStackUtils.getSize(stack)) != -1)
         {
             return this;
         }
@@ -165,7 +168,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     private static boolean isInRack(final ItemStack stack, final TileEntity entity, final boolean ignoreDamageValue)
     {
         return entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty() && ((AbstractTileEntityRack) entity).hasItemStack(stack, ignoreDamageValue)
-                 && InventoryUtils.findSlotInItemHandlerNotFullWithItem(entity.getCapability(ITEM_HANDLER_CAPABILITY, null), stack);
+                 && InventoryUtils.findSlotInItemHandlerNotFullWithItem(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), stack);
     }
 
     /**
@@ -179,7 +182,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     private static boolean isInChest(final ItemStack stack, final TileEntity entity, final boolean ignoreDamageValue)
     {
         return entity instanceof ChestTileEntity
-                 && InventoryUtils.findSlotInItemHandlerNotFullWithItem(entity.getCapability(ITEM_HANDLER_CAPABILITY, null), stack);
+                 && InventoryUtils.findSlotInItemHandlerNotFullWithItem(entity.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), stack);
     }
 
     /**

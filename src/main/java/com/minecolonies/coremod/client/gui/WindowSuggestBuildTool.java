@@ -4,6 +4,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.controls.Text;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.DirectPlaceMessage;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;

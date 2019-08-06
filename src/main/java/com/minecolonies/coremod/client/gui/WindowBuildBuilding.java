@@ -6,9 +6,7 @@ import com.ldtteam.structurize.Structurize;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
-import com.ldtteam.structurize.util.BlockInfo;
-import com.ldtteam.structurize.util.PlacementSettings;
-import com.ldtteam.structurize.util.StructurePlacementUtils;
+import com.ldtteam.structurize.util.*;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -21,25 +19,23 @@ import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.DropDownList;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.BuildingSetStyleMessage;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockBed;
-import net.minecraft.block.DoorBlock;
-import net.minecraft.block.BlockState;
+import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.state.properties.BedPart;
+import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -247,7 +243,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             Log.getLogger().info("Request To Server for structure " + sn);
             if (ServerLifecycleHooks.getCurrentServer() == null)
             {
-                Structurize.getNetwork().sendToServer(new SchematicRequestMessage(sn.toString()));
+                com.ldtteam.structurize.Network.getNetwork().sendToServer(new SchematicRequestMessage(sn.toString()));
                 return;
             }
             else
@@ -261,7 +257,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         while (structure.findNextBlock())
         {
             @Nullable final BlockInfo blockInfo = structure.getBlockInfo();
-            @Nullable final BlockState blockState = blockInfo.getState();
+            @Nullable final BlockState blockState = blockInfo.getState().getBlockState();
 
             if (blockState == null)
             {
@@ -271,8 +267,8 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             @Nullable final Block block = blockState.getBlock();
 
             if (StructurePlacementUtils.isStructureBlockEqualWorldBlock(world, structure.getBlockPosition(), blockState)
-                  || (blockState.getBlock() instanceof BlockBed && blockState.get(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
-                  || (blockState.getBlock() instanceof DoorBlock && blockState.get(DoorBlock.HALF).equals(DoorBlock.EnumDoorHalf.UPPER)))
+                  || (blockState.getBlock() instanceof BedBlock && blockState.get(BedBlock.PART).equals(BedPart.FOOT))
+                  || (blockState.getBlock() instanceof DoorBlock && blockState.get(DoorBlock.HALF).equals(DoubleBlockHalf.UPPER)))
             {
                 continue;
             }
@@ -287,7 +283,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
                     final List<ItemStack> itemList = new ArrayList<>();
                     if (structure.getBlockInfo().getState() != null && structure.getBlockInfo().getTileEntityData() != null)
                     {
-                        itemList.addAll(ItemStackUtils.getItemStacksOfTileEntity(structure.getBlockInfo().getTileEntityData(), world));
+                        itemList.addAll(com.ldtteam.structurize.api.util.ItemStackUtils.getItemStacksOfTileEntity(structure.getBlockInfo().getTileEntityData(), world));
                     }
 
                     for (final ItemStack stack : itemList)
@@ -468,11 +464,11 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
                 final ItemStorage resource = tempRes.get(index);
                 final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
                 final Label quantityLabel = rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class);
-                resourceLabel.setLabelText(resource.getItemStack().getDisplayName());
+                resourceLabel.setLabelText(resource.getItemStack().getDisplayName().getFormattedText());
                 quantityLabel.setLabelText(Integer.toString(resource.getAmount()));
                 resourceLabel.setColor(WHITE, WHITE);
                 quantityLabel.setColor(WHITE, WHITE);
-                rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(new ItemStack(resource.getItem(), 1, resource.getDamageValue()));
+                rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(new ItemStack(resource.getItem(), 1));
             }
         });
     }

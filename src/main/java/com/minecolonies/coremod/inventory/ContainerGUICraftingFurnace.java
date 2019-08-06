@@ -5,11 +5,14 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.*;
+import net.minecraft.inventory.container.*;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.network.play.server.SPacketSetSlot;
+import net.minecraft.item.crafting.FurnaceRecipe;
+import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.play.server.SSetSlotPacket;
 import net.minecraft.tileentity.FurnaceTileEntity;
-import net.minecraft.world.World;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
@@ -17,7 +20,7 @@ import static com.minecolonies.api.util.constant.InventoryConstants.*;
 /**
  * Crafting container for the recipe teaching of furnace recipes.
  */
-public class ContainerGUICraftingFurnace extends Container
+public class ContainerGUICraftingFurnace extends AbstractFurnaceContainer
 {
     /**
      * The furnace inventory.
@@ -25,27 +28,28 @@ public class ContainerGUICraftingFurnace extends Container
     private final IInventory furnaceInventory;
 
     /**
-     * The world object.
-     */
-    private final World worldObj;
-
-    /**
      * The player assigned to it.
      */
-    private final PlayerEntity player;
+    private final PlayerInventory playerInventory;
+
+    /**
+     * The colony building.
+     */
+    public final BlockPos buildingPos;
 
     /**
      * Constructs the GUI with the player and furnace inventory.
-     * @param playerInventory the player inventory.
-     * @param worldIn the world.
+     * @param windowId the window id.
+     * @param inv the player inventory.
+     * @param extra extra data.
      */
-    public ContainerGUICraftingFurnace(final PlayerInventory playerInventory, final World worldIn)
+    public ContainerGUICraftingFurnace(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
     {
-        super();
+        super(MinecoloniesContainers.craftingFurnace, IRecipeType.SMELTING, windowId, inv);
         this.furnaceInventory = new FurnaceTileEntity();
-        this.worldObj = worldIn;
-        this.player = playerInventory.player;
-        this.addSlotToContainer(new Slot(furnaceInventory, 0 , 56, 17)
+        this.playerInventory = inv;
+        buildingPos = extra.readBlockPos();
+        this.addSlot(new Slot(furnaceInventory, 0 , 56, 17)
         {
             @Override
             public int getSlotStackLimit()
@@ -80,7 +84,7 @@ public class ContainerGUICraftingFurnace extends Container
             }
         });
 
-        this.addSlotToContainer(new SlotFurnaceOutput(playerInventory.player, furnaceInventory, 1, 116, 35));
+        this.addSlot(new FurnaceResultSlot(playerInventory.player, furnaceInventory, 1, 116, 35));
 
         // Player inventory slots
         // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
@@ -89,7 +93,7 @@ public class ContainerGUICraftingFurnace extends Container
         {
             for (int j = 0; j < INVENTORY_COLUMNS; j++)
             {
-                addSlotToContainer(new Slot(
+                addSlot(new Slot(
                   playerInventory,
                   j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
                   PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
@@ -100,7 +104,7 @@ public class ContainerGUICraftingFurnace extends Container
 
         for (i = 0; i < INVENTORY_COLUMNS; i++)
         {
-            addSlotToContainer(new Slot(
+            addSlot(new Slot(
               playerInventory, i,
               PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
               PLAYER_INVENTORY_HOTBAR_OFFSET_CRAFTING
@@ -122,7 +126,7 @@ public class ContainerGUICraftingFurnace extends Container
             {
                 final Slot slot = this.inventorySlots.get(slotId);
 
-                final ItemStack dropping = player.inventory.getItemStack();
+                final ItemStack dropping = playerIn.inventory.getItemStack();
 
                 clickResult = handleSlotClick(slot, dropping);
             }
@@ -137,16 +141,21 @@ public class ContainerGUICraftingFurnace extends Container
         }
         else
         {
-            clickResult = super.slotClick(slotId, clickedButton, mode, player);
+            clickResult = super.slotClick(slotId, clickedButton, mode, playerInventory.player);
         }
 
-        if (!worldObj.isRemote)
+        if (!world.isRemote)
         {
-            final ServerPlayerEntity PlayerEntityMP = (ServerPlayerEntity) player;
-            final ItemStack result = FurnaceRecipes.instance().getSmeltingResult(furnaceInventory.getStackInSlot(0)).copy();
+            final ServerPlayerEntity player = (ServerPlayerEntity) playerIn;
 
-            this.furnaceInventory.setInventorySlotContents(1, result);
-            ServerPlayerEntity.connection.sendPacket(new SPacketSetSlot(this.windowId, 1, result));
+            final FurnaceRecipe i = ((ServerPlayerEntity) playerIn).server.getRecipeManager().getRecipe(IRecipeType.SMELTING, furnaceInventory, world).orElseGet(null);
+
+            if (i != null)
+            {
+                final ItemStack result = i.getRecipeOutput();
+                this.furnaceInventory.setInventorySlotContents(1, result);
+                player.connection.sendPacket(new SSetSlotPacket(this.windowId, 1, result));
+            }
         }
         return clickResult;
     }
@@ -234,6 +243,6 @@ public class ContainerGUICraftingFurnace extends Container
     @Override
     public boolean canMergeSlot(final ItemStack stack, final Slot slotIn)
     {
-        return !(slotIn instanceof SlotFurnaceOutput) && super.canMergeSlot(stack, slotIn);
+        return !(slotIn instanceof FurnaceResultSlot) && super.canMergeSlot(stack, slotIn);
     }
 }

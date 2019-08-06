@@ -1,29 +1,29 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.inventory.ContainerGUICraftingFurnace;
 import com.minecolonies.coremod.network.messages.AddRemoveRecipeMessage;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
+import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-
-import java.io.IOException;
+import net.minecraft.util.text.ITextComponent;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Furnace crafting gui.
  */
-public class WindowGuiFurnaceCrafting extends GuiContainer
+public class WindowGuiFurnaceCrafting<T extends ContainerGUICraftingFurnace> extends ContainerScreen
 {
     private static final ResourceLocation CRAFTING_FURNACE = new ResourceLocation(Constants.MOD_ID, "textures/gui/furnace.png");
 
@@ -65,74 +65,70 @@ public class WindowGuiFurnaceCrafting extends GuiContainer
     /**
      * The button to click done after finishing the recipe.
      */
-    private GuiButton doneButton;
+    private Button doneButton;
 
     /**
      * The building the window belongs to.
      */
-    private final AbstractBuildingWorker.View building;
+    private final ContainerGUICraftingFurnace container;
+
+    private final AbstractBuildingSmelterCrafter.View building;
 
     /**
      * Create a crafting gui window.
-     *
-     * @param playerInv     the player.
-     * @param worldIn       the world.
-     * @param building      the building.
+     * @param container the container.
+     * @param playerInventory the player inv.
+     * @param iTextComponent the display text component.
      */
-    public WindowGuiFurnaceCrafting(final PlayerInventory playerInv, final World worldIn, final AbstractBuildingWorker.View building)
+    public WindowGuiFurnaceCrafting(final Container container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
     {
-        super(new ContainerGUICraftingFurnace(playerInv, worldIn));
-        this.building = building;
+        super(container, playerInventory, iTextComponent);
+        this.container = (ContainerGUICraftingFurnace) container;
+        this.building = (AbstractBuildingSmelterCrafter.View) IColonyManager.getInstance().getBuildingView(playerInventory.player.dimension.getId(), ((ContainerGUICraftingFurnace) container).buildingPos);
     }
 
     @Override
-    public void initGui()
+    protected void init()
     {
-        super.initGui();
-
-        this.doneButton = this.addButton(new GuiButton(0, guiLeft + BUTTON_X_OFFSET, guiTop + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, I18n.format("gui.done")));
-
+        super.init();
+        final String buttonDisplay = building.canRecipeBeAdded() ? I18n.format("gui.done") : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
+        this.doneButton = new Button(guiLeft + BUTTON_X_OFFSET, guiTop + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, buttonDisplay, new OnButtonPress());
+        this.addButton(doneButton);
         if(!building.canRecipeBeAdded())
         {
-            this.doneButton.displayString = LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
             this.doneButton.enabled = false;
         }
     }
 
-    @Override
-    protected void mouseClicked(final int mouseX, final int mouseY, final int mouseButton) throws IOException
+    public class OnButtonPress implements Button.IPressable
     {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-
-        if (building.canRecipeBeAdded() && doneButton.isMouseOver())
+        @Override
+        public void onPress(final Button button)
         {
-            final List<ItemStack> input = new ArrayList<>();
-            input.add(inventorySlots.getInventory().get(0));
-            final ItemStack primaryOutput =  inventorySlots.getSlot(1).getStack().copy();
-
-            if(!ItemStackUtils.isEmpty(primaryOutput))
+            if (building.canRecipeBeAdded())
             {
-                Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(input, 1, primaryOutput, building, false));
+                final List<ItemStack> input = new ArrayList<>();
+                input.add(container.inventorySlots.get(0).getStack());
+                final ItemStack primaryOutput = container.inventorySlots.get(1).getStack().copy();
+
+                if(!ItemStackUtils.isEmpty(primaryOutput))
+                {
+                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(input, 1, primaryOutput, building, false));
+                }
             }
         }
     }
 
-    /**
-     * Draw the foreground layer for the GuiContainer (everything in front of the items)
-     */
-    @Override
-    protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
-    {
-        this.fontRenderer.drawString(I18n.format("container.furnace"), X_OFFSET, Y_OFFSET, GUI_COLOR);
-    }
+
 
     /**
      * Draws the background layer of this container (behind the items).
      */
+    @Override
     protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY)
     {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(CRAFTING_FURNACE);
-        this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        this.minecraft.getTextureManager().bindTexture(CRAFTING_FURNACE);
+        this.blit(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
     }
 }

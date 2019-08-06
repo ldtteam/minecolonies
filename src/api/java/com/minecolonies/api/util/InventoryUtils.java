@@ -95,12 +95,11 @@ public class InventoryUtils
      *
      * @param itemStack  ItemStack to check.
      * @param targetItem Item to check.
-     * @param itemDamage the item damage value.
      * @return True when item in item stack is equal to target item.
      */
-    private static boolean compareItems(@Nullable final ItemStack itemStack, final Item targetItem, final int itemDamage)
+    private static boolean compareItems(@Nullable final ItemStack itemStack, final Item targetItem)
     {
-        return !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() == targetItem && (itemStack.getDamage() == itemDamage || itemDamage == -1);
+        return !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() == targetItem;
     }
 
     /**
@@ -116,7 +115,7 @@ public class InventoryUtils
 
     /**
      * Filters a list of items, matches the stack using {@link
-     * #compareItems(ItemStack, Item, int)}, with targetItem and itemDamage as
+     * #compareItems(ItemStack, Item)}, with targetItem and itemDamage as
      * parameters, in an {@link IItemHandler}.
      *
      * @param itemHandler Inventory to get items from
@@ -2095,15 +2094,14 @@ public class InventoryUtils
      *
      * @param provider   the provider to check.
      * @param item       the item.
-     * @param itemDamage its damage.
      * @param amount     stack size to be considered.
      * @return the slot or -1.
      */
-    public static int findSlotInProviderNotFullWithItem(final ICapabilityProvider provider, final Item item, final int itemDamage, final int amount)
+    public static int findSlotInProviderNotFullWithItem(final ICapabilityProvider provider, final Item item, final int amount)
     {
         for (final IItemHandler handler : getItemHandlersFromProvider(provider))
         {
-            final int foundSlot = findSlotInItemHandlerNotFullWithItem(handler, (ItemStack stack) -> compareItems(stack, item, itemDamage), amount);
+            final int foundSlot = findSlotInItemHandlerNotFullWithItem(handler, (ItemStack stack) -> compareItems(stack, item), amount);
             //TODO: When contract is hardened later: Replace this -1 check with a try-catch block.
             if (foundSlot > -1)
             {

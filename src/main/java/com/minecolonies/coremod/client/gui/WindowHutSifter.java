@@ -138,7 +138,7 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
                 else
                 {
                     resourceLabel.setColor(WHITE, WHITE);
-                    resourceLabel.setLabelText(resource.getDisplayName());
+                    resourceLabel.setLabelText(resource.getDisplayName().getFormattedText());
                 }
 
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
@@ -221,7 +221,7 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
      */
     private void setupSettings(final Button crushingSettingsButton)
     {
-        crushingSettingsButton.setLabel(this.block.getItemStack().getDisplayName());
+        crushingSettingsButton.setLabel(this.block.getItemStack().getDisplayName().getFormattedText());
     }
 
     @NotNull

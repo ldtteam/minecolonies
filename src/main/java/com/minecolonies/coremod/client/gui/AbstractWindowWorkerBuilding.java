@@ -7,6 +7,7 @@ import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.ChangeDeliveryPriorityMessage;
 import com.minecolonies.coremod.network.messages.ChangeDeliveryPriorityStateMessage;
 import com.minecolonies.coremod.network.messages.OpenCraftingGUIMessage;

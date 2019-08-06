@@ -7,6 +7,7 @@ import com.minecolonies.api.util.InventoryFunctions;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -17,6 +18,10 @@ import java.util.function.Predicate;
 
 public abstract class AbstractTileEntityColonyBuilding extends ChestTileEntity
 {
+    public AbstractTileEntityColonyBuilding(final TileEntityType type)
+    {
+        super(type);
+    }
 
     /**
      * Finds the first @see ItemStack the type of {@code is}.
