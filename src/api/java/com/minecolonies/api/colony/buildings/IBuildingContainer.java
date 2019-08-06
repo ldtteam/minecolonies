@@ -115,8 +115,6 @@ public interface IBuildingContainer extends ISchematicProvider, ICitizenAssignab
      */
     void setTileEntity(AbstractTileEntityColonyBuilding te);
 
-    boolean hasCapability(@Nonnull Capability<?> capability, @Nullable Direction facing);
-
     @Nonnull
     @Override
     <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap);
