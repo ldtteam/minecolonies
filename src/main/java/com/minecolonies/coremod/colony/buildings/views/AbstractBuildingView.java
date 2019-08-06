@@ -17,6 +17,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
 import com.minecolonies.coremod.network.messages.HutRenameMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import io.netty.buffer.ByteBuf;
@@ -543,7 +544,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     @Override
     public ILocation getLocation()
     {
-        return null;
+        return new StaticLocation(this.getPosition(), colony.getDimension());
     }
 
     /**
