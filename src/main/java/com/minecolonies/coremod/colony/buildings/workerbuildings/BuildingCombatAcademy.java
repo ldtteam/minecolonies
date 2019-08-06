@@ -16,8 +16,8 @@ import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockHay;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.HayBlock;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
@@ -80,7 +80,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        if (block == Blocks.PUMPKIN && world.getBlockState(pos.down()).getBlock() instanceof BlockHay)
+        if (block == Blocks.PUMPKIN && world.getBlockState(pos.down()).getBlock() instanceof HayBlock)
         {
             fightingPos.add(pos.down());
         }
@@ -124,7 +124,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     {
         final CompoundNBT compound = new CompoundNBT();
         compound.putInt(TAG_PARTNER1, tuple.getKey());
-        compound.putInt(TAG_PARTNER2, tuple.get());
+        compound.putInt(TAG_PARTNER2, tuple.getValue());
         return compound;
     }
 

@@ -17,8 +17,9 @@ import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobBlacksmith;
 import net.minecraft.item.*;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
@@ -90,27 +91,18 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
         for(final ItemStorage itemStorage : storage.getCleanedInput())
         {
             final ItemStack stack = itemStorage.getItemStack();
-            if(!ItemStackUtils.isEmpty(stack))
+            if (!ItemStackUtils.isEmpty(stack))
             {
-                for(final int id: OreDictionary.getOreIDs(stack))
+                if (stack.getItem().isIn(Tags.Items.INGOTS))
                 {
-                    final String name = OreDictionary.getOreName(id);
-                    if(name.contains("ingot"))
-                    {
-                        ingots++;
-                    }
+                    ingots++;
+                    break;
                 }
             }
         }
 
         final ItemStack output = storage.getPrimaryOutput();
-        return output.getItem() instanceof ItemTool || output.getItem() instanceof SwordItem || output.getItem() instanceof ArmorItem || output.getItem() instanceof HoeItem || Compatibility.isTinkersWeapon(output) || ingots == size;
-    }
-
-    @Override
-    public BuildingEntry getBuildingRegistryEntry()
-    {
-        return ModBuildings.blacksmith;
+        return output.getItem() instanceof ToolItem || output.getItem() instanceof SwordItem || output.getItem() instanceof ArmorItem || output.getItem() instanceof HoeItem || Compatibility.isTinkersWeapon(output) || ingots == size;
     }
 
     @Override

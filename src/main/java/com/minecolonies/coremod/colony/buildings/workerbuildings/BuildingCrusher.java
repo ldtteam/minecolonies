@@ -14,7 +14,7 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutCrusher;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
@@ -24,7 +24,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -102,7 +101,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
             final IRecipeStorage recipe = StandardFactoryController.getInstance().getNewInstance(
               TypeConstants.RECIPE,
               StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              input, 2, mode.get().getItemStack(), ModBlocks.blockHutCrusher);
+              input, 2, mode.getValue().getItemStack(), ModBlocks.blockHutCrusher);
             crusherRecipes.put(mode.getKey(), recipe);
         }
     }
@@ -221,7 +220,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
 
         if (compound.keySet().contains(TAG_CRUSHER_MODE))
         {
-            this.crusherMode = new ItemStorage(new ItemStack(compound.getCompound(TAG_CRUSHER_MODE)));
+            this.crusherMode = new ItemStorage(ItemStack.read(compound.getCompound(TAG_CRUSHER_MODE)));
         }
 
         if (super.recipes.isEmpty())

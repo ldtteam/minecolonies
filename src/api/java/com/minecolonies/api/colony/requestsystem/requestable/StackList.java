@@ -11,6 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.LIST_REQUEST_DISPLAY_STRING;
@@ -197,13 +198,9 @@ public class StackList implements IDeliverable
         {
             for (final ItemStack tempStack : theStacks)
             {
-                for (final ResourceLocation tag: tempStack.getItem().getTags())
+                if (!Collections.disjoint(stack.getItem().getTags(), tempStack.getItem().getTags()))
                 {
-                    final Tag<Item> theTag = new Tag<>(tag);
-                    if (theTag.contains(stack.getItem()));
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
         }

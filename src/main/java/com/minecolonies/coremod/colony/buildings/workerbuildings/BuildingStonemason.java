@@ -15,12 +15,15 @@ import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.jobs.JobStonemason;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
@@ -101,20 +104,10 @@ public class BuildingStonemason extends AbstractBuildingCrafter
 
         if (storage.getPrimaryOutput().getItem() instanceof BlockItem)
         {
-            final Block block = ((BlockItem) storage.getPrimaryOutput().getItem()).getBlock();
-            if (block == Blocks.STONEBRICK
-                  || block == Blocks.STONE_BRICK_STAIRS
-                  || block == Blocks.STONE_SLAB
-                  || block == Blocks.STONE_SLAB2
-                  || block == Blocks.STONE
-                  || block == Blocks.SANDSTONE
-                  || block == Blocks.RED_SANDSTONE)
+            final Item item = storage.getPrimaryOutput().getItem();
+            if (item.isIn(Tags.Items.STONE) || item.isIn(Tags.Items.COBBLESTONE) || item.isIn(ItemTags.STONE_BRICKS))
             {
                 return true;
-            }
-            else if (block == Blocks.END_BRICKS)
-            {
-                return false;
             }
         }
         else if (storage.getPrimaryOutput().getItem() == Items.FLOWER_POT)
@@ -130,22 +123,21 @@ public class BuildingStonemason extends AbstractBuildingCrafter
                 if (stack.getItem() instanceof BlockItem)
                 {
                     final Block block = ((BlockItem) stack.getItem()).getBlock();
-                    if (block == Blocks.STONEBRICK || block == Blocks.STONE_BRICK_STAIRS || block == Blocks.STONE_SLAB || block == Blocks.STONE_SLAB2)
+                    if (block.isIn(Tags.Blocks.STONE) || block.isIn(Tags.Blocks.COBBLESTONE) || block.isIn(BlockTags.STONE_BRICKS))
                     {
                         amountOfValidBlocks++;
                         continue;
                     }
                 }
 
-                for(final int id: OreDictionary.getOreIDs(stack))
+                for (final ResourceLocation tag : stack.getItem().getTags())
                 {
-                    final String name = OreDictionary.getOreName(id);
-                    if(name.contains("stone"))
+                    if(tag.getPath().contains("stone"))
                     {
                         amountOfValidBlocks++;
                         break;
                     }
-                    else if(name.contains("stick") || name.contains("wood") || name.toLowerCase(Locale.US).contains("redstone") || name.contains("string") || name.contains("gunpowder"))
+                    else if(tag.getPath().contains("stick") || tag.getPath().contains("wood") || tag.getPath().toLowerCase(Locale.US).contains("redstone") || tag.getPath().contains("string") || tag.getPath().contains("gunpowder"))
                     {
                         return false;
                     }

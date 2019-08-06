@@ -9,21 +9,21 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutCitizen;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import net.minecraft.block.BedBlock;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.state.properties.BedPart;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -136,7 +136,7 @@ public class BuildingHome extends AbstractBuilding
             {
                 residentIds[i] = getAssignedCitizen().get(i).getId();
             }
-            compound.setIntArray(TAG_RESIDENTS, residentIds);
+            compound.putIntArray(TAG_RESIDENTS, residentIds);
         }
         if (!bedList.isEmpty())
         {
@@ -164,11 +164,11 @@ public class BuildingHome extends AbstractBuilding
         {
             BlockState state = world.getBlockState(pos);
             state = state.getBlock().getExtendedState(state, world, pos);
-            if (state.getBlock() instanceof BlockBed
-                  && state.get(BlockBed.OCCUPIED)
-                  && state.get(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
+            if (state.getBlock() instanceof BedBlock
+                  && state.get(BedBlock.OCCUPIED)
+                  && state.get(BedBlock.PART).equals(BedPart.HEAD))
             {
-                world.setBlockState(pos, state.with(BlockBed.OCCUPIED, false), 0x03);
+                world.setBlockState(pos, state.with(BedBlock.OCCUPIED, false), 0x03);
             }
         }
     }
@@ -186,11 +186,11 @@ public class BuildingHome extends AbstractBuilding
         super.registerBlockPosition(blockState, pos, world);
 
         BlockPos registrationPosition = pos;
-        if (blockState.getBlock() instanceof BlockBed)
+        if (blockState.getBlock() instanceof BedBlock)
         {
-            if (blockState.get(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
+            if (blockState.get(BedBlock.PART) == BedPart.FOOT)
             {
-                registrationPosition = registrationPosition.offset(blockState.get(BlockBed.FACING));
+                registrationPosition = registrationPosition.offset(blockState.get(BedBlock.HORIZONTAL_FACING));
             }
 
             if (!bedList.contains(registrationPosition))
@@ -480,16 +480,6 @@ public class BuildingHome extends AbstractBuilding
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
-
-        if (newLevel == NUM_ACHIEVEMENT_FIRST)
-        {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingColonist);
-        }
-        if (newLevel >= this.getMaxBuildingLevel())
-        {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeColonistMax);
-        }
-
         for (final Optional<AbstractEntityCitizen> entityCitizen : getAssignedEntities())
         {
             if (entityCitizen.isPresent() && entityCitizen.get().getCitizenJobHandler().getColonyJob() == null)

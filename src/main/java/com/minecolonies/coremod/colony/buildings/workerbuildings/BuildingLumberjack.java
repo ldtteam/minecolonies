@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutLumberjack;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
@@ -26,7 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT_FIRST;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -145,15 +143,6 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
-
-        if (newLevel == NUM_ACHIEVEMENT_FIRST)
-        {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingLumberjack);
-        }
-        if (newLevel >= this.getMaxBuildingLevel())
-        {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
-        }
     }
 
     /**

@@ -6,15 +6,15 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.util.StudyItem;
 import com.minecolonies.api.util.Log;
 import com.ldtteam.blockout.views.Window;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockBookshelf;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -24,6 +24,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -88,7 +89,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
     {
         final List<StudyItem> studyItemList = new ArrayList<>();
 
-        for (final String entry : MineColonies.getConfig().getCommon().gameplay.configListStudyItems)
+        for (final String entry : MineColonies.getConfig().getCommon().configListStudyItems.get())
         {
 
             try
@@ -99,7 +100,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
                     Log.getLogger().info("Minecolonies: Parsing config for study items for Library failed for entry:" + entry);
                     continue;
                 }
-                final Item item = Item.REGISTRY.getObject(new ResourceLocation(entries[0]));
+                final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(entries[0]));
                 final int skillChance = Integer.parseInt(entries[1]);
                 final int breakChance = Integer.parseInt(entries[2]);
 
@@ -191,7 +192,8 @@ public class BuildingLibrary extends AbstractBuildingWorker
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
         super.registerBlockPosition(block, pos, world);
-        if (block instanceof BlockBookshelf)
+        //todo we might in the future want to add our own oredict tag to this.
+        if (block == Blocks.BOOKSHELF)
         {
             bookCases.add(pos);
         }
@@ -209,7 +211,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
             return getPosition();
         }
         final BlockPos returnPos = bookCases.get(random.nextInt(bookCases.size()));
-        if ((colony.getWorld().getBlockState(returnPos).getBlock() instanceof BlockBookshelf))
+        if (colony.getWorld().getBlockState(returnPos).getBlock() == Blocks.BOOKSHELF)
         {
             return returnPos;
         }

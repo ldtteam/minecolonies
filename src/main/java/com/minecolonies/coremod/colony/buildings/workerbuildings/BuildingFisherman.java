@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutFisherman;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -18,7 +17,6 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT_FIRST;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -77,15 +75,6 @@ public class BuildingFisherman extends AbstractBuildingWorker
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
-
-        if (newLevel == NUM_ACHIEVEMENT_FIRST)
-        {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingFisher);
-        }
-        if (newLevel >= this.getMaxBuildingLevel())
-        {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeFisherMax);
-        }
     }
 
     @Override

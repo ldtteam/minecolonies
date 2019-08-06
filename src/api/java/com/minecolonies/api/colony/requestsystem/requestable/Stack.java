@@ -10,6 +10,8 @@ import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+
 /**
  * Deliverable that can only be fulfilled by a single stack with a given minimal amount of items.
  */
@@ -165,13 +167,9 @@ public class Stack implements IDeliverable
     {
         if (matchOreDic)
         {
-            for (final ResourceLocation tag: getStack().getItem().getTags())
+            if (!Collections.disjoint(stack.getItem().getTags(), theStack.getItem().getTags()))
             {
-                final Tag<Item> theTag = new Tag<>(tag);
-                if (theTag.contains(stack.getItem()));
-                {
-                    return true;
-                }
+                return true;
             }
         }
 

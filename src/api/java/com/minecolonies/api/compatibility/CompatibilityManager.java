@@ -2,6 +2,7 @@ package com.minecolonies.api.compatibility;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockStateStorage;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -210,7 +211,7 @@ public class CompatibilityManager implements ICompatibilityManager
             return false;
         }
 
-        for (final String string : MineColonies.getConfig().getCommon().gameplay.listOfCompostableItems)
+        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().listOfCompostableItems.get())
         {
             if (itemStack.getItem().getRegistryName().toString().equals(string))
             {
@@ -218,8 +219,7 @@ public class CompatibilityManager implements ICompatibilityManager
             }
             for (final ResourceLocation tag : itemStack.getItem().getTags())
             {
-                final Tag<Item> theTag = new Tag<>(tag);
-                if (theTag.getId().getPath().equals(string))
+                if (tag.getPath().equals(string))
                 {
                     return true;
                 }
@@ -236,7 +236,7 @@ public class CompatibilityManager implements ICompatibilityManager
             return false;
         }
 
-        for (final String string : MineColonies.getConfig().getCommon().gameplay.luckyBlocks)
+        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().luckyBlocks.get())
         {
             if (itemStack.getItem().getRegistryName().toString().equals(string))
             {
@@ -244,8 +244,7 @@ public class CompatibilityManager implements ICompatibilityManager
             }
             for (final ResourceLocation tag : itemStack.getItem().getTags())
             {
-                final Tag<Item> theTag = new Tag<>(tag);
-                if (theTag.getId().getPath().equals(string))
+                if (tag.getPath().equals(string))
                 {
                     return true;
                 }
@@ -317,8 +316,7 @@ public class CompatibilityManager implements ICompatibilityManager
 
         for (final ResourceLocation tag : stack.getItem().getTags())
         {
-            final Tag<Item> theTag = new Tag<>(tag);
-            if (theTag.getId().getPath().contains(ORE_STRING))
+            if (tag.getPath().contains(ORE_STRING))
             {
                 return !FurnaceRecipes.instance().getSmeltingResult(stack).isEmpty();
             }
@@ -334,13 +332,10 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             return false;
         }
+
         for (final ResourceLocation tag : stack.getItem().getTags())
         {
-            final Tag<Item> theTag = new Tag<>(tag);
-            if (theTag.getId().getPath().contains(ORE_STRING))
-            {
-                ;
-            }
+            if (tag.getPath().contains(ORE_STRING))
             {
                 return true;
             }
@@ -400,7 +395,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public ItemStack getRandomLuckyOre()
     {
-        if (random.nextInt(ONE_HUNDRED_PERCENT) <= MineColonies.getConfig().getCommon().gameplay.luckyBlockChance)
+        if (random.nextInt(ONE_HUNDRED_PERCENT) <= MinecoloniesAPIProxy.getInstance().getConfig().getCommon().luckyBlockChance.get())
         {
             Collections.shuffle(luckyOres);
             return luckyOres.get(0).getItemStack().copy();
@@ -424,10 +419,10 @@ public class CompatibilityManager implements ICompatibilityManager
                                                     .map(stack -> ((BlockItem) stack.getItem()).getBlock())
                                                     .collect(Collectors.toList())));
 
-            for (final String oreString : MineColonies.getConfig().getCommon().gameplay.extraOres)
+            for (final String oreString : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().extraOres.get())
             {
                 final String[] split = oreString.split(":");
-                final Block block = ForgeRegistries.BLOCKS.get(new ResourceLocation(split[0], split[1]));
+                final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(split[0], split[1]));
                 if (!(block == null || oreBlocks.contains(block)))
                 {
                     oreBlocks.add(block);
@@ -500,7 +495,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (luckyOres.isEmpty())
         {
-            for (final String ore : MineColonies.getConfig().getCommon().gameplay.luckyOres)
+            for (final String ore : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().luckyOres.get())
             {
                 final String[] split = ore.split("!");
                 if (split.length < 2)
@@ -509,7 +504,7 @@ public class CompatibilityManager implements ICompatibilityManager
                     continue;
                 }
 
-                final Item item = ForgeRegistries.ITEMS.get(new ResourceLocation(split[0], split[1]));
+                final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0], split[1]));
                 if (item == null || item == Items.AIR)
                 {
                     Log.getLogger().warn("Invalid lucky block: " + ore);
@@ -539,7 +534,7 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private void discoverSifting()
     {
-        for (final String string : MineColonies.getConfig().getCommon().gameplay.sifterMeshes)
+        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().sifterMeshes.get())
         {
             final String[] mesh = string.split(",");
 
@@ -554,7 +549,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 final double probability = Double.parseDouble(mesh[1]);
 
                 final String[] item = mesh[0].split(":");
-                final Item theItem = ForgeRegistries.ITEMS.get(new ResourceLocation(item[0], item[1]));
+                final Item theItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(item[0], item[1]));
 
                 if (theItem == null)
                 {
@@ -571,12 +566,12 @@ public class CompatibilityManager implements ICompatibilityManager
             }
         }
 
-        for (final String string : MineColonies.getConfig().getCommon().gameplay.siftableBlocks)
+        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().siftableBlocks.get())
         {
             try
             {
                 final String[] item = string.split(":");
-                final Item theItem = ForgeRegistries.ITEMS.get(new ResourceLocation(item[0], item[1]));
+                final Item theItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(item[0], item[1]));
 
                 if (theItem == null)
                 {
@@ -594,7 +589,7 @@ public class CompatibilityManager implements ICompatibilityManager
         }
 
         final Map<ItemStorage, Map<ItemStorage, Map<ItemStorage, Double>>> tempDrops = new HashMap<>();
-        for (final String string : MineColonies.getConfig().getCommon().gameplay.sifterDrops)
+        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().sifterDrops.get())
         {
             final String[] drop = string.split(",");
             if (drop.length != 4)
@@ -626,7 +621,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 final ItemStorage meshStorage = sifterMeshes.get(mesh).getA();
 
                 final String[] item = drop[2].split(":");
-                final Item theItem = ForgeRegistries.ITEMS.get(new ResourceLocation(item[0], item[1]));
+                final Item theItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(item[0], item[1]));
 
                 if (theItem == null)
                 {
@@ -670,14 +665,14 @@ public class CompatibilityManager implements ICompatibilityManager
 
         for (final Map.Entry<ItemStorage, Map<ItemStorage, Map<ItemStorage, Double>>> meshEntry : tempDrops.entrySet())
         {
-            for (final Map.Entry<ItemStorage, Map<ItemStorage, Double>> blockEntry : meshEntry.get().entrySet())
+            for (final Map.Entry<ItemStorage, Map<ItemStorage, Double>> blockEntry : meshEntry.getValue().entrySet())
             {
                 final List<ItemStorage> theDrops = new ArrayList<>();
                 double probabilitySum = 0;
-                for (final Map.Entry<ItemStorage, Double> drops : blockEntry.get().entrySet())
+                for (final Map.Entry<ItemStorage, Double> drops : blockEntry.getValue().entrySet())
                 {
                     final ItemStorage storage = drops.getKey();
-                    final double probability = drops.get();
+                    final double probability = drops.getValue();
                     probabilitySum += probability;
                     for (int i = 0; i < probability; i++)
                     {
@@ -713,7 +708,7 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private void discoverCrusherModes()
     {
-        for (final String string : MineColonies.getConfig().getCommon().gameplay.crusherProduction)
+        for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().crusherProduction.get())
         {
             final String[] split = string.split("!");
             if (split.length != 2)
@@ -725,8 +720,8 @@ public class CompatibilityManager implements ICompatibilityManager
             final String[] firstItem = split[0].split(":");
             final String[] secondItem = split[1].split(":");
 
-            final Item item1 = ForgeRegistries.ITEMS.get(new ResourceLocation(firstItem[0], firstItem[1]));
-            final Item item2 = ForgeRegistries.ITEMS.get(new ResourceLocation(secondItem[0], secondItem[1]));
+            final Item item1 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(firstItem[0], firstItem[1]));
+            final Item item2 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(secondItem[0], secondItem[1]));
 
             try
             {
