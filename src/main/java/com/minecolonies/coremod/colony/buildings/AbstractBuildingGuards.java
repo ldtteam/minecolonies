@@ -21,8 +21,8 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
 import com.minecolonies.coremod.network.messages.GuardMobAttackListMessage;
+import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MobEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -1007,7 +1007,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         int i = 0;
         for (final Map.Entry<ResourceLocation, EntityType<?>> entry : ForgeRegistries.ENTITIES.getEntries())
         {
-            if (entry.getValue().create(colony.getWorld()).getClass().isAssignableFrom(MobEntity.class))
+            if (entry.getValue().getClassification() == EntityClassification.MONSTER)
             {
                 i++;
                 mobs.add(new MobEntryView(entry.getKey(), true, i));
