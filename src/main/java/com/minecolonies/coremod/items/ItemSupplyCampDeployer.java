@@ -3,13 +3,14 @@ package com.minecolonies.coremod.items;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.placementhandlers.PlacementError;
-import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.configuration.Configurations;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -52,34 +53,23 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     /**
      * Creates a new supplycamp deployer. The item is not stackable.
      */
-    public ItemSupplyCampDeployer()
+    public ItemSupplyCampDeployer(final Item.Properties properties)
     {
-        super("supplyCampDeployer");
-
-        super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        setMaxStackSize(1);
+        super("supplyCampDeployer", properties.maxStackSize(1).group(ModCreativeTabs.MINECOLONIES));
     }
 
     @NotNull
     @Override
-    public ActionResultType onItemUse(
-            final PlayerEntity playerIn,
-            final World worldIn,
-            final BlockPos pos,
-            final Hand hand,
-            final Direction facing,
-            final float hitX,
-            final float hitY,
-            final float hitZ)
+    public ActionResultType onItemUse(final ItemUseContext ctx)
     {
-        if (worldIn.isRemote)
+        if (ctx.getWorld().isRemote)
         {
-            if(!MineColonies.getConfig().getCommon().gameplay.allowOtherDimColonies && worldIn.world.getDimension().getType().getId() != 0)
+            if (!MineColonies.getConfig().getCommon().allowOtherDimColonies.get() && ctx.getWorld().getDimension().getType().getId() != 0)
             {
-                LanguageHandler.sendPlayerMessage(playerIn, CANT_PLACE_COLONY_IN_OTHER_DIM);
+                LanguageHandler.sendPlayerMessage(ctx.getPlayer(), CANT_PLACE_COLONY_IN_OTHER_DIM);
                 return ActionResultType.FAIL;
             }
-            placeSupplyCamp(pos, playerIn.getHorizontalFacing());
+            placeSupplyCamp(ctx.getPos(), ctx.getPlayer().getHorizontalFacing());
         }
 
         return ActionResultType.FAIL;
@@ -92,7 +82,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         final ItemStack stack = playerIn.getHeldItem(hand);
         if (worldIn.isRemote)
         {
-            if(!MineColonies.getConfig().getCommon().gameplay.allowOtherDimColonies && worldIn.world.getDimension().getType().getId() != 0)
+            if (!MineColonies.getConfig().getCommon().allowOtherDimColonies.get() && worldIn.getDimension().getType().getId() != 0)
             {
                 LanguageHandler.sendPlayerMessage(playerIn, CANT_PLACE_COLONY_IN_OTHER_DIM);
                 return new ActionResult<>(ActionResultType.FAIL, stack);
@@ -105,7 +95,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
 
     private void placeSupplyCamp(@Nullable final BlockPos pos, @NotNull final Direction direction)
     {
-        if(pos == null)
+        if (pos == null)
         {
             MineColonies.proxy.openBuildToolWindow(null, SUPPLY_CAMP_STRUCTURE_NAME, 0, null);
             return;
@@ -137,25 +127,26 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
 
     /**
      * Checks if the camp can be placed.
+     *
      * @param world the world.
-     * @param pos the position.
-     * @param size the size.
+     * @param pos   the position.
+     * @param size  the size.
      * @return true if so.
      */
     @NotNull
     public static boolean canCampBePlaced(@NotNull final World world, @NotNull final BlockPos pos, final BlockPos size, @NotNull final List<PlacementError> placementErrorList)
     {
-        for(int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)
+        for (int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)
         {
-            for(int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
+            for (int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
             {
                 checkIfSolidAndNotInColony(world, new BlockPos(x, pos.getY(), z), placementErrorList);
             }
         }
 
-        for(int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)
+        for (int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)
         {
-            for(int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
+            for (int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
             {
                 if (world.getBlockState(new BlockPos(x, pos.getY() + 1, z)).getMaterial().isSolid())
                 {
@@ -172,7 +163,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      * Check if the there is a solid block at a position and it's not in a colony.
      *
      * @param world the world.
-     * @param pos  the position.
+     * @param pos   the position.
      * @return true if is water
      */
     private static boolean checkIfSolidAndNotInColony(final World world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList)
@@ -196,7 +187,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      * Check if a coordinate is in any colony.
      *
      * @param world the world to check in.
-     * @param pos  the position.
+     * @param pos   the position.
      * @return true if no colony found.
      */
     private static boolean notInAnyColony(final World world, final BlockPos pos)

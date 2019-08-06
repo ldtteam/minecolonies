@@ -1,19 +1,20 @@
 package com.minecolonies.coremod.items;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -31,54 +32,39 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     /**
      * Sets the name, creative tab, and registers the resource scroll item.
      */
-    public ItemResourceScroll()
+    public ItemResourceScroll(final Item.Properties properties)
     {
-        super("resourcescroll");
-        super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        setMaxStackSize(STACKSIZE);
+        super("resourcescroll", properties.maxStackSize(STACKSIZE).group(ModCreativeTabs.MINECOLONIES));
     }
 
     /**
      * Used when clicking on block in world.
      *
-     * @param playerIn the player
-     * @param worldIn  the world
-     * @param pos      the position
-     * @param hand     the hand
-     * @param facing   the facing hit
-     * @param hitX     the x coordinate
-     * @param hitY     the y coordinate
-     * @param hitZ     the z coordinate
+     * @param ctx the context of use.
      * @return the result
      */
     @Override
     @NotNull
-    public ActionResultType onItemUse(
-                                       final PlayerEntity playerIn,
-                                       final World worldIn,
-                                       final BlockPos pos,
-                                       final Hand hand,
-                                       final Direction facing,
-                                       final float hitX,
-                                       final float hitY,
-                                       final float hitZ)
+    public ActionResultType onItemUse(ItemUseContext ctx)
     {
-        final ItemStack scroll = playerIn.getHeldItem(hand);
+        final ItemStack scroll = ctx.getPlayer().getHeldItem(ctx.getHand());
 
         final CompoundNBT compound = checkForCompound(scroll);
-        final TileEntity entity = worldIn.getTileEntity(pos);
+        final TileEntity entity = ctx.getWorld().getTileEntity(ctx.getPos());
 
         if (entity instanceof TileEntityColonyBuilding)
         {
             compound.putInt(TAG_COLONY_ID, ((AbstractTileEntityColonyBuilding) entity).getColonyId());
             BlockPosUtil.write(compound, TAG_BUILDER, ((AbstractTileEntityColonyBuilding) entity).getPosition());
 
-            if (!worldIn.isRemote)
+            if (!ctx.getWorld().isRemote)
             {
-                LanguageHandler.sendPlayerMessage(playerIn, TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET, ((AbstractTileEntityColonyBuilding) entity).getColonyId());
+                LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
+                  TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET,
+                  ((AbstractTileEntityColonyBuilding) entity).getColonyId());
             }
         }
-        else if (compound.keySet().contains(TAG_COLONY_ID) && compound.keySet().contains(TAG_BUILDER) && worldIn.isRemote)
+        else if (compound.keySet().contains(TAG_COLONY_ID) && compound.keySet().contains(TAG_BUILDER) && ctx.getWorld().isRemote)
         {
             final int colonyId = compound.getInt(TAG_COLONY_ID);
             final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
@@ -99,9 +85,9 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     @Override
     @NotNull
     public ActionResult<ItemStack> onItemRightClick(
-                                                     final World worldIn,
-                                                     final PlayerEntity playerIn,
-                                                     final Hand hand)
+      final World worldIn,
+      final PlayerEntity playerIn,
+      final Hand hand)
     {
         final ItemStack cllipboard = playerIn.getHeldItem(hand);
 
@@ -136,7 +122,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     {
         if (!item.hasTag())
         {
-            item.put(new CompoundNBT());
+            item.setTag(new CompoundNBT());
         }
         return item.getTag();
     }

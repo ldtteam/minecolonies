@@ -2,6 +2,8 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemTier;
 import net.minecraft.item.SwordItem;
 
 import static com.minecolonies.api.util.constant.Constants.SCIMITAR_NAME;
@@ -14,21 +16,9 @@ public class ItemIronScimitar extends SwordItem
     /**
      * Constructor method for the Scimitar Item
      */
-    public ItemIronScimitar()
+    public ItemIronScimitar(final Item .Properties properties)
     {
-        super(ToolMaterial.IRON);
-        super.setTranslationKey(Constants.MOD_ID.toLowerCase() + "." + SCIMITAR_NAME);
+        super(ItemTier.IRON, 3, -2.4f, properties.group(ModCreativeTabs.MINECOLONIES));
         setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + SCIMITAR_NAME);
-        super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
-    }
-
-    /**
-     * returns the items name
-     *
-     * @return Returns the items name in the form of a string
-     */
-    public final String getName()
-    {
-        return SCIMITAR_NAME;
     }
 }

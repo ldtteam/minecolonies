@@ -8,8 +8,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
@@ -21,28 +19,35 @@ public class ItemAncientTome extends AbstractItemMinecolonies
     /**
      * Sets the name, creative tab, and registers the Ancient Tome item.
      */
-    public ItemAncientTome()
+    public ItemAncientTome(final Properties properties)
     {
-        super("ancienttome");
-        super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        setMaxStackSize(STACKSIZE);
+        super("ancienttome", properties.maxStackSize(STACKSIZE).group(ModCreativeTabs.MINECOLONIES));
     }
 
     @Override
-    public void onUpdate(final ItemStack stack, final World worldIn, final Entity entityIn, final int itemSlot, final boolean isSelected)
+    public void inventoryTick(final ItemStack stack, final World worldIn, final Entity entityIn, final int itemSlot, final boolean isSelected)
     {
-        super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
-        final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, entityIn.getPosition());
+        super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
+
 
         if (stack.getTag() == null)
-            stack.putCompound(new CompoundNBT());
+        {
+            stack.setTag(new CompoundNBT());
+            final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, entityIn.getPosition());
+            stack.getTag().putInt(NbtTagConstants.TAG_COLONY_ID, colony != null ? colony.getID() : 0);
+            stack.getTag().putInt(NbtTagConstants.TAG_DIMENSION, colony != null ? colony.getDimension() : 0);
+        }
 
-        stack.getTag().putBoolean(NbtTagConstants.TAG_RAID_WILL_HAPPEN, colony.getRaiderManager().willRaidTonight());
+        final IColony colony =
+          IColonyManager.getInstance().getColonyByDimension(stack.getTag().getInt(NbtTagConstants.TAG_COLONY_ID), stack.getTag().getInt(NbtTagConstants.TAG_DIMENSION));
+        if (colony != null)
+        {
+            stack.getTag().putBoolean(NbtTagConstants.TAG_RAID_WILL_HAPPEN, colony.getRaiderManager().willRaidTonight());
+        }
     }
 
-    @SideOnly(Side.CLIENT)
     public boolean hasEffect(final ItemStack stack)
     {
-        return stack.getTag() != null && stack.getTag().hasKey(NbtTagConstants.TAG_RAID_WILL_HAPPEN) && stack.getTag().getBoolean(NbtTagConstants.TAG_RAID_WILL_HAPPEN);
+        return stack.getTag() != null && stack.getTag().getBoolean(NbtTagConstants.TAG_RAID_WILL_HAPPEN);
     }
 }

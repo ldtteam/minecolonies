@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
-import net.minecraftforge.common.util.EnumHelper;
+import net.minecraft.item.IArmorMaterial;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,22 +15,21 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ItemSantaHead extends ArmorItem
 {
-    public static final ArmorMaterial SANTA_HAT =
-      EnumHelper.addArmorMaterial("minecolonies:santa_hat", "minecolonies:santa_hat", 500, new int[] {0, 0, 0, 0}, 5, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0F);
+    public static final IArmorMaterial SANTA_HAT =
+      new MineColoniesArmorMaterial("minecolonies:santa_hat", 500, new int[] {0, 0, 0, 0}, 5, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0F, Ingredient.fromItems());
 
     /**
      * Constructor method for the Chief Sword Item
      */
     public ItemSantaHead(
       @NotNull final String name,
-      @NotNull final CreativeTabs tab,
-      @NotNull final ArmorMaterial materialIn,
-      final int renderIndexIn,
-      @NotNull final EquipmentSlotType equipmentSlotIn)
+      @NotNull final ItemGroup tab,
+      @NotNull final IArmorMaterial materialIn,
+      @NotNull final EquipmentSlotType equipmentSlotIn,
+      final Item.Properties properties)
     {
-        super(materialIn, renderIndexIn, equipmentSlotIn);
-        setTranslationKey(name);
-        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" +  name);
-        setCreativeTab(tab);
+        super(materialIn, equipmentSlotIn, properties.group(tab));
+
+        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + name);
     }
 }
