@@ -48,30 +48,13 @@ public class WindowGuiFurnaceCrafting<T extends ContainerGUICraftingFurnace> ext
     private static final int BUTTON_HEIGHT = 20;
 
     /**
-     * Color of the gui description.
-     */
-    private static final int GUI_COLOR = 4_210_752;
-
-    /**
-     * X offset of the gui description.
-     */
-    private static final int X_OFFSET = 97;
-
-    /**
-     * Y offset of the gui description.
-     */
-    private static final int Y_OFFSET = 8;
-
-    /**
-     * The button to click done after finishing the recipe.
-     */
-    private Button doneButton;
-
-    /**
      * The building the window belongs to.
      */
     private final ContainerGUICraftingFurnace container;
 
+    /**
+     * The building assigned to this.
+     */
     private final AbstractBuildingSmelterCrafter.View building;
 
     /**
@@ -92,11 +75,14 @@ public class WindowGuiFurnaceCrafting<T extends ContainerGUICraftingFurnace> ext
     {
         super.init();
         final String buttonDisplay = building.canRecipeBeAdded() ? I18n.format("gui.done") : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
-        this.doneButton = new Button(guiLeft + BUTTON_X_OFFSET, guiTop + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, buttonDisplay, new OnButtonPress());
+        /**
+         * The button to click done after finishing the recipe.
+         */
+        final Button doneButton = new Button(guiLeft + BUTTON_X_OFFSET, guiTop + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, buttonDisplay, new OnButtonPress());
         this.addButton(doneButton);
         if(!building.canRecipeBeAdded())
         {
-            this.doneButton.enabled = false;
+            doneButton.active = false;
         }
     }
 
