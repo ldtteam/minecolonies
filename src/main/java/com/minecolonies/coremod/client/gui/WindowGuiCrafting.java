@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * AbstractCrafting gui.
  */
-public class WindowGuiCrafting extends GuiContainer
+public class WindowGuiCrafting<T extends ContainerGUICraftingFurnace> extends ContainerScreen
 {
     private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES = new ResourceLocation(Constants.MOD_ID, "textures/gui/crafting2x2.png");
 
