@@ -172,7 +172,7 @@ public class ViewFilterableList
     {
         final Predicate<ItemStack> filterPredicate = stack -> filter.isEmpty()
                                                                 || stack.getTranslationKey().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                || stack.getDisplayName().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
+                                                                || stack.getDisplayName().getFormattedText().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US));
         allItems.clear();
         allItems.addAll(getBlockList(filterPredicate));
         allItems.addAll(getExceptions().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList()));
@@ -239,7 +239,7 @@ public class ViewFilterableList
             {
                 final ItemStack resource = tempRes.get(index).getItemStack();
                 final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
-                resourceLabel.setLabelText(resource.getDisplayName());
+                resourceLabel.setLabelText(resource.getDisplayName().getFormattedText());
                 resourceLabel.setColor(WHITE, WHITE);
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
 

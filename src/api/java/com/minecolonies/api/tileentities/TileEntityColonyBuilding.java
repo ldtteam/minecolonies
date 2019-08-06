@@ -1,6 +1,7 @@
 package com.minecolonies.api.tileentities;
 
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -18,6 +19,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -89,18 +91,21 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
      */
     private ResourceLocation registryName;
 
+    /**
+     * Standard constructor.
+     */
     public TileEntityColonyBuilding()
     {
+        this(MinecoloniesTileEntities.BUILDING);
     }
 
     /**
-     * Empty standard constructor.
-     * @param registryName the registry name of the building.
+     * Alternative overriden constructor.
      */
-    public TileEntityColonyBuilding(final ResourceLocation registryName)
+    public TileEntityColonyBuilding(final TileEntityType type)
     {
-        super();
-        this.registryName = registryName;
+        super(type);
+        this.registryName = ((AbstractBlockHut) getBlockState().getBlock()).getBuildingEntry().getRegistryName();
     }
 
     /**
@@ -422,12 +427,6 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     public void setStyle(final String style)
     {
         this.style = style;
-    }
-
-    @Override
-    public ResourceLocation getBuildingName()
-    {
-        return registryName;
     }
 
     @Override

@@ -8,11 +8,11 @@ import com.ldtteam.blockout.controls.ButtonHandler;
 import com.ldtteam.blockout.controls.Image;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.network.messages.HireMercenaryMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.util.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_DONE;
@@ -69,7 +69,7 @@ public class WindowTownHallMercenary extends Window implements ButtonHandler
         {
             colony.usedMercenaries();
             Network.getNetwork().sendToServer(new HireMercenaryMessage(colony));
-            Minecraft.getInstance().player.playSound(SoundEvents.ENTITY_LIGHTNING_THUNDER, 1.0f, 1.0f);
+            Minecraft.getInstance().player.playSound(SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0f, 1.0f);
         }
 
         this.close();

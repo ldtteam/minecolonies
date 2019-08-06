@@ -15,14 +15,14 @@ import com.ldtteam.blockout.Alignment;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.SwitchView;
 import com.ldtteam.blockout.views.View;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsToCitizenRequestMessage;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -55,11 +55,11 @@ public class WindowCitizen extends AbstractWindowRequestTree
      */
     private enum HeartsEnum
     {
-        EMPTY(Gui.ICONS, EMPTY_HEART_ICON_X, HEART_ICON_MC_Y, EMPTY_HEART_VALUE, null, null),
-        HALF_RED(Gui.ICONS, HALF_RED_HEART_ICON_X, HEART_ICON_MC_Y, RED_HEART_VALUE - 1, null, EMPTY),
-        RED(Gui.ICONS, RED_HEART_ICON_X, HEART_ICON_MC_Y, RED_HEART_VALUE, HALF_RED, EMPTY),
-        HALF_GOLDEN(Gui.ICONS, HALF_GOLD_HEART_ICON_X, HEART_ICON_MC_Y, GOLDEN_HEART_VALUE - 1, null, RED),
-        GOLDEN(Gui.ICONS, GOLD_HEART_ICON_X, HEART_ICON_MC_Y, GOLDEN_HEART_VALUE, HALF_GOLDEN, RED),
+        EMPTY(Screen.STATS_ICON_LOCATION, EMPTY_HEART_ICON_X, HEART_ICON_MC_Y, EMPTY_HEART_VALUE, null, null),
+        HALF_RED(Screen.STATS_ICON_LOCATION, HALF_RED_HEART_ICON_X, HEART_ICON_MC_Y, RED_HEART_VALUE - 1, null, EMPTY),
+        RED(Screen.STATS_ICON_LOCATION, RED_HEART_ICON_X, HEART_ICON_MC_Y, RED_HEART_VALUE, HALF_RED, EMPTY),
+        HALF_GOLDEN(Screen.STATS_ICON_LOCATION, HALF_GOLD_HEART_ICON_X, HEART_ICON_MC_Y, GOLDEN_HEART_VALUE - 1, null, RED),
+        GOLDEN(Screen.STATS_ICON_LOCATION, GOLD_HEART_ICON_X, HEART_ICON_MC_Y, GOLDEN_HEART_VALUE, HALF_GOLDEN, RED),
         HALF_GREEN(GREEN_BLUE_ICON, GREEN_HALF_HEART_ICON_X, GREEN_HEARTS_ICON_Y, GREEN_HEART_VALUE - 1, null, GOLDEN),
         GREEN(GREEN_BLUE_ICON, GREEN_HEART_ICON_X, GREEN_HEARTS_ICON_Y, GREEN_HEART_VALUE, HALF_GREEN, GOLDEN),
         HALF_BLUE(GREEN_BLUE_ICON, BLUE_HALF_HEART_ICON_X, BLUE_HEARTS_ICON_Y, BLUE_HEART_VALUE - 1, null, GREEN),
@@ -98,7 +98,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
     /**
      * Is the player in creative or not.
      */
-    private final boolean isCreative = this.mc.player.capabilities.isCreativeMode;
+    private final boolean isCreative = this.mc.player.isCreative();
 
     /**
      * Constructor to initiate the citizen windows.
@@ -107,7 +107,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
      */
     public WindowCitizen(final ICitizenDataView citizen)
     {
-        super(citizen.getWorkBuilding(),Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX, IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().world.world.getDimension().getType().getId()));
+        super(citizen.getWorkBuilding(),Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX, IColonyManager.getInstance().getColonyView(citizen.getColonyId(), Minecraft.getInstance().world.getDimension().getType().getId()));
         this.citizen = citizen;
     }
 
@@ -224,7 +224,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
         for (int i = 0; i < ICitizenData.MAX_SATURATION; i++)
         {
             @NotNull final Image saturation = new Image();
-            saturation.setImage(Gui.ICONS, EMPTY_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH, false);
+            saturation.setImage(Screen.STATS_ICON_LOCATION, EMPTY_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH, false);
 
             saturation.setPosition(i * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y);
             findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
@@ -235,7 +235,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
         for (saturationPos = 0; saturationPos < ((int) citizen.getSaturation()); saturationPos++)
         {
             @NotNull final Image saturation = new Image();
-            saturation.setImage(Gui.ICONS, FULL_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH, false);
+            saturation.setImage(Screen.STATS_ICON_LOCATION, FULL_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH, false);
             saturation.setPosition(saturationPos * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y);
             findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
         }
@@ -244,7 +244,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
         if (citizen.getSaturation() / 2 % 1 > 0)
         {
             @NotNull final Image saturation = new Image();
-            saturation.setImage(Gui.ICONS, HALF_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH, false);
+            saturation.setImage(Screen.STATS_ICON_LOCATION, HALF_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH, false);
             saturation.setPosition(saturationPos * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y);
             findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
         }
@@ -262,11 +262,11 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
 
         @NotNull final Image xpBar = new Image();
-        xpBar.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
+        xpBar.setImage(Screen.STATS_ICON_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
         xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
 
         @NotNull final Image xpBar2 = new Image();
-        xpBar2.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false);
+        xpBar2.setImage(Screen.STATS_ICON_LOCATION, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false);
         xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y);
 
         window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar);
@@ -275,7 +275,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
         if (experienceRatio > 0)
         {
             @NotNull final Image xpBarFull = new Image();
-            xpBarFull.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false);
+            xpBarFull.setImage(Screen.STATS_ICON_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false);
             xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
             window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull);
         }
@@ -296,11 +296,11 @@ public class WindowCitizen extends AbstractWindowRequestTree
         window.findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setLabelText(Integer.toString(citizen.getLevel()));
 
         @NotNull final Image xpBar = new Image();
-        xpBar.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, XP_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
+        xpBar.setImage(Screen.STATS_ICON_LOCATION, XP_BAR_ICON_COLUMN, XP_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
         xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
 
         @NotNull final Image xpBar2 = new Image();
-        xpBar2.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN_END, XP_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false);
+        xpBar2.setImage(Screen.STATS_ICON_LOCATION, XP_BAR_ICON_COLUMN_END, XP_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false);
         xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y);
 
         window.findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBar);
@@ -309,7 +309,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
         if (experienceRatio > 0)
         {
             @NotNull final Image xpBarFull = new Image();
-            xpBarFull.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, XP_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false);
+            xpBarFull.setImage(Screen.STATS_ICON_LOCATION, XP_BAR_ICON_COLUMN, XP_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false);
             xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
             window.findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBarFull);
         }
@@ -329,11 +329,11 @@ public class WindowCitizen extends AbstractWindowRequestTree
         window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Label.class).setLabelText(Integer.toString((int) citizen.getHappiness()));
 
         @NotNull final Image xpBar = new Image();
-        xpBar.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
+        xpBar.setImage(Screen.STATS_ICON_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
         xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
 
         @NotNull final Image xpBar2 = new Image();
-        xpBar2.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false);
+        xpBar2.setImage(Screen.STATS_ICON_LOCATION, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false);
         xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y);
 
         window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar);
@@ -342,7 +342,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
         if (experienceRatio > 0)
         {
             @NotNull final Image xpBarFull = new Image();
-            xpBarFull.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false);
+            xpBarFull.setImage(Screen.STATS_ICON_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false);
             xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
             window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull);
         }

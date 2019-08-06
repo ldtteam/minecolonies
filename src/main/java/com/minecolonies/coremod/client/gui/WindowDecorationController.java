@@ -12,7 +12,7 @@ import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonHandler;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.controls.TextField;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.network.messages.DecorationBuildRequestMessage;
 import com.minecolonies.coremod.network.messages.DecorationControllUpdateMessage;
@@ -187,7 +187,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
     private void confirmClicked()
     {
         Network.getNetwork()
-          .sendToServer(new DecorationBuildRequestMessage(controller.getPos(), controller.getSchematicName(), controller.getLevel() + 1, world.world.getDimension().getType().getId()));
+          .sendToServer(new DecorationBuildRequestMessage(controller.getPos(), controller.getSchematicName(), controller.getLevel() + 1, world.getDimension().getType().getId()));
         close();
     }
 
@@ -197,7 +197,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton implement
     private void repairClicked()
     {
         Network.getNetwork()
-          .sendToServer(new DecorationBuildRequestMessage(controller.getPos(), controller.getSchematicName(), controller.getLevel(), world.world.getDimension().getType().getId()));
+          .sendToServer(new DecorationBuildRequestMessage(controller.getPos(), controller.getSchematicName(), controller.getLevel(), world.getDimension().getType().getId()));
         close();
     }
 }

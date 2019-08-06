@@ -8,6 +8,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
 import com.minecolonies.coremod.network.messages.ComposterRetrievalMessage;
 import net.minecraft.block.Blocks;
@@ -79,11 +80,11 @@ public class WindowHutComposter extends AbstractHutFilterableLists
     {
         if (ownBuilding.retrieveDirtFromCompostBin)
         {
-            button.setLabel(LanguageHandler.format(Blocks.DIRT.getLocalizedName()));
+            button.setLabel(LanguageHandler.format(Blocks.DIRT.getTranslationKey()));
         }
         else
         {
-            button.setLabel(LanguageHandler.format(ModItems.compost.getItemStackDisplayName(new ItemStack(ModItems.compost))));
+            button.setLabel(LanguageHandler.format(ModItems.compost.getTranslationKey(new ItemStack(ModItems.compost))));
         }
     }
 

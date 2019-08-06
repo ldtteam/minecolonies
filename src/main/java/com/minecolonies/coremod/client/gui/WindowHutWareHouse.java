@@ -6,14 +6,14 @@ import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Label;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.SortWarehouseMessage;
 import com.minecolonies.coremod.network.messages.UpgradeWarehouseMessage;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -76,7 +76,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
 
         final int amountToSet;
         final PlayerInventory inventory = this.mc.player.inventory;
-        final boolean isCreative = this.mc.player.capabilities.isCreativeMode;
+        final boolean isCreative = this.mc.player.isCreative();
         if (isCreative)
         {
             amountToSet = resource.getAmount();
@@ -144,7 +144,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
         neededLabel.setLabelText(Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getAmount()));
         findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount() - resource.getAvailable()));
 
-        findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(new ItemStack(resource.getItem(), 1, resource.getDamageValue()));
+        findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(new ItemStack(resource.getItem(), 1));
     }
 
     /**

@@ -14,10 +14,10 @@ import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -52,7 +52,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     /**
      * Is the player in creative or not.
      */
-    private final boolean isCreative = this.mc.player.capabilities.isCreativeMode;
+    private final boolean isCreative = this.mc.player.isCreative();
 
     /**
      * Life count.
@@ -89,7 +89,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     {
         super.onUpdate();
 
-        if (!GuiScreen.isShiftKeyDown())
+        if (!Screen.hasShiftDown())
         {
             lifeCount++;
         }

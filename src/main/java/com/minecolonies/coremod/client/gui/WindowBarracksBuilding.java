@@ -73,7 +73,7 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
     public WindowBarracksBuilding(final BuildingBarracks.View building)
     {
         super(building, Constants.MOD_ID + HOME_BUILDING_RESOURCE_SUFFIX);
-        IColonyView = building.getColony();
+        iColonyView = building.getColony();
         positionsList = findPaneOfTypeByID(LIST_POSITIONS, ScrollingList.class);
     }
 
@@ -95,8 +95,8 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
         super.onOpened();
         if (building.getBuildingLevel() >= BUILDING_LEVEL_FOR_LIST)
         {
-            List<BlockPos> spawnPoints = IColonyView.getLastSpawnPoints();
-            if(IColonyView.isRaiding())
+            List<BlockPos> spawnPoints = iColonyView.getLastSpawnPoints();
+            if(iColonyView.isRaiding())
             {
                 findPaneOfTypeByID(LABEL_CURRENNT, Label.class).setLabelText(mountDistanceString(spawnPoints.get(spawnPoints.size()-1)));
             }
@@ -105,14 +105,14 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
                 @Override
                 public int getElementCount()
                 {
-                    return spawnPoints.size() - (IColonyView.isRaiding() ? 1 : 0);
+                    return spawnPoints.size() - (iColonyView.isRaiding() ? 1 : 0);
                 }
 
                 @Override
                 public void updateElement(final int index, @NotNull final Pane rowPane)
                 {
                     final BlockPos pos = spawnPoints.get(index);
-                    if(!(IColonyView.isRaiding() && index == spawnPoints.size()-1))
+                    if(!(iColonyView.isRaiding() && index == spawnPoints.size()-1))
                     {
                         rowPane.findPaneOfTypeByID(LABEL_POS, Label.class).setLabelText((index + 1) + ": " + mountDistanceString(pos));
                     }

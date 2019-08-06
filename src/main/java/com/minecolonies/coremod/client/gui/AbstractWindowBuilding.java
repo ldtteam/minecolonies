@@ -4,7 +4,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Label;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;

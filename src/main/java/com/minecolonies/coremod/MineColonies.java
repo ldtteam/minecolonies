@@ -10,17 +10,20 @@ import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.MinecoloniesAPIImpl;
+import com.minecolonies.coremod.client.gui.WindowGuiFurnaceCrafting;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.commands.CommandEntryPoint;
 import com.minecolonies.coremod.commands.CommandEntryPointNew;
 import com.minecolonies.coremod.event.*;
+import com.minecolonies.coremod.inventory.MinecoloniesContainers;
 import com.minecolonies.coremod.placementhandlers.MinecoloniesPlacementHandlers;
 import com.minecolonies.coremod.proxy.ClientProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
 import com.minecolonies.coremod.util.RecipeHandler;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.entity.EntityType;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -30,6 +33,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import org.apache.logging.log4j.LogManager;
@@ -61,7 +65,7 @@ public class MineColonies
     /**
      * The proxy.
      */
-    public static final  IProxy proxy  = DistExecutor.runForDist( () -> ClientProxy::new, () -> ServerProxy::new);
+    public static final IProxy proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 
     public MineColonies()
     {
@@ -105,6 +109,13 @@ public class MineColonies
     {
         Structurize.getLogger().warn("FMLLoadCompleteEvent");
         LanguageHandler.setMClanguageLoaded();
+    }
+
+    //todo this here stays!
+    @SubscribeEvent
+    private void doClientStuff(final FMLClientSetupEvent event)
+    {
+        ScreenManager.registerFactory(MinecoloniesContainers.craftingFurnace, WindowGuiFurnaceCrafting::new);
     }
 
     @SubscribeEvent
@@ -205,6 +216,7 @@ public class MineColonies
 
     /**
      * Get the config handler.
+     *
      * @return the config handler.
      */
     public static Configuration getConfig()

@@ -16,12 +16,13 @@ import com.ldtteam.blockout.controls.Image;
 import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.UpdateRequestStateMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -144,7 +145,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
                 logo.setImage(request.getDisplayIcon());
             }
 
-            final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.world.getDimension().getType().getId());
+            final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimension().getType().getId());
             rowPane.findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getDisplayName(view.getRequestManager(), request.getId()).getFormattedText());
 
             rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
@@ -159,7 +160,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     public ImmutableList<IRequest> getOpenRequests()
     {
         final ArrayList<IRequest<?>> requests = Lists.newArrayList();
-        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.world.getDimension().getType().getId());
+        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimension().getType().getId());
 
         if (view == null)
         {
@@ -184,7 +185,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
         final BlockPos playerPos = Minecraft.getInstance().player.getPosition();
         requests.sort(Comparator.comparing((IRequest request) -> request.getRequester().getLocation().getInDimensionLocation()
-                .getDistance(playerPos.getX(), playerPos.getY(), playerPos.getZ()))
+                .distanceSq(new Vec3i(playerPos.getX(), playerPos.getY(), playerPos.getZ())))
                 .thenComparingInt((IRequest request) -> request.getId().hashCode()));
 
         return ImmutableList.copyOf(requests);
@@ -194,7 +195,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
     public void onUpdate()
     {
         super.onUpdate();
-        if (!GuiScreen.isShiftKeyDown())
+        if (!Screen.hasShiftDown())
         {
             lifeCount++;
         }
