@@ -182,14 +182,6 @@ public abstract class CommonProxy implements IProxy
 
     }
 
-    /*
-    * @param entityName A unique name for the entity
-    * @param id A mod specific ID for the entity
-    * @param mod The mod
-    * @param trackingRange The range at which MC will send tracking updates
-    * @param updateFrequency The frequency of tracking updates
-    * @param sendsVelocityUpdates Whether to send velocity information packets as well
-    * */
     @Override
     public void registerEntities()
     {
