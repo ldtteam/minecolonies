@@ -5,7 +5,9 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -24,12 +26,9 @@ public class ItemCompost extends AbstractItemMinecolonies
     /***
      * Constructor for the ItemCompost
      */
-    public ItemCompost()
+    public ItemCompost(final Item.Properties properties)
     {
-        super("compost");
-
-        super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        maxStackSize = Constants.STACKSIZE;
+        super("compost", properties.maxStackSize(Constants.STACKSIZE).group(ModCreativeTabs.MINECOLONIES));
     }
 
     /***
@@ -45,15 +44,14 @@ public class ItemCompost extends AbstractItemMinecolonies
      * @return ActionResultType.SUCCESS if it could apply the event, ActionResultType.FAIL if not
      */
     @Override
-    public ActionResultType onItemUse(final PlayerEntity player, final World worldIn, final BlockPos pos, final Hand hand,
-                                      final Direction facing, final float hitX, final float hitY, final float hitZ)
+    public ActionResultType onItemUse(final ItemUseContext ctx)
     {
-        final ItemStack itemstack = player.getHeldItem(hand);
-        if (applyBonemeal(itemstack, worldIn, pos, player, hand))
+        final ItemStack itemstack = ctx.getPlayer().getHeldItem(ctx.getHand());
+        if (applyBonemeal(itemstack, ctx.getWorld(), ctx.getPos(), ctx.getPlayer()))
         {
-            if (!worldIn.isRemote)
+            if (!ctx.getWorld().isRemote)
             {
-                worldIn.playEvent(2005, pos, 0);
+                ctx.getWorld().playEvent(2005, ctx.getPos(), 0);
             }
             return ActionResultType.SUCCESS;
         }
@@ -69,11 +67,10 @@ public class ItemCompost extends AbstractItemMinecolonies
      * @param hand the hand of the player
      * @return true if it could apply the event, false if not
      */
-    public static boolean applyBonemeal(final ItemStack stack, final World worldIn, final BlockPos target, final PlayerEntity player,
-                                        @Nullable final Hand hand)
+    public static boolean applyBonemeal(final ItemStack stack, final World worldIn, final BlockPos target, final PlayerEntity player)
     {
         final BlockState BlockState = worldIn.getBlockState(target);
-        final int hook = ForgeEventFactory.onApplyBonemeal(player, worldIn, target, BlockState, stack, hand);
+        final int hook = ForgeEventFactory.onApplyBonemeal(player, worldIn, target, BlockState, stack);
         if (hook != 0)
         {
             return hook > 0;

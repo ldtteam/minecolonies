@@ -7,14 +7,14 @@ import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,11 +33,9 @@ public class ItemClipBoard extends AbstractItemMinecolonies
     /**
      * Sets the name, creative tab, and registers the Ancient Tome item.
      */
-    public ItemClipBoard()
+    public ItemClipBoard(final Item.Properties properties)
     {
-        super("clipboard");
-        super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        setMaxStackSize(STACKSIZE);
+        super("clipboard", properties.maxStackSize(STACKSIZE).group(ModCreativeTabs.MINECOLONIES));
     }
 
     /**
@@ -55,32 +53,26 @@ public class ItemClipBoard extends AbstractItemMinecolonies
      */
     @Override
     @NotNull
-    public ActionResultType onItemUse(
-                                       final PlayerEntity playerIn,
-                                       final World worldIn,
-                                       final BlockPos pos,
-                                       final Hand hand,
-                                       final Direction facing,
-                                       final float hitX,
-                                       final float hitY,
-                                       final float hitZ)
+    public ActionResultType onItemUse(final ItemUseContext ctx)
     {
-        final ItemStack clipboard = playerIn.getHeldItem(hand);
+        final ItemStack clipboard = ctx.getPlayer().getHeldItem(ctx.getHand());
 
         final CompoundNBT compound = checkForCompound(clipboard);
-        final TileEntity entity = worldIn.getTileEntity(pos);
+        final TileEntity entity = ctx.getWorld().getTileEntity(ctx.getPos());
 
         if (entity instanceof TileEntityColonyBuilding)
         {
             compound.putInt(TAG_COLONY, ((AbstractTileEntityColonyBuilding) entity).getColonyId());
-            if (!worldIn.isRemote)
+            if (!ctx.getWorld().isRemote)
             {
-                LanguageHandler.sendPlayerMessage(playerIn, TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET, ((AbstractTileEntityColonyBuilding) entity).getColonyId());
+                LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
+                  TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET,
+                  ((AbstractTileEntityColonyBuilding) entity).getColonyId());
             }
         }
         else if (compound.keySet().contains(TAG_COLONY))
         {
-            if (worldIn.isRemote)
+            if (ctx.getWorld().isRemote)
             {
                 final int colonyId = compound.getInt(TAG_COLONY);
                 MineColonies.proxy.openClipBoardWindow(colonyId);
@@ -101,9 +93,9 @@ public class ItemClipBoard extends AbstractItemMinecolonies
     @Override
     @NotNull
     public ActionResult<ItemStack> onItemRightClick(
-                                                     final World worldIn,
-                                                     final PlayerEntity playerIn,
-                                                     final Hand hand)
+      final World worldIn,
+      final PlayerEntity playerIn,
+      final Hand hand)
     {
         final ItemStack cllipboard = playerIn.getHeldItem(hand);
 
@@ -137,7 +129,7 @@ public class ItemClipBoard extends AbstractItemMinecolonies
     {
         if (!scepter.hasTag())
         {
-            scepter.put(new CompoundNBT());
+            scepter.setTag(new CompoundNBT());
         }
         return scepter.getTag();
     }

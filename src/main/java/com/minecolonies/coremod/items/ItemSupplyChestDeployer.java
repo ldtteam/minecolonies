@@ -2,14 +2,15 @@ package com.minecolonies.coremod.items;
 
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.Structures;
-import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.creativetab.ModCreativeTabs;
-import com.minecolonies.api.util.BlockUtils;
+import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -55,33 +56,22 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     /**
      * Creates a new supplychest deployer. The item is not stackable.
      */
-    public ItemSupplyChestDeployer()
+    public ItemSupplyChestDeployer(final Item.Properties properties)
     {
-        super("supplyChestDeployer");
-
-        super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        setMaxStackSize(1);
+        super("supplyChestDeployer", properties.maxStackSize(1).group(ModCreativeTabs.MINECOLONIES));
     }
 
     @NotNull
     @Override
-    public ActionResultType onItemUse(
-            final PlayerEntity playerIn,
-            final World worldIn,
-            final BlockPos pos,
-            final Hand hand,
-            final Direction facing,
-            final float hitX,
-            final float hitY,
-            final float hitZ)
+    public ActionResultType onItemUse(final ItemUseContext ctx)
     {
-        if (worldIn.isRemote)
+        if (ctx.getWorld().isRemote)
         {
-            if(!MineColonies.getConfig().getCommon().gameplay.allowOtherDimColonies && worldIn.world.getDimension().getType().getId() != 0)
+            if (!MineColonies.getConfig().getCommon().allowOtherDimColonies.get() && ctx.getWorld().getDimension().getType().getId() != 0)
             {
                 return ActionResultType.FAIL;
             }
-            placeSupplyShip(pos, playerIn.getHorizontalFacing());
+            placeSupplyShip(ctx.getPos(), ctx.getPlayer().getHorizontalFacing());
         }
 
         return ActionResultType.FAIL;
@@ -94,7 +84,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         final ItemStack stack = playerIn.getHeldItem(hand);
         if (worldIn.isRemote)
         {
-            if(!MineColonies.getConfig().getCommon().gameplay.allowOtherDimColonies && worldIn.world.getDimension().getType().getId() != 0)
+            if (!MineColonies.getConfig().getCommon().allowOtherDimColonies.get() && worldIn.getDimension().getType().getId() != 0)
             {
                 LanguageHandler.sendPlayerMessage(playerIn, CANT_PLACE_COLONY_IN_OTHER_DIM);
                 return new ActionResult<>(ActionResultType.FAIL, stack);
@@ -107,7 +97,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
     private void placeSupplyShip(@Nullable final BlockPos pos, @NotNull final Direction direction)
     {
-        if(pos == null)
+        if (pos == null)
         {
             MineColonies.proxy.openBuildToolWindow(null, SUPPLY_SHIP_STRUCTURE_NAME, 0, null);
             return;
@@ -139,29 +129,30 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
     /**
      * Checks if the ship can be placed.
+     *
      * @param world the world.
-     * @param pos the pos.
-     * @param size the size.
+     * @param pos   the pos.
+     * @param size  the size.
      * @return true if so.
      */
     public static boolean canShipBePlaced(@NotNull final World world, @NotNull final BlockPos pos, final BlockPos size)
     {
-        for(int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)
+        for (int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)
         {
-            for(int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
+            for (int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
             {
-                if(!checkIfWaterAndNotInColony(world, new BlockPos(x, pos.getY() + 2, z)))
+                if (!checkIfWaterAndNotInColony(world, new BlockPos(x, pos.getY() + 2, z)))
                 {
                     return false;
                 }
             }
         }
 
-        for(int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)
+        for (int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)
         {
-            for(int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
+            for (int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
             {
-                if(!world.isAirBlock(new BlockPos(x, pos.getY() + SCAN_HEIGHT, z)))
+                if (!world.isAirBlock(new BlockPos(x, pos.getY() + SCAN_HEIGHT, z)))
                 {
                     return false;
                 }
@@ -174,7 +165,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * Check if the there is water at one of three positions.
      *
      * @param world the world.
-     * @param pos  the first position.
+     * @param pos   the first position.
      * @return true if is water
      */
     private static boolean checkIfWaterAndNotInColony(final World world, final BlockPos pos)
@@ -186,7 +177,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * Check if any of the coordinates is in any colony.
      *
      * @param world the world to check in.
-     * @param pos  the first position.
+     * @param pos   the first position.
      * @return true if no colony found.
      */
     private static boolean notInAnyColony(final World world, final BlockPos pos)

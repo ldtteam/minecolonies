@@ -20,34 +20,34 @@ public final class ModItemsInitializer
      */
     public static void init(final IForgeRegistry<Item> registry)
     {
-        ModItems.supplyChest = new ItemSupplyChestDeployer();
-        ModItems.permTool = new ItemScepterPermission();
-        ModItems.caliper = new ItemCaliper();
-        ModItems.scepterGuard = new ItemScepterGuard();
-        ModItems.supplyCamp = new ItemSupplyCampDeployer();
-        ModItems.ancientTome = new ItemAncientTome();
-        ModItems.chiefSword = new ItemChiefSword();
-        ModItems.scimitar = new ItemIronScimitar();
-        ModItems.clipboard = new ItemClipBoard();
-        ModItems.compost = new ItemCompost();
-        ModItems.resourceScroll = new ItemResourceScroll();
+        ModItems.supplyChest = new ItemSupplyChestDeployer(new Item.Properties());
+        ModItems.permTool = new ItemScepterPermission(new Item.Properties());
+        ModItems.caliper = new ItemCaliper(new Item.Properties());
+        ModItems.scepterGuard = new ItemScepterGuard(new Item.Properties());
+        ModItems.supplyCamp = new ItemSupplyCampDeployer(new Item.Properties());
+        ModItems.ancientTome = new ItemAncientTome(new Item.Properties());
+        ModItems.chiefSword = new ItemChiefSword(new Item.Properties());
+        ModItems.scimitar = new ItemIronScimitar(new Item.Properties());
+        ModItems.clipboard = new ItemClipBoard(new Item.Properties());
+        ModItems.compost = new ItemCompost(new Item.Properties());
+        ModItems.resourceScroll = new ItemResourceScroll(new Item.Properties());
 
-        ModItems.santaHat = new ItemSantaHead("santa_hat", ModCreativeTabs.MINECOLONIES, ItemSantaHead.SANTA_HAT, 0, EquipmentSlotType.HEAD);
+        ModItems.santaHat = new ItemSantaHead("santa_hat", ModCreativeTabs.MINECOLONIES, ItemSantaHead.SANTA_HAT, EquipmentSlotType.HEAD, new Item.Properties());
 
-        ModItems.pirateHelmet_1 = new ItemPirateGear("pirate_hat", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EquipmentSlotType.HEAD);
-        ModItems.pirateChest_1 = new ItemPirateGear("pirate_top", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EquipmentSlotType.CHEST);
-        ModItems.pirateLegs_1 = new ItemPirateGear("pirate_leggins", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 1, EquipmentSlotType.LEGS);
-        ModItems.pirateBoots_1 = new ItemPirateGear("pirate_boots", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, 0, EquipmentSlotType.FEET);
+        ModItems.pirateHelmet_1 = new ItemPirateGear("pirate_hat", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlotType.HEAD, new Item.Properties());
+        ModItems.pirateChest_1 = new ItemPirateGear("pirate_top", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1,  EquipmentSlotType.CHEST, new Item.Properties());
+        ModItems.pirateLegs_1 = new ItemPirateGear("pirate_leggins", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlotType.LEGS, new Item.Properties());
+        ModItems.pirateBoots_1 = new ItemPirateGear("pirate_boots", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlotType.FEET, new Item.Properties());
 
-        ModItems.pirateHelmet_2 = new ItemPirateGear("pirate_cap", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 0, EquipmentSlotType.HEAD);
-        ModItems.pirateChest_2 = new ItemPirateGear("pirate_chest", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 0, EquipmentSlotType.CHEST);
-        ModItems.pirateLegs_2 = new ItemPirateGear("pirate_legs", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 1, EquipmentSlotType.LEGS);
-        ModItems.pirateBoots_2 = new ItemPirateGear("pirate_shoes", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, 0, EquipmentSlotType.FEET);
+        ModItems.pirateHelmet_2 = new ItemPirateGear("pirate_cap", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, EquipmentSlotType.HEAD, new Item.Properties());
+        ModItems.pirateChest_2 = new ItemPirateGear("pirate_chest", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, EquipmentSlotType.CHEST, new Item.Properties());
+        ModItems.pirateLegs_2 = new ItemPirateGear("pirate_legs", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, EquipmentSlotType.LEGS, new Item.Properties());
+        ModItems.pirateBoots_2 = new ItemPirateGear("pirate_shoes", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_2, EquipmentSlotType.FEET, new Item.Properties());
 
-        ModItems.itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
-        ModItems.itemAchievementProxyTown = new ItemAchievementProxy("sizeTown");
-        ModItems.itemAchievementProxyCity = new ItemAchievementProxy("sizeCity");
-        ModItems.itemAchievementProxyMetropolis = new ItemAchievementProxy("sizeMetropolis");
+        ModItems.itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement", new Item.Properties());
+        ModItems.itemAchievementProxyTown = new ItemAchievementProxy("sizeTown", new Item.Properties());
+        ModItems.itemAchievementProxyCity = new ItemAchievementProxy("sizeCity", new Item.Properties());
+        ModItems.itemAchievementProxyMetropolis = new ItemAchievementProxy("sizeMetropolis", new Item.Properties());
 
         registry.register(ModItems.supplyChest);
         registry.register(ModItems.permTool);
