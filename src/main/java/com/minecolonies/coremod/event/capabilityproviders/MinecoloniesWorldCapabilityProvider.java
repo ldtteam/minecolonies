@@ -41,12 +41,6 @@ public class MinecoloniesWorldCapabilityProvider implements ICapabilitySerializa
         CHUNK_STORAGE_UPDATE_CAP.getStorage().readNBT(CHUNK_STORAGE_UPDATE_CAP, chunkMap, null, nbt);
     }
 
-    @Override
-    public boolean hasCapability(@Nonnull final Capability<?> capability, @Nullable final Direction facing)
-    {
-        return capability == CHUNK_STORAGE_UPDATE_CAP;
-    }
-
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final Direction facing)

@@ -41,12 +41,6 @@ public class MinecoloniesChunkCapabilityProvider implements ICapabilitySerializa
         CLOSE_COLONY_CAP.getStorage().readNBT(CLOSE_COLONY_CAP, colonyList, null, nbt);
     }
 
-    @Override
-    public boolean hasCapability(@Nonnull final Capability<?> capability, @Nullable final Direction facing)
-    {
-        return capability == CLOSE_COLONY_CAP;
-    }
-
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final Direction facing)

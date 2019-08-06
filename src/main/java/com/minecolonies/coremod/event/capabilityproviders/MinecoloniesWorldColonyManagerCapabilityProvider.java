@@ -41,12 +41,6 @@ public class MinecoloniesWorldColonyManagerCapabilityProvider implements ICapabi
         COLONY_MANAGER_CAP.getStorage().readNBT(COLONY_MANAGER_CAP, colonyManager, null, nbt);
     }
 
-    @Override
-    public boolean hasCapability(@Nonnull final Capability<?> capability, @Nullable final Direction facing)
-    {
-        return capability == COLONY_MANAGER_CAP;
-    }
-
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final Direction facing)

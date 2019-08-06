@@ -486,22 +486,6 @@ public class EntityCitizen extends AbstractEntityCitizen
         return super.getCapability(capability, facing);
     }
 
-    @Override
-    public boolean hasCapability(@NotNull final Capability<?> capability, final Direction facing)
-    {
-        if (getCitizenData() == null)
-        {
-            return super.hasCapability(capability, facing);
-        }
-
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-        {
-            return true;
-        }
-
-        return super.hasCapability(capability, facing);
-    }
-
     /**
      * Calls a guard for help against an attacker.
      *
