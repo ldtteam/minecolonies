@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutSifter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -240,8 +241,8 @@ public class BuildingSifter extends AbstractBuildingWorker
         this.dailyQuantity = compound.getInt(TAG_DAILY);
         this.currentDailyQuantity = compound.getInt(TAG_CURRENT_DAILY);
 
-        this.sievableBlock = new ItemStorage(new ItemStack(compound.getCompound(TAG_BLOCK)));
-        final ItemStorage mesh = new ItemStorage(new ItemStack(compound.getCompound(TAG_MESH)));
+        this.sievableBlock = new ItemStorage(ItemStack.read(compound.getCompound(TAG_BLOCK)));
+        final ItemStorage mesh = new ItemStorage(ItemStack.read(compound.getCompound(TAG_MESH)));
         final double prob = compound.getDouble(TAG_MESH_PROB);
         this.sifterMesh = new Tuple<>(mesh, prob);
     }

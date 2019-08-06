@@ -14,14 +14,13 @@ import com.minecolonies.coremod.client.gui.WindowHutStoneSmelter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.jobs.JobStoneSmeltery;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockGlazedTerracotta;
-import net.minecraft.block.BlockHardenedClay;
 import net.minecraft.block.Blocks;
-import net.minecraft.init.Items;
+import net.minecraft.block.GlazedTerracottaBlock;
 import net.minecraft.item.Item;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.item.Items;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -94,6 +93,7 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
             return false;
         }
 
+        getColony().getWorld().getServer().getRecipeManager().getRecipes(IRecipeType.SMELTING);
         return isBlockForThisSmelter(storage.getPrimaryOutput()) && FurnaceRecipes.instance().getSmeltingResult(storage.getInput().get(0)).isItemEqual(storage.getPrimaryOutput());
     }
 
@@ -110,9 +110,8 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
         {
             final Block block = ((BlockItem) item).getBlock();
             if (block == Blocks.STONE
-                  || block == Blocks.STONEBRICK
-                  || block instanceof BlockGlazedTerracotta
-                  || block instanceof BlockHardenedClay)
+                  || block == Blocks.STONE_BRICKS
+                  || block instanceof GlazedTerracottaBlock)
             {
                 return true;
             }

@@ -10,7 +10,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutMiner;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
@@ -24,6 +23,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
-import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT_FIRST;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
@@ -130,16 +129,15 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         final ItemStack stackFence = new ItemStack(Blocks.OAK_FENCE);
         final ItemStack stackTorch = new ItemStack(Blocks.TORCH);
         final ItemStack stackCobble = new ItemStack(Blocks.COBBLESTONE);
-        final ItemStack stackSlab = new ItemStack(Blocks.WOODEN_SLAB);
-        final ItemStack stackPlanks = new ItemStack(Blocks.PLANKS);
         final ItemStack stackDirt = new ItemStack(Blocks.DIRT);
 
         keepX.put(stackLadder::isItemEqual, new Tuple<>(STACKSIZE, true));
         keepX.put(stackFence::isItemEqual, new Tuple<>(STACKSIZE, true));
         keepX.put(stackTorch::isItemEqual, new Tuple<>(STACKSIZE, true));
         keepX.put(stackCobble::isItemEqual, new Tuple<>(STACKSIZE, true));
-        keepX.put(stackSlab::isItemEqual, new Tuple<>(STACKSIZE, true));
-        keepX.put(stackPlanks::isItemEqual, new Tuple<>(STACKSIZE, true));
+
+        keepX.put(stack -> stack.getItem().isIn(ItemTags.SLABS), new Tuple<>(STACKSIZE, true));
+        keepX.put(stack -> stack.getItem().isIn(ItemTags.PLANKS), new Tuple<>(STACKSIZE, true));
         keepX.put(stackDirt::isItemEqual, new Tuple<>(STACKSIZE, true));
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
@@ -176,15 +174,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
-
-        if (newLevel == NUM_ACHIEVEMENT_FIRST)
-        {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingMiner);
-        }
-        if (newLevel >= this.getMaxBuildingLevel())
-        {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeMinerMax);
-        }
     }
 
     @Override

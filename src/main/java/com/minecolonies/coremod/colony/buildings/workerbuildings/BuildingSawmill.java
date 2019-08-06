@@ -19,8 +19,9 @@ import com.minecolonies.coremod.colony.jobs.JobSawmill;
 import net.minecraft.item.Item;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
@@ -105,15 +106,14 @@ public class BuildingSawmill extends AbstractBuildingCrafter
         {
             if(!ItemStackUtils.isEmpty(stack))
             {
-                for(final int id: OreDictionary.getOreIDs(stack))
+                for (final ResourceLocation tag : stack.getItem().getTags())
                 {
-                    final String name = OreDictionary.getOreName(id);
-                    if(name.contains("Wood"))
+                    if(tag.getPath().contains("wood"))
                     {
                         amountOfValidBlocks++;
                         break;
                     }
-                    else if(name.contains("ingot") || name.contains("stone") || name.contains("redstone") || name.contains("string"))
+                    else if(tag.getPath().contains("ingot") || tag.getPath().contains("stone") || tag.getPath().contains("redstone") || tag.getPath().contains("string"))
                     {
                         return false;
                     }

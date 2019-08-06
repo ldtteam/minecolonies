@@ -780,7 +780,7 @@ public final class ItemStackUtils
             return false;
         }
 
-        return new Tag<Item>(ItemTags.SAPLINGS.getId()).contains(stack.getItem());
+        return stack.getItem().isIn(ItemTags.SAPLINGS);
     }
 
     /**

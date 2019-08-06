@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.client.gui.WindowHutBuilder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -18,7 +17,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderVi
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.workorders.*;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockChest;
+import net.minecraft.block.ChestBlock;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -85,15 +84,6 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
-
-        if (newLevel == NUM_ACHIEVEMENT_FIRST)
-        {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingBuilder);
-        }
-        if (newLevel >= this.getMaxBuildingLevel())
-        {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeBuilderMax);
-        }
     }
 
     @Override
@@ -112,7 +102,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
         //Only the chests and racks because he shouldn't fill up the furnaces.
-        if (block instanceof BlockChest || block instanceof BlockMinecoloniesRack)
+        if (block instanceof ChestBlock || block instanceof BlockMinecoloniesRack)
         {
             addContainerPosition(pos);
         }

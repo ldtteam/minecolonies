@@ -15,7 +15,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsVi
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.SwordItem;
-import net.minecraft.item.ItemTool;
+import net.minecraft.item.ToolItem;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -60,7 +60,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
         keepX.put(IColonyManager.getInstance().getCompatibilityManager()::isOre, new Tuple<>(Integer.MAX_VALUE, true));
         keepX.put(FurnaceTileEntity::isFuel, new Tuple<>(Integer.MAX_VALUE, true));
         keepX.put(stack -> !ItemStackUtils.isEmpty(stack)
-                && (stack.getItem() instanceof SwordItem || stack.getItem() instanceof ItemTool || stack.getItem() instanceof ArmorItem)
+                && (stack.getItem() instanceof SwordItem || stack.getItem() instanceof ToolItem || stack.getItem() instanceof ArmorItem)
                 , new Tuple<>(STUFF_TO_KEEP, true));
     }
 

@@ -11,16 +11,15 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.ToolType;
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.achievements.ModAchievements;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutFarmer;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.network.messages.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.AssignmentModeMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import net.minecraft.item.Items;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -359,15 +358,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
-
-        if (newLevel == NUM_ACHIEVEMENT_FIRST)
-        {
-            getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingFarmer);
-        }
-        if (newLevel >= getMaxBuildingLevel())
-        {
-            getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeFarmerMax);
-        }
     }
 
     /**
