@@ -10,6 +10,10 @@ import java.util.function.Predicate;
 
 public abstract class AbstractTileEntityWareHouse extends TileEntityColonyBuilding
 {
+    public AbstractTileEntityWareHouse()
+    {
+    }
+
     public AbstractTileEntityWareHouse(final ResourceLocation resourceName) {super(resourceName);}
 
     public abstract boolean hasMatchingItemStackInWarehouse(@NotNull Predicate<ItemStack> itemStackSelectionPredicate, int count);

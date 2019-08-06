@@ -145,7 +145,7 @@ public abstract class AbstractTileEntityRack extends TileEntity
             updateItemStorage();
             this.markDirty();
         }
-        else if (relativeNeighbor != null && this.pos.subtract(relativeNeighbor).equals(newNeighbor) && !(world.getBlockState(newNeighbor) == ModBlocks.blockRack))
+        else if (relativeNeighbor != null && this.pos.subtract(relativeNeighbor).equals(newNeighbor) && !(world.getBlockState(newNeighbor).getBlock() == ModBlocks.blockRack))
         {
             this.relativeNeighbor = null;
             single = true;

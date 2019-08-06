@@ -31,6 +31,10 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
  */
 public class TileEntityWareHouse extends AbstractTileEntityWareHouse
 {
+    public TileEntityWareHouse()
+    {
+        super();
+    }
 
     public TileEntityWareHouse(final ResourceLocation resourceName) {super(resourceName);}
 
