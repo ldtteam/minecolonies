@@ -12,14 +12,15 @@ import net.minecraftforge.registries.ObjectHolder;
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class MinecoloniesContainers
 {
-    @ObjectHolder("CraftingFurnace")
+    @ObjectHolder("crafting_furnace")
     public static ContainerType<?> craftingFurnace;
 
-    @ObjectHolder("CraftingGrid")
-    public static Container craftingGrid;
+    @ObjectHolder("crafting_building")
+    public static ContainerType<?> craftingGrid;
 
     public static void registerContainers(final RegistryEvent.Register<ContainerType<?>> event)
     {
         craftingFurnace = IForgeContainerType.create(ContainerGUICraftingFurnace::new).setRegistryName("crafting_furnace");
+        craftingGrid = IForgeContainerType.create(CraftingGUIBuilding::new).setRegistryName("crafting_building");
     }
 }

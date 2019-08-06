@@ -13,6 +13,7 @@ import net.minecraft.inventory.container.CraftingResultSlot;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SSetSlotPacket;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -33,17 +34,7 @@ public class CraftingGUIBuilding extends Container
     /**
      * The crafting result slot.
      */
-    private final CraftingInventory craftResult;
-
-    /**
-     * The world object.
-     */
-    private final World worldObj;
-
-    /**
-     * The player assigned to it.
-     */
-    private final PlayerEntity player;
+    private final Slot craftResult;
 
     /**
      * Boolean variable defining if complete grid or not 3x3(true), 2x2(false).
@@ -52,16 +43,14 @@ public class CraftingGUIBuilding extends Container
 
     /**
      * Creates a crafting container.
-     * @param playerInventory the players inv.
-     * @param worldIn the world.
-     * @param complete if 3x3(true) or 2x2(false).
+     * @param windowId the window id.
+     * @param inv the inventory.
+     * @param extra some extra data.
      */
-    public CraftingGUIBuilding(final PlayerInventory playerInventory, final World worldIn, final boolean complete)
+    public CraftingGUIBuilding(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
     {
-        super();
-        this.worldObj = worldIn;
-        this.player = playerInventory.player;
-        this.complete = complete;
+        super(MinecoloniesContainers.craftingGrid, windowId);
+        this.complete = extra.readBoolean();
         if(complete)
         {
             craftMatrix = new CraftingInventory(this, 3, 3);
@@ -71,7 +60,7 @@ public class CraftingGUIBuilding extends Container
             craftMatrix = new CraftingInventory(this, 2, 2);
         }
 
-        this.craftResult = this.addSlot(new CraftingResultSlot(playerInventory.player, this.craftMatrix, this, 0, X_CRAFT_RESULT, Y_CRAFT_RESULT)
+        this.craftResult = this.addSlot(new CraftingResultSlot(inv.player, this.craftMatrix, this.craftMatrix, 0, X_CRAFT_RESULT, Y_CRAFT_RESULT)
         {
             @Override
             public boolean canTakeStack(final PlayerEntity playerIn)
@@ -129,7 +118,7 @@ public class CraftingGUIBuilding extends Container
             for (int j = 0; j < INVENTORY_COLUMNS; j++)
             {
                 addSlot(new Slot(
-                        playerInventory,
+                  inv,
                         j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
                         PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
                         PLAYER_INVENTORY_INITIAL_Y_OFFSET_CRAFTING + i * PLAYER_INVENTORY_OFFSET_EACH
@@ -140,7 +129,7 @@ public class CraftingGUIBuilding extends Container
         for (i = 0; i < INVENTORY_COLUMNS; i++)
         {
             addSlot(new Slot(
-                    playerInventory, i,
+              inv, i,
                     PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
               PLAYER_INVENTORY_HOTBAR_OFFSET_CRAFTING
             ));
@@ -155,7 +144,7 @@ public class CraftingGUIBuilding extends Container
     @Override
     public void onCraftMatrixChanged(final IInventory inventoryIn)
     {
-        if (!worldObj.isRemote)
+        if (!.isRemote)
         {
             final ServerPlayerEntity player = (ServerPlayerEntity) player;
             ItemStack itemstack = ItemStack.EMPTY;
@@ -309,7 +298,7 @@ public class CraftingGUIBuilding extends Container
      */
     public PlayerEntity getPlayer()
     {
-        return player;
+        return inv.pl;
     }
 
     /**
