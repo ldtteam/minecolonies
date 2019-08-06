@@ -11,6 +11,7 @@ import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.AddRemoveRecipeMessage;
 import com.minecolonies.coremod.network.messages.ChangeRecipePriorityMessage;

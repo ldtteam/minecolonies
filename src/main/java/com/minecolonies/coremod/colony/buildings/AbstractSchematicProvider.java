@@ -81,16 +81,16 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = new CompoundNBT();
-        BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
+        BlockPosUtil.write(compound, TAG_LOCATION, location);
         final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
         if (Structures.hasMD5(structureName))
         {
-            compound.setString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName.toString()));
+            compound.putString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName.toString()));
         }
 
-        compound.setInteger(TAG_SCHEMATIC_LEVEL, buildingLevel);
-        compound.setInteger(TAG_ROTATION, rotation);
-        compound.setString(TAG_STYLE, style);
+        compound.putInt(TAG_SCHEMATIC_LEVEL, buildingLevel);
+        compound.putInt(TAG_ROTATION, rotation);
+        compound.putString(TAG_STYLE, style);
 
         compound.putBoolean(TAG_MIRROR, isBuildingMirrored);
 
@@ -107,7 +107,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
-        buildingLevel = compound.getInteger(TAG_SCHEMATIC_LEVEL);
+        buildingLevel = compound.getInt(TAG_SCHEMATIC_LEVEL);
 
         rotation = compound.getInt(TAG_ROTATION);
         style = compound.getString(TAG_STYLE);

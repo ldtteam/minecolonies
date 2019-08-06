@@ -9,7 +9,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -60,7 +59,7 @@ public abstract class AbstractFilterableListBuilding extends AbstractBuildingWor
                 final List<ItemStorage> items = new ArrayList<>();
                 for (int j = 0; j < filterableItems.size(); ++j)
                 {
-                    items.add(new ItemStorage(new ItemStack(filterableItems.getCompound(j))));
+                    items.add(new ItemStorage(ItemStack.read(filterableItems.getCompound(j))));
                 }
                 if (!items.isEmpty())
                 {

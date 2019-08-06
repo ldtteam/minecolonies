@@ -8,7 +8,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,7 +77,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
     /**
      * On tick of the server.
      *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
+     * @param event {@link net.minecraftforge.event.TickEvent.ServerTickEvent}
      */
     @Override
     public void onServerTick(final TickEvent.ServerTickEvent event)
@@ -88,7 +88,7 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
     /**
      * On tick of the world.
      *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
+     * @param event {@link net.minecraftforge.event.TickEvent.WorldTickEvent}
      */
     @Override
     public void onWorldTick(final TickEvent.WorldTickEvent event)

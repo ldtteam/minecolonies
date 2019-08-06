@@ -20,6 +20,7 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
@@ -35,8 +36,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -343,11 +343,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 for (int i = 0; i < workersTagList.size(); ++i)
                 {
                     final ICitizenData data;
-                    if (workersTagList.getCompound(i).hasKey(TAG_ID))
+                    if (workersTagList.getCompound(i).keySet().contains(TAG_ID))
                     {
                         data = getColony().getCitizenManager().getCitizen(workersTagList.getCompound(i).getInt(TAG_ID));
                     }
-                    else if (workersTagList.getCompound(i).hasKey(TAG_WORKER_ID))
+                    else if (workersTagList.getCompound(i).keySet().contains(TAG_WORKER_ID))
                     {
                         data = getColony().getCitizenManager().getCitizen(workersTagList.getCompound(i).getInt(TAG_WORKER_ID));
                     }
@@ -505,7 +505,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         buf.writeInt(storages.size());
         for(final IRecipeStorage storage: storages)
         {
-            ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(storage));
+            buf.writeCompoundTag(StandardFactoryController.getInstance().serialize(storage));
         }
 
         buf.writeBoolean(canCraftComplexRecipes());
@@ -637,7 +637,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             final int recipesSize = buf.readInt();
             for(int i = 0; i < recipesSize; i++)
             {
-                final IRecipeStorage storage = StandardFactoryController.getInstance().deserialize(ByteBufUtils.readTag(buf));
+                final IRecipeStorage storage = StandardFactoryController.getInstance().deserialize(buf.readCompoundTag());
                 if(storage != null)
                 {
                     recipes.add(storage);

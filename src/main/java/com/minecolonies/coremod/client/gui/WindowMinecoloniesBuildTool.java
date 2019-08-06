@@ -2,22 +2,20 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.structures.lib.BlueprintUtils;
 import com.ldtteam.structurize.util.BlockUtils;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
 import com.minecolonies.coremod.network.messages.BuildToolPasteMessage;
 import com.minecolonies.coremod.network.messages.BuildToolPlaceMessage;
-import com.ldtteam.structurize.api.util.LanguageHandler;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.placementhandlers.PlacementError;
 import com.ldtteam.structures.helpers.Settings;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,7 +58,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     public void place(final StructureName structureName)
     {
         final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint());;
-        final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset);
+        final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
         Network.getNetwork().sendToServer(new BuildToolPlaceMessage(
           structureName.toString(),
           structureName.toString(),
@@ -87,7 +85,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     public void paste(final StructureName name, final boolean complete)
     {
         final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint());;
-        final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset);
+        final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
         Network.getNetwork().sendToServer(new BuildToolPasteMessage(
           name.toString(),
           name.toString(),
@@ -162,7 +160,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
             }
         }
 
-        if (!GuiScreen.isShiftKeyDown())
+        if (!Screen.hasShiftDown())
         {
             super.cancelClicked();
         }

@@ -19,7 +19,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -136,10 +135,10 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         for (int i = 0; i < neededResTagList.size(); ++i)
         {
             final CompoundNBT neededRes = neededResTagList.getCompound(i);
-            final ItemStack stack = new ItemStack(neededRes);
+            final ItemStack stack = ItemStack.read(neededRes);
             final BuildingBuilderResource resource = new BuildingBuilderResource(stack, ItemStackUtils.getSize(stack));
             final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
-            neededResources.put(stack.getTranslationKey() + ":" + stack.getItemDamage() + "-" + hashCode, resource);
+            neededResources.put(stack.getTranslationKey() + "-" + hashCode, resource);
         }
 
         if (compound.keySet().contains(TAG_PROGRESS_POS))
@@ -158,8 +157,8 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
             @NotNull final CompoundNBT neededRes = new CompoundNBT();
-            final ItemStack itemStack = new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
-            itemStack.put(resource.getItemStack().getTag());
+            final ItemStack itemStack = new ItemStack(resource.getItem(), resource.getAmount());
+            itemStack.setTag(resource.getItemStack().getTag());
             itemStack.write(neededRes);
 
             neededResTagList.add(neededRes);
@@ -271,7 +270,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
 
                 if (getTileEntity() != null)
                 {
-                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(this.getCapability(ITEM_HANDLER_CAPABILITY, null),
+                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(this.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
                       stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
             }
@@ -301,7 +300,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             return;
         }
         final int hashCode = res.hasTag() ? res.getTag().hashCode() : 0;
-        BuildingBuilderResource resource = this.neededResources.get(res.getTranslationKey() + ":" + res.getItemDamage() + "-" + hashCode);
+        BuildingBuilderResource resource = this.neededResources.get(res.getTranslationKey() + "-" + hashCode);
         if (resource == null)
         {
             resource = new BuildingBuilderResource(res, amount);
@@ -310,7 +309,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         {
             resource.setAmount(resource.getAmount() + amount);
         }
-        this.neededResources.put(res.getTranslationKey() + ":" + res.getItemDamage() + "-" + hashCode, resource);
+        this.neededResources.put(res.getTranslationKey() + "-" + hashCode, resource);
         this.markDirty();
     }
 
@@ -324,7 +323,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     {
         final int hashCode = res.hasTag() ? res.getTag().hashCode() : 0;
         int preAmount = 0;
-        final String name = res.getTranslationKey() + ":" + res.getItemDamage() + "-" + hashCode;
+        final String name = res.getTranslationKey() + "-" + hashCode;
         if (this.neededResources.containsKey(name))
         {
             preAmount = this.neededResources.get(name).getAmount();
@@ -359,7 +358,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     public boolean requiresResourceForBuilding(final ItemStack stack)
     {
         final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
-        return neededResources.containsKey(stack.getTranslationKey() + ":" + stack.getItemDamage() + "-" + hashCode);
+        return neededResources.containsKey(stack.getTranslationKey() + "-" + hashCode);
     }
 
     /**

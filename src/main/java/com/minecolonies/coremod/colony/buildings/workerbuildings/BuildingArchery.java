@@ -13,8 +13,8 @@ import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFence;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.FenceBlock;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
@@ -75,7 +75,7 @@ public class BuildingArchery extends AbstractBuildingWorker
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        if (block == Blocks.HAY_BLOCK && world.getBlockState(pos.down()).getBlock() instanceof BlockFence)
+        if (block == Blocks.HAY_BLOCK && world.getBlockState(pos.down()).getBlock() instanceof FenceBlock)
         {
             shootingTargets.add(pos);
         }

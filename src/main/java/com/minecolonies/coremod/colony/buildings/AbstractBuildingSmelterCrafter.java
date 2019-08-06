@@ -17,7 +17,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFurnace;
+import net.minecraft.block.FurnaceBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -140,7 +140,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
         final ListNBT furnaceTagList = compound.getList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < furnaceTagList.size(); ++i)
         {
-            furnaces.add(NBTUtil.getPosFromTag(furnaceTagList.getCompound(i).getCompound(TAG_POS)));
+            furnaces.add(NBTUtil.readBlockPos(furnaceTagList.getCompound(i).getCompound(TAG_POS)));
         }
     }
 
@@ -153,7 +153,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
         for (@NotNull final BlockPos entry : furnaces)
         {
             @NotNull final CompoundNBT furnaceCompound = new CompoundNBT();
-            furnaceCompound.put(TAG_POS, NBTUtil.createPosTag(entry));
+            furnaceCompound.put(TAG_POS, NBTUtil.writeBlockPos(entry));
             furnacesTagList.add(furnaceCompound);
         }
 
@@ -166,7 +166,7 @@ public abstract class AbstractBuildingSmelterCrafter extends AbstractFilterableL
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
         super.registerBlockPosition(block, pos, world);
-        if (block instanceof BlockFurnace && !furnaces.contains(pos))
+        if (block instanceof FurnaceBlock && !furnaces.contains(pos))
         {
             furnaces.add(pos);
         }

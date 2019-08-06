@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.inventory;
 
-import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.block.CraftingTableBlock;
-import net.minecraft.client.gui.screen.inventory.CraftingScreen;
+import com.ldtteam.structurize.api.util.ItemStackUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -12,7 +10,8 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.CraftingResultSlot;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.ICraftingRecipe;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SSetSlotPacket;
 import net.minecraft.world.GameRules;
@@ -42,6 +41,16 @@ public class CraftingGUIBuilding extends Container
     private final boolean complete;
 
     /**
+     * World world
+     */
+    private final World world;
+
+    /**
+     * The player inventory.
+     */
+    private final PlayerInventory inv;
+
+    /**
      * Creates a crafting container.
      * @param windowId the window id.
      * @param inv the inventory.
@@ -50,6 +59,8 @@ public class CraftingGUIBuilding extends Container
     public CraftingGUIBuilding(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
     {
         super(MinecoloniesContainers.craftingGrid, windowId);
+        this.world = inv.player.world;
+        this.inv = inv;
         this.complete = extra.readBoolean();
         if(complete)
         {
@@ -144,22 +155,20 @@ public class CraftingGUIBuilding extends Container
     @Override
     public void onCraftMatrixChanged(final IInventory inventoryIn)
     {
-        if (!.isRemote)
+        if (!world.isRemote)
         {
-            final ServerPlayerEntity player = (ServerPlayerEntity) player;
-            ItemStack itemstack = ItemStack.EMPTY;
-            final IRecipe irecipe = CraftingManager.getRecipe(craftMatrix, worldObj);
-            if (irecipe != null && (irecipe.isDynamic()
-                    || !worldObj.getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING)
-                    || player.getRecipeBook().isUnlocked(irecipe)
+            final ServerPlayerEntity player = (ServerPlayerEntity) inv.player;
+            final ICraftingRecipe iRecipe = ((ServerPlayerEntity) inv.player).server.getRecipeManager().getRecipe(IRecipeType.CRAFTING, craftMatrix, world).orElseGet(null);
+            final ItemStack stack;
+            if (iRecipe != null && (iRecipe.isDynamic()
+                    || !world.getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING)
+                    || player.getRecipeBook().isUnlocked(iRecipe)
                     || player.isCreative()))
             {
-                this.craftResult.setRecipeUsed(irecipe);
-                itemstack = irecipe.getCraftingResult(this.craftMatrix);
+                stack = iRecipe.getCraftingResult(this.craftMatrix);
+                this.craftResult.putStack(stack);
+                player.connection.sendPacket(new SSetSlotPacket(this.windowId, 0, stack));
             }
-
-            this.craftResult.setInventorySlotContents(0, itemstack);
-            player.connection.sendPacket(new SSetSlotPacket(this.windowId, 0, itemstack));
         }
 
         super.onCraftMatrixChanged(inventoryIn);
@@ -289,7 +298,7 @@ public class CraftingGUIBuilding extends Container
      */
     public World getWorldObj()
     {
-        return worldObj;
+        return world;
     }
 
     /**
@@ -298,7 +307,7 @@ public class CraftingGUIBuilding extends Container
      */
     public PlayerEntity getPlayer()
     {
-        return inv.pl;
+        return inv.player;
     }
 
     /**

@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -19,27 +18,27 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.Log;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
 import com.minecolonies.coremod.network.messages.GuardMobAttackListMessage;
+import net.minecraft.entity.EntityType;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.registry.EntityEntry;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,7 +81,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * The health modifier which changes the HP
      */
-    private final AttributeModifier healthModConfig = new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME, MineColonies.getConfig().getCommon().gameplay.guardHealthMult - 1, 1);
+    private final AttributeModifier healthModConfig = new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME, MineColonies.getConfig().getCommon().guardHealthMult.get() - 1, 1);
 
     /**
      * Vision range per building level.
@@ -193,7 +192,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                     optCitizen.get().removeHealthModifier(GUARD_HEALTH_MOD_BUILDING_NAME);
 
                     final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), 0);
-                    optCitizen.get().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(healthModBuildingHP);
+                    optCitizen.get().getAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(healthModBuildingHP);
                 }
             }
         }
@@ -223,15 +222,15 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 optCitizen.get().increaseHPForGuards();
                 optCitizen
                   .get()
-                  .getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
+                  .getAttribute(SharedMonsterAttributes.MAX_HEALTH)
                   .applyModifier(healthModBuildingHP);
                 optCitizen
                   .get()
-                  .getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
+                  .getAttribute(SharedMonsterAttributes.MAX_HEALTH)
                   .applyModifier(healthModConfig);
                 optCitizen
                   .get()
-                  .getEntityAttribute(SharedMonsterAttributes.ARMOR)
+                  .getAttribute(SharedMonsterAttributes.ARMOR)
                   .setBaseValue(SharedMonsterAttributes.ARMOR.getDefaultValue() + getDefenceBonus());
             }
             colony.getCitizenManager().calculateMaxCitizens();
@@ -292,7 +291,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             }
         }
 
-        guardPos = NBTUtil.getPosFromTag(compound.getCompound(NBT_GUARD));
+        guardPos = NBTUtil.readBlockPos(compound.getCompound(NBT_GUARD));
     }
 
     @Override
@@ -326,7 +325,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         }
         compound.put(NBT_MOBS, mobsTagList);
 
-        compound.put(NBT_GUARD, NBTUtil.createPosTag(guardPos));
+        compound.put(NBT_GUARD, NBTUtil.writeBlockPos(guardPos));
 
         return compound;
     }
@@ -361,7 +360,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         buf.writeBoolean(patrolManually);
         buf.writeBoolean(tightGrouping);
         buf.writeInt(task.ordinal());
-        ByteBufUtils.writeUTF8String(buf, job == null ? "" : job.getRegistryName().toString());
+        buf.writeString(job == null ? "" : job.getRegistryName().toString());
         buf.writeInt(patrolTargets.size());
 
         for (final BlockPos pos : patrolTargets)
@@ -581,7 +580,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         }
 
         @Override
-        public void deserialize(@NotNull final ByteBuf buf)
+        public void deserialize(@NotNull final PacketBuffer buf)
         {
             super.deserialize(buf);
             assignManually = buf.readBoolean();
@@ -591,7 +590,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
 
             task = GuardTask.values()[buf.readInt()];
-            final ResourceLocation jobId = new ResourceLocation(ByteBufUtils.readUTF8String(buf));
+            final ResourceLocation jobId = new ResourceLocation(buf.readString());
             guardType = IGuardTypeRegistry.getInstance().getValue(jobId);
 
             final int targetSize = buf.readInt();
@@ -734,7 +733,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     {
         if (job == null)
         {
-            final List<GuardType> guardTypes = new ArrayList<>(IGuardTypeRegistry.getInstance().getValuesCollection());
+            final List<GuardType> guardTypes = new ArrayList<>(IGuardTypeRegistry.getInstance().getValues());
             job = guardTypes.get(new Random().nextInt(guardTypes.size()));
         }
         return this.job;
@@ -937,8 +936,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     {
         if (this.getColony().getWorld() != null)
         {
-            this.getColony().getWorld().getScoreboard().addPlayerToTeam(player.getName(), TEAM_COLONY_NAME + getColony().getID());
-            player.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION_TEAM, GLOW_EFFECT_MULTIPLIER));
+            this.getColony().getWorld().getScoreboard().addPlayerToTeam(player.getScoreboardName(), new ScorePlayerTeam(this.getColony().getWorld().getScoreboard(), TEAM_COLONY_NAME + getColony().getID()));
+            player.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION_TEAM, GLOW_EFFECT_MULTIPLIER));
 
             if (followPlayer != null)
             {
@@ -947,7 +946,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                     this.getColony()
                       .getWorld()
                       .getScoreboard()
-                      .removePlayerFromTeam(followPlayer.getName(), this.getColony().getWorld().getScoreboard().getTeam(TEAM_COLONY_NAME + getColony().getID()));
+                      .removePlayerFromTeam(followPlayer.getScoreboardName(), this.getColony().getWorld().getScoreboard().getTeam(TEAM_COLONY_NAME + getColony().getID()));
                     player.removePotionEffect(GLOW_EFFECT);
                 }
                 catch (final Exception e)
@@ -1013,29 +1012,29 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         final List<MobEntryView> mobs = new ArrayList<>();
 
         int i = 0;
-        for (final EntityEntry entry : ForgeRegistries.ENTITIES.getsCollection())
+        for (final Map.Entry<ResourceLocation, EntityType<?>> entry : ForgeRegistries.ENTITIES.getEntries())
         {
-            if (EntityMob.class.isAssignableFrom(entry.getEntityClass()))
+            if (Entitytype.entry.))
             {
                 i++;
-                mobs.add(new MobEntryView(entry.getRegistryName(), true, i));
+                mobs.add(new MobEntryView(entry.getKey(), true, i));
             }
             else
             {
-                for (final String location : MineColonies.getConfig().getCommon().gameplay.guardResourceLocations)
+                for (final String location : MineColonies.getConfig().getCommon().guardResourceLocations.get())
                 {
-                    if (entry.getRegistryName() != null && entry.getRegistryName().toString().equals(location))
+                    if (entry.getKey() != null && entry.getKey().toString().equals(location))
                     {
                         i++;
-                        mobs.add(new MobEntryView(entry.getRegistryName(), true, i));
+                        mobs.add(new MobEntryView(entry.getKey(), true, i));
                     }
                 }
             }
         }
 
-        getColony().getPackageManager().getSubscribers().forEach(player -> MineColonies
+        getColony().getPackageManager().getSubscribers().forEach(player -> Network
                                                                              .getNetwork()
-                                                                             .sendTo(new GuardMobAttackListMessage(getColony().getID(),
+                                                                             .sendToPlayer(new GuardMobAttackListMessage(getColony().getID(),
                                                                                  getID(),
                                                                                  mobsToAttack),
                                                                                player));

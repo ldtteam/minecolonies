@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.render.mobs.pirates;
 
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
-import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
@@ -24,7 +24,7 @@ public abstract class AbstractRendererPirate extends RenderLiving<AbstractEntity
      */
     public AbstractRendererPirate(final RenderManager renderManagerIn)
     {
-        super(renderManagerIn, new ModelBiped(), SHADOW_SIZE);
+        super(renderManagerIn, new BipedModel(), SHADOW_SIZE);
         this.addLayer(new LayerHeldItem(this));
         this.addLayer(new LayerBipedArmor(this));
     }

@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
@@ -22,13 +23,13 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.blockout.Log;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
@@ -43,9 +44,10 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -55,10 +57,10 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -174,7 +176,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void onPlacement()
     {
-        if (MineColonies.getConfig().getCommon().gameplay.enableDynamicColonySizes)
+        if (MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
         {
             ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), getPosition(), colony.getDimension(), getClaimRadius(getBuildingLevel()));
         }
@@ -215,7 +217,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public CompoundNBT serializeNBT()
     {
         final CompoundNBT compound = super.serializeNBT();
-        compound.setString(TAG_BUILDING_TYPE, this.getBuildingRegistryEntry().getRegistryName().toString());
+        compound.putString(TAG_BUILDING_TYPE, this.getBuildingRegistryEntry().getRegistryName().toString());
         writeRequestSystemToNBT(compound);
         compound.putBoolean(TAG_IS_BUILT, isBuilt);
         compound.putString(TAG_CUSTOM_NAME, customName);
@@ -246,7 +248,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             world.updateComparatorOutputLevel(this.getPosition(), block);
         }
 
-        if (MineColonies.getConfig().getCommon().gameplay.enableDynamicColonySizes)
+        if (MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
         {
             ChunkDataHelper.claimColonyChunks(world, false, colony.getID(), this.getID(), colony.getDimension(), getClaimRadius(getBuildingLevel()));
         }
@@ -436,7 +438,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
-        ByteBufUtils.writeUTF8String(buf, getBuildingRegistryEntry().getRegistryName().toString());
+        buf.writeString(getBuildingRegistryEntry().getRegistryName().toString());
         buf.writeInt(getBuildingLevel());
         buf.writeInt(getMaxBuildingLevel());
         buf.writeInt(getPickUpPriority());
@@ -457,10 +459,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         buf.writeInt(resolvers.size());
         for (final IRequestResolver<?> resolver : resolvers)
         {
-            ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(resolver.getId()));
+            buf.writeCompoundTag(StandardFactoryController.getInstance().serialize(resolver.getId()));
         }
-        ByteBufUtils.writeTag(buf, StandardFactoryController.getInstance().serialize(getId()));
-        ByteBufUtils.writeTag(buf, requestSystemCompound);
+        buf.writeCompoundTag(StandardFactoryController.getInstance().serialize(getId()));
+        buf.writeCompoundTag(requestSystemCompound);
     }
 
     /**
@@ -521,7 +523,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
         }
         else
         {
-            player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.worker.noUpgrade"));
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.worker.noUpgrade"));
         }
     }
 
@@ -572,11 +574,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public AbstractTileEntityColonyBuilding getTileEntity()
     {
-        if ((tileEntity == null || tileEntity.isInvalid())
+        if ((tileEntity == null)
               && colony != null
               && colony.getWorld() != null
               && getPosition() != null
-              && colony.getWorld().getBlockState(getPosition())
+              && colony.getWorld().getBlockState(getPosition()).getBlock()
                    != Blocks.AIR && colony.getWorld().getBlockState(this.getPosition()).getBlock() instanceof AbstractBlockHut)
         {
             final TileEntity te = getColony().getWorld().getTileEntity(getPosition());
@@ -591,10 +593,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             }
             else
             {
-                com.minecolonies.blockout.Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be!");
+                Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be!");
                 Log.getLogger().error("Trying to restore order!");
 
-                AbstractTileEntityColonyBuilding tileEntityColonyBuilding = new TileEntityColonyBuilding(getBuildingRegistryEntry().getRegistryName());
+                AbstractTileEntityColonyBuilding tileEntityColonyBuilding = new TileEntityColonyBuilding(MinecoloniesTileEntities.BUILDING);
                 colony.getWorld().setTileEntity(getPosition(), tileEntityColonyBuilding);
                 this.tileEntity = tileEntityColonyBuilding;
             }
@@ -612,7 +614,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
-        if (MineColonies.getConfig().getCommon().gameplay.enableDynamicColonySizes)
+        if (MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
         {
             ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), this.getID(), colony.getDimension(), this.getClaimRadius(newLevel));
         }

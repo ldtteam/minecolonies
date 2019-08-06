@@ -1,6 +1,9 @@
 package com.minecolonies.api.util.constant;
 
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.Effects;
 import net.minecraft.potion.Potion;
+import net.minecraft.potion.Potions;
 
 /**
  * Some constants needed for the whole mod.
@@ -131,8 +134,8 @@ public final class Constants
 
     public static final String SCIMITAR_NAME     = "iron_scimitar";
     public static final String CHIEFSWORD_NAME   = "chiefsword";
-    public static final Potion LEVITATION_EFFECT = Potion.getPotionById(25);
-    public static final Potion GLOW_EFFECT       = Potion.getPotionById(24);
+    public static final Effect LEVITATION_EFFECT = Effects.LEVITATION;
+    public static final Effect GLOW_EFFECT       = Effects.GLOWING;
 
     public static final int GLOW_EFFECT_DURATION   = 20 * 30;
     public static final int GLOW_EFFECT_MULTIPLIER = 20;

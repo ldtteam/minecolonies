@@ -75,7 +75,7 @@ public class WindowGuiFurnaceCrafting<T extends ContainerGUICraftingFurnace> ext
     {
         super.init();
         final String buttonDisplay = building.canRecipeBeAdded() ? I18n.format("gui.done") : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
-        /**
+        /*
          * The button to click done after finishing the recipe.
          */
         final Button doneButton = new Button(guiLeft + BUTTON_X_OFFSET, guiTop + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, buttonDisplay, new OnButtonPress());
@@ -104,8 +104,6 @@ public class WindowGuiFurnaceCrafting<T extends ContainerGUICraftingFurnace> ext
             }
         }
     }
-
-
 
     /**
      * Draws the background layer of this container (behind the items).

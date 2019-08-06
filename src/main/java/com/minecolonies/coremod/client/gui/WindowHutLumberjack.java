@@ -7,6 +7,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.network.messages.LumberjackReplantSaplingToggleMessage;
 import net.minecraft.item.ItemStack;

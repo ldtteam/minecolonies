@@ -1,84 +1,85 @@
 package com.minecolonies.coremod.client.model;
 
-import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The smelter male model.
  */
-public class ModelEntitySmelterMale extends ModelBiped
+public class ModelEntitySmelterMale extends BipedModel
 {
     /**
      * Constructor which generates the model.
      */
     public ModelEntitySmelterMale()
     {
-        ModelRenderer toolHandle1;
-        ModelRenderer toolHandle2;
-        ModelRenderer pocket;
+        RendererModel toolHandle1;
+        RendererModel toolHandle2;
+        RendererModel pocket;
 
         textureWidth = 128;
         textureHeight = 64;
 
-        toolHandle1 = new ModelRenderer(this, 10, 32);
+        toolHandle1 = new RendererModel(this, 10, 32);
         toolHandle1.addBox(0F, 0F, 0F, 1, 3, 1);
         toolHandle1.setRotationPoint(-1F, 5F, -3F);
         toolHandle1.setTextureSize(128, 64);
         toolHandle1.mirror = true;
         setRotation(toolHandle1, 0F, 0F, 0F);
 
-        toolHandle2 = new ModelRenderer(this, 10, 32);
+        toolHandle2 = new RendererModel(this, 10, 32);
         toolHandle2.addBox(0F, 0F, 0F, 1, 2, 1);
         toolHandle2.setRotationPoint(1F, 6F, -3F);
         toolHandle2.setTextureSize(128, 64);
         toolHandle2.mirror = true;
         setRotation(toolHandle2, 0F, 0F, 0F);
 
-        pocket = new ModelRenderer(this, 0, 32);
+        pocket = new RendererModel(this, 0, 32);
         pocket.addBox(0F, 0F, 0F, 4, 3, 1);
         pocket.setRotationPoint(-2F, 8F, -3F);
         pocket.setTextureSize(128, 64);
         pocket.mirror = true;
         setRotation(pocket, 0F, 0F, 0F);
 
-        bipedRightArm = new ModelRenderer(this, 40, 16);
+        bipedRightArm = new RendererModel(this, 40, 16);
         bipedRightArm.addBox(-3F, -2F, -2F, 4, 12, 4);
         bipedRightArm.setRotationPoint(-5F, 2F, 0F);
         bipedRightArm.setTextureSize(128, 64);
         bipedRightArm.mirror = true;
         setRotation(bipedRightArm, 0F, 0F, 0F);
 
-        bipedLeftArm = new ModelRenderer(this, 40, 16);
+        bipedLeftArm = new RendererModel(this, 40, 16);
         bipedLeftArm.addBox(-1F, -2F, -2F, 4, 12, 4);
         bipedLeftArm.setRotationPoint(5F, 2F, 0F);
         bipedLeftArm.setTextureSize(128, 64);
         bipedLeftArm.mirror = true;
         setRotation(bipedLeftArm, 0F, 0F, 0F);
 
-        bipedRightLeg = new ModelRenderer(this, 0, 16);
+        bipedRightLeg = new RendererModel(this, 0, 16);
         bipedRightLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
         bipedRightLeg.setRotationPoint(-2F, 12F, 0F);
         bipedRightLeg.setTextureSize(128, 64);
         bipedRightLeg.mirror = true;
         setRotation(bipedRightLeg, 0F, 0F, 0F);
 
-        bipedLeftLeg = new ModelRenderer(this, 0, 16);
+        bipedLeftLeg = new RendererModel(this, 0, 16);
         bipedLeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4);
         bipedLeftLeg.setRotationPoint(2F, 12F, 0F);
         bipedLeftLeg.setTextureSize(128, 64);
         bipedLeftLeg.mirror = true;
         setRotation(bipedLeftLeg, 0F, 0F, 0F);
 
-        bipedBody = new ModelRenderer(this, 16, 16);
+        bipedBody = new RendererModel(this, 16, 16);
         bipedBody.addBox(-4F, 0F, -2F, 8, 12, 4);
         bipedBody.setRotationPoint(0F, 0F, 0F);
         bipedBody.setTextureSize(128, 64);
         bipedBody.mirror = true;
         setRotation(bipedBody, 0F, 0F, 0F);
 
-        bipedHead = new ModelRenderer(this, 0, 0);
+        bipedHead = new RendererModel(this, 0, 0);
         bipedHead.addBox(-4F, -8F, -4F, 8, 8, 8);
         bipedHead.setRotationPoint(0F, 0F, 0F);
         bipedHead.setTextureSize(128, 64);
@@ -94,7 +95,7 @@ public class ModelEntitySmelterMale extends ModelBiped
 
     @Override
     public void render(
-      @NotNull final Entity entity,
+      @NotNull final LivingEntity entity,
       final float limbSwing,
       final float limbSwingAmount,
       final float ageInTicks,
@@ -103,10 +104,10 @@ public class ModelEntitySmelterMale extends ModelBiped
       final float scaleFactor)
     {
         super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
-        setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
+        setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
     }
 
-    private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
+    private void setRotation(@NotNull final RendererModel model, final float x, final float y, final float z)
     {
         model.rotateAngleX = x;
         model.rotateAngleY = y;

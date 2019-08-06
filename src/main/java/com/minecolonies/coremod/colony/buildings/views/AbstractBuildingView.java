@@ -16,7 +16,7 @@ import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.Log;
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.HutRenameMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import net.minecraft.network.PacketBuffer;
@@ -24,7 +24,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -336,7 +335,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     }
 
     /**
-     * Read this view from a {@link ByteBuf}.
+     * Read this view from a {@link PacketBuffer}.
      *
      * @param buf The buffer to read this view from.
      */
@@ -360,7 +359,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         final int resolverSize = buf.readInt();
         for (int i = 0; i < resolverSize; i++)
         {
-            final CompoundNBT compound = ByteBufUtils.readTag(buf);
+            final CompoundNBT compound = buf.readCompoundTag();
             if (compound != null)
             {
                 list.add(StandardFactoryController.getInstance().deserialize(compound));
@@ -368,13 +367,13 @@ public abstract class AbstractBuildingView implements IBuildingView
         }
 
         resolvers = ImmutableList.copyOf(list);
-        final CompoundNBT compound = ByteBufUtils.readTag(buf);
+        final CompoundNBT compound = buf.readCompoundTag();
         if (compound != null)
         {
             requesterId = StandardFactoryController.getInstance().deserialize(compound);
         }
 
-        loadRequestSystemFromNBT(ByteBufUtils.readTag(buf));
+        loadRequestSystemFromNBT(buf.readCompoundTag());
     }
 
     private void loadRequestSystemFromNBT(final CompoundNBT compound)

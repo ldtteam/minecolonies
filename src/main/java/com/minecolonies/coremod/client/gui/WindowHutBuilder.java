@@ -12,7 +12,7 @@ import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
@@ -70,7 +70,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         {
             final BuildingBuilder.View updatedView = (BuildingBuilder.View) newView;
             final PlayerInventory inventory = this.mc.player.inventory;
-            final boolean isCreative = this.mc.player.capabilities.isCreativeMode;
+            final boolean isCreative = this.mc.player.isCreative();
 
             resources.clear();
             resources.addAll(updatedView.getResources().values());
@@ -188,8 +188,8 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(index));
         rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount() - resource.getAvailable()));
 
-        final ItemStack stack = new ItemStack(resource.getItem(), 1, resource.getDamageValue());
-        stack.put(resource.getItemStack().getTag());
+        final ItemStack stack = new ItemStack(resource.getItem(), 1);
+        stack.setTag(resource.getItemStack().getTag());
         rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(stack);
     }
 
@@ -238,8 +238,8 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         {
             // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
             // and use quantity for the size
-            @NotNull final ItemStack itemStack = new ItemStack(res.getItem(), 1, res.getDamageValue());
-            itemStack.put(res.getItemStack().getTag());
+            @NotNull final ItemStack itemStack = new ItemStack(res.getItem(), 1);
+            itemStack.setTag(res.getItemStack().getTag());
             final Label quantityLabel = pane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class);
             final int quantity = Integer.parseInt(quantityLabel.getLabelText());
             Network.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, itemStack, quantity, true));

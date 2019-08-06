@@ -3,7 +3,7 @@ package com.minecolonies.coremod.client.render;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.coremod.client.model.ModelEntityCitizenFemaleCitizen;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -21,8 +21,8 @@ import static com.minecolonies.api.util.constant.Constants.BED_HEIGHT;
  */
 public class RenderBipedCitizen<C extends EntityCitizen> extends RenderBiped<C>
 {
-    private static final ModelBiped defaultModelMale   = new ModelBiped();
-    private static final ModelBiped defaultModelFemale = new ModelEntityCitizenFemaleCitizen();
+    private static final BipedModel defaultModelMale   = new BipedModel();
+    private static final BipedModel defaultModelFemale = new ModelEntityCitizenFemaleCitizen();
     private static final double     SHADOW_SIZE        = 0.5F;
     private static final int        THREE_QUARTERS     = 270;
 
@@ -50,27 +50,27 @@ public class RenderBipedCitizen<C extends EntityCitizen> extends RenderBiped<C>
             mainModel = citizen.isFemale() ? defaultModelFemale : defaultModelMale;
         }
 
-        final ModelBiped citizenModel = (ModelBiped) mainModel;
+        final BipedModel citizenModel = (BipedModel) mainModel;
 
         final ItemStack mainHandStack = citizen.getHeldItemMainhand();
         final ItemStack offHandStack = citizen.getHeldItemOffhand();
-        ModelBiped.ArmPose armPoseMainHand = ModelBiped.ArmPose.EMPTY;
-        ModelBiped.ArmPose armPoseOffHand = ModelBiped.ArmPose.EMPTY;
+        BipedModel.ArmPose armPoseMainHand = BipedModel.ArmPose.EMPTY;
+        BipedModel.ArmPose armPoseOffHand = BipedModel.ArmPose.EMPTY;
 
         final EnumAction enumActionMainHand;
         if (!mainHandStack.isEmpty())
         {
-            armPoseMainHand = ModelBiped.ArmPose.ITEM;
+            armPoseMainHand = BipedModel.ArmPose.ITEM;
             if (citizen.getItemInUseCount() > 0)
             {
                 enumActionMainHand = mainHandStack.getItemUseAction();
                 if (enumActionMainHand == EnumAction.BLOCK)
                 {
-                    armPoseMainHand = ModelBiped.ArmPose.BLOCK;
+                    armPoseMainHand = BipedModel.ArmPose.BLOCK;
                 }
                 else if (enumActionMainHand == EnumAction.BOW)
                 {
-                    armPoseMainHand = ModelBiped.ArmPose.BOW_AND_ARROW;
+                    armPoseMainHand = BipedModel.ArmPose.BOW_AND_ARROW;
                 }
             }
         }
@@ -78,17 +78,17 @@ public class RenderBipedCitizen<C extends EntityCitizen> extends RenderBiped<C>
         final EnumAction enumActionOffHand;
         if (!offHandStack.isEmpty())
         {
-            armPoseOffHand = ModelBiped.ArmPose.ITEM;
+            armPoseOffHand = BipedModel.ArmPose.ITEM;
             if (citizen.getItemInUseCount() > 0)
             {
                 enumActionOffHand = offHandStack.getItemUseAction();
                 if (enumActionOffHand == EnumAction.BLOCK)
                 {
-                    armPoseOffHand = ModelBiped.ArmPose.BLOCK;
+                    armPoseOffHand = BipedModel.ArmPose.BLOCK;
                 }
                 else if (enumActionOffHand == EnumAction.BOW)
                 {
-                    armPoseOffHand = ModelBiped.ArmPose.BOW_AND_ARROW;
+                    armPoseOffHand = BipedModel.ArmPose.BOW_AND_ARROW;
                 }
             }
         }

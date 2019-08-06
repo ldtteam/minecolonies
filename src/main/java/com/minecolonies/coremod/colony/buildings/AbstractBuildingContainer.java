@@ -6,12 +6,10 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.ContainerBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -24,6 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -84,7 +83,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         for (int i = 0; i < containerTagList.size(); ++i)
         {
             final CompoundNBT containerCompound = containerTagList.getCompound(i);
-            containerList.add(NBTUtil.getPosFromTag(containerCompound));
+            containerList.add(NBTUtil.readBlockPos(containerCompound));
         }
         if (compound.keySet().contains(TAG_PRIO))
         {
@@ -104,7 +103,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
         @NotNull final ListNBT containerTagList = new ListNBT();
         for (@NotNull final BlockPos pos : containerList)
         {
-            containerTagList.add(NBTUtil.createPosTag(pos));
+            containerTagList.add(NBTUtil.writeBlockPos(pos));
         }
         compound.put(TAG_CONTAINERS, containerTagList);
         compound.putInt(TAG_PRIO, this.pickUpPriority);
@@ -226,7 +225,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     @SuppressWarnings("squid:S1172")
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        if (block instanceof BlockContainer || block instanceof BlockMinecoloniesRack)
+        if (block instanceof ContainerBlock || block instanceof BlockMinecoloniesRack)
         {
             addContainerPosition(pos);
         }
@@ -289,23 +288,15 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
 
     //------------------------- !Start! Capabilities handling for minecolonies buildings -------------------------//
 
+    @Nonnull
     @Override
-    public boolean hasCapability(
-      @Nonnull final Capability<?> capability, @Nullable final Direction facing)
+    public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap)
     {
-        return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null;
-    }
-
-    @Nullable
-    @Override
-    public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final Direction facing)
-    {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == null && getTileEntity() != null)
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getTileEntity() != null)
         {
-           return tileEntity.getCapability(capability, facing);
+            return tileEntity.getCapability(cap);
         }
-        return null;
+        return LazyOptional.empty();
     }
-
     //------------------------- !End! Capabilities handling for minecolonies buildings -------------------------//
 }
