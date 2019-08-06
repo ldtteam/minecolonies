@@ -5,12 +5,15 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 /**
  * Caliper Item class. Calculates distances, areas, and volumes.
@@ -30,12 +33,9 @@ public class ItemCaliper extends AbstractItemMinecolonies
     /**
      * Caliper constructor. Sets max stack to 1, like other tools.
      */
-    public ItemCaliper()
+    public ItemCaliper(final Properties properties)
     {
-        super("caliper");
-
-        super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        maxStackSize = 1;
+        super("caliper",properties.maxStackSize(1).group(ModCreativeTabs.MINECOLONIES));
     }
 
     private static ActionResultType handleZEqual(@NotNull final PlayerEntity playerIn, final int a, final int a2)
@@ -49,44 +49,33 @@ public class ItemCaliper extends AbstractItemMinecolonies
     }
 
     @Override
-    public ActionResultType onItemUse(
-                                       final PlayerEntity player,
-                                       final World worldIn,
-                                       final BlockPos pos,
-                                       final Hand hand,
-                                       final Direction facing,
-                                       final float hitX,
-                                       final float hitY,
-                                       final float hitZ)
+    public ActionResultType onItemUse(final ItemUseContext ctx)
     {
         // if client world, do nothing
-        if (worldIn.isRemote)
+        if (ctx.getWorld().isRemote)
         {
             return ActionResultType.FAIL;
         }
 
         // if attribute instance is not known, register it.
-        IAttributeInstance attribute = player.getEntityAttribute(ATTRIBUTE_CALIPER_USE);
-        if (attribute == null)
-        {
-            attribute = player.getAttributeMap().registerAttribute(ATTRIBUTE_CALIPER_USE);
-        }
+        IAttributeInstance attribute = ctx.getPlayer().getAttribute(ATTRIBUTE_CALIPER_USE);
+
         // if the value of the attribute is still 0, set the start values. (first point)
-        if (attribute.getAttributeValue() < HALF)
+        if (attribute.getValue() < HALF)
         {
-            startPosition = pos;
+            startPosition = ctx.getPos();
             attribute.setBaseValue(1.0);
             return ActionResultType.SUCCESS;
         }
         attribute.setBaseValue(0.0);
         //Start == end, same location
-        if (startPosition.getX() == pos.getX() && startPosition.getY() == pos.getY() && startPosition.getZ() == pos.getZ())
+        if (startPosition.getX() == ctx.getPos().getX() && startPosition.getY() == ctx.getPos().getY() && startPosition.getZ() == ctx.getPos().getZ())
         {
-            LanguageHandler.sendPlayerMessage(player, ITEM_CALIPER_MESSAGE_SAME);
+            LanguageHandler.sendPlayerMessage(ctx.getPlayer(), ITEM_CALIPER_MESSAGE_SAME);
             return ActionResultType.FAIL;
         }
 
-        return handlePlayerMessage(player, pos);
+        return handlePlayerMessage(ctx.getPlayer(), ctx.getPos());
     }
 
     private ActionResultType handlePlayerMessage(@NotNull final PlayerEntity playerIn, @NotNull final BlockPos pos)

@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.items;
 
+import net.minecraft.item.Item;
+
 /**
  * This is a proxy item class for achievements.
  * <p>
@@ -16,10 +18,8 @@ public class ItemAchievementProxy extends AbstractItemMinecolonies
      *
      * @param name The item name
      */
-    public ItemAchievementProxy(final String name)
+    public ItemAchievementProxy(final String name, Item.Properties itemProperties)
     {
-        super(name);
-
-        this.maxStackSize = 1;
+        super(name, itemProperties.maxStackSize(1));
     }
 }
