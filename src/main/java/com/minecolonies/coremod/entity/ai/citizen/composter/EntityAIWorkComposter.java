@@ -17,7 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -159,7 +159,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      */
     private IAIState decideWhatToDo()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
 
         if(walkToBuilding())
         {
@@ -205,7 +205,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      */
     private IAIState fillBarrels()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_FILLING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_FILLING));
 
         if(worker.getHeldItem(Hand.MAIN_HAND) == ItemStack.EMPTY)
         {
@@ -251,7 +251,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      */
     private IAIState harvestBarrels()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_HARVESTING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_COMPOSTER_HARVESTING));
 
         if (walkToBlock(currentTarget))
         {
@@ -326,7 +326,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             ticksToComplain = TICKS_UNTIL_COMPLAIN;
             for(final PlayerEntity player : getOwnBuilding().getColony().getMessagePlayerEntitys())
             {
-                player.sendMessage(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST));
+                player.sendMessage(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST));
             }
         }
         else

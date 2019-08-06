@@ -11,7 +11,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -83,7 +83,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         }
         else
         {
-            player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.worker.needBarracks"));
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.worker.needBarracks"));
         }
     }
 
@@ -114,7 +114,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     public void deserializeNBT(final CompoundNBT compound)
     {
         super.deserializeNBT(compound);
-        barracks = NBTUtil.getPosFromTag(compound.getCompound(TAG_POS));
+        barracks = NBTUtil.readBlockPos(compound.getCompound(TAG_POS));
     }
 
     @Override
@@ -123,7 +123,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         final CompoundNBT compound = super.serializeNBT();
         if (barracks != null)
         {
-            compound.put(TAG_POS, NBTUtil.createPosTag(barracks));
+            compound.put(TAG_POS, NBTUtil.writeBlockPos(barracks));
         }
 
         return compound;

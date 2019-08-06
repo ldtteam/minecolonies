@@ -9,7 +9,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -419,7 +419,7 @@ public class CitizenDataView implements ICitizenDataView
         for (int i = 0; i < length; i++)
         {
             final String textComp = buf.readString();
-            final TextComponentTranslation textComponent = new TextComponentTranslation(textComp);
+            final TranslationTextComponent textComponent = new TranslationTextComponent(textComp);
             latestStatus[i] = textComponent;
         }
 

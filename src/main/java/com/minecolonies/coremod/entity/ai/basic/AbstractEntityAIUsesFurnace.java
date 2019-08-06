@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -108,7 +108,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
                 if ((!furnace.isBurning() && countInResultSlot > 0)
                         || countInResultSlot > RETRIEVE_SMELTABLE_IF_MORE_THAN)
                 {
-                    worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
+                    worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
                     return pos;
                 }
             }
@@ -144,7 +144,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
             return getState();
         }
 
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
 
         final IAIState nextState = checkForImportantJobs();
         if(nextState != START_WORKING)
@@ -156,7 +156,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         if (posOfOven != null)
         {
             walkTo = posOfOven;
-            worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.retrieving"));
+            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.retrieving"));
             return RETRIEVING_END_PRODUCT_FROM_FURNACE;
         }
 
@@ -230,7 +230,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
      */
     protected IAIState checkForAdditionalJobs()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
         setDelay(WAIT_AFTER_REQUEST);
         return START_WORKING;
     }
@@ -264,7 +264,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
      */
     private IAIState retrieveSmeltableFromFurnace()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
 
         if (walkTo == null)
         {

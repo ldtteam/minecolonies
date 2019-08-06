@@ -22,7 +22,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -271,7 +271,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     {
         if (job.tree == null)
         {
-            worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.searchingtree"));
+            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.searchingtree"));
 
             return findTree();
         }
@@ -374,7 +374,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private IAIState chopTree()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.chopping"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.chopping"));
 
         if (job.tree.hasLogs() || checkedInHut)
         {
@@ -511,7 +511,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             return;
         }
         //now we seem to be stuck!
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.stuckinleaves"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.stuckinleaves"));
 
         tryGettingUnstuckFromLeaves();
     }
@@ -576,7 +576,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             return true;
         }
 
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.planting"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.planting"));
 
         final int saplingSlot = findSaplingSlot();
         final BlockPos dirtLocation = new BlockPos(location.getX(), location.getY() - 1, location.getZ());
@@ -746,7 +746,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private IAIState gathering()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.gathering"));
 
         if (getItemsForPickUp() == null)
         {

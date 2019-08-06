@@ -11,7 +11,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -175,7 +175,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
         if ((moveAwayPath == null || !moveAwayPath.isInProgress()) && citizen.getNavigator().noPath())
         {
             moveAwayPath = citizen.getNavigator().moveAwayFromXYZ(citizen.getPosition().add(rand.nextInt(2), 0, rand.nextInt(2)), distanceFromEntity + 5, nearSpeed);
-            citizen.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.avoiding"));
+            citizen.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.avoiding"));
             return true;
         }
         return false;

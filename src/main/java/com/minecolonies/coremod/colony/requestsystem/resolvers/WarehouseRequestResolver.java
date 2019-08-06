@@ -21,7 +21,7 @@ import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -192,7 +192,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     @Override
     public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME);
+        return new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME);
     }
 
     @Override

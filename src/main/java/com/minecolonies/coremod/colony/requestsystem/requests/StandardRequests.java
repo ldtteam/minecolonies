@@ -24,7 +24,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import org.jetbrains.annotations.NotNull;
 
@@ -122,7 +122,7 @@ public final class StandardRequests
         public ITextComponent getShortDisplayString()
         {
             final ITextComponent result = new NonSiblingFormattingTextComponent();
-            result.appendSibling(new TextComponentTranslation(stackList.getDescription()));
+            result.appendSibling(new TranslationTextComponent(stackList.getDescription()));
             return result;
         }
 
@@ -167,7 +167,7 @@ public final class StandardRequests
         public ITextComponent getShortDisplayString()
         {
             final ITextComponent result = new NonSiblingFormattingTextComponent();
-            result.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_DELIVERY).appendSibling( new StringTextComponent(getRequest().getStack().getCount() + " ")).appendSibling(getRequest().getStack().getTextComponent()));
+            result.appendSibling(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_DELIVERY).appendSibling( new StringTextComponent(getRequest().getStack().getCount() + " ")).appendSibling(getRequest().getStack().getTextComponent()));
             return result;
         }
 
@@ -211,7 +211,7 @@ public final class StandardRequests
         public final ITextComponent getShortDisplayString()
         {
             final ITextComponent result = new NonSiblingFormattingTextComponent();
-            final ITextComponent preType = new TextComponentTranslation(getTranslationKey());
+            final ITextComponent preType = new TranslationTextComponent(getTranslationKey());
 
             result.appendSibling(preType);
 
@@ -330,7 +330,7 @@ public final class StandardRequests
         public ITextComponent getLongDisplayString()
         {
             final ITextComponent result = new NonSiblingFormattingTextComponent();
-            final ITextComponent preType = new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PRETYPE);
+            final ITextComponent preType = new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PRETYPE);
 
             result.appendSibling(preType);
 
@@ -339,7 +339,7 @@ public final class StandardRequests
             if (getRequest().getMinLevel() > ToolLevelConstants.TOOL_LEVEL_HAND)
             {
                 result.appendText(" ");
-                result.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMINLEVEL));
+                result.appendSibling(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMINLEVEL));
                 result.appendText(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMinLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMinLevel()));
             }
 
@@ -348,11 +348,11 @@ public final class StandardRequests
                 if (getRequest().getMinLevel() > ToolLevelConstants.TOOL_LEVEL_HAND)
                 {
                     result.appendText(" ");
-                    result.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_GENERAL_AND));
+                    result.appendSibling(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_GENERAL_AND));
                 }
 
                 result.appendText(" ");
-                result.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMAXLEVEL));
+                result.appendSibling(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMAXLEVEL));
                 result.appendText(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMaxLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMaxLevel()));
             }
 
@@ -398,7 +398,7 @@ public final class StandardRequests
         public ITextComponent getShortDisplayString()
         {
             final ITextComponent result = new NonSiblingFormattingTextComponent();
-            result.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_FOOD));
+            result.appendSibling(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_FOOD));
             return result;
         }
 
@@ -459,7 +459,7 @@ public final class StandardRequests
         @Override
         public ITextComponent getShortDisplayString()
         {
-            return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE);
+            return new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE);
         }
 
         @NotNull
@@ -516,7 +516,7 @@ public final class StandardRequests
         public ITextComponent getShortDisplayString()
         {
             final ITextComponent result = new NonSiblingFormattingTextComponent();
-            result.appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_REQUESTS_BURNABLE));
+            result.appendSibling(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_BURNABLE));
             return result;
         }
 

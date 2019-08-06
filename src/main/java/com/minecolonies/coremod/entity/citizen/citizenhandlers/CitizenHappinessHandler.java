@@ -517,7 +517,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             fieldCompound.putBoolean(NbtTagConstants.TAG_FIELD_CAN_FARM, field.isCanFarm());
 
             @NotNull final ListNBT containerTagList = new ListNBT();
-            containerTagList.add(NBTUtil.createPosTag(pos));
+            containerTagList.add(NBTUtil.writeBlockPos(pos));
             fieldCompound.put(NbtTagConstants.TAG_ID, containerTagList);
 
             fieldsTagList.add(fieldCompound);
@@ -569,7 +569,7 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
 
             final ListNBT blockPosTagList = containerCompound.getList(NbtTagConstants.TAG_ID, Constants.NBT.TAG_COMPOUND);
             final CompoundNBT blockPoCompound = blockPosTagList.getCompound(0);
-            final BlockPos pos = NBTUtil.getPosFromTag(blockPoCompound);
+            final BlockPos pos = NBTUtil.readBlockPos(blockPoCompound);
             fieldModifier.put(pos, field);
         }
 

@@ -158,12 +158,12 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
 
         if (player.getName().equals("[abandoned]"))
         {
-            final ITextComponent abandonButton = new TextComponentTranslation("tile.blockHutTownHall.addOfficerMessageLink")
+            final ITextComponent abandonButton = new TranslationTextComponent("tile.blockHutTownHall.addOfficerMessageLink")
                                                    .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD)
                                                                .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                                                  String.format(ADD_OFFICER_COLONY_COMMAND_SUGGESTED, colony.getID(), sender.getName())))
                                                    );
-            sender.sendMessage(new TextComponentTranslation("tile.blockHutTownHall.abandonAddOfficer"));
+            sender.sendMessage(new TranslationTextComponent("tile.blockHutTownHall.abandonAddOfficer"));
             sender.sendMessage(abandonButton);
         }
     }

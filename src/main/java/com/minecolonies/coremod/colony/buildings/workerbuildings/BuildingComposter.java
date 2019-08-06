@@ -130,7 +130,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
         final ListNBT compostBinTagList = compound.getList(TAG_BARRELS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < compostBinTagList.size(); ++i)
         {
-            barrels.add(NBTUtil.getPosFromTag(compostBinTagList.getCompound(i).getCompound(TAG_POS)));
+            barrels.add(NBTUtil.readBlockPos(compostBinTagList.getCompound(i).getCompound(TAG_POS)));
         }
         if (compound.keySet().contains(TAG_DIRT))
         {
@@ -146,7 +146,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
         for (@NotNull final BlockPos entry : barrels)
         {
             @NotNull final CompoundNBT compostBinCompound = new CompoundNBT();
-            compostBinCompound.put(TAG_POS, NBTUtil.createPosTag(entry));
+            compostBinCompound.put(TAG_POS, NBTUtil.writeBlockPos(entry));
             compostBinTagList.add(compostBinCompound);
         }
         compound.put(TAG_BARRELS, compostBinTagList);

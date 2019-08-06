@@ -59,7 +59,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
@@ -378,7 +378,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     private void performMoveAway(@Nullable final Entity attacker)
     {
-        this.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.avoiding"));
+        this.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.avoiding"));
 
         // Environmental damage
         if (!(attacker instanceof LivingEntityBase))
@@ -715,11 +715,11 @@ public class EntityCitizen extends AbstractEntityCitizen
             {
                 if (isMourning())
                 {
-                    ICitizenStatusHandler.setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_MOURN));
+                    ICitizenStatusHandler.setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_MOURN));
                 }
                 else
                 {
-                    ICitizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waitingForWork"));
+                    ICitizenStatusHandler.setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waitingForWork"));
                 }
             }
 
@@ -1016,7 +1016,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                     citizenData.markDirty();
                 }
 
-                ICitizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.sleeping"));
+                ICitizenStatusHandler.setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.sleeping"));
                 return DesiredActivity.SLEEP;
             }
 
@@ -1031,8 +1031,8 @@ public class EntityCitizen extends AbstractEntityCitizen
             if (CompatibilityUtils.getWorldFromCitizen(this).isRaining() && !shouldWorkWhileRaining())
             {
                 hidingFromRain = true;
-                ICitizenStatusHandler.setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"),
-                  new TextComponentTranslation("com.minecolonies.coremod.status.rainStop"));
+                ICitizenStatusHandler.setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waiting"),
+                  new TranslationTextComponent("com.minecolonies.coremod.status.rainStop"));
                 return DesiredActivity.IDLE;
             }
             else

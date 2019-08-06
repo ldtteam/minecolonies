@@ -37,7 +37,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.*;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -305,7 +305,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     @Override
     public void fillItemsList()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.gathering"));
 
         if (currentStructure == null)
         {
@@ -344,7 +344,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         checkForExtraBuildingActions();
         if (!BlockUtils.shouldNeverBeMessedWith(structureBlock.worldBlock))
         {
-            worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.decorating"));
+            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.decorating"));
 
             //Fill workFrom with the position from where the builder should build.
             //also ensure we are at that position.
@@ -726,7 +726,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         checkForExtraBuildingActions();
         if (!BlockUtils.shouldNeverBeMessedWith(structureBlock.worldBlock))
         {
-            worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.building"));
+            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.building"));
 
             //Fill workFrom with the position from where the builder should build.
             //also ensure we are at that position.
@@ -863,7 +863,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             return true;
         }
 
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.clearing"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.clearing"));
 
         //Don't break bedrock etc.
         //Don't break bedrock etc.
@@ -937,7 +937,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     {
         if (currentStructure == null)
         {
-            worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waitingForBuild"));
+            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waitingForBuild"));
         }
         return currentStructure != null;
     }
@@ -1011,7 +1011,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             return true;
         }
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.spawning"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.spawning"));
 
         for (final CompoundNBT entityInfo : entityInfos)
         {

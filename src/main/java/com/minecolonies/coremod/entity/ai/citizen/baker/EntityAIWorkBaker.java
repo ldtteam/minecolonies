@@ -10,7 +10,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
-import net.minecraft.block.BlockFurnace;
+import net.minecraft.block.FurnaceBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.init.Items;
@@ -314,7 +314,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 
         final BlockState furnace = world.getBlockState(currentFurnace);
         final List<BakingProduct> bakingProducts = building.getTasks().get(ProductState.PREPARED);
-        if (!(furnace.getBlock() instanceof BlockFurnace))
+        if (!(furnace.getBlock() instanceof FurnaceBlock))
         {
             if (bakingProducts.isEmpty())
             {
@@ -338,7 +338,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         {
             building.putInFurnace(currentFurnace, bakingProduct);
             bakingProduct.nextState();
-            world.setBlockState(currentFurnace, Blocks.LIT_FURNACE.getDefaultState().with(BlockFurnace.FACING, furnace.get(BlockFurnace.FACING)));
+            world.setBlockState(currentFurnace, Blocks.LIT_FURNACE.getDefaultState().with(FurnaceBlock.FACING, furnace.get(FurnaceBlock.FACING)));
         }
         return PREPARING;
     }

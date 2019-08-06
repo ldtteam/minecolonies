@@ -13,7 +13,7 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraf
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -84,17 +84,17 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
         }
         else
         {
-            return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME);
+            return new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME);
         }
 
         if (request == null)
         {
-            return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME);
+            return new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME);
         }
 
         return request.getRequester().getDisplayName(manager, request.getId())
                  .appendSibling(new StringTextComponent(" ("))
-                 .appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME))
+                 .appendSibling(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME))
                  .appendSibling(new StringTextComponent(")"));
     }
 

@@ -117,7 +117,7 @@ public class BuildingHome extends AbstractBuilding
         for (int i = 0; i < bedTagList.size(); ++i)
         {
             final CompoundNBT bedCompound = bedTagList.getCompound(i);
-            final BlockPos bedPos = NBTUtil.getPosFromTag(bedCompound);
+            final BlockPos bedPos = NBTUtil.readBlockPos(bedCompound);
             if (!bedList.contains(bedPos))
             {
                 bedList.add(bedPos);
@@ -143,7 +143,7 @@ public class BuildingHome extends AbstractBuilding
             @NotNull final ListNBT bedTagList = new ListNBT();
             for (@NotNull final BlockPos pos : bedList)
             {
-                bedTagList.add(NBTUtil.createPosTag(pos));
+                bedTagList.add(NBTUtil.writeBlockPos(pos));
             }
             compound.put(TAG_BEDS, bedTagList);
         }

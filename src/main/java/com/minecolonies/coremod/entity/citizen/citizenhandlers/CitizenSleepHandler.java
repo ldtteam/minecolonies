@@ -10,7 +10,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -137,7 +137,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     {
         if (citizen.getCitizenColonyHandler().getWorkBuilding() != null)
         {
-            citizen.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.working"));
+            citizen.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.working"));
             citizen.getCitizenColonyHandler().getWorkBuilding().onWakeUp();
         }
         if (citizen.getCitizenJobHandler().getColonyJob() != null)

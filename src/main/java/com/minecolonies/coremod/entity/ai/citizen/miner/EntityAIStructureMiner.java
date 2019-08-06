@@ -23,7 +23,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -333,7 +333,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     private IAIState doShaftMining()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.mining"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.mining"));
 
         minerWorkingLocation = getNextBlockInShaftToMine();
         if (minerWorkingLocation == null)

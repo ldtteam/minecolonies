@@ -10,7 +10,7 @@ import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -110,7 +110,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Entity
      */
     private IAIState milkCows()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING));
 
         if (!worker.getCitizenInventoryHandler().hasItemInInventory(getBreedingItem().getItem(), 0) && isInHut(new ItemStack(Items.BUCKET, 1)))
         {

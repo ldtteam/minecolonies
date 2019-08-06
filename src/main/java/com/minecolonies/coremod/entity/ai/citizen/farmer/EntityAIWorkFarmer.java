@@ -33,7 +33,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -453,7 +453,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                     switch ((AIWorkerState) getState())
                     {
                         case FARMER_HOE:
-                            worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.hoeing"));
+                            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.hoeing"));
 
                             if (!hoeIfAble(position, scarecrow))
                             {
@@ -461,14 +461,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                             }
                             break;
                         case FARMER_PLANT:
-                            worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.planting"));
+                            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.planting"));
                             if (!tryToPlant(scarecrow, position))
                             {
                                 return PREPARING;
                             }
                             break;
                         case FARMER_HARVEST:
-                            worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.harvesting"));
+                            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.harvesting"));
                             if (!harvestIfAble(position))
                             {
                                 return getState();

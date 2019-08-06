@@ -35,7 +35,7 @@ import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -189,7 +189,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return START_WORKING;
         }
 
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.gathering"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.gathering"));
 
         if (!worker.isWorkerAtSiteWithMove(gatherTarget, MIN_DISTANCE_TO_WAREHOUSE))
         {
@@ -417,7 +417,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public IAIState dump()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.dumping"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.dumping"));
 
         if (!worker.isWorkerAtSiteWithMove(getWareHouse().getPosition(), MIN_DISTANCE_TO_WAREHOUSE))
         {
@@ -490,7 +490,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return START_WORKING;
         }
 
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.delivering"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.delivering"));
 
         if (!buildingToDeliver.isReachableFromLocation(worker.getLocation()))
         {
