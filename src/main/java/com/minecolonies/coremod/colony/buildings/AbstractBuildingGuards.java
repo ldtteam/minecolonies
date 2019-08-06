@@ -19,10 +19,10 @@ import com.minecolonies.api.util.Log;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutGuardTower;
 import com.minecolonies.coremod.network.messages.GuardMobAttackListMessage;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -81,12 +81,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * The health modifier which changes the HP
      */
-    private final AttributeModifier healthModConfig = new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME, MineColonies.getConfig().getCommon().guardHealthMult.get() - 1, 1);
+    private final AttributeModifier healthModConfig = new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME, MineColonies.getConfig().getCommon().guardHealthMult.get() - 1, AttributeModifier.Operation.ADDITION);
 
     /**
      * Vision range per building level.
      */
-    private static final int VISION_RANGE_PER_LEVEL = 5;
+    private static final int         VISION_RANGE_PER_LEVEL = 5;
+
+    /**
+     * All the mobs.
+     */
+    private final List<MobEntryView> mobs;
 
     /**
      * Whether the guardType will be assigned manually.
@@ -97,11 +102,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
      * Whether to retrieve the guard on low health.
      */
     private boolean retrieveOnLowHealth = false;
-
-    /**
-     * The level for getting our achievement
-     */
-    private static final int ACHIEVEMENT_LEVEL = 1;
 
     /**
      * Whether to patrol manually or not.
@@ -169,6 +169,8 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         keepX.put(itemStack -> !ItemStackUtils.isEmpty(itemStack)
                                  && itemStack.getItem() instanceof ArmorItem
                                  && ((ArmorItem) itemStack.getItem()).getEquipmentSlot() == EquipmentSlotType.FEET, new Tuple<>(1, true));
+
+        mobs = calculateMobs();
     }
 
     //// ---- NBT Overrides ---- \\\\
@@ -191,22 +193,13 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
                 {
                     optCitizen.get().removeHealthModifier(GUARD_HEALTH_MOD_BUILDING_NAME);
 
-                    final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), 0);
+                    final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), AttributeModifier.Operation.ADDITION);
                     optCitizen.get().getAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(healthModBuildingHP);
                 }
             }
         }
 
         super.onUpgradeComplete(newLevel);
-
-        if (newLevel == ACHIEVEMENT_LEVEL)
-        {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingGuard);
-        }
-        if (newLevel >= this.getMaxBuildingLevel())
-        {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeGuardMax);
-        }
     }
 
     @Override
@@ -218,7 +211,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             final Optional<AbstractEntityCitizen> optCitizen = citizen.getCitizenEntity();
             if (optCitizen.isPresent())
             {
-                final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), 0);
+                final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), AttributeModifier.Operation.ADDITION);
                 optCitizen.get().increaseHPForGuards();
                 optCitizen
                   .get()
@@ -370,7 +363,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
         if (mobsToAttack.isEmpty())
         {
-            mobsToAttack.addAll(calculateMobs());
+            mobsToAttack.addAll(mobs);
         }
 
         buf.writeInt(mobsToAttack.size());
@@ -1014,7 +1007,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
         int i = 0;
         for (final Map.Entry<ResourceLocation, EntityType<?>> entry : ForgeRegistries.ENTITIES.getEntries())
         {
-            if (Entitytype.entry.))
+            if (entry.getValue().create(colony.getWorld()).getClass().isAssignableFrom(MobEntity.class))
             {
                 i++;
                 mobs.add(new MobEntryView(entry.getKey(), true, i));
