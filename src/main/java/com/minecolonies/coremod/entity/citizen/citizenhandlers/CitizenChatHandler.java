@@ -11,7 +11,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,16 +70,16 @@ public class CitizenChatHandler implements ICitizenChatHandler
             return;
         }
 
-        final TextComponentTranslation requiredItem;
+        final TranslationTextComponent requiredItem;
 
         if (msg.length == 0)
         {
-            requiredItem = new TextComponentTranslation(key);
+            requiredItem = new TranslationTextComponent(key);
         }
         else
         {
             statusMessages.put(key + msg[0], citizen.ticksExisted);
-            requiredItem = new TextComponentTranslation(key, msg);
+            requiredItem = new TranslationTextComponent(key, msg);
         }
 
         final StringTextComponent citizenDescription = new StringTextComponent(" ");
@@ -124,7 +124,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
             final IJob job = citizen.getCitizenJobHandler().getColonyJob();
             if (job != null)
             {
-                final ITextComponent component = new TextComponentTranslation("tile.blockHutTownHall.messageWorkerDead", new TextComponentTranslation(job.getName()), citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY, (int) citizen.posZ, damageSource.damageType);
+                final ITextComponent component = new TranslationTextComponent("tile.blockHutTownHall.messageWorkerDead", new TranslationTextComponent(job.getName()), citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY, (int) citizen.posZ, damageSource.damageType);
                 LanguageHandler.sendPlayersMessage(
                   citizen.getCitizenColonyHandler().getColony().getMessagePlayerEntitys(), component);
             }

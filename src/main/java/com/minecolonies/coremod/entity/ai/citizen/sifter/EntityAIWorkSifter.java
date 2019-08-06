@@ -16,7 +16,7 @@ import com.minecolonies.coremod.network.messages.LocalizedParticleEffectMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -176,7 +176,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
                 if (worker.getRandom().nextDouble() * 100 < sifterBuilding.getMesh().getB())
                 {
                     sifterBuilding.resetMesh();
-                    worker.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.sifter.meshBroke"));
+                    worker.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.sifter.meshBroke"));
                 }
 
                 worker.decreaseSaturationForContinuousAction();

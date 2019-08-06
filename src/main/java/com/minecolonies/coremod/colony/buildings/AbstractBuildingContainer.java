@@ -25,9 +25,9 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -290,13 +290,14 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap)
+    public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, @Nullable final Direction side)
     {
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getTileEntity() != null)
         {
-            return tileEntity.getCapability(cap);
+            return tileEntity.getCapability(cap, side);
         }
         return LazyOptional.empty();
     }
+
     //------------------------- !End! Capabilities handling for minecolonies buildings -------------------------//
 }

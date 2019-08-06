@@ -24,7 +24,7 @@ import net.minecraft.item.*;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -137,7 +137,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
      */
     private IAIState smeltStuff()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(SMELTING_DOWN));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(SMELTING_DOWN));
         if (walkToBuilding())
         {
             return getState();
@@ -310,7 +310,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
         {
             return SMELTER_SMELTING_ITEMS;
         }
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
         setDelay(WAIT_AFTER_REQUEST);
         return START_WORKING;
     }

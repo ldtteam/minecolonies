@@ -24,7 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -314,7 +314,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         {
             return FISHERMAN_SEARCHING_WATER;
         }
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.goingtopond"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.goingtopond"));
 
         if (walkToWater())
         {
@@ -366,7 +366,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private IAIState findWater()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.searchingwater"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.searchingwater"));
 
         //Reset executedRotations when fisherman searches a new Pond
         executedRotations = 0;
@@ -453,7 +453,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     @Nullable
     private IAIState doFishing()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.fishing"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.fishing"));
 
         @Nullable final IAIState notReadyState = isReadyToFish();
         if (notReadyState != null)

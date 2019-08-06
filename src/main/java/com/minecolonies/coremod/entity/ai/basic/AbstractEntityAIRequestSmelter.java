@@ -15,7 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,7 +79,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                 final int countInResultSlot = isEmpty(furnace.getStackInSlot(RESULT_SLOT)) ? 0 : furnace.getStackInSlot(RESULT_SLOT).getCount();
                 if ((!furnace.isBurning() && countInResultSlot > 0 && isEmpty(furnace.getStackInSlot(SMELTABLE_SLOT))))
                 {
-                    worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
+                    worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
                     return pos;
                 }
             }
@@ -134,7 +134,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
      */
     private IAIState retrieveSmeltableFromFurnace()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
 
         if (walkTo == null || currentRequest == null)
         {
@@ -293,7 +293,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         if (posOfOven != null)
         {
             walkTo = posOfOven;
-            worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.retrieving"));
+            worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.retrieving"));
             return RETRIEVING_END_PRODUCT_FROM_FURNACE;
         }
 

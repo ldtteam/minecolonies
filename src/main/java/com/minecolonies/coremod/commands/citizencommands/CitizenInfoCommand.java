@@ -7,7 +7,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -74,7 +74,7 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
 
         if (!optionalEntityCitizen.isPresent())
         {
-            sender.sendMessage(new TextComponentTranslation(CITIZEN_NOT_LOADED));
+            sender.sendMessage(new TranslationTextComponent(CITIZEN_NOT_LOADED));
             return;
         }
 

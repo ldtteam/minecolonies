@@ -37,7 +37,7 @@ import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -217,7 +217,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private IAIState getNeededItem()
     {
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation(COM_MINECOLONIES_COREMOD_STATUS_GATHERING));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_GATHERING));
         setDelay(STANDARD_DELAY);
 
         if (walkTo == null && walkToBuilding())
@@ -515,7 +515,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             request = getOwnBuilding().getOpenRequests(worker.getCitizenData()).stream().findFirst().orElse(null);
         }
 
-        worker.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.waiting"), request.getShortDisplayString());
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.waiting"), request.getShortDisplayString());
     }
 
     /**

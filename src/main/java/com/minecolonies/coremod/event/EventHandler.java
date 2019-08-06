@@ -45,7 +45,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.World;
@@ -597,7 +597,7 @@ public class EventHandler
         {
             if (!world.isRemote)
             {
-                player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.permission.no"));
+                player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.permission.no"));
             }
             return false;
         }
@@ -606,7 +606,7 @@ public class EventHandler
         {
             if (!world.isRemote)
             {
-                final ITextComponent deleteButton = new TextComponentTranslation("tile.blockHutTownHall.deleteMessageLink")
+                final ITextComponent deleteButton = new TranslationTextComponent("tile.blockHutTownHall.deleteMessageLink")
                                                       .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
                                                         new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                                           String.format(DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED,
@@ -614,17 +614,17 @@ public class EventHandler
                                                           ))));
                 if (MineColonies.getConfig().getCommon().gameplay.allowInfiniteColonies)
                 {
-                    final ITextComponent abandonButton = new TextComponentTranslation("tile.blockHutTownHall.abandonMessageLink")
+                    final ITextComponent abandonButton = new TranslationTextComponent("tile.blockHutTownHall.abandonMessageLink")
                                                            .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD)
                                                                        .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                                                          String.format(ABANDON_COLONY_CONFIRM_COMMAND_SUGGESTED, colony.getID())))
                                                            );
-                    player.sendMessage(new TextComponentTranslation("tile.blockHutTownHall.messagePlacedAlreadyInfi"));
+                    player.sendMessage(new TranslationTextComponent("tile.blockHutTownHall.messagePlacedAlreadyInfi"));
                     player.sendMessage(abandonButton);
                 }
                 else
                 {
-                    player.sendMessage(new TextComponentTranslation("tile.blockHutTownHall.messagePlacedAlreadyDel"));
+                    player.sendMessage(new TranslationTextComponent("tile.blockHutTownHall.messagePlacedAlreadyDel"));
                 }
                 player.sendMessage(deleteButton);
             }
@@ -636,7 +636,7 @@ public class EventHandler
         {
             if (!world.isRemote)
             {
-                player.sendMessage(new TextComponentTranslation("tile.blockHutTownHall.messagePlacedAlready"));
+                player.sendMessage(new TranslationTextComponent("tile.blockHutTownHall.messagePlacedAlready"));
             }
             return false;
         }

@@ -19,7 +19,7 @@ import com.minecolonies.coremod.entity.ai.citizen.baker.BakerRecipes;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
 import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFurnace;
+import net.minecraft.block.FurnaceBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
@@ -30,7 +30,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -143,7 +143,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
         super.registerBlockPosition(block, pos, world);
-        if (block instanceof BlockFurnace && !furnaces.containsKey(pos))
+        if (block instanceof FurnaceBlock && !furnaces.containsKey(pos))
         {
             addToFurnaces(pos);
         }
@@ -297,7 +297,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
                 return;
             }
             final BlockState furnace = worldObj.getBlockState(entry.getKey());
-            if (!(furnace.getBlock() instanceof BlockFurnace))
+            if (!(furnace.getBlock() instanceof FurnaceBlock))
             {
                 if (worldObj.getTileEntity(entry.getKey()) instanceof FurnaceTileEntity)
                 {
@@ -312,11 +312,11 @@ public class BuildingBaker extends AbstractFilterableListBuilding
             if (bakingProduct != null && bakingProduct.getState() == ProductState.BAKING)
             {
                 bakingProduct.increaseBakingProgress();
-                worldObj.setBlockState(entry.getKey(), Blocks.LIT_FURNACE.getDefaultState().with(BlockFurnace.FACING, furnace.get(BlockFurnace.FACING)));
+                worldObj.setBlockState(entry.getKey(), Blocks.FURNACE.getDefaultState().with(FurnaceBlock.FACING, furnace.get(FurnaceBlock.FACING)).with(FurnaceBlock.LIT, true));
             }
             else
             {
-                worldObj.setBlockState(entry.getKey(), Blocks.FURNACE.getDefaultState().with(BlockFurnace.FACING, furnace.get(BlockFurnace.FACING)));
+                worldObj.setBlockState(entry.getKey(), Blocks.FURNACE.getDefaultState().with(FurnaceBlock.FACING, furnace.get(FurnaceBlock.FACING)));
             }
         }
     }

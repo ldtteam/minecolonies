@@ -12,7 +12,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -88,7 +88,7 @@ public class PostBox extends AbstractBuilding
         @Override
         public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken request)
         {
-            return new TextComponentTranslation("tile.minecolonies.blockpostbox.name");
+            return new TranslationTextComponent("tile.minecolonies.blockpostbox.name");
         }
     }
 }

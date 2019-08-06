@@ -20,6 +20,7 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -436,7 +437,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     }
 
     @Override
-    public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability)
+    public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, @NotNull final Direction side)
     {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && getBuilding() != null)
         {

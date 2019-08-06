@@ -117,5 +117,5 @@ public interface IBuildingContainer extends ISchematicProvider, ICitizenAssignab
 
     @Nonnull
     @Override
-    <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap);
+    <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, final Direction direction);
 }

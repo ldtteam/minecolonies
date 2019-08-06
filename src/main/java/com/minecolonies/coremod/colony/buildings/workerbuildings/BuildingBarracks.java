@@ -101,7 +101,7 @@ public class BuildingBarracks extends AbstractBuilding
         {
             if (world.getBlockState(pos).getBlock() != ModBlocks.blockHutBarracksTower)
             {
-                world.setBlockState(pos, ModBlocks.blockHutBarracksTower.getDefaultState().with(HorizontalBlock.FACING, block.get(HorizontalBlock.FACING)));
+                world.setBlockState(pos, ModBlocks.blockHutBarracksTower.getDefaultState().with(HorizontalBlock.HORIZONTAL_FACING, block.get(HorizontalBlock.HORIZONTAL_FACING)));
                 getColony().getBuildingManager().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(pos), world);
             }
             final IBuilding building = getColony().getBuildingManager().getBuilding(pos);
@@ -130,12 +130,6 @@ public class BuildingBarracks extends AbstractBuilding
             }
         }
         return Math.max(1, sum / getMaxBuildingLevel());
-    }
-
-    @Override
-    public BuildingEntry getBuildingRegistryEntry()
-    {
-        return ModBuildings.barracks;
     }
 
     @Override

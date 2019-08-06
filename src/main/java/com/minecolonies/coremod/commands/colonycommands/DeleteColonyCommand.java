@@ -134,7 +134,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
 
         if (!confirmDelete)
         {
-            final ITextComponent deleteButton = new TextComponentTranslation("tile.blockHutTownHall.deleteMessageLink")
+            final ITextComponent deleteButton = new TranslationTextComponent("tile.blockHutTownHall.deleteMessageLink")
                     .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
                             new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                     String.format(DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED,
