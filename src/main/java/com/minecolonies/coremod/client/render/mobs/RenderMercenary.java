@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.render.mobs;
 
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
-import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
@@ -25,7 +25,7 @@ public class RenderMercenary extends RenderBiped<EntityMercenary>
      */
     public RenderMercenary(final RenderManager renderManagerIn)
     {
-        super(renderManagerIn, new ModelBiped(), 0.5f);
+        super(renderManagerIn, new BipedModel(), 0.5f);
 
         this.addLayer(new LayerHeldItem(this));
         this.addLayer(new LayerBipedArmor(this));

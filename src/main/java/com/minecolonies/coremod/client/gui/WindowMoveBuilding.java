@@ -3,28 +3,27 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structures.lib.BlueprintUtils;
-import com.ldtteam.structurize.Structurize;
+import com.ldtteam.structurize.Network;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.network.messages.LSStructureDisplayerMessage;
 import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
+import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.BuildingMoveMessage;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.network.PacketBuffer;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -151,7 +150,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
                 Log.getLogger().info("Request To Server for structure " + structureName);
                 if (ServerLifecycleHooks.getCurrentServer() == null)
                 {
-                    Structurize.getNetwork().sendToServer(new SchematicRequestMessage(structureName.toString()));
+                    Network.getNetwork().sendToServer(new SchematicRequestMessage(structureName.toString()));
                     return;
                 }
                 else
@@ -266,8 +265,8 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
         else
         {
             final BlockPos offset = BlueprintUtils.getPrimaryBlockOffset(Settings.instance.getActiveStructure().getBluePrint());
-            final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset);
-            Network.getNetwork().sendToServer(new BuildingMoveMessage(
+            final BlockState state  = Settings.instance.getActiveStructure().getBlockState(offset).getBlockState();
+            com.minecolonies.coremod.Network.getNetwork().sendToServer(new BuildingMoveMessage(
                     structureName.toString(),
                     structureName.toString(),
                     Settings.instance.getPosition(),
@@ -277,7 +276,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
               state));
         }
 
-        if (!GuiScreen.isShiftKeyDown())
+        if (!Screen.hasShiftDown())
         {
             cancelClicked();
         }
@@ -290,7 +289,7 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
     {
         building.openGui(false);
         Settings.instance.reset();
-        Structurize.getNetwork().sendToServer(new LSStructureDisplayerMessage(Unpooled.buffer(), false));
+        Network.getNetwork().sendToServer(new LSStructureDisplayerMessage(new PacketBuffer(Unpooled.buffer()), false));
         close();
     }
 
@@ -333,9 +332,9 @@ public class WindowMoveBuilding extends AbstractWindowSkeleton
     {
         if (Settings.instance.getActiveStructure() != null)
         {
-            final PacketBuffer buffer = Unpooled.buffer();
+            final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
             Settings.instance.toBytes(buffer);
-            Structurize.getNetwork().sendToServer(new LSStructureDisplayerMessage(buffer, true));
+            Network.getNetwork().sendToServer(new LSStructureDisplayerMessage(buffer, true));
         }
     }
 }

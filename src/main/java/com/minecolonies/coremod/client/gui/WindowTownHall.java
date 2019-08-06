@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
@@ -20,6 +19,7 @@ import com.ldtteam.blockout.views.DropDownList;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
@@ -384,7 +384,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         }
 
         if (townHall.getColony().getMercenaryUseTime() != 0
-              && townHall.getColony().getWorld().getTotalWorldTime() - townHall.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
+              && townHall.getColony().getWorld().getGameTime() - townHall.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
         {
             findPaneOfTypeByID(BUTTON_MERCENARY, Button.class).disable();
         }
@@ -484,7 +484,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final TextField input = findPaneOfTypeByID(INPUT_BLOCK_NAME, TextField.class);
         final String inputText = input.getText();
 
-        final Block block = ForgeRegistries.BLOCKS.get(new ResourceLocation(inputText));
+        final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(inputText));
 
         if (block != null)
         {
@@ -744,11 +744,11 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final IColonyView iColonyView = allies.get(index);
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(IColonyView.getName());
-                final long distance = BlockPosUtil.getDistance2D(IColonyView.getCenter(), building.getPosition());
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(iColonyView.getName());
+                final long distance = BlockPosUtil.getDistance2D(iColonyView.getCenter(), building.getPosition());
                 rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText((int) distance + "b");
                 final Button button = rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class);
-                if (townHall.getBuildingLevel() < MineColonies.getConfig().getCommon().gameplay.minThLevelToTeleport || !townHall.canPlayerUseTP())
+                if (townHall.getBuildingLevel() < MineColonies.getConfig().getCommon().minThLevelToTeleport.get() || !townHall.canPlayerUseTP())
                 {
                     button.setLabel(LanguageHandler.format(TH_TOO_LOW));
                     button.disable();
@@ -772,8 +772,8 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final IColonyView iColonyView = feuds.get(index);
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(IColonyView.getName());
-                final long distance = BlockPosUtil.getDistance2D(IColonyView.getCenter(), building.getPosition());
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(iColonyView.getName());
+                final long distance = BlockPosUtil.getDistance2D(iColonyView.getCenter(), building.getPosition());
                 rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText(String.valueOf((int) distance));
             }
         });

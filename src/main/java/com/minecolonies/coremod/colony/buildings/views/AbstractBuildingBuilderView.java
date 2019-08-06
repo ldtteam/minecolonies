@@ -6,7 +6,6 @@ import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -68,7 +67,7 @@ public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorker
             final int amountAvailable = buf.readInt();
             final int amountNeeded = buf.readInt();
             final BuildingBuilderResource resource = new BuildingBuilderResource(itemStack, amountNeeded, amountAvailable);
-            resources.put(itemStack.getDisplayName() + ":" + itemStack.getItemDamage(), resource);
+            resources.put(itemStack.getDisplayName().getFormattedText(), resource);
         }
 
         constructionName = buf.readString();

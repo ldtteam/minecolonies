@@ -147,7 +147,6 @@ public class ContainerGUICraftingFurnace extends AbstractFurnaceContainer
         if (!world.isRemote)
         {
             final ServerPlayerEntity player = (ServerPlayerEntity) playerIn;
-
             final FurnaceRecipe i = ((ServerPlayerEntity) playerIn).server.getRecipeManager().getRecipe(IRecipeType.SMELTING, furnaceInventory, world).orElseGet(null);
 
             if (i != null)

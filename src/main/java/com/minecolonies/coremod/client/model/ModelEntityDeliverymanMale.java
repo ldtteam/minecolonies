@@ -1,45 +1,46 @@
 package com.minecolonies.coremod.client.model;
 
-import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.MathHelper;
 
-public class ModelEntityDeliverymanMale extends ModelBiped
+public class ModelEntityDeliverymanMale extends BipedModel
 {
-    public ModelRenderer backpack;
+    public RendererModel backpack;
 
     public ModelEntityDeliverymanMale()
     {
         final float scale = 0F;
-        bipedHead = new ModelRenderer(this, 0, 0);
+        bipedHead = new RendererModel(this, 0, 0);
         bipedHead.addBox(-4F, -8F, -4F, 8, 8, 8, scale);
         bipedHead.setRotationPoint(0F, 2F, -4F);
         bipedHead.rotateAngleX = 0.34907F;
 
-        bipedBody = new ModelRenderer(this, 16, 16);
+        bipedBody = new RendererModel(this, 16, 16);
         bipedBody.addBox(-4F, 0F, -4F, 8, 12, 4, scale);
         bipedBody.setRotationPoint(0F, 1F, -2F);
         bipedBody.rotateAngleX = 0.34907F;
         bipedBody.rotateAngleZ = 0F;
 
-        bipedLeftArm = new ModelRenderer(this, 40, 16);
+        bipedLeftArm = new RendererModel(this, 40, 16);
         bipedLeftArm.addBox(0F, 0F, -2F, 4, 12, 4, scale);
         bipedLeftArm.setRotationPoint(4F, 2F, -4F);
 
-        bipedRightArm = new ModelRenderer(this, 40, 16);
+        bipedRightArm = new RendererModel(this, 40, 16);
         bipedRightArm.addBox(-4F, 0F, -2F, 4, 12, 4, scale);
         bipedRightArm.setRotationPoint(-4F, 2F, -4F);
 
-        bipedRightLeg = new ModelRenderer(this, 0, 16);
+        bipedRightLeg = new RendererModel(this, 0, 16);
         bipedRightLeg.addBox(-2F, 0F, -2F, 4, 12, 4, scale);
         bipedRightLeg.setRotationPoint(-2F, 12F, 0F);
 
-        bipedLeftLeg = new ModelRenderer(this, 0, 16);
+        bipedLeftLeg = new RendererModel(this, 0, 16);
         bipedLeftLeg.addBox(-2F, 0F, -2F, 4, 12, 4, scale);
         bipedLeftLeg.setRotationPoint(2F, 12F, 0F);
 
-        backpack = new ModelRenderer(this, 32, 0);
+        backpack = new RendererModel(this, 32, 0);
         backpack.addBox(-4F, 0F, 0F, 8, 10, 6, scale);
         backpack.setRotationPoint(0F, 1F, -2F);
         backpack.rotateAngleX = 0.34907F;
@@ -47,7 +48,7 @@ public class ModelEntityDeliverymanMale extends ModelBiped
 
     @Override
     public void render(
-                        final Entity entity,
+                        final LivingEntity entity,
                         final float limbSwing,
                         final float limbSwingAmount,
                         final float ageInTicks,
@@ -55,7 +56,7 @@ public class ModelEntityDeliverymanMale extends ModelBiped
                         final float headPitch,
                         final float scaleFactor)
     {
-        setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
+        setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
         bipedHead.render(scaleFactor);
         bipedBody.render(scaleFactor);
         bipedLeftArm.render(scaleFactor);
@@ -66,14 +67,13 @@ public class ModelEntityDeliverymanMale extends ModelBiped
     }
 
     @Override
-    public void setRotationAngles(
+    public void setRotationAngles(final LivingEntity entityIn,
                                    final float limbSwing,
                                    final float limbSwingAmount,
                                    final float ageInTicks,
                                    final float netHeadYaw,
                                    final float headPitch,
-                                   final float scaleFactor,
-                                   final Entity entityIn)
+                                   final float scaleFactor)
     {
         bipedHead.rotateAngleY = netHeadYaw / 57.29578F;
         bipedHead.rotateAngleX = headPitch / 57.29578F + 0.45F;
@@ -86,7 +86,7 @@ public class ModelEntityDeliverymanMale extends ModelBiped
         bipedLeftLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 1.4F * limbSwingAmount;
         bipedRightLeg.rotateAngleY = 0.0F;
         bipedLeftLeg.rotateAngleY = 0.0F;
-        if (isRiding)
+        if (isSitting)
         {
             bipedRightArm.rotateAngleX += -0.6283185F;
             bipedLeftArm.rotateAngleX += -0.6283185F;

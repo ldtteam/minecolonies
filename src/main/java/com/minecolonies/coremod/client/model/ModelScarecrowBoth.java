@@ -6,91 +6,93 @@
 
 package com.minecolonies.coremod.client.model;
 
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.client.renderer.entity.model.RendererModel;
+import net.minecraft.client.renderer.model.Model;
+import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelScarecrowBoth extends ModelBase
+public class ModelScarecrowBoth extends EntityModel
 {
     //fields
-    ModelRenderer Head;
-    ModelRenderer Post;
-    ModelRenderer LeftArmPeg;
-    ModelRenderer RightArmPeg;
-    ModelRenderer Torso;
-    ModelRenderer RightLegPeg;
-    ModelRenderer LeftLegPeg;
-    ModelRenderer LeftArm;
-    ModelRenderer RightArm;
-    ModelRenderer RightLeg;
-    ModelRenderer LeftLeg;
+    RendererModel Head;
+    RendererModel Post;
+    RendererModel LeftArmPeg;
+    RendererModel RightArmPeg;
+    RendererModel Torso;
+    RendererModel RightLegPeg;
+    RendererModel LeftLegPeg;
+    RendererModel LeftArm;
+    RendererModel RightArm;
+    RendererModel RightLeg;
+    RendererModel LeftLeg;
 
     public ModelScarecrowBoth()
     {
         textureWidth = 128;
         textureHeight = 64;
 
-        Head = new ModelRenderer(this, 0, 0);
+        Head = new RendererModel(this, 0, 0);
         Head.addBox(-8.2F, -35.6F, -4.2F, 8, 8, 8);
         Head.setRotationPoint(7F, 24F, -1F);
         Head.setTextureSize(128, 64);
         Head.mirror = true;
         setRotation(Head, 0F, 0.1858931F, -0.1092638F);
-        Post = new ModelRenderer(this, 0, 32);
+        Post = new RendererModel(this, 0, 32);
         Post.addBox(-1F, -16F, -1F, 2, 16, 2);
         Post.setRotationPoint(0F, 24F, 0F);
         Post.setTextureSize(128, 64);
         Post.mirror = true;
         setRotation(Post, 0F, 0F, 0F);
-        LeftArmPeg = new ModelRenderer(this, 9, 33);
+        LeftArmPeg = new RendererModel(this, 9, 33);
         LeftArmPeg.addBox(23.5F, 1F, -1F, 2, 2, 2);
         LeftArmPeg.setRotationPoint(7F, 24F, 0F);
         LeftArmPeg.setTextureSize(128, 64);
         LeftArmPeg.mirror = true;
         setRotation(LeftArmPeg, 0F, 0F, -1.351339F);
-        RightArmPeg = new ModelRenderer(this, 9, 33);
+        RightArmPeg = new RendererModel(this, 9, 33);
         RightArmPeg.addBox(-28F, 15.8F, -1F, 2, 2, 2);
         RightArmPeg.setRotationPoint(7F, 24F, 0F);
         RightArmPeg.setTextureSize(128, 64);
         RightArmPeg.mirror = true;
         setRotation(RightArmPeg, 0F, 0F, 1.351339F);
-        Torso = new ModelRenderer(this, 16, 16);
+        Torso = new RendererModel(this, 16, 16);
         Torso.addBox(-10.3F, -27.6F, -2F, 8, 12, 4);
         Torso.setRotationPoint(7F, 24F, 0F);
         Torso.setTextureSize(128, 64);
         Torso.mirror = true;
         setRotation(Torso, 0F, 0F, -0.0349066F);
-        RightLegPeg = new ModelRenderer(this, 9, 33);
+        RightLegPeg = new RendererModel(this, 9, 33);
         RightLegPeg.addBox(-11F, -4F, -1F, 2, 2, 2);
         RightLegPeg.setRotationPoint(7F, 24F, 0F);
         RightLegPeg.setTextureSize(128, 64);
         RightLegPeg.mirror = true;
         setRotation(RightLegPeg, 0F, 0F, 0.0872665F);
-        LeftLegPeg = new ModelRenderer(this, 9, 33);
+        LeftLegPeg = new RendererModel(this, 9, 33);
         LeftLegPeg.addBox(-4.5F, -5F, -1F, 2, 2, 2);
         LeftLegPeg.setRotationPoint(7F, 24F, 0F);
         LeftLegPeg.setTextureSize(128, 64);
         LeftLegPeg.mirror = true;
         setRotation(LeftLegPeg, 0F, 0F, -0.0872665F);
-        LeftArm = new ModelRenderer(this, 40, 16);
+        LeftArm = new RendererModel(this, 40, 16);
         LeftArm.addBox(22.5F, -10F, -1.99F, 4, 12, 4);
         LeftArm.setRotationPoint(7F, 24F, 0F);
         LeftArm.setTextureSize(128, 64);
         LeftArm.mirror = true;
         setRotation(LeftArm, 0F, 0F, -1.351339F);
-        RightArm = new ModelRenderer(this, 40, 16);
+        RightArm = new RendererModel(this, 40, 16);
         RightArm.addBox(-29F, 4.8F, -1.99F, 4, 12, 4);
         RightArm.setRotationPoint(7F, 24F, 0F);
         RightArm.setTextureSize(128, 64);
         RightArm.mirror = true;
         setRotation(RightArm, 0F, 0F, 1.351339F);
-        RightLeg = new ModelRenderer(this, 0, 16);
+        RightLeg = new RendererModel(this, 0, 16);
         RightLeg.addBox(-12F, -15F, -1.99F, 4, 12, 4);
         RightLeg.setRotationPoint(7F, 24F, 0F);
         RightLeg.setTextureSize(128, 64);
         RightLeg.mirror = true;
         setRotation(RightLeg, 0F, 0F, 0.0872665F);
-        LeftLeg = new ModelRenderer(this, 0, 16);
+        LeftLeg = new RendererModel(this, 0, 16);
         LeftLeg.addBox(-5.5F, -16F, -1.98F, 4, 12, 4);
         LeftLeg.setRotationPoint(7F, 24F, 0F);
         LeftLeg.setTextureSize(128, 64);
@@ -98,15 +100,24 @@ public class ModelScarecrowBoth extends ModelBase
         setRotation(LeftLeg, 0F, 0F, -0.0872665F);
     }
 
-    private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
+    private void setRotation(@NotNull final RendererModel model, final float x, final float y, final float z)
     {
         model.rotateAngleX = x;
         model.rotateAngleY = y;
         model.rotateAngleZ = z;
     }
 
-    public void render(final float scaleFactor)
+    @Override
+    public void render(
+      final Entity entityIn,
+      final float limbSwing,
+      final float limbSwingAmount,
+      final float ageInTicks,
+      final float netHeadYaw,
+      final float headPitch,
+      final float scaleFactor)
     {
+        super.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
         Head.render(scaleFactor);
         Post.render(scaleFactor);
         LeftArmPeg.render(scaleFactor);

@@ -3,7 +3,7 @@ package com.minecolonies.api.colony.buildings;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +28,7 @@ public interface ICitizenAssignable extends ISchematicProvider
     /**
      * On tick of the server.
      *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
+     * @param event {@link net.minecraftforge.event.TickEvent.ServerTickEvent}
      */
     void onServerTick(TickEvent.ServerTickEvent event);
 

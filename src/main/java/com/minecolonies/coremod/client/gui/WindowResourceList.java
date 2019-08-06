@@ -12,6 +12,7 @@ import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
@@ -51,7 +52,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
     public WindowResourceList(final int colonyId, final BlockPos buildingPos)
     {
         super(Constants.MOD_ID + RESOURCE_SCROLL_RESOURCE_SUFFIX);
-        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.world.getDimension().getType().getId());
+        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimension().getType().getId());
         if (colonyView != null)
         {
             final IBuildingView buildingView = colonyView.getBuilding(buildingPos);
@@ -76,7 +77,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         {
             final BuildingBuilder.View updatedView = (BuildingBuilder.View) newView;
             final PlayerInventory inventory = this.mc.player.inventory;
-            final boolean isCreative = this.mc.player.capabilities.isCreativeMode;
+            final boolean isCreative = this.mc.player.isCreative();
 
             resources.clear();
             resources.addAll(updatedView.getResources().values());
@@ -187,8 +188,8 @@ public class WindowResourceList extends AbstractWindowSkeleton
         rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(index));
         rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount() - resource.getAvailable()));
 
-        final ItemStack stack = new ItemStack(resource.getItem(), 1, resource.getDamageValue());
-        stack.put(resource.getItemStack().getTag());
+        final ItemStack stack = new ItemStack(resource.getItem(), 1);
+        stack.setTag(resource.getItemStack().getTag());
         rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(stack);
     }
 

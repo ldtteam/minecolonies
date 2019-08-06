@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.MinecoloniesAPIImpl;
+import com.minecolonies.coremod.client.gui.WindowGuiCrafting;
 import com.minecolonies.coremod.client.gui.WindowGuiFurnaceCrafting;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
@@ -116,6 +117,8 @@ public class MineColonies
     private void doClientStuff(final FMLClientSetupEvent event)
     {
         ScreenManager.registerFactory(MinecoloniesContainers.craftingFurnace, WindowGuiFurnaceCrafting::new);
+        ScreenManager.registerFactory(MinecoloniesContainers.craftingGrid, WindowGuiCrafting::new);
+
     }
 
     @SubscribeEvent

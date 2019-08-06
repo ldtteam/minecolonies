@@ -11,13 +11,13 @@ import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.SwitchView;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.network.messages.GuardRecalculateMessage;
 import com.minecolonies.coremod.network.messages.GuardScepterMessage;
 import com.minecolonies.coremod.network.messages.GuardTaskMessage;
 import com.minecolonies.coremod.network.messages.MobEntryChangeMessage;
-import net.minecraft.client.entity.ClientPlayerEntity;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -313,13 +313,13 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     {
         if (building.getGuardType() == null)
         {
-            final List<GuardType> guardTypes = new ArrayList<>(IGuardTypeRegistry.getInstance().getValuesCollection());
+            final List<GuardType> guardTypes = new ArrayList<>(IGuardTypeRegistry.getInstance().getValues());
             job = guardTypes.get(new Random().nextInt(guardTypes.size()));
         }
         else
         {
             final GuardType guardType = building.getGuardType();
-            final List<GuardType> possibleGuardTypes = new ArrayList<>(IGuardTypeRegistry.getInstance().getValuesCollection());
+            final List<GuardType> possibleGuardTypes = new ArrayList<>(IGuardTypeRegistry.getInstance().getValues());
             final int currentGuardTypeIndex = possibleGuardTypes.indexOf(guardType);
             final GuardType nextGuardType = possibleGuardTypes.get(currentGuardTypeIndex == possibleGuardTypes.size() - 1 ? 0 : currentGuardTypeIndex + 1);
 
