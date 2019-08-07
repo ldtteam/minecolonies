@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
@@ -13,11 +12,13 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingT
 import com.minecolonies.api.entity.ai.util.ChatSpamFilter;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.CompatibilityUtils;
-import net.minecraft.entity.ai.EntityAIBase;
+import com.minecolonies.coremod.MineColonies;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Random;
 
 /**
@@ -27,10 +28,10 @@ import java.util.Random;
  *
  * @param <J> the job this ai will have.
  */
-public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
+public abstract class AbstractAISkeleton<J extends IJob> extends Goal
 {
 
-    private static final int                   MUTEX_MASK = 3;
+    private static final Flag                  MUTEX_MASK =  Flag.MOVE;
     @NotNull
     protected final      J                     job;
     @NotNull
@@ -64,7 +65,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
             throw new IllegalArgumentException("Cannot instantiate a AI from a Job that is attached to a Citizen without entity.");
         }
 
-        setMutexBits(MUTEX_MASK);
+        this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
         this.job = job;
         this.worker = this.job.getCitizen().getCitizenEntity().get();
         this.world = CompatibilityUtils.getWorldFromCitizen(this.worker);
@@ -72,7 +73,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
         stateMachine = new TickRateStateMachine(AIWorkerState.INIT, this::onException);
 
         // Start at a random tickcounter to spread AI updates over all ticks
-        tickCounter = new Random().nextInt(MineColonies.getConfig().getCommon().gameplay.updateRate) + 1;
+        tickCounter = new Random().nextInt(MineColonies.getConfig().getCommon().updateRate.get()) + 1;
     }
 
     /**
@@ -139,9 +140,9 @@ public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
      * Updates the task.
      */
     @Override
-    public final void updateTask()
+    public final void tick()
     {
-        if (tickCounter < MineColonies.getConfig().getCommon().gameplay.updateRate)
+        if (tickCounter < MineColonies.getConfig().getCommon().updateRate.get())
         {
             tickCounter++;
         }
@@ -164,9 +165,9 @@ public abstract class AbstractAISkeleton<J extends IJob> extends EntityAIBase
      * @param mutexBits the bits to flag this with.
      */
     @Override
-    public final void setMutexBits(final int mutexBits)
+    public final void setMutexFlags(final EnumSet<Flag> mutexBits)
     {
-        super.setMutexBits(mutexBits);
+        super.setMutexFlags(mutexBits);
     }
 
     /**

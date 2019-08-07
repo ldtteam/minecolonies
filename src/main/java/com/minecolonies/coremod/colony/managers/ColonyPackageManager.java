@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.managers.interfaces.IColonyPackageManager;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.permissions.Permissions;
@@ -19,6 +19,7 @@ import net.minecraft.network.PacketBuffer;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -102,19 +103,19 @@ public class ColonyPackageManager implements IColonyPackageManager
     {
         final World world = colony.getWorld();
         // If the world or server is null, don't try to update the subscribers this tick.
-        if (world == null || world.getMinecraftServer() == null)
+        if (world == null || world.getServer() == null)
         {
             return;
         }
 
         // Add owners
-        world.getMinecraftServer().getPlayerList().getPlayers()
+        world.getServer().getPlayerList().getPlayers()
                 .stream()
                 .filter(colony.getPermissions()::isSubscriber)
                 .forEach(subscribers::add);
 
         //  Add nearby players
-        for (final PlayerEntity o : world.playerEntities)
+        for (final PlayerEntity o : world.getPlayers())
         {
             if (o instanceof ServerPlayerEntity)
             {
@@ -125,7 +126,7 @@ public class ColonyPackageManager implements IColonyPackageManager
                     continue;
                 }
 
-                final double distance = player.getDistanceSq(colony.getCenter());
+                final double distance = player.getDistanceSq(new Vec3d(colony.getCenter()));
                 if (distance < MAX_SQ_DIST_SUBSCRIBER_UPDATE
                         || (oldSubscribers.contains(player) && distance < MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE))
                 {
@@ -206,14 +207,14 @@ public class ColonyPackageManager implements IColonyPackageManager
     {
         if (isDirty || hasNewSubscribers)
         {
-            final PacketBuffer colonyPacketBuffer = Unpooled.buffer();
-            ColonyView.serializeNetworkData(colony, colonyByteBuf, hasNewSubscribers);
+            final PacketBuffer colonyPacketBuffer = new PacketBuffer(Unpooled.buffer());
+            ColonyView.serializeNetworkData(colony, colonyPacketBuffer, hasNewSubscribers);
             for (final ServerPlayerEntity player : subscribers)
             {
                 final boolean isNewSubscriber = !oldSubscribers.contains(player);
                 if (isDirty || isNewSubscriber)
                 {
-                    Network.getNetwork().sendTo(new ColonyViewMessage(colony, colonyByteBuf, isNewSubscriber), player);
+                    Network.getNetwork().sendToPlayer(new ColonyViewMessage(colony, colonyPacketBuffer, isNewSubscriber), player);
                 }
             }
         }
@@ -231,7 +232,7 @@ public class ColonyPackageManager implements IColonyPackageManager
                     .filter(player -> permissions.isDirty() || !oldSubscribers.contains(player)).forEach(player ->
             {
                 final Rank rank = permissions.getRank(player);
-                Network.getNetwork().sendTo(new PermissionsMessage.View(colony, rank), player);
+                Network.getNetwork().sendToPlayer(new PermissionsMessage.View(colony, rank), player);
             });
         }
     }
@@ -247,7 +248,7 @@ public class ColonyPackageManager implements IColonyPackageManager
                 if (!(workOrder instanceof WorkOrderBuildMiner))
                 {
                     subscribers.stream().filter(player -> workManager.isDirty() || !oldSubscribers.contains(player))
-                            .forEach(player -> Network.getNetwork().sendTo(new ColonyViewWorkOrderMessage(colony, workOrder), player));
+                            .forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewWorkOrderMessage(colony, workOrder), player));
                 }
             }
 
@@ -261,7 +262,7 @@ public class ColonyPackageManager implements IColonyPackageManager
         if (Structures.isDirty() || hasNewSubscribers)
         {
             subscribers.stream()
-                    .forEach(player -> Network.getNetwork().sendTo(new ColonyStylesMessage(), player));
+                    .forEach(player -> Network.getNetwork().sendToPlayer(new ColonyStylesMessage(), player));
         }
     }
 

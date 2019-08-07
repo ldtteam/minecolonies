@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.management.handlers;
 
-import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.coremod.MineColonies;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,7 +18,7 @@ public final class LogHandler
      */
     public static void log(final String logEntry)
     {
-        if (MineColonies.getConfig().getCommon().requestSystem.enableDebugLogging)
+        if (MineColonies.getConfig().getCommon().enableDebugLogging.get())
         {
             logger.info(logEntry);
         }

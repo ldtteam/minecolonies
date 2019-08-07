@@ -14,11 +14,11 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
@@ -90,7 +90,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
         final IColony colony = manager.getColony();
         if (colony instanceof Colony)
         {
-            if (MineColonies.getConfig().getCommon().requestSystem.creativeResolve &&
+            if (MineColonies.getConfig().getCommon().creativeResolve.get() &&
                     request.getRequest() instanceof IDeliverable &&
                     request.getRequester() instanceof BuildingBasedRequester &&
                     ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getId()).isPresent() &&

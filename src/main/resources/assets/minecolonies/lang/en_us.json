@@ -20,6 +20,19 @@
   "minecolonies.config.commands": "Command Settings",
   "minecolonies.config.commands.comment": "All configurations related to the Minecolonies commands",
 
+  "minecolonies.config.names": "Name Settings",
+  "minecolonies.config.names.comment": "All configuration items related to the citizen names",
+
+  "minecolonies.config.usemiddleinitial": "Middle Initial",
+  "minecolonies.config.usemiddleinitial.comment": "Should citizens have a middle initial?",
+
+  "minecolonies.config.malefirstnames": "Male First Names",
+  "minecolonies.config.malefirstnames.comment": "Male first names to be used for colonists",
+  "minecolonies.config.femalefirstnames": "Female First Names",
+  "minecolonies.config.femalefirstnames.comment": "Female first names to be used for colonists",
+  "minecolonies.config.lastnames": "Last names",
+  "minecolonies.config.lastnames.comment": "Last names to be used for colonists",
+
   "minecolonies.config.initialcitizenamount": "Initital Citizen Count",
   "minecolonies.config.initialcitizenamount.comment": "Amount of initial citizens. [Default: 4]",
   "minecolonies.config.builderplaceconstructiontape": "Contruction-Tape Placement",

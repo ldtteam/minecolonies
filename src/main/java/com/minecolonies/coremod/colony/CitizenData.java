@@ -8,14 +8,13 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.api.configuration.NameConfiguration;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
@@ -25,7 +24,6 @@ import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.INBT;
-import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Hand;
@@ -252,7 +250,7 @@ public class CitizenData implements ICitizenData
 
         if (compound.keySet().contains("job"))
         {
-            setJob(IJobDataManager.getInstance().createFrom(this, compound.getCompoundTag("job")));
+            setJob(IJobDataManager.getInstance().createFrom(this, compound.getCompound("job")));
         }
 
         //  Attributes
@@ -509,17 +507,17 @@ public class CitizenData implements ICitizenData
 
         if (female)
         {
-            firstName = getRandomElement(rand, NameConfiguration.names.femaleFirstNames);
+            firstName = getRandomElement(rand, MineColonies.getConfig().getServer().femaleFirstNames.get().toArray(new String[0]));
         }
         else
         {
-            firstName = getRandomElement(rand, NameConfiguration.names.maleFirstNames);
+            firstName = getRandomElement(rand, MineColonies.getConfig().getServer().maleFirstNames.get().toArray(new String[0]));
         }
 
         middleInitial = String.valueOf(getRandomLetter(rand));
-        lastName = getRandomElement(rand, NameConfiguration.names.lastNames);
+        lastName = getRandomElement(rand, MineColonies.getConfig().getServer().lastNames.get().toArray(new String[0]));
 
-        if (NameConfiguration.names.useMiddleInitial)
+        if (MineColonies.getConfig().getServer().useMiddleInitial.get())
         {
             citizenName = String.format("%s %s. %s", firstName, middleInitial, lastName);
         }
@@ -729,10 +727,10 @@ public class CitizenData implements ICitizenData
             else if (job != null)
             {
                 getCitizenEntity().ifPresent(entityCitizen -> {
-                    entityCitizen.getTasks().removeTask(entityCitizen.getTasks().taskEntries.stream()
-                                                          .filter(task -> task.action instanceof AbstractAISkeleton)
+                    entityCitizen.getTasks().removeGoal(entityCitizen.getTasks().getRunningGoals()
+                                                          .filter(task -> task.getGoal() instanceof AbstractAISkeleton)
                                                           .findFirst()
-                                                          .orElse(null).action);
+                                                          .orElse(null).getGoal());
                 });
 
                 //  No place of employment, get rid of our job
@@ -751,7 +749,7 @@ public class CitizenData implements ICitizenData
     public void updateCitizenEntityIfNecessary()
     {
         final List<AbstractEntityCitizen> list = colony.getWorld()
-                                            .getLoadedEntityList()
+                                            .getEntities()
                                             .stream()
                                                    .filter(e -> e instanceof AbstractEntityCitizen)
                                                    .map(e -> (AbstractEntityCitizen) e)
@@ -767,7 +765,7 @@ public class CitizenData implements ICitizenData
             for (int i = 1; i < list.size(); i++)
             {
                 Log.getLogger().warn("Removing duplicate entity:" + list.get(i).getName());
-                colony.getWorld().removeEntity(list.get(i));
+                colony.getWorld().getEntityByID(list.get(i).getEntityId()).remove();
             }
             return;
         }
@@ -961,8 +959,7 @@ public class CitizenData implements ICitizenData
 
         final CompoundNBT compound = new CompoundNBT();
         compound.put("inventory", inventory.write(new ListNBT()));
-        ByteBufUtils.writeTag(buf, compound);
-
+        buf.writeCompoundTag(compound);
         buf.writeBlockPos(lastPosition);
     }
 
@@ -980,7 +977,7 @@ public class CitizenData implements ICitizenData
             final ITextComponent[] latestStatusArray = entityCitizen.getCitizenStatusHandler().getLatestStatus();
             for (final ITextComponent latestStatus : latestStatusArray)
             {
-                buf.writeString(latestStatus == null ? "" : latestStatus.getUnformattedText());
+                buf.writeString(latestStatus == null ? "" : latestStatus.getFormattedText());
             }
         });
     }
@@ -1085,7 +1082,7 @@ public class CitizenData implements ICitizenData
     @Override
     public void decreaseSaturation(final double extraSaturation)
     {
-        this.saturation = Math.max(MIN_SATURATION, this.saturation - Math.abs(extraSaturation * MineColonies.getConfig().getCommon().gameplay.foodModifier));
+        this.saturation = Math.max(MIN_SATURATION, this.saturation - Math.abs(extraSaturation * MineColonies.getConfig().getCommon().foodModifier.get()));
         this.justAte = false;
     }
 

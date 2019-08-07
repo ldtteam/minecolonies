@@ -10,8 +10,8 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRetryable;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -60,13 +60,13 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Override
     public int getMaximalTries()
     {
-        return MineColonies.getConfig().getCommon().requestSystem.maximalRetries;
+        return MineColonies.getConfig().getCommon().maximalRetries.get();
     }
 
     @Override
     public int getMaximalDelayBetweenRetriesInTicks()
     {
-        return MineColonies.getConfig().getCommon().requestSystem.delayBetweenRetries;
+        return MineColonies.getConfig().getCommon().delayBetweenRetries.get();
     }
 
     @Override
@@ -145,7 +145,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     }
 
     @Override
-    public void update()
+    public void tick()
     {
         LogHandler.log("Starting reassignment.");
 

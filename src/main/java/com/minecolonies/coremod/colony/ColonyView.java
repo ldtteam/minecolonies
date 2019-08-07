@@ -15,8 +15,9 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.permissions.PermissionsView;
@@ -29,14 +30,15 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.event.TickEvent;
 
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -194,7 +196,7 @@ public final class ColonyView implements IColonyView
      * Populate an NBT compound for a network packet representing a ColonyView.
      *
      * @param colony            Colony to write data about.
-     * @param buf               {@link ByteBuf} to write data in.
+     * @param buf               {@link PacketBuffer} to write data in.
      * @param hasNewSubscribers true if there is a new subscription.
      */
     public static void serializeNetworkData(@NotNull Colony colony, @NotNull PacketBuffer buf, boolean hasNewSubscribers)
@@ -229,7 +231,7 @@ public final class ColonyView implements IColonyView
         for (final Map.Entry<BlockPos, BlockState> block : waypoints.entrySet())
         {
             buf.writeBlockPos(block.getKey());
-            ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new CompoundNBT(), block.get()));
+            buf.writeInt(Block.getStateId(block.getValue()));
         }
 
         buf.writeInt(colony.getLastContactInHours());
@@ -242,14 +244,14 @@ public final class ColonyView implements IColonyView
             final int preSize = buf.writerIndex();
             final int preState = buf.readerIndex();
             buf.writeBoolean(true);
-            ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
+            buf.writeCompoundTag(colony.getRequestManager().serializeNBT());
             final int postSize = buf.writerIndex();
             if ((postSize - preSize) >= ColonyView.MAX_BYTES_NBTCOMPOUND)
             {
                 colony.getRequestManager().reset();
                 buf.setIndex(preState, preSize);
                 buf.writeBoolean(true);
-                ByteBufUtils.writeTag(buf, colony.getRequestManager().serializeNBT());
+                buf.writeCompoundTag(colony.getRequestManager().serializeNBT());
             }
         }
         else
@@ -271,7 +273,7 @@ public final class ColonyView implements IColonyView
         buf.writeLong(colony.getMercenaryUseTime());
 
         buf.writeString(colony.getStyle());
-        buf.writeInt(colony.getRaiderManager().getHorde(colony.getWorld().getMinecraftServer().getWorld(colony.getDimension())).size());
+        buf.writeInt(colony.getRaiderManager().getHorde(colony.getWorld().getServer().getWorld(DimensionType.getById(colony.getDimension()))).size());
     }
 
     /**
@@ -592,7 +594,7 @@ public final class ColonyView implements IColonyView
     /**
      * Populate a ColonyView from the network data.
      *
-     * @param buf               {@link ByteBuf} to read from.
+     * @param buf               {@link PacketBuffer} to read from.
      * @param isNewSubscription Whether this is a new subscription of not.
      * @return null == no response.
      */
@@ -624,7 +626,7 @@ public final class ColonyView implements IColonyView
         final int blockListSize = buf.readInt();
         for (int i = 0; i < blockListSize; i++)
         {
-            freeBlocks.add(Block.getBlockFromName(buf.readString()));
+            freeBlocks.add(ForgeRegistries.BLOCKS.getValue(new ResourceLocation((buf.readString()))));
         }
 
         final int posListSize = buf.readInt();
@@ -638,7 +640,7 @@ public final class ColonyView implements IColonyView
         final int wayPointListSize = buf.readInt();
         for (int i = 0; i < wayPointListSize; i++)
         {
-            wayPoints.put(BlockPosUtil.readFromByteBuf(buf), NBTUtil.readBlockState(ByteBufUtils.readTag(buf)));
+            wayPoints.put(BlockPosUtil.readFromByteBuf(buf), Block.getStateById(buf.readInt()));
         }
         this.lastContactInHours = buf.readInt();
         this.manualHousing = buf.readBoolean();
@@ -646,7 +648,7 @@ public final class ColonyView implements IColonyView
 
         if (buf.readBoolean())
         {
-            final CompoundNBT compound = ByteBufUtils.readTag(buf);
+            final CompoundNBT compound = buf.readCompoundTag();
             this.requestManager = new StandardRequestManager(this);
             this.requestManager.deserializeNBT(compound);
         }
@@ -891,8 +893,8 @@ public final class ColonyView implements IColonyView
     @Override
     public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        final Chunk chunk = w.getChunk(pos);
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+        final Chunk chunk = w.getChunkAt(pos);
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
         return cap.getOwningColony() == this.getID();
     }
 
@@ -1211,12 +1213,6 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public IStatisticAchievementManager getStatsManager()
-    {
-        return null;
-    }
-
-    @Override
     public IRaiderManager getRaiderManager()
     {
         return null;
@@ -1249,6 +1245,6 @@ public final class ColonyView implements IColonyView
     @Override
     public void usedMercenaries()
     {
-        mercenaryLastUseTime = world.getTotalWorldTime();
+        mercenaryLastUseTime = world.getGameTime();
     }
 }

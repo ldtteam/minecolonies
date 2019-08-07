@@ -7,10 +7,8 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.sounds.FishermanSounds;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.fisherman.EntityAIWorkFisherman;
-import net.minecraft.entity.monster.EntityGuardian;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.DamageSource;
@@ -208,10 +206,6 @@ public class JobFisherman extends AbstractJob
     public void triggerDeathAchievement(final DamageSource source, final AbstractEntityCitizen citizen)
     {
         super.triggerDeathAchievement(source, citizen);
-        if (source.getTrueSource() instanceof EntityGuardian)
-        {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementFisherDeathGuardian);
-        }
     }
 
     /**

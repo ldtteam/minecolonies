@@ -117,7 +117,7 @@ public class StandardDataStoreManager implements IDataStoreManager
                 final IDataStore store = controller.deserialize(CompoundNBT.getCompound(NbtTagConstants.TAG_VALUE));
 
                 return new Tuple<>(token, store);
-            }).collect(Collectors.toMap(Tuple::getFirst, Tuple::getSecond));
+            }).collect(Collectors.toMap(Tuple::getA, Tuple::getB));
 
             return new StandardDataStoreManager(storeMap);
         }

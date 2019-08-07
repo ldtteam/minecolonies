@@ -596,7 +596,7 @@ public final class StandardRequestFactories
     {
         final IRequester requester = controller.deserialize(compound.getCompound(NBT_REQUESTER));
         final IToken token = controller.deserialize(compound.getCompound(NBT_TOKEN));
-        final RequestState state = RequestState.deserializeNBT((IntNBT) compound.getTag(NBT_STATE));
+        final RequestState state = RequestState.deserializeNBT((IntNBT) compound.get(NBT_STATE));
         final T requested = typeDeserialization.apply(controller, compound.getCompound(NBT_REQUESTED));
 
         final List<IToken> childTokens = new ArrayList<>();
@@ -624,7 +624,7 @@ public final class StandardRequestFactories
         {
             final ImmutableList.Builder<ItemStack> stackBuilder = ImmutableList.builder();
             final ListNBT deliveriesList = compound.getList(NBT_DELIVERIES, Constants.NBT.TAG_COMPOUND);
-            NBTUtils.streamCompound(deliveriesList).forEach(itemStackCompound -> stackBuilder.add(new ItemStack(itemStackCompound)));
+            NBTUtils.streamCompound(deliveriesList).forEach(itemStackCompound -> stackBuilder.add(ItemStack.read(itemStackCompound)));
 
             request.overrideCurrentDeliveries(stackBuilder.build());
         }

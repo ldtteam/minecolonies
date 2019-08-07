@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
@@ -14,10 +15,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Abstract skeleton implementation of a request.
@@ -440,20 +437,7 @@ public abstract class AbstractRequest<R extends IRequestable> implements IReques
 
         if (itemExamples == null)
         {
-            itemExamples =
-              ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
-                  final NonNullList<ItemStack> stacks = NonNullList.create();
-                  try
-                  {
-                      item.getSubItems(CreativeTabs.SEARCH, stacks);
-                  }
-                  catch (Exception ex)
-                  {
-                      Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
-                  }
-
-                  return stacks.stream().filter(deliverable::matches);
-              }).collect(Collectors.toList()));
+            itemExamples = ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(deliverable::matches).collect(Collectors.toList()));
         }
 
         return itemExamples;

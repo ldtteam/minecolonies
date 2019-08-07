@@ -9,7 +9,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -247,7 +247,7 @@ public class WorkManager implements IWorkManager
      * Process updates on the World Tick.
      * Currently, does periodic Work Order cleanup.
      *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}.
+     * @param event {@link net.minecraftforge.event.TickEvent.WorldTickEvent}.
      */
     @Override
     public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)

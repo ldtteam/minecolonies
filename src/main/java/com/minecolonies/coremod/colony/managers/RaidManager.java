@@ -3,13 +3,13 @@ package com.minecolonies.coremod.colony.managers;
 import com.ldtteam.structurize.management.StructureName;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.InstantStructurePlacer;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
@@ -19,7 +19,7 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -194,12 +194,12 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public void unregisterRaider(@NotNull final AbstractEntityMinecoloniesMob raider, final WorldServer world)
+    public void unregisterRaider(@NotNull final AbstractEntityMinecoloniesMob raider, final ServerWorld world)
     {
         for(final UUID uuid : new ArrayList<>(horde))
         {
-            final Entity raiderEntity = world.getEntityFromUuid(uuid);
-            if(raiderEntity == null || !raiderEntity.isEntityAlive() || uuid.equals(raider.getUniqueID()))
+            final Entity raiderEntity = world.getEntityByUuid(uuid);
+            if(raiderEntity == null || !raiderEntity.isAlive() || uuid.equals(raider.getUniqueID()))
             {
                 horde.remove(uuid);
             }
@@ -231,7 +231,7 @@ public class RaidManager implements IRaiderManager
                 {
                     schematicMap.remove(entry.getKey());
                 }
-                else if (entry.getValue().getB() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * MineColonies.getConfig().getCommon().gameplay.daysUntilPirateshipsDespawn < world.getWorldTime())
+                else if (entry.getValue().getB() + TICKS_SECOND * SECONDS_A_MINUTE * MINUTES_A_DAY * MineColonies.getConfig().getCommon().daysUntilPirateshipsDespawn.get() < world.getGameTime())
                 {
                     // Load the backup from before spawning
                     try
@@ -272,13 +272,13 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public List<AbstractEntityMinecoloniesMob> getHorde(final WorldServer world)
+    public List<AbstractEntityMinecoloniesMob> getHorde(final ServerWorld world)
     {
         final List<AbstractEntityMinecoloniesMob> raiders = new ArrayList<>();
         for (final UUID uuid : new ArrayList<>(horde))
         {
-            final Entity raider = world.getEntityFromUuid(uuid);
-            if (!(raider instanceof AbstractEntityMinecoloniesMob) || !raider.isEntityAlive())
+            final Entity raider = world.getEntityByUuid(uuid);
+            if (!(raider instanceof AbstractEntityMinecoloniesMob) || !raider.isAlive())
             {
                 horde.remove(uuid);
                 sendHordeMessage();

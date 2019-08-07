@@ -216,7 +216,7 @@ public interface IColonyView extends IColony
     /**
      * Populate a ColonyView from the network data.
      *
-     * @param buf               {@link ByteBuf} to read from.
+     * @param buf               {@link PacketBuffer} to read from.
      * @param isNewSubscription Whether this is a new subscription of not.
      * @return null == no response.
      */

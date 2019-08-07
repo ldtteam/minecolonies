@@ -5,10 +5,8 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.sounds.ArcherSounds;
 import com.minecolonies.api.sounds.KnightSounds;
-import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
-import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.Nullable;
@@ -40,10 +38,6 @@ public abstract class AbstractJobGuard extends AbstractJob
     public void triggerDeathAchievement(final DamageSource source, final AbstractEntityCitizen citizen)
     {
         super.triggerDeathAchievement(source, citizen);
-        if (source.getTrueSource() instanceof EntityEnderman && citizen.getCitizenColonyHandler().getColony() != null)
-        {
-            citizen.getCitizenColonyHandler().getColony().getStatsManager().triggerAchievement(ModAchievements.achievementGuardDeathEnderman);
-        }
     }
 
     /**

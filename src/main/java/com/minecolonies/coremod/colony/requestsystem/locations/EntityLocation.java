@@ -7,7 +7,8 @@ import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +40,7 @@ public class EntityLocation implements ILocation
             return;
         }
 
-        entity = new WeakReference<>(ServerLifecycleHooks.getCurrentServer().getEntityFromUuid(uuid));
+        entity = new WeakReference<>(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(getDimension())).getEntityByUuid(uuid));
     }
 
     /**
@@ -77,7 +78,7 @@ public class EntityLocation implements ILocation
         }
         else
         {
-            return entity.get().dimension;
+            return entity.get().dimension.getId();
         }
     }
 
@@ -174,7 +175,7 @@ public class EntityLocation implements ILocation
         @Override
         public EntityLocation getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final Entity input)
         {
-            return new EntityLocation(input.getPersistentID());
+            return new EntityLocation(input.getUniqueID());
         }
     }
 }
