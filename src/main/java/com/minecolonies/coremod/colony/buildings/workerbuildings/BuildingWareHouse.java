@@ -27,9 +27,9 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
+import net.minecraft.block.ContainerBlock;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -157,8 +157,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         for (final Vec3d pos : registeredDeliverymenCopy)
         {
             final IColony colony = getColony();
-            if (colony != null && colony.getWorld() != null
-                  && (!(colony.getWorld().getBlockState(new BlockPos(pos)) instanceof BlockHutDeliveryman) || colony.isCoordInColony(colony.getWorld(), new BlockPos(pos))))
+            if (colony != null && colony.getWorld() != null && (!(colony.getWorld().getBlockState(new BlockPos(pos)).getBlock() instanceof BlockHutDeliveryman) || colony.isCoordInColony(colony.getWorld(), new BlockPos(pos))))
             {
                 registeredDeliverymen.remove(pos);
             }
@@ -256,7 +255,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
     {
-        if (block instanceof BlockContainer || block instanceof BlockMinecoloniesRack)
+        if (block instanceof ContainerBlock || block instanceof BlockMinecoloniesRack)
         {
             final TileEntity entity = world.getTileEntity(pos);
             if (entity instanceof ChestTileEntity)
@@ -281,15 +280,15 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     public static void handleBuildingOverChest(@NotNull final BlockPos pos, final ChestTileEntity chest, final World world)
     {
         final List<ItemStack> inventory = new ArrayList<>();
-        final int size = chest.getSingleChestHandler().getSlots();
+        final int size = chest.getSizeInventory();
         for (int slot = 0; slot < size; slot++)
         {
-            final ItemStack stack = chest.getSingleChestHandler().getStackInSlot(slot);
+            final ItemStack stack = chest.getStackInSlot(slot);
             if (!ItemStackUtils.isEmpty(stack))
             {
                 inventory.add(stack.copy());
             }
-            chest.getSingleChestHandler().extractItem(slot, Integer.MAX_VALUE, false);
+            chest.removeStackFromSlot(slot);
         }
 
         world.setBlockState(pos, ModBlocks.blockRack.getDefaultState(), 0x03);
