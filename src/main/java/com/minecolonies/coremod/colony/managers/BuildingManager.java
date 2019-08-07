@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
@@ -13,9 +14,8 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
@@ -32,7 +32,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -328,7 +328,7 @@ public class BuildingManager implements IBuildingManager
 
                 Log.getLogger().info(String.format("Colony %d - new AbstractBuilding for %s at %s",
                         colony.getID(),
-                        tileEntity.getBlockType().getClass(),
+                        tileEntity.getBlockState().getClass(),
                         tileEntity.getPosition()));
                 if (tileEntity.isMirrored())
                 {
@@ -370,7 +370,7 @@ public class BuildingManager implements IBuildingManager
             {
                 Log.getLogger().error(String.format("Colony %d unable to create AbstractBuilding for %s at %s",
                         colony.getID(),
-                        tileEntity.getBlockType().getClass(),
+                        tileEntity.getBlockState().getClass(),
                         tileEntity.getPosition()));
             }
 
@@ -387,7 +387,7 @@ public class BuildingManager implements IBuildingManager
         {
             for (final ServerPlayerEntity player : subscribers)
             {
-                Network.getNetwork().sendTo(new ColonyViewRemoveBuildingMessage(colony, building.getID()), player);
+                Network.getNetwork().sendToPlayer(new ColonyViewRemoveBuildingMessage(colony, building.getID()), player);
             }
 
             Log.getLogger().info(String.format("Colony %d - removed AbstractBuilding %s of type %s",
@@ -504,7 +504,7 @@ public class BuildingManager implements IBuildingManager
                 {
                     subscribers.stream()
                             .filter(player -> building.isDirty() || !oldSubscribers.contains(player))
-                            .forEach(player -> Network.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
+                            .forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewBuildingViewMessage(building), player));
                 }
             }
         }
@@ -523,7 +523,7 @@ public class BuildingManager implements IBuildingManager
             {
                 if (building instanceof BuildingFarmer)
                 {
-                    subscribers.forEach(player -> Network.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
+                    subscribers.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewBuildingViewMessage(building), player));
                 }
             }
         }

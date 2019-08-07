@@ -7,9 +7,8 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.permissions.PermissionEvent;
-import com.minecolonies.api.configuration.Configurations;
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.coremod.achievements.ModAchievements;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowTownHall;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -21,7 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.MAX_PERMISSION_EVENTS;
-import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT_FIRST;
 
 /**
  * Class used to manage the townHall building block.
@@ -71,15 +69,6 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
-
-        if (newLevel == NUM_ACHIEVEMENT_FIRST)
-        {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementBuildingTownhall);
-        }
-        if (newLevel >= this.getMaxBuildingLevel())
-        {
-            this.getColony().getStatsManager().triggerAchievement(ModAchievements.achievementUpgradeTownhallMax);
-        }
     }
 
     @Override
@@ -112,7 +101,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     {
         super.serializeToView(buf);
 
-        buf.writeBoolean(MineColonies.getConfig().getCommon().gameplay.canPlayerUseColonyTPCommand);
+        buf.writeBoolean(MineColonies.getConfig().getCommon().canPlayerUseColonyTPCommand.get());
         buf.writeInt(permissionEvents.size());
         for(final PermissionEvent event: permissionEvents)
         {
@@ -123,9 +112,9 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     @Override
     public int getClaimRadius(final int newLevel)
     {
-        if (newLevel + 1 < MineColonies.getConfig().getCommon().gameplay.minTownHallPadding)
+        if (newLevel + 1 < MineColonies.getConfig().getCommon().minTownHallPadding.get())
         {
-            return MineColonies.getConfig().getCommon().gameplay.minTownHallPadding;
+            return MineColonies.getConfig().getCommon().minTownHallPadding.get();
         }
         return newLevel + 1;
     }
