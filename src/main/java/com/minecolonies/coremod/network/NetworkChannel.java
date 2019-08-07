@@ -132,6 +132,7 @@ public class NetworkChannel
         registerMessage(++idx, LocalizedParticleEffectMessage.class);
         registerMessage(++idx, UpdateChunkRangeCapabilityMessage.class);
         registerMessage(++idx, OpenSuggestionWindowMessage.class);
+        registerMessage(++idx, UpdateClientWithRecipesMessage.class);
 
         //JEI Messages
         registerMessage(++idx, TransferRecipeCrafingTeachingMessage.class);

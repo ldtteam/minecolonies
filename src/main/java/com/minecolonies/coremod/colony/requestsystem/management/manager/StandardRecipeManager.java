@@ -58,7 +58,7 @@ public class StandardRecipeManager implements IRecipeManager
     {
         for(final Map.Entry<IToken, IRecipeStorage> tempStorage: recipes.entrySet())
         {
-            if(tempStorage.get().equals(storage))
+            if(tempStorage.getValue().equals(storage))
             {
                 return tempStorage.getKey();
             }
