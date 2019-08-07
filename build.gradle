@@ -156,7 +156,7 @@ minecraft {
             property 'forge.logging.console.level', 'info'
 
             mods {
-                structurize {
+                minecolonies {
                     source sourceSets.main
                     source sourceSets.api
                 }
@@ -197,13 +197,12 @@ jar {
                 'ContainedDeps': configurations.contained.files.collect { it.name }.join(' '),
                 'Maven-Artifact': "${project.group}:${project.archivesBaseName}:${project.version}:universal",
                 'Timestamp': System.currentTimeMillis(),
-                'FMLAT': "minecolonies_at.cfg",
-                "Specification-Title": "structurize",
-                "Specification-Vendor": "structurizesareus",
+                "Specification-Title": "minecolonies",
+                "Specification-Vendor": "minecoloniessareus",
                 "Specification-Version": "1", // We are version 1 of ourselves
                 "Implementation-Title": project.name,
                 "Implementation-Version": "${version}",
-                "Implementation-Vendor" :"structurizesareus",
+                "Implementation-Vendor" :"minecoloniessareus",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }

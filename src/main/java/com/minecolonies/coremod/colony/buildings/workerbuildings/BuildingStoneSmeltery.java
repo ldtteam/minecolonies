@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.coremod.util.FurnaceRecipes;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutStoneSmelter;
@@ -20,7 +21,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -93,8 +93,7 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
             return false;
         }
 
-        getColony().getWorld().getServer().getRecipeManager().getRecipes(IRecipeType.SMELTING);
-        return isBlockForThisSmelter(storage.getPrimaryOutput()) && FurnaceRecipes.instance().getSmeltingResult(storage.getInput().get(0)).isItemEqual(storage.getPrimaryOutput());
+        return isBlockForThisSmelter(storage.getPrimaryOutput()) && FurnaceRecipes.getInstance().getSmeltingResult(storage.getInput().get(0)).isItemEqual(storage.getPrimaryOutput());
     }
 
     /**
