@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipeBook;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -106,4 +107,11 @@ public interface IProxy
      * @param pos the position of the block.
      */
     void openDecorationControllerWindow(@NotNull final BlockPos pos);
+
+    /**
+     * Get the world for a dimension.
+     * @param dimension the dimension.
+     * @return the world.
+     */
+    World getWorld(int dimension);
 }

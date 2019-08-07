@@ -10,7 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -226,7 +226,7 @@ public interface IColonyManager
      * On server tick, tick every Colony.
      * NOTE: Review this for performance.
      *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
+     * @param event {@link net.minecraftforge.event.TickEvent.ServerTickEvent}
      */
     void onServerTick(@NotNull TickEvent.ServerTickEvent event);
 

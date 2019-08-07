@@ -226,9 +226,9 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     }
 
     @Override
-    public void update()
+    public void tick()
     {
-        wrappedManager.update();
+        wrappedManager.tick();
     }
 
     @NotNull

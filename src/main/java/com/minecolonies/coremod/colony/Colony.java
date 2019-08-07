@@ -11,15 +11,14 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.util.MobEventsUtils;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.managers.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
@@ -34,17 +33,18 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -104,11 +104,6 @@ public class Colony implements IColony
      * Colony happiness manager.
      */
     private final IColonyHappinessManager colonyHappinessManager = new ColonyHappinessManager();
-
-    /**
-     * Statistic and achievement manager manager of the colony.
-     */
-    private final IStatisticAchievementManager statsManager = new StatisticAchievementManager(this);
 
     /**
      * Barbarian manager of the colony.
@@ -271,15 +266,15 @@ public class Colony implements IColony
         this.id = id;
         if (world != null)
         {
-            this.dimensionId = world.world.getDimension().getType().getId();
+            this.dimensionId = world.getDimension().getType().getId();
             this.world = world;
             checkOrCreateTeam();
         }
         this.permissions = new Permissions(this);
 
-        for (final String s : MineColonies.getConfig().getCommon().gameplay.freeToInteractBlocks)
+        for (final String s : MineColonies.getConfig().getCommon().freeToInteractBlocks.get())
         {
-            final Block block = ForgeRegistries.BLOCKS.get(new ResourceLocation(s));
+            final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
             if (block == null)
             {
                 final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
@@ -319,7 +314,7 @@ public class Colony implements IColony
             checkOrCreateTeam();
             this.colonyTeamColor = colonyColor;
             this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id).setColor(colonyColor);
-            this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id).setPrefix(colonyColor.toString());
+            this.world.getScoreboard().getTeam(TEAM_COLONY_NAME + this.id).setPrefix(new StringTextComponent(colonyColor.toString()));
             this.markDirty();
         }
     }
@@ -411,16 +406,6 @@ public class Colony implements IColony
             buildingManager.read(compound);
         }
 
-        if (compound.keySet().contains(TAG_STATS_MANAGER))
-        {
-            statsManager.read(compound.getCompound(TAG_STATS_MANAGER));
-        }
-        else
-        {
-            //Compatability with old version!
-            statsManager.read(compound);
-        }
-
         if (compound.keySet().contains(TAG_PROGRESS_MANAGER))
         {
             progressManager.read(compound);
@@ -454,7 +439,7 @@ public class Colony implements IColony
         final ListNBT freeBlockTagList = compound.getList(TAG_FREE_BLOCKS, NBT.TAG_STRING);
         for (int i = 0; i < freeBlockTagList.size(); ++i)
         {
-            freeBlocks.add(ForgeRegistries.BLOCKS.get(new ResourceLocation(freeBlockTagList.getString(i))));
+            freeBlocks.add(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(freeBlockTagList.getString(i))));
         }
 
         // Free positions
@@ -559,10 +544,6 @@ public class Colony implements IColony
 
         colonyHappinessManager.getLockedHappinessModifier().ifPresent(d -> compound.putDouble(TAG_HAPPINESS_MODIFIER, d));
 
-        final CompoundNBT statsCompound = new CompoundNBT();
-        statsManager.write(statsCompound);
-        compound.put(TAG_STATS_MANAGER, statsCompound);
-
         //  Workload
         @NotNull final CompoundNBT workManagerCompound = new CompoundNBT();
         workManager.write(workManagerCompound);
@@ -577,8 +558,7 @@ public class Colony implements IColony
         {
             @NotNull final CompoundNBT wayPointCompound = new CompoundNBT();
             BlockPosUtil.write(wayPointCompound, TAG_WAYPOINT, entry.getKey());
-            NBTUtil.writeBlockState(wayPointCompound, entry.getValue());
-
+            wayPointCompound.put(TAG_BLOCK, NBTUtil.writeBlockState(entry.getValue()));
             wayPointTagList.add(wayPointCompound);
         }
         compound.put(TAG_WAYPOINT, wayPointTagList);
@@ -587,7 +567,7 @@ public class Colony implements IColony
         @NotNull final ListNBT freeBlocksTagList = new ListNBT();
         for (@NotNull final Block block : freeBlocks)
         {
-            freeBlocksTagList.add(new NBTTagString(block.getRegistryName().toString()));
+            freeBlocksTagList.add(new StringNBT(block.getRegistryName().toString()));
         }
         compound.put(TAG_FREE_BLOCKS, freeBlocksTagList);
 
@@ -666,11 +646,6 @@ public class Colony implements IColony
         world = null;
     }
 
-    /**
-     * Any per-server-tick logic should be performed here.
-     *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
-     */
     @Override
     public void onServerTick(@NotNull final TickEvent.ServerTickEvent event)
     {
@@ -684,7 +659,7 @@ public class Colony implements IColony
 
         buildingManager.tick(event);
 
-        getRequestManager().update();
+        getRequestManager().tick();
 
         final List<PlayerEntity> visitors = new ArrayList<>(visitingPlayers);
 
@@ -817,10 +792,10 @@ public class Colony implements IColony
         citizenManager.onWorldTick(event);
 
         if (shallUpdate(world, TICKS_SECOND)
-              && event.world.getDifficulty() != EnumDifficulty.PEACEFUL
-              && MineColonies.getConfig().getCommon().gameplay.doBarbariansSpawn
+              && event.world.getDifficulty() != Difficulty.PEACEFUL
+              && MineColonies.getConfig().getCommon().doBarbariansSpawn.get()
               && raidManager.canHaveRaiderEvents()
-              && !world.getMinecraftServer().getPlayerList().getPlayers()
+              && !world.getServer().getPlayerList().getPlayers()
                     .stream().filter(permissions::isSubscriber).collect(Collectors.toList()).isEmpty()
               && MobEventsUtils.isItTimeToRaid(event.world, this))
         {
@@ -884,12 +859,12 @@ public class Colony implements IColony
      */
     public static boolean shallUpdate(final World world, final int averageTicks)
     {
-        return world.getWorldTime() % (world.rand.nextInt(averageTicks * 2) + 1) == 0;
+        return world.getGameTime() % (world.rand.nextInt(averageTicks * 2) + 1) == 0;
     }
 
     public boolean areAllColonyChunksLoaded(@NotNull final TickEvent.WorldTickEvent event)
     {
-        final int distanceFromCenter = MineColonies.getConfig().getCommon().gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK + 48 /* 3 chunks */ + BLOCKS_PER_CHUNK - 1 /* round up a chunk */;
+        final int distanceFromCenter = MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get() * BLOCKS_PER_CHUNK + 48 /* 3 chunks */ + BLOCKS_PER_CHUNK - 1 /* round up a chunk */;
         for (int x = -distanceFromCenter; x <= distanceFromCenter; x += CONST_CHUNKSIZE)
         {
             for (int z = -distanceFromCenter; z <= distanceFromCenter; z += CONST_CHUNKSIZE)
@@ -914,12 +889,12 @@ public class Colony implements IColony
             final int stopAt = world.rand.nextInt(entries.length);
             final Object obj = entries[stopAt];
 
-            if (obj instanceof Map.Entry && ((Map.Entry) obj).getKey() instanceof BlockPos && ((Map.Entry) obj).get() instanceof BlockState)
+            if (obj instanceof Map.Entry && ((Map.Entry) obj).getKey() instanceof BlockPos && ((Map.Entry) obj).getValue() instanceof BlockState)
             {
                 @NotNull final BlockPos key = (BlockPos) ((Map.Entry) obj).getKey();
                 if (world.isBlockLoaded(key))
                 {
-                    @NotNull final BlockState value = (BlockState) ((Map.Entry) obj).get();
+                    @NotNull final BlockState value = (BlockState) ((Map.Entry) obj).getValue();
                     if (world.getBlockState(key).getBlock() != (value.getBlock()))
                     {
                         wayPoints.remove(key);
@@ -970,14 +945,14 @@ public class Colony implements IColony
     @Override
     public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        if (w.world.getDimension().getType().getId() != this.dimensionId)
+        if (w.getDimension().getType().getId() != this.dimensionId)
         {
             return false;
         }
 
-        final Chunk chunk = w.getChunk(pos);
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
-        return cap.getOwningColony() == this.getID();
+        final Chunk chunk = w.getChunkAt(pos);
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
+        return cap != null && cap.getOwningColony() == this.getID();
     }
 
     @Override
@@ -1154,7 +1129,7 @@ public class Colony implements IColony
         //  Inform Subscribers of removed workOrder
         for (final ServerPlayerEntity player : packageManager.getSubscribers())
         {
-            Network.getNetwork().sendTo(new ColonyViewRemoveWorkOrderMessage(this, orderId), player);
+            Network.getNetwork().sendToPlayer(new ColonyViewRemoveWorkOrderMessage(this, orderId), player);
         }
     }
 
@@ -1286,17 +1261,6 @@ public class Colony implements IColony
     }
 
     /**
-     * Get the statsManager of the colony.
-     *
-     * @return the statsManager.
-     */
-    @Override
-    public IStatisticAchievementManager getStatsManager()
-    {
-        return statsManager;
-    }
-
-    /**
      * Get the barbManager of the colony.
      *
      * @return the barbManager.
@@ -1343,7 +1307,7 @@ public class Colony implements IColony
     public void addVisitingPlayer(final PlayerEntity player)
     {
         final Rank rank = getPermissions().getRank(player);
-        if (rank != Rank.OWNER && rank != Rank.OFFICER && !visitingPlayers.contains(player) && MineColonies.getConfig().getCommon().gameplay.sendEnteringLeavingMessages)
+        if (rank != Rank.OWNER && rank != Rank.OFFICER && !visitingPlayers.contains(player) && MineColonies.getConfig().getCommon().sendEnteringLeavingMessages.get())
         {
             visitingPlayers.add(player);
             LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
@@ -1354,7 +1318,7 @@ public class Colony implements IColony
     @Override
     public void removeVisitingPlayer(final PlayerEntity player)
     {
-        if (!getMessagePlayerEntitys().contains(player) && MineColonies.getConfig().getCommon().gameplay.sendEnteringLeavingMessages)
+        if (!getMessagePlayerEntitys().contains(player) && MineColonies.getConfig().getCommon().sendEnteringLeavingMessages.get())
         {
             visitingPlayers.remove(player);
             LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
@@ -1575,7 +1539,7 @@ public class Colony implements IColony
     @Override
     public void usedMercenaries()
     {
-        mercenaryLastUse = world.getTotalWorldTime();
+        mercenaryLastUse = world.getGameTime();
         markDirty();
     }
 

@@ -95,14 +95,14 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
             Integer tries = assignmentCompound.getInt(NBT_VALUE);
 
             return new HashMap.SimpleEntry<>(token, tries);
-        }).collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::get));
+        }).collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::getValue));
 
         final Map<IToken<?>, Integer> delays = NBTUtils.streamCompound(nbt.getList(NBT_DELAYS, Constants.NBT.TAG_COMPOUND)).map(assignmentCompound -> {
             IToken token = controller.deserialize(assignmentCompound.getCompound(NBT_TOKEN));
             Integer tries = assignmentCompound.getInt(NBT_VALUE);
 
             return new HashMap.SimpleEntry<>(token, tries);
-        }).collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::get));
+        }).collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::getValue));
 
         final IToken<?> token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
         final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));

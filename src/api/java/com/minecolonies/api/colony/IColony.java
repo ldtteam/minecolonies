@@ -223,8 +223,6 @@ public interface IColony
 
     IColonyHappinessManager getColonyHappinessManager();
 
-    IStatisticAchievementManager getStatsManager();
-
     IRaiderManager getRaiderManager();
 
     IColonyPackageManager getPackageManager();

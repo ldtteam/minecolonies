@@ -8,12 +8,11 @@ import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.util.ChunkLoadStorage;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.achievements.ModAchievements;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRecipeManager;
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
@@ -23,14 +22,14 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ServerMultiWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.DimensionManager;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +38,6 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
-import static com.minecolonies.api.util.constant.Constants.HALF_A_CIRCLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.coremod.MineColonies.*;
 
@@ -96,7 +94,7 @@ public final class ColonyManager implements IColonyManager
     @Override
     public void createColony(@NotNull final World w, final BlockPos pos, @NotNull final PlayerEntity player, @NotNull final String style)
     {
-        final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null);
+        final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -106,12 +104,9 @@ public final class ColonyManager implements IColonyManager
         final IColony colony = cap.createColony(w, pos);
         colony.setStyle(style);
 
-        final String colonyName = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.defaultName", player.getDisplayNameString());
+        final String colonyName = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.defaultName", player.getName());
         colony.setName(colonyName);
         colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Rank.OWNER, w);
-
-        colony.getStatsManager().triggerAchievement(ModAchievements.achievementGetSupply);
-        colony.getStatsManager().triggerAchievement(ModAchievements.achievementTownhall);
         Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(), player.getName()));
 
         if (colony.getWorld() == null)
@@ -120,7 +115,7 @@ public final class ColonyManager implements IColonyManager
             return;
         }
 
-        if (MineColonies.getConfig().getCommon().gameplay.enableDynamicColonySizes)
+        if (MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
         {
             ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension(), 2);
         }
@@ -179,7 +174,7 @@ public final class ColonyManager implements IColonyManager
         final World world = colony.getWorld();
         try
         {
-            if (!MineColonies.getConfig().getCommon().gameplay.enableDynamicColonySizes)
+            if (!MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
             {
                 ChunkDataHelper.claimColonyChunks(world, false, id, colony.getCenter(), colony.getDimension());
             }
@@ -206,14 +201,14 @@ public final class ColonyManager implements IColonyManager
                 if (world.getBlockState(location).getBlock() instanceof AbstractBlockHut)
                 {
                     Log.getLogger().info("Found Block, deleting " + world.getBlockState(location).getBlock());
-                    world.setBlockToAir(location);
+                    world.removeBlock(location, false);
                 }
             }
 
             MinecraftForge.EVENT_BUS.unregister(colony.getEventHandler());
             Log.getLogger().info("Deleting colony: " + colony.getID());
 
-            final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
+            final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
             if (cap == null)
             {
                 Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -239,7 +234,7 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getColonyByWorld(final int id, final World world)
     {
-        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
+        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -258,8 +253,8 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getColonyByDimension(final int id, final int dimension)
     {
-        final World world = ServerLifecycleHooks.getCurrentServer().getWorld(dimension);
-        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
+        final World world = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(dimension));
+        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -311,8 +306,8 @@ public final class ColonyManager implements IColonyManager
     @Override
     public IColony getColonyByPosFromWorld(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        final Chunk centralChunk = w.getChunk(pos);
-        final int id = centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony();
+        final Chunk centralChunk = w.getChunkAt(pos);
+        final int id = centralChunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null).getOwningColony();
         if (id == 0)
         {
             return null;
@@ -330,7 +325,7 @@ public final class ColonyManager implements IColonyManager
     @Override
     public IColony getColonyByPosFromDim(final int dim, @NotNull final BlockPos pos)
     {
-        final World w = ServerLifecycleHooks.getCurrentServer().getWorld(dim);
+        final World w = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(dim));
         return getColonyByPosFromWorld(w, pos);
     }
 
@@ -344,22 +339,22 @@ public final class ColonyManager implements IColonyManager
     @Override
     public boolean isTooCloseToColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        if (MineColonies.getConfig().getCommon().gameplay.enableDynamicColonySizes)
+        if (MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
         {
-            return !ChunkDataHelper.canClaimChunksInRange(w, pos, MineColonies.getConfig().getCommon().gameplay.minTownHallPadding);
+            return !ChunkDataHelper.canClaimChunksInRange(w, pos, MineColonies.getConfig().getCommon().minTownHallPadding.get());
         }
-        final IChunkmanagerCapability worldCapability = w.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
+        final IChunkmanagerCapability worldCapability = w.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).orElseGet(null);
         if (worldCapability == null)
         {
             return true;
         }
-        final Chunk centralChunk = w.getChunk(pos);
-        final IColonyTagCapability colonyCap = centralChunk.getCapability(CLOSE_COLONY_CAP, null);
+        final Chunk centralChunk = w.getChunkAt(pos);
+        final IColonyTagCapability colonyCap = centralChunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
         if (colonyCap == null)
         {
             return true;
         }
-        final ChunkLoadStorage storage = worldCapability.getChunkStorage(centralChunk.x, centralChunk.z);
+        final ChunkLoadStorage storage = worldCapability.getChunkStorage(centralChunk.getPos().getXStart(), centralChunk.getPos().getZStart());
         if (storage != null)
         {
             storage.applyToCap(colonyCap);
@@ -377,7 +372,7 @@ public final class ColonyManager implements IColonyManager
     @NotNull
     public List<IColony> getColonies(@NotNull final World w)
     {
-        final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null);
+        final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
         if (cap == null)
         {
             Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
@@ -396,9 +391,9 @@ public final class ColonyManager implements IColonyManager
     public List<IColony> getAllColonies()
     {
         final List<IColony> allColonies = new ArrayList<>();
-        for (final World world : ServerLifecycleHooks.getCurrentServer().worlds)
+        for (final World world : ServerLifecycleHooks.getCurrentServer().getWorlds())
         {
-            final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
+            final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
             if (cap != null)
             {
                 allColonies.addAll(cap.getColonies());
@@ -479,13 +474,13 @@ public final class ColonyManager implements IColonyManager
      */
     private IColonyView getColonyView(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        final Chunk centralChunk = w.getChunk(pos);
-        final int id = centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony();
+        final Chunk centralChunk = w.getChunkAt(pos);
+        final int id = centralChunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null).getOwningColony();
         if (id == 0)
         {
             return null;
         }
-        return getColonyView(id, w.world.getDimension().getType().getId());
+        return getColonyView(id, w.getDimension().getType().getId());
     }
 
     /**
@@ -522,11 +517,11 @@ public final class ColonyManager implements IColonyManager
             return null;
         }
 
-        final Chunk chunk = w.getChunk(pos);
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+        final Chunk chunk = w.getChunkAt(pos);
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
         if (cap.getOwningColony() != 0)
         {
-            return getColonyView(cap.getOwningColony(), w.world.getDimension().getType().getId());
+            return getColonyView(cap.getOwningColony(), w.getDimension().getType().getId());
         }
         else if (!cap.getAllCloseColonies().isEmpty())
         {
@@ -535,8 +530,8 @@ public final class ColonyManager implements IColonyManager
 
             for (final int cId : cap.getAllCloseColonies())
             {
-                final IColonyView c = getColonyView(cId, w.world.getDimension().getType().getId());
-                if (c != null && c.getDimension() == w.world.getDimension().getType().getId())
+                final IColonyView c = getColonyView(cId, w.getDimension().getType().getId());
+                if (c != null && c.getDimension() == w.getDimension().getType().getId())
                 {
                     final long dist = c.getDistanceSquared(pos);
                     if (dist < closestDist)
@@ -552,11 +547,11 @@ public final class ColonyManager implements IColonyManager
         @Nullable IColonyView closestColony = null;
         long closestDist = Long.MAX_VALUE;
 
-        if (colonyViews.containsKey(w.world.getDimension().getType().getId()))
+        if (colonyViews.containsKey(w.getDimension().getType().getId()))
         {
-            for (@NotNull final IColonyView c : colonyViews.get(w.world.getDimension().getType().getId()))
+            for (@NotNull final IColonyView c : colonyViews.get(w.getDimension().getType().getId()))
             {
-                if (c.getDimension() == w.world.getDimension().getType().getId() && c.getCenter() != null)
+                if (c.getDimension() == w.getDimension().getType().getId() && c.getCenter() != null)
                 {
                     final long dist = c.getDistanceSquared(pos);
                     if (dist < closestDist)
@@ -581,8 +576,8 @@ public final class ColonyManager implements IColonyManager
     @Override
     public IColony getClosestColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
-        final Chunk chunk = w.getChunk(pos);
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+        final Chunk chunk = w.getChunkAt(pos);
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
         if (cap.getOwningColony() != 0)
         {
             return getColonyByWorld(cap.getOwningColony(), w);
@@ -595,7 +590,7 @@ public final class ColonyManager implements IColonyManager
             for (final int cId : cap.getAllCloseColonies())
             {
                 final IColony c = getColonyByWorld(cId, w);
-                if (c != null && c.getDimension() == w.world.getDimension().getType().getId())
+                if (c != null && c.getDimension() == w.getDimension().getType().getId())
                 {
                     final long dist = c.getDistanceSquared(pos);
                     if (dist < closestDist)
@@ -613,7 +608,7 @@ public final class ColonyManager implements IColonyManager
 
         for (@NotNull final IColony c : getColonies(w))
         {
-            if (c.getDimension() == w.world.getDimension().getType().getId())
+            if (c.getDimension() == w.getDimension().getType().getId())
             {
                 final long dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
@@ -660,7 +655,7 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getIColonyByOwner(@NotNull final World w, final UUID owner)
     {
-        return w.isRemote ? getColonyViewByOwner(owner, w.world.getDimension().getType().getId()) : getColonyByOwner(owner);
+        return w.isRemote ? getColonyViewByOwner(owner, w.getDimension().getType().getId()) : getColonyByOwner(owner);
     }
 
     /**
@@ -717,15 +712,9 @@ public final class ColonyManager implements IColonyManager
     public int getMinimumDistanceBetweenTownHalls()
     {
         //  [TownHall](Radius)+(Padding)+(Radius)[TownHall]
-        return (2 * MineColonies.getConfig().getCommon().gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK) + MineColonies.getConfig().getCommon().gameplay.townHallPaddingChunk * BLOCKS_PER_CHUNK;
+        return (2 * MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get() * BLOCKS_PER_CHUNK) + MineColonies.getConfig().getCommon().townHallPaddingChunk.get() * BLOCKS_PER_CHUNK;
     }
 
-    /**
-     * On server tick, tick every Colony.
-     * NOTE: Review this for performance.
-     *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
-     */
     @Override
     public void onServerTick(@NotNull final TickEvent.ServerTickEvent event)
     {
@@ -749,7 +738,7 @@ public final class ColonyManager implements IColonyManager
         //Get the colonies NBT tags and store them in a ListNBT.
         if (serverUUID != null)
         {
-            compound.setUniqueId(TAG_UUID, serverUUID);
+            compound.putUniqueId(TAG_UUID, serverUUID);
         }
 
         final CompoundNBT compCompound = new CompoundNBT();
@@ -773,12 +762,6 @@ public final class ColonyManager implements IColonyManager
     @Override
     public void read(@NotNull final CompoundNBT compound, @NotNull final World world)
     {
-        if (!compound.keySet().contains(TAG_DISTANCE))
-        {
-            MineColonies.getConfig().getCommon().gameplay.workingRangeTownHallChunks =
-              (int) ((Math.cos(45.0 / HALF_A_CIRCLE * Math.PI) * MineColonies.getConfig().getCommon().gameplay.workingRangeTownHall) / BLOCKS_PER_CHUNK);
-        }
-
         if (!compound.keySet().contains(TAG_CAP_COLONIES))
         {
             if (!compound.keySet().contains(TAG_NEW_COLONIES))
@@ -787,28 +770,28 @@ public final class ColonyManager implements IColonyManager
                 for (int i = 0; i < colonyTags.size(); ++i)
                 {
                     final CompoundNBT colonyCompound = colonyTags.getCompound(i);
-                    final World colonyWorld = ServerLifecycleHooks.getCurrentServer().getWorld(colonyCompound.getInt(TAG_DIMENSION));
-                    final IColonyManagerCapability cap = colonyWorld.getCapability(COLONY_MANAGER_CAP, null);
+                    final World colonyWorld = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(colonyCompound.getInt(TAG_DIMENSION)));
+                    final IColonyManagerCapability cap = colonyWorld.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
                     @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompound(i),
-                      ServerLifecycleHooks.getCurrentServer().getWorld(colonyCompound.getInt(TAG_DIMENSION)));
+                      ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(colonyCompound.getInt(TAG_DIMENSION))));
                     cap.addColony(colony);
                 }
 
-                final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
+                final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
                 cap.setMissingChunksToLoad(compound.getInt(TAG_MISSING_CHUNKS));
                 Log.getLogger().info(String.format("Loaded %d colonies", cap.getColonies().size()));
             }
             else
             {
                 final int size = compound.getInt(TAG_NEW_COLONIES);
-                @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+                @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
                 for (int colonyId = 0; colonyId <= size; colonyId++)
                 {
                     @Nullable final CompoundNBT colonyData = BackUpHelper.loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY_OLD, colonyId)));
                     if (colonyData != null)
                     {
-                        final World colonyWorld = ServerLifecycleHooks.getCurrentServer().getWorld(colonyData.getInt(TAG_DIMENSION));
-                        final IColonyManagerCapability cap = colonyWorld.getCapability(COLONY_MANAGER_CAP, null);
+                        final World colonyWorld = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(colonyData.getInt(TAG_DIMENSION)));
+                        final IColonyManagerCapability cap = colonyWorld.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
                         @NotNull final Colony colony = Colony.loadColony(colonyData, colonyWorld);
                         colony.getCitizenManager().checkCitizensForHappiness();
                         cap.addColony(colony);
@@ -836,11 +819,6 @@ public final class ColonyManager implements IColonyManager
         }
     }
 
-    /**
-     * On Client tick, clears views when player left.
-     *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent}.
-     */
     @Override
     public void onClientTick(@NotNull final TickEvent.ClientTickEvent event)
     {
@@ -856,12 +834,6 @@ public final class ColonyManager implements IColonyManager
         }
     }
 
-    /**
-     * On world tick, tick every Colony in that world.
-     * NOTE: Review this for performance.
-     *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}.
-     */
     @Override
     public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
@@ -913,6 +885,7 @@ public final class ColonyManager implements IColonyManager
                 c.onWorldLoad(world);
             }
 
+            world.
             world.addEventListener(new ColonyManagerWorldAccess());
         }
     }
@@ -948,7 +921,7 @@ public final class ColonyManager implements IColonyManager
     @Override
     public void onWorldUnload(@NotNull final World world)
     {
-        if (!world.isRemote && !(world instanceof WorldServerMulti))
+        if (!world.isRemote && !(world instanceof ServerMultiWorld))
         {
             for (@NotNull final IColony c : getColonies(world))
             {
@@ -966,7 +939,7 @@ public final class ColonyManager implements IColonyManager
      * Sends view message to the right view.
      *
      * @param colonyId          ID of the colony.
-     * @param colonyData        {@link ByteBuf} with colony data.
+     * @param colonyData        {@link PacketBuffer} with colony data.
      * @param isNewSubscription whether this is a new subscription or not.
      * @param dim               the dimension.
      */
@@ -1009,12 +982,12 @@ public final class ColonyManager implements IColonyManager
     }
 
     /**
-     * Returns result of {@link ColonyView#handlePermissionsViewMessage(ByteBuf)}
+     * Returns result of {@link ColonyView#handlePermissionsViewMessage(PacketBuffer)}
      * if {@link #getColonyView(int, int)}. gives a not-null result. If {@link
      * #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyID ID of the colony.
-     * @param data     {@link ByteBuf} with colony data.
+     * @param data     {@link PacketBuffer} with colony data.
      * @param dim      the dimension.
      */
     @Override
@@ -1033,12 +1006,12 @@ public final class ColonyManager implements IColonyManager
 
     /**
      * Returns result of {@link ColonyView#handleColonyViewCitizensMessage(int,
-     * ByteBuf)} if {@link #getColonyView(int, int)} gives a not-null result. If
+     * PacketBuffer)} if {@link #getColonyView(int, int)} gives a not-null result. If
      * {@link #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyId  ID of the colony.
      * @param citizenId ID of the citizen.
-     * @param buf       {@link ByteBuf} with colony data.
+     * @param buf       {@link PacketBuffer} with colony data.
      * @param dim       the dimension.
      */
     @Override
@@ -1053,12 +1026,12 @@ public final class ColonyManager implements IColonyManager
     }
 
     /**
-     * Returns result of {@link ColonyView#handleColonyViewWorkOrderMessage(ByteBuf)}
+     * Returns result of {@link ColonyView#handleColonyViewWorkOrderMessage(PacketBuffer)}
      * (int, ByteBuf)} if {@link #getColonyView(int, int)} gives a not-null result.
      * If {@link #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyId ID of the colony.
-     * @param buf      {@link ByteBuf} with colony data.
+     * @param buf      {@link PacketBuffer} with colony data.
      * @param dim      the dimension.
      */
     @Override
@@ -1095,12 +1068,12 @@ public final class ColonyManager implements IColonyManager
 
     /**
      * Returns result of {@link ColonyView#handleColonyBuildingViewMessage(BlockPos,
-     * ByteBuf)} if {@link #getColonyView(int, int)} gives a not-null result. If
+     * PacketBuffer)} if {@link #getColonyView(int, int)} gives a not-null result. If
      * {@link #getColonyView(int, int)} is null, returns null.
      *
      * @param colonyId   ID of the colony.
      * @param buildingId ID of the building.
-     * @param buf        {@link ByteBuf} with colony data.
+     * @param buf        {@link PacketBuffer} with colony data.
      * @param dim        the dimension.
      */
     @Override
@@ -1210,8 +1183,8 @@ public final class ColonyManager implements IColonyManager
     @Override
     public boolean isCoordinateInAnyColony(@NotNull final World world, final BlockPos pos)
     {
-        final Chunk centralChunk = world.getChunk(pos);
-        return centralChunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() != 0;
+        final Chunk centralChunk = world.getChunkAt(pos);
+        return centralChunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null).getOwningColony() != 0;
     }
 
     /**
@@ -1245,9 +1218,9 @@ public final class ColonyManager implements IColonyManager
     public int getTopColonyId()
     {
         int top = 0;
-        for (final World world : ServerLifecycleHooks.getCurrentServer().worlds)
+        for (final World world : ServerLifecycleHooks.getCurrentServer().getWorlds())
         {
-            final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
+            final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
             if (cap != null)
             {
                 final int tempTop = cap.getTopID();

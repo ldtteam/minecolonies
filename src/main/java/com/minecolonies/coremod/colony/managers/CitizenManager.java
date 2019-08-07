@@ -6,11 +6,11 @@ import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.EntityUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
@@ -26,7 +26,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -120,14 +120,14 @@ public class CitizenManager implements ICitizenManager
                     {
                         subscribers.stream()
                           .filter(player -> citizen.isDirty() || !oldSubscribers.contains(player))
-                          .forEach(player -> Network.getNetwork().sendTo(new ColonyViewCitizenViewMessage(colony, citizen), player));
+                          .forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewCitizenViewMessage(colony, citizen), player));
                     }
                 }
             }
 
             subscribers.stream()
               .filter(player -> !oldSubscribers.contains(player))
-              .forEach(player -> Network.getNetwork().sendTo(new HappinessDataMessage(colony, colony.getHappinessData()), player));
+              .forEach(player -> Network.getNetwork().sendToPlayer(new HappinessDataMessage(colony, colony.getHappinessData()), player));
         }
     }
 
@@ -231,7 +231,7 @@ public class CitizenManager implements ICitizenManager
         //  Inform Subscribers of removed citizen
         for (final ServerPlayerEntity player : colony.getPackageManager().getSubscribers())
         {
-            Network.getNetwork().sendTo(new ColonyViewRemoveCitizenMessage(colony, citizen.getId()), player);
+            Network.getNetwork().sendToPlayer(new ColonyViewRemoveCitizenMessage(colony, citizen.getId()), player);
         }
 
         colony.markDirty();
@@ -321,7 +321,7 @@ public class CitizenManager implements ICitizenManager
     @Override
     public int getMaxCitizens()
     {
-        return Math.min(maxCitizens, MineColonies.getConfig().getCommon().gameplay.maxCitizenPerColony);
+        return Math.min(maxCitizens, MineColonies.getConfig().getCommon().maxCitizenPerColony.get());
     }
 
     /**
@@ -442,12 +442,12 @@ public class CitizenManager implements ICitizenManager
         }
 
         //  Spawn initial Citizens
-        if (colony.hasTownHall() && getCitizens().size() < MineColonies.getConfig().getCommon().gameplay.initialCitizenAmount)
+        if (colony.hasTownHall() && getCitizens().size() < MineColonies.getConfig().getCommon().initialCitizenAmount.get())
         {
-            int respawnInterval = MineColonies.getConfig().getCommon().gameplay.citizenRespawnInterval * TICKS_SECOND;
+            int respawnInterval = MineColonies.getConfig().getCommon().citizenRespawnInterval.get() * TICKS_SECOND;
             respawnInterval -= (SECONDS_A_MINUTE * colony.getBuildingManager().getTownHall().getBuildingLevel());
 
-            if ((event.world.getTotalWorldTime() + 1) % (respawnInterval + 1) == 0)
+            if ((event.world.getGameTime() + 1) % (respawnInterval + 1) == 0)
             {
                 // Make sure the initial citizen contain both genders
                 final CitizenData newCitizen = createAndRegisterNewCitizenData();

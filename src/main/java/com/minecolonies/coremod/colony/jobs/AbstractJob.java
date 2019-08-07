@@ -13,7 +13,7 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import net.minecraft.entity.ai.EntityAITasks;
+import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
@@ -126,9 +126,9 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     {
         final CompoundNBT compound = new CompoundNBT();
 
-        compound.setString(TAG_JOB_TYPE, getJobRegistryEntry().getRegistryName().toString());
-        compound.setTag(TAG_ASYNC_REQUESTS, getAsyncRequests().stream().map(StandardFactoryController.getInstance()::serialize).collect(NBTUtils.toNBTTagList()));
-        compound.setInteger(TAG_ACTIONS_DONE, actionsDone);
+        compound.putString(TAG_JOB_TYPE, getJobRegistryEntry().getRegistryName().toString());
+        compound.put(TAG_ASYNC_REQUESTS, getAsyncRequests().stream().map(StandardFactoryController.getInstance()::serialize).collect(NBTUtils.toListNBT()));
+        compound.putInt(TAG_ACTIONS_DONE, actionsDone);
 
         return compound;
     }
@@ -187,7 +187,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
      * @param tasks EntityAITasks list to add tasks to.
      */
     @Override
-    public void addWorkerAIToTaskList(@NotNull final EntityAITasks tasks)
+    public void addWorkerAIToTaskList(@NotNull final GoalSelector tasks)
     {
         final AI tempAI = generateAI();
 
@@ -208,7 +208,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
         }
 
         workerAI = new WeakReference<>(tempAI);
-        tasks.addTask(TASK_PRIORITY, tempAI);
+        tasks.addGoal(TASK_PRIORITY, tempAI);
     }
 
     /**

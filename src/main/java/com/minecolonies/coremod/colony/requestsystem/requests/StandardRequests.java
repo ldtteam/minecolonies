@@ -12,15 +12,10 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.util.text.NonSiblingFormattingTextComponent;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.FurnaceTileEntity;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -29,10 +24,7 @@ import net.minecraft.util.text.TextFormatting;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Final class holding all the requests for requestables inside minecolonie
@@ -408,22 +400,7 @@ public final class StandardRequests
         {
             if (foodExamples == null)
             {
-                foodExamples = ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false)
-                                                      .filter(item -> item instanceof ItemFood)
-                                                      .flatMap(item -> {
-                                                          final NonNullList<ItemStack> stacks = NonNullList.create();
-                                                          try
-                                                          {
-                                                              item.getSubItems( CreativeTabs.SEARCH, stacks);
-                                                          }
-                                                          catch (Exception ex)
-                                                          {
-                                                              Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
-                                                          }
-
-                                                          return stacks.stream();
-                                                      })
-                                                      .collect(Collectors.toList()));
+                foodExamples = ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(item -> item.getItem().isFood()).collect(Collectors.toList()));
             }
 
             return foodExamples;
@@ -468,20 +445,7 @@ public final class StandardRequests
         {
             if (oreExamples == null)
             {
-                oreExamples =
-                        ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
-                            final NonNullList<ItemStack> stacks = NonNullList.create();
-                            try
-                            {
-                                item.getSubItems(CreativeTabs.SEARCH, stacks);
-                            }
-                            catch (Exception ex)
-                            {
-                                Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
-                            }
-
-                            return stacks.stream().filter(IColonyManager.getInstance().getCompatibilityManager()::isOre);
-                        }).collect(Collectors.toList()));
+                oreExamples = ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(IColonyManager.getInstance().getCompatibilityManager()::isOre).collect(Collectors.toList()));
             }
             return oreExamples;
         }
@@ -526,20 +490,7 @@ public final class StandardRequests
         {
             if (burnableExamples == null)
             {
-                burnableExamples =
-                  ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(Item.REGISTRY.iterator(), Spliterator.ORDERED), false).flatMap(item -> {
-                      final NonNullList<ItemStack> stacks = NonNullList.create();
-                      try
-                      {
-                          item.getSubItems( CreativeTabs.SEARCH, stacks);
-                      }
-                      catch (Exception ex)
-                      {
-                          Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
-                      }
-
-                      return stacks.stream().filter(FurnaceTileEntity::isFuel);
-                  }).collect(Collectors.toList()));
+                burnableExamples = ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(FurnaceTileEntity::isFuel).collect(Collectors.toList()));
             }
 
             return burnableExamples;

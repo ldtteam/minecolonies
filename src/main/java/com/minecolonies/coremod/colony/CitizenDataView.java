@@ -425,7 +425,7 @@ public class CitizenDataView implements ICitizenDataView
 
         colonyId = buf.readInt();
 
-        final CompoundNBT compound = ByteBufUtils.readTag(buf);
+        final CompoundNBT compound = buf.readCompoundTag();
         inventory = new InventoryCitizen(this.name, true);
         final ListNBT ListNBT = compound.getList("inventory", 10);
         this.inventory.read(ListNBT);

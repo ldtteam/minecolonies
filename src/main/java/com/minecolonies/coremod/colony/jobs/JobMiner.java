@@ -4,11 +4,8 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner;
-import net.minecraft.util.DamageSource;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -56,19 +53,5 @@ public class JobMiner extends AbstractJobStructure
     public AbstractAISkeleton<JobMiner> generateAI()
     {
         return new EntityAIStructureMiner(this);
-    }
-
-    @Override
-    public void triggerDeathAchievement(final DamageSource source, final AbstractEntityCitizen citizen)
-    {
-        super.triggerDeathAchievement(source, citizen);
-        if (source == DamageSource.LAVA || source == DamageSource.IN_FIRE || source == DamageSource.ON_FIRE)
-        {
-            citizen.getCitizenColonyHandler().getColony().getStatsManager().triggerAchievement(ModAchievements.achievementMinerDeathLava);
-        }
-        if (source.equals(DamageSource.FALL))
-        {
-            citizen.getCitizenColonyHandler().getColony().getStatsManager().triggerAchievement(ModAchievements.achievementMinerDeathFall);
-        }
     }
 }

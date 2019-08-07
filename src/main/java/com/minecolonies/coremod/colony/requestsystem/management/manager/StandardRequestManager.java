@@ -419,38 +419,38 @@ public class StandardRequestManager implements IStandardRequestManager
 
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_DATASTORE,
-          CompoundNBT::getCompoundTag,
+          CompoundNBT::getCompound,
           c -> dataStoreManager = getFactoryController().deserialize(c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUEST_IDENTITIES,
-          CompoundNBT::getCompoundTag,
+          CompoundNBT::getCompound,
           c -> requestIdentitiesDataStoreId = getFactoryController().deserialize(c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUEST_RESOLVER_IDENTITIES,
-          CompoundNBT::getCompoundTag,
+          CompoundNBT::getCompound,
           c -> requestResolverIdentitiesDataStoreId = getFactoryController().deserialize(c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_PROVIDER_ASSIGNMENTS,
-          CompoundNBT::getCompoundTag,
+          CompoundNBT::getCompound,
           c -> providerRequestResolverAssignmentDataStoreId = getFactoryController().deserialize(c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUEST_RESOLVER_ASSIGNMENTS,
-          CompoundNBT::getCompoundTag,
+          CompoundNBT::getCompound,
           c -> requestResolverRequestAssignmentDataStoreId = getFactoryController().deserialize(c));
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_REQUESTABLE_TYPE_ASSIGNMENTS,
-          CompoundNBT::getCompoundTag,
+          CompoundNBT::getCompound,
           c -> requestableTypeRequestResolverAssignmentDataStoreId = getFactoryController().deserialize(c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_PLAYER,
-          CompoundNBT::getCompoundTag,
+          CompoundNBT::getCompound,
           c -> playerRequestResolverId = getFactoryController().deserialize(c));
 
         executeDeserializationStepOrMarkForUpdate(nbt,
           NBT_ID_RETRYING,
-          CompoundNBT::getCompoundTag,
+          CompoundNBT::getCompound,
           c -> retryingRequestResolverId = getFactoryController().deserialize(c));
 
         updateIfRequired();
@@ -458,7 +458,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
     private <T> void executeDeserializationStepOrMarkForUpdate(@NotNull final CompoundNBT nbt, @NotNull final String key, @NotNull final BiFunction<CompoundNBT, String, T> extractor, @NotNull final Consumer<T> valueConsumer)
     {
-        if (!nbt.hasKey(key))
+        if (!nbt.keySet().contains(key))
         {
             markForUpdate();
             return;
@@ -492,10 +492,10 @@ public class StandardRequestManager implements IStandardRequestManager
     }
 
     @Override
-    public void update()
+    public void tick()
     {
         this.getRetryingRequestResolver().updateManager(this);
-        this.getRetryingRequestResolver().update();
+        this.getRetryingRequestResolver().tick();
     }
 
     @NotNull

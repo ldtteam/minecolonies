@@ -9,14 +9,13 @@ import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.util.AchievementUtils;
 import com.mojang.authlib.GameProfile;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -293,7 +292,7 @@ public class Permissions implements IPermissions
             final CompoundNBT ownerCompound = ownerTagList.getCompound(i);
             @NotNull final UUID id = UUID.fromString(ownerCompound.getString(TAG_ID));
             String name = "";
-            if (ownercompound.keySet().contains(TAG_NAME))
+            if (ownerCompound.keySet().contains(TAG_NAME))
             {
                 name = ownerCompound.getString(TAG_NAME);
             }
@@ -325,7 +324,7 @@ public class Permissions implements IPermissions
 
             for (int j = 0; j < flagsTagList.size(); ++j)
             {
-                final String flag = flagsTagList.getStringTagAt(j);
+                final String flag = flagsTagList.getString(j);
                 flags = Utils.setFlag(flags, Action.valueOf(flag).getFlag());
             }
             permissionMap.put(rank, flags);
@@ -467,10 +466,10 @@ public class Permissions implements IPermissions
     {
         players.remove(getOwner());
 
-        ownerName = player.getName();
+        ownerName = player.getName().getFormattedText();
         ownerUUID = player.getUniqueID();
 
-        players.put(ownerUUID, new Player(ownerUUID, player.getName(), Rank.OWNER));
+        players.put(ownerUUID, new Player(ownerUUID, player.getName().getFormattedText(), Rank.OWNER));
 
         markDirty();
         return true;
@@ -531,7 +530,7 @@ public class Permissions implements IPermissions
             {
                 if (Utils.testFlag(entry.getValue(), action.getFlag()))
                 {
-                    flagsTagList.add(new NBTTagString(action.name()));
+                    flagsTagList.add(new StringNBT(action.name()));
                 }
             }
             permissionsCompound.put(TAG_FLAGS, flagsTagList);
@@ -691,7 +690,7 @@ public class Permissions implements IPermissions
         else
         {
 
-            final GameProfile gameprofile = world.getMinecraftServer().getPlayerProfileCache().getProfileByUUID(id);
+            final GameProfile gameprofile = world.getServer().getPlayerProfileCache().getProfileByUUID(id);
 
             return gameprofile != null && addPlayer(gameprofile, rank);
         }
@@ -749,7 +748,7 @@ public class Permissions implements IPermissions
         {
             return false;
         }
-        final GameProfile gameprofile = world.getMinecraftServer().getPlayerProfileCache().getGameProfileForUsername(player);
+        final GameProfile gameprofile = world.getServer().getPlayerProfileCache().getGameProfileForUsername(player);
         //Check if the player already exists so that their rank isn't overridden
         return gameprofile != null && ownerUUID != gameprofile.getId() && addPlayer(gameprofile, rank);
     }
@@ -807,7 +806,7 @@ public class Permissions implements IPermissions
             final Map.Entry<UUID, Player> owner = getOwnerEntry();
             if (owner != null)
             {
-                ownerName = owner.get().getName();
+                ownerName = owner.getValue().getName();
             }
         }
         return ownerName;
@@ -856,7 +855,7 @@ public class Permissions implements IPermissions
     /**
      * Serializes network data.
      *
-     * @param buf        {@link ByteBuf} to write to.
+     * @param buf        {@link PacketBuffer} to write to.
      * @param viewerRank Rank of the viewer.
      */
     public void serializeViewNetworkData(@NotNull final PacketBuffer buf, @NotNull final Rank viewerRank)
@@ -868,8 +867,8 @@ public class Permissions implements IPermissions
         for (@NotNull final Map.Entry<UUID, Player> player : players.entrySet())
         {
             PacketUtils.writeUUID(buf, player.getKey());
-            buf.writeString(player.get().getName());
-            buf.writeString(player.get().getRank().name());
+            buf.writeString(player.getValue().getName());
+            buf.writeString(player.getValue().getRank().name());
         }
 
         // Permissions

@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public interface IJob<AI extends GoalSelector> extends INBTSerializable<CompoundNBT>
+public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
 {
 
     /**
@@ -67,7 +67,7 @@ public interface IJob<AI extends GoalSelector> extends INBTSerializable<Compound
      *
      * @param tasks EntityAITasks list to add tasks to.
      */
-    void addWorkerAIToTaskList(@NotNull Goal tasks);
+    void addWorkerAIToTaskList(@NotNull GoalSelector tasks);
 
     /**
      * Generate your AI class to register.
