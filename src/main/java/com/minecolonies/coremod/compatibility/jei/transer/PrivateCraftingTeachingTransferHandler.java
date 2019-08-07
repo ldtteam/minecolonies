@@ -5,25 +5,29 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.inventory.CraftingGUIBuilding;
 import com.minecolonies.coremod.network.messages.TransferRecipeCrafingTeachingMessage;
-import mezz.jei.api.gui.IGuiIngredient;
-import mezz.jei.api.gui.IGuiItemStackGroup;
+import io.netty.buffer.Unpooled;
 import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.gui.ingredient.IGuiIngredient;
+import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.stats.RecipeBook;
+import net.minecraft.item.crafting.ICraftingRecipe;
+import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.item.crafting.RecipeBook;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.GameRules;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHandler<CraftingGUIBuilding>
@@ -46,7 +50,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
     public IRecipeTransferError transferRecipe(
             final CraftingGUIBuilding craftingGUIBuilding,
             final IRecipeLayout recipeLayout,
-            final PlayerEntity PlayerEntity,
+            final PlayerEntity player,
             final boolean b,
             final boolean b1)
     {
@@ -94,16 +98,9 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
                 inputIndex++;
             }
         }
-        final int size = craftingGUIBuilding.isComplete() ? 3 : 2;
-        final InventoryCrafting craftMatrix = new InventoryCrafting(new Container()
-        {
-            @Override
-            public boolean canInteractWith(final PlayerEntity PlayerEntity)
-            {
-                return false;
-            }
-        }, size, size);
-
+        final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+        buffer.writeBoolean(craftingGUIBuilding.isComplete());
+        final CraftingInventory craftMatrix = craftingGUIBuilding.getInv();
 
         if(craftingGUIBuilding.isComplete())
         {
@@ -126,14 +123,14 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
 
         }
 
-        final IRecipe recipe = CraftingManager.findMatchingRecipe(craftMatrix, craftingGUIBuilding.getWorldObj());
-        if (recipe == null)
+        final Optional<ICraftingRecipe> recipe = player.world.getServer().getRecipeManager().getRecipe(IRecipeType.CRAFTING, craftMatrix, craftingGUIBuilding.getWorldObj());
+        if (!recipe.isPresent())
         {
             return handlerHelper.createInternalError();
         }
 
-        final RecipeBook book = MineColonies.proxy.getRecipeBookFromPlayer(PlayerEntity);
-        if (craftingGUIBuilding.getWorldObj().getGameRules().getBoolean("doLimitedCrafting") && !craftingGUIBuilding.getPlayer().isCreative()  && !book.isUnlocked(recipe))
+        final RecipeBook book = MineColonies.proxy.getRecipeBookFromPlayer(player);
+        if (craftingGUIBuilding.getWorldObj().getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING) && !craftingGUIBuilding.getPlayer().isCreative()  && !book.isUnlocked(recipe.get()))
         {
             final String tooltipMessage = LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_COMPAT_JEI_CRAFTIN_TEACHING_UNKNOWN_RECIPE);
             return handlerHelper.createUserErrorWithTooltip(tooltipMessage);

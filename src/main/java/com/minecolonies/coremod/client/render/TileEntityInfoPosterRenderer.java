@@ -32,7 +32,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class TileEntityInfoPosterRenderer extends TileEntitySpecialRenderer<TileEntityInfoPoster>
 {
     /**

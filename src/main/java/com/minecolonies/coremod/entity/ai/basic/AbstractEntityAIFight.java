@@ -13,7 +13,7 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import net.minecraft.entity.LivingEntityBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
@@ -62,7 +62,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
     /**
      * The current target for our guard.
      */
-    protected LivingEntityBase target = null;
+    protected LivingEntity target = null;
 
     /**
      * The value of the speed which the guard will move.
@@ -220,7 +220,7 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
               InventoryUtils.findAllSlotsInProviderWith(building, itemStack -> entry.getValue().stream().anyMatch(guardGear -> guardGear.test(itemStack)));
             for (final Map.Entry<IItemHandler, List<Integer>> handlers : slotsChest.entrySet())
             {
-                for (final int slot : handlers.get())
+                for (final int slot : handlers.getValue())
                 {
                     final ItemStack stack = handlers.getKey().getStackInSlot(slot);
                     if (!ItemStackUtils.isEmpty(stack))
@@ -330,12 +330,12 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard> extends 
 
             for (final Map.Entry<IToolType, ItemStack> armorStack : armorToWear.entrySet())
             {
-                if (ItemStackUtils.isEmpty(armorStack.get()))
+                if (ItemStackUtils.isEmpty(armorStack.getValue()))
                 {
                     continue;
                 }
                 final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()),
-                  itemStack -> itemStack.isItemEqualIgnoreDurability(armorStack.get()));
+                  itemStack -> itemStack.isItemEqualIgnoreDurability(armorStack.getValue()));
                 if (slot == -1)
                 {
                     continue;

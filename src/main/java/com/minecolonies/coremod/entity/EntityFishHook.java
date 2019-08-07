@@ -265,7 +265,7 @@ public final class EntityFishHook extends Entity
      * @return true or false.
      */
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public boolean isInRangeToRenderDist(final double range)
     {
         double maxLength = this.getEntityBoundingBox().getAverageEdgeLength() * NUM_BOUNDING_BOX_EDGES;
@@ -300,7 +300,7 @@ public final class EntityFishHook extends Entity
      * @param vectorZ directionZ
      */
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void setVelocity(final double vectorX, final double vectorY, final double vectorZ)
     {
         this.motionX = vectorX;

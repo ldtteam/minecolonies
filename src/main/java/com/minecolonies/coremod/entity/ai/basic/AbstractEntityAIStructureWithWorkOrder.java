@@ -2,17 +2,17 @@ package com.minecolonies.coremod.entity.ai.basic;
 
 import com.ldtteam.structurize.blocks.schematic.BlockSolidSubstitution;
 import com.ldtteam.structurize.util.BlockInfo;
+import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.StructurePlacementUtils;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.util.StructureIterator;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
@@ -20,16 +20,15 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockBed;
-import net.minecraft.block.DoorBlock;
-import net.minecraft.block.BlockFalling;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.state.properties.BedPart;
+import net.minecraft.state.properties.DoubleBlockHalf;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.chunk.ChunkStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -160,7 +159,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
      */
     private void requestMaterialsState()
     {
-        if (MineColonies.getConfig().getCommon().gameplay.builderInfiniteResources || job.getWorkOrder().isRequested() || job.getWorkOrder() instanceof WorkOrderBuildRemoval)
+        if (MineColonies.getConfig().getCommon().builderInfiniteResources.get() || job.getWorkOrder().isRequested() || job.getWorkOrder() instanceof WorkOrderBuildRemoval)
         {
             return;
         }
@@ -195,12 +194,12 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
             final BlockPos worldPos = blockInfo.getPos().add(job.getStructure().getOffsetPosition());
 
-            @Nullable BlockState blockState = blockInfo.getState();
+            @Nullable BlockState blockState = blockInfo.getState().getBlockState();
             @Nullable Block block = blockState.getBlock();
 
             if (StructurePlacementUtils.isStructureBlockEqualWorldBlock(world, worldPos, blockState)
-                  || (blockState.getBlock() instanceof BlockBed && blockState.get(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
-                  || (blockState.getBlock() instanceof DoorBlock && blockState.get(DoorBlock.HALF).equals(DoorBlock.EnumDoorHalf.UPPER))
+                  || (blockState.getBlock() instanceof BedBlock && blockState.get(BedBlock.PART).equals(BedPart.FOOT))
+                  || (blockState.getBlock() instanceof DoorBlock && blockState.get(DoorBlock.HALF).equals(DoubleBlockHalf.UPPER))
                   || blockState.getBlock() == Blocks.AIR)
             {
                 continue;
@@ -217,7 +216,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
 
             final Block worldBlock = BlockPosUtil.getBlock(world, job.getStructure().getBlockPosition());
-            if (block instanceof BlockFalling)
+            if (block instanceof FallingBlock)
             {
                 final BlockState downState = BlockPosUtil.getBlockState(world, worldPos.down());
                 if (!downState.getMaterial().isSolid())
@@ -230,7 +229,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   && block != Blocks.AIR
                   && worldBlock != Blocks.BEDROCK
                   && !(worldBlock instanceof AbstractBlockHut)
-                  && !isBlockFree(block, 0))
+                  && !isBlockFree(block))
             {
                 requestBlockToBuildingIfRequired(buildingWorker, blockState, blockInfo);
             }
@@ -271,9 +270,8 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
 
         if (!ChiselAndBitsCheck.isChiselAndBitsBlock(blockState)
-              && blockState.getBlock() != Blocks.BED
-              && blockState.getBlock() != Blocks.STANDING_BANNER
-              && blockState.getBlock() != Blocks.WALL_BANNER)
+              && !blockState.getBlock().isIn(BlockTags.BEDS)
+              && !blockState.getBlock().isIn(BlockTags.BANNERS))
         {
             building.addNeededResource(BlockUtils.getItemStackFromBlockState(blockState), 1);
         }
@@ -286,7 +284,6 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         if (getOwnBuilding(AbstractBuildingStructureBuilder.class)
               .getNeededResources()
               .get(stack.getTranslationKey()
-                     + ":" + stack.getItemDamage()
                      + "-" + hashCode) == null)
         {
             getOwnBuilding(AbstractBuildingStructureBuilder.class).addNeededResource(stack, 1);
@@ -305,7 +302,6 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 = getOwnBuilding(AbstractBuildingStructureBuilder.class)
                 .getNeededResources()
                 .get(deliveredItemStack.getTranslationKey()
-                        + ":" + deliveredItemStack.getItemDamage()
                         + "-" + hashCode);
         if (resource != null)
         {
@@ -373,7 +369,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     {
         if (job.getStructure() != null && job.getStructure().getBlockInfo() != null && job.getStructure().getBlockInfo().getTileEntityData() != null)
         {
-            return ItemStackUtils.getItemStacksOfTileEntity(job.getStructure().getBlockInfo().getTileEntityData(), world);
+            return com.ldtteam.structurize.api.util.ItemStackUtils.getItemStacksOfTileEntity(job.getStructure().getBlockInfo().getTileEntityData(), world);
         }
         return Collections.emptyList();
     }
@@ -397,8 +393,8 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             return true;
         }
         else return job.getWorkOrder() != null
-                      && ( !world.getChunk(job.getWorkOrder().getBuildingLocation()).isLoaded()
-                             || (currentStructure != null && !world.getChunk(incrementBlock(currentStructure.getCurrentBlockPosition(), new BlockPos(currentStructure.getWidth(), currentStructure.getLength(), currentStructure.getHeight()))).isLoaded()));
+                      && ( !!world.isBlockLoaded(job.getWorkOrder().getBuildingLocation())
+                             || (currentStructure != null && !world.isBlockLoaded(incrementBlock(currentStructure.getCurrentBlockPosition(), new BlockPos(currentStructure.getWidth(), currentStructure.getLength(), currentStructure.getHeight())))));
     }
 
     /**
@@ -458,12 +454,12 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
         final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
         final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding(AbstractBuildingStructureBuilder.class);
-        BuildingBuilderResource resource = buildingWorker.getNeededResources().get(stack.getTranslationKey() + ":" + stack.getItemDamage() + "-" + hashCode);
+        BuildingBuilderResource resource = buildingWorker.getNeededResources().get(stack.getTranslationKey() + "-" + hashCode);
 
         if(resource == null)
         {
             requestMaterials();
-            resource = buildingWorker.getNeededResources().get(stack.getTranslationKey() + ":" + stack.getItemDamage() + "-" + hashCode);
+            resource = buildingWorker.getNeededResources().get(stack.getTranslationKey() + "-" + hashCode);
         }
 
         if(resource == null)
@@ -471,8 +467,8 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             return stack;
         }
 
-        final ItemStack resStack = new ItemStack(resource.getItem(), Math.min(STACKSIZE, resource.getAmount()), resource.getDamageValue());
-        resStack.put(resource.getItemStack().getTag());
+        final ItemStack resStack = new ItemStack(resource.getItem(), Math.min(STACKSIZE, resource.getAmount()));
+        resStack.setTag(resource.getItemStack().getTag());
         return resStack;
     }
 

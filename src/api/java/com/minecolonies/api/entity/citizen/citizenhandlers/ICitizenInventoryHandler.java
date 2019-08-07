@@ -9,55 +9,49 @@ public interface ICitizenInventoryHandler
      * Returns the first slot in the inventory with a specific item.
      *
      * @param targetItem the item.
-     * @param itemDamage the damage value
      * @return the slot.
      */
-    int findFirstSlotInInventoryWith(Item targetItem, int itemDamage);
+    int findFirstSlotInInventoryWith(Item targetItem);
 
     /**
      * Returns the first slot in the inventory with a specific block.
      *
      * @param block      the block.
-     * @param itemDamage the damage value
      * @return the slot.
      */
-    int findFirstSlotInInventoryWith(Block block, int itemDamage);
+    int findFirstSlotInInventoryWith(Block block);
 
     /**
      * Returns the amount of a certain block in the inventory.
      *
      * @param block      the block.
-     * @param itemDamage the damage value
      * @return the quantity.
      */
-    int getItemCountInInventory(Block block, int itemDamage);
+    int getItemCountInInventory(Block block);
 
     /**
      * Returns the amount of a certain item in the inventory.
      *
      * @param targetItem the block.
-     * @param itemDamage the damage value.
      * @return the quantity.
      */
-    int getItemCountInInventory(Item targetItem, int itemDamage);
+    int getItemCountInInventory(Item targetItem);
 
     /**
      * Checks if citizen has a certain block in the inventory.
      *
      * @param block      the block.
-     * @param itemDamage the damage value
      * @return true if so.
      */
-    boolean hasItemInInventory(Block block, int itemDamage);
+    boolean hasItemInInventory(Block block);
 
     /**
      * Checks if citizen has a certain item in the inventory.
      *
      * @param item       the item.
-     * @param itemDamage the damage value
      * @return true if so.
      */
-    boolean hasItemInInventory(Item item, int itemDamage);
+    boolean hasItemInInventory(Item item);
 
     /**
      * On Inventory change, mark the building dirty.

@@ -52,7 +52,7 @@ public final class Pathfinding
      *
      * @param frame entity movement weight.
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static void debugDraw(final double frame)
     {
         if (AbstractPathJob.lastDebugNodesNotVisited == null)
@@ -112,7 +112,7 @@ public final class Pathfinding
         GlStateManager.popMatrix();
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     private static void debugDrawNode(@NotNull final Node n, final float r, final float g, final float b)
     {
         GlStateManager.pushMatrix();
@@ -187,7 +187,7 @@ public final class Pathfinding
         GlStateManager.popMatrix();
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     private static void renderDebugText(@NotNull final Node n)
     {
         final String s1 = String.format("F: %.3f [%d]", n.getCost(), n.getCounterAdded());

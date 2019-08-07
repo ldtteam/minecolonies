@@ -8,11 +8,13 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
@@ -32,7 +34,9 @@ import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockSilverfish;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.ClientPlayerEntity;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.multiplayer.ClientWorld;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.monster.EntityMob;
@@ -49,8 +53,11 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -60,6 +67,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -86,12 +94,40 @@ public class EventHandler
     private static final String ABANDON_COLONY_CONFIRM_COMMAND_SUGGESTED = "/mc colony ownerchange colony: %d player: [abandoned]";
 
     /**
+     * On Entity join do this.
+     * @param event the event.
+     */
+    @SubscribeEvent
+    public void onEntityAdded(@NotNull final EntityJoinWorldEvent event)
+    {
+        if (event.getEntity() instanceof EntityCitizen)
+        {
+            ((AbstractEntityCitizen) event.getEntity()).getCitizenColonyHandler().updateColonyServer();
+        }
+    }
+
+    //todo on entity removed event!
+    @SubscribeEvent
+    public void onEntityRemoved(@NotNull final EntityEv entity)
+    {
+        if (entity instanceof EntityCitizen)
+        {
+            final ICitizenData citizen = ((AbstractEntityCitizen) entity).getCitizenData();
+            if (citizen != null)
+            {
+                citizen.setLastPosition(((AbstractEntityCitizen) entity).getCurrentPosition());
+                citizen.setCitizenEntity(null);
+            }
+        }
+    }
+
+    /**
      * Event when the debug screen is opened. Event gets called by displayed
      * text on the screen, we only need it when f3 is clicked.
      *
      * @param event {@link net.minecraftforge.client.event.RenderGameOverlayEvent.Text}
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public void onDebugOverlay(final RenderGameOverlayEvent.Text event)
     {
@@ -158,7 +194,7 @@ public class EventHandler
     @SubscribeEvent
     public void onChunkLoad(@NotNull final ChunkEvent.Load event)
     {
-        if (event.getWorld() instanceof WorldServer)
+        if (event.getWorld() instanceof ServerWorld)
         {
             ChunkDataHelper.loadChunk(event.getChunk(), event.getWorld());
         }
@@ -178,17 +214,17 @@ public class EventHandler
         if (entity instanceof ServerPlayerEntity)
         {
             final World world = entity.getEntityWorld();
-            Network.getNetwork().sendTo(new UpdateChunkRangeCapabilityMessage(world, event.getNewChunkX(), event.getNewChunkZ(), MineColonies.getConfig().getCommon().gameplay.workingRangeTownHallChunks), (ServerPlayerEntity) event.getEntity());
+            Network.getNetwork().sendToPlayer(new UpdateChunkRangeCapabilityMessage(world, event.getNewChunkX(), event.getNewChunkZ(), MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get()), (ServerPlayerEntity) event.getEntity());
 
             final Chunk newChunk = world.getChunk(event.getNewChunkX(), event.getNewChunkZ());
             ChunkDataHelper.loadChunk(newChunk, entity.world);
 
-            final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null);
+            final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
 
-            Network.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.x, newChunk.z));
+            Network.getNetwork().sendToEveryone(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.x, newChunk.z));
             @NotNull final ServerPlayerEntity player = (ServerPlayerEntity) entity;
             final Chunk oldChunk = world.getChunk(event.getOldChunkX(), event.getOldChunkZ());
-            final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null);
+            final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
 
             // Add new subscribers to colony.
             for (final int colonyId : newCloseColonies.getAllCloseColonies())
