@@ -14,6 +14,7 @@ import net.minecraft.item.crafting.ICraftingRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SSetSlotPacket;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -317,5 +318,14 @@ public class CraftingGUIBuilding extends Container
     public boolean isComplete()
     {
         return complete;
+    }
+
+    /**
+     * Get the craft matrix inv.
+     * @return the inv.
+     */
+    public CraftingInventory getInv()
+    {
+        return craftMatrix;
     }
 }

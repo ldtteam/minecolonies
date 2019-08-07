@@ -89,10 +89,10 @@ dependencies {
     compileClasspath "com.ldtteam:structurize:${config.structurize_version}"
     apiCompileOnly "com.ldtteam:structurize:${config.structurize_version}"
 
-    // compile against the JEI API but do not include it at runtime
-    //compileOnly "mezz.jei:jei-1.14.3-${config.jei_version}:api"
+    //compile against the JEI API but do not include it at runtime
+    compileOnly "mezz.jei:jei-1.14.3:${config.jei_version}"
     // at runtime, use the full JEI jar
-    //runtime "mezz.jei:jei-1.14.3-${config.jei_version}"
+    runtime "mezz.jei:jei-1.14.3:${config.jei_version}"
 
     testCompile 'junit:junit:4.12'
     testCompile "org.mockito:mockito-core:1.+"

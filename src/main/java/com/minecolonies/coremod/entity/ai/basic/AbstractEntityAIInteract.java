@@ -1,13 +1,14 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.minecolonies.api.colony.managers.interfaces.IStatisticAchievementManager;
-import com.minecolonies.api.configuration.Configurations;
+import com.ldtteam.structurize.util.BlockUtils;
+import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.util.*;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -160,12 +161,13 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         @Nullable final Block curBlock = curBlockState.getBlock();
         if (curBlock == null
               || curBlock.equals(Blocks.AIR)
-              || BlockUtils.shouldNeverBeMessedWith(curBlock))
+              || curBlock instanceof IBuilderUndestroyable
+              || curBlock == Blocks.BEDROCK)
         {
             if (curBlock != null
                   && curBlockState.getMaterial().isLiquid())
             {
-                world.setBlockToAir(blockToMine);
+                world.removeBlock(blockToMine, false);
             }
             //no need to mine block...
             return true;
@@ -209,8 +211,6 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
                 InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, new InvWrapper(worker.getInventoryCitizen()));
             }
         }
-        //if block in statistic then increment that statistic.
-        triggerMinedBlock(curBlockState);
 
         if (blockBreakAction == null)
         {
@@ -225,7 +225,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
 
         if (tool != null && damageTool)
         {
-            tool.getItem().onUpdate(tool, world, worker, worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(tool.getItem(), tool.getItemDamage()), true);
+            tool.getItem().inventoryTick(tool, world, worker, worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(tool.getItem()), true);
         }
         worker.getCitizenExperienceHandler().addExperience(XP_PER_BLOCK);
         this.incrementActionsDone();
@@ -260,41 +260,6 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     }
 
     /**
-     * Trigger that a block was succesfully mined.
-     * @param blockToMine the mined blockState.
-     */
-    protected void triggerMinedBlock(@NotNull final BlockState blockToMine)
-    {
-        final IStatisticAchievementManager statsManager = this.getOwnBuilding().getColony().getStatsManager();
-        final Block block = blockToMine.getBlock();
-        if (block == (Blocks.COAL_ORE)
-              || block == (Blocks.IRON_ORE)
-              || block == (Blocks.LAPIS_ORE)
-              || block == (Blocks.GOLD_ORE)
-              || block == (Blocks.REDSTONE_ORE)
-              || block == (Blocks.EMERALD_ORE))
-        {
-            statsManager.incrementStatistic("ores");
-        }
-        if (block == Blocks.DIAMOND_ORE)
-        {
-            statsManager.incrementStatistic("diamonds");
-        }
-        if (block == Blocks.CARROTS)
-        {
-            statsManager.incrementStatistic("carrots");
-        }
-        if (block == Blocks.POTATOES)
-        {
-            statsManager.incrementStatistic("potatoes");
-        }
-        if (block == Blocks.WHEAT)
-        {
-            statsManager.incrementStatistic("wheat");
-        }
-    }
-
-    /**
      * Calculate how long it takes to mine this block.
      *
      * @param block the block type
@@ -308,7 +273,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             return (int) world.getBlockState(pos).getBlockHardness(world, pos);
         }
 
-        return (int) ((MineColonies.getConfig().getCommon().gameplay.pvp_mode ? MineColonies.getConfig().getCommon().gameplay.blockMiningDelayModifier / 2 : MineColonies.getConfig().getCommon().gameplay.blockMiningDelayModifier * Math.pow(LEVEL_MODIFIER, worker.getCitizenExperienceHandler().getLevel())) * (double) world.getBlockState(pos).getBlockHardness(world, pos) / (double) (worker.getHeldItemMainhand().getItem().getDestroySpeed(worker.getHeldItemMainhand(), block.getDefaultState())));
+        return (int) ((MineColonies.getConfig().getCommon().pvp_mode.get() ? MineColonies.getConfig().getCommon().blockMiningDelayModifier.get() / 2 : MineColonies.getConfig().getCommon().blockMiningDelayModifier.get() * Math.pow(LEVEL_MODIFIER, worker.getCitizenExperienceHandler().getLevel())) * (double) world.getBlockState(pos).getBlockHardness(world, pos) / (double) (worker.getHeldItemMainhand().getItem().getDestroySpeed(worker.getHeldItemMainhand(), block.getDefaultState())));
     }
 
     /**
@@ -316,7 +281,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      */
     public void fillItemsList()
     {
-        searchForItems(worker.getEntityBoundingBox()
+        searchForItems(worker.getBoundingBox()
                          .expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
                          .expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
     }
@@ -329,10 +294,10 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      */
     public void searchForItems(final AxisAlignedBB boundingBox)
     {
-        items = world.getEntitiesWithinAABB(EntityItem.class, boundingBox)
+        items = world.getEntitiesWithinAABB(ItemEntity.class, boundingBox)
                   .stream()
-                  .filter(item -> item != null && !item.isDead &&
-                                    (!item.getEntityData().hasKey("PreventRemoteMovement") || !item.getEntityData().getBoolean("PreventRemoteMovement")))
+                  .filter(item -> item != null && item.isAlive() &&
+                                    (!item.getEntityData().keySet().contains("PreventRemoteMovement") || !item.getEntityData().getBoolean("PreventRemoteMovement")))
                   .map(BlockPosUtil::fromEntity)
                   .collect(Collectors.toList());
     }

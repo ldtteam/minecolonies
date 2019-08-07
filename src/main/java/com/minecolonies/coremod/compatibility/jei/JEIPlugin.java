@@ -1,20 +1,29 @@
 package com.minecolonies.coremod.compatibility.jei;
 
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.compatibility.jei.transer.PrivateCraftingTeachingTransferHandler;
-import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
-import mezz.jei.api.IModRegistry;
-import mezz.jei.api.ISubtypeRegistry;
-import mezz.jei.api.ingredients.IModIngredientRegistration;
-import mezz.jei.api.recipe.IRecipeCategoryRegistration;
-import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
-import mezz.jei.api.recipe.transfer.IRecipeTransferRegistry;
+import mezz.jei.api.constants.VanillaRecipeCategoryUid;
+import mezz.jei.api.registration.IModIngredientRegistration;
+import mezz.jei.api.registration.IRecipeCategoryRegistration;
+import mezz.jei.api.registration.IRecipeTransferRegistration;
+import mezz.jei.api.registration.ISubtypeRegistration;
+import mezz.jei.api.runtime.IJeiRuntime;
+import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
-@mezz.jei.api.JEIPlugin
+@mezz.jei.api.JeiPlugin
 public class JEIPlugin implements IModPlugin
 {
+    @NotNull
     @Override
-    public void registerItemSubtypes(final ISubtypeRegistry iSubtypeRegistry)
+    public ResourceLocation getPluginUid()
+    {
+        return new ResourceLocation(Constants.MOD_ID);
+    }
+
+    @Override
+    public void registerItemSubtypes(final ISubtypeRegistration iSubtypeRegistry)
     {
 
     }
@@ -32,10 +41,9 @@ public class JEIPlugin implements IModPlugin
     }
 
     @Override
-    public void register(final IModRegistry iModRegistry)
+    public void registerRecipeTransferHandlers(final IRecipeTransferRegistration registration)
     {
-        final IRecipeTransferRegistry recipeTranferRegistry = iModRegistry.getRecipeTransferRegistry();
-        recipeTranferRegistry.addRecipeTransferHandler(new PrivateCraftingTeachingTransferHandler(iModRegistry.getJeiHelpers().recipeTransferHandlerHelper()), VanillaRecipeCategoryUid.CRAFTING);
+        registration.addRecipeTransferHandler(new PrivateCraftingTeachingTransferHandler(registration.getTransferHelper()), VanillaRecipeCategoryUid.CRAFTING);
     }
 
     @Override

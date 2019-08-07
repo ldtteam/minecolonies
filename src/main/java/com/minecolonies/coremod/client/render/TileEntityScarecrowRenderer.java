@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Class to render the scarecrow.
  */
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<ScarecrowTileEntity>
 {
     /**

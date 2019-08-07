@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.basic;
 
 import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
 import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
+import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.StructurePlacementUtils;
 import com.minecolonies.api.blocks.ModBlocks;
@@ -9,8 +10,8 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
@@ -19,6 +20,7 @@ import com.minecolonies.api.entity.ai.util.StructureIterator;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.util.WorkerUtil;
@@ -26,14 +28,18 @@ import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.block.Blocks;
-import net.minecraft.init.Items;
+import net.minecraft.entity.item.ArmorStandEntity;
+import net.minecraft.entity.item.ItemFrameEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.state.properties.BedPart;
+import net.minecraft.state.properties.DoubleBlockHalf;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.*;
@@ -342,7 +348,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     private Boolean decorationStep(final StructureIterator.StructureBlock structureBlock)
     {
         checkForExtraBuildingActions();
-        if (!BlockUtils.shouldNeverBeMessedWith(structureBlock.worldBlock))
+        if (!(structureBlock.worldBlock instanceof IBuilderUndestroyable) || structureBlock.worldBlock == Blocks.BEDROCK)
         {
             worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.decorating"));
 
@@ -414,7 +420,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
     private boolean placeBlockAt(@NotNull final BlockState blockState, @NotNull final BlockPos coords)
     {
-        if (blockState instanceof BlockGrassPath)
+        if (blockState.getBlock() instanceof GrassPathBlock)
         {
             holdEfficientTool(blockState.getBlock(), coords);
         }
@@ -427,7 +433,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             if (handlers.canHandle(world, coords, blockState))
             {
-                if (!MineColonies.getConfig().getCommon().gameplay.builderInfiniteResources)
+                if (!MineColonies.getConfig().getCommon().builderInfiniteResources.get())
                 {
                     final List<ItemStack> requiredItems = handlers.getRequiredItems(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false);
 
@@ -446,10 +452,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 final BlockState worldState = world.getBlockState(coords);
 
                 if (worldState.getMaterial() != Material.AIR
-                      && !(worldState.getBlock() instanceof BlockDoublePlant && worldState.get(BlockDoublePlant.HALF).equals(BlockDoublePlant.EnumBlockHalf.UPPER)))
+                      && !(worldState.getBlock() instanceof DoublePlantBlock && worldState.get(DoublePlantBlock.HALF).equals(DoubleBlockHalf.UPPER)))
                 {
                     handleBuildingOverBlock(coords);
-                    world.setBlockToAir(coords);
+                    world.removeBlock(coords, false);
                 }
 
                 final Object result = handlers.handle(world, coords, blockState, job.getStructure().getTileEntityData(job.getStructure().getLocalPosition()), false, job.getStructure().getPosition(), job.getStructure().getSettings());
@@ -486,7 +492,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                         final ItemStack itemStack = worker.getInventoryCitizen().getStackInSlot(slot);
                         worker.getInventoryCitizen().getStackInSlot(slot);
                         worker.setItemStackToSlot(EquipmentSlotType.MAINHAND, itemStack);
-                        itemStack.damageItem(1, worker);
+                        itemStack.damageItem(1, worker, (i) -> {
+                            i.sendBreakAnimation(Hand.MAIN_HAND);
+                    });
                     }
                 }
             }
@@ -528,7 +536,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream().anyMatch(target -> target.isItemEqual(itemStack)));
         }
-        itemList.removeIf(itemstack -> itemstack.getItem() instanceof BlockItem && isBlockFree(((BlockItem) itemstack.getItem()).getBlock(), itemstack.getMetadata()));
+        itemList.removeIf(itemstack -> itemstack.getItem() instanceof BlockItem && isBlockFree(((BlockItem) itemstack.getItem()).getBlock()));
 
         final Map<ItemStorage, Integer> list = new HashMap<>();
         for (final ItemStack stack : itemList)
@@ -557,7 +565,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                   .isEmpty())
             {
                 final Stack stackRequest = new Stack(placedStack.getKey().getItemStack());
-                stackRequest.setCount(placedStack.get());
+                stackRequest.setCount(placedStack.getValue());
                 placer.getWorker().getCitizenData().createRequest(stackRequest);
                 placer.registerBlockAsNeeded(placedStack.getKey().getItemStack());
                 return true;
@@ -614,7 +622,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         @NotNull final Block blockToPlace = block;
 
         //It will crash at blocks like water which is actually free, we don't have to decrease the stacks we have.
-        if (isBlockFree(blockToPlace, blockToPlace.getMetaFromState(stateToPlace)))
+        if (isBlockFree(blockToPlace))
         {
             return true;
         }
@@ -637,7 +645,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         {
             if (!ItemStackUtils.isEmpty(tempStack))
             {
-                final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(tempStack.getItem(), tempStack.getItemDamage());
+                final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(tempStack.getItem());
                 if (slot != -1)
                 {
                     final ItemStack container = tempStack.getItem().getContainerItem(tempStack);
@@ -651,9 +659,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             }
         }
 
-        if (MineColonies.getConfig().getCommon().gameplay.builderBuildBlockDelay > 0 && blockToPlace != Blocks.AIR)
+        if (MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() > 0 && blockToPlace != Blocks.AIR)
         {
-            setDelay(MineColonies.getConfig().getCommon().gameplay.builderBuildBlockDelay * PROGRESS_MULTIPLIER / (worker.getCitizenExperienceHandler().getLevel() + PROGRESS_MULTIPLIER));
+            setDelay(MineColonies.getConfig().getCommon().builderBuildBlockDelay.get() * PROGRESS_MULTIPLIER / (worker.getCitizenExperienceHandler().getLevel() + PROGRESS_MULTIPLIER));
         }
 
         return true;
@@ -676,16 +684,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      * Defines blocks that can be built for free.
      *
      * @param block    The block to check if it is free.
-     * @param metadata The metadata of the block.
      * @return true or false.
      */
-    public static boolean isBlockFree(@Nullable final Block block, final int metadata)
+    public static boolean isBlockFree(@Nullable final Block block)
     {
         return block == null
                  || BlockUtils.isWater(block.getDefaultState())
-                 || block.equals(Blocks.LEAVES)
-                 || block.equals(Blocks.LEAVES2)
-                 || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08))
+                 || block.isIn(BlockTags.LEAVES)
                  || block == ModBlocks.blockDecorationPlaceholder;
     }
 
@@ -724,7 +729,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
     private Boolean structureStep(final StructureIterator.StructureBlock structureBlock)
     {
         checkForExtraBuildingActions();
-        if (!BlockUtils.shouldNeverBeMessedWith(structureBlock.worldBlock))
+        if (!(structureBlock.worldBlock instanceof IBuilderUndestroyable) || structureBlock.worldBlock == Blocks.BEDROCK)
         {
             worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.building"));
 
@@ -867,7 +872,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
         //Don't break bedrock etc.
         //Don't break bedrock etc.
-        if (!BlockUtils.shouldNeverBeMessedWith(currentBlock.worldBlock) && currentBlock.worldBlock != Blocks.TORCH)
+        if (!(currentBlock.worldBlock instanceof IBuilderUndestroyable) || currentBlock.worldBlock == Blocks.BEDROCK && currentBlock.worldBlock != Blocks.TORCH)
         {
             //Fill workFrom with the position from where the builder should build.
             //also ensure we are at that position.
@@ -877,8 +882,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             }
 
             if (StructurePlacementUtils.isStructureBlockEqualWorldBlock(world, currentBlock.blockPosition, job.getStructure().getBlockstate())
-                  || (currentBlock.block instanceof BlockBed && currentBlock.metadata.get(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
-                  || (currentBlock.block instanceof DoorBlock && currentBlock.metadata.get(DoorBlock.HALF).equals(DoorBlock.EnumDoorHalf.UPPER)))
+                  || (currentBlock.block instanceof BedBlock && currentBlock.metadata.get(BedBlock.PART).equals(BedPart.FOOT))
+                  || (currentBlock.block instanceof DoorBlock && currentBlock.metadata.get(DoorBlock.HALF).equals(DoubleBlockHalf.UPPER)))
             {
                 return true;
             }
@@ -886,10 +891,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
             WorkerUtil.faceBlock(currentBlock.blockPosition, worker);
 
             //We need to deal with materials
-            if (MineColonies.getConfig().getCommon().gameplay.builderInfiniteResources || currentBlock.worldMetadata.getMaterial().isLiquid())
+            if (MineColonies.getConfig().getCommon().builderInfiniteResources.get() || currentBlock.worldMetadata.getMaterial().isLiquid())
             {
                 worker.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
-                world.setBlockToAir(currentBlock.blockPosition);
+                world.removeBlock(currentBlock.blockPosition, false);
                 world.setBlockState(currentBlock.blockPosition, Blocks.AIR.getDefaultState());
                 worker.swingArm(worker.getActiveHand());
                 setDelay(UNLIMITED_RESOURCES_TIMEOUT * PROGRESS_MULTIPLIER / (worker.getCitizenExperienceHandler().getLevel() + PROGRESS_MULTIPLIER));
@@ -1035,9 +1040,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 if (!EntityUtils.isEntityAtPosition(entity, world, worker))
                 {
                     final List<ItemStack> request = new ArrayList<>();
-                    if (entity instanceof EntityItemFrame)
+                    if (entity instanceof ItemFrameEntity)
                     {
-                        final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
+                        final ItemStack stack = ((ItemFrameEntity) entity).getDisplayedItem();
                         if (!ItemStackUtils.isEmpty(stack))
                         {
                             ItemStackUtils.setSize(stack, 1);
@@ -1045,20 +1050,20 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                         }
                         request.add(new ItemStack(Items.ITEM_FRAME, 1));
                     }
-                    else if (entity instanceof EntityArmorStand)
+                    else if (entity instanceof ArmorStandEntity)
                     {
-                        request.add(entity.getPickedResult(new RayTraceResult(worker)));
+                        request.add(entity.getPickedResult(new EntityRayTraceResult(worker)));
                         entity.getArmorInventoryList().forEach(request::add);
                         entity.getHeldEquipment().forEach(request::add);
                     }
                     else
                     {
-                        request.add(entity.getPickedResult(new RayTraceResult(worker)));
+                        request.add(entity.getPickedResult(new EntityRayTraceResult(worker)));
                     }
 
                     request.removeIf(ItemStackUtils::isEmpty);
 
-                    if (!MineColonies.getConfig().getCommon().gameplay.builderInfiniteResources)
+                    if (!MineColonies.getConfig().getCommon().builderInfiniteResources.get())
                     {
                         if (checkForListInInvAndRequest(this, new ArrayList<>(request), true))
                         {
@@ -1072,7 +1077,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                             {
                                 continue;
                             }
-                            final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(stack.getItem(), stack.getItemDamage());
+                            final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(stack.getItem());
                             if (slot != -1)
                             {
                                 new InvWrapper(getInventory()).extractItem(slot, 1, false);

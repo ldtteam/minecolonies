@@ -32,12 +32,14 @@ import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -320,7 +322,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             exceptionTimer *= 2;
             if (worker != null)
             {
-                final String name = this.worker.getName();
+                final String name = this.worker.getName().getFormattedText();
                 final BlockPos workerPosition = worker.getPosition();
                 final IJob colonyJob = worker.getCitizenJobHandler().getColonyJob();
                 final String jobName = colonyJob == null ? "null" : colonyJob.getName();
@@ -1090,7 +1092,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             if (amount > 0)
             {
                 final ItemStack activeStack = new InvWrapper(getInventory()).extractItem(slotAt, amount, false);
-                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, buildingWorker.getCapability(ITEM_HANDLER_CAPABILITY, null));
+                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, buildingWorker.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null));
             }
         }
         slotAt++;
@@ -1310,7 +1312,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             @NotNull final BlockPos positionInDirection = getPositionInDirection(direction, distance + offset, targetPos);
             if (EntityUtils.checkForFreeSpace(world, positionInDirection)
-                  && world.getBlockState(positionInDirection.up()).getBlock() != Blocks.SAPLING)
+                  && world.getBlockState(positionInDirection.up()).getBlock().isIn(BlockTags.SAPLINGS))
             {
                 return positionInDirection;
             }

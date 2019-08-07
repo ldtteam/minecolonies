@@ -67,7 +67,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
      * Returns the orientation of the bed in degrees.
      */
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public float getBedOrientationInDegrees()
     {
         final BlockState state = getBedLocation() == null ? null : citizen.world.getBlockState(getBedLocation());

@@ -884,9 +884,6 @@ public final class ColonyManager implements IColonyManager
             {
                 c.onWorldLoad(world);
             }
-
-            world.
-            world.addEventListener(new ColonyManagerWorldAccess());
         }
     }
 
