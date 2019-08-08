@@ -43,7 +43,7 @@ public class PathJobFindWater extends AbstractPathJob
 
     private static double squareDistance(@NotNull final BlockPos currentPond, @NotNull final BlockPos nextPond)
     {
-        return currentPond.distanceSq(nextPond.getX(), nextPond.getY(), nextPond.getZ());
+        return currentPond.distanceSq(nextPond);
     }
 
     @NotNull

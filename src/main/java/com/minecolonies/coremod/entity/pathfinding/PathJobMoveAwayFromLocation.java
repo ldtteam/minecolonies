@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.util.Direction;
@@ -110,7 +110,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     @Override
     protected Path search()
     {
-        if (MineColonies.getConfig().getCommon().pathfinding.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
+        if (MineColonies.getConfig().getCommon().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE)
         {
             Log.getLogger().info(String.format("Pathfinding from [%d,%d,%d] away from [%d,%d,%d]",
               start.getX(), start.getY(), start.getZ(), avoid.getX(), avoid.getY(), avoid.getZ()));
@@ -161,6 +161,6 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     @Override
     protected double getNodeResultScore(@NotNull final Node n)
     {
-        return avoid.distanceSq(n.pos.getX(), n.pos.getY(), n.pos.getZ());
+        return avoid.distanceSq(n.pos);
     }
 }

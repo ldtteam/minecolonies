@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.ai.pathfinding.AbstractWalkToProxy;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +22,7 @@ public class GeneralEntityWalkToProxy extends AbstractWalkToProxy
      *
      * @param entity the entity.
      */
-    public GeneralEntityWalkToProxy(final LivingEntity entity)
+    public GeneralEntityWalkToProxy(final MobEntity entity)
     {
         super(entity);
     }
