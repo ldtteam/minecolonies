@@ -2,15 +2,15 @@ package com.minecolonies.coremod.entity.ai.citizen.herders;
 
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingChickenHerder;
 import com.minecolonies.coremod.colony.jobs.JobChickenHerder;
-import net.minecraft.entity.passive.EntityChicken;
-import net.minecraft.init.Items;
+import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The AI behind the {@link JobChickenHerder} for Breeding and Killing Chickens.
  */
-public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChickenHerder, EntityChicken>
+public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChickenHerder, ChickenEntity>
 {
     /**
      * Max amount of animals per Hut Level.
@@ -50,8 +50,8 @@ public class EntityAIWorkChickenHerder extends AbstractEntityAIHerder<JobChicken
     }
 
     @Override
-    public Class<EntityChicken> getAnimalClass()
+    public Class<ChickenEntity> getAnimalClass()
     {
-        return EntityChicken.class;
+        return ChickenEntity.class;
     }
 }

@@ -3,14 +3,14 @@ package com.minecolonies.coremod.entity.ai.citizen.builder;
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.HorizontalBlock;
-import net.minecraft.block.properties.DirectionProperty;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.state.DirectionProperty;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class ConstructionTapeHelper
 {
-    public static final DirectionProperty FACING    = HorizontalBlock.FACING;
+    public static final DirectionProperty FACING    = HorizontalBlock.HORIZONTAL_FACING;
     public static final int               MINHEIGHT = 1;
     public static final int               MAXHEIGHT = 256;
 
@@ -60,7 +60,7 @@ public final class ConstructionTapeHelper
      */
     public static void placeConstructionTape(final BlockPos pos, final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners, @NotNull final World world)
     {
-        if (MineColonies.getConfig().getCommon().gameplay.builderPlaceConstructionTape)
+        if (MineColonies.getConfig().getCommon().builderPlaceConstructionTape.get())
         {
             final BlockState constructionTape = ModBlocks.blockConstructionTape.getDefaultState();
 
@@ -147,7 +147,7 @@ public final class ConstructionTapeHelper
     public static int checkIfPlaceable(@NotNull final int x, @NotNull final int y, @NotNull final int z, @NotNull final World world)
     {
         BlockPos target = new BlockPos(x,y,z);
-        final Chunk chunk = world.getChunk(target);
+        final Chunk chunk = world.getChunkAt(target);
 
         target = new BlockPos(x, chunk.getTopFilledSegment() + 16, z);
         while(world.getBlockState(target).getMaterial().isReplaceable())

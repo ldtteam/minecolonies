@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.mobs.aitasks;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.CompatibilityUtils;
 import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.LivingEntityBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.SoundEvents;
@@ -32,7 +32,7 @@ public class EntityAIAttackArcher extends EntityAIBase
     private static final double PITCH_DIVIDER                  = 1.0D;
     private static final double MAX_ATTACK_DISTANCE            = 20.0D;
     private final EntityCreature   entity;
-    private       LivingEntityBase target;
+    private       LivingEntity target;
     private int lastAttack = 0;
 
     /**
@@ -89,7 +89,7 @@ public class EntityAIAttackArcher extends EntityAIBase
      * AI for an Entity to attack the target. Called every Tick(20tps)
      * @param target The target to attack
      */
-    private void attack(final LivingEntityBase target)
+    private void attack(final LivingEntity target)
     {
         // Limit Actions to every 10 Ticks
         if (tickTimer > 0)

@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.entity.ai.citizen.composter;
 
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
@@ -268,7 +268,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
             if (getOwnBuilding(BuildingComposter.class).shouldRetrieveDirtFromCompostBin())
             {
-                InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(Blocks.DIRT, MineColonies.getConfig().getCommon().gameplay.dirtFromCompost));
+                InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(Blocks.DIRT, MineColonies.getConfig().getCommon().dirtFromCompost.get()));
             }
             else
             {

@@ -13,8 +13,8 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import net.minecraft.block.FurnaceBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
@@ -338,7 +338,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
         {
             building.putInFurnace(currentFurnace, bakingProduct);
             bakingProduct.nextState();
-            world.setBlockState(currentFurnace, Blocks.LIT_FURNACE.getDefaultState().with(FurnaceBlock.FACING, furnace.get(FurnaceBlock.FACING)));
+            world.setBlockState(currentFurnace, Blocks.FURNACE.getDefaultState().with(FurnaceBlock.FACING, furnace.get(FurnaceBlock.FACING)).with(FurnaceBlock.LIT, true));
         }
         return PREPARING;
     }
@@ -435,14 +435,14 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             return PREPARING;
         }
 
-        worker.setHeldItem(EnumHand.MAIN_HAND, currentBakingProduct.getEndProduct());
+        worker.setHeldItem(Hand.MAIN_HAND, currentBakingProduct.getEndProduct());
 
         final ItemStack newItem = currentBakingProduct.getEndProduct();
         worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
 
         if (progress >= getRequiredProgressForKneading())
         {
-            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+            worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
             getOwnBuilding().removeFromTasks(ProductState.BAKED, currentBakingProduct);
             if (newItem != null)
             {

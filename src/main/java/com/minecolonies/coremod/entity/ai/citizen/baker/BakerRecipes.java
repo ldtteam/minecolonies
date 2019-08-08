@@ -5,8 +5,8 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.block.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +58,7 @@ public final class BakerRecipes
     static
     {
         final List<ItemStack> inputPumpkinPie = new ArrayList<>();
-        inputPumpkinPie.add(new ItemStack(Blocks.PUMPKIN.getItemDropped(null, null, 0), 1));
+        inputPumpkinPie.add(new ItemStack(Items.PUMPKIN, 1));
 //        inputPumpkinPie.add(new ItemStack(Items.PUMPKIN_SEEDS, 4));
         inputPumpkinPie.add(new ItemStack(Items.SUGAR, 1));
         inputPumpkinPie.add(new ItemStack(Items.EGG, 1));
@@ -75,7 +75,7 @@ public final class BakerRecipes
 
         final List<ItemStack> inputCookie = new ArrayList<>();
         inputCookie.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT_COOKIES));
-        inputCookie.add(new ItemStack(Items.DYE, REQUIRED_COCOA, 0x3));
+        inputCookie.add(new ItemStack(Items.COCOA_BEANS, REQUIRED_COCOA));
 
         final List<ItemStack> inputBread = new ArrayList<>();
         inputBread.add(new ItemStack(Items.WHEAT, REQUIRED_WHEAT));

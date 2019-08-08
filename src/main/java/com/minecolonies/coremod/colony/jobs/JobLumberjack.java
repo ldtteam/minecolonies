@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,11 +18,18 @@ import org.jetbrains.annotations.Nullable;
 public class JobLumberjack extends AbstractJob
 {
     private static final String TAG_TREE = "Tree";
+    private static final String TAG_SAPLING = "Sapling";
+
     /**
      * The tree this lumberjack is currently working on.
      */
     @Nullable
     public Tree tree;
+
+    /**
+     * The sapling of the current tree.
+     */
+    public ItemStack sapling;
 
     /**
      * Create a lumberjack job.
@@ -46,6 +54,11 @@ public class JobLumberjack extends AbstractJob
         if (compound.keySet().contains(TAG_TREE))
         {
             tree = Tree.read(compound.getCompound(TAG_TREE));
+        }
+
+        if (compound.keySet().contains(TAG_SAPLING))
+        {
+            sapling = ItemStack.read(compound.getCompound(TAG_SAPLING))
         }
     }
 
@@ -94,6 +107,11 @@ public class JobLumberjack extends AbstractJob
         if (tree != null)
         {
             tree.write(treeTag);
+        }
+
+        if (sapling != null)
+        {
+            sapling.write(treeTag);
         }
     }
 

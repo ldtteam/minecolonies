@@ -165,7 +165,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             range = getOwnBuilding().getTargetableArea(world);
         }
 
-        if (!range.intersectsWithXZ(new Vec3d(living.getPosition())))
+        if (!range.contains(new Vec3d(living.getPosition())))
         {
             worker.getNavigator().clearPath();
             removeFromQueue();

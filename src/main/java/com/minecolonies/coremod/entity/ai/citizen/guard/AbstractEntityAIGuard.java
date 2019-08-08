@@ -20,12 +20,14 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
-import net.minecraft.entity.LivingEntityBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -82,7 +84,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     /**
      * The current target for our guard.
      */
-    protected LivingEntityBase target = null;
+    protected LivingEntity target = null;
 
     /**
      * The current blockPos we're patrolling at.
@@ -179,8 +181,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             return START_WORKING;
         }
 
-        worker.addPotionEffect(new PotionEffect(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER));
-        this.world.getScoreboard().addPlayerToTeam(worker.getName(), TEAM_COLONY_NAME + worker.getCitizenColonyHandler().getColonyId());
+        worker.addPotionEffect(new EffectInstance(GLOW_EFFECT, GLOW_EFFECT_DURATION, GLOW_EFFECT_MULTIPLIER));
+        this.world.getScoreboard().addPlayerToTeam(worker.getName().getFormattedText(), new ScorePlayerTeam(this.world.getScoreboard(), TEAM_COLONY_NAME + worker.getCitizenColonyHandler().getColonyId()));
 
         if (BlockPosUtil.getDistance2D(worker.getPosition(), buildingGuards.getPlayerToFollow()) > MAX_FOLLOW_DERIVATION)
         {
@@ -274,7 +276,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      * @param citizen  the citizen to help.
      * @param attacker the citizens attacker.
      */
-    public void startHelpCitizen(final EntityCitizen citizen, final LivingEntityBase attacker)
+    public void startHelpCitizen(final EntityCitizen citizen, final LivingEntity attacker)
     {
         if (canHelp())
         {
@@ -291,7 +293,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     public boolean canHelp()
     {
-        return (target == null || target.isDead) && getState() != HELP_CITIZEN;
+        return (target == null || !target.isAlive()) && getState() != HELP_CITIZEN;
     }
 
     /**
@@ -304,10 +306,10 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             return DECIDE;
         }
 
-        if (target == null || target.isDead)
+        if (target == null || !target.isAlive())
         {
             target = helpCitizen.get().getAttackTarget();
-            if (target == null || target.isDead)
+            if (target == null || !target.isAlive())
             {
                 return DECIDE;
             }
@@ -356,7 +358,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     protected boolean checkForTarget()
     {
-        if (target != null && target.isDead)
+        if (target != null && !target.isAlive())
         {
             incrementActionsDoneAndDecSaturation();
             worker.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
@@ -408,13 +410,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
             return GUARD_REGEN;
         }
 
-        if (worker.getRevengeTarget() != null && !worker.getRevengeTarget().isDead
+        if (worker.getRevengeTarget() != null && worker.getRevengeTarget().isAlive()
               && (isInAttackDistance(worker.getRevengeTarget().getPosition()) || isWithinPersecutionDistance(worker.getRevengeTarget().getPosition())))
         {
             target = worker.getRevengeTarget();
         }
 
-        if (target == null || target.isDead || !isWithinPersecutionDistance(target.getPosition()))
+        if (target == null || !target.isAlive() || !isWithinPersecutionDistance(target.getPosition()))
         {
             // Clear pathing when target changes
             worker.getNavigator().clearPath();
@@ -440,12 +442,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      *
      * @return The next IAIState to go to.
      */
-    protected LivingEntityBase getTarget()
+    protected LivingEntity getTarget()
     {
         reduceAttackDelay(1);
 
         final IColony colony = worker.getCitizenColonyHandler().getColony();
-        if (worker.getLastAttackedEntity() != null && !worker.getLastAttackedEntity().isDead)
+        if (worker.getLastAttackedEntity() != null && worker.getLastAttackedEntity().isAlive())
         {
             if (!isWithinPersecutionDistance(worker.getLastAttackedEntity().getPosition()))
             {
@@ -469,13 +471,13 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
 
         if (colony != null)
         {
-            if (!colony.getRaiderManager().getHorde((WorldServer) worker.getEntityWorld()).isEmpty() || colony.isColonyUnderAttack())
+            if (!colony.getRaiderManager().getHorde((ServerWorld) worker.getEntityWorld()).isEmpty() || colony.isColonyUnderAttack())
             {
                 for (final ICitizenData citizen : colony.getCitizenManager().getCitizens())
                 {
                     if (citizen.getCitizenEntity().isPresent())
                     {
-                        final LivingEntityBase entity = citizen.getCitizenEntity().get().getLastAttackedEntity();
+                        final LivingEntity entity = citizen.getCitizenEntity().get().getLastAttackedEntity();
                         if (entity instanceof AbstractEntityMinecoloniesMob && worker.canEntityBeSeen(entity))
                         {
                             return entity;
@@ -493,16 +495,16 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 }
             }
 
-            final List<LivingEntityBase> targets = world.getEntitiesWithinAABB(LivingEntityBase.class, getSearchArea(),
+            final List<LivingEntity> targets = world.getEntitiesWithinAABB(LivingEntity.class, getSearchArea(),
               entity -> buildingGuards.getMobsToAttack()
                           .stream()
                           .filter(MobEntryView::hasAttack)
-                          .anyMatch(mobEntry -> mobEntry.getEntityEntry().getEntityClass().isInstance(entity)));
+                          .anyMatch(mobEntry -> mobEntry.getEntityEntry().getClass().isInstance(entity)));
 
 
             int closest = Integer.MAX_VALUE;
-            LivingEntityBase targetEntity = null;
-            for (final LivingEntityBase entity : targets)
+            LivingEntity targetEntity = null;
+            for (final LivingEntity entity : targets)
             {
                 if (worker.canEntityBeSeen(entity) && isWithinPersecutionDistance(entity.getPosition()))
                 {
@@ -516,7 +518,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                         return entity;
                     }
 
-                    final int tempDistance = (int) worker.getPosition().distanceSq(entity.posX, entity.posY, entity.posZ);
+                    final int tempDistance = (int) worker.getPosition().distanceSq(entity.posX, entity.posY, entity.posZ, false);
                     if (tempDistance < closest)
                     {
                         closest = tempDistance;

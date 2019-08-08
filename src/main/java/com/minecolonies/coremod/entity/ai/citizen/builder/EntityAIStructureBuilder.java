@@ -1,12 +1,13 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
+import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.util.StructureIterator;
 import com.minecolonies.api.util.*;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
@@ -19,7 +20,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWor
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -254,7 +255,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             final IBuilding building = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(buildingPos);
             if (building != null)
             {
-                world.getEntitiesWithinAABB(EntityMob.class, building.getTargetableArea(world)).forEach(Entity::setDead);
+                world.getEntitiesWithinAABB(MobEntity.class, building.getTargetableArea(world)).forEach(Entity::remove);
             }
         }
     }
@@ -354,7 +355,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     @Override
     public BlockState getSolidSubstitution(@NotNull final BlockPos location)
     {
-        return BlockUtils.getSubstitutionBlockAtWorld(world, location);
+        return BlockUtils.getSubstitutionBlockAtWorld(world, location).getBlockState();
     }
 
     @Override
@@ -362,7 +363,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         final int initialDelay = super.getBlockMiningDelay(block, pos);
 
-        if (pos.getY() > DEPTH_LEVEL_0 || !MineColonies.getConfig().getCommon().gameplay.restrictBuilderUnderground)
+        if (pos.getY() > DEPTH_LEVEL_0 || !MineColonies.getConfig().getCommon().restrictBuilderUnderground.get())
         {
             return (int) (initialDelay * SPEED_BUFF_0);
         }

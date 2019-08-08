@@ -37,7 +37,7 @@ import com.minecolonies.coremod.util.PermissionUtils;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.LivingEntityBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIOpenDoor;
 import net.minecraft.entity.ai.EntityAISwimming;
@@ -381,7 +381,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.avoiding"));
 
         // Environmental damage
-        if (!(attacker instanceof LivingEntityBase))
+        if (!(attacker instanceof LivingEntity))
         {
             moveAwayPath = this.getNavigator().moveAwayFromLivingEntity(this, 5, INITIAL_RUN_SPEED_AVOID);
             return;
@@ -494,7 +494,7 @@ public class EntityCitizen extends AbstractEntityCitizen
      */
     public void callForHelp(final Entity attacker, final int guardHelpRange)
     {
-        if (!(attacker instanceof LivingEntityBase) || !MineColonies.getConfig().getCommon().gameplay.citizenCallForHelp || callForHelpCooldown != 0)
+        if (!(attacker instanceof LivingEntity) || !MineColonies.getConfig().getCommon().gameplay.citizenCallForHelp || callForHelpCooldown != 0)
         {
             return;
         }
@@ -524,7 +524,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
         if (guard != null)
         {
-            ((AbstractEntityAIGuard) guard.getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntityBase) attacker);
+            ((AbstractEntityAIGuard) guard.getCitizenData().getJob().getWorkerAI()).startHelpCitizen(this, (LivingEntity) attacker);
         }
     }
 

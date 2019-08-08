@@ -1,7 +1,7 @@
 package com.minecolonies.api.util;
 
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.BlockState;
+import net.minecraft.state.IProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

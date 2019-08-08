@@ -5,7 +5,7 @@ import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.RaiderConstants;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
-import net.minecraft.entity.LivingEntityBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.EntityDamageSource;
@@ -23,7 +23,7 @@ public class EntityAIRaiderAttackMelee extends EntityAIBase
     private static final double                        ATTACK_SPEED            = 1.3;
     private static final int                           MUTEX_BITS              = 3;
     private final        AbstractEntityMinecoloniesMob entity;
-    private              LivingEntityBase              target;
+    private              LivingEntity              target;
     private              int                           lastAttack              = 0;
 
     /**
@@ -80,7 +80,7 @@ public class EntityAIRaiderAttackMelee extends EntityAIBase
      *
      * @param target The target to attack
      */
-    private void attack(final LivingEntityBase target)
+    private void attack(final LivingEntity target)
     {
         // Limit Actions to every 10 Ticks
         if (tickTimer > 0)
