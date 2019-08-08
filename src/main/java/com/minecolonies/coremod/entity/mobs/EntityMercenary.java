@@ -339,9 +339,9 @@ public class EntityMercenary extends EntityCreature implements INPC, IColonyRela
     @Override
     public boolean attackEntityFrom(final DamageSource source, final float damage)
     {
-        if (source.getTrueSource() instanceof LivingEntityBase)
+        if (source.getTrueSource() instanceof LivingEntity)
         {
-            this.setAttackTarget((LivingEntityBase) source.getTrueSource());
+            this.setAttackTarget((LivingEntity) source.getTrueSource());
         }
         return super.attackEntityFrom(source, damage);
     }

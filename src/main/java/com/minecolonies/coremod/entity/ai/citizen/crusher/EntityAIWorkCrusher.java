@@ -6,14 +6,16 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.SoundUtils;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.network.messages.LocalizedParticleEffectMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.SoundEvents;
+import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -143,10 +145,9 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
         }
         if (check == CRAFT)
         {
-            Network.getNetwork().sendToAllTracking(new LocalizedParticleEffectMessage(currentRecipeStorage.getInput().get(0).copy(), crusherBuilding.getID()), worker);
-            Network.getNetwork().sendToAllTracking(new LocalizedParticleEffectMessage(currentRecipeStorage.getPrimaryOutput().copy(), crusherBuilding.getID().down()),
+            Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(currentRecipeStorage.getInput().get(0).copy(), crusherBuilding.getID()), worker);
+            Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(currentRecipeStorage.getPrimaryOutput().copy(), crusherBuilding.getID().down()),
               worker);
-
             SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.BLOCK_STONE_BREAK);
         }
         return getState();

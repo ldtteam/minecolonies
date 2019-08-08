@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -21,6 +20,7 @@ import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
@@ -28,7 +28,6 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHou
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.ChestTileEntity;
@@ -165,18 +164,18 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         if (maximalGatherCount < 0)
         {
-            maximalGatherCount = MineColonies.getConfig().getCommon().requestSystem.minimalBuildingsToGather
+            maximalGatherCount = MineColonies.getConfig().getCommon().minimalBuildingsToGather.get()
                     + worker.getRandom().nextInt(
-                            Math.max(1, MineColonies.getConfig().getCommon().requestSystem.maximalBuildingsToGather - MineColonies.getConfig().getCommon().requestSystem.minimalBuildingsToGather));
+                            Math.max(1, MineColonies.getConfig().getCommon().maximalBuildingsToGather.get() - MineColonies.getConfig().getCommon().minimalBuildingsToGather.get()));
         }
 
         if (gatherTarget == null)
         {
             if (gatherCount == maximalGatherCount)
             {
-                maximalGatherCount = MineColonies.getConfig().getCommon().requestSystem.minimalBuildingsToGather
+                maximalGatherCount = MineColonies.getConfig().getCommon().minimalBuildingsToGather.get()
                         + worker.getRandom().nextInt(
-                                Math.max(1, MineColonies.getConfig().getCommon().requestSystem.maximalBuildingsToGather - MineColonies.getConfig().getCommon().requestSystem.minimalBuildingsToGather));
+                                Math.max(1, MineColonies.getConfig().getCommon().maximalBuildingsToGather.get() - MineColonies.getConfig().getCommon().minimalBuildingsToGather.get()));
                 gatherCount = 0;
                 return DUMPING;
             }
@@ -302,7 +301,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean gatherFromBuilding(@NotNull final IBuilding building)
     {
-        final IItemHandler handler = building.getCapability(ITEM_HANDLER_CAPABILITY, null);
+        final IItemHandler handler = building.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null);
         if (handler == null)
         {
             return false;
@@ -323,7 +322,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final int amount = workerRequiresItem(building, stack, alreadyKept);
         if (amount <= 0
               || (building instanceof BuildingCook
-                    && stack.getItem() instanceof ItemFood))
+                    && stack.getItem().isFood()))
         {
             return false;
         }
@@ -529,11 +528,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             if (ITileEntityColonyBuilding.getBuilding() instanceof AbstractBuildingWorker)
             {
                 insertionResultStack = InventoryUtils.forceItemStackToItemHandler(
-                  ITileEntityColonyBuilding.getBuilding().getCapability(ITEM_HANDLER_CAPABILITY, null), stack, ((IBuildingWorker) building)::isItemStackInRequest);
+                  ITileEntityColonyBuilding.getBuilding().getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), stack, ((IBuildingWorker) building)::isItemStackInRequest);
             }
             else
             {
-                insertionResultStack = InventoryUtils.forceItemStackToItemHandler(ITileEntityColonyBuilding.getBuilding().getCapability(ITEM_HANDLER_CAPABILITY, null), stack, itemStack -> false);
+                insertionResultStack = InventoryUtils.forceItemStackToItemHandler(ITileEntityColonyBuilding.getBuilding().getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), stack, itemStack -> false);
             }
 
             if (!ItemStackUtils.isEmpty(insertionResultStack))
@@ -628,15 +627,15 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             if (((ChestTileEntity) tileEntity).numPlayersUsing == 0)
             {
-                this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 1);
-                this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType(), true);
-                this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType(), true);
+                this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockState().getBlock(), 1, 1);
+                this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockState().getBlock());
+                this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockState().getBlock());
                 setDelay(DUMP_AND_GATHER_DELAY);
                 return getState();
             }
-            this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 0);
-            this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType(), true);
-            this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType(), true);
+            this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockState().getBlock(), 1, 0);
+            this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockState().getBlock());
+            this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockState().getBlock());
         }
 
         if (gatherIfInTileEntity(tileEntity, request.getRequest().getStack()))
@@ -683,7 +682,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             return START_WORKING;
         }
-        worker.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
+        worker.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
           .setBaseValue(
             BASE_MOVEMENT_SPEED + (worker.getCitizenExperienceHandler().getLevel() > 50 ? 50 : worker.getCitizenExperienceHandler().getLevel()) * BONUS_SPEED_PER_LEVEL);
 

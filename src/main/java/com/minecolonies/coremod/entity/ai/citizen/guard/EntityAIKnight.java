@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.compatibility.tinkers.TinkersWeaponHelper;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardGear;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -10,19 +9,16 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.SwordItem;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
+import net.minecraft.util.*;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -121,7 +117,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
           Items.SHIELD,
           -1);
 
-        if (target != null && !target.isDead)
+        if (target != null && target.isAlive())
         {
             if (shieldSlot != -1)
             {
@@ -129,7 +125,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
                 worker.setActiveHand(Hand.OFF_HAND);
 
                 worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
-                worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+                worker.getLookController().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
                 worker.decreaseSaturationForContinuousAction();
             }
             else
@@ -177,7 +173,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
         if (getOwnBuilding() != null)
         {
             worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
-            worker.getLookHelper().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
+            worker.getLookController().setLookPositionWithEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
 
             worker.swingArm(Hand.MAIN_HAND);
             worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
@@ -189,8 +185,8 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
                 damageToBeDealt *= 2;
             }
 
-            final DamageSource source = new EntityDamageSource(worker.getName(), worker);
-            if (MineColonies.getConfig().getCommon().gameplay.pvp_mode && target instanceof PlayerEntity)
+            final DamageSource source = new EntityDamageSource(worker.getName().getFormattedText(), worker);
+            if (MineColonies.getConfig().getCommon().pvp_mode.get() && target instanceof PlayerEntity)
             {
                 source.setDamageBypassesArmor();
             }
@@ -232,14 +228,14 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
             }
 
             addDmg += getLevelDamage();
-            return (int) ((BASE_PHYSICAL_DAMAGE + addDmg) * MineColonies.getConfig().getCommon().gameplay.knightDamageMult);
+            return (int) ((BASE_PHYSICAL_DAMAGE + addDmg) * MineColonies.getConfig().getCommon().knightDamageMult.get());
         }
-        return (int) (BASE_PHYSICAL_DAMAGE * MineColonies.getConfig().getCommon().gameplay.knightDamageMult);
+        return (int) (BASE_PHYSICAL_DAMAGE * MineColonies.getConfig().getCommon().knightDamageMult.get());
     }
 
     @Override
     public void moveInAttackPosition()
     {
-        worker.getNavigator().tryMoveToLivingEntity(target, getCombatMovementSpeed());
+        worker.getNavigator().tryMoveToEntityLiving(target, getCombatMovementSpeed());
     }
 }

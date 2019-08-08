@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -9,16 +8,20 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.LivingEntityBase;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
-import net.minecraft.entity.projectile.EntityTippedArrow;
-import net.minecraft.init.Enchantments;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.TippedArrowItem;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -152,7 +155,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
      * @return The next IAIState to go to.
      */
     @Override
-    protected LivingEntityBase getTarget()
+    protected LivingEntity getTarget()
     {
         strafingTime = 0;
         tooCloseNumTicks = 0;
@@ -312,9 +315,9 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 worker.faceEntity(target, (float) TURN_AROUND, (float) TURN_AROUND);
                 worker.swingArm(Hand.MAIN_HAND);
 
-                final EntityTippedArrow arrow = new GuardArrow(world, worker);
+                final ArrowEntity arrow = EntityType.ARROW.create(world);
                 final double xVector = target.posX - worker.getPosX();
-                final double yVector = target.getEntityBoundingBox().minY + target.height / getAimHeight() - arrow.posY;
+                final double yVector = target.getBoundingBox().minY + target.getHeight() / getAimHeight() - arrow.posY;
                 final double zVector = target.posZ - worker.getPosZ();
                 final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
                 double damage = getRangedAttackDamage();
@@ -349,7 +352,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 final double zDiff = target.posZ - worker.getPosZ();
                 final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
                 final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
-                worker.move(MoverType.SELF, goToX, 0, goToZ);
+                worker.move(MoverType.SELF, new Vec3d(goToX, 0, goToZ));
 
                 timeCanSee = 0;
                 target.setRevengeTarget(worker);
@@ -411,7 +414,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
         if (worker.getCitizenData() != null)
         {
             int enchantDmg = 0;
-            if (MineColonies.getConfig().getCommon().gameplay.rangerEnchants)
+            if (MineColonies.getConfig().getCommon().rangerEnchants.get())
             {
                 final ItemStack heldItem = worker.getHeldItem(Hand.MAIN_HAND);
                 // Normalize to +1 dmg
@@ -419,9 +422,9 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 enchantDmg += EnchantmentHelper.getEnchantmentLevel(Enchantments.POWER, heldItem);
             }
 
-            return (RANGER_BASE_DMG + getLevelDamage() + enchantDmg) * MineColonies.getConfig().getCommon().gameplay.rangerDamageMult;
+            return (RANGER_BASE_DMG + getLevelDamage() + enchantDmg) * MineColonies.getConfig().getCommon().rangerDamageMult.get();
         }
-        return RANGER_BASE_DMG * MineColonies.getConfig().getCommon().gameplay.rangerDamageMult;
+        return RANGER_BASE_DMG * MineColonies.getConfig().getCommon().rangerDamageMult.get();
     }
 
     /**

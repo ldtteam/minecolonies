@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
-import net.minecraft.entity.LivingEntityBase;
+import net.minecraft.entity.LivingEntity;
 import com.minecolonies.api.entity.pathfinding.WaterPathResult;
 import com.minecolonies.api.util.Pond;
 import net.minecraft.util.math.BlockPos;
@@ -34,7 +34,7 @@ public class PathJobFindWater extends AbstractPathJob
      * @param ponds already visited fishing places.
      * @param entity the entity.
      */
-    PathJobFindWater(final World world, @NotNull final BlockPos start, final BlockPos home, final int range, @NotNull final List<BlockPos> ponds, final LivingEntityBase entity)
+    PathJobFindWater(final World world, @NotNull final BlockPos start, final BlockPos home, final int range, @NotNull final List<BlockPos> ponds, final LivingEntity entity)
     {
         super(world, start, start, range, new WaterPathResult(), entity);
         this.ponds = new ArrayList<>(ponds);

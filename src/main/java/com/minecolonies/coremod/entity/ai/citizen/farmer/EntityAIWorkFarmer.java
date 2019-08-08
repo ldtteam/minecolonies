@@ -11,12 +11,11 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
 import com.minecolonies.api.tileentities.ScarecrowFieldStage;
-import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
@@ -26,16 +25,18 @@ import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.loot.LootContext;
 import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -170,7 +171,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 final List<ItemStack> compostAbleItems = new ArrayList<>();
                 compostAbleItems.add(new ItemStack(ModItems.compost));
-                compostAbleItems.add(new ItemStack(Items.DYE, 1, 15));
+                compostAbleItems.add(new ItemStack(Items.BONE_MEAL, 1));
                 worker.getCitizenData().createRequestAsync(new StackList(compostAbleItems, FERTLIZER));
             }
         }
@@ -231,12 +232,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             return true;
         }
-        if (itemStack.getItem() == Items.DYE)
-        {
-            final EnumDyeColor enumdyecolor = EnumDyeColor.byDyeDamage(itemStack.getMetadata());
-            return enumdyecolor == EnumDyeColor.WHITE;
-        }
-        return false;
+        return itemStack.getItem() == Items.BONE_MEAL;
     }
 
     /**
@@ -316,7 +312,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         worker.getCitizenData().getCitizenHappinessHandler().setNoFieldForFarmerModifier(currentField.getPos(), true); 
 
         final ItemStack seeds = currentField.getSeed().copy();
-        final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(seeds.getItem(), seeds.getItemDamage());
+        final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(seeds.getItem());
         if (slot != -1)
         {
             return FARMER_PLANT;
@@ -343,9 +339,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean shouldHoe(@NotNull final BlockPos position, @NotNull final ScarecrowTileEntity field)
     {
-        return !field.isNoPartOfField(world, position) && !BlockUtils.isBlockSeed(world, position.up())
+        return !field.isNoPartOfField(world, position) && world.getBlockState(position.up()) .getBlock() instanceof CropsBlock
                  && !(world.getBlockState(position.up()).getBlock() instanceof BlockScarecrow)
-                 && (world.getBlockState(position).getBlock() instanceof BlockDirt || world.getBlockState(position).getBlock() instanceof BlockGrass);
+                 && (world.getBlockState(position).getBlock().isIn(BlockTags.DIRT_LIKE) || world.getBlockState(position).getBlock() instanceof GrassBlock);
     }
 
     /**
@@ -577,8 +573,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean shouldPlant(@NotNull final BlockPos position, @NotNull final ScarecrowTileEntity field)
     {
-        return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.up()).getBlock() instanceof BlockCrops)
-                 && !(world.getBlockState(position.up()).getBlock() instanceof BlockStem)
+        return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.up()).getBlock() instanceof CropsBlock)
+                 && !(world.getBlockState(position.up()).getBlock() instanceof StemBlock)
                  && !(world.getBlockState(position).getBlock() instanceof BlockScarecrow) && world.getBlockState(position).getBlock() == Blocks.FARMLAND;
     }
 
@@ -591,7 +587,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean plantCrop(final ItemStack item, @NotNull final BlockPos position)
     {
-        final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(item.getItem(), item.getItemDamage());
+        final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(item.getItem());
         if (slot == -1)
         {
             return false;
@@ -620,14 +616,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         BlockState state = world.getBlockState(position.up());
         Block block = state.getBlock();
 
-        if (block == Blocks.PUMPKIN || block == Blocks.MELON_BLOCK)
+        if (block == Blocks.PUMPKIN || block == Blocks.MELON)
         {
             return true;
         }
 
         if (isCrop(block))
         {
-            @NotNull BlockCrops crop = (BlockCrops) block;
+            @NotNull CropsBlock crop = (CropsBlock) block;
             if (crop.isMaxAge(state))
             {
                 return true;
@@ -640,14 +636,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
             if (InventoryUtils.shrinkItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), this::isCompost))
             {
-                Network.getNetwork().sendToAllAround(new CompostParticleMessage(position.up()),
-                  new NetworkRegistry.TargetPoint(world.world.getDimension().getType().getId(), position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE));
+                Network.getNetwork().sendToPosition(new CompostParticleMessage(position.up()),
+                  new PacketDistributor.TargetPoint(position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE, world.getDimension().getType()));
                 crop.grow(world, position.up(), state);
                 state = world.getBlockState(position.up());
                 block = state.getBlock();
                 if (isCrop(block))
                 {
-                    crop = (BlockCrops) block;
+                    crop = (CropsBlock) block;
                 }
             }
             return crop.isMaxAge(state);
@@ -663,7 +659,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     public boolean isCrop(final Block block)
     {
-        return block instanceof IGrowable && block instanceof BlockCrops;
+        return block instanceof IGrowable && block instanceof CropsBlock;
     }
 
     /**
@@ -678,15 +674,15 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         final int fortune = ItemStackUtils.getFortuneOf(tool);
         final BlockState state = world.getBlockState(pos);
         NonNullList<ItemStack> drops = NonNullList.create();
-        state.getBlock().getDrops(drops, world, pos, state, fortune);
+        state.getDrops(new LootContext.Builder((ServerWorld) world));
         for (final ItemStack item : drops)
         {
             InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), item);
         }
 
-        if (state.getBlock() instanceof BlockCrops)
+        if (state.getBlock() instanceof CropsBlock)
         {
-            final BlockCrops crops = (BlockCrops) state.getBlock();
+            final CropsBlock crops = (CropsBlock) state.getBlock();
             world.setBlockState(pos, crops.withAge(0));
         }
 

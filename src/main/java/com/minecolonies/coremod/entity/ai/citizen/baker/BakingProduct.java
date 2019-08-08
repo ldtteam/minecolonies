@@ -57,11 +57,11 @@ public class BakingProduct
      */
     public static BakingProduct createFromNBT(final CompoundNBT productCompound)
     {
-        if (productcompound.keySet().contains(TAG_STATE))
+        if (productCompound.keySet().contains(TAG_STATE))
         {
             final ProductState state = ProductState.values()[productCompound.getInt(TAG_STATE)];
             final int recipeId = productCompound.getInt(TAG_RECIPE_ID);
-            final BakingProduct bakingProduct = new BakingProduct(new ItemStack(productCompound), recipeId);
+            final BakingProduct bakingProduct = new BakingProduct(ItemStack.read(productCompound), recipeId);
             bakingProduct.setState(state);
             return bakingProduct;
         }

@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.fisherman;
 
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -11,19 +10,21 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFisherman;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
 import com.minecolonies.coremod.entity.EntityFishHook;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.FishingRodItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -290,7 +291,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean hasFish()
     {
-        return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventory()), Items.FISH, -1);
+        return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventory()), item -> item.getItem().isIn(ItemTags.FISHES));
     }
 
     /**
@@ -300,7 +301,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean hasRodButNotEquipped()
     {
-        return worker.getCitizenInventoryHandler().hasItemInInventory(Items.FISHING_ROD, -1) && worker.getHeldItemMainhand() != null && !(worker.getHeldItemMainhand().getItem() instanceof FishingRodItem);
+        return worker.getCitizenInventoryHandler().hasItemInInventory(Items.FISHING_ROD) && worker.getHeldItemMainhand() != null && !(worker.getHeldItemMainhand().getItem() instanceof FishingRodItem);
     }
 
     /**
@@ -463,9 +464,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         
         if (caughtFish())
         {
-            this.getOwnBuilding().getColony().getStatsManager().incrementStatistic("fish");
             playCaughtFishSound();
-            if (getOwnBuilding().getBuildingLevel() > LEVEL_FOR_SPONGE && random.nextInt(ONE_HUNDRED_PERCENT) < MineColonies.getConfig().getCommon().gameplay.fisherSpongeChance)
+            if (getOwnBuilding().getBuildingLevel() > LEVEL_FOR_SPONGE && random.nextInt(ONE_HUNDRED_PERCENT) < MineColonies.getConfig().getCommon().fisherSpongeChance.get())
             {
                 InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(Blocks.SPONGE));
             }
@@ -532,7 +532,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             WorkerUtil.faceBlock(job.getWater(), worker);
             world.playSound(null,
               this.worker.getPosition(),
-              SoundEvents.ENTITY_BOBBER_THROW,
+              SoundEvents.ENTITY_FISHING_BOBBER_THROW,
               SoundCategory.NEUTRAL,
               0.5F,
               (float) (0.4D / (this.world.rand.nextFloat() * 0.4D + 0.8D)));
@@ -552,7 +552,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean isFishHookStuck()
     {
-        return (!entityFishHook.isInWater() && (entityFishHook.onGround || entityFishHook.fishHookIsOverTimeToLive())) || entityFishHook.isDead;
+        return (!entityFishHook.isInWater() && (entityFishHook.onGround || entityFishHook.fishHookIsOverTimeToLive())) || !entityFishHook.isAlive();
     }
 
     /**
@@ -579,7 +579,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     private IAIState isReadyToFish()
     {
         //We really do have our Rod in our inventory?
-        if (!worker.getCitizenInventoryHandler().hasItemInInventory(Items.FISHING_ROD, -1))
+        if (!worker.getCitizenInventoryHandler().hasItemInInventory(Items.FISHING_ROD))
         {
             return PREPARING;
         }
