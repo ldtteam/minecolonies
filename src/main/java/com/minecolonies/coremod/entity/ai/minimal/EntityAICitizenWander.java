@@ -4,14 +4,16 @@ import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
-import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.math.Vec3d;
+
+import java.util.EnumSet;
 
 /**
  * Entity action to wander randomly around.
  */
-public class EntityAICitizenWander extends EntityAIBase
+public class EntityAICitizenWander extends Goal
 {
     protected final AbstractEntityCitizen citizen;
     protected final double                speed;
@@ -32,12 +34,12 @@ public class EntityAICitizenWander extends EntityAIBase
         this.citizen = citizen;
         this.speed = speed;
         this.randomModifier = randomModifier;
-        this.setMutexBits(1);
+        this.setMutexFlags(EnumSet.of(Flag.MOVE));
     }
 
     /**
      * {@inheritDoc}
-     * Returns whether the EntityAIBase should begin execution.
+     * Returns whether the Goal should begin execution.
      * True when age less than 100, when a random (120) is chosen correctly, and when a citizen is nearby.
      */
     @Override
@@ -85,7 +87,7 @@ public class EntityAICitizenWander extends EntityAIBase
 
     /**
      * {@inheritDoc}
-     * Returns whether an in-progress EntityAIBase should continue executing.
+     * Returns whether an in-progress Goal should continue executing.
      */
     @Override
     public boolean shouldContinueExecuting()

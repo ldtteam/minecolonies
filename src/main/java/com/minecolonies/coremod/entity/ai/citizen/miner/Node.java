@@ -95,7 +95,7 @@ public class Node
     public static Node createFromNBT(@NotNull final CompoundNBT compound)
     {
         // for backwards compatibility check if the types are doubles
-        final boolean hasDoubles = compound.keySet().contains(TAG_X, Constants.NBT.TAG_DOUBLE);
+        final boolean hasDoubles = compound.keySet().contains(TAG_X);
 
         final int x;
         final int z;

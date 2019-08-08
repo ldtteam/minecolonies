@@ -9,6 +9,7 @@ import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberj
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,12 +25,12 @@ public class JobLumberjack extends AbstractJob
      * The tree this lumberjack is currently working on.
      */
     @Nullable
-    public Tree tree;
+    private Tree tree;
 
     /**
      * The sapling of the current tree.
      */
-    public ItemStack sapling;
+    private ItemStack sapling;
 
     /**
      * Create a lumberjack job.
@@ -58,7 +59,7 @@ public class JobLumberjack extends AbstractJob
 
         if (compound.keySet().contains(TAG_SAPLING))
         {
-            sapling = ItemStack.read(compound.getCompound(TAG_SAPLING))
+            sapling = ItemStack.read(compound.getCompound(TAG_SAPLING));
         }
     }
 
@@ -113,6 +114,46 @@ public class JobLumberjack extends AbstractJob
         {
             sapling.write(treeTag);
         }
+
+        compound.put(TAG_TREE, treeTag);
+    }
+
+    /**
+     * Get the current tree the lumberjack is cutting.
+     * @return the tree.
+     */
+    @Nullable
+    public Tree getTree()
+    {
+        return tree;
+    }
+
+    /**
+     * Set the tree he is currently cutting.
+     * @param tree the tree.
+     * @param world the world.
+     */
+    public void setTree(@Nullable final Tree tree, final ServerWorld world)
+    {
+        this.tree = tree;
+        if (tree == null)
+        {
+            sapling = null;
+        }
+        else
+        {
+            sapling = this.tree.calcSapling(world);
+        }
+    }
+
+    /**
+     * Get the sapling the lumberjack needs for the current tree.
+     * @return the sapling to replant.
+     */
+    @Nullable
+    public ItemStack getSapling()
+    {
+        return sapling;
     }
 
     /**

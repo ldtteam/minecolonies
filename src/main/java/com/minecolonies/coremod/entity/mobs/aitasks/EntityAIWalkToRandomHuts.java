@@ -1,15 +1,13 @@
 package com.minecolonies.coremod.entity.mobs.aitasks;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
 import net.minecraft.block.DoorBlock;
-import net.minecraft.block.BlockLadder;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -24,7 +22,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.LADDERS_TO_PLAC
 /**
  * Raider Pathing Class
  */
-public class EntityAIWalkToRandomHuts extends EntityAIBase
+public class EntityAIWalkToRandomHuts extends Goal
 {
 
     /**
@@ -35,7 +33,7 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     /**
      * All directions.
      */
-    private final List<Direction> directions = Arrays.asList(Arrays.copyOf(Direction.HORIZONTALS, 4));
+    private final List<Direction> directions = Arrays.asList(Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST);
 
     /**
      * The world.
@@ -114,14 +112,14 @@ public class EntityAIWalkToRandomHuts extends EntityAIBase
     }
 
     /**
-     * Returns whether an in-progress EntityAIBase should continue executing
+     * Returns whether an in-progress Goal should continue executing
      *
      * @return Boolean value of whether or not to continue executing
      */
     @Override
     public boolean shouldContinueExecuting()
     {
-        return !this.entity.getNavigator().noPath() && this.entity.isEntityAlive();
+        return !this.entity.getNavigator().noPath() && this.entity.isAlive();
     }
 
     /**

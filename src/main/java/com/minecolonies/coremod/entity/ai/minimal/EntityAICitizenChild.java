@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -9,25 +8,27 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
+import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityAgeable;
-import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 
 /**
  * AI which controls child behaviour and growing.
  */
-public class EntityAICitizenChild extends EntityAIBase
+public class EntityAICitizenChild extends Goal
 {
 
     /**
@@ -102,7 +103,7 @@ public class EntityAICitizenChild extends EntityAIBase
     {
         super();
         this.child = citizen;
-        this.setMutexBits(1);
+        super.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
         stateMachine = new TickRateStateMachine(State.IDLE, this::handleAIException);
         stateMachine.addTransition(new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::updateTimers, stateMachine::getState, 1));
         stateMachine.addTransition(new AIEventTarget(AIBlockingEventType.EVENT, this::tryGrowUp, () -> State.IDLE, 500));
@@ -131,10 +132,10 @@ public class EntityAICitizenChild extends EntityAIBase
         // Timer used for delays on actions
         if (actionTimer > 0)
         {
-            actionTimer -= MineColonies.getConfig().getCommon().gameplay.updateRate;
+            actionTimer -= MineColonies.getConfig().getCommon().updateRate.get();
         }
 
-        AIActiveTime += MineColonies.getConfig().getCommon().gameplay.updateRate;
+        AIActiveTime += MineColonies.getConfig().getCommon().updateRate.get();
 
         return false;
     }
@@ -171,12 +172,12 @@ public class EntityAICitizenChild extends EntityAIBase
           // Search entities in radius
           .getEntitiesInAABBexcluding(
             child,
-            child.getEntityBoundingBox().expand(
+            child.getBoundingBox().expand(
               (double) START_FOLLOW_DISTANCE,
               1.0D,
               (double) START_FOLLOW_DISTANCE),
             // Limit entity classes
-            target -> target.isEntityAlive() && (target instanceof EntityAgeable || target instanceof PlayerEntity))
+            target -> target.isAlive() && (target instanceof AgeableEntity || target instanceof PlayerEntity))
           // Take the first entity
           .stream()
           .findFirst()
@@ -271,7 +272,7 @@ public class EntityAICitizenChild extends EntityAIBase
             }
 
             // 1/144 Chance to grow up, every 25 seconds = avg 1h. Set to half since this AI isnt always active, e.g. sleeping.  At 2h they directly grow
-            if (rand.nextInt((int) (70 / MineColonies.getConfig().getCommon().gameplay.growthModifier)) == 0 || AIActiveTime > 70000 / MineColonies.getConfig().getCommon().gameplay.growthModifier)
+            if (rand.nextInt((int) (70 / MineColonies.getConfig().getCommon().growthModifier.get())) == 0 || AIActiveTime > 70000 / MineColonies.getConfig().getCommon().growthModifier.get())
             {
 
                 LanguageHandler.sendPlayersMessage(child.getCitizenColonyHandler().getColony().getMessagePlayerEntitys(),
@@ -289,7 +290,7 @@ public class EntityAICitizenChild extends EntityAIBase
 
     /**
      * {@inheritDoc}
-     * Returns whether the EntityAIBase should begin execution.
+     * Returns whether the Goal should begin execution.
      * True when age less than 100, when a random (120) is chosen correctly, and when a citizen is nearby.
      */
     @Override
@@ -300,7 +301,7 @@ public class EntityAICitizenChild extends EntityAIBase
 
     /**
      * {@inheritDoc}
-     * Returns whether an in-progress EntityAIBase should continue executing.
+     * Returns whether an in-progress Goal should continue executing.
      */
     @Override
     public boolean shouldContinueExecuting()

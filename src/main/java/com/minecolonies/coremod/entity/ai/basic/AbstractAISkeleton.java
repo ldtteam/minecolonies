@@ -99,7 +99,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends Goal
     }
 
     /**
-     * Returns whether the EntityAIBase should begin execution.
+     * Returns whether the Goal should begin execution.
      *
      * @return true if execution is wanted.
      */
@@ -110,7 +110,7 @@ public abstract class AbstractAISkeleton<J extends IJob> extends Goal
     }
 
     /**
-     * Returns whether an in-progress EntityAIBase should continue executing.
+     * Returns whether an in-progress Goal should continue executing.
      */
     @Override
     public final boolean shouldContinueExecuting()

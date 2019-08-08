@@ -7,14 +7,15 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingArchery;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
-import com.minecolonies.coremod.entity.ai.citizen.guard.GuardArrow;
 import com.minecolonies.coremod.util.WorkerUtil;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
-import net.minecraft.entity.projectile.EntityTippedArrow;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -78,7 +79,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
     /**
      * Shooting arrow in progress.
      */
-    private EntityTippedArrow arrowInProgress;
+    private ArrowEntity arrowInProgress;
 
     /**
      * Creates the abstract part of the AI.inte
@@ -166,7 +167,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             WorkerUtil.faceBlock(currentShootingTarget, worker);
             worker.swingArm(Hand.MAIN_HAND);
 
-            final EntityTippedArrow arrow = new GuardArrow(world, worker);
+            final ArrowEntity arrow = EntityType.ARROW.create(world);
             final double xVector = currentShootingTarget.getX() - worker.getPosX();
             final double yVector = currentShootingTarget.getY() - arrow.posY;
             final double zVector = currentShootingTarget.getZ() - worker.getPosZ();
@@ -182,7 +183,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             final double zDiff = currentShootingTarget.getZ() - worker.getPosZ();
             final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
             final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
-            worker.move(MoverType.SELF, goToX, 0, goToZ);
+            worker.move(MoverType.SELF, new Vec3d(goToX, 0, goToZ));
 
             if (worker.getRandom().nextBoolean())
             {
@@ -209,7 +210,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
 
     private IAIState checkShot()
     {
-        if (arrowInProgress.getDistanceSq(currentShootingTarget) < MIN_DISTANCE_FOR_SUCCESS)
+        if (arrowInProgress.getDistanceSq(new Vec3d(currentShootingTarget)) < MIN_DISTANCE_FOR_SUCCESS)
         {
             worker.getCitizenExperienceHandler().addExperience(XP_PER_SUCCESSFUL_SHOT);
         }

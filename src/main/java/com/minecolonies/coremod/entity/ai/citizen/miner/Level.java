@@ -158,7 +158,7 @@ public class Level
             this.nodes.put(new Vec2i(node.getX(), node.getZ()), node);
         }
 
-        final boolean hasDoubles = compound.keySet().contains(TAG_LADDERX, Constants.NBT.TAG_DOUBLE);
+        final boolean hasDoubles = compound.keySet().contains(TAG_LADDERX);
 
         final int ladderX;
         final int ladderZ;

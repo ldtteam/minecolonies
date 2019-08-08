@@ -16,7 +16,7 @@ import com.minecolonies.api.items.ModItems;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.Goal;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -46,10 +46,10 @@ public final class MobSpawnUtils
      */
     public static void setupMobAi(final AbstractEntityMinecoloniesMob mob)
     {
-        final Multimap<Integer, EntityAIBase> aiTasks = IMinecoloniesAPI.getInstance().getMobAIRegistry().getEntityAiTasksForMobs(mob);
+        final Multimap<Integer, Goal> aiTasks = IMinecoloniesAPI.getInstance().getMobAIRegistry().getEntityAiTasksForMobs(mob);
         aiTasks.keySet().forEach(priority -> aiTasks.get(priority).forEach(task -> mob.tasks.addTask(priority, task)));
 
-        final Multimap<Integer, EntityAIBase> aiTargetTasks = IMinecoloniesAPI.getInstance().getMobAIRegistry().getEntityAiTargetTasksForMobs(mob);
+        final Multimap<Integer, Goal> aiTargetTasks = IMinecoloniesAPI.getInstance().getMobAIRegistry().getEntityAiTargetTasksForMobs(mob);
         aiTargetTasks.keySet().forEach(priority -> aiTasks.get(priority).forEach(task -> mob.tasks.addTask(priority, task)));
     }
 

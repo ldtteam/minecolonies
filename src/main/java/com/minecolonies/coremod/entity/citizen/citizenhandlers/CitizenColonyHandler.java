@@ -82,7 +82,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
             colonyId = 0;
             citizen.setCitizenId(0);
             citizen.setCitizenData(null);
-            citizen.setDead();
+            citizen.remove();
             return;
         }
 
@@ -94,7 +94,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         citizen.setIsChild(data.isChild());
         citizen.setCustomNameTag(citizen.getCitizenData().getName());
 
-        citizen.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(data.getMaxHealth());
+        citizen.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(data.getMaxHealth());
         citizen.setHealth((float) data.getHealth());
 
         citizen.setFemale(citizen.getCitizenData().isFemale());
@@ -134,7 +134,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
             final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(citizen.getEntityWorld(), citizen.getPosition());
             if (colony == null)
             {
-                citizen.setDead();
+                citizen.remove();
             }
             else
             {
@@ -160,7 +160,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         if (c == null)
         {
             Log.getLogger().warn(String.format("EntityCitizen '%s' unable to find Colony #%d", citizen.getUniqueID(), colonyId));
-            citizen.setDead();
+            citizen.remove();
             return;
         }
 
@@ -172,7 +172,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
               citizen.getUniqueID(),
               colonyId,
               citizen.getCitizenId()));
-            citizen.setDead();
+            citizen.remove();
             return;
         }
 
@@ -196,7 +196,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         }
         else
         {
-            citizen.setDead();
+            citizen.remove();
         }
     }
 
@@ -296,10 +296,10 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
             return new AxisAlignedBB(corners.getA().getA(), citizen.posY - 1, corners.getB().getA(),
               corners.getA().getB(),
               citizen.posY + 1,
-              corners.getB().getB()).intersectsWithXZ(new Vec3d(citizen.getPosition()));
+              corners.getB().getB()).contains(new Vec3d(citizen.getPosition()));
         }
 
         @Nullable final BlockPos homePosition = citizen.getHomePosition();
-        return homePosition.distanceSq((int) Math.floor(citizen.posX), (int)citizen. posY, (int) Math.floor(citizen.posZ)) <= RANGE_TO_BE_HOME;
+        return homePosition.distanceSq(Math.floor(citizen.posX), citizen. posY,  Math.floor(citizen.posZ),false) <= RANGE_TO_BE_HOME;
     }
 }

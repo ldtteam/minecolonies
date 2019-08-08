@@ -5,16 +5,18 @@ import com.minecolonies.api.entity.ai.util.ChatSpamFilter;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.EnumSet;
 
 /**
  * EntityCitizen go home AI.
  * Created: May 25, 2014
  */
-public class EntityAIGoHome extends EntityAIBase
+public class EntityAIGoHome extends Goal
 {
     /**
      * Chance to play goHomeSound.
@@ -47,6 +49,7 @@ public class EntityAIGoHome extends EntityAIBase
         super();
         this.citizen = citizen;
         this.chatSpamFilter = new ChatSpamFilter(citizen.getCitizenData());
+        this.setMutexFlags(EnumSet.of(Flag.MOVE));
     }
 
     /**
@@ -97,12 +100,6 @@ public class EntityAIGoHome extends EntityAIBase
         }
         
         playGoHomeSounds();
-    }
-
-    @Override
-    public void setMutexBits(final int mutexBitsIn)
-    {
-        super.setMutexBits(1);
     }
 
     /**

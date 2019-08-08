@@ -6,17 +6,20 @@ import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import net.minecraft.block.BlockBed;
+import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.block.Blocks;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.state.properties.BedPart;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.EnumSet;
 
 /**
  * AI to send Entity to sleep.
  */
-public class EntityAISleep extends EntityAIBase
+public class EntityAISleep extends Goal
 {
     /**
      * The citizen.
@@ -41,7 +44,7 @@ public class EntityAISleep extends EntityAIBase
     public EntityAISleep(final EntityCitizen citizen)
     {
         super();
-        this.setMutexBits(1);
+        this.setMutexFlags(EnumSet.of(Flag.MOVE));
         this.citizen = citizen;
     }
 
@@ -96,19 +99,19 @@ public class EntityAISleep extends EntityAIBase
                         final World world = citizen.world;
                         BlockState state = world.getBlockState(pos);
                         state = state.getBlock().getExtendedState(state, world, pos);
-                        if (state.getBlock() == Blocks.BED
-                              && !state.get(BlockBed.OCCUPIED)
-                              && state.get(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD)
+                        if (state.getBlock().isIn(BlockTags.BEDS)
+                              && !state.get(BedBlock.OCCUPIED)
+                              && state.get(BedBlock.PART).equals(BedPart.HEAD)
                               && world.isAirBlock(pos.up()))
                         {
                             usedBed = pos;
-                            citizen.world.setBlockState(pos, state.with(BlockBed.OCCUPIED, true), 0x03);
+                            citizen.world.setBlockState(pos, state.with(BedBlock.OCCUPIED, true), 0x03);
 
-                            final BlockPos feetPos = pos.offset(state.get(BlockBed.FACING).getOpposite());
+                            final BlockPos feetPos = pos.offset(state.get(BedBlock.HORIZONTAL_FACING).getOpposite());
                             final BlockState feetState = citizen.world.getBlockState(feetPos);
-                            if (feetState.getBlock() == Blocks.BED)
+                            if (feetState.getBlock().isIn(BlockTags.BEDS))
                             {
-                                citizen.world.setBlockState(feetPos, feetState.with(BlockBed.OCCUPIED, true), 0x03);
+                                citizen.world.setBlockState(feetPos, feetState.with(BedBlock.OCCUPIED, true), 0x03);
                             }
 
                             return true;
@@ -133,17 +136,17 @@ public class EntityAISleep extends EntityAIBase
         if (usedBed != null)
         {
             final BlockState state = citizen.world.getBlockState(usedBed);
-            if (state.getBlock() == Blocks.BED)
+            if (state.getBlock().isIn(BlockTags.BEDS))
             {
                 final BlockState headState = citizen.world.getBlockState(usedBed);
-                citizen.world.setBlockState(usedBed, headState.with(BlockBed.OCCUPIED, false), 0x03);
+                citizen.world.setBlockState(usedBed, headState.with(BedBlock.OCCUPIED, false), 0x03);
 
-                final BlockPos feetPos = usedBed.offset(headState.get(BlockBed.FACING).getOpposite());
+                final BlockPos feetPos = usedBed.offset(headState.get(BedBlock.HORIZONTAL_FACING).getOpposite());
                 final BlockState feetState = citizen.world.getBlockState(feetPos);
 
-                if (feetState.getBlock() == Blocks.BED)
+                if (feetState.getBlock().isIn(BlockTags.BEDS))
                 {
-                    citizen.world.setBlockState(feetPos, feetState.with(BlockBed.OCCUPIED, false), 0x03);
+                    citizen.world.setBlockState(feetPos, feetState.with(BedBlock.OCCUPIED, false), 0x03);
                 }
             }
             usedBed = null;
@@ -167,7 +170,7 @@ public class EntityAISleep extends EntityAIBase
      * Might add sleeping sounds here.
      */
     @Override
-    public void updateTask()
+    public void tick()
     {
         //TODO make sleeping noises here.
     }

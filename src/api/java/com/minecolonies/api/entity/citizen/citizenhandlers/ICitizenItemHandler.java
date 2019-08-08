@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -12,9 +12,9 @@ public interface ICitizenItemHandler
     /**
      * Citizen will try to pick up a certain item.
      *
-     * @param entityItem the item he wants to pickup.
+     * @param ItemEntity the item he wants to pickup.
      */
-    void tryPickupEntityItem(@NotNull EntityItem entityItem);
+    void tryPickupItemEntity(@NotNull ItemEntity ItemEntity);
 
     /**
      * Removes the currently held item.
@@ -84,7 +84,7 @@ public interface ICitizenItemHandler
      * @param itemstack to drop.
      * @return the dropped item.
      */
-    EntityItem entityDropItem(@NotNull ItemStack itemstack);
+    ItemEntity entityDropItem(@NotNull ItemStack itemstack);
 
     /**
      * Updates the armour damage after being hit.

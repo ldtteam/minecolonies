@@ -3,7 +3,7 @@ package com.minecolonies.api.entity.ai.registry;
 import com.google.common.collect.Multimap;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
-import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.goal.Goal;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -21,7 +21,7 @@ public interface IMobAIRegistry
      * @return The map with the entity AI tasks that are needed for the given mob, with their priorities.
      */
     @NotNull
-    Multimap<Integer, EntityAIBase> getEntityAiTasksForMobs(final AbstractEntityMinecoloniesMob mob);
+    Multimap<Integer, Goal> getEntityAiTasksForMobs(final AbstractEntityMinecoloniesMob mob);
 
     /**
      * Method used to register a entity AI task for a mob that matches the predicate.
@@ -31,7 +31,7 @@ public interface IMobAIRegistry
      * @return The registry.
      */
     @NotNull
-    default IMobAIRegistry registerNewAiTaskForMobs(final int priority, final Function<AbstractEntityMinecoloniesMob, EntityAIBase> aiTaskProducer)
+    default IMobAIRegistry registerNewAiTaskForMobs(final int priority, final Function<AbstractEntityMinecoloniesMob, Goal> aiTaskProducer)
     {
         return this.registerNewAiTaskForMobs(priority, aiTaskProducer, mob -> true);
     }
@@ -47,7 +47,7 @@ public interface IMobAIRegistry
     @NotNull
     IMobAIRegistry registerNewAiTaskForMobs(
       final int priority,
-      final Function<AbstractEntityMinecoloniesMob, EntityAIBase> aiTaskProducer,
+      final Function<AbstractEntityMinecoloniesMob, Goal> aiTaskProducer,
       Predicate<AbstractEntityMinecoloniesMob> applyPredicate);
 
     /**
@@ -58,7 +58,7 @@ public interface IMobAIRegistry
      * @return The map with the entity AI tasks that are needed for the given mob, with their priorities.
      */
     @NotNull
-    Multimap<Integer, EntityAIBase> getEntityAiTargetTasksForMobs(final AbstractEntityMinecoloniesMob mob);
+    Multimap<Integer, Goal> getEntityAiTargetTasksForMobs(final AbstractEntityMinecoloniesMob mob);
 
     /**
      * Method used to register a entity AI target task for a mob that matches the predicate.
@@ -68,7 +68,7 @@ public interface IMobAIRegistry
      * @return The registry.
      */
     @NotNull
-    default IMobAIRegistry registerNewAiTargetTaskForMobs(final int priority, final Function<AbstractEntityMinecoloniesMob, EntityAIBase> aiTaskProducer)
+    default IMobAIRegistry registerNewAiTargetTaskForMobs(final int priority, final Function<AbstractEntityMinecoloniesMob, Goal> aiTaskProducer)
     {
         return this.registerNewAiTargetTaskForMobs(priority, aiTaskProducer, mob -> true);
     }
@@ -84,6 +84,6 @@ public interface IMobAIRegistry
     @NotNull
     IMobAIRegistry registerNewAiTargetTaskForMobs(
       final int priority,
-      final Function<AbstractEntityMinecoloniesMob, EntityAIBase> aiTaskProducer,
+      final Function<AbstractEntityMinecoloniesMob, Goal> aiTaskProducer,
       Predicate<AbstractEntityMinecoloniesMob> applyPredicate);
 }

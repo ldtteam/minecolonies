@@ -13,7 +13,7 @@ import com.minecolonies.api.util.MobSpawnUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ILivingEntityData;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
@@ -305,8 +305,8 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     {
         if (!(this.getAttackingEntity() instanceof PlayerEntity) && (this.recentlyHit > 0 && this.canDropLoot() && world.getGameRules().getBoolean("doMobLoot")))
         {
-            final int experience = EntityXPOrb.getXPSplit(BARBARIAN_EXP_DROP);
-            CompatibilityUtils.addEntity(world, new EntityXPOrb(world, this.posX, this.posY, this.posZ, experience));
+            final int experience = ExperienceOrbEntity.getXPSplit(BARBARIAN_EXP_DROP);
+            CompatibilityUtils.addEntity(world, new ExperienceOrbEntity(world, this.posX, this.posY, this.posZ, experience));
         }
         super.onDeathUpdate();
     }

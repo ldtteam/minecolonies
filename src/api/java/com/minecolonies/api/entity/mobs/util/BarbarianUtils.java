@@ -51,6 +51,6 @@ public final class BarbarianUtils
             distanceFromEntity,
             Y_DISTANCE_TO_CHECK_WITHIN,
             distanceFromEntity),
-          Entity::isEntityAlive));
+          Entity::isAlive));
     }
 }
