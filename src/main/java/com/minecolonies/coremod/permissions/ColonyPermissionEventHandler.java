@@ -538,22 +538,22 @@ public class ColonyPermissionEventHandler
     {
         if (checkEventCancelation(Action.TOSS_ITEM, event.getPlayer(), event.getPlayer().getEntityWorld(), event, event.getPlayer().getPosition()))
         {
-            event.getPlayer().inventory.addItemStackToInventory(event.getEntityItem().getItem());
+            event.getPlayer().inventory.addItemStackToInventory(event.getItemEntity().getItem());
         }
     }
 
     /**
-     * EntityItemPickupEvent handler.
+     * ItemEntityPickupEvent handler.
      * <p>
      * Check, if a player tries to pickup a block.
      * Deny if:
      * - If the pickUp happens in the colony
      * - player is neutral or hostile to colony
      *
-     * @param event EntityItemPickupEvent
+     * @param event ItemEntityPickupEvent
      */
     @SubscribeEvent
-    public void on(final EntityItemPickupEvent event)
+    public void on(final ItemEntityPickupEvent event)
     {
         checkEventCancelation(Action.PICKUP_ITEM, event.getEntityPlayer(), event.getEntityPlayer().getEntityWorld(), event, event.getEntityPlayer().getPosition());
     }
@@ -566,7 +566,7 @@ public class ColonyPermissionEventHandler
      * - If the fill happens in the colony
      * - player is neutral or hostile to colony
      *
-     * @param event EntityItemPickupEvent
+     * @param event ItemEntityPickupEvent
      */
     @SubscribeEvent
     public void on(final FillBucketEvent event)
@@ -591,7 +591,7 @@ public class ColonyPermissionEventHandler
      * - If the shooting happens in the colony
      * - player is neutral or hostile to colony
      *
-     * @param event EntityItemPickupEvent
+     * @param event ItemEntityPickupEvent
      */
     @SubscribeEvent
     public void on(final ArrowLooseEvent event)
@@ -607,7 +607,7 @@ public class ColonyPermissionEventHandler
      * - If the attacking happens in the colony
      * - Player is less than officer to the colony.
      *
-     * @param event EntityItemPickupEvent
+     * @param event ItemEntityPickupEvent
      */
     @SubscribeEvent
     public void on(final AttackEntityEvent event)

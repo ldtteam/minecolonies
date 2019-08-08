@@ -10,21 +10,23 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.CitizenConstants;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ItemParticleEffectMessage;
-import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.item.ItemFood;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.item.Food;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
+
+import java.util.EnumSet;
 
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
@@ -38,7 +40,7 @@ import static com.minecolonies.coremod.entity.ai.minimal.EntityAIEatTask.EatingS
 /**
  * The AI task for citizens to execute when they are supposed to eat.
  */
-public class EntityAIEatTask extends EntityAIBase
+public class EntityAIEatTask extends Goal
 {
     /**
      * Minutes between consecutive food checks.
@@ -120,7 +122,7 @@ public class EntityAIEatTask extends EntityAIBase
     {
         super();
         this.citizen = citizen;
-        this.setMutexBits(1);
+        this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
     }
 
     @Override
@@ -154,7 +156,7 @@ public class EntityAIEatTask extends EntityAIBase
     }
 
     @Override
-    public void updateTask()
+    public void tick()
     {
         if (chatSpamFilter == null)
         {
@@ -225,7 +227,7 @@ public class EntityAIEatTask extends EntityAIBase
             citizen.swingArm(Hand.MAIN_HAND);
             citizen.playSound(SoundEvents.ENTITY_GENERIC_EAT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
             Network.getNetwork()
-              .sendToAllTracking(new ItemParticleEffectMessage(citizen.getHeldItemMainhand(),
+              .sendToTrackingEntity(new ItemParticleEffectMessage(citizen.getHeldItemMainhand(),
                 citizen.posX,
                 citizen.posY,
                 citizen.posZ,
@@ -240,8 +242,9 @@ public class EntityAIEatTask extends EntityAIBase
             return EAT;
         }
 
-        final ItemFood itemFood = (ItemFood) stack.getItem();
-        citizenData.increaseSaturation(itemFood.getHealAmount(stack) / 2.0);
+
+        final Food itemFood = stack.getItem().getFood();
+        citizenData.increaseSaturation(itemFood.getHealing() / 2.0);
         citizenData.getInventory().decrStackSize(foodSlot, 1);
         citizenData.markDirty();
         citizen.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
@@ -281,7 +284,7 @@ public class EntityAIEatTask extends EntityAIBase
         if (cookBuilding instanceof BuildingCook)
         {
             InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
-              cookBuilding.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
+              cookBuilding.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
               CAN_EAT,
               AMOUNT_OF_FOOD_TO_SERVE,
               new InvWrapper(citizen.getInventoryCitizen()));
@@ -379,7 +382,7 @@ public class EntityAIEatTask extends EntityAIBase
             if (slot != -1)
             {
                 InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
-                  buildingWorker.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
+                  buildingWorker.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
                   CAN_EAT,
                   buildingWorker.getBuildingLevel() * AMOUNT_OF_FOOD_TO_SERVE,
                   new InvWrapper(citizen.getInventoryCitizen()));

@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
@@ -17,10 +16,11 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLadder;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.LadderBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -183,7 +183,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @NotNull
     private String getRenderMetaTorch()
     {
-        if (worker.getCitizenInventoryHandler().hasItemInInventory(Blocks.TORCH, -1))
+        if (worker.getCitizenInventoryHandler().hasItemInInventory(Items.TORCH))
         {
             return RENDER_META_TORCH;
         }
@@ -295,7 +295,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     private void validateLadderOrientation()
     {
         @Nullable final BuildingMiner buildingMiner = getOwnBuilding();
-        final Direction ladderOrientation = world.getBlockState(buildingMiner.getLadderLocation()).get(BlockLadder.FACING);
+        final Direction ladderOrientation = world.getBlockState(buildingMiner.getLadderLocation()).get(LadderBlock.FACING);
 
         if (ladderOrientation == Direction.WEST)
         {
@@ -350,16 +350,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         }
 
         return MINER_MINING_SHAFT;
-    }
-
-    @Override
-    protected void triggerMinedBlock(@NotNull final BlockState blockToMine)
-    {
-        super.triggerMinedBlock(blockToMine);
-        if (IColonyManager.getInstance().getCompatibilityManager().isLuckyBlock(new ItemStack(blockToMine.getBlock())))
-        {
-            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(IColonyManager.getInstance().getCompatibilityManager().getRandomLuckyOre(), new InvWrapper(worker.getInventoryCitizen()));
-        }
     }
 
     private IAIState advanceLadder(final IAIState state)
@@ -441,8 +431,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         if (block != null
               && block != Blocks.AIR
               && block != Blocks.LADDER
-              && !(block.equals(Blocks.FLOWING_WATER)
-                     || block.equals(Blocks.FLOWING_LAVA)))
+              && !(block.equals(Blocks.WATER)
+                     || block.equals(Blocks.LAVA)))
         {
             return minerWorkingLocation;
         }
@@ -465,9 +455,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 @NotNull final BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder, ladderPos.getZ() + z);
                 block = getBlock(curBlock);
                 if (block.equals(Blocks.WATER)
-                      || block.equals(Blocks.LAVA)
-                      || block.equals(Blocks.FLOWING_WATER)
-                      || block.equals(Blocks.FLOWING_LAVA))
+                      || block.equals(Blocks.LAVA))
                 {
                     setBlockFromInventory(curBlock, Blocks.COBBLESTONE);
                 }
@@ -492,9 +480,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                       && !world.isAirBlock(curBlock))
                 {
                     if (block.equals(Blocks.WATER)
-                          || block.equals(Blocks.LAVA)
-                          || block.equals(Blocks.FLOWING_WATER)
-                          || block.equals(Blocks.FLOWING_LAVA))
+                          || block.equals(Blocks.LAVA))
                     {
                         setBlockFromInventory(curBlock, Blocks.COBBLESTONE);
                     }
@@ -744,9 +730,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                     @NotNull final BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
                     final Block block = getBlock(curBlock);
                     if (block.equals(Blocks.WATER)
-                          || block.equals(Blocks.LAVA)
-                          || block.equals(Blocks.FLOWING_WATER)
-                          || block.equals(Blocks.FLOWING_LAVA))
+                          || block.equals(Blocks.LAVA))
                     {
                         setBlockFromInventory(curBlock, Blocks.COBBLESTONE);
                     }
@@ -774,13 +758,13 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     private void setBlockFromInventory(@NotNull final BlockPos location, final Block block, final BlockState metadata)
     {
         final int slot;
-        if (block instanceof BlockLadder)
+        if (block instanceof LadderBlock)
         {
-            slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(block, -1);
+            slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(block);
         }
         else
         {
-            slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(block, block.getMetaFromState(metadata));
+            slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(block);
         }
         if (slot != -1)
         {

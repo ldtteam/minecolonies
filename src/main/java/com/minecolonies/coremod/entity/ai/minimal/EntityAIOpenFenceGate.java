@@ -2,11 +2,11 @@ package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.SoundUtils;
-import net.minecraft.block.BlockFenceGate;
-import net.minecraft.block.state.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.FenceGateBlock;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -33,7 +33,7 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
      * @param entityLivingIn the registering entity.
      * @param shouldClose    should the entity close the gate.
      */
-    public EntityAIOpenFenceGate(@NotNull final LivingEntity entityLivingIn, final boolean shouldClose)
+    public EntityAIOpenFenceGate(@NotNull final MobEntity entityLivingIn, final boolean shouldClose)
     {
         super(entityLivingIn);
         this.theEntity = entityLivingIn;
@@ -71,9 +71,9 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
     {
         final BlockState BlockState = CompatibilityUtils.getWorldFromEntity(this.theEntity).getBlockState(this.gatePosition);
         //If the block is a gate block and the fence gate state does not respond to the input open toggle it.
-        if (BlockState.getBlock() == this.gateBlock && (BlockState.get(BlockFenceGate.OPEN)) != open)
+        if (BlockState.getBlock() == this.gateBlock && (BlockState.get(FenceGateBlock.OPEN)) != open)
         {
-            CompatibilityUtils.getWorldFromEntity(this.theEntity).setBlockState(this.gatePosition, BlockState.with(BlockFenceGate.OPEN, open), 2);
+            CompatibilityUtils.getWorldFromEntity(this.theEntity).setBlockState(this.gatePosition, BlockState.with(FenceGateBlock.OPEN, open), 2);
             final SoundEvent openCloseSound = open ? SoundEvents.BLOCK_FENCE_GATE_OPEN : SoundEvents.BLOCK_FENCE_GATE_CLOSE;
             SoundUtils.playSoundAtCitizen(CompatibilityUtils.getWorldFromEntity(this.theEntity), this.gatePosition, openCloseSound);
         }
@@ -85,10 +85,10 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
      * Door has to stay open enough to let the worker go through it.
      */
     @Override
-    public void updateTask()
+    public void tick()
     {
         --this.closeDoorTemporisation;
-        super.updateTask();
+        super.tick();
     }
 
     /**

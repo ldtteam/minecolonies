@@ -7,8 +7,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -671,16 +671,16 @@ public final class EntityFishHook extends Entity
         final double citizenPosX = citizen.getPosX();
         final double citizenPosY = citizen.getPosY();
         final double citizenPosZ = citizen.getPosZ();
-        @NotNull final EntityItem entityitem = new EntityItem(CompatibilityUtils.getWorldFromEntity(this), this.posX, this.posY, this.posZ, this.getFishingLoot(citizen));
+        @NotNull final ItemEntity ItemEntity = new ItemEntity(CompatibilityUtils.getWorldFromEntity(this), this.posX, this.posY, this.posZ, this.getFishingLoot(citizen));
         final double distanceX = citizenPosX - this.posX;
         final double distanceY = citizenPosY - this.posY;
         final double distanceZ = citizenPosZ - this.posZ;
 
-        entityitem.motionX = distanceX * 0.1;
-        entityitem.motionY = distanceY * 0.1 + Math.sqrt(Math.sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ)) * 0.08;
-        entityitem.motionZ = distanceZ * 0.1;
-        CompatibilityUtils.getWorldFromEntity(this).addEntity(entityitem);
-        CompatibilityUtils.getWorldFromCitizen(citizen).addEntity(new EntityXPOrb(CompatibilityUtils.getWorldFromCitizen(citizen),
+        ItemEntity.motionX = distanceX * 0.1;
+        ItemEntity.motionY = distanceY * 0.1 + Math.sqrt(Math.sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ)) * 0.08;
+        ItemEntity.motionZ = distanceZ * 0.1;
+        CompatibilityUtils.getWorldFromEntity(this).addEntity(ItemEntity);
+        CompatibilityUtils.getWorldFromCitizen(citizen).addEntity(new ExperienceOrbEntity(CompatibilityUtils.getWorldFromCitizen(citizen),
                                                                           citizenPosX,
                                                                           citizenPosY + 0.D,
                                                                           citizenPosZ + 0.5,

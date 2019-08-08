@@ -31,78 +31,72 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
      * Returns the first slot in the inventory with a specific item.
      *
      * @param targetItem the item.
-     * @param itemDamage the damage value
      * @return the slot.
      */
     @Override
-    public int findFirstSlotInInventoryWith(final Item targetItem, final int itemDamage)
+    public int findFirstSlotInInventoryWith(final Item targetItem)
     {
-        return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(citizen.getInventoryCitizen()), targetItem, itemDamage);
+        return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(citizen.getInventoryCitizen()), targetItem);
     }
 
     /**
      * Returns the first slot in the inventory with a specific block.
      *
      * @param block      the block.
-     * @param itemDamage the damage value
      * @return the slot.
      */
     @Override
-    public int findFirstSlotInInventoryWith(final Block block, final int itemDamage)
+    public int findFirstSlotInInventoryWith(final Block block)
     {
-        return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(citizen.getInventoryCitizen()), block, itemDamage);
+        return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(citizen.getInventoryCitizen()), block);
     }
 
     /**
      * Returns the amount of a certain block in the inventory.
      *
      * @param block      the block.
-     * @param itemDamage the damage value
      * @return the quantity.
      */
     @Override
-    public int getItemCountInInventory(final Block block, final int itemDamage)
+    public int getItemCountInInventory(final Block block)
     {
-        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(citizen.getInventoryCitizen()), block, itemDamage);
+        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(citizen.getInventoryCitizen()), block);
     }
 
     /**
      * Returns the amount of a certain item in the inventory.
      *
      * @param targetItem the block.
-     * @param itemDamage the damage value.
      * @return the quantity.
      */
     @Override
-    public int getItemCountInInventory(final Item targetItem, final int itemDamage)
+    public int getItemCountInInventory(final Item targetItem)
     {
-        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(citizen.getInventoryCitizen()), targetItem, itemDamage);
+        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(citizen.getInventoryCitizen()), targetItem);
     }
 
     /**
      * Checks if citizen has a certain block in the inventory.
      *
      * @param block      the block.
-     * @param itemDamage the damage value
      * @return true if so.
      */
     @Override
-    public boolean hasItemInInventory(final Block block, final int itemDamage)
+    public boolean hasItemInInventory(final Block block)
     {
-        return InventoryUtils.hasItemInItemHandler(new InvWrapper(citizen.getInventoryCitizen()), block, itemDamage);
+        return InventoryUtils.hasItemInItemHandler(new InvWrapper(citizen.getInventoryCitizen()), block);
     }
 
     /**
      * Checks if citizen has a certain item in the inventory.
      *
      * @param item       the item.
-     * @param itemDamage the damage value
      * @return true if so.
      */
     @Override
-    public boolean hasItemInInventory(final Item item, final int itemDamage)
+    public boolean hasItemInInventory(final Item item)
     {
-        return InventoryUtils.hasItemInItemHandler(new InvWrapper(citizen.getInventoryCitizen()), item, itemDamage);
+        return InventoryUtils.hasItemInItemHandler(new InvWrapper(citizen.getInventoryCitizen()), item);
     }
 
     /**

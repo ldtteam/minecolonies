@@ -1,10 +1,13 @@
 package com.minecolonies.coremod.entity.mobs.aitasks;
 
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.CompatibilityUtils;
-import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.Goal;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.Hand;
@@ -13,7 +16,7 @@ import net.minecraft.util.math.MathHelper;
 /**
  * Barbarian Ranged Attack AI class
  */
-public class EntityAIAttackArcher extends EntityAIBase
+public class EntityAIAttackArcher extends Goal
 {
     /**
      * Max delay between attacks is 4s, aka 80 ticks.
@@ -24,16 +27,16 @@ public class EntityAIAttackArcher extends EntityAIBase
     private static final double    HALF_ROTATION               = 180;
     private static final double    ATTACK_SPEED                = 1.3;
     private static final int       MUTEX_BITS                  = 3;
-    private static final double    AIM_HEIGHT                  = 3.0D;
-    private static final double    ARROW_SPEED                 = 1.6D;
-    private static final double    HIT_CHANCE                  = 10.0D;
-    private static final double AIM_SLIGHTLY_HIGHER_MULTIPLIER = 0.20000000298023224D;
-    private static final double BASE_PITCH                     = 0.8D;
-    private static final double PITCH_DIVIDER                  = 1.0D;
-    private static final double MAX_ATTACK_DISTANCE            = 20.0D;
-    private final EntityCreature   entity;
-    private       LivingEntity target;
-    private int lastAttack = 0;
+    private static final double                        AIM_HEIGHT                  = 3.0D;
+    private static final double                        ARROW_SPEED                 = 1.6D;
+    private static final double                        HIT_CHANCE                  = 10.0D;
+    private static final double                        AIM_SLIGHTLY_HIGHER_MULTIPLIER = 0.20000000298023224D;
+    private static final double                        BASE_PITCH                     = 0.8D;
+    private static final double                        PITCH_DIVIDER                  = 1.0D;
+    private static final double                        MAX_ATTACK_DISTANCE            = 20.0D;
+    private final        AbstractEntityMinecoloniesMob entity;
+    private              LivingEntity                  target;
+    private              int                           lastAttack = 0;
 
     /**
      * Timer for the update rate of attack logic
@@ -45,7 +48,7 @@ public class EntityAIAttackArcher extends EntityAIBase
      *
      * @param creatureIn The creature which is using the AI
      */
-    public EntityAIAttackArcher(final EntityCreature creatureIn)
+    public EntityAIAttackArcher(final AbstractEntityMinecoloniesMob creatureIn)
     {
         super();
         this.entity = creatureIn;
@@ -60,7 +63,7 @@ public class EntityAIAttackArcher extends EntityAIBase
     }
 
     /**
-     * Returns whether an in-progress EntityAIBase should continue executing
+     * Returns whether an in-progress Goal should continue executing
      *
      * @return Boolean value on whether or not to continue executing
      */
@@ -68,7 +71,7 @@ public class EntityAIAttackArcher extends EntityAIBase
     public boolean shouldContinueExecuting()
     {
         target = entity.getAttackTarget();
-        if (target != null && target.isEntityAlive() && entity.isEntityAlive())
+        if (target != null && target.isAlive() && entity.isAlive())
         {
             attack(target);
             return true;

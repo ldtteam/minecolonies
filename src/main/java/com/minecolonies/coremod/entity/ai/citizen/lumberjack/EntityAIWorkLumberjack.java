@@ -23,6 +23,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -269,7 +270,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private IAIState findTrees()
     {
-        if (job.tree == null)
+        if (job.getTree() == null)
         {
             worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.searchingtree"));
 
@@ -326,16 +327,16 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         }
         else
         {
-            job.tree = new Tree(world, pathResult.treeLocation);
+            job.setTree(new Tree(world, pathResult.treeLocation), (ServerWorld) world);
 
             // Check if tree creation was successful
-            if (job.tree.isTree())
+            if (job.getTree().isTree())
             {
-                job.tree.findLogs(world);
+                job.getTree().findLogs(world);
             }
             else
             {
-                job.tree = null;
+                job.setTree(null, (ServerWorld) world);
             }
         }
         pathResult = null;
@@ -356,7 +357,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             return IDLE;
         }
 
-        if (job.tree == null)
+        if (job.getTree() == null)
         {
             return LUMBERJACK_SEARCHING_TREE;
         }
@@ -376,17 +377,17 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.chopping"));
 
-        if (job.tree.hasLogs() || checkedInHut)
+        if (job.getTree().hasLogs() || checkedInHut)
         {
-            final BlockPos location = job.tree.getLocation();
-            if (!walkToTree(job.tree.getStumpLocations().get(0)))
+            final BlockPos location = job.getTree().getLocation();
+            if (!walkToTree(job.getTree().getStumpLocations().get(0)))
             {
                 checkIfStuckOnLeaves(location);
                 return getState();
             }
         }
 
-        if (!job.tree.hasLogs() && (!job.tree.isSlimeTree() || !job.tree.hasLeaves()))
+        if (!job.getTree().hasLogs() && (!job.getTree().isSlimeTree() || !job.getTree().hasLeaves()))
         {
             if (hasNotDelayed(WAIT_BEFORE_SAPLING))
             {
@@ -400,7 +401,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             }
             else
             {
-                job.tree = null;
+                job.setTree(null, (ServerWorld) world);
                 checkedInHut = false;
             }
             incrementActionsDoneAndDecSaturation();
@@ -419,12 +420,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             WorkerUtil.setSpawnPoint(spawnPoint, worker);
         }
 
-        if (job.tree.hasLogs())
+        if (job.getTree().hasLogs())
         {
             //take first log from queue
-            final BlockPos log = job.tree.peekNextLog();
+            final BlockPos log = job.getTree().peekNextLog();
 
-            if (job.tree.isDynamicTree())
+            if (job.getTree().isDynamicTree())
             {
                 // Dynamic Trees handles drops/tool dmg upon tree break, so those are set to false here
                 if (!mineBlock(log, workFrom, false, false, Compatibility.getDynamicTreeBreakAction(
@@ -450,18 +451,18 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                     return getState();
                 }
             }
-            job.tree.pollNextLog();
+            job.getTree().pollNextLog();
             worker.decreaseSaturationForContinuousAction();
         }
-        else if (job.tree.hasLeaves() && job.tree.isSlimeTree())
+        else if (job.getTree().hasLeaves() && job.getTree().isSlimeTree())
         {
             //take first leaf from queue
-            final BlockPos leaf = job.tree.peekNextLeaf();
+            final BlockPos leaf = job.getTree().peekNextLeaf();
             if (!mineBlock(leaf, workFrom))
             {
                 return getState();
             }
-            job.tree.pollNextLeaf();
+            job.getTree().pollNextLeaf();
         }
         return getState();
     }
@@ -518,9 +519,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private void plantSapling()
     {
-        if (plantSapling(job.tree.getLocation()))
+        if (plantSapling(job.getTree().getLocation()))
         {
-            job.tree = null;
+            job.setTree(null, (ServerWorld) world);
             checkedInHut = false;
         }
     }
@@ -579,13 +580,13 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         final BlockPos dirtLocation = new BlockPos(location.getX(), location.getY() - 1, location.getZ());
         final Block dirt = world.getBlockState(dirtLocation).getBlock();
 
-        if (saplingSlot != -1 && ((job.tree.isSlimeTree() && Compatibility.isSlimeDirtOrGrass(dirt))
-                                    || (!job.tree.isSlimeTree() && !Compatibility.isSlimeDirtOrGrass(dirt))))
+        if (saplingSlot != -1 && ((job.getTree().isSlimeTree() && Compatibility.isSlimeDirtOrGrass(dirt))
+                                    || (!job.getTree().isSlimeTree() && !Compatibility.isSlimeDirtOrGrass(dirt))))
         {
             final ItemStack stack = getInventory().getStackInSlot(saplingSlot);
             worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, saplingSlot);
 
-            if (job.tree.isDynamicTree() && Compatibility.isDynamicTreeSapling(stack))
+            if (job.getTree().isDynamicTree() && Compatibility.isDynamicTreeSapling(stack))
             {
                 Compatibility.plantDynamicSapling(world, location, stack);
                 new InvWrapper(getInventory()).extractItem(saplingSlot, 1, false);
@@ -617,7 +618,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             checkedInHut = true;
         }
 
-        if (job.tree.getStumpLocations().isEmpty() || timeWaited >= MAX_WAITING_TIME)
+        if (job.getTree().getStumpLocations().isEmpty() || timeWaited >= MAX_WAITING_TIME)
         {
             timeWaited = 0;
             incrementActionsDoneAndDecSaturation();
@@ -634,9 +635,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     @Override
     public void fillItemsList()
     {
-        if (job.tree != null)
+        if (job.getTree() != null)
         {
-            searchForItems(new AxisAlignedBB(job.tree.getLocation())
+            searchForItems(new AxisAlignedBB(job.getTree().getLocation())
                              .expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP)
                              .expand(-RANGE_HORIZONTAL_PICKUP, -RANGE_VERTICAL_PICKUP, -RANGE_HORIZONTAL_PICKUP));
         }
@@ -695,15 +696,15 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     @SuppressWarnings("deprecation")
     private void placeSaplings(final int saplingSlot, @NotNull final ItemStack stack, @NotNull final Block block)
     {
-        while (!job.tree.getStumpLocations().isEmpty())
+        while (!job.getTree().getStumpLocations().isEmpty())
         {
-            final BlockPos pos = job.tree.getStumpLocations().get(0);
+            final BlockPos pos = job.getTree().getStumpLocations().get(0);
             if ((world.setBlockState(pos, block.getDefaultState()) && getInventory().getStackInSlot(saplingSlot) != null)
                   || Objects.equals(world.getBlockState(pos), block.getDefaultState()))
             {
 
                 new InvWrapper(getInventory()).extractItem(saplingSlot, 1, false);
-                job.tree.removeStump(pos);
+                job.getTree().removeStump(pos);
             }
             else
             {

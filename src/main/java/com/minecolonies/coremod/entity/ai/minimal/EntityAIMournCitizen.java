@@ -8,16 +8,19 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.ai.RandomPositionGenerator;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+
+import java.util.EnumSet;
 
 /**
  * @author kevin
  *
  */
-public class EntityAIMournCitizen extends EntityAIBase
+public class EntityAIMournCitizen extends Goal
 {
     /**
      * handler to the citizen thisis located
@@ -81,7 +84,7 @@ public class EntityAIMournCitizen extends EntityAIBase
     /**
      * Constant values of mourning
      */
-    private static final int MIN_DESTINATION_TO_LOCATION = 15;
+    private static final int MIN_DESTINATION_TO_LOCATION = 225;
     private static final int MIN_MOURN_TIME = 2000;
     private static final int MIN_MOURN_RANDOM_TIME = 1000;
 
@@ -96,13 +99,13 @@ public class EntityAIMournCitizen extends EntityAIBase
         super();
         this.citizen = citizen;
         this.speed = speed;
-        this.setMutexBits(1);
+        this.setMutexFlags(EnumSet.of(Flag.MOVE));
         mourningTime = citizen.getRNG().nextInt(MIN_MOURN_RANDOM_TIME) + MIN_MOURN_TIME;
     }
 
     /**
      * {@inheritDoc}
-     * Returns whether the EntityAIBase should begin execution.
+     * Returns whether the Goal should begin execution.
      * This will execute if the status for the citizen is set to MOURN
      * It will determine the location of the mourn location and start to move
      * entity toward that location.   Once there it will random move the citizen around.
@@ -120,8 +123,7 @@ public class EntityAIMournCitizen extends EntityAIBase
         if ((citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
             || (reachedFinalDestination && checkForRandom()))
         {
-            closestEntity = this.citizen.world.findNearestEntityWithinAABB(EntityCitizen.class,
-                            citizen.getEntityBoundingBox().grow((double) maxDistanceForPlayer, 3.0D, (double)maxDistanceForPlayer), citizen);
+            closestEntity = this.citizen.world.getClosestEntityWithinAABB(EntityCitizen.class, EntityPredicate.DEFAULT, citizen, citizen.posX, citizen.posY, citizen.posZ, citizen.getBoundingBox().grow(maxDistanceForPlayer, 3.0D, maxDistanceForPlayer));
             if (closestEntity == null)
             {
                 continueLooking = false;
@@ -142,7 +144,7 @@ public class EntityAIMournCitizen extends EntityAIBase
 
     /**
      * {@inheritDoc}
-     * Returns whether an in-progress EntityAIBase should continue executing.
+     * Returns whether an in-progress Goal should continue executing.
      */
     @Override
     public boolean shouldContinueExecuting()
@@ -200,7 +202,7 @@ public class EntityAIMournCitizen extends EntityAIBase
     }
 
     @Override
-    public void updateTask()
+    public void tick()
     {
         if (mourningTime > 0)
         {
@@ -216,7 +218,7 @@ public class EntityAIMournCitizen extends EntityAIBase
             continueLooking = true;
         }
 
-        if (goingToMourn && citizen.getDistance(homeLocation.x, homeLocation.y, homeLocation.z) < MIN_DESTINATION_TO_LOCATION)
+        if (goingToMourn && citizen.getDistanceSq(homeLocation) < MIN_DESTINATION_TO_LOCATION)
         {
             reachedFinalDestination = true;
             goingToMourn = false;
@@ -242,7 +244,7 @@ public class EntityAIMournCitizen extends EntityAIBase
         }
         else
         {
-            if (citizen.getDistance(homeLocation.x, homeLocation.y, homeLocation.z) < MIN_DESTINATION_TO_LOCATION)
+            if (citizen.getDistanceSq(homeLocation) < MIN_DESTINATION_TO_LOCATION)
             {
                 vec3d = RandomPositionGenerator.getLandPos(citizen, 10, 10);
                 if (vec3d != null)
@@ -269,15 +271,15 @@ public class EntityAIMournCitizen extends EntityAIBase
 
         if (continueLooking && closestEntity != null)
         {
-            citizen.getLookHelper().setLookPosition(closestEntity.posX, closestEntity.posY + (double) closestEntity.getEyeHeight(),
+            citizen.getLookController().setLookPosition(closestEntity.posX, closestEntity.posY + (double) closestEntity.getEyeHeight(),
                     closestEntity.posZ, (float) citizen.getHorizontalFaceSpeed(), (float) citizen.getVerticalFaceSpeed());
         }
         else
         {
-            citizen.getLookHelper().setLookPosition(citizen.posX, citizen.posY - 10, citizen.posZ, (float) citizen.getHorizontalFaceSpeed(),
+            citizen.getLookController().setLookPosition(citizen.posX, citizen.posY - 10, citizen.posZ, (float) citizen.getHorizontalFaceSpeed(),
                     (float) citizen.getVerticalFaceSpeed());
         }
-        super.updateTask();
+        super.tick();
     }
 
 }

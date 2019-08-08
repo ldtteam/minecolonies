@@ -7,11 +7,12 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.item.EntityXPOrb;
-import net.minecraft.init.Enchantments;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.GameRules;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -156,12 +157,12 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         double localXp = xp;
         final ItemStack tool = EnchantmentHelper.getEnchantedItem(Enchantments.MENDING, citizen);
 
-        if (!ItemStackUtils.isEmpty(tool) && tool.isItemDamaged())
+        if (!ItemStackUtils.isEmpty(tool) && tool.isDamaged())
         {
             //2 xp to heal 1 dmg
-            final double dmgHealed = Math.min(localXp / 2, tool.getItemDamage());
+            final double dmgHealed = Math.min(localXp / 2, tool.getDamage());
             localXp -= dmgHealed * 2;
-            tool.setItemDamage(tool.getItemDamage() - (int) Math.ceil(dmgHealed));
+            tool.setDamage(tool.getDamage() - (int) Math.ceil(dmgHealed));
         }
 
         return localXp;
@@ -176,15 +177,16 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     {
         int experience;
 
-        if (!CompatibilityUtils.getWorldFromCitizen(citizen).isRemote && citizen.getRecentlyHit() > 0 && citizen.checkCanDropLoot() && CompatibilityUtils.getWorldFromCitizen(citizen).getGameRules().getBoolean("doMobLoot"))
+        if (!CompatibilityUtils.getWorldFromCitizen(citizen).isRemote && citizen.getRecentlyHit() > 0 && citizen.checkCanDropLoot() && CompatibilityUtils.getWorldFromCitizen(citizen).getGameRules().getBoolean(
+          GameRules.DO_MOB_LOOT))
         {
             experience = (int) (citizen.getCitizenData().getExperience());
 
             while (experience > 0)
             {
-                final int j = EntityXPOrb.getXPSplit(experience);
+                final int j = ExperienceOrbEntity.getXPSplit(experience);
                 experience -= j;
-                CompatibilityUtils.getWorldFromCitizen(citizen).addEntity(new EntityXPOrb(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.posX, citizen.posY, citizen.posZ, j));
+                CompatibilityUtils.getWorldFromCitizen(citizen).addEntity(new ExperienceOrbEntity(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.posX, citizen.posY, citizen.posZ, j));
             }
         }
 
@@ -194,10 +196,10 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             final double d2 = citizen.getRandom().nextGaussian() * 0.02D;
             final double d0 = citizen.getRandom().nextGaussian() * 0.02D;
             final double d1 = citizen.getRandom().nextGaussian() * 0.02D;
-            CompatibilityUtils.getWorldFromCitizen(citizen).spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
-              citizen.posX + (citizen.getRandom().nextDouble() * citizen.width * 2.0F) - (double) citizen.width,
-              citizen.posY + (citizen.getRandom().nextDouble() * citizen.height),
-              citizen.posZ + (citizen.getRandom().nextDouble() * citizen.width * 2.0F) - (double) citizen.width,
+            CompatibilityUtils.getWorldFromCitizen(citizen).addParticle(ParticleTypes.EXPLOSION,
+              citizen.posX + (citizen.getRandom().nextDouble() * citizen.getWidth() * 2.0F) - (double) citizen.getWidth(),
+              citizen.posY + (citizen.getRandom().nextDouble() * citizen.getHeight()),
+              citizen.posZ + (citizen.getRandom().nextDouble() * citizen.getWidth() * 2.0F) - (double) citizen.getWidth(),
               d2,
               d0,
               d1);
@@ -210,10 +212,10 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     @Override
     public void gatherXp()
     {
-        for (@NotNull final EntityXPOrb orb : getXPOrbsOnGrid())
+        for (@NotNull final ExperienceOrbEntity orb : getXPOrbsOnGrid())
         {
             addExperience(orb.getXpValue() / 2.0D);
-            orb.setDead();
+            orb.remove();
         }
     }
 
@@ -222,11 +224,11 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
      *
      * @return a list of xp orbs around the entity.
      */
-    private List<EntityXPOrb> getXPOrbsOnGrid()
+    private List<ExperienceOrbEntity> getXPOrbsOnGrid()
     {
         @NotNull final AxisAlignedBB bb = new AxisAlignedBB(citizen.posX - 2, citizen.posY - 2, citizen.posZ - 2, citizen.posX + 2, citizen.posY + 2, citizen.posZ + 2);
 
-        return CompatibilityUtils.getWorldFromCitizen(citizen).getEntitiesWithinAABB(EntityXPOrb.class, bb);
+        return CompatibilityUtils.getWorldFromCitizen(citizen).getEntitiesWithinAABB(ExperienceOrbEntity.class, bb);
     }
 
     /**

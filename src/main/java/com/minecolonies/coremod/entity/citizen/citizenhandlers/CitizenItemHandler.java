@@ -4,23 +4,22 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenItemHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.BlockParticleEffectMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,19 +54,19 @@ public class CitizenItemHandler implements ICitizenItemHandler
     /**
      * Citizen will try to pick up a certain item.
      *
-     * @param entityItem the item he wants to pickup.
+     * @param ItemEntity the item he wants to pickup.
      */
     @Override
-    public void tryPickupEntityItem(@NotNull final EntityItem entityItem)
+    public void tryPickupItemEntity(@NotNull final ItemEntity ItemEntity)
     {
         if (!CompatibilityUtils.getWorldFromCitizen(citizen).isRemote)
         {
-            if (entityItem.cannotPickup())
+            if (ItemEntity.cannotPickup())
             {
                 return;
             }
 
-            final ItemStack itemStack = entityItem.getItem();
+            final ItemStack itemStack = ItemEntity.getItem();
             final ItemStack compareStack = itemStack.copy();
 
             final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(citizen.getInventoryCitizen()), itemStack);
@@ -81,7 +80,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
                   SoundCategory.AMBIENT,
                   (float) DEFAULT_VOLUME,
                   (float) ((citizen.getRandom().nextGaussian() * DEFAULT_PITCH_MULTIPLIER + 1.0D) * 2.0D));
-                citizen.onItemPickup(entityItem, ItemStackUtils.getSize(itemStack) - resultingStackSize);
+                citizen.onItemPickup(ItemEntity, ItemStackUtils.getSize(itemStack) - resultingStackSize);
 
                 final ItemStack overrulingStack = itemStack.copy();
                 overrulingStack.setCount(ItemStackUtils.getSize(itemStack) - resultingStackSize);
@@ -93,7 +92,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
 
                 if (ItemStackUtils.isEmpty(resultStack))
                 {
-                    entityItem.setDead();
+                    ItemEntity.remove();
                 }
             }
         }
@@ -174,7 +173,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
             return;
         }
 
-        citizen.getLookHelper().setLookPosition(blockPos.getX(), blockPos.getY(), blockPos.getZ(), FACING_DELTA_YAW, citizen.getVerticalFaceSpeed());
+        citizen.getLookController().setLookPosition(blockPos.getX(), blockPos.getY(), blockPos.getZ(), FACING_DELTA_YAW, citizen.getVerticalFaceSpeed());
 
         citizen.swingArm(citizen.getActiveHand());
 
@@ -184,10 +183,10 @@ public class CitizenItemHandler implements ICitizenItemHandler
         {
             if (!CompatibilityUtils.getWorldFromCitizen(citizen).isRemote)
             {
-                Network.getNetwork().sendToAllAround(
+                Network.getNetwork().sendToPosition(
                   new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
-                  new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorldFromCitizen(citizen).world.getDimension().getType().getId(),
-                    blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
+                  new PacketDistributor.TargetPoint(
+                    blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE, citizen.world.getDimension().getType()));
             }
             CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
               blockPos,
@@ -195,7 +194,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
               SoundCategory.BLOCKS,
               block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getVolume(),
               block.getSoundType(blockState, CompatibilityUtils.getWorldFromCitizen(citizen), blockPos, citizen).getPitch());
-            CompatibilityUtils.getWorldFromCitizen(citizen).setBlockToAir(blockPos);
+            CompatibilityUtils.getWorldFromCitizen(citizen).removeBlock(blockPos, false);
 
             damageItemInHand(citizen.getActiveHand(), 1);
         }
@@ -206,10 +205,10 @@ public class CitizenItemHandler implements ICitizenItemHandler
                 final BlockPos vector = blockPos.subtract(citizen.getPosition());
                 final Direction facing = Direction.getFacingFromVector(vector.getX(), vector.getY(), vector.getZ()).getOpposite();
 
-                Network.getNetwork().sendToAllAround(
+                Network.getNetwork().sendToPosition(
                   new BlockParticleEffectMessage(blockPos, CompatibilityUtils.getWorldFromCitizen(citizen).getBlockState(blockPos), facing.ordinal()),
-                  new NetworkRegistry.TargetPoint(CompatibilityUtils.getWorldFromCitizen(citizen).world.getDimension().getType().getId(), blockPos.getX(),
-                    blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE));
+                  new PacketDistributor.TargetPoint(blockPos.getX(),
+                    blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE, citizen.world.getDimension().getType()));
             }
             CompatibilityUtils.getWorldFromCitizen(citizen).playSound(null,
               blockPos,
@@ -234,7 +233,9 @@ public class CitizenItemHandler implements ICitizenItemHandler
         {
             return;
         }
-        heldItem.damageItem(damage, citizen);
+        heldItem.damageItem(damage, citizen, (i) -> {
+            i.sendBreakAnimation(Hand.MAIN_HAND);
+        });
 
         //check if tool breaks
         if (ItemStackUtils.getSize(heldItem) < 1)
@@ -250,24 +251,24 @@ public class CitizenItemHandler implements ICitizenItemHandler
     @Override
     public void pickupItems()
     {
-        @NotNull final List<EntityItem> retList = new ArrayList<>();
+        @NotNull final List<ItemEntity> retList = new ArrayList<>();
         //I know streams look better but they are flawed in type erasure
         for (final Object o :
           CompatibilityUtils.getWorldFromCitizen(citizen).
-                                             getEntitiesWithinAABB(EntityItem.class,
+                                             getEntitiesWithinAABB(ItemEntity.class,
                                                new AxisAlignedBB(citizen.getPosition()).expand(2.0F, 1.0F, 2.0F).expand(-2.0F, -1.0F, -2.0F)))
         {
-            if (o instanceof EntityItem)
+            if (o instanceof ItemEntity)
             {
-                retList.add((EntityItem) o);
+                retList.add((ItemEntity) o);
             }
         }
 
         retList.stream()
           .filter(Objects::nonNull)
-          .filter(item -> !item.isDead)
+          .filter(item -> item.isAlive())
           .filter(item -> citizen.canPickUpLoot())
-          .forEach(this::tryPickupEntityItem);
+          .forEach(this::tryPickupItemEntity);
     }
 
     /**
@@ -295,7 +296,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
      * @return the dropped item.
      */
     @Override
-    public EntityItem entityDropItem(@NotNull final ItemStack itemstack)
+    public ItemEntity entityDropItem(@NotNull final ItemStack itemstack)
     {
         return citizen.entityDropItem(itemstack, 0.0F);
     }
@@ -314,13 +315,9 @@ public class CitizenItemHandler implements ICitizenItemHandler
             {
                 continue;
             }
-            stack.damageItem((int) (damage / 2), citizen);
-
-            if (ItemStackUtils.getSize(stack) < 1)
-            {
-                citizen.setItemStackToSlot(LivingEntity.getSlotForItemStack(stack), ItemStackUtils.EMPTY);
-            }
-            citizen.setItemStackToSlot(LivingEntity.getSlotForItemStack(stack), stack);
+            stack.damageItem((int)(damage/2), citizen, (i) -> {
+                i.sendBreakAnimation(Hand.MAIN_HAND);
+            });
         }
     }
 }

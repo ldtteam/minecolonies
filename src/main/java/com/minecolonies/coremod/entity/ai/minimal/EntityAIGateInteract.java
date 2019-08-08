@@ -2,13 +2,13 @@ package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.api.util.CompatibilityUtils;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFenceGate;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.FenceGateBlock;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.pathfinding.Path;
-import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ import static com.minecolonies.api.util.constant.Constants.HALF_BLOCK;
 /**
  * Used for gate interaction for the citizens.
  */
-public class EntityAIGateInteract extends EntityAIBase
+public class EntityAIGateInteract extends Goal
 {
     /**
      * Number of blocks to check for the fence gate - height.
@@ -33,44 +33,44 @@ public class EntityAIGateInteract extends EntityAIBase
     /**
      * The min distance the gate has to be from the citizen.
      */
-    private static final double MIN_DISTANCE    = 2.25D;
+    private static final double         MIN_DISTANCE    = 2.25D;
     /**
      * Our citizen.
      */
-    protected LivingEntity   theEntity;
+    protected            MobEntity      theEntity;
     /**
      * The gate position.
      */
-    protected BlockPos       gatePosition;
+    protected            BlockPos       gatePosition;
     /**
      * The gate block.
      */
     @Nullable
-    protected BlockFenceGate gateBlock;
+    protected            FenceGateBlock gateBlock;
     /**
      * Check if the interaction with the fenceGate stopped already.
      */
-    private   boolean        hasStoppedFenceInteraction;
+    private              boolean        hasStoppedFenceInteraction;
     /**
      * The entities x position.
      */
-    private   double         entityPositionX;
+    private              double         entityPositionX;
     /**
      * The entities z position.
      */
-    private   double         entityPositionZ;
+    private              double         entityPositionZ;
 
     /**
      * Constructor called to register the AI class with an entity.
      *
      * @param entityIn the registering entity.
      */
-    public EntityAIGateInteract(@NotNull final LivingEntity entityIn)
+    public EntityAIGateInteract(@NotNull final MobEntity entityIn)
     {
         super();
         this.gatePosition = BlockPos.ZERO;
         this.theEntity = entityIn;
-        if (!(entityIn.getNavigator() instanceof PathNavigateGround))
+        if (!(entityIn.getNavigator() instanceof GroundPathNavigator))
         {
             throw new IllegalArgumentException("Unsupported mob type for DoorInteractGoal");
         }
@@ -94,7 +94,7 @@ public class EntityAIGateInteract extends EntityAIBase
      */
     private boolean checkPath()
     {
-        @NotNull final PathNavigateGround pathnavigateground = (PathNavigateGround) this.theEntity.getNavigator();
+        @NotNull final GroundPathNavigator pathnavigateground = (GroundPathNavigator) this.theEntity.getNavigator();
         final Path path = pathnavigateground.getPath();
         return path != null && !path.isFinished() && pathnavigateground.getEnterDoors() && checkFenceGate(path);
     }
@@ -136,16 +136,16 @@ public class EntityAIGateInteract extends EntityAIBase
      * @param pos the position to be searched.
      * @return fenceBlock or null.
      */
-    private BlockFenceGate getBlockFence(@NotNull final BlockPos pos)
+    private FenceGateBlock getBlockFence(@NotNull final BlockPos pos)
     {
         final BlockState blockState = CompatibilityUtils.getWorldFromEntity(this.theEntity).getBlockState(pos);
         Block block = blockState.getBlock();
-        if (!(block instanceof BlockFenceGate && blockState.getMaterial() == Material.WOOD))
+        if (!(block instanceof FenceGateBlock && blockState.getMaterial() == Material.WOOD))
         {
             block = CompatibilityUtils.getWorldFromEntity(this.theEntity).getBlockState(this.theEntity.getPosition()).getBlock();
             gatePosition = this.theEntity.getPosition();
         }
-        return block instanceof BlockFenceGate && blockState.getMaterial() == Material.WOOD ? (BlockFenceGate) block : null;
+        return block instanceof FenceGateBlock && blockState.getMaterial() == Material.WOOD ? (FenceGateBlock) block : null;
     }
 
     /**
@@ -174,7 +174,7 @@ public class EntityAIGateInteract extends EntityAIBase
      * Updates the task and checks if the citizen passed the gate already.
      */
     @Override
-    public void updateTask()
+    public void tick()
     {
         final double entityDistX = this.gatePosition.getX() + HALF_BLOCK - this.theEntity.posX;
         final double entityDistZ = this.gatePosition.getZ() + HALF_BLOCK - this.theEntity.posZ;

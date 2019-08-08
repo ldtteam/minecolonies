@@ -145,7 +145,7 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob> extends Ab
             range = getOwnBuilding().getTargetableArea(world);
         }
 
-        if (range.intersectsWithXZ(new Vec3d(pos)))
+        if (range.contains(new Vec3d(pos)))
         {
             return pos;
         }

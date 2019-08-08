@@ -8,13 +8,14 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Random;
 
@@ -25,7 +26,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.MAX_GUARD_CALL
 /**
  * AI task to avoid an Entity class.
  */
-public class EntityAICitizenAvoidEntity extends EntityAIBase
+public class EntityAICitizenAvoidEntity extends Goal
 {
     /**
      * Defines how close the entity has to be to the mob to run away.
@@ -93,7 +94,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
         this.distanceFromEntity = distanceFromEntity;
         this.farSpeed = farSpeed;
         this.nearSpeed = nearSpeed;
-        super.setMutexBits(1);
+        super.setMutexFlags(EnumSet.of(Flag.MOVE));
 
         stateMachine = new TickRateStateMachine(SAFE, this::onException);
 
@@ -148,17 +149,17 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     {
         if (targetEntityClass == PlayerEntity.class)
         {
-            return CompatibilityUtils.getWorldFromCitizen(citizen).getClosestPlayerToEntity(citizen, (double) distanceFromEntity);
+            return CompatibilityUtils.getWorldFromCitizen(citizen).getClosestPlayer(citizen, (double) distanceFromEntity);
         }
         else
         {
             final Optional<Entity> entityOptional = CompatibilityUtils.getWorldFromCitizen(citizen).getEntitiesInAABBexcluding(
               citizen,
-              citizen.getEntityBoundingBox().grow(
+              citizen.getBoundingBox().grow(
                 (double) distanceFromEntity,
                 3.0D,
                 (double) distanceFromEntity),
-              target -> target.isEntityAlive() && citizen.getEntitySenses().canSee(target))
+              target -> target.isAlive() && citizen.getEntitySenses().canSee(target))
                                                       .stream()
                                                       .filter(targetEntityClass::isInstance)
                                                       .findFirst();
@@ -220,7 +221,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     }
 
     /**
-     * Returns whether the EntityAIBase should begin execution of avoiding.
+     * Returns whether the Goal should begin execution of avoiding.
      */
     @Override
     public boolean shouldExecute()
@@ -235,7 +236,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     }
 
     /**
-     * Returns whether an in-progress EntityAIBase should continue executing.
+     * Returns whether an in-progress Goal should continue executing.
      */
     @Override
     public boolean shouldContinueExecuting()

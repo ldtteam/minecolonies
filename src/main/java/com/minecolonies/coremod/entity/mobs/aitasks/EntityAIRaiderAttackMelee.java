@@ -6,7 +6,8 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.RaiderConstants;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.Goal;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.Hand;
@@ -14,7 +15,7 @@ import net.minecraft.util.Hand;
 /**
  * Barbarian Attack AI class
  */
-public class EntityAIRaiderAttackMelee extends EntityAIBase
+public class EntityAIRaiderAttackMelee extends Goal
 {
 
     private static final int                           MAX_ATTACK_DELAY        = 60;
@@ -51,14 +52,14 @@ public class EntityAIRaiderAttackMelee extends EntityAIBase
     }
 
     /**
-     * Returns whether an in-progress EntityAIBase should continue executing
+     * Returns whether an in-progress Goal should continue executing
      *
      * @return Boolean value on whether or not to continue executing
      */
     @Override
     public boolean shouldContinueExecuting()
     {
-        if (target.isEntityAlive() && entity.isEntityAlive() && entity.canEntityBeSeen(target))
+        if (target.isAlive() && entity.isAlive() && entity.canEntityBeSeen(target))
         {
             attack(target);
             return true;

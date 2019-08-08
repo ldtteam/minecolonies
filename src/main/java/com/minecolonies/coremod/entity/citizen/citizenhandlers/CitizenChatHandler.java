@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenChatHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.entity.player.PlayerEntity;
@@ -83,7 +83,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
         }
 
         final StringTextComponent citizenDescription = new StringTextComponent(" ");
-        citizenDescription.appendText(citizen.getCustomNameTag()).appendText(": ");
+        citizenDescription.appendText(citizen.getCustomName().getFormattedText()).appendText(": ");
         if (citizen.getCitizenColonyHandler().getColony() != null)
         {
             final StringTextComponent colonyDescription = new StringTextComponent(" at " + citizen.getCitizenColonyHandler().getColony().getName() + ":");
@@ -108,7 +108,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
         //Only check if there are messages and once a second
         if (statusMessages.size() > 0 && citizen.ticksExisted % TICKS_20 == 0)
         {
-            statusMessages.entrySet().removeIf(stringIntegerEntry -> citizen.ticksExisted - stringIntegerEntry.get() > TICKS_20 * MineColonies.getConfig().getCommon().gameplay.chatFrequency);
+            statusMessages.entrySet().removeIf(stringIntegerEntry -> citizen.ticksExisted - stringIntegerEntry.getValue() > TICKS_20 * MineColonies.getConfig().getCommon().chatFrequency.get());
         }
     }
 
@@ -126,7 +126,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
             {
                 final ITextComponent component = new TranslationTextComponent("tile.blockHutTownHall.messageWorkerDead", new TranslationTextComponent(job.getName()), citizen.getCitizenData().getName(), (int) citizen.posX, (int) citizen.posY, (int) citizen.posZ, damageSource.damageType);
                 LanguageHandler.sendPlayersMessage(
-                  citizen.getCitizenColonyHandler().getColony().getMessagePlayerEntitys(), component);
+                  citizen.getCitizenColonyHandler().getColony().getMessagePlayerEntitys(), component.getUnformattedComponentText());
             }
             else
             {

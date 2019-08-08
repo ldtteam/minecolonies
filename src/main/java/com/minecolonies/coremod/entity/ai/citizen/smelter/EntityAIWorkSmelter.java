@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.smelter;
 
 import com.google.common.reflect.TypeToken;
-import com.ldtteam.structurize.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
@@ -18,9 +18,9 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIUsesFurnace;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Tuple;
@@ -188,9 +188,8 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
             if (!ItemStackUtils.isEmpty(material))
             {
                 material.setCount(materialTuple.getB());
-                material.setItemDamage(0);
                 new InvWrapper(worker.getInventoryCitizen()).setStackInSlot(slot, material);
-                if (getOwnBuilding().getBuildingLevel() > 0 && stack.isItemEnchanted() &&
+                if (getOwnBuilding().getBuildingLevel() > 0 && stack.isEnchanted() &&
                       ENCHANTED_BOOK_CHANCE[getOwnBuilding().getBuildingLevel() - 1] < new Random().nextInt(MAX_ENCHANTED_BOOK_CHANCE))
                 {
                     final ItemStack book = extractEnchantFromItem(stack);
@@ -225,18 +224,18 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     private static Tuple<ItemStack, Integer> getMaterialAndAmount(final ItemStack stack)
     {
         int amount = 1;
-        ItemStack material = ItemStackUtils.EMPTY;
+        Ingredient material = Ingredient.EMPTY;
         if (stack.getItem() instanceof SwordItem)
         {
-            material = Item.ToolMaterial.valueOf(((SwordItem) stack.getItem()).getToolMaterialName()).getRepairItemStack();
+            material = ((SwordItem) stack.getItem()).getTier().getRepairMaterial();
         }
-        else if (stack.getItem() instanceof ItemTool)
+        else if (stack.getItem() instanceof ToolItem)
         {
-            material = Item.ToolMaterial.valueOf(((ItemTool) stack.getItem()).getToolMaterialName()).getRepairItemStack();
+            material = ((ToolItem) stack.getItem()).getTier().getRepairMaterial();
         }
         else if (stack.getItem() instanceof ArmorItem)
         {
-            material = ((ArmorItem) stack.getItem()).getArmorMaterial().getRepairItemStack();
+            material = ((ArmorItem) stack.getItem()).getArmorMaterial().getRepairMaterial();
             final EquipmentSlotType eq = ((ArmorItem) stack.getItem()).getEquipmentSlot();
             if (eq == EquipmentSlotType.CHEST)
             {
@@ -255,7 +254,13 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
                 amount = FEET_MAT_AMOUNT;
             }
         }
-        return new Tuple<>(material, amount);
+
+        if (material.hasNoMatchingItems())
+        {
+            return new Tuple<>(ItemStack.EMPTY, amount);
+        }
+
+        return new Tuple<>(material.getMatchingStacks()[0], amount);
     }
 
     /**
@@ -338,7 +343,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     {
         if (!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(getSmeltAbleClass().getClass())) &&
               !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
-                req -> req.getShortDisplayString().getUnformattedText().equals(LanguageHandler.format(COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE))))
+                req -> req.getShortDisplayString().getUnformattedComponentText().equals(LanguageHandler.format(COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE))))
         {
             final Map<String, List<ItemStorage>> allowedItems = getOwnBuilding(AbstractBuildingFurnaceUser.class).getCopyOfAllowedItems();
             if (allowedItems.containsKey(ORE_LIST) && allowedItems.get(ORE_LIST).size() > 0)
@@ -365,7 +370,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     private static boolean isSmeltableToolOrWeapon(final ItemStack stack)
     {
         return !ItemStackUtils.isEmpty(stack) && (stack.getItem() instanceof SwordItem
-                                                    || stack.getItem() instanceof ItemTool
+                                                    || stack.getItem() instanceof ToolItem
                                                     || stack.getItem() instanceof ArmorItem)
                  && !stack.getItem().isDamaged(stack);
     }
@@ -386,7 +391,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
         final ItemStack books = new ItemStack(Items.ENCHANTED_BOOK);
         for (final Map.Entry<Enchantment, Integer> entry : enchants.entrySet())
         {
-            ItemEnchantedBook.addEnchantment(books, new EnchantmentData(entry.getKey(), entry.getValue()));
+            EnchantedBookItem.addEnchantment(books, new EnchantmentData(entry.getKey(), entry.getValue()));
         }
         worker.decreaseSaturationForAction();
         return books;

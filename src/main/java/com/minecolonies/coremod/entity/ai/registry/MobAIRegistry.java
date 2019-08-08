@@ -11,10 +11,10 @@ import com.minecolonies.coremod.entity.mobs.aitasks.EntityAIRaiderAttackMelee;
 import com.minecolonies.coremod.entity.mobs.aitasks.EntityAIWalkToRandomHuts;
 import com.minecolonies.coremod.util.MultimapCollector;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,19 +43,19 @@ public class MobAIRegistry implements IMobAIRegistry
     private static void setupMobAiTasks(IMobAIRegistry registry)
     {
         registry
-          .registerNewAiTaskForMobs(PRIORITY_ZERO, EntityAISwimming::new)
+          .registerNewAiTaskForMobs(PRIORITY_ZERO, SwimGoal::new)
           .registerNewAiTaskForMobs(PRIORITY_FOUR, mob -> new EntityAIWalkToRandomHuts(mob, AI_MOVE_SPEED))
-          .registerNewAiTargetTaskForMobs(PRIORITY_TWO, mob -> new EntityAINearestAttackableTarget<>(mob, PlayerEntity.class, true))
-          .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new EntityAINearestAttackableTarget<>(mob, EntityCitizen.class, true))
-          .registerNewAiTaskForMobs(PRIORITY_FIVE, mob -> new EntityAIWatchClosest(mob, PlayerEntity.class, MAX_WATCH_DISTANCE))
-          .registerNewAiTaskForMobs(PRIORITY_SIX, mob -> new EntityAIWatchClosest(mob, EntityCitizen.class, MAX_WATCH_DISTANCE))
+          .registerNewAiTargetTaskForMobs(PRIORITY_TWO, mob -> new NearestAttackableTargetGoal<>(mob, PlayerEntity.class, true))
+          .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new NearestAttackableTargetGoal<>(mob, EntityCitizen.class, true))
+          .registerNewAiTaskForMobs(PRIORITY_FIVE, mob -> new LookAtGoal(mob, PlayerEntity.class, MAX_WATCH_DISTANCE))
+          .registerNewAiTaskForMobs(PRIORITY_SIX, mob -> new LookAtGoal(mob, EntityCitizen.class, MAX_WATCH_DISTANCE))
           .registerNewAiTaskForMobs(PRIORITY_ONE, EntityAIAttackArcher::new, mob -> mob instanceof IArcherMobEntity)
           .registerNewAiTaskForMobs(PRIORITY_ONE, EntityAIRaiderAttackMelee::new, mob -> !(mob instanceof IArcherMobEntity));
     }
 
     @NotNull
     @Override
-    public Multimap<Integer, EntityAIBase> getEntityAiTasksForMobs(final AbstractEntityMinecoloniesMob mob)
+    public Multimap<Integer, Goal> getEntityAiTasksForMobs(final AbstractEntityMinecoloniesMob mob)
     {
         return mobAiTasks.stream().filter(wrapper -> wrapper.entityPredicate.test(mob)).collect(MultimapCollector.toMultimap(
           TaskInformationWrapper::getPriority,
@@ -67,7 +67,7 @@ public class MobAIRegistry implements IMobAIRegistry
     @NotNull
     @Override
     public IMobAIRegistry registerNewAiTaskForMobs(
-      final int priority, final Function<AbstractEntityMinecoloniesMob, EntityAIBase> aiTaskProducer, final Predicate<AbstractEntityMinecoloniesMob> applyPredicate)
+      final int priority, final Function<AbstractEntityMinecoloniesMob, Goal> aiTaskProducer, final Predicate<AbstractEntityMinecoloniesMob> applyPredicate)
     {
         mobAiTasks.add(new TaskInformationWrapper<>(priority, aiTaskProducer, applyPredicate));
         return this;
@@ -75,7 +75,7 @@ public class MobAIRegistry implements IMobAIRegistry
 
     @NotNull
     @Override
-    public Multimap<Integer, EntityAIBase> getEntityAiTargetTasksForMobs(final AbstractEntityMinecoloniesMob mob)
+    public Multimap<Integer, Goal> getEntityAiTargetTasksForMobs(final AbstractEntityMinecoloniesMob mob)
     {
         return mobAiTargetTasks.stream().filter(wrapper -> wrapper.getEntityPredicate().test(mob)).collect(MultimapCollector.toMultimap(
           TaskInformationWrapper::getPriority,
@@ -87,7 +87,7 @@ public class MobAIRegistry implements IMobAIRegistry
     @NotNull
     @Override
     public IMobAIRegistry registerNewAiTargetTaskForMobs(
-      final int priority, final Function<AbstractEntityMinecoloniesMob, EntityAIBase> aiTaskProducer, final Predicate<AbstractEntityMinecoloniesMob> applyPredicate)
+      final int priority, final Function<AbstractEntityMinecoloniesMob, Goal> aiTaskProducer, final Predicate<AbstractEntityMinecoloniesMob> applyPredicate)
     {
         mobAiTargetTasks.add(new TaskInformationWrapper<>(priority, aiTaskProducer, applyPredicate));
         return this;
@@ -101,12 +101,12 @@ public class MobAIRegistry implements IMobAIRegistry
     private final class TaskInformationWrapper<M extends Entity>
     {
         private final int                                                   priority;
-        private final Function<AbstractEntityMinecoloniesMob, EntityAIBase> aiTaskProducer;
+        private final Function<AbstractEntityMinecoloniesMob, Goal> aiTaskProducer;
         private final Predicate<M>                                          entityPredicate;
 
         private TaskInformationWrapper(
           final int priority,
-          final Function<AbstractEntityMinecoloniesMob, EntityAIBase> aiTaskProducer, final Predicate<M> entityPredicate)
+          final Function<AbstractEntityMinecoloniesMob, Goal> aiTaskProducer, final Predicate<M> entityPredicate)
         {
             this.priority = priority;
             this.aiTaskProducer = aiTaskProducer;
@@ -118,7 +118,7 @@ public class MobAIRegistry implements IMobAIRegistry
             return priority;
         }
 
-        public Function<AbstractEntityMinecoloniesMob, EntityAIBase> getAiTaskProducer()
+        public Function<AbstractEntityMinecoloniesMob, Goal> getAiTaskProducer()
         {
             return aiTaskProducer;
         }

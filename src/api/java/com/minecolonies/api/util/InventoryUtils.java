@@ -50,19 +50,18 @@ public class InventoryUtils
 
     /**
      * Filters a list of items, matches the stack using {@link
-     * #compareItems(ItemStack, Item, int)}, in an {@link IItemHandler}. Uses
+     * #compareItems(ItemStack, Item)}, in an {@link IItemHandler}. Uses
      * the MetaData and {@link #getItemFromBlock(Block)} as parameters for the
      * Predicate.
      *
      * @param itemHandler Inventory to filter in
      * @param block       Block to filter
-     * @param metaData    the damage value.
      * @return List of item stacks
      */
     @NotNull
-    public static List<ItemStack> filterItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Block block, final int metaData)
+    public static List<ItemStack> filterItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Block block)
     {
-        return filterItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, getItemFromBlock(block), metaData));
+        return filterItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, getItemFromBlock(block)));
     }
 
     /**
@@ -120,13 +119,13 @@ public class InventoryUtils
      *
      * @param itemHandler Inventory to get items from
      * @param targetItem  Item to look for
-     * @param itemDamage  the damage value.
+
      * @return List of item stacks with the given item in inventory
      */
     @NotNull
-    public static List<ItemStack> filterItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Item targetItem, final int itemDamage)
+    public static List<ItemStack> filterItemHandler(@NotNull final IItemHandler itemHandler, @NotNull final Item targetItem)
     {
-        return filterItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, targetItem, itemDamage));
+        return filterItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, targetItem));
     }
 
     /**
@@ -135,12 +134,11 @@ public class InventoryUtils
      *
      * @param itemHandler {@link IItemHandler} to check.
      * @param block       Block to find.
-     * @param itemDamage  the damage value.
      * @return Index of the first occurrence.
      */
-    public static int findFirstSlotInItemHandlerWith(@NotNull final IItemHandler itemHandler, @NotNull final Block block, final int itemDamage)
+    public static int findFirstSlotInItemHandlerWith(@NotNull final IItemHandler itemHandler, @NotNull final Block block)
     {
-        return findFirstSlotInItemHandlerWith(itemHandler, getItemFromBlock(block), itemDamage);
+        return findFirstSlotInItemHandlerWith(itemHandler, getItemFromBlock(block));
     }
 
     /**
@@ -149,12 +147,11 @@ public class InventoryUtils
      *
      * @param itemHandler {@link IItemHandler} to check
      * @param targetItem  Item to find.
-     * @param itemDamage  The damage value to match on the stack.
      * @return Index of the first occurrence
      */
-    public static int findFirstSlotInItemHandlerWith(@NotNull final IItemHandler itemHandler, @NotNull final Item targetItem, final int itemDamage)
+    public static int findFirstSlotInItemHandlerWith(@NotNull final IItemHandler itemHandler, @NotNull final Item targetItem)
     {
-        return findFirstSlotInItemHandlerWith(itemHandler, (ItemStack stack) -> compareItems(stack, targetItem, itemDamage));
+        return findFirstSlotInItemHandlerWith(itemHandler, (ItemStack stack) -> compareItems(stack, targetItem));
     }
 
     /**
@@ -227,17 +224,16 @@ public class InventoryUtils
      *
      * @param itemHandler {@link IItemHandler} to scan.
      * @param block       The block to count
-     * @param itemDamage  the damage value
      * @return Amount of occurrences of stacks that match the given block and
      * ItemDamage
      */
-    public static int getItemCountInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Block block, final int itemDamage)
+    public static int getItemCountInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Block block)
     {
         if (itemHandler == null)
         {
             Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("getItemCountInItemHandler got a null itemHandler"));
         }
-        return itemHandler == null ? 0 : getItemCountInItemHandler(itemHandler, getItemFromBlock(block), itemDamage);
+        return itemHandler == null ? 0 : getItemCountInItemHandler(itemHandler, getItemFromBlock(block));
     }
 
     /**
@@ -245,17 +241,16 @@ public class InventoryUtils
      *
      * @param itemHandler {@link IItemHandler} to scan.
      * @param targetItem  Item to count
-     * @param itemDamage  the item damage value.
      * @return Amount of occurrences of stacks that match the given item and
      * ItemDamage
      */
-    public static int getItemCountInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Item targetItem, final int itemDamage)
+    public static int getItemCountInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Item targetItem)
     {
         if (itemHandler == null)
         {
             Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("getItemCountInItemHandler got a null itemHandler"));
         }
-        return itemHandler == null ? 0 : getItemCountInItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, targetItem, itemDamage));
+        return itemHandler == null ? 0 : getItemCountInItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, targetItem));
     }
 
     /**
@@ -277,38 +272,37 @@ public class InventoryUtils
 
     /**
      * Checks if a player has a block in the {@link IItemHandler}. Checked by
-     * {@link #getItemCountInItemHandler(IItemHandler, Block, int)} &gt; 0;
+     * {@link #getItemCountInItemHandler(IItemHandler, Block)} &gt; 0;
      *
      * @param itemHandler {@link IItemHandler} to scan
      * @param block       Block to count
-     * @param itemDamage  the damage value.
+
      * @return True when in {@link IItemHandler}, otherwise false
      */
-    public static boolean hasItemInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Block block, final int itemDamage)
+    public static boolean hasItemInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Block block)
     {
         if (itemHandler == null)
         {
             Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
         }
-        return itemHandler != null && hasItemInItemHandler(itemHandler, getItemFromBlock(block), itemDamage);
+        return itemHandler != null && hasItemInItemHandler(itemHandler, getItemFromBlock(block));
     }
 
     /**
      * Checks if a player has an item in the {@link IItemHandler}. Checked by
-     * {@link #getItemCountInItemHandler(IItemHandler, Item, int)} &gt; 0;
+     * {@link #getItemCountInItemHandler(IItemHandler, Item)} &gt; 0;
      *
      * @param itemHandler {@link IItemHandler} to scan
      * @param item        Item to count
-     * @param itemDamage  the damage value of the item.
      * @return True when in {@link IItemHandler}, otherwise false
      */
-    public static boolean hasItemInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Item item, final int itemDamage)
+    public static boolean hasItemInItemHandler(@Nullable final IItemHandler itemHandler, @NotNull final Item item)
     {
         if (itemHandler == null)
         {
             Log.getLogger().error("This is not supposed to happen, please notify the developers!", new Exception("hasItemInItemHandler got a null itemHandler"));
         }
-        return itemHandler != null && hasItemInItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, item, itemDamage));
+        return itemHandler != null && hasItemInItemHandler(itemHandler, (ItemStack stack) -> compareItems(stack, item));
     }
 
     /**
@@ -454,19 +448,18 @@ public class InventoryUtils
 
     /**
      * Filters a list of items, matches the stack using {@link
-     * #compareItems(ItemStack, Item, int)}, in an {@link ICapabilityProvider}.
+     * #compareItems(ItemStack, Item)}, in an {@link ICapabilityProvider}.
      * Uses the MetaData and {@link #getItemFromBlock(Block)} as parameters for
      * the Predicate.
      *
      * @param provider Provider to filter in
      * @param block    Block to filter
-     * @param metaData the damage value.
      * @return List of item stacks
      */
     @NotNull
-    public static List<ItemStack> filterProvider(@NotNull final ICapabilityProvider provider, final Block block, final int metaData)
+    public static List<ItemStack> filterProvider(@NotNull final ICapabilityProvider provider, final Block block)
     {
-        return filterProvider(provider, (ItemStack stack) -> compareItems(stack, getItemFromBlock(block), metaData));
+        return filterProvider(provider, (ItemStack stack) -> compareItems(stack, getItemFromBlock(block)));
     }
 
     /**
@@ -541,18 +534,17 @@ public class InventoryUtils
 
     /**
      * Filters a list of items, matches the stack using {@link
-     * #compareItems(ItemStack, Item, int)}, with targetItem and itemDamage as
+     * #compareItems(ItemStack, Item)}, with targetItem and itemDamage as
      * parameters, in an {@link ICapabilityProvider}.
      *
      * @param provider   Provider to get items from
      * @param targetItem Item to look for
-     * @param itemDamage the damage value.
      * @return List of item stacks with the given item in inventory
      */
     @NotNull
-    public static List<ItemStack> filterProvider(@NotNull final ICapabilityProvider provider, @Nullable final Item targetItem, final int itemDamage)
+    public static List<ItemStack> filterProvider(@NotNull final ICapabilityProvider provider, @Nullable final Item targetItem)
     {
-        return filterProvider(provider, (ItemStack stack) -> compareItems(stack, targetItem, itemDamage));
+        return filterProvider(provider, (ItemStack stack) -> compareItems(stack, targetItem));
     }
 
     /**
@@ -561,12 +553,11 @@ public class InventoryUtils
      *
      * @param provider   {@link ICapabilityProvider} to check.
      * @param block      Block to find.
-     * @param itemDamage the damage value.
      * @return Index of the first occurrence.
      */
-    public static int findFirstSlotInProviderWith(@NotNull final ICapabilityProvider provider, final Block block, final int itemDamage)
+    public static int findFirstSlotInProviderWith(@NotNull final ICapabilityProvider provider, final Block block)
     {
-        return findFirstSlotInProviderWith(provider, getItemFromBlock(block), itemDamage);
+        return findFirstSlotInProviderWith(provider, getItemFromBlock(block));
     }
 
     /**
@@ -575,12 +566,11 @@ public class InventoryUtils
      *
      * @param provider   {@link ICapabilityProvider} to check
      * @param targetItem Item to find.
-     * @param itemDamage The damage value to match on the stack.
      * @return Index of the first occurrence
      */
-    public static int findFirstSlotInProviderWith(@NotNull final ICapabilityProvider provider, final Item targetItem, final int itemDamage)
+    public static int findFirstSlotInProviderWith(@NotNull final ICapabilityProvider provider, final Item targetItem)
     {
-        return findFirstSlotInProviderNotEmptyWith(provider, (ItemStack stack) -> compareItems(stack, targetItem, itemDamage));
+        return findFirstSlotInProviderNotEmptyWith(provider, (ItemStack stack) -> compareItems(stack, targetItem));
     }
 
     /**
@@ -706,27 +696,25 @@ public class InventoryUtils
      *
      * @param provider   {@link ICapabilityProvider} to scan.
      * @param block      The block to count
-     * @param itemDamage the damage value
      * @return Amount of occurrences of stacks that match the given block and
      * ItemDamage
      */
-    public static int getItemCountInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Block block, final int itemDamage)
+    public static int getItemCountInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Block block)
     {
-        return getItemCountInProvider(provider, getItemFromBlock(block), itemDamage);
+        return getItemCountInProvider(provider, getItemFromBlock(block));
     }
 
     /**
      * Returns the amount of occurrences in the {@link ICapabilityProvider}.
      *
      * @param provider   {@link ICapabilityProvider} to scan.
-     * @param targetItem Item to count
-     * @param itemDamage the item damage value.
+     * @param targetItem Item to count.
      * @return Amount of occurrences of stacks that match the given item and
      * ItemDamage
      */
-    public static int getItemCountInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Item targetItem, final int itemDamage)
+    public static int getItemCountInProvider(@NotNull final ICapabilityProvider provider, @NotNull final Item targetItem)
     {
-        return getItemCountInProvider(provider, (ItemStack stack) -> compareItems(stack, targetItem, itemDamage));
+        return getItemCountInProvider(provider, (ItemStack stack) -> compareItems(stack, targetItem));
     }
 
     /**
@@ -746,32 +734,28 @@ public class InventoryUtils
 
     /**
      * Checks if a player has a block in the {@link ICapabilityProvider}.
-     * Checked by {@link #getItemCountInProvider(ICapabilityProvider, Block,
-     * int)} &gt; 0;
+     * Checked by {@link #getItemCountInProvider(ICapabilityProvider, Block)} &gt; 0;
      *
      * @param Provider   {@link ICapabilityProvider} to scan
      * @param block      Block to count
-     * @param itemDamage the damage value.
      * @return True when in {@link ICapabilityProvider}, otherwise false
      */
-    public static boolean hasItemInProvider(@NotNull final ICapabilityProvider Provider, @NotNull final Block block, final int itemDamage)
+    public static boolean hasItemInProvider(@NotNull final ICapabilityProvider Provider, @NotNull final Block block)
     {
-        return hasItemInProvider(Provider, getItemFromBlock(block), itemDamage);
+        return hasItemInProvider(Provider, getItemFromBlock(block));
     }
 
     /**
      * Checks if a player has an item in the {@link ICapabilityProvider}.
-     * Checked by {@link #getItemCountInProvider(ICapabilityProvider, Item,
-     * int)} &gt; 0;
+     * Checked by {@link #getItemCountInProvider(ICapabilityProvider, Item)} &gt; 0;
      *
      * @param Provider   {@link ICapabilityProvider} to scan
      * @param item       Item to count
-     * @param itemDamage the damage value of the item.
      * @return True when in {@link ICapabilityProvider}, otherwise false
      */
-    public static boolean hasItemInProvider(@NotNull final ICapabilityProvider Provider, @NotNull final Item item, final int itemDamage)
+    public static boolean hasItemInProvider(@NotNull final ICapabilityProvider Provider, @NotNull final Item item)
     {
-        return hasItemInProvider(Provider, (ItemStack stack) -> compareItems(stack, item, itemDamage));
+        return hasItemInProvider(Provider, (ItemStack stack) -> compareItems(stack, item));
     }
 
     /**
@@ -1068,7 +1052,7 @@ public class InventoryUtils
 
     /**
      * Filters a list of items, matches the stack using {@link
-     * #compareItems(ItemStack, Item, int)}, in an {@link IItemHandler}. Uses
+     * #compareItems(ItemStack, Item)}, in an {@link IItemHandler}. Uses
      * the MetaData and {@link #getItemFromBlock(Block)} as parameters for the
      * Predicate.
      *
@@ -1077,22 +1061,20 @@ public class InventoryUtils
      * @param facing   The facing to get the {@link IItemHandler} from. Can be
      *                 null for the internal one
      * @param block    Block to filter
-     * @param metaData the damage value.
      * @return List of item stacks
      */
     @NotNull
     public static List<ItemStack> filterItemHandlerFromProviderForSide(
                                                                         @NotNull final ICapabilityProvider provider,
                                                                         @Nullable final Direction facing,
-                                                                        @NotNull final Block block,
-                                                                        final int metaData)
+                                                                        @NotNull final Block block)
     {
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), (ItemStack stack) -> compareItems(stack, getItemFromBlock(block), metaData));
+        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), (ItemStack stack) -> compareItems(stack, getItemFromBlock(block)));
     }
 
     /**
      * Filters a list of items, matches the stack using {@link
-     * #compareItems(ItemStack, Item, int)}, with targetItem and itemDamage as
+     * #compareItems(ItemStack, Item)}, with targetItem and itemDamage as
      * parameters, in an {@link IItemHandler}.
      *
      * @param provider   The {@link ICapabilityProvider} that holds the {@link
@@ -1110,7 +1092,7 @@ public class InventoryUtils
                                                                         @NotNull final Item targetItem,
                                                                         final int itemDamage)
     {
-        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), (ItemStack stack) -> compareItems(stack, targetItem, itemDamage));
+        return filterItemHandler(provider.getCapability(ITEM_HANDLER_CAPABILITY, facing).orElse(null), (ItemStack stack) -> compareItems(stack, targetItem));
     }
 
     /**
@@ -1156,7 +1138,7 @@ public class InventoryUtils
                                                           @NotNull final Block block,
                                                           final int itemDamage)
     {
-        return findFirstSlotInProviderForSideWith(provider, facing, getItemFromBlock(block), itemDamage);
+        return findFirstSlotInProviderForSideWith(provider, facing, getItemFromBlock(block));
     }
 
     /**
@@ -1167,16 +1149,14 @@ public class InventoryUtils
      * @param provider   {@link ICapabilityProvider} to check
      * @param facing     The facing to check for.
      * @param targetItem Item to find.
-     * @param itemDamage The damage value to match on the stack.
      * @return Index of the first occurrence
      */
     public static int findFirstSlotInProviderForSideWith(
                                                           @NotNull final ICapabilityProvider provider,
                                                           @Nullable final Direction facing,
-                                                          @NotNull final Item targetItem,
-                                                          final int itemDamage)
+                                                          @NotNull final Item targetItem)
     {
-        return findFirstSlotInProviderForSideWith(provider, facing, (ItemStack stack) -> compareItems(stack, targetItem, itemDamage));
+        return findFirstSlotInProviderForSideWith(provider, facing, (ItemStack stack) -> compareItems(stack, targetItem));
     }
 
     /**
@@ -1211,17 +1191,15 @@ public class InventoryUtils
      * @param provider   {@link ICapabilityProvider} to scan.
      * @param facing     The facing to count in.
      * @param block      The block to count
-     * @param itemDamage the damage value
      * @return Amount of occurrences of stacks that match the given block and
      * ItemDamage
      */
     public static int getItemCountInProviderForSide(
                                                      @NotNull final ICapabilityProvider provider,
                                                      @Nullable final Direction facing,
-                                                     @NotNull final Block block,
-                                                     final int itemDamage)
+                                                     @NotNull final Block block)
     {
-        return getItemCountInProviderForSide(provider, facing, getItemFromBlock(block), itemDamage);
+        return getItemCountInProviderForSide(provider, facing, getItemFromBlock(block));
     }
 
     /**
@@ -1231,17 +1209,15 @@ public class InventoryUtils
      * @param provider   {@link ICapabilityProvider} to scan.
      * @param facing     The facing to count in.
      * @param targetItem Item to count
-     * @param itemDamage the item damage value.
      * @return Amount of occurrences of stacks that match the given item and
      * ItemDamage
      */
     public static int getItemCountInProviderForSide(
                                                      @NotNull final ICapabilityProvider provider,
                                                      @Nullable final Direction facing,
-                                                     @NotNull final Item targetItem,
-                                                     final int itemDamage)
+                                                     @NotNull final Item targetItem)
     {
-        return getItemCountInProviderForSide(provider, facing, (ItemStack stack) -> compareItems(stack, targetItem, itemDamage));
+        return getItemCountInProviderForSide(provider, facing, (ItemStack stack) -> compareItems(stack, targetItem));
     }
 
     /**
@@ -1270,33 +1246,31 @@ public class InventoryUtils
     /**
      * Checks if a player has a block in the {@link ICapabilityProvider}, for a
      * given {@link Direction}. Checked by {@link #getItemCountInProvider(ICapabilityProvider,
-     * Block, int)} &gt; 0;
+     * Block)} &gt; 0;
      *
      * @param provider   {@link ICapabilityProvider} to scan
      * @param facing     The side to check for.
      * @param block      Block to count
-     * @param itemDamage the damage value.
      * @return True when in {@link ICapabilityProvider}, otherwise false
      */
-    public static boolean hasItemInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final Direction facing, @NotNull final Block block, final int itemDamage)
+    public static boolean hasItemInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final Direction facing, @NotNull final Block block)
     {
-        return hasItemInProviderForSide(provider, facing, getItemFromBlock(block), itemDamage);
+        return hasItemInProviderForSide(provider, facing, getItemFromBlock(block));
     }
 
     /**
      * Checks if a player has an item in the {@link ICapabilityProvider}, for a
      * given {@link Direction}. Checked by {@link #getItemCountInProvider(ICapabilityProvider,
-     * Item, int)} &gt; 0;
+     * Item)} &gt; 0;
      *
      * @param provider   {@link ICapabilityProvider} to scan
      * @param facing     The side to check for.
      * @param item       Item to count
-     * @param itemDamage the damage value of the item.
      * @return True when in {@link ICapabilityProvider}, otherwise false
      */
-    public static boolean hasItemInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final Direction facing, @NotNull final Item item, final int itemDamage)
+    public static boolean hasItemInProviderForSide(@NotNull final ICapabilityProvider provider, @Nullable final Direction facing, @NotNull final Item item)
     {
-        return hasItemInProviderForSide(provider, facing, (ItemStack stack) -> compareItems(stack, item, itemDamage));
+        return hasItemInProviderForSide(provider, facing, (ItemStack stack) -> compareItems(stack, item));
     }
 
     /**
@@ -2183,7 +2157,7 @@ public class InventoryUtils
             {
                 foundEmptySlot = true;
             }
-            else if (compareItems(stack, inStack.getItem(), inStack.getDamage()))
+            else if (compareItems(stack, inStack.getItem()))
             {
                 if (ItemStackUtils.getSize(stack) + ItemStackUtils.getSize(inStack) <= stack.getMaxStackSize())
                 {
@@ -2191,7 +2165,7 @@ public class InventoryUtils
                 }
                 foundItem = true;
             }
-            else if (compareItems(stack, inStack.getItem(), -1))
+            else if (compareItems(stack, inStack.getItem()))
             {
                 foundItem = true;
             }
@@ -2246,10 +2220,10 @@ public class InventoryUtils
         while (stack.getCount() > 0)
         {
             final int randomSplitStackSize = random.nextInt(MAX_RANDOM_SPAWN) + MIN_RANDOM_SPAWN;
-            final ItemEntity entityitem = new ItemEntity(worldIn, x + spawnX, y + spawnY, z + spawnZ, stack.split(randomSplitStackSize));
+            final ItemEntity ItemEntity = new ItemEntity(worldIn, x + spawnX, y + spawnY, z + spawnZ, stack.split(randomSplitStackSize));
 
-            entityitem.setMotion(random.nextGaussian() * MOTION_MULTIPLIER, random.nextGaussian() * MOTION_MULTIPLIER + MOTION_Y_MIN, random.nextGaussian() * MOTION_MULTIPLIER);
-            worldIn.addEntity(entityitem);
+            ItemEntity.setMotion(random.nextGaussian() * MOTION_MULTIPLIER, random.nextGaussian() * MOTION_MULTIPLIER + MOTION_Y_MIN, random.nextGaussian() * MOTION_MULTIPLIER);
+            worldIn.addEntity(ItemEntity);
         }
     }
 
@@ -2354,8 +2328,8 @@ public class InventoryUtils
     {
         final List<ItemStack> list = Lists.newArrayList();
         mergedCountedStacks.entrySet().forEach(itemStackIntegerEntry -> {
-            final int minimalFullStacks = itemStackIntegerEntry.get() / itemStackIntegerEntry.getKey().getMaxStackSize();
-            final int residualStackSize = itemStackIntegerEntry.get() % itemStackIntegerEntry.getKey().getMaxStackSize();
+            final int minimalFullStacks = itemStackIntegerEntry.getValue() / itemStackIntegerEntry.getKey().getMaxStackSize();
+            final int residualStackSize = itemStackIntegerEntry.getValue() % itemStackIntegerEntry.getKey().getMaxStackSize();
 
             for (int i = 0; i < minimalFullStacks; i++)
             {
