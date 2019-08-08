@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.util.math.BlockPos;
@@ -48,7 +48,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
     @Override
     protected Path search()
     {
-        if (MineColonies.getConfig().getCommon().pathfinding.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
+        if (MineColonies.getConfig().getCommon().pathfindingDebugVerbosity.get() > DEBUG_VERBOSITY_NONE)
         {
             Log.getLogger().info(String.format("Pathfinding from [%d,%d,%d] to [%d,%d,%d]",
               start.getX(), start.getY(), start.getZ(), destination.getX(), destination.getY(), destination.getZ()));
@@ -90,7 +90,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
                      && n.pos.getZ() == destination.getZ();
         }
 
-        return destination.distanceSq(n.pos.getX(), n.pos.getY(), n.pos.getZ()) <= destinationSlack;
+        return destination.distanceSq(n.pos) <= destinationSlack;
     }
 
     /**
@@ -103,6 +103,6 @@ public class PathJobMoveToLocation extends AbstractPathJob
     protected double getNodeResultScore(@NotNull final Node n)
     {
         //  For Result Score higher is better - return negative distance so closer to 0 = better
-        return -destination.distanceSq(n.pos.getX(), n.pos.getY(), n.pos.getZ());
+        return -destination.distanceSq(n.pos);
     }
 }

@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenExperienceHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.ExperienceUtils;
@@ -13,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.GameRules;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -155,8 +157,14 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     private double applyMending(final double xp)
     {
         double localXp = xp;
-        final ItemStack tool = EnchantmentHelper.getEnchantedItem(Enchantments.MENDING, citizen);
 
+        final int toolSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(citizen.getInventoryCitizen()), stack -> stack.isEnchanted() && EnchantmentHelper.getEnchantments(stack).containsKey(Enchantments.MENDING));
+        if (toolSlot == -1)
+        {
+            return localXp;
+        }
+     
+        final ItemStack tool = citizen.getInventoryCitizen().getStackInSlot(toolSlot);
         if (!ItemStackUtils.isEmpty(tool) && tool.isDamaged())
         {
             //2 xp to heal 1 dmg

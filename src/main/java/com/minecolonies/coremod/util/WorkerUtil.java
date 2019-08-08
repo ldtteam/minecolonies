@@ -12,18 +12,21 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.block.Block;
+import net.minecraft.block.GlazedTerracottaBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.MoverType;
 import net.minecraft.block.Blocks;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.tileentity.SignTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,6 +52,17 @@ public final class WorkerUtil
     private WorkerUtil()
     {
         //Hide default constructor.
+    }
+
+    /**
+     * Checks if a certain block is a pathBlock (roadBlock).
+     *
+     * @param block the block to analyze.
+     * @return true if is so.
+     */
+    public static boolean isPathBlock(final Block block)
+    {
+        return block == Blocks.GRAVEL || block == Blocks.STONE_BRICKS || block == Blocks.GRASS_PATH;
     }
 
     /**
@@ -135,13 +149,13 @@ public final class WorkerUtil
      */
     public static IToolType getBestToolForBlock(final Block target)
     {
-        final IToolType toolType = ToolType.getToolType(target.getHarvestTool(target.getDefaultState()));
+        final IToolType toolType = ToolType.getToolType(target.getHarvestTool(target.getDefaultState()).getName());
 
         if (toolType == ToolType.NONE && target.getDefaultState().getMaterial() == Material.WOOD)
         {
             return ToolType.AXE;
         }
-        else if (target == Blocks.HARDENED_CLAY || target == Blocks.STAINED_HARDENED_CLAY)
+        else if (target instanceof GlazedTerracottaBlock)
         {
             return ToolType.PICKAXE;
         }
@@ -160,7 +174,7 @@ public final class WorkerUtil
         final int required = target.getHarvestLevel(target.getDefaultState());
 
         if ((required == -1 && target.getDefaultState().getMaterial() == Material.WOOD)
-              || target == Blocks.HARDENED_CLAY || target == Blocks.STAINED_HARDENED_CLAY)
+              || target instanceof GlazedTerracottaBlock)
         {
             return 0;
         }
@@ -207,7 +221,7 @@ public final class WorkerUtil
         final double goToZ = zDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
 
         //Have to move the entity minimally into the direction to render his new rotation.
-        citizen.move(MoverType.SELF, (float) goToX, 0, (float) goToZ);
+        citizen.move(MoverType.SELF, new Vec3d((float) goToX, 0, (float) goToZ));
     }
 
     /**
@@ -258,10 +272,10 @@ public final class WorkerUtil
         {
             final TileEntity te = world.getTileEntity(levelSignPos);
 
-            if (te instanceof TileEntitySign)
+            if (te instanceof SignTileEntity)
             {
                 final BlockState BlockState = world.getBlockState(levelSignPos);
-                final TileEntitySign teLevelSign = (TileEntitySign) te;
+                final SignTileEntity teLevelSign = (SignTileEntity) te;
 
                 teLevelSign.signText[0] = new StringTextComponent(TextFormatting.getTextWithoutFormattingCodes(
                   LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.minerMineNode") + ": " + levelId));

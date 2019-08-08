@@ -1,7 +1,7 @@
 package com.minecolonies.api.util;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -90,7 +90,8 @@ public final class Utils
     {
         for (int dy = 0; dy < height; dy++)
         {
-            if (!arrayContains(blocks, world.getBlockState(new BlockPos(x, y + dy, z)).getBlock()))
+            final BlockState state = world.getBlockState(new BlockPos(x, y + dy, z));
+            if (!arrayContains(blocks, state.getBlock()) && state.getMaterial().blocksMovement())
             {
                 return false;
             }

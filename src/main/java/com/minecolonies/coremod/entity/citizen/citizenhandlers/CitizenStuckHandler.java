@@ -49,7 +49,7 @@ public class CitizenStuckHandler implements ICitizenStuckHandler
      * Called in the citizen every few ticks to check if stuck.
      */
     @Override
-    public void update()
+    public void tick()
     {
         if (citizen.getTicksExisted() % TICKS_20 == 0)
         {
@@ -83,7 +83,7 @@ public class CitizenStuckHandler implements ICitizenStuckHandler
             return;
         }
 
-        if (citizen.getNavigator().getDestination() == null || citizen.getNavigator().getDestination().distanceSq(citizen.getPosition().getX(), citizen.getPosition().getY(), citizen.getPosition().getZ()) < MOVE_AWAY_RANGE)
+        if (citizen.getNavigator().getDestination() == null || citizen.getNavigator().getDestination().distanceSq(citizen.getPosition()) < MOVE_AWAY_RANGE)
         {
             stuckTime = 0;
             return;
@@ -109,7 +109,7 @@ public class CitizenStuckHandler implements ICitizenStuckHandler
 
         if (stuckTime >= MAX_STUCK_TIME)
         {
-            if (citizen.getNavigator().getDestination().distanceSq(citizen.getPosition().getX(), citizen.getPosition().getY(), citizen.getPosition().getZ()) < MOVE_AWAY_RANGE
+            if (citizen.getNavigator().getDestination().distanceSq(citizen.getPosition()) < MOVE_AWAY_RANGE
                   || (citizen.getNavigator().getDestination().getY() - citizen.getPosition().getY() > 2))
             {
                 stuckTime = 0;
@@ -123,11 +123,8 @@ public class CitizenStuckHandler implements ICitizenStuckHandler
               Utils.scanForBlockNearPoint
                       (CompatibilityUtils.getWorldFromCitizen(citizen), destination, 1, 1, 1, 3,
                         Blocks.AIR,
-                        Blocks.SNOW_LAYER,
-                        Blocks.TALLGRASS,
-                        Blocks.RED_FLOWER,
-                        Blocks.YELLOW_FLOWER,
-                        Blocks.CARPET);
+                        Blocks.SNOW,
+                        Blocks.TALL_GRASS);
 
             WorkerUtil.setSpawnPoint(spawnPoint, citizen);
             if (citizen.getCitizenColonyHandler().getColony() != null)

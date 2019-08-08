@@ -4,15 +4,16 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSleepHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import net.minecraft.block.BlockBed;
+import net.minecraft.block.BedBlock;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_BED_POS;
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_IS_ASLEEP;
@@ -113,9 +114,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
           (double) ((float) bedLocation.getY()),
           ((float) bedLocation.getZ() + HALF_BLOCK));
 
-        citizen.motionX = 0.0D;
-        citizen.motionY = 0.0D;
-        citizen.motionZ = 0.0D;
+        citizen.setMotion(0,0,0);
 
         //Remove item while citizen is asleep.
         citizen.getCitizenItemHandler().removeHeldItem();
@@ -158,9 +157,9 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         }
 
         final BlockPos spawn;
-        if (!getBedLocation().equals(BlockPos.ZERO) && citizen.world.getBlockState(getBedLocation()).getBlock() == Blocks.BED)
+        if (!getBedLocation().equals(BlockPos.ZERO) && citizen.world.getBlockState(getBedLocation()).getBlock().isIn(BlockTags.BEDS))
         {
-            spawn = BlockBed.getSafeExitLocation(citizen.world, getBedLocation(), 0);
+            spawn = BedBlock.func_220172_a(citizen, citizen.world, getBedLocation(), 0);
         }
         else
         {
@@ -204,7 +203,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         final BlockState state = citizen.world.isBlockLoaded(getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, getBedLocation(), citizen);
-        final Direction Direction = isBed && state.getBlock() instanceof HorizontalBlock ? state.get(HorizontalBlock.FACING) : null;
+        final Direction Direction = isBed && state.getBlock() instanceof HorizontalBlock ? state.get(HorizontalBlock.HORIZONTAL_FACING) : null;
 
         if (Direction == null)
         {
@@ -228,7 +227,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         final BlockState state = citizen.world.isBlockLoaded(getBedLocation()) ? citizen.world.getBlockState(getBedLocation()) : null;
         final boolean isBed = state != null && state.getBlock().isBed(state, citizen.world, getBedLocation(), citizen);
-        final Direction Direction = isBed && state.getBlock() instanceof HorizontalBlock ? state.get(HorizontalBlock.FACING) : null;
+        final Direction Direction = isBed && state.getBlock() instanceof HorizontalBlock ? state.get(HorizontalBlock.HORIZONTAL_FACING) : null;
 
         if (Direction == null)
         {
