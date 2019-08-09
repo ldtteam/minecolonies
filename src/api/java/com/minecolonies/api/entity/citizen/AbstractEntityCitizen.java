@@ -16,6 +16,7 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.entity.player.PlayerEntity;
@@ -47,9 +48,8 @@ import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
  * The abstract citizen entity.
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.CouplingBetweenObjects"})
-public abstract class AbstractEntityCitizen extends AgeableEntity implements ICapabilitySerializable<CompoundNBT>, INamedContainerProvider
+public abstract class AbstractEntityCitizen extends AgeableEntity implements ICapabilitySerializable<CompoundNBT>
 {
-
     public static final DataParameter<Integer>  DATA_LEVEL           = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
     public static final DataParameter<Integer>  DATA_TEXTURE         = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
     public static final DataParameter<Integer>  DATA_IS_FEMALE       = EntityDataManager.createKey(AbstractEntityCitizen.class, DataSerializers.VARINT);
@@ -93,9 +93,9 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
      *
      * @param world the world.
      */
-    public AbstractEntityCitizen(final World world)
+    public AbstractEntityCitizen(final EntityType<? extends AgeableEntity> type, final World world)
     {
-        super(world);
+        super(type, world);
     }
 
     public GoalSelector getTasks()
@@ -232,9 +232,9 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     }
 
     @Override
-    public void entityInit()
+    protected void registerData()
     {
-        super.entityInit();
+        super.registerData();
         dataManager.register(DATA_TEXTURE, 0);
         dataManager.register(DATA_LEVEL, 0);
         dataManager.register(DATA_IS_FEMALE, 0);
@@ -359,15 +359,15 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
      * Applies attributes like health, charisma etc to the citizens.
      */
     @Override
-    protected void applyEntityAttributes()
+    protected void registerAttributes()
     {
-        super.applyEntityAttributes();
+        super.registerAttributes();
 
-        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
-        getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED);
+        getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
+        getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED);
 
         //path finding search range
-        getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(BASE_PATHFINDING_RANGE);
+        getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(BASE_PATHFINDING_RANGE);
     }
 
     /**
