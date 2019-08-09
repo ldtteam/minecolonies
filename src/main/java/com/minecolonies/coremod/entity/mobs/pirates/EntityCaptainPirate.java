@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.mobs.pirates;
 
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import com.minecolonies.api.entity.mobs.pirates.ICaptainPirateEntity;
+import com.minecolonies.api.util.constant.LootTableConstants;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -26,6 +27,6 @@ public class EntityCaptainPirate extends AbstractEntityPirate implements ICaptai
     @Override
     protected ResourceLocation getLootTable()
     {
-        return LOOT_TABLE;
+        return LootTableConstants.CHIEF_PIRATE_DROPS;
     }
 }

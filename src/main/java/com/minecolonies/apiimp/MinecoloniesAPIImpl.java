@@ -31,7 +31,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 import org.jetbrains.annotations.NotNull;
 
-public class MinecoloniesAPIImpl implements IMinecoloniesAPI
+public final class MinecoloniesAPIImpl implements IMinecoloniesAPI
 {
     private static MinecoloniesAPIImpl  ourInstance         = new MinecoloniesAPIImpl();
 

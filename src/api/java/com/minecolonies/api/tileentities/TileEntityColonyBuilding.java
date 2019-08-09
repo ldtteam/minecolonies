@@ -48,6 +48,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TY
 /**
  * Class which handles the tileEntity of our colonyBuildings.
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
 {
     /**
@@ -93,7 +94,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     private ResourceLocation registryName;
 
     /**
-     * Standard constructor.
+     * Default constructor used to create a new TileEntity via reflection. Do not use.
      */
     public TileEntityColonyBuilding()
     {

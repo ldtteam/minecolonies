@@ -101,7 +101,8 @@ public final class TeleportToColony
      * @param colID            the senders colony ID.
      * @param playerToTeleport the player which shall be teleported.
      */
-    private static void teleportPlayer(final PlayerEntity playerToTeleport, final int colID, final CommandSource sender)
+    @SuppressWarnings("PMD.PrematureDeclaration")
+    private static void teleportPlayer(final EntityPlayer playerToTeleport, final int colID, final ICommandSender sender)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByWorld(colID, ServerLifecycleHooks.getCurrentServer().getWorld(0));
         final ITownHall townHall = colony.getBuildingManager().getTownHall();

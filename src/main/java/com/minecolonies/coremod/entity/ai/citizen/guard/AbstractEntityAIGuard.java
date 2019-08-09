@@ -442,6 +442,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      *
      * @return The next IAIState to go to.
      */
+    @SuppressWarnings("PMD.PrematureDeclaration")
     protected LivingEntity getTarget()
     {
         reduceAttackDelay(1);

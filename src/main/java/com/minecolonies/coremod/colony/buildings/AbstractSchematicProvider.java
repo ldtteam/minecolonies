@@ -112,28 +112,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         rotation = compound.getInt(TAG_ROTATION);
         style = compound.getString(TAG_STYLE);
 
-        final String md5 = compound.getString(TAG_SCHEMATIC_MD5);
-        final int testLevel = buildingLevel == 0 ? 1 : buildingLevel;
-        final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + testLevel);
-
-        if (!Structures.hasMD5(sn))
-        {
-            final StructureName newStructureName = Structures.getStructureNameByMD5(md5);
-            if (newStructureName != null
-                  && newStructureName.getPrefix().equals(sn.getPrefix())
-                  && newStructureName.getSchematic().equals(sn.getSchematic()))
-            {
-                //We found the new location for the schematic, update the style accordingly
-                style = newStructureName.getStyle();
-                Log.getLogger().warn("AbstractBuilding.read: " + sn + " have been moved to " + newStructureName);
-            }
-        }
-
-        if (style.isEmpty())
-        {
-            Log.getLogger().warn("Loaded empty style, setting to wooden");
-            style = "wooden";
-        }
+        deserializerStructureInformationFrom(compound);
 
         isBuildingMirrored = compound.getBoolean(TAG_MIRROR);
 
@@ -148,6 +127,32 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         if (compound.keySet().contains(TAG_HEIGHT))
         {
             this.height = compound.getInt(TAG_HEIGHT);
+        }
+    }
+
+    private void deserializerStructureInformationFrom(final CompoundNBT compound)
+    {
+        final String md5 = compound.getString(TAG_SCHEMATIC_MD5);
+        final int testLevel = buildingLevel == 0 ? 1 : buildingLevel;
+        final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + testLevel);
+
+        if (!Structures.hasMD5(sn))
+        {
+            final StructureName newStructureName = Structures.getStructureNameByMD5(md5);
+            if (newStructureName != null
+                  && newStructureName.getPrefix().equals(sn.getPrefix())
+                  && newStructureName.getSchematic().equals(sn.getSchematic()))
+            {
+                //We found the new location for the schematic, update the style accordingly
+                style = newStructureName.getStyle();
+                Log.getLogger().warn(String.format("AbstractBuilding.readFromNBT: %s have been moved to %s", sn, newStructureName));
+            }
+        }
+
+        if (style.isEmpty())
+        {
+            Log.getLogger().warn("Loaded empty style, setting to wooden");
+            style = "wooden";
         }
     }
 

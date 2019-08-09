@@ -436,6 +436,7 @@ public final class NbtTagConstants
     public static final String TAG_CURRENT_DAILY = "currentDaily";
     public static final String TAG_CRUSHER_MODE  = "Crushermode";
     public static final String TAG_JOB_TYPE      = "type";
+    public static final String NBT_SLOT          = "Slot";
 
     /**
      * Private constructor to hide the implicit one.

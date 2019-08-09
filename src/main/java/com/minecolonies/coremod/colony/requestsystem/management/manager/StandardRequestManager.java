@@ -183,10 +183,7 @@ public class StandardRequestManager implements IStandardRequestManager
 
         if (this.isDirty())
         {
-            if (colony != null)
-            {
-                colony.markDirty();
-            }
+            colony.markDirty();
         }
     }
 
@@ -235,11 +232,6 @@ public class StandardRequestManager implements IStandardRequestManager
     public IRequest<?> getRequestForToken(@NotNull final IToken<?> token) throws IllegalArgumentException
     {
         final IRequest<?> internalRequest = RequestHandler.getRequestOrNull(this, token);
-
-        if (internalRequest == null)
-        {
-            return null;
-        }
 
         return internalRequest;
     }

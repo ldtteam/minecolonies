@@ -151,6 +151,29 @@ public class EntityAIWalkToRandomHuts extends Goal
      */
     private boolean isEntityAtSiteWithMove(@NotNull final BlockPos site, final int range)
     {
+        if (handleProxyWhileMoving())
+        {
+            return proxy.walkToBlock(site, range, true);
+        }
+        updateStuckTimers();
+
+        lastPos = entity.getPosition();
+
+        if (resetStuckTimers())
+        {
+            return true;
+        }
+
+        if (stuckTime > 2)
+        {
+            return handleEntityBeingStuck();
+        }
+
+        return proxy.walkToBlock(site, range, true);
+    }
+
+    private boolean handleProxyWhileMoving()
+    {
         passedTicks++;
         if (proxy == null)
         {
@@ -159,10 +182,14 @@ public class EntityAIWalkToRandomHuts extends Goal
 
         if (passedTicks % TICKS_SECOND != 0)
         {
-            return proxy.walkToBlock(site, range, true);
+            return true;
         }
         passedTicks = 0;
+        return false;
+    }
 
+    private void updateStuckTimers()
+    {
         if (new AxisAlignedBB(entity.getPosition()).expand(1, 1, 1).expand(-1, -1, -1)
               .intersects(new AxisAlignedBB(lastPos)))
         {
@@ -184,9 +211,10 @@ public class EntityAIWalkToRandomHuts extends Goal
             stuckTime = 0;
             notStuckTime++;
         }
+    }
 
-        lastPos = entity.getPosition();
-
+    private boolean resetStuckTimers()
+    {
         if (notStuckTime > 1)
         {
             entity.setStuckCounter(0);
@@ -195,92 +223,120 @@ public class EntityAIWalkToRandomHuts extends Goal
             stuckTime = 0;
             return true;
         }
+        return false;
+    }
 
-        if (stuckTime > 2)
+    private boolean handleEntityBeingStuck()
+    {
+        entity.getNavigator().clearPath();
+        entity.setStuckCounter(entity.getStuckCounter() + 1);
+        final BlockPos front = entity.getPosition().down().offset(entity.getHorizontalFacing());
+
+        if (world.isAirBlock(front) || world.getBlockState(front).getBlock() == Blocks.LAVA || world.getBlockState(front).getBlock() == Blocks.FLOWING_LAVA)
         {
-            entity.getNavigator().clearPath();
-            entity.setStuckCounter(entity.getStuckCounter() + 1);
-            final BlockPos front = entity.getPosition().down().offset(entity.getHorizontalFacing());
-
-            if (world.isAirBlock(front) || world.getBlockState(front).getBlock() == Blocks.LAVA || world.getBlockState(front).getBlock() == Blocks.FLOWING_LAVA)
-            {
-                notStuckTime = 0;
-                world.setBlockState(front, Blocks.COBBLESTONE.getDefaultState());
-            }
-
-            if (entity.getStuckCounter() > 1 && MineColonies.getConfig().getCommon().gameplay.doBarbariansBreakThroughWalls)
-            {
-                Collections.shuffle(directions);
-
-                entity.setLadderCounter(entity.getLadderCounter() + 1);
-                notStuckTime = 0;
-                final BlockState ladderHere = world.getBlockState(entity.getPosition());
-                final BlockState ladderUp = world.getBlockState(entity.getPosition().up());
-                if (entity.getLadderCounter() <= LADDERS_TO_PLACE || random.nextBoolean())
-                {
-                    if (ladderHere.getBlock() == Blocks.LADDER && ladderUp.getBlock() != Blocks.LADDER && !ladderHere.getMaterial().isLiquid())
-                    {
-                        world.setBlockState(entity.getPosition().up(), ladderHere);
-                    }
-                    else if(ladderUp.getBlock() == Blocks.LADDER && ladderHere.getBlock() != Blocks.LADDER && !ladderUp.getMaterial().isLiquid())
-                    {
-                        world.setBlockState(entity.getPosition(), ladderUp);
-                    }
-                    else if (ladderUp.getBlock() != Blocks.LADDER && ladderHere.getBlock() != Blocks.LADDER)
-                    {
-                        for (final Direction dir : directions)
-                        {
-                            if (world.getBlockState(entity.getPosition().offset(dir)).getMaterial().isSolid())
-                            {
-                                if (random.nextBoolean())
-                                {
-                                    world.setBlockState(entity.getPosition().up(), Blocks.LADDER.getDefaultState().with(BlockLadder.FACING, dir.getOpposite()));
-                                }
-                                else if (!ladderHere.getMaterial().isLiquid())
-                                {
-                                    world.setBlockState(entity.getPosition(), Blocks.LADDER.getDefaultState().with(BlockLadder.FACING, dir.getOpposite()));
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    for (final Direction dir : directions)
-                    {
-                        final BlockState state = world.getBlockState(entity.getPosition().offset(dir));
-                        if ((state.getMaterial().isSolid() && state.getBlock() != Blocks.LADDER) || state.getBlock() instanceof DoorBlock)
-                        {
-                            final BlockPos posToDestroy;
-                            switch (random.nextInt(4))
-                            {
-                                case 1:
-                                    posToDestroy = entity.getPosition().offset(dir).up();
-                                    break;
-                                case 2:
-                                    posToDestroy = entity.getPosition().offset(dir);
-                                    break;
-                                default:
-                                    posToDestroy = entity.getPosition().up(2);
-                                    break;
-                            }
-                            world.destroyBlock(posToDestroy, true);
-                            break;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (moveAwayPath == null || !moveAwayPath.isInProgress())
-                {
-                    moveAwayPath = entity.getNavigator().moveAwayFromXYZ(entity.getPosition(), random.nextInt(4), 2);
-                }
-            }
-            return false;
+            notStuckTime = 0;
+            world.setBlockState(front, Blocks.COBBLESTONE.getDefaultState());
         }
-        return proxy.walkToBlock(site, range, true);
+
+        if (entity.getStuckCounter() > 1 && Configurations.gameplay.doBarbariansBreakThroughWalls)
+        {
+            handleBarbarianMovementSpecials();
+        }
+        else
+        {
+            if (moveAwayPath == null || !moveAwayPath.isInProgress())
+            {
+                moveAwayPath = entity.getNavigator().moveAwayFromXYZ(entity.getPosition(), random.nextInt(4), 2);
+            }
+        }
+        return false;
+    }
+
+    private void handleBarbarianMovementSpecials()
+    {
+        Collections.shuffle(directions);
+
+        entity.setLadderCounter(entity.getLadderCounter() + 1);
+        notStuckTime = 0;
+        final IBlockState ladderHere = world.getBlockState(entity.getPosition());
+        final IBlockState ladderUp = world.getBlockState(entity.getPosition().up());
+        if (entity.getLadderCounter() <= LADDERS_TO_PLACE || random.nextBoolean())
+        {
+            handleBarbarianLadderPlacement(ladderHere, ladderUp);
+        }
+        else
+        {
+            handleBarbarianBlockBreakment();
+        }
+    }
+
+    private void handleBarbarianLadderPlacement(final IBlockState ladderHere, final IBlockState ladderUp)
+    {
+        if (ladderHere.getBlock() == Blocks.LADDER && ladderUp.getBlock() != Blocks.LADDER && !ladderHere.getMaterial().isLiquid())
+        {
+            world.setBlockState(entity.getPosition().up(), ladderHere);
+        }
+        else if (ladderUp.getBlock() == Blocks.LADDER && ladderHere.getBlock() != Blocks.LADDER && !ladderUp.getMaterial().isLiquid())
+        {
+            world.setBlockState(entity.getPosition(), ladderUp);
+        }
+        else if (ladderUp.getBlock() != Blocks.LADDER && ladderHere.getBlock() != Blocks.LADDER)
+        {
+            handleNextLadderPlacement(ladderHere);
+        }
+    }
+
+    private void handleBarbarianBlockBreakment()
+    {
+        for (final EnumFacing dir : directions)
+        {
+            final IBlockState state = world.getBlockState(entity.getPosition().offset(dir));
+            if ((state.getMaterial().isSolid() && state.getBlock() != Blocks.LADDER) || state.getBlock() instanceof BlockDoor)
+            {
+                final BlockPos posToDestroy;
+                posToDestroy = breakRandomBlockIn(dir);
+                world.destroyBlock(posToDestroy, true);
+                break;
+            }
+        }
+    }
+
+    private void handleNextLadderPlacement(final IBlockState ladderHere)
+    {
+        for (final EnumFacing dir : directions)
+        {
+            if (world.getBlockState(entity.getPosition().offset(dir)).getMaterial().isSolid())
+            {
+                if (random.nextBoolean())
+                {
+                    world.setBlockState(entity.getPosition().up(), Blocks.LADDER.getDefaultState().withProperty(BlockLadder.FACING, dir.getOpposite()));
+                }
+                else if (!ladderHere.getMaterial().isLiquid())
+                {
+                    world.setBlockState(entity.getPosition(), Blocks.LADDER.getDefaultState().withProperty(BlockLadder.FACING, dir.getOpposite()));
+                }
+                break;
+            }
+        }
+    }
+
+    @NotNull
+    private BlockPos breakRandomBlockIn(final EnumFacing dir)
+    {
+        final BlockPos posToDestroy;
+        switch (random.nextInt(4))
+        {
+            case 1:
+                posToDestroy = entity.getPosition().offset(dir).up();
+                break;
+            case 2:
+                posToDestroy = entity.getPosition().offset(dir);
+                break;
+            default:
+                posToDestroy = entity.getPosition().up(2);
+                break;
+        }
+        return posToDestroy;
     }
 
     /**

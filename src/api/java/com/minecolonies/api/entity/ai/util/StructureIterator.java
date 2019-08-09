@@ -32,149 +32,6 @@ import java.util.function.Supplier;
 public class StructureIterator
 {
     /**
-     * This exception get's thrown when a StructureProxy file could not be loaded.
-     */
-    public static final class StructureException extends Exception
-    {
-        public static final long serialVersionUID = 8632728763984762837L;
-
-        /**
-         * Create this exception to throw a previously catched one.
-         *
-         * @param message the message to pass along
-         * @param cause   the cause of this exception
-         */
-        public StructureException(final String message, final Throwable cause)
-        {
-            super(message, cause);
-        }
-
-        /**
-         * Create this exception with a message.
-         *
-         * @param message the message to pass along.
-         */
-        public StructureException(final String message)
-        {
-            super(message);
-        }
-    }
-
-    /**
-     * Class used to describe a certain structure block of the structure.
-     */
-    public static final class StructureBlock
-    {
-        /**
-         * The block.
-         */
-        public final Block block;
-
-        /**
-         * The position of the block.
-         */
-        public final BlockPos blockPosition;
-
-        /**
-         * The metadata of the block.
-         */
-        public final BlockState metadata;
-
-        /**
-         * The item of the block.
-         */
-        public final Item item;
-
-        /**
-         * The world block at the same position.
-         */
-        public final Block worldBlock;
-
-        /**
-         * The metadata of the world block at the same position.
-         */
-        public final BlockState worldMetadata;
-
-        /**
-         * The entityInfo block.
-         */
-        public final CompoundNBT[] entity;
-
-        /**
-         * Create one immutable Block containing all information needed.
-         *
-         * @param block          the minecraft block this block has.
-         * @param blockPosition  the BlockPos this block has.
-         * @param metadata       the metadata this block has.
-         * @param entity         the entity in the structure.
-         * @param item           the item needed to place this block
-         * @param worldBlock     the block to be replaced with the structure block
-         * @param worldMetadata  the metadata of the world block
-         */
-        public StructureBlock(
-                               final Block block, final BlockPos blockPosition, final BlockState metadata, final CompoundNBT[] entity,
-                               final Item item, final Block worldBlock, final BlockState worldMetadata)
-        {
-            this.block = block;
-            this.blockPosition = blockPosition;
-            this.metadata = metadata;
-            this.entity = entity;
-            this.item = item;
-            this.worldBlock = worldBlock;
-            this.worldMetadata = worldMetadata;
-        }
-
-        /**
-         * Checks if the structureBlock equals the worldBlock.
-         *
-         * @return true if so.
-         */
-        public boolean doesStructureBlockEqualWorldBlock()
-        {
-            if (metadata == null)
-            {
-                return true;
-            }
-            
-            final BlockState structureBlockState = metadata;
-            final Block structureBlock = structureBlockState.getBlock();
-
-            //All worldBlocks are equal the substitution block
-            if (structureBlockEqualsWorldBlock(structureBlock, worldBlock, worldMetadata))
-            {
-                return true;
-            }
-
-            final BlockState worldBlockState = worldMetadata;
-
-            //list of things to only check block for.
-            //For the time being any flower pot is equal to each other.
-            if (structureBlock instanceof DoorBlock || structureBlock == Blocks.FLOWER_POT)
-            {
-                return structureBlock == worldBlockState.getBlock();
-            }
-            else if ((structureBlock instanceof StairsBlock && structureBlockState.equals(worldBlockState))
-                       || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState)
-                       || (worldBlock instanceof AbstractBlockMinecoloniesRack && AbstractBlockMinecoloniesRack.shouldBlockBeReplacedWithRack(structureBlock)))
-            {
-                return true;
-            }
-
-            return structureBlockState.equals(worldBlockState);
-        }
-
-        private static boolean structureBlockEqualsWorldBlock(
-                                                               @NotNull final Block structureBlock,
-                                                               @NotNull final Block worldBlock, @NotNull final BlockState worldMetadata)
-        {
-            return structureBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution || (
-              structureBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution
-                    && worldMetadata.getMaterial().isSolid() && !(IColonyManager.getInstance().getCompatibilityManager().isOre(worldMetadata))
-                    && worldBlock != Blocks.AIR);
-        }
-    }
-
-    /**
      * The internal structure loaded.
      */
     @Nullable
@@ -516,5 +373,148 @@ public class StructureIterator
         SPAWN,
         COMPLETE,
         REMOVE
+    }
+
+    /**
+     * This exception get's thrown when a StructureProxy file could not be loaded.
+     */
+    public static final class StructureException extends Exception
+    {
+        public static final long serialVersionUID = 8632728763984762837L;
+
+        /**
+         * Create this exception to throw a previously catched one.
+         *
+         * @param message the message to pass along
+         * @param cause   the cause of this exception
+         */
+        public StructureException(final String message, final Throwable cause)
+        {
+            super(message, cause);
+        }
+
+        /**
+         * Create this exception with a message.
+         *
+         * @param message the message to pass along.
+         */
+        public StructureException(final String message)
+        {
+            super(message);
+        }
+    }
+
+    /**
+     * Class used to describe a certain structure block of the structure.
+     */
+    public static final class StructureBlock
+    {
+        /**
+         * The block.
+         */
+        public final Block block;
+
+        /**
+         * The position of the block.
+         */
+        public final BlockPos blockPosition;
+
+        /**
+         * The metadata of the block.
+         */
+        public final IBlockState metadata;
+
+        /**
+         * The item of the block.
+         */
+        public final Item item;
+
+        /**
+         * The world block at the same position.
+         */
+        public final Block worldBlock;
+
+        /**
+         * The metadata of the world block at the same position.
+         */
+        public final IBlockState worldMetadata;
+
+        /**
+         * The entityInfo block.
+         */
+        public final NBTTagCompound[] entity;
+
+        /**
+         * Create one immutable Block containing all information needed.
+         *
+         * @param block         the minecraft block this block has.
+         * @param blockPosition the BlockPos this block has.
+         * @param metadata      the metadata this block has.
+         * @param entity        the entity in the structure.
+         * @param item          the item needed to place this block
+         * @param worldBlock    the block to be replaced with the structure block
+         * @param worldMetadata the metadata of the world block
+         */
+        public StructureBlock(
+          final Block block, final BlockPos blockPosition, final IBlockState metadata, final NBTTagCompound[] entity,
+          final Item item, final Block worldBlock, final IBlockState worldMetadata)
+        {
+            this.block = block;
+            this.blockPosition = blockPosition;
+            this.metadata = metadata;
+            this.entity = entity.clone();
+            this.item = item;
+            this.worldBlock = worldBlock;
+            this.worldMetadata = worldMetadata;
+        }
+
+        /**
+         * Checks if the structureBlock equals the worldBlock.
+         *
+         * @return true if so.
+         */
+        public boolean doesStructureBlockEqualWorldBlock()
+        {
+            if (metadata == null)
+            {
+                return true;
+            }
+
+            final IBlockState structureBlockState = metadata;
+            final Block structureBlock = structureBlockState.getBlock();
+
+            //All worldBlocks are equal the substitution block
+            if (structureBlockEqualsWorldBlock(structureBlock, worldBlock, worldMetadata))
+            {
+                return true;
+            }
+
+            final IBlockState worldBlockState = worldMetadata;
+
+            //list of things to only check block for.
+            //For the time being any flower pot is equal to each other.
+            if (structureBlock instanceof BlockDoor || structureBlock == Blocks.FLOWER_POT)
+            {
+                return structureBlock == worldBlockState.getBlock();
+            }
+            else if ((structureBlock instanceof BlockStairs && structureBlockState.equals(worldBlockState))
+                       || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState)
+                       || (worldBlock instanceof AbstractBlockMinecoloniesRack && AbstractBlockMinecoloniesRack.shouldBlockBeReplacedWithRack(structureBlock)))
+            {
+                return true;
+            }
+
+            return structureBlockState.equals(worldBlockState);
+        }
+
+        private static boolean structureBlockEqualsWorldBlock(
+          @NotNull final Block structureBlock,
+          @NotNull final Block worldBlock, @NotNull final IBlockState worldMetadata)
+        {
+            return structureBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution || (
+              structureBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution
+                && worldMetadata.getMaterial().isSolid() && !(IColonyManager.getInstance().getCompatibilityManager().isOre(worldMetadata))
+                && worldBlock != Blocks.AIR);
+        }
     }
 }

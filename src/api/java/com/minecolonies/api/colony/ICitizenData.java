@@ -27,13 +27,6 @@ public interface ICitizenData extends INBTSerializable<CompoundNBT>
     int MAX_SATURATION = 10;
 
     /**
-     * Reads data from NBT-tag compound.
-     *
-     * @param compound NBT-Tag compound.
-     */
-    void read(@NotNull CompoundNBT compound);
-
-    /**
      * Return the entity instance of the citizen data. Respawn the citizen if
      * needed.
      *
@@ -192,14 +185,6 @@ public interface ICitizenData extends INBTSerializable<CompoundNBT>
      */
     @Nullable
     <J extends IJob> J getJob(@NotNull Class<J> type);
-
-    /**
-     * Writes the citizen data to an NBT-compound.
-     *
-     * @param compound NBT-Tag compound.
-     * @return return the data in NBT format
-     */
-    CompoundNBT write(@NotNull CompoundNBT compound);
 
     /**
      * Writes the citizen data to a byte buf for transition.

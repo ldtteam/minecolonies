@@ -19,6 +19,7 @@ import java.util.function.BiFunction;
  * Used to lookup how to create {@link IBuilding} and {@link IBuildingView}.
  * Also links a given {@link IBuilding} to a given {@link AbstractBlockHut}.
  */
+@SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
 public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry> implements IForgeRegistryEntry<BuildingEntry>
 {
     private final AbstractBlockHut<?> buildingBlock;
@@ -26,35 +27,10 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry> implements 
     private final BiFunction<IColony, BlockPos, IBuilding>         buildingProducer;
     private final BiFunction<IColonyView, BlockPos, IBuildingView> buildingViewProducer;
 
-    private BuildingEntry(
-      final AbstractBlockHut<?> buildingBlock,
-      final BiFunction<IColony, BlockPos, IBuilding> buildingProducer,
-      final BiFunction<IColonyView, BlockPos, IBuildingView> buildingViewProducer)
-    {
-        this.buildingBlock = buildingBlock;
-        this.buildingProducer = buildingProducer;
-        this.buildingViewProducer = buildingViewProducer;
-    }
-
-    public AbstractBlockHut<?> getBuildingBlock()
-    {
-        return buildingBlock;
-    }
-
-    public BiFunction<IColony, BlockPos, IBuilding> getBuildingProducer()
-    {
-        return buildingProducer;
-    }
-
-    public BiFunction<IColonyView, BlockPos, IBuildingView> getBuildingViewProducer()
-    {
-        return buildingViewProducer;
-    }
-
     /**
      * A builder class for {@link BuildingEntry}.
      */
-    public static class Builder
+    public static final class Builder
     {
         private AbstractBlockHut<?>                              buildingBlock;
         private BiFunction<IColony, BlockPos, IBuilding>         buildingProducer;
@@ -114,6 +90,7 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry> implements 
          *
          * @return The entry.
          */
+        @SuppressWarnings("PMD.AccessorClassGeneration") //The builder explicitly allowed to create an instance.
         public BuildingEntry createBuildingEntry()
         {
             Validate.notNull(buildingBlock);
@@ -123,5 +100,31 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry> implements 
 
             return new BuildingEntry(buildingBlock, buildingProducer, buildingViewProducer).setRegistryName(registryName);
         }
+    }
+
+    public AbstractBlockHut<?> getBuildingBlock()
+    {
+        return buildingBlock;
+    }
+
+    public BiFunction<IColony, BlockPos, IBuilding> getBuildingProducer()
+    {
+        return buildingProducer;
+    }
+
+    public BiFunction<IColonyView, BlockPos, IBuildingView> getBuildingViewProducer()
+    {
+        return buildingViewProducer;
+    }
+
+    private BuildingEntry(
+      final AbstractBlockHut<?> buildingBlock,
+      final BiFunction<IColony, BlockPos, IBuilding> buildingProducer,
+      final BiFunction<IColonyView, BlockPos, IBuildingView> buildingViewProducer)
+    {
+        super();
+        this.buildingBlock = buildingBlock;
+        this.buildingProducer = buildingProducer;
+        this.buildingViewProducer = buildingViewProducer;
     }
 }

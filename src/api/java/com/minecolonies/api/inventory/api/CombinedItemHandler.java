@@ -304,6 +304,11 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
         return false;
     }
 
+    protected IItemHandlerModifiable[] getHandlers()
+    {
+        return handlers.clone();
+    }
+
     @Override
     public void setName(@Nullable final String name)
     {

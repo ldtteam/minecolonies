@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.mobs.pirates;
 
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import com.minecolonies.api.entity.mobs.pirates.IMeleePirateEntity;
+import com.minecolonies.api.util.constant.LootTableConstants;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -26,6 +27,6 @@ public class EntityPirate extends AbstractEntityPirate implements IMeleePirateEn
     @Override
     protected ResourceLocation getLootTable()
     {
-        return LOOT_TABLE;
+        return LootTableConstants.MELEE_PIRATE_DROPS;
     }
 }

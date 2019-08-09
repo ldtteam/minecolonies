@@ -189,7 +189,7 @@ public class BuildingMoveMessage implements IMessage
             return;
         }
 
-        @Nullable IBuilding oldBuilding = IColonyManager.getInstance().getBuilding(world, oldBuildingId);
+        @Nullable final IBuilding oldBuilding = IColonyManager.getInstance().getBuilding(world, oldBuildingId);
         if (oldBuilding instanceof BuildingTownHall)
         {
             if (tempColony != null)

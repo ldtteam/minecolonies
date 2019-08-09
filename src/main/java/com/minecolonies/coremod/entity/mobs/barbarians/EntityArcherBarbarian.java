@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.mobs.barbarians;
 
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.api.entity.mobs.barbarians.IArcherBarbarianEntity;
+import com.minecolonies.api.util.constant.LootTableConstants;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -26,6 +27,6 @@ public class EntityArcherBarbarian extends AbstractEntityBarbarian implements IA
     @Override
     protected ResourceLocation getLootTable()
     {
-        return LOOT_TABLE;
+        return LootTableConstants.ARCHER_BARBARIAN_DROPS;
     }
 }

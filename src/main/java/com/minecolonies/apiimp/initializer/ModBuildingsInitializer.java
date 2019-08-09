@@ -16,6 +16,7 @@ public final class ModBuildingsInitializer
         throw new IllegalStateException("Tried to initialize: ModBuildingsInitializer but this is a Utility class.");
     }
 
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
     public static void init(final RegistryEvent.Register<BuildingEntry> event)
     {
         final IForgeRegistry<BuildingEntry> reg = event.getRegistry();

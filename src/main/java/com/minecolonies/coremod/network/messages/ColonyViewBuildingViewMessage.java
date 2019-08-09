@@ -42,6 +42,7 @@ public class ColonyViewBuildingViewMessage implements IMessage
      */
     public ColonyViewBuildingViewMessage(@NotNull final IBuilding building)
     {
+        super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.buildingData = Unpooled.buffer();

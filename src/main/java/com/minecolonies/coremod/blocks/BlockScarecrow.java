@@ -32,6 +32,7 @@ import static net.minecraft.util.Direction.fromAngle;
 /**
  * The class handling the fieldBlocks, placement and activation.
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarecrow>
 {
 
