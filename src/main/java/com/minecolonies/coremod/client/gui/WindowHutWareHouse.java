@@ -83,7 +83,7 @@ public class WindowHutWareHouse extends AbstractWindowBuilding<BuildingWareHouse
         }
         else
         {
-            amountToSet = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), resource.getItem(), resource.getDamageValue());
+            amountToSet = InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory), resource.getItem());
         }
         resource.setPlayerAmount(amountToSet);
 

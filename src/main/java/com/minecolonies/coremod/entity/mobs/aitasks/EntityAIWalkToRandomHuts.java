@@ -3,10 +3,12 @@ package com.minecolonies.coremod.entity.mobs.aitasks;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.pathfinding.PathResult;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
 import net.minecraft.block.DoorBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.LadderBlock;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -97,7 +99,7 @@ public class EntityAIWalkToRandomHuts extends Goal
         this.speed = speedIn;
         this.world = creatureIn.getEntityWorld();
         lastPos = entity.getPosition();
-        this.setMutexBits(1);
+        this.setMutexFlags(EnumSet.of(Flag.MOVE));
     }
 
     @Override
@@ -194,7 +196,7 @@ public class EntityAIWalkToRandomHuts extends Goal
               .intersects(new AxisAlignedBB(lastPos)))
         {
             final BlockPos front = entity.getPosition().down().offset(entity.getHorizontalFacing());
-            final AxisAlignedBB collisionBox = world.getBlockState(entity.getPosition()).getCollisionBoundingBox(world, entity.getPosition());
+            final AxisAlignedBB collisionBox = world.getBlockState(entity.getPosition()).getCollisionShape(world, entity.getPosition()).getBoundingBox();
             if (!world.getBlockState(front).getMaterial().isSolid()
                   || world.getBlockState(entity.getPosition().up().offset(entity.getHorizontalFacing())).getMaterial().isSolid()
                   || (collisionBox != null && collisionBox.maxY > 1.0))
@@ -232,13 +234,13 @@ public class EntityAIWalkToRandomHuts extends Goal
         entity.setStuckCounter(entity.getStuckCounter() + 1);
         final BlockPos front = entity.getPosition().down().offset(entity.getHorizontalFacing());
 
-        if (world.isAirBlock(front) || world.getBlockState(front).getBlock() == Blocks.LAVA || world.getBlockState(front).getBlock() == Blocks.FLOWING_LAVA)
+        if (world.isAirBlock(front) || world.getBlockState(front).getBlock() == Blocks.LAVA)
         {
             notStuckTime = 0;
             world.setBlockState(front, Blocks.COBBLESTONE.getDefaultState());
         }
 
-        if (entity.getStuckCounter() > 1 && Configurations.gameplay.doBarbariansBreakThroughWalls)
+        if (entity.getStuckCounter() > 1 && MineColonies.getConfig().getCommon().doBarbariansBreakThroughWalls.get())
         {
             handleBarbarianMovementSpecials();
         }
@@ -258,8 +260,8 @@ public class EntityAIWalkToRandomHuts extends Goal
 
         entity.setLadderCounter(entity.getLadderCounter() + 1);
         notStuckTime = 0;
-        final IBlockState ladderHere = world.getBlockState(entity.getPosition());
-        final IBlockState ladderUp = world.getBlockState(entity.getPosition().up());
+        final BlockState ladderHere = world.getBlockState(entity.getPosition());
+        final BlockState ladderUp = world.getBlockState(entity.getPosition().up());
         if (entity.getLadderCounter() <= LADDERS_TO_PLACE || random.nextBoolean())
         {
             handleBarbarianLadderPlacement(ladderHere, ladderUp);
@@ -270,7 +272,7 @@ public class EntityAIWalkToRandomHuts extends Goal
         }
     }
 
-    private void handleBarbarianLadderPlacement(final IBlockState ladderHere, final IBlockState ladderUp)
+    private void handleBarbarianLadderPlacement(final BlockState ladderHere, final BlockState ladderUp)
     {
         if (ladderHere.getBlock() == Blocks.LADDER && ladderUp.getBlock() != Blocks.LADDER && !ladderHere.getMaterial().isLiquid())
         {
@@ -288,10 +290,10 @@ public class EntityAIWalkToRandomHuts extends Goal
 
     private void handleBarbarianBlockBreakment()
     {
-        for (final EnumFacing dir : directions)
+        for (final Direction dir : directions)
         {
-            final IBlockState state = world.getBlockState(entity.getPosition().offset(dir));
-            if ((state.getMaterial().isSolid() && state.getBlock() != Blocks.LADDER) || state.getBlock() instanceof BlockDoor)
+            final BlockState state = world.getBlockState(entity.getPosition().offset(dir));
+            if ((state.getMaterial().isSolid() && state.getBlock() != Blocks.LADDER) || state.getBlock() instanceof DoorBlock)
             {
                 final BlockPos posToDestroy;
                 posToDestroy = breakRandomBlockIn(dir);
@@ -301,19 +303,19 @@ public class EntityAIWalkToRandomHuts extends Goal
         }
     }
 
-    private void handleNextLadderPlacement(final IBlockState ladderHere)
+    private void handleNextLadderPlacement(final BlockState ladderHere)
     {
-        for (final EnumFacing dir : directions)
+        for (final Direction dir : directions)
         {
             if (world.getBlockState(entity.getPosition().offset(dir)).getMaterial().isSolid())
             {
                 if (random.nextBoolean())
                 {
-                    world.setBlockState(entity.getPosition().up(), Blocks.LADDER.getDefaultState().withProperty(BlockLadder.FACING, dir.getOpposite()));
+                    world.setBlockState(entity.getPosition().up(), Blocks.LADDER.getDefaultState().with(LadderBlock.FACING, dir.getOpposite()));
                 }
                 else if (!ladderHere.getMaterial().isLiquid())
                 {
-                    world.setBlockState(entity.getPosition(), Blocks.LADDER.getDefaultState().withProperty(BlockLadder.FACING, dir.getOpposite()));
+                    world.setBlockState(entity.getPosition(), Blocks.LADDER.getDefaultState().with(LadderBlock.FACING, dir.getOpposite()));
                 }
                 break;
             }
@@ -321,7 +323,7 @@ public class EntityAIWalkToRandomHuts extends Goal
     }
 
     @NotNull
-    private BlockPos breakRandomBlockIn(final EnumFacing dir)
+    private BlockPos breakRandomBlockIn(final Direction dir)
     {
         final BlockPos posToDestroy;
         switch (random.nextInt(4))

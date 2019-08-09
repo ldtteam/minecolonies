@@ -208,7 +208,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     }
 
     @Override
-    public void read(final CompoundNBT compound)
+    public void readAdditional(final CompoundNBT compound)
     {
         worldTimeAtSpawn = compound.getLong(TAG_TIME);
         stuckCounter = compound.getInt(TAG_STUCK_COUNTER);
@@ -221,7 +221,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
                 setColony(IColonyManager.getInstance().getColonyByWorld(colonyId, world));
             }
         }
-        super.read(compound);
+        super.readAdditional(compound);
     }
 
     @Override

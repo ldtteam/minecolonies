@@ -152,7 +152,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
         final int numOfBreedableAnimals = (int) animals.stream().filter(animal -> animal.getGrowingAge() == 0).count();
 
         final boolean hasBreedingItem =
-          InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
+          InventoryUtils.hasItemInItemHandler((worker.getInventoryCitizen()),
             (ItemStack stack) -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, getBreedingItem()));
 
         if (!searchForItemsInArea().isEmpty())
@@ -421,7 +421,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
                 //noinspection ConstantConditions
                 animal.setInLove(null);
                 worker.swingArm(Hand.MAIN_HAND);
-                InventoryUtils.reduceStackInItemHandler(new InvWrapper(worker.getInventoryCitizen()), getBreedingItem());
+                InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), getBreedingItem());
                 worker.decreaseSaturationForAction();
             }
         }
@@ -478,7 +478,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
     {
         if (getOwnBuilding() != null)
         {
-            final int slot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), toolType,
+            final int slot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), toolType,
               TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
 
             if (slot == -1)
@@ -514,7 +514,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob, T extends An
      */
     public int getItemSlot(final Item item)
     {
-        return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventory()), item, 0);
+        return InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), item);
     }
 
     /**

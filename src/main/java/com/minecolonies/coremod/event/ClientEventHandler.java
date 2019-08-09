@@ -15,13 +15,13 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientWorld;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -53,12 +53,12 @@ public class ClientEventHandler
     /**
      * Cached wayPointBlueprint.
      */
-    private Blueprint wayPointTemplate;
+    private static Blueprint wayPointTemplate;
 
     /**
      * Cached wayPointBlueprint.
      */
-    private Blueprint partolPointTemplate;
+    private static Blueprint partolPointTemplate;
 
     /**
      * The colony view required here.
@@ -71,7 +71,7 @@ public class ClientEventHandler
      * @param event the catched event.
      */
     @SubscribeEvent
-    public void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
+    public static void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
     {
         Pathfinding.debugDraw(event.getPartialTicks());
 
@@ -104,7 +104,7 @@ public class ClientEventHandler
             }
             final CompoundNBT compound = stack.getTag();
 
-            final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), player.world.world.getDimension().getType().getId());
+            final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), player.world.getDimension().getType().getId());
             if (colony == null)
             {
                 return;

@@ -1028,9 +1028,9 @@ public class EntityCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public void read(final CompoundNBT compound)
+    public void readAdditional(final CompoundNBT compound)
     {
-        super.read(compound);
+        super.readAdditional(compound);
 
         citizenStatusHandler.setStatus(Status.values()[compound.getInt(TAG_STATUS)]);
         citizenColonyHandler.setColonyId(compound.getInt(TAG_COLONY_ID));

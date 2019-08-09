@@ -293,7 +293,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     }
 
     @Override
-    public void read(final CompoundNBT compound)
+    public void readAdditional(final CompoundNBT compound)
     {
         worldTimeAtSpawn = compound.getLong(TAG_TIME);
         if (compound.keySet().contains(TAG_COLONY_ID))
@@ -304,7 +304,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
                 setColony(IColonyManager.getInstance().getColonyByWorld(colonyId, world));
             }
         }
-        super.read(compound);
+        super.readAdditional(compound);
     }
 
     @Override

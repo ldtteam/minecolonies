@@ -2,6 +2,7 @@ package com.minecolonies.api.entity.mobs.util;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MobSpawnUtils;
 import net.minecraft.block.BlockState;
@@ -9,7 +10,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import static com.minecolonies.api.util.constant.ColonyConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.RAID_EVENT_MESSAGE;
 
 /**
@@ -48,9 +48,9 @@ public final class BarbarianEventUtils
           colony.getMessagePlayerEntitys(),
           RAID_EVENT_MESSAGE + raidNumber, colony.getName());
 
-        MobSpawnUtils.spawn(BARBARIAN, horde.numberOfRaiders, targetSpawnPoint, world, colony);
-        MobSpawnUtils.spawn(ARCHER, horde.numberOfArchers, targetSpawnPoint, world, colony);
-        MobSpawnUtils.spawn(CHIEF, horde.numberOfBosses, targetSpawnPoint, world, colony);
+        MobSpawnUtils.spawn(ModEntities.BARBARIAN, horde.numberOfRaiders, targetSpawnPoint, world, colony);
+        MobSpawnUtils.spawn(ModEntities.ARCHERBARBARIAN, horde.numberOfArchers, targetSpawnPoint, world, colony);
+        MobSpawnUtils.spawn(ModEntities.CHIEFBARBARIAN, horde.numberOfBosses, targetSpawnPoint, world, colony);
     }
 
     /**

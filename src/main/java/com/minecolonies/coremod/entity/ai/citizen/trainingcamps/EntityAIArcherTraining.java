@@ -231,7 +231,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             return false;
         }
 
-        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.BOW, 0, getOwnBuilding().getMaxToolLevel());
+        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.BOW, 0, getOwnBuilding().getMaxToolLevel());
         worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, bowSlot);
         return true;
     }

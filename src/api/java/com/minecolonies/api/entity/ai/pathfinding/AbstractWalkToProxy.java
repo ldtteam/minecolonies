@@ -169,7 +169,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
      * @param range  the range.
      * @return true if so.
      */
-    public boolean isLivingAtSiteWithMove(final LivingEntity entity, final int x, final int y, final int z, final int range)
+    public boolean isLivingAtSiteWithMove(final MobEntity entity, final int x, final int y, final int z, final int range)
     {
         if (!EntityUtils.isLivingAtSiteWithMove(entity, x, y, z, range))
         {
