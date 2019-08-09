@@ -11,12 +11,8 @@ import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class JobDataManager implements IJobDataManager
+public final class JobDataManager implements IJobDataManager
 {
-    public JobDataManager()
-    {
-    }
-
     @Nullable
     @Override
     public IJob createFrom(

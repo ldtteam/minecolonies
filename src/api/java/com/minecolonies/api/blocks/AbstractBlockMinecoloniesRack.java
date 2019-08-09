@@ -31,7 +31,7 @@ public abstract class AbstractBlockMinecoloniesRack<B extends AbstractBlockMinec
      * @param block the block to check.
      * @return true if so.
      */
-    public static boolean shouldBlockBeReplacedWithRack(Block block)
+    public static boolean shouldBlockBeReplacedWithRack(final Block block)
     {
         return block == Blocks.CHEST || block instanceof AbstractBlockMinecoloniesRack;
     }

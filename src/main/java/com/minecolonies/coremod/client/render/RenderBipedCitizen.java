@@ -40,7 +40,22 @@ public class RenderBipedCitizen<C extends EntityCitizen> extends RenderBiped<C>
     @Override
     public void doRender(@NotNull final C citizen, final double d, final double d1, final double d2, final float f, final float f1)
     {
+        setupMainModelFrom(citizen);
 
+        final ModelBiped citizenModel = (ModelBiped) mainModel;
+
+        final ItemStack mainHandStack = citizen.getHeldItemMainhand();
+        final ItemStack offHandStack = citizen.getHeldItemOffhand();
+        final ModelBiped.ArmPose armPoseMainHand = getArmPoseFrom(citizen, mainHandStack, ModelBiped.ArmPose.EMPTY);
+        final ModelBiped.ArmPose armPoseOffHand = getArmPoseFrom(citizen, offHandStack, ModelBiped.ArmPose.EMPTY);
+
+        updateArmPose(citizen, citizenModel, armPoseMainHand, armPoseOffHand);
+
+        super.doRender(citizen, d, d1, d2, f, f1);
+    }
+
+    private void setupMainModelFrom(@NotNull final C citizen)
+    {
         mainModel = citizen.isFemale()
                       ? IModelTypeRegistry.getInstance().getFemaleMap().get(citizen.getModelType())
                       : IModelTypeRegistry.getInstance().getMaleMap().get(citizen.getModelType());
@@ -49,14 +64,10 @@ public class RenderBipedCitizen<C extends EntityCitizen> extends RenderBiped<C>
         {
             mainModel = citizen.isFemale() ? defaultModelFemale : defaultModelMale;
         }
+    }
 
-        final BipedModel citizenModel = (BipedModel) mainModel;
-
-        final ItemStack mainHandStack = citizen.getHeldItemMainhand();
-        final ItemStack offHandStack = citizen.getHeldItemOffhand();
-        BipedModel.ArmPose armPoseMainHand = BipedModel.ArmPose.EMPTY;
-        BipedModel.ArmPose armPoseOffHand = BipedModel.ArmPose.EMPTY;
-
+    private ModelBiped.ArmPose getArmPoseFrom(@NotNull final C citizen, final ItemStack mainHandStack, ModelBiped.ArmPose armPoseMainHand)
+    {
         final EnumAction enumActionMainHand;
         if (!mainHandStack.isEmpty())
         {
@@ -74,26 +85,16 @@ public class RenderBipedCitizen<C extends EntityCitizen> extends RenderBiped<C>
                 }
             }
         }
+        return armPoseMainHand;
+    }
 
-        final EnumAction enumActionOffHand;
-        if (!offHandStack.isEmpty())
-        {
-            armPoseOffHand = BipedModel.ArmPose.ITEM;
-            if (citizen.getItemInUseCount() > 0)
-            {
-                enumActionOffHand = offHandStack.getItemUseAction();
-                if (enumActionOffHand == EnumAction.BLOCK)
-                {
-                    armPoseOffHand = BipedModel.ArmPose.BLOCK;
-                }
-                else if (enumActionOffHand == EnumAction.BOW)
-                {
-                    armPoseOffHand = BipedModel.ArmPose.BOW_AND_ARROW;
-                }
-            }
-        }
-
-        if (citizen.getPrimaryHand() == HandSide.RIGHT)
+    private void updateArmPose(
+      @NotNull final C citizen,
+      final ModelBiped citizenModel,
+      final ModelBiped.ArmPose armPoseMainHand,
+      final ModelBiped.ArmPose armPoseOffHand)
+    {
+        if (citizen.getPrimaryHand() == EnumHandSide.RIGHT)
         {
             citizenModel.rightArmPose = armPoseMainHand;
             citizenModel.leftArmPose = armPoseOffHand;
@@ -103,8 +104,6 @@ public class RenderBipedCitizen<C extends EntityCitizen> extends RenderBiped<C>
             citizenModel.rightArmPose = armPoseOffHand;
             citizenModel.leftArmPose = armPoseMainHand;
         }
-
-        super.doRender(citizen, d, d1, d2, f, f1);
     }
 
     @Override

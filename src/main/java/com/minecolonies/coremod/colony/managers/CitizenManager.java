@@ -27,6 +27,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -150,38 +151,47 @@ public class CitizenManager implements ICitizenManager
 
         if (spawnPoint != null)
         {
-
-            ICitizenData citizenData = data;
-            if (citizenData == null)
-            {
-                citizenData = createAndRegisterNewCitizenData();
-
-                if (getMaxCitizens() == getCitizens().size() && !force)
-                {
-                    LanguageHandler.sendPlayersMessage(
-                      colony.getMessagePlayerEntitys(),
-                      "tile.blockHutTownHall.messageMaxSize",
-                      colony.getName());
-                }
-            }
-            final EntityCitizen entity = new EntityCitizen(world);
-            citizenData.setCitizenEntity(entity);
-
-            entity.getCitizenColonyHandler().initEntityCitizenValues(colony, citizenData);
-
-            entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
-            world.addEntity(entity);
-
-            colony.getProgressManager().progressCitizenSpawn(citizens.size(), citizens.values().stream().filter(tempDate -> tempDate.getJob() != null).collect(Collectors.toList()).size());
-            colony.getStatsManager().checkAchievements();
-            markCitizensDirty();
-            return citizenData;
+            return spawnCitizenOnPosition(data, world, force, spawnPoint);
         }
         else
         {
             LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), "com.minecolonies.coremod.citizens.nospace");
         }
         return data;
+    }
+
+    @NotNull
+    private ICitizenData spawnCitizenOnPosition(
+      @Nullable final ICitizenData data,
+      @NotNull final World world,
+      final boolean force,
+      final BlockPos spawnPoint)
+    {
+        ICitizenData citizenData = data;
+        if (citizenData == null)
+        {
+            citizenData = createAndRegisterNewCitizenData();
+
+            if (getMaxCitizens() == getCitizens().size() && !force)
+            {
+                LanguageHandler.sendPlayersMessage(
+                  colony.getMessagePlayerEntitys(),
+                  "tile.blockHutTownHall.messageMaxSize",
+                  colony.getName());
+            }
+        }
+        final EntityCitizen entity = new EntityCitizen(world);
+        citizenData.setCitizenEntity(entity);
+
+        entity.getCitizenColonyHandler().initEntityCitizenValues(colony, citizenData);
+
+        entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
+        world.addEntity(entity);
+
+        colony.getProgressManager()
+          .progressCitizenSpawn(citizens.size(), citizens.values().stream().filter(tempDate -> tempDate.getJob() != null).collect(Collectors.toList()).size());
+        markCitizensDirty();
+        return citizenData;
     }
 
     @Override

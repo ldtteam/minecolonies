@@ -17,18 +17,18 @@ public class MultimapCollector<T, K, V> implements Collector<T, Multimap<K, V>, 
     private final Function<T, K> keyGetter;
     private final Function<T, V> valueGetter;
 
-    public MultimapCollector(Function<T, K> keyGetter, Function<T, V> valueGetter)
+    public MultimapCollector(final Function<T, K> keyGetter, final Function<T, V> valueGetter)
     {
         this.keyGetter = keyGetter;
         this.valueGetter = valueGetter;
     }
 
-    public static <T, K, V> MultimapCollector<T, K, V> toMultimap(Function<T, K> keyGetter, Function<T, V> valueGetter)
+    public static <T, K, V> MultimapCollector<T, K, V> toMultimap(final Function<T, K> keyGetter, final Function<T, V> valueGetter)
     {
         return new MultimapCollector<>(keyGetter, valueGetter);
     }
 
-    public static <T, K, V> MultimapCollector<T, K, T> toMultimap(Function<T, K> keyGetter)
+    public static <T, K, V> MultimapCollector<T, K, T> toMultimap(final Function<T, K> keyGetter)
     {
         return new MultimapCollector<>(keyGetter, v -> v);
     }

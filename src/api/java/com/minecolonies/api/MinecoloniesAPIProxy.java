@@ -15,9 +15,11 @@ import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 
-public class MinecoloniesAPIProxy implements IMinecoloniesAPI
+public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
 {
     private static MinecoloniesAPIProxy ourInstance = new MinecoloniesAPIProxy();
+
+    private IMinecoloniesAPI apiInstance;
 
     public static MinecoloniesAPIProxy getInstance()
     {
@@ -27,8 +29,6 @@ public class MinecoloniesAPIProxy implements IMinecoloniesAPI
     private MinecoloniesAPIProxy()
     {
     }
-
-    private IMinecoloniesAPI apiInstance;
 
     public void setApiInstance(final IMinecoloniesAPI apiInstance)
     {

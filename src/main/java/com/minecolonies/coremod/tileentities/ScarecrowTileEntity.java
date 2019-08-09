@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.tileentities;
 
-import com.ldtteam.structurize.api.util.LanguageHandler;
 import com.ldtteam.structurize.blocks.ModBlocks;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -36,6 +36,7 @@ import static net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND;
 /**
  * The scarecrow tile entity to store extra data.
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
 {
     /**

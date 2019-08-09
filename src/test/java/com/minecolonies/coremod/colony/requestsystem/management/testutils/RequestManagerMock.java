@@ -17,8 +17,6 @@ import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHand
 import com.minecolonies.coremod.colony.testutils.ColonyMock;
 import com.minecolonies.coremod.util.ModifyableLambdaWrapper;
 import com.minecolonies.testutils.MatcherUtils;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -38,12 +36,17 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 public final class RequestManagerMock
 {
+    private RequestManagerMock()
+    {
+        throw new IllegalArgumentException("Utility");
+    }
 
     public static IStandardRequestManager mockBlank()
     {
         return Mockito.mock(IStandardRequestManager.class);
     }
 
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
     public static IStandardRequestManager mock()
     {
         final ModifyableLambdaWrapper<Boolean> dirty = new ModifyableLambdaWrapper<>(false);
@@ -168,8 +171,6 @@ public final class RequestManagerMock
 
             requestResolverBiMap.values().forEach(resolver -> resolver.onColonyUpdate(requestManager, shouldReassignPredicate));
         }).when(requestManager).onColonyUpdate(Mockito.any());
-
-
 
 
         return requestManager;

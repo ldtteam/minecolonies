@@ -106,7 +106,7 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
         int page;
         if (null != pageProvided)
         {
-            page = pageProvided.intValue();
+            page = pageProvided;
         }
         else
         {
@@ -138,6 +138,17 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
         final int pageStartIndex = CITIZENS_ON_PAGE * (page - 1);
         final int pageStopIndex = Math.min(CITIZENS_ON_PAGE * page, citizenCount);
 
+        final List<ICitizenData> citizensPage = getCitizensOnPage(citizens, citizenCount, pageStartIndex, pageStopIndex);
+        final ITextComponent headerLine = new TextComponentString(String.format(PAGE_TOP, page, pageCount));
+        sender.sendMessage(headerLine);
+
+        drawCitizens(sender, citizensPage);
+        drawPageSwitcher(sender, page, citizenCount, halfPage, colony.getID());
+    }
+
+    @NotNull
+    private List<ICitizenData> getCitizensOnPage(final List<ICitizenData> citizens, final int citizenCount, final int pageStartIndex, final int pageStopIndex)
+    {
         final List<ICitizenData> citizensPage;
 
         if (pageStartIndex < 0 || pageStartIndex >= citizenCount)
@@ -148,10 +159,11 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
         {
             citizensPage = citizens.subList(pageStartIndex, pageStopIndex);
         }
+        return citizensPage;
+    }
 
-        final ITextComponent headerLine = new StringTextComponent(String.format(PAGE_TOP, page, pageCount));
-        sender.sendMessage(headerLine);
-
+    private void drawCitizens(@NotNull final ICommandSender sender, final List<ICitizenData> citizensPage)
+    {
         for (final ICitizenData citizen : citizensPage)
         {
             sender.sendMessage(new StringTextComponent(String.format(CITIZEN_DESCRIPTION,
@@ -165,7 +177,6 @@ public class ListCitizensCommand extends AbstractSingleCommand implements IActio
                 sender.sendMessage(new StringTextComponent(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
             });
         }
-        drawPageSwitcher(sender, page, citizenCount, halfPage, (null != colony ? colony.getID() : -1));
     }
 
     /**

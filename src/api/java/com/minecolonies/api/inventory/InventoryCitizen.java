@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.block.BlockState;
+import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.player.PlayerEntity;
@@ -575,7 +576,7 @@ public class InventoryCitizen implements IInventory
                 crashreportcategory.addCrashSection("Item ID", Item.getIdFromItem(itemStackIn.getItem()));
                 crashreportcategory.addCrashSection("Item data", itemStackIn.getMetadata());
                 crashreportcategory.addDetail("Item name", itemStackIn::getDisplayName);
-                throw new ReportedException(crashreport);
+                throw new ReportedException(crashreport); //NOPMD
             }
         }
     }
@@ -750,19 +751,19 @@ public class InventoryCitizen implements IInventory
      * Writes the inventory out as a list of compound tags. This is where the slot indices are used (+100 for armor, +80
      * for crafting).
      *
-     * @param ListNBTIn the taglist in.
+     * @param nbtTagList the taglist in.
      * @return the filled list.
      */
-    public ListNBT write(final ListNBT ListNBTIn)
+    public ListNBT write(final ListNBT nbtTagList)
     {
         for (int i = 0; i < this.mainInventory.size(); ++i)
         {
             if (!(this.mainInventory.get(i)).isEmpty())
             {
-                final CompoundNBT CompoundNBT = new CompoundNBT();
-                CompoundNBT.setByte("Slot", (byte) i);
-                (this.mainInventory.get(i)).write(CompoundNBT);
-                ListNBTIn.add(CompoundNBT);
+                final CompoundNBT compoundNBT = new CompoundNBT();
+                compoundNBT.putByte("Slot", (byte) i);
+                (this.mainInventory.get(i)).write(compoundNBT);
+                nbtTagList.add(compoundNBT);
             }
         }
 
@@ -770,10 +771,10 @@ public class InventoryCitizen implements IInventory
         {
             if (!(this.armorInventory.get(j)).isEmpty())
             {
-                final CompoundNBT CompoundNBT1 = new CompoundNBT();
-                CompoundNBT1.setByte("Slot", (byte) (j + 100));
-                (this.armorInventory.get(j)).write(CompoundNBT1);
-                ListNBTIn.add(CompoundNBT1);
+                final CompoundNBT compoundNBT = new CompoundNBT();
+                compoundNBT.putByte("Slot", (byte) (j + 100));
+                (this.armorInventory.get(j)).write(compoundNBT);
+                nbtTagList.add(compoundNBT);
             }
         }
 
@@ -781,32 +782,32 @@ public class InventoryCitizen implements IInventory
         {
             if (!(this.offHandInventory.get(k)).isEmpty())
             {
-                final CompoundNBT CompoundNBT2 = new CompoundNBT();
-                CompoundNBT2.setByte("Slot", (byte) (k + 150));
-                (this.offHandInventory.get(k)).write(CompoundNBT2);
-                ListNBTIn.add(CompoundNBT2);
+                final CompoundNBT compoundNBT = new CompoundNBT();
+                compoundNBT.putByte("Slot", (byte) (k + 150));
+                (this.offHandInventory.get(k)).write(compoundNBT);
+                nbtTagList.add(compoundNBT);
             }
         }
 
-        return ListNBTIn;
+        return nbtTagList;
     }
 
     /**
      * Reads from the given tag list and fills the slots in the inventory with the correct items.
      *
-     * @param ListNBTIn the tag list.
+     * @param nbtTagList the tag list.
      */
-    public void read(final ListNBT ListNBTIn)
+    public void read(final ListNBT nbtTagList)
     {
         this.mainInventory.clear();
         this.armorInventory.clear();
         this.offHandInventory.clear();
 
-        for (int i = 0; i < ListNBTIn.size(); ++i)
+        for (int i = 0; i < nbtTagList.size(); ++i)
         {
-            final CompoundNBT CompoundNBT = ListNBTIn.getCompound(i);
-            final int j = CompoundNBT.getByte("Slot") & 255;
-            final ItemStack itemstack = new ItemStack(CompoundNBT);
+            final CompoundNBT compoundNBT = nbtTagList.getCompound(i);
+            final int j = compoundNBT.getByte("Slot") & 255;
+            final ItemStack itemstack = ItemStack.read(compoundNBT);
 
             if (!itemstack.isEmpty())
             {

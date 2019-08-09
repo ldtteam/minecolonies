@@ -12,31 +12,16 @@ import java.util.function.Function;
 /**
  * Entry for the {@link IJob} registry.
  */
+@SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
 public final class JobEntry extends ForgeRegistryEntry<JobEntry> implements IForgeRegistryEntry<JobEntry>
 {
 
     private final Function<ICitizenData, IJob<?>> jobProducer;
 
-    private JobEntry(final Function<ICitizenData, IJob<?>> jobProducer)
-    {
-        this.jobProducer = jobProducer;
-    }
-
-    /**
-     * The producer for the {@link IJob}.
-     * Creates the job from a {@link ICitizenData} instance.
-     *
-     * @return The created {@link IJob}.
-     */
-    public Function<ICitizenData, IJob<?>> getJobProducer()
-    {
-        return jobProducer;
-    }
-
     /**
      * Builder for a {@link JobEntry}.
      */
-    public static class Builder
+    public static final class Builder
     {
         private Function<ICitizenData, IJob<?>> jobProducer;
         private ResourceLocation                registryName;
@@ -70,6 +55,7 @@ public final class JobEntry extends ForgeRegistryEntry<JobEntry> implements IFor
          *
          * @return The created {@link JobEntry}.
          */
+        @SuppressWarnings("PMD.AccessorClassGeneration") //The builder is explicitly allowed to create one.
         public JobEntry createJobEntry()
         {
             Validate.notNull(jobProducer);
@@ -77,5 +63,21 @@ public final class JobEntry extends ForgeRegistryEntry<JobEntry> implements IFor
 
             return new JobEntry(jobProducer).setRegistryName(registryName);
         }
+    }
+
+    /**
+     * The producer for the {@link IJob}. Creates the job from a {@link ICitizenData} instance.
+     *
+     * @return The created {@link IJob}.
+     */
+    public Function<ICitizenData, IJob<?>> getJobProducer()
+    {
+        return jobProducer;
+    }
+
+    private JobEntry(final Function<ICitizenData, IJob<?>> jobProducer)
+    {
+        super();
+        this.jobProducer = jobProducer;
     }
 }

@@ -34,6 +34,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 {
     private static final double ON_PATH_SPEED_MULTIPLIER = 1.3D;
     private static final double PIRATE_SWIM_BONUS        = 20;
+    public static final  double MIN_Y_DISTANCE           = 0.001;
 
     @Nullable
     private PathResult pathResult;
@@ -91,28 +92,49 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         this.originalDestination = dest;
         this.walkSpeed = speed;
 
-        future = Pathfinding.enqueue(job);
+        calculationFuture = Pathfinding.enqueue(job);
         pathResult = job.getResult();
         return pathResult;
     }
 
     @Override
-    public void clearPath()
+    public void onUpdateNavigation()
     {
-        if (future != null)
+        if (calculationFuture != null)
         {
-            future.cancel(true);
-            future = null;
+            if (!calculationFuture.isDone())
+            {
+                return;
+            }
+
+            try
+            {
+                if (processCompletedCalculationResult())
+                {
+                    return;
+                }
+            }
+            catch (@NotNull InterruptedException | ExecutionException e)
+            {
+                Log.getLogger().catching(e);
+            }
+
+            calculationFuture = null;
         }
 
-        if (pathResult != null)
+        int oldIndex = this.noPath() ? 0 : this.getPath().getCurrentPathIndex();
+        super.onUpdateNavigation();
+
+        if (handleLadders(oldIndex))
         {
-            pathResult.setStatus(PathFindingStatus.CANCELLED);
+            return;
+        }
+
+        if (pathResult != null && noPath())
+        {
+            pathResult.setStatus(PathFindingStatus.COMPLETE);
             pathResult = null;
         }
-
-        destination = null;
-        super.clearPath();
     }
 
     /**
@@ -261,49 +283,32 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         return super.setPath(tempPath == null ? path : tempPath, speed);
     }
 
-    @Override
-    public void onUpdateNavigation()
+    private boolean processCompletedCalculationResult() throws InterruptedException, ExecutionException
     {
-        if (future != null)
+        if (calculationFuture.get() == null)
         {
-            if (!future.isDone())
-            {
-                return;
-            }
-
-            try
-            {
-                if (future.get() == null)
-                {
-                    future = null;
-                    return;
-                }
-
-                setPath(future.get(), getSpeed());
-
-                pathResult.setPathLength(getPath().getCurrentPathLength());
-                pathResult.setStatus(PathFindingStatus.IN_PROGRESS_FOLLOWING);
-
-                final PathPoint p = getPath().getFinalPathPoint();
-                if (p != null && destination == null)
-                {
-                    destination = new BlockPos(p.x, p.y, p.z);
-
-                    //  AbstractPathJob with no destination, did reach it's destination
-                    pathResult.setPathReachesDestination(true);
-                }
-            }
-            catch (@NotNull InterruptedException | ExecutionException e)
-            {
-                Log.getLogger().catching(e);
-            }
-
-            future = null;
+            calculationFuture = null;
+            return true;
         }
 
-        int oldIndex = this.noPath() ? 0 : this.getPath().getCurrentPathIndex();
-        super.onUpdateNavigation();
+        setPath(calculationFuture.get(), getSpeed());
 
+        pathResult.setPathLength(getPath().getCurrentPathLength());
+        pathResult.setStatus(PathFindingStatus.IN_PROGRESS_FOLLOWING);
+
+        final PathPoint p = getPath().getFinalPathPoint();
+        if (p != null && destination == null)
+        {
+            destination = new BlockPos(p.x, p.y, p.z);
+
+            //  AbstractPathJob with no destination, did reach it's destination
+            pathResult.setPathReachesDestination(true);
+        }
+        return false;
+    }
+
+    private boolean handleLadders(int oldIndex)
+    {
         //  Ladder Workaround
         if (!this.noPath())
         {
@@ -311,66 +316,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
             if (pEx.isOnLadder())
             {
-                Vec3d vec3 = this.getPath().getPosition(this.ourEntity);
-
-                if (vec3.squareDistanceTo(ourEntity.posX, vec3.y, ourEntity.posZ) < Math.random() * 0.1)
-                {
-                    //This way he is less nervous and gets up the ladder
-                    double newSpeed = 0.05;
-                    switch (pEx.getLadderFacing())
-                    {
-                        //  Any of these values is climbing, so adjust our direction of travel towards the ladder
-                        case NORTH:
-                            vec3 = vec3.add(0, 0, 1);
-                            break;
-                        case SOUTH:
-                            vec3 = vec3.add(0, 0, -1);
-                            break;
-                        case WEST:
-                            vec3 = vec3.add(1, 0, 0);
-                            break;
-                        case EAST:
-                            vec3 = vec3.add(-1, 0, 0);
-                            break;
-                        //  Any other value is going down, so lets not move at all
-                        default:
-                            newSpeed = 0;
-                            break;
-                    }
-
-                    this.ourEntity.getMoveHelper().setMoveTo(vec3.x, vec3.y, vec3.z, newSpeed);
-                }
+                handlePathPointOnLadder(pEx);
             }
             else if (ourEntity.isInWater())
             {
-                //  Prevent shortcuts when swimming
-                final int curIndex = this.getPath().getCurrentPathIndex();
-                if (curIndex > 0
-                      && (curIndex + 1) < this.getPath().getCurrentPathLength()
-                      && this.getPath().getPathPointFromIndex(curIndex - 1).y != pEx.y)
-                {
-                    //  Work around the initial 'spin back' when dropping into water
-                    oldIndex = curIndex + 1;
-                }
-
-                this.getPath().setCurrentPathIndex(oldIndex);
-
-                Vec3d vec3d = this.getPath().getPosition(this.ourEntity);
-
-                if (vec3d.squareDistanceTo(new Vec3d(ourEntity.posX, vec3d.y, ourEntity.posZ)) < 0.1
-                      && Math.abs(ourEntity.posY - vec3d.y) < 0.5)
-                {
-                    this.getPath().setCurrentPathIndex(this.getPath().getCurrentPathIndex() + 1);
-                    if (this.noPath())
-                    {
-                        return;
-                    }
-
-                    vec3d = this.getPath().getPosition(this.ourEntity);
-                }
-
-                ourEntity.setAIMoveSpeed((float) getSpeed());
-                this.ourEntity.getMoveHelper().setMoveTo(vec3d.x, vec3d.y, vec3d.z, getSpeed());
+                return handleEntityInWater(oldIndex, pEx);
             }
             else
             {
@@ -384,12 +334,73 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 }
             }
         }
+        return false;
+    }
 
-        if (pathResult != null && noPath())
+    private void handlePathPointOnLadder(final PathPointExtended pEx)
+    {
+        Vec3d vec3 = this.getPath().getPosition(this.ourEntity);
+
+        if (vec3.squareDistanceTo(ourEntity.posX, vec3.y, ourEntity.posZ) < Math.random() * 0.1)
         {
-            pathResult.setStatus(PathFindingStatus.COMPLETE);
-            pathResult = null;
+            //This way he is less nervous and gets up the ladder
+            double newSpeed = 0.05;
+            switch (pEx.getLadderFacing())
+            {
+                //  Any of these values is climbing, so adjust our direction of travel towards the ladder
+                case NORTH:
+                    vec3 = vec3.add(0, 0, 1);
+                    break;
+                case SOUTH:
+                    vec3 = vec3.add(0, 0, -1);
+                    break;
+                case WEST:
+                    vec3 = vec3.add(1, 0, 0);
+                    break;
+                case EAST:
+                    vec3 = vec3.add(-1, 0, 0);
+                    break;
+                //  Any other value is going down, so lets not move at all
+                default:
+                    newSpeed = 0;
+                    break;
+            }
+
+            this.ourEntity.getMoveHelper().setMoveTo(vec3.x, vec3.y, vec3.z, newSpeed);
         }
+    }
+
+    private boolean handleEntityInWater(int oldIndex, final PathPointExtended pEx)
+    {
+        //  Prevent shortcuts when swimming
+        final int curIndex = this.getPath().getCurrentPathIndex();
+        if (curIndex > 0
+              && (curIndex + 1) < this.getPath().getCurrentPathLength()
+              && this.getPath().getPathPointFromIndex(curIndex - 1).y != pEx.y)
+        {
+            //  Work around the initial 'spin back' when dropping into water
+            oldIndex = curIndex + 1;
+        }
+
+        this.getPath().setCurrentPathIndex(oldIndex);
+
+        Vec3d vec3d = this.getPath().getPosition(this.ourEntity);
+
+        if (vec3d.squareDistanceTo(new Vec3d(ourEntity.posX, vec3d.y, ourEntity.posZ)) < 0.1
+              && Math.abs(ourEntity.posY - vec3d.y) < 0.5)
+        {
+            this.getPath().setCurrentPathIndex(this.getPath().getCurrentPathIndex() + 1);
+            if (this.noPath())
+            {
+                return true;
+            }
+
+            vec3d = this.getPath().getPosition(this.ourEntity);
+        }
+
+        ourEntity.setAIMoveSpeed((float) getSpeed());
+        this.ourEntity.getMoveHelper().setMoveTo(vec3d.x, vec3d.y, vec3d.z, getSpeed());
+        return false;
     }
 
     @Override
@@ -408,7 +419,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                   && !pExNext.isOnLadder())
             {
                 final Vec3d vec3 = getEntityPosition();
-                if ((vec3.y - (double) pEx.y) < 0.001)
+                if ((vec3.y - (double) pEx.y) < MIN_Y_DISTANCE)
                 {
                     this.currentPath.setCurrentPathIndex(curNodeNext);
                 }
@@ -427,7 +438,26 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     @Override
     public boolean noPath()
     {
-        return future == null && super.noPath();
+        return calculationFuture == null && super.noPath();
+    }
+
+    @Override
+    public void clearPath()
+    {
+        if (calculationFuture != null)
+        {
+            calculationFuture.cancel(true);
+            calculationFuture = null;
+        }
+
+        if (pathResult != null)
+        {
+            pathResult.setStatus(PathFindingStatus.CANCELLED);
+            pathResult = null;
+        }
+
+        destination = null;
+        super.clearPath();
     }
 
     /**

@@ -43,7 +43,7 @@ public class ClientEventHandler
     /**
      * The currently displayed citizen.
      */
-    private CitizenDataView citizen = null;
+    private final CitizenDataView citizen = null;
 
     /**
      * The ticks passed since showing the sign.
@@ -63,7 +63,7 @@ public class ClientEventHandler
     /**
      * The colony view required here.
      */
-    private IColonyView view = null;
+    private final IColonyView view = null;
 
     /**
      * Used to catch the renderWorldLastEvent in order to draw the debug nodes for pathfinding.

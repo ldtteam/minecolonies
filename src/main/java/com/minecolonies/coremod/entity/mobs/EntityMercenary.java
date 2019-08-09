@@ -49,6 +49,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.FOLLOW_RANGE;
 /**
  * Class for Mercenary entities, which can be spawned to protect the colony
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 public class EntityMercenary extends EntityCreature implements INPC, IColonyRelated
 {
     /**
@@ -314,6 +315,7 @@ public class EntityMercenary extends EntityCreature implements INPC, IColonyRela
     @Override
     public void registerWithColony()
     {
+        //Does not need to register.
     }
 
     @Override

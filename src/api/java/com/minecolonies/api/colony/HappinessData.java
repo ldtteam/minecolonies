@@ -89,15 +89,6 @@ public class HappinessData
      */
     private List<DeathModifierData> deathModifier = new ArrayList();
 
-
-    /**
-     * Creating a default constructor
-     */
-    public HappinessData()
-    {
-        /* Just empty */
-    }
-
     /**
      * Get the Guards/Citizens ratio level.
      *

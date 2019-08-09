@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
@@ -62,11 +61,6 @@ public class WindowGuardControl extends AbstractWindowSkeleton
      * The GuardTask of the guard.
      */
     private GuardTask task = GuardTask.GUARD;
-
-    /**
-     * The GuardJob of the guard.
-     */
-    private GuardType job = null;
 
     /**
      * The list of manual patrol targets.
@@ -213,7 +207,6 @@ public class WindowGuardControl extends AbstractWindowSkeleton
         this.retrieveOnLowHealth = building.isRetrieveOnLowHealth();
         this.tightGrouping = building.isTightGrouping();
         this.task = building.getTask();
-        this.job = building.getGuardType();
         this.patrolTargets = building.getPatrolTargets();
     }
 

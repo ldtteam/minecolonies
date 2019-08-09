@@ -10,6 +10,7 @@ import net.minecraft.world.World;
  */
 public class ChildrenSounds extends AbstractWorkerSounds
 {
+    public static final  int LAUGH_COUNT   = 2;
     /**
      * Chance to say a phrase.
      */
@@ -31,8 +32,9 @@ public class ChildrenSounds extends AbstractWorkerSounds
     @Override
     public void playSound(final World worldIn, final BlockPos position, final boolean isFemale, final double saturation)
     {
+
         // Play random giggle
-        if (worldIn.rand.nextInt(2) == 1)
+        if (worldIn.rand.nextBoolean())
         {
             SoundUtils.playSoundAtCitizenWithChance(worldIn, position, laugh1, PHRASE_CHANCE);
         }
