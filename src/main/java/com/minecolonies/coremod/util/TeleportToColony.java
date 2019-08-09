@@ -101,6 +101,7 @@ public final class TeleportToColony
      * @param colID            the senders colony ID.
      * @param playerToTeleport the player which shall be teleported.
      */
+    @SuppressWarnings("PMD.PrematureDeclaration")
     private static void teleportPlayer(final EntityPlayer playerToTeleport, final int colID, final ICommandSender sender)
     {
         final IColony colony = IColonyManager.getInstance().getColonyByWorld(colID, FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0));

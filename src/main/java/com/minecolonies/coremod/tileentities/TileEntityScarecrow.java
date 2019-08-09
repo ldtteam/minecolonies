@@ -39,6 +39,7 @@ import static net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND;
 /**
  * The scarecrow tile entity to store extra data.
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 public class TileEntityScarecrow extends AbstractScarescrowTileEntity
 {
     /**

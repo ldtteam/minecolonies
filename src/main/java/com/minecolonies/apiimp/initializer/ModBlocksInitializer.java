@@ -26,6 +26,7 @@ public final class ModBlocksInitializer
      *
      * @param registry The registry to register the new blocks.
      */
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
     public static void init(final IForgeRegistry<Block> registry)
     {
         ModBlocks.blockHutBaker = new BlockHutBaker().registerBlock(registry);

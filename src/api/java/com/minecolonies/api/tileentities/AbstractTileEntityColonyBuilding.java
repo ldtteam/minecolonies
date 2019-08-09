@@ -28,7 +28,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityChest
      * @param itemStackSelectionPredicate the itemStack predicate.
      * @return true if found the stack.
      */
-    public static boolean isInTileEntity(ICapabilityProvider entity, @NotNull Predicate<ItemStack> itemStackSelectionPredicate)
+    public static boolean isInTileEntity(final ICapabilityProvider entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
         return InventoryFunctions.matchFirstInProvider(entity, itemStackSelectionPredicate);
     }

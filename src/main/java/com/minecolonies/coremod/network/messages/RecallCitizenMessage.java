@@ -51,7 +51,7 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
      *
      * @param building View of the building the citizen is working in.
      */
-    public RecallCitizenMessage(@NotNull final com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker.View building)
+    public RecallCitizenMessage(@NotNull final AbstractBuildingWorker.View building)
     {
         super();
         this.colonyId = building.getColony().getID();

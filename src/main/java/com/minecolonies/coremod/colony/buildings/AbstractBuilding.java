@@ -28,7 +28,6 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
@@ -78,14 +77,16 @@ import static com.minecolonies.api.util.constant.Suppression.*;
  * We suppress the warning which warns you about referencing child classes in the parent because that's how we register the instances of the childClasses
  * to their views and blocks.
  */
-@SuppressWarnings("squid:S2390")
+@SuppressWarnings({"squid:S2390", "PMD.ExcessiveClassLength"})
 public abstract class AbstractBuilding extends AbstractBuildingContainer implements IBuilding
 {
+    public static final int       MAX_BUILD_HEIGHT = 256;
+    public static final int       MIN_BUILD_HEIGHT = 1;
     /**
      * The data store id for request system related data.
      */
     @NotNull
-    private IToken<?> rsDataStoreToken;
+    private             IToken<?> rsDataStoreToken;
 
     /**
      * The ID of the building. Needed in the request system to identify it.
@@ -294,14 +295,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
               "entity.builder.messageBuildersTooFar");
             return;
         }
-        
-        if(getPosition().getY() + getHeight() >= 256)
+
+        if (getPosition().getY() + getHeight() >= MAX_BUILD_HEIGHT)
         {
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
               "entity.builder.messageBuildTooHigh");
             return;
         }
-        else if(getPosition().getY() <= 1)
+        else if (getPosition().getY() <= MIN_BUILD_HEIGHT)
         {
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
               "entity.builder.messageBuildTooLow");
@@ -593,10 +594,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             }
             else
             {
-                com.minecolonies.blockout.Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be!");
+                Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be!");
                 Log.getLogger().error("Trying to restore order!");
 
-                AbstractTileEntityColonyBuilding tileEntityColonyBuilding = new TileEntityColonyBuilding(getBuildingRegistryEntry().getRegistryName());
+                final AbstractTileEntityColonyBuilding tileEntityColonyBuilding = new TileEntityColonyBuilding(getBuildingRegistryEntry().getRegistryName());
                 colony.getWorld().setTileEntity(getPosition(), tileEntityColonyBuilding);
                 this.tileEntity = tileEntityColonyBuilding;
             }

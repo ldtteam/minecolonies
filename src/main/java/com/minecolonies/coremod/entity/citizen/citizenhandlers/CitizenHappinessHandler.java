@@ -223,6 +223,16 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         if (citizen.getColony().getColonyHappinessManager().getLockedHappinessModifier().isPresent())
             return;
 
+        processDailyHappinessForHomeData(hasHouse);
+        processDailyHappinessForJobData(hasJob);
+        processDailyHappinessForFarmData();
+        processDailyHappinessForToolData();
+
+        citizen.markDirty();
+    }
+
+    private void processDailyHappinessForHomeData(final boolean hasHouse)
+    {
         if (!hasHouse && !citizen.isChild())
         {
             numberOfDaysWithoutHouse++;
@@ -240,7 +250,10 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             numberOfDaysWithoutHouse = 0;
         }
         setHomeModifier(hasHouse);
+    }
 
+    private void processDailyHappinessForJobData(final boolean hasJob)
+    {
         if (!hasJob && !citizen.isChild())
         {
             numberOfDaysWithoutJob++;
@@ -258,7 +271,10 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             numberOfDaysWithoutJob = 0;
         }
         setJobModifier(hasJob);
+    }
 
+    private void processDailyHappinessForFarmData()
+    {
         farmerModifier = 0;
         hasNoFields = true;
         for (final FieldDataModifier field : fieldModifier.values())
@@ -286,7 +302,10 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         {
             farmerModifier = NO_FIELD_MODIFIER;
         }
+    }
 
+    private void processDailyHappinessForToolData()
+    {
         noToolModifier = 0;
         for (final Map.Entry<IToolType, Integer> entry : needsTool.entrySet())
         {
@@ -303,9 +322,6 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
             }
             noToolModifier += (((double) numDays / NO_TOOLS_MAX_DAYS_MODIFIER) * NO_TOOLS_MODIFIER);
         }
-
-        citizen.markDirty();
-
     }
 
     /**
@@ -446,7 +462,9 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
     public double getHappiness()
     {
         if (citizen.getColony().getColonyHappinessManager().getLockedHappinessModifier().isPresent())
+        {
             return citizen.getColony().getColonyHappinessManager().getLockedHappinessModifier().get();
+        }
 
         double value = baseHappiness + foodModifier + damageModifier + houseModifier + jobModifier + farmerModifier + noToolModifier;
         if (value > MAX_HAPPINESS)

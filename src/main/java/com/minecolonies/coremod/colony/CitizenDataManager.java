@@ -18,7 +18,7 @@ public class CitizenDataManager implements ICitizenDataManager
     {
         final int id = compound.getInteger(TAG_ID);
         final @NotNull CitizenData citizen = new CitizenData(id, colony);
-        citizen.readFromNBT(compound);
+        citizen.deserializeNBT(compound);
         return citizen;
     }
 

@@ -77,16 +77,38 @@ public class CitizenStuckHandler implements ICitizenStuckHandler
      */
     private void checkIfStuck()
     {
+        if (handleCitizenNotStuck())
+        {
+            return;
+        }
+
+        stuckTime++;
+
+        if (resetWhenCitizenNotStuck())
+        {
+            return;
+        }
+
+        if (handleCitizenStuck())
+        {
+            return;
+        }
+
+        citizen.setCurrentPosition(citizen.getPosition());
+    }
+
+    private boolean handleCitizenNotStuck()
+    {
         if (citizen.getCurrentPosition() == null)
         {
             citizen.setCurrentPosition(citizen.getPosition());
-            return;
+            return true;
         }
 
         if (citizen.getNavigator().getDestination() == null || citizen.getNavigator().getDestination().distanceSq(citizen.getPosition().getX(), citizen.getPosition().getY(), citizen.getPosition().getZ()) < MOVE_AWAY_RANGE)
         {
             stuckTime = 0;
-            return;
+            return true;
         }
 
         if (!new AxisAlignedBB(citizen.getCurrentPosition()).expand(1, 1, 1)
@@ -94,49 +116,59 @@ public class CitizenStuckHandler implements ICitizenStuckHandler
         {
             stuckTime = 0;
             citizen.setCurrentPosition(citizen.getPosition());
-            return;
+            return true;
         }
+        return false;
+    }
 
-        stuckTime++;
-
+    private boolean resetWhenCitizenNotStuck()
+    {
         if (stuckTime >= MIN_STUCK_TIME + citizen.getRandom().nextInt(MIN_STUCK_TIME) && movingAwayAttempts <= MOVE_AWAY_RETRIES)
         {
             stuckTime = 0;
             movingAwayAttempts++;
             citizen.getNavigator().moveAwayFromXYZ(citizen.getCurrentPosition(), MIN_MOVE_AWAY_RANGE + citizen.getRandom().nextInt(MOVE_AWAY_RANGE), 1);
-            return;
+            return true;
         }
+        return false;
+    }
 
+    private boolean handleCitizenStuck()
+    {
         if (stuckTime >= MAX_STUCK_TIME)
         {
             if (citizen.getNavigator().getDestination().distanceSq(citizen.getPosition().getX(), citizen.getPosition().getY(), citizen.getPosition().getZ()) < MOVE_AWAY_RANGE
                   || (citizen.getNavigator().getDestination().getY() - citizen.getPosition().getY() > 2))
             {
                 stuckTime = 0;
-                return;
+                return true;
             }
 
             movingAwayAttempts = 0;
 
-            final BlockPos destination = BlockPosUtil.getFloor(citizen.getNavigator().getDestination().up(), CompatibilityUtils.getWorldFromCitizen(citizen));
-            @Nullable final BlockPos spawnPoint =
-              Utils.scanForBlockNearPoint
-                      (CompatibilityUtils.getWorldFromCitizen(citizen), destination, 1, 1, 1, 3,
-                        Blocks.AIR,
-                        Blocks.SNOW_LAYER,
-                        Blocks.TALLGRASS,
-                        Blocks.RED_FLOWER,
-                        Blocks.YELLOW_FLOWER,
-                        Blocks.CARPET);
-
-            WorkerUtil.setSpawnPoint(spawnPoint, citizen);
-            if (citizen.getCitizenColonyHandler().getColony() != null)
-            {
-                Log.getLogger().info("Teleported stuck citizen " + citizen.getName() + " from colony: " + citizen.getCitizenColonyHandler().getColonyId() + " to target location");
-            }
-            stuckTime = 0;
+            handleStuckCitizenTeleport();
         }
+        return false;
+    }
 
-        citizen.setCurrentPosition(citizen.getPosition());
+    private void handleStuckCitizenTeleport()
+    {
+        final BlockPos destination = BlockPosUtil.getFloor(citizen.getNavigator().getDestination().up(), CompatibilityUtils.getWorldFromCitizen(citizen));
+        @Nullable final BlockPos spawnPoint =
+          Utils.scanForBlockNearPoint
+                  (CompatibilityUtils.getWorldFromCitizen(citizen), destination, 1, 1, 1, 3,
+                    Blocks.AIR,
+                    Blocks.SNOW_LAYER,
+                    Blocks.TALLGRASS,
+                    Blocks.RED_FLOWER,
+                    Blocks.YELLOW_FLOWER,
+                    Blocks.CARPET);
+
+        WorkerUtil.setSpawnPoint(spawnPoint, citizen);
+        if (citizen.getCitizenColonyHandler().getColony() != null)
+        {
+            Log.getLogger().info("Teleported stuck citizen " + citizen.getName() + " from colony: " + citizen.getCitizenColonyHandler().getColonyId() + " to target location");
+        }
+        stuckTime = 0;
     }
 }

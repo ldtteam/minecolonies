@@ -47,6 +47,7 @@ import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 /**
  * Client side representation of the Colony.
  */
+@SuppressWarnings("PMD.ExcessiveClassLength")
 public final class ColonyView implements IColonyView
 {
     /**
@@ -185,7 +186,7 @@ public final class ColonyView implements IColonyView
      * @return the new colony view.
      */
     @NotNull
-    static ColonyView createFromNetwork(int id)
+    public static ColonyView createFromNetwork(final int id)
     {
         return new ColonyView(id);
     }
@@ -1185,11 +1186,10 @@ public final class ColonyView implements IColonyView
         return style;
     }
 
-    ////////TODO: Figure out how to implement these on
     @Override
     public void setStyle(final String style)
     {
-
+        ////////TODO: Figure out how to implement these on
     }
 
     @Override

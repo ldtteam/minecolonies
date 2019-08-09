@@ -564,7 +564,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @return boolean, delivery priority state.
      */
     @Override
-    public boolean getBuildingDmPrioState()
+    public boolean isBuildingDmPrioState()
     {
         return buildingDmPrioState;
     }

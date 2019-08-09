@@ -10,10 +10,19 @@ import java.util.function.Predicate;
 
 public abstract class AbstractTileEntityWareHouse extends TileEntityColonyBuilding
 {
+    /**
+     * Empty constructor used to create TileEntities reflectively. Do not use.
+     */
     public AbstractTileEntityWareHouse()
     {
+        super();
     }
 
+    /**
+     * Constructor that creates a new warehouse tile entity.
+     *
+     * @param resourceName The building entry registry name for the warehouse building type this tile entity belongs to.
+     */
     public AbstractTileEntityWareHouse(final ResourceLocation resourceName) {super(resourceName);}
 
     public abstract boolean hasMatchingItemStackInWarehouse(@NotNull Predicate<ItemStack> itemStackSelectionPredicate, int count);

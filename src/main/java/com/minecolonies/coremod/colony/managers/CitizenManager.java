@@ -26,6 +26,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -100,7 +101,7 @@ public class CitizenManager implements ICitizenManager
     {
         compound.setInteger(TAG_MAX_CITIZENS, maxCitizens);
 
-        @NotNull final NBTTagList citizenTagList = citizens.values().stream().map(citizen -> citizen.writeToNBT(new NBTTagCompound())).collect(NBTUtils.toNBTTagList());
+        @NotNull final NBTTagList citizenTagList = citizens.values().stream().map(INBTSerializable::serializeNBT).collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_CITIZENS, citizenTagList);
     }
 
@@ -150,38 +151,48 @@ public class CitizenManager implements ICitizenManager
 
         if (spawnPoint != null)
         {
-
-            ICitizenData citizenData = data;
-            if (citizenData == null)
-            {
-                citizenData = createAndRegisterNewCitizenData();
-
-                if (getMaxCitizens() == getCitizens().size() && !force)
-                {
-                    LanguageHandler.sendPlayersMessage(
-                      colony.getMessageEntityPlayers(),
-                      "tile.blockHutTownHall.messageMaxSize",
-                      colony.getName());
-                }
-            }
-            final EntityCitizen entity = new EntityCitizen(world);
-            citizenData.setCitizenEntity(entity);
-
-            entity.getCitizenColonyHandler().initEntityCitizenValues(colony, citizenData);
-
-            entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
-            world.spawnEntity(entity);
-
-            colony.getProgressManager().progressCitizenSpawn(citizens.size(), citizens.values().stream().filter(tempDate -> tempDate.getJob() != null).collect(Collectors.toList()).size());
-            colony.getStatsManager().checkAchievements();
-            markCitizensDirty();
-            return citizenData;
+            return spawnCitizenOnPosition(data, world, force, spawnPoint);
         }
         else
         {
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.citizens.nospace");
         }
         return data;
+    }
+
+    @NotNull
+    private ICitizenData spawnCitizenOnPosition(
+      @Nullable final ICitizenData data,
+      @NotNull final World world,
+      final boolean force,
+      final BlockPos spawnPoint)
+    {
+        ICitizenData citizenData = data;
+        if (citizenData == null)
+        {
+            citizenData = createAndRegisterNewCitizenData();
+
+            if (getMaxCitizens() == getCitizens().size() && !force)
+            {
+                LanguageHandler.sendPlayersMessage(
+                  colony.getMessageEntityPlayers(),
+                  "tile.blockHutTownHall.messageMaxSize",
+                  colony.getName());
+            }
+        }
+        final EntityCitizen entity = new EntityCitizen(world);
+        citizenData.setCitizenEntity(entity);
+
+        entity.getCitizenColonyHandler().initEntityCitizenValues(colony, citizenData);
+
+        entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
+        world.spawnEntity(entity);
+
+        colony.getProgressManager()
+          .progressCitizenSpawn(citizens.size(), citizens.values().stream().filter(tempDate -> tempDate.getJob() != null).collect(Collectors.toList()).size());
+        colony.getStatsManager().checkAchievements();
+        markCitizensDirty();
+        return citizenData;
     }
 
     @Override

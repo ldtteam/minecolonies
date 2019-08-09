@@ -113,6 +113,7 @@ public final class PirateEventUtils
                 break;
             default:
                 Log.getLogger().warn("Invalid ship size detected!");
+                break;
         }
     }
 

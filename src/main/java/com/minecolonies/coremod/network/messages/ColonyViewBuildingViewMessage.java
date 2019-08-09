@@ -39,6 +39,7 @@ public class ColonyViewBuildingViewMessage extends AbstractMessage<ColonyViewBui
      */
     public ColonyViewBuildingViewMessage(@NotNull final IBuilding building)
     {
+        super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.buildingData = Unpooled.buffer();

@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.mobs.pirates;
 
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import com.minecolonies.api.entity.mobs.pirates.IArcherPirateEntity;
+import com.minecolonies.api.util.constant.LootTableConstants;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -26,6 +27,6 @@ public class EntityArcherPirate extends AbstractEntityPirate implements IArcherP
     @Override
     protected ResourceLocation getLootTable()
     {
-        return LOOT_TABLE;
+        return LootTableConstants.ARCHER_PIRATE_DROPS;
     }
 }

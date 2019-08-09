@@ -309,7 +309,7 @@ public class CombinedItemHandler
 
     protected IItemHandlerModifiable[] getHandlers()
     {
-        return handlers;
+        return handlers.clone();
     }
 
 

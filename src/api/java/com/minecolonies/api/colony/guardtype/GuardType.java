@@ -24,6 +24,7 @@ public class GuardType extends IForgeRegistryEntry.Impl<GuardType>
       final String buttonTranslationKey,
       final IBuildingWorker.Skill primarySkill, final IBuildingWorker.Skill secondarySkill, final String workerSoundName)
     {
+        super();
         this.guardJobProducer = guardJobProducer;
         this.jobTranslationKey = jobTranslationKey;
         this.buttonTranslationKey = buttonTranslationKey;

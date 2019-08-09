@@ -47,7 +47,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Extra data for Citizens.
  */
-@SuppressWarnings(Suppression.BIG_CLASS)
+@SuppressWarnings({Suppression.BIG_CLASS, "PMD.ExcessiveClassLength"})
 public class CitizenData implements ICitizenData
 {
 
@@ -222,79 +222,6 @@ public class CitizenData implements ICitizenData
         this.colony = colony;
         inventory = new InventoryCitizen("Minecolonies Inventory", true, this);
         this.citizenHappinessHandler = new CitizenHappinessHandler(this);
-    }
-
-    /**
-     * Reads data from NBT-tag compound.
-     *
-     * @param compound NBT-Tag compound.
-     */
-    @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
-    {
-        name = compound.getString(TAG_NAME);
-        female = compound.getBoolean(TAG_FEMALE);
-        paused = compound.getBoolean(TAG_PAUSED);
-        isChild = compound.getBoolean(TAG_CHILD);
-        textureId = compound.getInteger(TAG_TEXTURE);
-
-        health = compound.getFloat(TAG_HEALTH);
-        maxHealth = compound.getFloat(TAG_MAX_HEALTH);
-
-        final NBTTagCompound nbtTagSkillsCompound = compound.getCompoundTag("skills");
-        strength = nbtTagSkillsCompound.getInteger("strength");
-        endurance = nbtTagSkillsCompound.getInteger("endurance");
-        charisma = nbtTagSkillsCompound.getInteger("charisma");
-        intelligence = nbtTagSkillsCompound.getInteger("intelligence");
-        dexterity = nbtTagSkillsCompound.getInteger("dexterity");
-        saturation = compound.getDouble(TAG_SATURATION);
-
-        if (compound.hasKey("job"))
-        {
-            setJob(IJobDataManager.getInstance().createFrom(this, compound.getCompoundTag("job")));
-        }
-
-        //  Attributes
-        if (compound.hasKey(TAG_LEVEL_MAP))
-        {
-            final NBTTagList levelTagList = compound.getTagList(TAG_LEVEL_MAP, Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < levelTagList.tagCount(); ++i)
-            {
-                final NBTTagCompound levelExperienceAtJob = levelTagList.getCompoundTagAt(i);
-                levelExperienceMap.put(levelExperienceAtJob.getString(TAG_NAME),
-                  new Tuple<>(Math.min(levelExperienceAtJob.getInteger(TAG_LEVEL), MAX_CITIZEN_LEVEL), levelExperienceAtJob.getDouble(TAG_EXPERIENCE)));
-            }
-        }
-        else if (job != null)
-        {
-            levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(compound.getInteger(TAG_LEVEL), compound.getDouble(TAG_EXPERIENCE)));
-        }
-
-        if (compound.hasKey(TAG_INVENTORY))
-        {
-            final NBTTagList nbttaglist = compound.getTagList(TAG_INVENTORY, 10);
-            this.inventory.readFromNBT(nbttaglist);
-            this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInteger(TAG_HELD_ITEM_SLOT));
-            this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
-        }
-
-        if (name.isEmpty())
-        {
-            name = generateName(new Random());
-        }
-
-        if (compound.hasKey(TAG_ASLEEP))
-        {
-            bedPos = BlockPosUtil.readFromNBT(compound, TAG_POS);
-            isAsleep = compound.getBoolean(TAG_ASLEEP);
-        }
-
-        if (compound.hasKey(TAG_JUST_ATE))
-        {
-            justAte = compound.getBoolean(TAG_JUST_ATE);
-        }
-
-        citizenHappinessHandler.readFromNBT(compound);
     }
 
     /**
@@ -842,67 +769,6 @@ public class CitizenData implements ICitizenData
         }
 
         return null;
-    }
-
-    /**
-     * Writes the citizen data to an NBT-compound.
-     *
-     * @param compound NBT-Tag compound.
-     * @return return the data in NBT format
-     */
-    @Override
-    public NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound)
-    {
-        compound.setInteger(TAG_ID, id);
-        compound.setString(TAG_NAME, name);
-        compound.setBoolean(TAG_FEMALE, female);
-        compound.setBoolean(TAG_PAUSED, paused);
-        compound.setBoolean(TAG_CHILD, isChild);
-        compound.setInteger(TAG_TEXTURE, textureId);
-
-        //  Attributes
-
-        @NotNull final NBTTagList levelTagList = new NBTTagList();
-        for (@NotNull final Map.Entry<String, Tuple<Integer, Double>> entry : levelExperienceMap.entrySet())
-        {
-            @NotNull final NBTTagCompound levelCompound = new NBTTagCompound();
-            levelCompound.setString(TAG_NAME, entry.getKey());
-            levelCompound.setInteger(TAG_LEVEL, entry.getValue().getFirst());
-            levelCompound.setDouble(TAG_EXPERIENCE, entry.getValue().getSecond());
-            levelTagList.appendTag(levelCompound);
-        }
-        compound.setTag(TAG_LEVEL_MAP, levelTagList);
-
-        compound.setDouble(TAG_HEALTH, health);
-        compound.setDouble(TAG_MAX_HEALTH, maxHealth);
-
-
-        @NotNull final NBTTagCompound nbtTagSkillsCompound = new NBTTagCompound();
-        nbtTagSkillsCompound.setInteger(TAG_SKILL_STRENGTH, strength);
-        nbtTagSkillsCompound.setInteger(TAG_SKILL_STAMINA, endurance);
-        nbtTagSkillsCompound.setInteger(TAG_SKILL_SPEED, charisma);
-        nbtTagSkillsCompound.setInteger(TAG_SKILL_INTELLIGENCE, intelligence);
-        nbtTagSkillsCompound.setInteger(TAG_SKILL_DEXTERITY, dexterity);
-        compound.setTag(TAG_SKILLS, nbtTagSkillsCompound);
-        compound.setDouble(TAG_SATURATION, saturation);
-
-        if (job != null)
-        {
-            @NotNull final NBTBase jobCompound = job.serializeNBT();
-            compound.setTag("job", jobCompound);
-        }
-
-        compound.setTag(TAG_INVENTORY, inventory.writeToNBT(new NBTTagList()));
-        compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.MAIN_HAND));
-        compound.setInteger(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.OFF_HAND));
-
-        BlockPosUtil.writeToNBT(compound, TAG_POS, bedPos);
-        compound.setBoolean(TAG_ASLEEP, isAsleep);
-        compound.setBoolean(TAG_JUST_ATE, justAte);
-
-        citizenHappinessHandler.writeToNBT(compound);
-
-        return compound;
     }
 
     /**
@@ -1568,12 +1434,125 @@ public class CitizenData implements ICitizenData
     @Override
     public NBTTagCompound serializeNBT()
     {
-        return null;
+        final NBTTagCompound nbtTagCompound = new NBTTagCompound();
+
+        nbtTagCompound.setInteger(TAG_ID, id);
+        nbtTagCompound.setString(TAG_NAME, name);
+        nbtTagCompound.setBoolean(TAG_FEMALE, female);
+        nbtTagCompound.setBoolean(TAG_PAUSED, paused);
+        nbtTagCompound.setBoolean(TAG_CHILD, isChild);
+        nbtTagCompound.setInteger(TAG_TEXTURE, textureId);
+
+        //  Attributes
+
+        @NotNull final NBTTagList levelTagList = new NBTTagList();
+        for (@NotNull final Map.Entry<String, Tuple<Integer, Double>> entry : levelExperienceMap.entrySet())
+        {
+            @NotNull final NBTTagCompound levelCompound = new NBTTagCompound();
+            levelCompound.setString(TAG_NAME, entry.getKey());
+            levelCompound.setInteger(TAG_LEVEL, entry.getValue().getFirst());
+            levelCompound.setDouble(TAG_EXPERIENCE, entry.getValue().getSecond());
+            levelTagList.appendTag(levelCompound);
+        }
+        nbtTagCompound.setTag(TAG_LEVEL_MAP, levelTagList);
+
+        nbtTagCompound.setDouble(TAG_HEALTH, health);
+        nbtTagCompound.setDouble(TAG_MAX_HEALTH, maxHealth);
+
+
+        @NotNull final NBTTagCompound nbtTagSkillsCompound = new NBTTagCompound();
+        nbtTagSkillsCompound.setInteger(TAG_SKILL_STRENGTH, strength);
+        nbtTagSkillsCompound.setInteger(TAG_SKILL_STAMINA, endurance);
+        nbtTagSkillsCompound.setInteger(TAG_SKILL_SPEED, charisma);
+        nbtTagSkillsCompound.setInteger(TAG_SKILL_INTELLIGENCE, intelligence);
+        nbtTagSkillsCompound.setInteger(TAG_SKILL_DEXTERITY, dexterity);
+        nbtTagCompound.setTag(TAG_SKILLS, nbtTagSkillsCompound);
+        nbtTagCompound.setDouble(TAG_SATURATION, saturation);
+
+        if (job != null)
+        {
+            @NotNull final NBTBase jobCompound = job.serializeNBT();
+            nbtTagCompound.setTag("job", jobCompound);
+        }
+
+        nbtTagCompound.setTag(TAG_INVENTORY, inventory.writeToNBT(new NBTTagList()));
+        nbtTagCompound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.MAIN_HAND));
+        nbtTagCompound.setInteger(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.OFF_HAND));
+
+        BlockPosUtil.writeToNBT(nbtTagCompound, TAG_POS, bedPos);
+        nbtTagCompound.setBoolean(TAG_ASLEEP, isAsleep);
+        nbtTagCompound.setBoolean(TAG_JUST_ATE, justAte);
+
+        citizenHappinessHandler.writeToNBT(nbtTagCompound);
+
+        return nbtTagCompound;
     }
 
     @Override
     public void deserializeNBT(final NBTTagCompound nbtTagCompound)
     {
+        name = nbtTagCompound.getString(TAG_NAME);
+        female = nbtTagCompound.getBoolean(TAG_FEMALE);
+        paused = nbtTagCompound.getBoolean(TAG_PAUSED);
+        isChild = nbtTagCompound.getBoolean(TAG_CHILD);
+        textureId = nbtTagCompound.getInteger(TAG_TEXTURE);
 
+        health = nbtTagCompound.getFloat(TAG_HEALTH);
+        maxHealth = nbtTagCompound.getFloat(TAG_MAX_HEALTH);
+
+        final NBTTagCompound nbtTagSkillsCompound = nbtTagCompound.getCompoundTag("skills");
+        strength = nbtTagSkillsCompound.getInteger("strength");
+        endurance = nbtTagSkillsCompound.getInteger("endurance");
+        charisma = nbtTagSkillsCompound.getInteger("charisma");
+        intelligence = nbtTagSkillsCompound.getInteger("intelligence");
+        dexterity = nbtTagSkillsCompound.getInteger("dexterity");
+        saturation = nbtTagCompound.getDouble(TAG_SATURATION);
+
+        if (nbtTagCompound.hasKey("job"))
+        {
+            setJob(IJobDataManager.getInstance().createFrom(this, nbtTagCompound.getCompoundTag("job")));
+        }
+
+        //  Attributes
+        if (nbtTagCompound.hasKey(TAG_LEVEL_MAP))
+        {
+            final NBTTagList levelTagList = nbtTagCompound.getTagList(TAG_LEVEL_MAP, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < levelTagList.tagCount(); ++i)
+            {
+                final NBTTagCompound levelExperienceAtJob = levelTagList.getCompoundTagAt(i);
+                levelExperienceMap.put(levelExperienceAtJob.getString(TAG_NAME),
+                  new Tuple<>(Math.min(levelExperienceAtJob.getInteger(TAG_LEVEL), MAX_CITIZEN_LEVEL), levelExperienceAtJob.getDouble(TAG_EXPERIENCE)));
+            }
+        }
+        else if (job != null)
+        {
+            levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(nbtTagCompound.getInteger(TAG_LEVEL), nbtTagCompound.getDouble(TAG_EXPERIENCE)));
+        }
+
+        if (nbtTagCompound.hasKey(TAG_INVENTORY))
+        {
+            final NBTTagList nbttaglist = nbtTagCompound.getTagList(TAG_INVENTORY, 10);
+            this.inventory.readFromNBT(nbttaglist);
+            this.inventory.setHeldItem(EnumHand.MAIN_HAND, nbtTagCompound.getInteger(TAG_HELD_ITEM_SLOT));
+            this.inventory.setHeldItem(EnumHand.OFF_HAND, nbtTagCompound.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
+        }
+
+        if (name.isEmpty())
+        {
+            name = generateName(new Random());
+        }
+
+        if (nbtTagCompound.hasKey(TAG_ASLEEP))
+        {
+            bedPos = BlockPosUtil.readFromNBT(nbtTagCompound, TAG_POS);
+            isAsleep = nbtTagCompound.getBoolean(TAG_ASLEEP);
+        }
+
+        if (nbtTagCompound.hasKey(TAG_JUST_ATE))
+        {
+            justAte = nbtTagCompound.getBoolean(TAG_JUST_ATE);
+        }
+
+        citizenHappinessHandler.readFromNBT(nbtTagCompound);
     }
 }

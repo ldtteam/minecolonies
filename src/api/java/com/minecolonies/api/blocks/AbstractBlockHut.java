@@ -41,6 +41,7 @@ import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
  * <p>
  * All AbstractBlockHut[something] should extend this class.
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBlockMinecolonies<B> implements ITileEntityProvider, IBuilderUndestroyable, IAnchorBlock
 {
     /**

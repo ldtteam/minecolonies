@@ -5,19 +5,9 @@ package com.minecolonies.api.entity.pathfinding;
  */
 public class PathResult
 {
-    protected volatile PathFindingStatus status                 = PathFindingStatus.IN_PROGRESS_COMPUTING;
-    protected volatile boolean           pathReachesDestination = false;
-    protected volatile int               pathLength             = 0;
-
-    /**
-     * Public constructor of the path result.
-     */
-    public PathResult()
-    {
-        /**
-         * Intentionally left empty.
-         */
-    }
+    protected PathFindingStatus status                 = PathFindingStatus.IN_PROGRESS_COMPUTING;
+    private   boolean           pathReachesDestination = false;
+    private   int               pathLength             = 0;
 
     /**
      * Get Status of the Path.

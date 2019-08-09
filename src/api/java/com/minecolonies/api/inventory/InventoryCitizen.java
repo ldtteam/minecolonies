@@ -3,6 +3,7 @@ package com.minecolonies.api.inventory;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
@@ -575,7 +576,7 @@ public class InventoryCitizen implements IInventory
                 crashreportcategory.addCrashSection("Item ID", Item.getIdFromItem(itemStackIn.getItem()));
                 crashreportcategory.addCrashSection("Item data", itemStackIn.getMetadata());
                 crashreportcategory.addDetail("Item name", itemStackIn::getDisplayName);
-                throw new ReportedException(crashreport);
+                throw new ReportedException(crashreport); //NOPMD
             }
         }
     }
@@ -760,7 +761,7 @@ public class InventoryCitizen implements IInventory
             if (!(this.mainInventory.get(i)).isEmpty())
             {
                 final NBTTagCompound nbttagcompound = new NBTTagCompound();
-                nbttagcompound.setByte("Slot", (byte) i);
+                nbttagcompound.setByte(NbtTagConstants.NBT_SLOT, (byte) i);
                 (this.mainInventory.get(i)).writeToNBT(nbttagcompound);
                 nbtTagListIn.appendTag(nbttagcompound);
             }
@@ -771,7 +772,7 @@ public class InventoryCitizen implements IInventory
             if (!(this.armorInventory.get(j)).isEmpty())
             {
                 final NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-                nbttagcompound1.setByte("Slot", (byte) (j + 100));
+                nbttagcompound1.setByte(NbtTagConstants.NBT_SLOT, (byte) (j + 100));
                 (this.armorInventory.get(j)).writeToNBT(nbttagcompound1);
                 nbtTagListIn.appendTag(nbttagcompound1);
             }
@@ -782,7 +783,7 @@ public class InventoryCitizen implements IInventory
             if (!(this.offHandInventory.get(k)).isEmpty())
             {
                 final NBTTagCompound nbttagcompound2 = new NBTTagCompound();
-                nbttagcompound2.setByte("Slot", (byte) (k + 150));
+                nbttagcompound2.setByte(NbtTagConstants.NBT_SLOT, (byte) (k + 150));
                 (this.offHandInventory.get(k)).writeToNBT(nbttagcompound2);
                 nbtTagListIn.appendTag(nbttagcompound2);
             }
@@ -805,7 +806,7 @@ public class InventoryCitizen implements IInventory
         for (int i = 0; i < nbtTagListIn.tagCount(); ++i)
         {
             final NBTTagCompound nbttagcompound = nbtTagListIn.getCompoundTagAt(i);
-            final int j = nbttagcompound.getByte("Slot") & 255;
+            final int j = nbttagcompound.getByte(NbtTagConstants.NBT_SLOT) & 255;
             final ItemStack itemstack = new ItemStack(nbttagcompound);
 
             if (!itemstack.isEmpty())

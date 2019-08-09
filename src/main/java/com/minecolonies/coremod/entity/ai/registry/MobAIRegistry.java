@@ -40,7 +40,7 @@ public class MobAIRegistry implements IMobAIRegistry
      *
      * @param registry The registry to register the AI tasks to.
      */
-    private static void setupMobAiTasks(IMobAIRegistry registry)
+    private static void setupMobAiTasks(final IMobAIRegistry registry)
     {
         registry
           .registerNewAiTaskForMobs(PRIORITY_ZERO, EntityAISwimming::new)
@@ -104,7 +104,7 @@ public class MobAIRegistry implements IMobAIRegistry
         private final Function<AbstractEntityMinecoloniesMob, EntityAIBase> aiTaskProducer;
         private final Predicate<M>                                          entityPredicate;
 
-        private TaskInformationWrapper(
+        TaskInformationWrapper(
           final int priority,
           final Function<AbstractEntityMinecoloniesMob, EntityAIBase> aiTaskProducer, final Predicate<M> entityPredicate)
         {

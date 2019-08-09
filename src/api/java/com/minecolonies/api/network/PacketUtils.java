@@ -8,7 +8,7 @@ import java.util.UUID;
 /**
  * Class with package utils
  */
-public class PacketUtils
+public final class PacketUtils
 {
     /**
      * Private constructor to hide implicit one.

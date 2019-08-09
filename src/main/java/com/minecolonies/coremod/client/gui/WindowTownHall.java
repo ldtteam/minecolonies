@@ -47,6 +47,7 @@ import static com.minecolonies.coremod.commands.colonycommands.ListColoniesComma
 /**
  * Window for the town hall.
  */
+@SuppressWarnings("PMD.ExcessiveClassLength")
 public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 {
     /**

@@ -36,6 +36,7 @@ import static com.minecolonies.api.util.constant.Constants.DEFAULT_VOLUME;
 /**
  * Handles the citizens interaction with an item with the world.
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 public class CitizenItemHandler implements ICitizenItemHandler
 {
     /**
@@ -237,7 +238,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
         heldItem.damageItem(damage, citizen);
 
         //check if tool breaks
-        if (ItemStackUtils.getSize(heldItem) < 1)
+        if (ItemStackUtils.isEmpty(heldItem))
         {
             citizen.getInventoryCitizen().setInventorySlotContents(citizen.getInventoryCitizen().getHeldItemSlot(hand), ItemStackUtils.EMPTY);
             citizen.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStackUtils.EMPTY);
@@ -316,7 +317,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
             }
             stack.damageItem((int) (damage / 2), citizen);
 
-            if (ItemStackUtils.getSize(stack) < 1)
+            if (ItemStackUtils.isEmpty(stack))
             {
                 citizen.setItemStackToSlot(EntityLiving.getSlotForItemStack(stack), ItemStackUtils.EMPTY);
             }

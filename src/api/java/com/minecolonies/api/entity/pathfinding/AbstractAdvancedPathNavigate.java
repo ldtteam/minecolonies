@@ -24,7 +24,7 @@ public abstract class AbstractAdvancedPathNavigate extends PathNavigateGround
     @Nullable
     protected       BlockPos     originalDestination;
     @Nullable
-    protected       Future<Path> future;
+    protected       Future<Path> calculationFuture;
 
     public AbstractAdvancedPathNavigate(
       final EntityLiving entitylivingIn,

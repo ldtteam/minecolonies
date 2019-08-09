@@ -87,62 +87,46 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
         final double citizenHutMaxLevel = home == null ? 1 : home.getMaxBuildingLevel();
         if (citizen.getCitizenData() != null)
         {
-            if ((citizenHutLevel < citizenHutMaxLevel
-                    && Math.pow(2.0, citizenHutLevel + 1.0) <= citizen.getCitizenData().getLevel()) || citizen.getCitizenData().getLevel() >= MAX_CITIZEN_LEVEL)
-            {
-                return;
-            }
-
-            double localXp = xp * skillModifier / EXP_DIVIDER;
-            final double workBuildingLevel = citizen.getCitizenColonyHandler().getWorkBuilding() == null ? 0 : citizen.getCitizenColonyHandler().getWorkBuilding().getBuildingLevel();
-            final double bonusXp = (workBuildingLevel * (1 + citizenHutLevel) / Math.log(citizen.getCitizenData().getLevel() + 2.0D)) / 2;
-            localXp = localXp * bonusXp;
-            final double saturation = citizen.getCitizenData().getSaturation();
-
-            if (saturation < AVERAGE_SATURATION)
-            {
-                if (saturation <= 0)
-                {
-                    return;
-                }
-
-                if (saturation < LOW_SATURATION)
-                {
-                    localXp -= localXp * BIG_SATURATION_FACTOR * saturation;
-                }
-                else
-                {
-                    localXp -= localXp * LOW_SATURATION_FACTOR * saturation;
-                }
-            }
-            else if (saturation > AVERAGE_SATURATION)
-            {
-                if (saturation > HIGH_SATURATION)
-                {
-                    localXp += localXp * BIG_SATURATION_FACTOR * saturation;
-                }
-                else
-                {
-                    localXp += localXp * LOW_SATURATION_FACTOR * saturation;
-                }
-            }
-
-            final double maxValue = Integer.MAX_VALUE - citizen.getCitizenData().getExperience();
-            if (localXp > maxValue)
-            {
-                localXp = maxValue;
-            }
-
-            localXp = applyMending(localXp);
-            citizen.getCitizenData().addExperience(localXp);
-
-            while (ExperienceUtils.getXPNeededForNextLevel(citizen.getCitizenData().getLevel()) < citizen.getCitizenData().getExperience())
-            {
-                citizen.getCitizenData().levelUp();
-            }
-            updateLevel();
-            citizen.markDirty();
+            addExperienceToCitizenData(xp, citizenHutLevel, citizenHutMaxLevel);
         }
+    }
+
+    private void addExperienceToCitizenData(final double xp, final double citizenHutLevel, final double citizenHutMaxLevel)
+    {
+        if ((citizenHutLevel < citizenHutMaxLevel
+               && Math.pow(2.0, citizenHutLevel + 1.0) <= citizen.getCitizenData().getLevel()) || citizen.getCitizenData().getLevel() >= MAX_CITIZEN_LEVEL)
+        {
+            return;
+        }
+
+        double localXp = xp * skillModifier / EXP_DIVIDER;
+        final double workBuildingLevel = citizen.getCitizenColonyHandler().getWorkBuilding() == null ? 0 : citizen.getCitizenColonyHandler().getWorkBuilding().getBuildingLevel();
+        final double bonusXp = (workBuildingLevel * (1 + citizenHutLevel) / Math.log(citizen.getCitizenData().getLevel() + 2.0D)) / 2;
+        localXp = localXp * bonusXp;
+        final double saturation = citizen.getCitizenData().getSaturation();
+
+        XpBasedOnSaturationCalculator xpBasedOnSaturationCalculator = new XpBasedOnSaturationCalculator(localXp, saturation).invoke();
+        if (xpBasedOnSaturationCalculator.is())
+        {
+            return;
+        }
+        localXp = xpBasedOnSaturationCalculator.getLocalXp();
+
+        final double maxValue = Integer.MAX_VALUE - citizen.getCitizenData().getExperience();
+        if (localXp > maxValue)
+        {
+            localXp = maxValue;
+        }
+
+        localXp = applyMending(localXp);
+        citizen.getCitizenData().addExperience(localXp);
+
+        while (ExperienceUtils.getXPNeededForNextLevel(citizen.getCitizenData().getLevel()) < citizen.getCitizenData().getExperience())
+        {
+            citizen.getCitizenData().levelUp();
+        }
+        updateLevel();
+        citizen.markDirty();
     }
 
     /**
@@ -247,5 +231,59 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     public void setLevel(final int level)
     {
         this.level = level;
+    }
+
+    private class XpBasedOnSaturationCalculator
+    {
+        private final double  saturation;
+        private       boolean myResult;
+        private       double  localXp;
+
+        public XpBasedOnSaturationCalculator(final double localXp, final double saturation)
+        {
+            this.localXp = localXp;
+            this.saturation = saturation;
+        }
+
+        boolean is() {return myResult;}
+
+        public double getLocalXp()
+        {
+            return localXp;
+        }
+
+        public XpBasedOnSaturationCalculator invoke()
+        {
+            if (saturation < AVERAGE_SATURATION)
+            {
+                if (saturation <= 0)
+                {
+                    myResult = true;
+                    return this;
+                }
+
+                if (saturation < LOW_SATURATION)
+                {
+                    localXp -= localXp * BIG_SATURATION_FACTOR * saturation;
+                }
+                else
+                {
+                    localXp -= localXp * LOW_SATURATION_FACTOR * saturation;
+                }
+            }
+            else if (saturation > AVERAGE_SATURATION)
+            {
+                if (saturation > HIGH_SATURATION)
+                {
+                    localXp += localXp * BIG_SATURATION_FACTOR * saturation;
+                }
+                else
+                {
+                    localXp += localXp * LOW_SATURATION_FACTOR * saturation;
+                }
+            }
+            myResult = false;
+            return this;
+        }
     }
 }

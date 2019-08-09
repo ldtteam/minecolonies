@@ -94,7 +94,7 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
         super.onOpened();
         if (building.getBuildingLevel() >= BUILDING_LEVEL_FOR_LIST)
         {
-            List<BlockPos> spawnPoints = IColonyView.getLastSpawnPoints();
+            final List<BlockPos> spawnPoints = IColonyView.getLastSpawnPoints();
             if(IColonyView.isRaiding())
             {
                 findPaneOfTypeByID(LABEL_CURRENNT, Label.class).setLabelText(mountDistanceString(spawnPoints.get(spawnPoints.size()-1)));

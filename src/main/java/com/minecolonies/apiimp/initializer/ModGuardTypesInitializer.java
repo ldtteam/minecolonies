@@ -16,6 +16,7 @@ public final class ModGuardTypesInitializer
         throw new IllegalStateException("Tried to initialize: ModGuardTypesInitializer but this is a Utility class.");
     }
 
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
     public static void init(final RegistryEvent.Register<GuardType> event)
     {
         final IForgeRegistry<GuardType> reg = event.getRegistry();

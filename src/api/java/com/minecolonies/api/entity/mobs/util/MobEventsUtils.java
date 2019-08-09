@@ -16,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ public final class MobEventsUtils
             return;
         }
 
-        final Horde horde = numberOfSpawns(colony);
+        final Horde horde = createNewHordeFor(colony);
         final int hordeSize = horde.hordeSize;
         if (hordeSize == 0)
         {
@@ -70,23 +71,9 @@ public final class MobEventsUtils
         colony.getRaiderManager().addRaiderSpawnPoint(targetSpawnPoint);
         colony.markDirty();
 
-        int raidNumber = HUGE_HORDE_MESSAGE_ID;
-        String shipSize = BIG_PIRATE_SHIP;
-        if (hordeSize < SMALL_HORDE_SIZE)
-        {
-            raidNumber = SMALL_HORDE_MESSAGE_ID;
-            shipSize = SMALL_PIRATE_SHIP;
-        }
-        else if (hordeSize < MEDIUM_HORDE_SIZE)
-        {
-            raidNumber = MEDIUM_HORDE_MESSAGE_ID;
-            shipSize = MEDIUM_PIRATE_SHIP;
-        }
-        else if (hordeSize < BIG_HORDE_SIZE)
-        {
-            raidNumber = BIG_HORDE_MESSAGE_ID;
-            shipSize = MEDIUM_PIRATE_SHIP;
-        }
+        HordeSizeCalculator hordeSizeCalculator = new HordeSizeCalculator(hordeSize).invoke();
+        int raidNumber = hordeSizeCalculator.getRaidNumber();
+        String shipSize = hordeSizeCalculator.getShipSize();
 
         colony.setNightsSinceLastRaid(0);
 
@@ -94,25 +81,35 @@ public final class MobEventsUtils
         final Structure structure = new Structure(world, Structures.SCHEMATICS_PREFIX + PirateEventUtils.PIRATESHIP_FOLDER + shipSize, new PlacementSettings());
         structure.rotate(BlockPosUtil.getRotationFromRotations(0), world, targetSpawnPoint, Mirror.NONE);
 
-        if ((world.getBlockState(targetSpawnPoint).getMaterial() == Material.WATER && isSurfaceAreaMostlyWater(world,
-          targetSpawnPoint.add(-structure.getOffset().getX(), 0, -structure.getOffset().getZ()),
-          targetSpawnPoint.add(structure.getWidth() - 1, 0, structure.getLength() - 1).subtract(structure.getOffset()),
-          0.8))
-              || (world.getBlockState(targetSpawnPoint.down()).getMaterial() == Material.WATER && isSurfaceAreaMostlyWater(world,
-          targetSpawnPoint.add(-structure.getOffset().getX(), 0, -structure.getOffset().getZ()).down(),
-          targetSpawnPoint.add(structure.getWidth() - 1, structure.getHeight(), structure.getLength() - 1).subtract(structure.getOffset()).down(),
-          0.8))
-        )
+        targetSpawnPoint = PlaceStructureAndFirePirateEvent(world, colony, targetSpawnPoint, raidNumber, shipSize, structure);
+        if (targetSpawnPoint == null)
         {
-            if (world.getBlockState(targetSpawnPoint).getMaterial() != Material.WATER)
-            {
-                targetSpawnPoint = targetSpawnPoint.down();
-            }
-            PirateEventUtils.pirateEvent(targetSpawnPoint, world, colony, shipSize, raidNumber);
             return;
         }
 
         BarbarianEventUtils.barbarianEvent(world, colony, targetSpawnPoint, raidNumber, horde);
+    }
+
+    /**
+     * Sets the number of spawns for each barbarian type
+     *
+     * @param colony The colony to get the RaidLevel from
+     * @return the total horde strength.
+     */
+    private static Horde createNewHordeFor(final IColony colony)
+    {
+        if (colony.getCitizenManager().getCitizens().size() < MIN_CITIZENS_FOR_RAID)
+        {
+            return new Horde(0, 0, 0, 0);
+        }
+
+        final int raidLevel =
+          Math.min(Configurations.gameplay.maxBarbarianSize, (int) ((getColonyRaidLevel(colony) / SPAWN_MODIFIER) * ((double) Configurations.gameplay.spawnBarbarianSize * 0.1)));
+        final int numberOfChiefs = Math.max(1, (int) (raidLevel * CHIEF_BARBARIANS_MULTIPLIER));
+        final int numberOfArchers = Math.max(1, (int) (raidLevel * ARCHER_BARBARIANS_MULTIPLIER));
+        final int numberOfBarbarians = raidLevel - numberOfChiefs - numberOfArchers;
+
+        return new Horde(raidLevel, numberOfBarbarians, numberOfArchers, numberOfChiefs);
     }
 
     /**
@@ -168,26 +165,35 @@ public final class MobEventsUtils
         return true;
     }
 
-    /**
-     * Sets the number of spawns for each barbarian type
-     *
-     * @param colony The colony to get the RaidLevel from
-     * @return the total horde strength.
-     */
-    private static Horde numberOfSpawns(final IColony colony)
+    @Nullable
+    private static BlockPos PlaceStructureAndFirePirateEvent(
+      final World world,
+      final IColony colony,
+      final BlockPos targetSpawnPoint,
+      final int raidNumber,
+      final String shipSize,
+      final Structure structure)
     {
-        if (colony.getCitizenManager().getCitizens().size() < MIN_CITIZENS_FOR_RAID)
+        BlockPos spawnPoint = targetSpawnPoint;
+
+        if ((world.getBlockState(targetSpawnPoint).getMaterial() == Material.WATER && isSurfaceAreaMostlyWater(world,
+          targetSpawnPoint.add(-structure.getOffset().getX(), 0, -structure.getOffset().getZ()),
+          targetSpawnPoint.add(structure.getWidth() - 1, 0, structure.getLength() - 1).subtract(structure.getOffset()),
+          0.8))
+              || (world.getBlockState(targetSpawnPoint.down()).getMaterial() == Material.WATER && isSurfaceAreaMostlyWater(world,
+          targetSpawnPoint.add(-structure.getOffset().getX(), 0, -structure.getOffset().getZ()).down(),
+          targetSpawnPoint.add(structure.getWidth() - 1, structure.getHeight(), structure.getLength() - 1).subtract(structure.getOffset()).down(),
+          0.8))
+        )
         {
-            return new Horde(0, 0, 0, 0);
+            if (world.getBlockState(targetSpawnPoint).getMaterial() != Material.WATER)
+            {
+                spawnPoint = targetSpawnPoint.down();
+            }
+            PirateEventUtils.pirateEvent(targetSpawnPoint, world, colony, shipSize, raidNumber);
+            return null;
         }
-
-        final int raidLevel =
-          Math.min(Configurations.gameplay.maxBarbarianSize, (int) ((getColonyRaidLevel(colony) / SPAWN_MODIFIER) * ((double) Configurations.gameplay.spawnBarbarianSize * 0.1)));
-        final int numberOfChiefs = Math.max(1, (int) (raidLevel * CHIEF_BARBARIANS_MULTIPLIER));
-        final int numberOfArchers = Math.max(1, (int) (raidLevel * ARCHER_BARBARIANS_MULTIPLIER));
-        final int numberOfBarbarians = raidLevel - numberOfChiefs - numberOfArchers;
-
-        return new Horde(raidLevel, numberOfBarbarians, numberOfArchers, numberOfChiefs);
+        return spawnPoint;
     }
 
     /**
@@ -310,6 +316,47 @@ public final class MobEventsUtils
             this.numberOfRaiders = numberOfRaiders;
             this.numberOfArchers = numberOfArchers;
             this.numberOfBosses = numberOfBosses;
+        }
+    }
+
+    private static class HordeSizeCalculator
+    {
+        private final int    hordeSize;
+        private       int    raidNumber;
+        private       String shipSize;
+
+        public HordeSizeCalculator(final int hordeSize) {this.hordeSize = hordeSize;}
+
+        public int getRaidNumber()
+        {
+            return raidNumber;
+        }
+
+        public String getShipSize()
+        {
+            return shipSize;
+        }
+
+        public HordeSizeCalculator invoke()
+        {
+            raidNumber = HUGE_HORDE_MESSAGE_ID;
+            shipSize = BIG_PIRATE_SHIP;
+            if (hordeSize < SMALL_HORDE_SIZE)
+            {
+                raidNumber = SMALL_HORDE_MESSAGE_ID;
+                shipSize = SMALL_PIRATE_SHIP;
+            }
+            else if (hordeSize < MEDIUM_HORDE_SIZE)
+            {
+                raidNumber = MEDIUM_HORDE_MESSAGE_ID;
+                shipSize = MEDIUM_PIRATE_SHIP;
+            }
+            else if (hordeSize < BIG_HORDE_SIZE)
+            {
+                raidNumber = BIG_HORDE_MESSAGE_ID;
+                shipSize = MEDIUM_PIRATE_SHIP;
+            }
+            return this;
         }
     }
 }

@@ -82,11 +82,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     private static final int MAX_STORAGE_UPGRADE = 3;
 
     /**
-     * The tileEntity of the building.
-     */
-    private AbstractTileEntityWareHouse tileEntity;
-
-    /**
      * Storage upgrade level.
      */
     private int storageUpgrade = 0;

@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSleepHandler;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockHorizontal;
@@ -110,7 +109,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         }
 
         citizen.setPosition( ((float) bedLocation.getX() + HALF_BLOCK),
-          (double) ((float) bedLocation.getY()),
+          (float) bedLocation.getY(),
           ((float) bedLocation.getZ() + HALF_BLOCK));
 
         citizen.motionX = 0.0D;
@@ -135,6 +134,19 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     @Override
     public void onWakeUp()
     {
+        notifyCitizenHandlersOfWakeUp();
+
+        //Only do this if he really sleeps
+        if (!isAsleep())
+        {
+            return;
+        }
+
+        spawnCitizenFromBed();
+    }
+
+    private void notifyCitizenHandlersOfWakeUp()
+    {
         if (citizen.getCitizenColonyHandler().getWorkBuilding() != null)
         {
             citizen.getCitizenStatusHandler().setLatestStatus(new TextComponentTranslation("com.minecolonies.coremod.status.working"));
@@ -150,13 +162,10 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         {
             homeBuilding.onWakeUp();
         }
+    }
 
-        //Only do this if he really sleeps
-        if (!isAsleep())
-        {
-            return;
-        }
-
+    private void spawnCitizenFromBed()
+    {
         final BlockPos spawn;
         if (!getBedLocation().equals(BlockPos.ORIGIN) && citizen.world.getBlockState(getBedLocation()).getBlock() == Blocks.BED)
         {
@@ -169,7 +178,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         if (spawn != null && !spawn.equals(BlockPos.ORIGIN))
         {
-            citizen.setPosition(spawn.getX() + Constants.HALF_BLOCK, spawn.getY() + Constants.HALF_BLOCK, spawn.getZ() + Constants.HALF_BLOCK);
+            citizen.setPosition(spawn.getX() + HALF_BLOCK, spawn.getY() + HALF_BLOCK, spawn.getZ() + HALF_BLOCK);
         }
 
         setIsAsleep(false);

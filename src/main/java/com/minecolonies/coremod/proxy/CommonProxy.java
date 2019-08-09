@@ -5,9 +5,9 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.api.entity.mobs.barbarians.IChiefBarbarianEntity;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.LootTableConstants;
 import com.minecolonies.apiimp.MinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
 import com.minecolonies.coremod.MineColonies;
@@ -265,14 +265,14 @@ public abstract class CommonProxy implements IProxy
           true);
 
         //Register Barbarian loot tables.
-        LootTableList.register(EntityBarbarian.LOOT_TABLE);
-        LootTableList.register(EntityArcherBarbarian.LOOT_TABLE);
-        LootTableList.register(IChiefBarbarianEntity.LOOT_TABLE);
+        LootTableList.register(LootTableConstants.MELEE_BARBARIAN_DROPS);
+        LootTableList.register(LootTableConstants.ARCHER_BARBARIAN_DROPS);
+        LootTableList.register(LootTableConstants.CHIEF_BARBARIAN_DROPS);
 
         //Register Pirate loot tables.
-        LootTableList.register(EntityPirate.LOOT_TABLE);
-        LootTableList.register(EntityArcherPirate.LOOT_TABLE);
-        LootTableList.register(EntityCaptainPirate.LOOT_TABLE);
+        LootTableList.register(LootTableConstants.MELEE_PIRATE_DROPS);
+        LootTableList.register(LootTableConstants.ARCHER_PIRATE_DROPS);
+        LootTableList.register(LootTableConstants.CHIEF_PIRATE_DROPS);
 
         //Register Barbarian spawn eggs
         EntityRegistry.registerEgg(BARBARIAN, PRIMARY_COLOR_BARBARIAN, SECONDARY_COLOR_BARBARIAN);

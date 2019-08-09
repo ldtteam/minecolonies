@@ -1045,6 +1045,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return true if is has to dump more.
      */
+    @SuppressWarnings("PMD.PrematureDeclaration")
     private boolean dumpOneMoreSlot()
     {
         if (walkToBuilding())

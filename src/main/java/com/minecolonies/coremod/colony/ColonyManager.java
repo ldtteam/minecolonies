@@ -46,6 +46,7 @@ import static com.minecolonies.coremod.MineColonies.*;
 /**
  * Singleton class that links colonies to minecraft.
  */
+@SuppressWarnings("PMD.ExcessiveClassLength")
 public final class ColonyManager implements IColonyManager
 {
     /**
@@ -67,7 +68,7 @@ public final class ColonyManager implements IColonyManager
     /**
      * Pseudo unique id for the server
      */
-    private volatile UUID serverUUID = null;
+    private UUID serverUUID = null;
 
     /**
      * Indicate if a schematic have just been downloaded.
@@ -79,11 +80,6 @@ public final class ColonyManager implements IColonyManager
      * If the manager finished loading already.
      */
     private boolean loaded = false;
-
-    public ColonyManager()
-    {
-        //Hides default constructor.
-    }
 
     /**
      * Create a new Colony in the given world and at that location.

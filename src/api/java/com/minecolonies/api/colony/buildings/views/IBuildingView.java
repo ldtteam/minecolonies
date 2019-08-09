@@ -183,7 +183,7 @@ public interface IBuildingView extends IRequester
      *
      * @return boolean, delivery priority state.
      */
-    boolean getBuildingDmPrioState();
+    boolean isBuildingDmPrioState();
 
     ImmutableCollection<IToken<?>> getResolverIds();
 

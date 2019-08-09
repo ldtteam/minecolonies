@@ -18,6 +18,7 @@ public final class ModItemsInitializer
     /**
      * Initates all the blocks. At the correct time.
      */
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
     public static void init(final IForgeRegistry<Item> registry)
     {
         ModItems.supplyChest = new ItemSupplyChestDeployer();

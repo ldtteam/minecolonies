@@ -24,8 +24,8 @@ public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> exte
     }
 
     public static IBlockState changeStateOverFullness(
-      AbstractTileEntityBarrel entity,
-      IBlockState blockState
+      final AbstractTileEntityBarrel entity,
+      final IBlockState blockState
     )
     {
 

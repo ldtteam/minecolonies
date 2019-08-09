@@ -17,7 +17,7 @@ public class PathNavigateRegistry implements IPathNavigateRegistry
 {
     private static final Function<EntityLiving, AbstractAdvancedPathNavigate> DEFAULT = (entityLiving -> new MinecoloniesAdvancedPathNavigate(entityLiving, entityLiving.world));
 
-    Map<Predicate<EntityLiving>, Function<EntityLiving, AbstractAdvancedPathNavigate>> registry = Maps.newLinkedHashMap();
+    private final Map<Predicate<EntityLiving>, Function<EntityLiving, AbstractAdvancedPathNavigate>> registry = Maps.newLinkedHashMap();
 
     @Override
     public IPathNavigateRegistry registerNewPathNavigate(

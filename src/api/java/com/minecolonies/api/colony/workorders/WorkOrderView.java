@@ -45,16 +45,6 @@ public class WorkOrderView
     private BlockPos pos;
 
     /**
-     * Public constructor of the WorkOrderView.
-     */
-    public WorkOrderView()
-    {
-        /*
-         * Intentionally left empty.
-         */
-    }
-
-    /**
      * Priority getter.
      *
      * @return the priority.

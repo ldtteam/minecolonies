@@ -81,6 +81,7 @@ public final class SoundUtils
      * @param citizen    the citizen to play the sound for.
      * @param saturation the saturation of the citizen.
      */
+    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     public static void playRandomSound(@NotNull final World worldIn, @NotNull final AbstractEntityCitizen citizen, final double saturation)
     {
         if (1 >= rand.nextInt(CHANCE_TO_PLAY_SOUND))

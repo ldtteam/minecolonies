@@ -106,7 +106,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
     public void cleanupChatMessages()
     {
         //Only check if there are messages and once a second
-        if (statusMessages.size() > 0 && citizen.ticksExisted % TICKS_20 == 0)
+        if (!statusMessages.isEmpty() && citizen.ticksExisted % TICKS_20 == 0)
         {
             statusMessages.entrySet().removeIf(stringIntegerEntry -> citizen.ticksExisted - stringIntegerEntry.getValue() > TICKS_20 * Configurations.gameplay.chatFrequency);
         }

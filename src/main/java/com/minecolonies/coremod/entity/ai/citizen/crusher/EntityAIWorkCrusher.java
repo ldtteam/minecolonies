@@ -173,7 +173,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
 
         if (maxCraftingCount == 0)
         {
-            PublicCrafting crafting = (PublicCrafting) job.getCurrentTask().getRequest();
+            final PublicCrafting crafting = (PublicCrafting) job.getCurrentTask().getRequest();
             maxCraftingCount = CraftingUtils.calculateMaxCraftingCount(crafting.getCount(), currentRecipeStorage);
         }
 

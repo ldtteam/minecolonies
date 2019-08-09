@@ -89,7 +89,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
 
     private int prio = building.getBuildingDmPrio();
 
-    private boolean state = building.getBuildingDmPrioState();
+    private boolean state = building.isBuildingDmPrioState();
 
     private String stateString = state ? DP_MODE_STATIC : DP_MODE_AUTOMATIC;
 

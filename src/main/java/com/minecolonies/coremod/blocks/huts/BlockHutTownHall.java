@@ -77,7 +77,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
             {
                 if (Configurations.gameplay.enableDynamicColonySizes)
                 {
-                    IColony ownedColony = IColonyManager.getInstance().getIColonyByOwner(worldIn, (EntityPlayer) placer);
+                    final IColony ownedColony = IColonyManager.getInstance().getIColonyByOwner(worldIn, (EntityPlayer) placer);
 
                     if (ownedColony == null)
                     {
