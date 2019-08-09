@@ -34,10 +34,8 @@ import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.util.PermissionUtils;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIOpenDoor;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
@@ -205,9 +203,14 @@ public class EntityCitizen extends AbstractEntityCitizen
      *
      * @param world the world the citizen lives in.
      */
-    public EntityCitizen(final World world)
+    /**
+     * Constructor for a new citizen typed entity.
+     *
+     * @param world the world.
+     */
+    public EntityCitizen(final EntityType<? extends AgeableEntity> type, final World world)
     {
-        super(world);
+        super(type, world);
         this.citizenExperienceHandler = new CitizenExperienceHandler(this);
         this.citizenChatHandler = new CitizenChatHandler(this);
         this.citizenStatusHandler = new CitizenStatusHandler(this);
@@ -217,7 +220,8 @@ public class EntityCitizen extends AbstractEntityCitizen
         this.citizenJobHandler = new CitizenJobHandler(this);
         this.citizenSleepHandler = new CitizenSleepHandler(this);
         this.citizenStuckHandler = new CitizenStuckHandler(this);
-
+        setCitizensize();
+        this.getType().siz
         setSize((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT);
         this.enablePersistence();
         this.setAlwaysRenderNameTag(MineColonies.getConfig().getCommon().gameplay.alwaysRenderNameTag);
