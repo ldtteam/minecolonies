@@ -5,12 +5,11 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.MathUtils;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.item.ExperienceOrbEntity;
-import net.minecraft.init.Enchantments;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
@@ -158,10 +157,10 @@ public final class EntityFishHook extends Entity
         this.posZ -= Math.sin(this.rotationYaw / HALF_CIRCLE * Math.PI) * INITIAL_MOVEMENT_LIMITER;
         this.setPosition(this.posX, this.posY, this.posZ);
         final double f = 0.4;
-        this.motionX = -Math.sin(this.rotationYaw / HALF_CIRCLE * Math.PI) * Math.cos(this.rotationPitch / HALF_CIRCLE * Math.PI) * f;
-        this.motionZ = Math.cos(this.rotationYaw / HALF_CIRCLE * Math.PI) * Math.cos(this.rotationPitch / HALF_CIRCLE * Math.PI) * f;
-        this.motionY = -Math.sin(this.rotationPitch / HALF_CIRCLE * Math.PI) * f;
-        this.setPosition(this.motionX, this.motionY, this.motionZ, 1.5, 1.0);
+        this.setMotion(-Math.sin(this.rotationYaw / HALF_CIRCLE * Math.PI) * Math.cos(this.rotationPitch / HALF_CIRCLE * Math.PI) * f,
+          Math.cos(this.rotationYaw / HALF_CIRCLE * Math.PI) * Math.cos(this.rotationPitch / HALF_CIRCLE * Math.PI) * f,
+          -Math.sin(this.rotationPitch / HALF_CIRCLE * Math.PI) * f);
+        this.setPosition(this.getMotion().x, this.getMotion().y, this.getMotion().z, 1.5, 1.0);
         fishingSpeedEnchantment = EnchantmentHelper.getEnchantmentLevel(Enchantments.LURE, citizen.getHeldItemMainhand());
         fishingLootEnchantment = EnchantmentHelper.getEnchantmentLevel(Enchantments.LUCK_OF_THE_SEA, citizen.getHeldItemMainhand());
     }
@@ -194,9 +193,7 @@ public final class EntityFishHook extends Entity
         newX *= yaw;
         newY *= yaw;
         newZ *= yaw;
-        this.motionX = newX;
-        this.motionY = newY;
-        this.motionZ = newZ;
+        this.setMotion(newX, newY, newZ);
         this.prevRotationYaw = this.rotationYaw = (float) (Math.atan2(newX, newZ) * HALF_CIRCLE / Math.PI);
         this.prevRotationPitch = this.rotationPitch = (float) (Math.atan2(newY, Math.sqrt(newX * newX + newZ * newZ)) * HALF_CIRCLE / Math.PI);
     }
@@ -209,18 +206,6 @@ public final class EntityFishHook extends Entity
     public AbstractEntityCitizen getCitizen()
     {
         return citizen;
-    }
-
-    /**
-     * Minecraft may call this method.
-     */
-    @Override
-    protected void entityInit()
-    {
-        /**
-         * No need to use this method.
-         * It will be ignored.
-         */
     }
 
     @Override
@@ -239,12 +224,12 @@ public final class EntityFishHook extends Entity
      * Called to update the entity's position/logic.
      */
     @Override
-    public void onUpdate()
+    public void tick()
     {
-        super.onUpdate();
+        super.tick();
         if (fishHookIsOverTimeToLive())
         {
-            this.setDead();
+            this.remove();
         }
         bounceFromGround();
         if (this.inGround)
@@ -302,9 +287,7 @@ public final class EntityFishHook extends Entity
     @OnlyIn(Dist.CLIENT.CLIENT)
     public void setVelocity(final double vectorX, final double vectorY, final double vectorZ)
     {
-        this.motionX = vectorX;
-        this.motionY = vectorY;
-        this.motionZ = vectorZ;
+        this.setMotion(vectorX, vectorY, vectorZ);
     }
 
     /**
@@ -337,9 +320,9 @@ public final class EntityFishHook extends Entity
         }
 
         this.inGround = false;
-        this.motionX *= (this.rand.nextDouble() * BOUNCE_MOVEMENT_LIMITER);
-        this.motionY *= (this.rand.nextDouble() * BOUNCE_MOVEMENT_LIMITER);
-        this.motionZ *= (this.rand.nextDouble() * BOUNCE_MOVEMENT_LIMITER);
+        this.setMotion(this.getMotion().getX() * (this.rand.nextDouble() * BOUNCE_MOVEMENT_LIMITER),
+          this.getMotion().getY() * (this.rand.nextDouble() * BOUNCE_MOVEMENT_LIMITER),
+        this.getMotion().getZ() * (this.rand.nextDouble() * BOUNCE_MOVEMENT_LIMITER));
     }
 
     /**
@@ -366,12 +349,12 @@ public final class EntityFishHook extends Entity
             final double d4 = this.getBoundingBox().minY + (this.getBoundingBox().maxY - this.getBoundingBox().minY) * (j + 1) / numSteps;
 
             @NotNull final AxisAlignedBB axisAlignedBB1 = new AxisAlignedBB(
-                                                                             this.getBoundingBox().minX,
-                                                                             d3,
-                                                                             this.getBoundingBox().minZ,
-                                                                             this.getBoundingBox().maxX,
-                                                                             d4,
-                                                                             this.getBoundingBox().maxZ);
+              this.getBoundingBox().minX,
+              d3,
+              this.getBoundingBox().minZ,
+              this.getBoundingBox().maxX,
+              d4,
+              this.getBoundingBox().maxZ);
 
             //If the hook is swimming
             if (CompatibilityUtils.getWorldFromEntity(this).isMaterialInBB(axisAlignedBB1, Material.WATER))
@@ -383,17 +366,17 @@ public final class EntityFishHook extends Entity
         checkIfFishBites(waterDensity);
 
         final double currentDistance = waterDensity * 2.0D - 1.0;
-        this.motionY += WATER_MOVEMENT_LIMITER * currentDistance;
+        this.setMotion(this.getMotion().getX(), this.getMotion().getY() + WATER_MOVEMENT_LIMITER * currentDistance, this.getMotion().getZ());
 
         if (waterDensity > 0.0)
         {
             movementLimiter *= 0.9;
-            this.motionY *= 0.8;
+            this.setMotion(this.getMotion().getX(), this.getMotion().getY() * 0.8, this.getMotion().getZ());
         }
 
-        this.motionX *= movementLimiter;
-        this.motionY *= movementLimiter;
-        this.motionZ *= movementLimiter;
+        this.setMotion(this.getMotion().getX() * movementLimiter,
+          this.getMotion().getY() * movementLimiter,
+          this.getMotion().getZ() * movementLimiter);
         this.setPosition(this.posX, this.posY, this.posZ);
     }
 
@@ -403,10 +386,10 @@ public final class EntityFishHook extends Entity
      */
     private void updateMotionAndRotation()
     {
-        this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
-        final double motion = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
-        this.rotationYaw = (float) (Math.atan2(this.motionY, this.motionZ) * HALF_CIRCLE / Math.PI);
-        this.rotationPitch = (float) (Math.atan2(this.motionY, motion) * HALF_CIRCLE / Math.PI);
+        this.move(MoverType.SELF, this.getMotion());
+        final double motion = Math.sqrt(this.getMotion().getX() * this.getMotion().getX() + this.getMotion().getZ() * this.getMotion().getZ());
+        this.rotationYaw = (float) (Math.atan2(this.getMotion().getY(), this.getMotion().getZ()) * HALF_CIRCLE / Math.PI);
+        this.rotationPitch = (float) (Math.atan2(this.getMotion().getY(), motion) * HALF_CIRCLE / Math.PI);
         while ((double) this.rotationPitch - (double) this.prevRotationPitch < -HALF_CIRCLE)
         {
             this.prevRotationPitch -= 360.0;
@@ -447,7 +430,8 @@ public final class EntityFishHook extends Entity
             int fishingProgressStep = 1;
 
             if (this.rand.nextDouble() < NO_CLEAR_SKY_CHANCE
-                  && !CompatibilityUtils.getWorldFromEntity(this).canBlockSeeSky(new BlockPos(MathHelper.floor(this.posX), MathHelper.floor(this.posY) + 1, MathHelper.floor(this.posZ))))
+                  && !CompatibilityUtils.getWorldFromEntity(this)
+                        .canBlockSeeSky(new BlockPos(MathHelper.floor(this.posX), MathHelper.floor(this.posY) + 1, MathHelper.floor(this.posZ))))
             {
                 --fishingProgressStep;
             }
@@ -680,10 +664,10 @@ public final class EntityFishHook extends Entity
         ItemEntity.motionZ = distanceZ * 0.1;
         CompatibilityUtils.getWorldFromEntity(this).addEntity(ItemEntity);
         CompatibilityUtils.getWorldFromCitizen(citizen).addEntity(new ExperienceOrbEntity(CompatibilityUtils.getWorldFromCitizen(citizen),
-                                                                          citizenPosX,
-                                                                          citizenPosY + 0.D,
-                                                                          citizenPosZ + 0.5,
-                                                                          this.rand.nextInt(6) + 1));
+          citizenPosX,
+          citizenPosY + 0.D,
+          citizenPosZ + 0.5,
+          this.rand.nextInt(6) + 1));
     }
 
     /**
