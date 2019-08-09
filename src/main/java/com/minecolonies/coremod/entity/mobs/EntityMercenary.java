@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.entity.mobs;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyRelated;
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.basestatemachine.IStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickingTransition;
@@ -10,30 +12,31 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRate
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
-import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,7 +53,7 @@ import static com.minecolonies.api.util.constant.RaiderConstants.FOLLOW_RANGE;
  * Class for Mercenary entities, which can be spawned to protect the colony
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public class EntityMercenary extends EntityCreature implements INPC, IColonyRelated
+public class EntityMercenary extends CreatureEntity implements INPC, IColonyRelated
 {
     /**
      * The minimum time inbetween, in ticks.
@@ -112,24 +115,22 @@ public class EntityMercenary extends EntityCreature implements INPC, IColonyRela
      * The entities name.
      */
     private static final String ENTITY_NAME = "Mercenary";
-
-    public EntityMercenary(final World world)
-    {
-        this(world, null);
-    }
-
+    
     /**
      * Constructor method for Mercenaries.
      *
      * @param world the world.
      */
-    public EntityMercenary(final World world, final IColony colony)
+    public EntityMercenary(final EntityType type, final World world)
     {
-        super(world);
-        this.colony = colony;
+        super(type, world);
+
+        this.goalSelector.addGoal(0, new SwimGoal(this));
+        this.goalSelector.addGoal(1, new EntityMercenaryAI(this));
+        this.goalSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, MobEntity.class, false));
+
         this.forceSpawn = true;
-        this.setSize(1.0f, 2.0f);
-        setAlwaysRenderNameTag(true);
+        setCustomNameVisible(true);
         this.enablePersistence();
 
         final ItemStack mainhand = new ItemStack(Items.GOLDEN_SWORD, 1);
@@ -150,10 +151,10 @@ public class EntityMercenary extends EntityCreature implements INPC, IColonyRela
         final ItemStack boots = new ItemStack(Items.CHAINMAIL_BOOTS, 1);
         this.setItemStackToSlot(EquipmentSlotType.FEET, boots);
 
-        this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
-        this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.3);
+        this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.3);
 
-        this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(60);
+        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(60);
         this.setHealth(this.getMaxHealth());
 
         stateMachine = new TickRateStateMachine(EntityMercenaryAI.State.INIT, this::handleStateException);
@@ -180,9 +181,9 @@ public class EntityMercenary extends EntityCreature implements INPC, IColonyRela
      */
     private boolean shouldDespawn()
     {
-        if (world == null || world.getTotalWorldTime() - worldTimeAtSpawn > TICKS_FOURTY_MIN || colony == null || this.isInvisible())
+        if (world == null || world.getGameTime() - worldTimeAtSpawn > TICKS_FOURTY_MIN || colony == null || this.isInvisible())
         {
-            this.setDead();
+            this.remove();
             return true;
         }
         return false;
@@ -197,10 +198,10 @@ public class EntityMercenary extends EntityCreature implements INPC, IColonyRela
     {
         if (worldTimeAtSpawn == 0)
         {
-            worldTimeAtSpawn = world.getTotalWorldTime();
+            worldTimeAtSpawn = world.getGameTime();
         }
 
-        return world != null && colony != null && !isDead && !isInvisible();
+        return world != null && colony != null && isAlive() && !isInvisible();
     }
 
     /**
@@ -234,7 +235,7 @@ public class EntityMercenary extends EntityCreature implements INPC, IColonyRela
         final BlockPos first = soldiers.get(0).getPosition().add(0, 0, 1);
         final BlockPos last = soldiers.get(soldiers.size() - 1).getPosition().add(0, 0, 1);
 
-        playSound(SoundEvents.ENTITY_EVOCATION_ILLAGER_AMBIENT, 2.0f, 1.0f);
+        playSound(SoundEvents.ENTITY_EVOKER_CELEBRATE, 2.0f, 1.0f);
         if (getPosition().equals(first))
         {
             getNavigator().tryMoveToBlockPos(last, 0.5);
@@ -278,17 +279,17 @@ public class EntityMercenary extends EntityCreature implements INPC, IColonyRela
     }
 
     @Override
-    public void playStepSound(final BlockPos pos, final Block blockIn)
+    protected void playStepSound(final BlockPos pos, final BlockState blockIn)
     {
         this.playSound(SoundEvents.ITEM_ARMOR_EQUIP_CHAIN, 0.45F, 1.0F);
     }
 
     @Override
-    public CompoundNBT write(final CompoundNBT compound)
+    public void writeAdditional(final CompoundNBT compound)
     {
         compound.putLong(TAG_TIME, worldTimeAtSpawn);
         compound.putInt(TAG_COLONY_ID, this.colony == null ? 0 : colony.getID());
-        return super.write(compound);
+        super.writeAdditional(compound);
     }
 
     @Override
@@ -307,9 +308,9 @@ public class EntityMercenary extends EntityCreature implements INPC, IColonyRela
     }
 
     @Override
-    public String getName()
+    public ITextComponent getName()
     {
-        return ENTITY_NAME;
+        return new StringTextComponent(ENTITY_NAME);
     }
 
     @Override
@@ -386,14 +387,6 @@ public class EntityMercenary extends EntityCreature implements INPC, IColonyRela
         return proxy;
     }
 
-    @Override
-    protected void initEntityAI()
-    {
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityMercenaryAI(this));
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityMob.class, false));
-    }
-
     @NotNull
     @Override
     public AbstractAdvancedPathNavigate getNavigator()
@@ -403,13 +396,13 @@ public class EntityMercenary extends EntityCreature implements INPC, IColonyRela
             this.newNavigator = new MinecoloniesAdvancedPathNavigate(this, world);
             this.navigator = newNavigator;
             this.newNavigator.setCanSwim(true);
-            this.newNavigator.setEnterDoors(true);
+            this.newNavigator.getNodeProcessor().setCanOpenDoors(true);
         }
         return newNavigator;
     }
 
     @Override
-    public void onLivingUpdate()
+    public void livingTick()
     {
         if (world != null && !world.isRemote)
         {
@@ -420,13 +413,13 @@ public class EntityMercenary extends EntityCreature implements INPC, IColonyRela
             slapTimer--;
         }
         updateArmSwingProgress();
-        super.onLivingUpdate();
+        super.livingTick();
     }
 
     @Override
-    public boolean canDespawn()
+    public boolean preventDespawn()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -438,7 +431,7 @@ public class EntityMercenary extends EntityCreature implements INPC, IColonyRela
     {
         final World world = colony.getWorld();
 
-        if (colony.getMercenaryUseTime() != 0 && world.getTotalWorldTime() - colony.getMercenaryUseTime() < TICKS_FOURTY_MIN)
+        if (colony.getMercenaryUseTime() != 0 && world.getGameTime() - colony.getMercenaryUseTime() < TICKS_FOURTY_MIN)
         {
             return;
         }
@@ -454,7 +447,8 @@ public class EntityMercenary extends EntityCreature implements INPC, IColonyRela
         final List<EntityMercenary> soldiers = new ArrayList<>();
         for (int i = 0; i < amountOfMercenaries; i++)
         {
-            final EntityMercenary merc = new EntityMercenary(world, colony);
+            final EntityMercenary merc = (EntityMercenary) ModEntities.MERCENARY.create(world);
+            merc.setColony(colony);
             merc.setPosition(spawn.getX() + i, spawn.getY(), spawn.getZ());
             merc.setDoSpawnEvent();
             soldiers.add(merc);
@@ -462,7 +456,8 @@ public class EntityMercenary extends EntityCreature implements INPC, IColonyRela
         }
 
         // spawn leader for the event.
-        final EntityMercenary merc = new EntityMercenary(world, colony);
+        final EntityMercenary merc = (EntityMercenary) ModEntities.MERCENARY.create(world);
+        merc.setColony(colony);
         merc.setPosition(spawn.getX(), spawn.getY(), spawn.getZ() + 1);
         merc.setLeader(soldiers);
         world.addEntity(merc);
@@ -479,7 +474,7 @@ public class EntityMercenary extends EntityCreature implements INPC, IColonyRela
     {
         final AxisAlignedBB buildingArea = colony.getBuildingManager().getTownHall().getTargetableArea(colony.getWorld());
         BlockPos spawn = new BlockPos((buildingArea.maxX + buildingArea.minX) / 2, 0, buildingArea.minZ);
-        double height = colony.getWorld().getHeight(spawn.getX(), spawn.getZ());
+        double height = colony.getWorld().getHeight(Heightmap.Type.WORLD_SURFACE, spawn.getX(), spawn.getZ());
         if (height > buildingArea.maxY)
         {
             height = buildingArea.minY + 1;
@@ -507,7 +502,7 @@ public class EntityMercenary extends EntityCreature implements INPC, IColonyRela
      * @param amountOfMercenaries how many we're spawning
      * @return true if enough air
      */
-    private static boolean isValidSpawnForMercenaries(final IBlockAccess world, final BlockPos spawn, final int amountOfMercenaries)
+    private static boolean isValidSpawnForMercenaries(final IWorld world, final BlockPos spawn, final int amountOfMercenaries)
     {
         for (int i = 0; i < amountOfMercenaries; i++)
         {

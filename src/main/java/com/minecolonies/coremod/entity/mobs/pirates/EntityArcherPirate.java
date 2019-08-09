@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.mobs.pirates;
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import com.minecolonies.api.entity.mobs.pirates.IArcherPirateEntity;
 import com.minecolonies.api.util.constant.LootTableConstants;
+import net.minecraft.entity.EntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -18,9 +19,9 @@ public class EntityArcherPirate extends AbstractEntityPirate implements IArcherP
      * Constructor of the entity.
      * @param worldIn world to construct it in.
      */
-    public EntityArcherPirate(final World worldIn)
+    public EntityArcherPirate(final EntityType type, final World worldIn)
     {
-        super(worldIn);
+        super(type, worldIn);
     }
 
     @Nullable

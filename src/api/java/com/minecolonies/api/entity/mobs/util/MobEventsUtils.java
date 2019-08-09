@@ -2,18 +2,18 @@ package com.minecolonies.api.entity.mobs.util;
 
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,12 +57,12 @@ public final class MobEventsUtils
 
         BlockPos targetSpawnPoint = calculateSpawnLocation(world, colony);
         Log.getLogger().info("[BarbarianEvent]: Spawning: " + targetSpawnPoint.getX() + " " + targetSpawnPoint.getZ());
-        if (targetSpawnPoint.equals(colony.getCenter()) || targetSpawnPoint.getY() > MineColonies.getConfig().getCommon().gameplay.maxYForBarbarians)
+        if (targetSpawnPoint.equals(colony.getCenter()) || targetSpawnPoint.getY() > MinecoloniesAPIProxy.getInstance().getConfig().getCommon().maxYForBarbarians.get())
         {
             return;
         }
 
-        if (MineColonies.getConfig().getCommon().gameplay.enableInDevelopmentFeatures)
+        if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().enableInDevelopmentFeatures.get())
         {
             LanguageHandler.sendPlayersMessage(
               colony.getMessagePlayerEntitys(),
@@ -104,7 +104,7 @@ public final class MobEventsUtils
         }
 
         final int raidLevel =
-          Math.min(Configurations.gameplay.maxBarbarianSize, (int) ((getColonyRaidLevel(colony) / SPAWN_MODIFIER) * ((double) Configurations.gameplay.spawnBarbarianSize * 0.1)));
+          Math.min(MinecoloniesAPIProxy.getInstance().getConfig().getCommon().maxBarbarianSize.get(), (int) ((getColonyRaidLevel(colony) / SPAWN_MODIFIER) * ((double) MinecoloniesAPIProxy.getInstance().getConfig().getCommon().spawnBarbarianSize.get() * 0.1)));
         final int numberOfChiefs = Math.max(1, (int) (raidLevel * CHIEF_BARBARIANS_MULTIPLIER));
         final int numberOfArchers = Math.max(1, (int) (raidLevel * ARCHER_BARBARIANS_MULTIPLIER));
         final int numberOfBarbarians = raidLevel - numberOfChiefs - numberOfArchers;
@@ -121,7 +121,7 @@ public final class MobEventsUtils
      * @return true if enough water surface blocks are found
      */
     public static boolean isSurfaceAreaMostlyWater(
-      @NotNull final IBlockAccess world,
+      @NotNull final IWorld world,
       @NotNull final BlockPos from,
       @NotNull final BlockPos to,
       @NotNull final double percentRequired)
@@ -250,7 +250,7 @@ public final class MobEventsUtils
             if (!colony.hasWillRaidTonight())
             {
                 final boolean raid = raidThisNight(world, colony);
-                if (MineColonies.getConfig().getCommon().gameplay.enableInDevelopmentFeatures)
+                if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().enableInDevelopmentFeatures.get())
                 {
                     LanguageHandler.sendPlayersMessage(
                       colony.getMessagePlayerEntitys(),
@@ -264,7 +264,7 @@ public final class MobEventsUtils
         {
             colony.getRaiderManager().setHasRaidBeenCalculated(false);
             colony.getRaiderManager().setWillRaidTonight(false);
-            if (MineColonies.getConfig().getCommon().gameplay.enableInDevelopmentFeatures)
+            if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().enableInDevelopmentFeatures.get())
             {
                 LanguageHandler.sendPlayersMessage(
                   colony.getMessagePlayerEntitys(),
@@ -288,8 +288,8 @@ public final class MobEventsUtils
      */
     private static boolean raidThisNight(final World world, final IColony colony)
     {
-        return colony.getNightsSinceLastRaid() > MineColonies.getConfig().getCommon().gameplay.minimumNumberOfNightsBetweenRaids
-                 && world.rand.nextDouble() < 1.0 / MineColonies.getConfig().getCommon().gameplay.averageNumberOfNightsBetweenRaids;
+        return colony.getNightsSinceLastRaid() > MinecoloniesAPIProxy.getInstance().getConfig().getCommon().minimumNumberOfNightsBetweenRaids.get()
+                 && world.rand.nextDouble() < 1.0 / MinecoloniesAPIProxy.getInstance().getConfig().getCommon().averageNumberOfNightsBetweenRaids.get();
     }
 
     /**

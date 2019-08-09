@@ -4,6 +4,7 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
@@ -20,7 +21,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ShieldItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -91,6 +91,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     /**
      * Constructor for a new citizen typed entity.
      *
+     * @param type the Entity type.
      * @param world the world.
      */
     public AbstractEntityCitizen(final EntityType<? extends AgeableEntity> type, final World world)
@@ -289,6 +290,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
             this.pathNavigate = IPathNavigateRegistry.getInstance().getNavigateFor(this);
             this.navigator = pathNavigate;
             this.pathNavigate.setCanSwim(true);
+            this.navigator.getNodeProcessor().setCanOpenDoors(true);
         }
         return pathNavigate;
     }

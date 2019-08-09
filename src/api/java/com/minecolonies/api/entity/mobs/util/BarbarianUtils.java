@@ -47,7 +47,7 @@ public final class BarbarianUtils
     {
         return new ArrayList<>(CompatibilityUtils.getWorldFromEntity(entity).getEntitiesWithinAABB(
           AbstractEntityMinecoloniesMob.class,
-          entity.getEntityBoundingBox().expand(
+          entity.getBoundingBox().expand(
             distanceFromEntity,
             Y_DISTANCE_TO_CHECK_WITHIN,
             distanceFromEntity),

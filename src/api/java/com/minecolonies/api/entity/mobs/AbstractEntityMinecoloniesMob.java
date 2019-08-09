@@ -1,8 +1,8 @@
 package com.minecolonies.api.entity.mobs;
 
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.mobs.util.BarbarianUtils;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
@@ -10,20 +10,19 @@ import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.sounds.BarbarianSounds;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.MobSpawnUtils;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ILivingEntityData;
-import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.item.ExperienceOrbEntity;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.GameRules;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.ServerWorld;
+import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -82,23 +81,12 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
      *
      * @param world the world.
      */
-    public AbstractEntityMinecoloniesMob(final World world)
+    public AbstractEntityMinecoloniesMob(final EntityType type, final World world)
     {
-        super(world);
-    }
-
-    @Override
-    protected void initEntityAI()
-    {
-        MobSpawnUtils.setupMobAi(this);
-    }
-
-    @Override
-    protected void entityInit()
-    {
-        worldTimeAtSpawn = world.getTotalWorldTime();
+        super(type, world);
+        worldTimeAtSpawn = world.getGameTime();
         this.enablePersistence();
-        super.entityInit();
+        MobSpawnUtils.setupMobAi(this);
     }
 
     @Override
@@ -113,10 +101,10 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     }
 
     @Override
-    public void playLivingSound()
+    public void playAmbientSound()
     {
+        super.playAmbientSound();
         final SoundEvent soundevent = this.getAmbientSound();
-
         if (soundevent != null && world.rand.nextInt(OUT_OF_ONE_HUNDRED) <= ONE)
         {
             this.playSound(soundevent, this.getSoundVolume(), this.getSoundPitch());
@@ -131,7 +119,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     }
 
     @Override
-    protected boolean canDespawn()
+    public boolean canDespawn(final double distanceToClosestPlayer)
     {
         return shouldDespawn() || getColony() == null;
     }
@@ -143,19 +131,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
      */
     private boolean shouldDespawn()
     {
-        return worldTimeAtSpawn != 0 && (world.getTotalWorldTime() - worldTimeAtSpawn) >= TICKS_TO_DESPAWN;
-    }
-
-    /**
-     * We have loot_tables for a reason, this is done to disable equipped items dropping on death.
-     *
-     * @param wasRecentlyHit  Was the barbarian recently hit?
-     * @param lootingModifier Was the barbarian hit with a sword with looting Enchantment?
-     */
-    @Override
-    protected void dropEquipment(final boolean wasRecentlyHit, final int lootingModifier)
-    {
-        // We have loot_tables for a reason, this is done to disable equipped items dropping on death.
+        return worldTimeAtSpawn != 0 && (world.getGameTime() - worldTimeAtSpawn) >= TICKS_TO_DESPAWN;
     }
 
     @NotNull
@@ -167,7 +143,7 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
             this.newNavigator = IPathNavigateRegistry.getInstance().getNavigateFor(this);
             this.navigator = newNavigator;
             this.newNavigator.setCanSwim(true);
-            this.newNavigator.setEnterDoors(false);
+            this.newNavigator.getNodeProcessor().setCanOpenDoors(false);
         }
         return newNavigator;
     }
@@ -222,13 +198,13 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
 
     @NotNull
     @Override
-    public CompoundNBT write(final CompoundNBT compound)
+    public void writeAdditional(final CompoundNBT compound)
     {
         compound.putLong(TAG_TIME, worldTimeAtSpawn);
         compound.putInt(TAG_STUCK_COUNTER, stuckCounter);
         compound.putInt(TAG_LADDER_COUNTER, ladderCounter);
         compound.putInt(TAG_COLONY_ID, this.colony == null ? 0 : colony.getID());
-        return super.write(compound);
+        super.writeAdditional(compound);
     }
 
     @Override
@@ -249,11 +225,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
     }
 
     @Override
-    public void onLivingUpdate()
+    public void livingTick()
     {
         if (world.isRemote)
         {
-            super.onLivingUpdate();
+            super.livingTick();
             return;
         }
 
@@ -261,12 +237,12 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         {
             if (worldTimeAtSpawn == 0)
             {
-                worldTimeAtSpawn = world.getTotalWorldTime();
+                worldTimeAtSpawn = world.getGameTime();
             }
 
             if (shouldDespawn())
             {
-                this.setDead();
+                this.remove();
             }
 
             if (currentCount <= 0)
@@ -275,11 +251,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
                 MobSpawnUtils.setMobAttributes(this, getColony());
 
                 if (!this.getHeldItemMainhand().isEmpty() && SPEED_EFFECT != null && this.getHeldItemMainhand().getItem() instanceof IChiefSwordItem
-                      && MineColonies.getConfig().getCommon().gameplay.barbarianHordeDifficulty >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
+                      && MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get() >= BARBARIAN_HORDE_DIFFICULTY_FIVE)
                 {
                     BarbarianUtils.getBarbariansCloseToEntity(this, SPEED_EFFECT_DISTANCE)
-                      .stream().filter(entity -> !entity.isPotionActive(SPEED_EFFECT))
-                      .forEach(entity -> entity.addPotionEffect(new PotionEffect(SPEED_EFFECT, SPEED_EFFECT_DURATION, SPEED_EFFECT_MULTIPLIER)));
+                      .stream().filter(entity -> !entity.isPotionActive(Effects.SPEED))
+                      .forEach(entity -> entity.addPotionEffect(new EffectInstance(Effects.SPEED, SPEED_EFFECT_DURATION, SPEED_EFFECT_MULTIPLIER)));
                 }
             }
             else
@@ -289,21 +265,22 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         }
         currentTick++;
 
-        super.onLivingUpdate();
+        super.livingTick();
     }
 
     @Nullable
     @Override
-    public ILivingEntityData onInitialSpawn(final DifficultyInstance difficulty, @Nullable final ILivingEntityData livingdata)
+    public ILivingEntityData onInitialSpawn(
+      final IWorld worldIn, final DifficultyInstance difficultyIn, final SpawnReason reason, @Nullable final ILivingEntityData spawnDataIn, @Nullable final CompoundNBT dataTag)
     {
         MobSpawnUtils.setEquipment(this);
-        return super.onInitialSpawn(difficulty, livingdata);
+        return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }
 
     @Override
     protected void onDeathUpdate()
     {
-        if (!(this.getAttackingEntity() instanceof PlayerEntity) && (this.recentlyHit > 0 && this.canDropLoot() && world.getGameRules().getBoolean("doMobLoot")))
+        if (!(this.getAttackingEntity() instanceof PlayerEntity) && (this.recentlyHit > 0 && this.canDropLoot() && world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT)))
         {
             final int experience = ExperienceOrbEntity.getXPSplit(BARBARIAN_EXP_DROP);
             CompatibilityUtils.addEntity(world, new ExperienceOrbEntity(world, this.posX, this.posY, this.posZ, experience));

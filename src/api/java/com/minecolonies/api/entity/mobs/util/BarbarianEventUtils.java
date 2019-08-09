@@ -1,8 +1,8 @@
 package com.minecolonies.api.entity.mobs.util;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.MobSpawnUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -60,7 +60,7 @@ public final class BarbarianEventUtils
      */
     private static void buildPlatform(final BlockPos target, final World world)
     {
-        final BlockState platformBlock = Blocks.WOODEN_SLAB.getDefaultState();
+        final BlockState platformBlock = Blocks.OAK_SLAB.getDefaultState();
 
         for (int z = 0; z < 5; z++)
         {

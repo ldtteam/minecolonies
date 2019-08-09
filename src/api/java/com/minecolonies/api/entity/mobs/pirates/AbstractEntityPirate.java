@@ -2,7 +2,10 @@ package com.minecolonies.api.entity.mobs.pirates;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.sounds.BarbarianSounds;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -17,16 +20,16 @@ public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
 {
     /**
      * Constructor method for Abstract Barbarians.
-     *
+     * @param type the type.
      * @param world the world.
      */
-    public AbstractEntityPirate(final World world)
+    public AbstractEntityPirate(final EntityType type, final World world)
     {
-        super(world);
+        super(type, world);
     }
 
     @Override
-    public void playLivingSound()
+    public void playAmbientSound()
     {
         final SoundEvent soundevent = this.getAmbientSound();
 
@@ -44,7 +47,7 @@ public abstract class AbstractEntityPirate extends AbstractEntityMinecoloniesMob
     }
 
     @Override
-    public boolean getCanSpawnHere()
+    public boolean canSpawn(final IWorld worldIn, final SpawnReason spawnReasonIn)
     {
         return true;
     }
