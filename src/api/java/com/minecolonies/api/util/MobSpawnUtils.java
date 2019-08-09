@@ -13,13 +13,13 @@ import com.minecolonies.api.entity.mobs.pirates.ICaptainPirateEntity;
 import com.minecolonies.api.entity.mobs.pirates.IPirateEntity;
 import com.minecolonies.api.entity.mobs.util.MobEventsUtils;
 import com.minecolonies.api.items.ModItems;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -103,7 +103,7 @@ public final class MobSpawnUtils
      * @param colony the colony to spawn them close to.
      */
     public static void spawn(
-      final ResourceLocation entityToSpawn,
+      final EntityType entityToSpawn,
       final int numberOfSpawns,
       final BlockPos spawnLocation,
       final World world,
@@ -118,7 +118,9 @@ public final class MobSpawnUtils
 
             IntStream.range(0, numberOfSpawns).forEach(theInteger ->
             {
-                final AbstractEntityBarbarian entity = (AbstractEntityBarbarian) EntityList.createEntityByIDFromName(entityToSpawn, world);
+
+
+                final AbstractEntityBarbarian entity = (AbstractEntityBarbarian) entityToSpawn.create(world);
 
                 if (entity != null)
                 {

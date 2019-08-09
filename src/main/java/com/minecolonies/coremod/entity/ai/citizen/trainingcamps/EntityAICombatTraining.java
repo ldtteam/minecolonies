@@ -10,10 +10,10 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCombatAcademy;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.item.Items;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -198,22 +198,20 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
             if (worker.getRandom().nextBoolean())
             {
-                final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventory()),
-                  Items.SHIELD,
-                  -1);
+                final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(), Items.SHIELD);
                 if (shieldSlot != -1)
                 {
                     worker.playSound(SoundEvents.ITEM_SHIELD_BLOCK, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
                     worker.getCitizenItemHandler().setHeldItem(Hand.OFF_HAND, shieldSlot);
                     worker.setActiveHand(Hand.OFF_HAND);
-                    worker.getLookHelper().setLookPositionWithEntity(trainingPartner, (float) TURN_AROUND, (float) TURN_AROUND);
+                    worker.getLookController().setLookPositionWithEntity(trainingPartner, (float) TURN_AROUND, (float) TURN_AROUND);
                 }
             }
             else
             {
                 worker.swingArm(Hand.MAIN_HAND);
                 worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-                trainingPartner.attackEntityFrom(new EntityDamageSource(worker.getName(), worker), 0.0F);
+                trainingPartner.attackEntityFrom(new EntityDamageSource(worker.getName().getFormattedText(), worker), 0.0F);
                 worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
             }
             worker.getNavigator().moveAwayFromXYZ(trainingPartner.getPosition(), 4.0, worker.getAIMoveSpeed());
@@ -294,9 +292,8 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
 
             if (worker.getRandom().nextBoolean())
             {
-                final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventory()),
-                  Items.SHIELD,
-                  -1);
+                final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(),
+                  Items.SHIELD);
                 if (shieldSlot != -1)
                 {
                     worker.playSound(SoundEvents.ITEM_SHIELD_BLOCK, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
@@ -338,7 +335,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             return false;
         }
 
-        final int weaponSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.SWORD, 0, getOwnBuilding().getMaxToolLevel());
+        final int weaponSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.SWORD, 0, getOwnBuilding().getMaxToolLevel());
         if (weaponSlot != -1)
         {
             worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, weaponSlot);

@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -169,13 +170,13 @@ public class MobEntryView
     {
         if (IMinecoloniesAPI.getInstance().getConfig().getCommon().enableInDevelopmentFeatures.get())
         {
-            return String.format("%s:%d", GameRegistry.findRegistry(EntityType.class).getValue(this.location).getTranslationKey(), this.priority);
+            return String.format("%s:%d", ForgeRegistries.ENTITIES.getValue(this.location).getTranslationKey(), this.priority);
         }
-        return GameRegistry.findRegistry(EntityType.class).getValue(this.location).getTranslationKey();
+        return ForgeRegistries.ENTITIES.getValue(this.location).getTranslationKey();
     }
 
     public EntityType<?> getEntityEntry()
     {
-        return GameRegistry.findRegistry(EntityType.class).getValue(this.location);
+        return ForgeRegistries.ENTITIES.getValue(this.location);
     }
 }

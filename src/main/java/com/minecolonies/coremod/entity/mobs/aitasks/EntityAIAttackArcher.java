@@ -1,17 +1,17 @@
 package com.minecolonies.coremod.entity.mobs.aitasks;
 
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.CompatibilityUtils;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.CreatureEntity;
+import com.minecolonies.coremod.MineColonies;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.Goal;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.projectile.EntityTippedArrow;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
+
+import java.util.EnumSet;
 
 /**
  * Barbarian Ranged Attack AI class
@@ -26,7 +26,6 @@ public class EntityAIAttackArcher extends Goal
     private static final double    PITCH_MULTIPLIER            = 0.4;
     private static final double    HALF_ROTATION               = 180;
     private static final double    ATTACK_SPEED                = 1.3;
-    private static final int       MUTEX_BITS                  = 3;
     private static final double                        AIM_HEIGHT                  = 3.0D;
     private static final double                        ARROW_SPEED                 = 1.6D;
     private static final double                        HIT_CHANCE                  = 10.0D;
@@ -52,7 +51,7 @@ public class EntityAIAttackArcher extends Goal
     {
         super();
         this.entity = creatureIn;
-        this.setMutexBits(MUTEX_BITS);
+        this.setMutexFlags(EnumSet.of(Flag.TARGET));
     }
 
     @Override
@@ -105,7 +104,7 @@ public class EntityAIAttackArcher extends Goal
 
         if (entity.getDistance(target) >= MAX_ATTACK_DISTANCE || !entity.canEntityBeSeen(target))
         {
-            entity.getNavigator().tryMoveToLivingEntity(target, ATTACK_SPEED);
+            entity.getNavigator().tryMoveToEntityLiving(target, ATTACK_SPEED);
         }
         else
         {
@@ -118,9 +117,9 @@ public class EntityAIAttackArcher extends Goal
             if (lastAttack <= 0 && entity.canEntityBeSeen(target))
             {
 
-                final EntityTippedArrow arrowEntity = new EntityTippedArrow(CompatibilityUtils.getWorldFromEntity(entity), entity);
+                final ArrowEntity arrowEntity = EntityType.ARROW.create(target.world);
                 final double xVector = target.posX - entity.posX;
-                final double yVector = target.getEntityBoundingBox().minY + target.height / AIM_HEIGHT - arrowEntity.posY;
+                final double yVector = target.getBoundingBox().minY + target.getHeight() / AIM_HEIGHT - arrowEntity.posY;
                 final double zVector = target.posZ - entity.posZ;
                 final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
                 //Lower the variable higher the chance that the arrows hits the target.
@@ -128,7 +127,7 @@ public class EntityAIAttackArcher extends Goal
                 arrowEntity.shoot(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) ARROW_SPEED, (float) HIT_CHANCE);
 
                 entity.faceEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
-                entity.getLookHelper().setLookPositionWithEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
+                entity.getLookController().setLookPositionWithEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
 
                 CompatibilityUtils.addEntity(CompatibilityUtils.getWorldFromEntity(entity), arrowEntity);
                 entity.swingArm(Hand.MAIN_HAND);
@@ -149,7 +148,7 @@ public class EntityAIAttackArcher extends Goal
      */
     protected int getAttackDelay()
     {
-        return MAX_ATTACK_DELAY - MineColonies.getConfig().getCommon().gameplay.barbarianHordeDifficulty * 4;
+        return MAX_ATTACK_DELAY - MineColonies.getConfig().getCommon().barbarianHordeDifficulty.get() * 4;
     }
 
     /**

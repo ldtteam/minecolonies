@@ -2527,7 +2527,7 @@ public class InventoryUtils
      * @param invWrapper the inventory item handler.
      * @param itemStack the itemStack to decrease.
      */
-    public static void reduceStackInItemHandler(final InvWrapper invWrapper, final ItemStack itemStack)
+    public static void reduceStackInItemHandler(final IItemHandler invWrapper, final ItemStack itemStack)
     {
         reduceStackInItemHandler(invWrapper, itemStack, 1);
     }
@@ -2538,7 +2538,7 @@ public class InventoryUtils
      * @param itemStack the itemStack to decrease.
      * @param quantity the quantity.
      */
-    public static void reduceStackInItemHandler(final InvWrapper invWrapper, final ItemStack itemStack, final int quantity)
+    public static void reduceStackInItemHandler(final IItemHandler invWrapper, final ItemStack itemStack, final int quantity)
     {
         for (int i = 0; i < invWrapper.getSlots(); i++)
         {

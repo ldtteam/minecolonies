@@ -1,16 +1,17 @@
 package com.minecolonies.coremod.entity.mobs.aitasks;
 
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.RaiderConstants;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.Goal;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
+
+import java.util.EnumSet;
 
 /**
  * Barbarian Attack AI class
@@ -41,7 +42,7 @@ public class EntityAIRaiderAttackMelee extends Goal
     {
         super();
         this.entity = creatureIn;
-        this.setMutexBits(MUTEX_BITS);
+        this.setMutexFlags(EnumSet.of(Flag.TARGET));
     }
 
     @Override
@@ -103,7 +104,7 @@ public class EntityAIRaiderAttackMelee extends Goal
 
             if (entity.getDistance(target) <= MIN_DISTANCE_FOR_ATTACK && lastAttack <= 0 && entity.canEntityBeSeen(target))
             {
-                target.attackEntityFrom(new EntityDamageSource(entity.getName(), entity), (float) damageToBeDealt);
+                target.attackEntityFrom(new EntityDamageSource(entity.getName().getFormattedText(), entity), (float) damageToBeDealt);
                 entity.swingArm(Hand.MAIN_HAND);
                 entity.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) 1.0D, (float) SoundUtils.getRandomPitch(entity.getRNG()));
                 target.setRevengeTarget(entity);
@@ -115,9 +116,9 @@ public class EntityAIRaiderAttackMelee extends Goal
             }
 
             entity.faceEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
-            entity.getLookHelper().setLookPositionWithEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
+            entity.getLookController().setLookPositionWithEntity(target, (float) HALF_ROTATION, (float) HALF_ROTATION);
 
-            entity.getNavigator().tryMoveToLivingEntity(target, ATTACK_SPEED);
+            entity.getNavigator().tryMoveToEntityLiving(target, ATTACK_SPEED);
         }
     }
 
@@ -128,6 +129,6 @@ public class EntityAIRaiderAttackMelee extends Goal
      */
     protected int getAttackDelay()
     {
-        return MAX_ATTACK_DELAY - MineColonies.getConfig().getCommon().gameplay.barbarianHordeDifficulty * 4;
+        return MAX_ATTACK_DELAY - MineColonies.getConfig().getCommon().barbarianHordeDifficulty.get() * 4;
     }
 }

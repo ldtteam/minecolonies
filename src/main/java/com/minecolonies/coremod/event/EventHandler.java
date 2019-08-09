@@ -7,7 +7,6 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -29,17 +28,14 @@ import com.minecolonies.coremod.network.messages.OpenSuggestionWindowMessage;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import com.minecolonies.coremod.network.messages.UpdateChunkRangeCapabilityMessage;
 import com.minecolonies.coremod.util.ChunkDataHelper;
+import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockBed;
-import net.minecraft.block.BlockSilverfish;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.ClientPlayerEntity;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.multiplayer.ClientWorld;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -53,7 +49,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.World;
-import net.minecraft.world.ServerWorld;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
@@ -67,12 +62,8 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -221,7 +212,7 @@ public class EventHandler
 
             final IColonyTagCapability newCloseColonies = newChunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
 
-            Network.getNetwork().sendToEveryone(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.x, newChunk.z));
+            Network.getNetwork().sendToEveryone(new UpdateChunkCapabilityMessage(newCloseColonies, newChunk.getPos().x, newChunk.getPos().z));
             @NotNull final ServerPlayerEntity player = (ServerPlayerEntity) entity;
             final Chunk oldChunk = world.getChunk(event.getOldChunkX(), event.getOldChunkZ());
             final IColonyTagCapability oldCloseColonies = oldChunk.getCapability(CLOSE_COLONY_CAP, null).orElse(null);
@@ -278,10 +269,10 @@ public class EventHandler
     @SubscribeEvent
     public void onEvent(final EntityJoinWorldEvent event)
     {
-        if (MineColonies.getConfig().getCommon().gameplay.mobAttackCitizens && (event.getEntity() instanceof EntityMob))
+        if (MineColonies.getConfig().getCommon().mobAttackCitizens.get() && (event.getEntity() instanceof MobEntity))
         {
-            ((EntityMob) event.getEntity()).targetTasks.addTask(6, new EntityAINearestAttackableTarget((EntityMob) event.getEntity(), EntityCitizen.class, true));
-            ((EntityMob) event.getEntity()).targetTasks.addTask(7, new EntityAINearestAttackableTarget((EntityMob) event.getEntity(), EntityMercenary.class, true));
+            ((MobEntity) event.getEntity()).goalSelector.addGoal(6, new NearestAttackableTargetGoal<>((MobEntity) event.getEntity(), EntityCitizen.class, true));
+            ((MobEntity) event.getEntity()).goalSelector.addGoal(7, new NearestAttackableTargetGoal((MobEntity) event.getEntity(), EntityMercenary.class, true));
         }
     }
 
@@ -293,7 +284,7 @@ public class EventHandler
     @SubscribeEvent
     public void onEnteringChunkEntity(@NotNull final EntityEvent.EnteringChunk event)
     {
-        if (MineColonies.getConfig().getCommon().gameplay.pvp_mode && event.getEntity() instanceof EntityCitizen)
+        if (MineColonies.getConfig().getCommon().pvp_mode.get() && event.getEntity() instanceof EntityCitizen)
         {
             if (event.getEntity().world != null && !event.getEntity().world.isBlockLoaded(new BlockPos(event.getNewChunkX() * BLOCKS_PER_CHUNK,
               70,
@@ -306,7 +297,7 @@ public class EventHandler
             {
                 final World world = entityCitizen.getEntityWorld();
                 final Chunk chunk = world.getChunk(event.getNewChunkX(), event.getNewChunkZ());
-                final IColonyTagCapability chunkCapability = chunk.getCapability(CLOSE_COLONY_CAP, null);
+                final IColonyTagCapability chunkCapability = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
                 if (chunkCapability != null && chunkCapability.getOwningColony() != 0
                       && entityCitizen.getCitizenColonyHandler().getColonyId() != chunkCapability.getOwningColony())
                 {
@@ -334,13 +325,13 @@ public class EventHandler
             final ItemStack itemstack = event.getPlayer().getHeldItem(Hand.MAIN_HAND);
             if (!itemstack.hasTag())
             {
-                itemstack.put(new CompoundNBT());
+                itemstack.setTag(new CompoundNBT());
             }
             final CompoundNBT compound = itemstack.getTag();
 
             BlockPosUtil.write(compound, FIRST_POS_STRING, event.getPos());
             LanguageHandler.sendPlayerMessage(event.getPlayer(), "item.scepterSteel.point", event.getPos().getX(), event.getPos().getY(), event.getPos().getZ());
-            itemstack.put(compound);
+            itemstack.setTag(compound);
 
             event.setCanceled(true);
         }
@@ -356,7 +347,7 @@ public class EventHandler
     @SubscribeEvent
     public void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickBlock event)
     {
-        final PlayerEntity player = event.getPlayerEntity();
+        final PlayerEntity player = event.getPlayer();
         final World world = event.getWorld();
         BlockPos bedBlockPos = event.getPos();
 
@@ -376,10 +367,10 @@ public class EventHandler
 
                 return;
             }
-            else if ("pmardle".equalsIgnoreCase(event.getPlayerEntity().getName())
+            else if ("pmardle".equalsIgnoreCase(event.getPlayer().getName())
                        && Block.getBlockFromItem(event.getItemStack().getItem()) instanceof BlockSilverfish)
             {
-                LanguageHandler.sendPlayerMessage(event.getPlayerEntity(), "Stop that you twat!!!");
+                LanguageHandler.sendPlayerMessage(event.getPlayer(), "Stop that you twat!!!");
                 event.setCanceled(true);
             }
 
@@ -392,12 +383,12 @@ public class EventHandler
 
                 final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, bedBlockPos);
                 //Checks to see if player tries to sleep in a bed belonging to a Citizen, ancels the event, and Notifies Player that bed is occuppied
-                if (colony != null && world.getBlockState(event.getPos()).getProperties().contains(BlockBed.PART))
+                if (colony != null && world.getBlockState(event.getPos()).getProperties().contains(BedBlock.PART))
                 {
                     final List<ICitizenData> citizenList = colony.getCitizenManager().getCitizens();
-                    if (world.getBlockState(event.getPos()).getBlock().isBedFoot(world, event.getPos()))
+                    if (world.getBlockState(event.getPos()).isBedFoot(world, event.getPos()))
                     {
-                        bedBlockPos = bedBlockPos.offset(world.getBlockState(event.getPos()).get(BlockBed.FACING));
+                        bedBlockPos = bedBlockPos.offset(world.getBlockState(event.getPos()).get(BedBlock.HORIZONTAL_FACING));
                     }
                     //Searches through the nearest Colony's Citizen and sees if the bed belongs to a Citizen, and if the Citizen is asleep
 
@@ -435,28 +426,30 @@ public class EventHandler
     }
 
     @SubscribeEvent
-    public void onBlockPlaced(@NotNull final BlockEvent.PlaceEvent event)
+    public void onBlockPlaced(@NotNull final BlockEvent.EntityPlaceEvent event)
     {
-        final PlayerEntity player = event.getPlayer();
-        final World world = event.getWorld();
-        if (event.getPlacedBlock().getBlock() instanceof AbstractBlockHut && event.getPlacedBlock().getBlock() != ModBlocks.blockPostBox)
+        if (event.getEntity() instanceof PlayerEntity)
         {
-            final IColony colony = IColonyManager.getInstance().getIColony(world, event.getPos());
-            if (colony != null && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
+            final PlayerEntity player = event.getEntity();
+            final World world = event.getWorld();
+            if (event.getPlacedBlock().getBlock() instanceof AbstractBlockHut && event.getPlacedBlock().getBlock() != ModBlocks.blockPostBox)
             {
-                event.setCanceled(true);
-                return;
-            }
-
-            if (MineColonies.getConfig().getCommon().gameplay.suggestBuildToolPlacement)
-            {
-                final ItemStack stack = event.getPlayer().getHeldItem(event.getHand());
-                if (!stack.isEmpty() && !world.isRemote)
+                final IColony colony = IColonyManager.getInstance().getIColony(world, event.getPos());
+                if (colony != null && !colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
                 {
-                    Network.getNetwork().sendTo(new OpenSuggestionWindowMessage(event.getPlacedBlock(), event.getPos(), stack), (ServerPlayerEntity) event.getPlayer());
-
+                    event.setCanceled(true);
+                    return;
                 }
-                event.setCanceled(true);
+
+                if (MineColonies.getConfig().getCommon().suggestBuildToolPlacement.get())
+                {
+                    final ItemStack stack = event.getEntity().getHeldItem(event.getHand());
+                    if (!stack.isEmpty() && !world.isRemote)
+                    {
+                        Network.getNetwork().sendToEveryone(new OpenSuggestionWindowMessage(event.getPlacedBlock(), event.getPos(), stack), (ServerPlayerEntity) event.getPlayer());
+                    }
+                    event.setCanceled(true);
+                }
             }
         }
     }

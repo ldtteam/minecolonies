@@ -4,11 +4,11 @@ import com.ldtteam.structurize.items.ModItems;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.coremod.MineColonies;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,7 +16,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -54,13 +54,13 @@ public class DebugRendererChunkBorder
         {
             center = new Tuple<>(PlayerEntity.chunkCoordX, PlayerEntity.chunkCoordZ);
             colonies.clear();
-            final int range = MineColonies.getConfig().getCommon().gameplay.workingRangeTownHallChunks;
+            final int range = MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get();
             for (int incX = -range; incX <= range; incX += 1)
             {
                 for (int incZ = -range; incZ <= range; incZ += 1)
                 {
                     final Chunk chunk = world.getChunk(PlayerEntity.chunkCoordX + incX, PlayerEntity.chunkCoordZ + incZ);
-                    final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+                    final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
                     if (cap != null)
                     {
                         colonies.put(new Tuple<>(incX, incZ), cap.getOwningColony());
@@ -79,13 +79,13 @@ public class DebugRendererChunkBorder
 
         final double lowerYLimitSmaller = Math.max(lowerYLimit, PlayerEntity.posY - 30 - relPlayerY);
 
-        GlStateManager.disableTexture2D();
+        GlStateManager.disableTexture();
         GlStateManager.disableBlend();
 
         final double chunkCoordX = ((double) (PlayerEntity.chunkCoordX << 4) - relPlayerX);
         final double chunkCoordZ = ((double) (PlayerEntity.chunkCoordZ << 4) - relPlayerZ);
 
-        GlStateManager.glLineWidth(1.0F);
+        GlStateManager.lineWidth(1.0F);
         bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
 
         for (final Map.Entry<Tuple<Integer, Integer>, Integer> c : colonies.entrySet())
@@ -95,26 +95,26 @@ public class DebugRendererChunkBorder
             final int incX = x * 16;
             final int incZ = z * 16;
 
-            if (c.get() == view.getID())
+            if (c.getValue() == view.getID())
             {
                 boolean north = false;
                 boolean south = false;
                 boolean east = false;
                 boolean west = false;
 
-                if (!c.get().equals(colonies.get(new Tuple<>(x, z - 1))) && colonies.containsKey(new Tuple<>(x, z - 1)))
+                if (!c.getValue().equals(colonies.get(new Tuple<>(x, z - 1))) && colonies.containsKey(new Tuple<>(x, z - 1)))
                 {
                     north = true;
                 }
-                if (!c.get().equals(colonies.get(new Tuple<>(x, z + 1))) && colonies.containsKey(new Tuple<>(x, z + 1)))
+                if (!c.getValue().equals(colonies.get(new Tuple<>(x, z + 1))) && colonies.containsKey(new Tuple<>(x, z + 1)))
                 {
                     south = true;
                 }
-                if (!c.get().equals(colonies.get(new Tuple<>(x + 1, z))) && colonies.containsKey(new Tuple<>(x + 1, z)))
+                if (!c.getValue().equals(colonies.get(new Tuple<>(x + 1, z))) && colonies.containsKey(new Tuple<>(x + 1, z)))
                 {
                     east = true;
                 }
-                if (!c.get().equals(colonies.get(new Tuple<>(x - 1, z))) && colonies.containsKey(new Tuple<>(x - 1, z)))
+                if (!c.getValue().equals(colonies.get(new Tuple<>(x - 1, z))) && colonies.containsKey(new Tuple<>(x - 1, z)))
                 {
                     west = true;
                 }
@@ -184,12 +184,12 @@ public class DebugRendererChunkBorder
         }
 
         tessellator.draw();
-        GlStateManager.glLineWidth(2.0F);
+        GlStateManager.lineWidth(2.0F);
         bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
 
         tessellator.draw();
-        GlStateManager.glLineWidth(1.0F);
+        GlStateManager.lineWidth(1.0F);
         GlStateManager.enableBlend();
-        GlStateManager.enableTexture2D();
+        GlStateManager.enableTexture();
     }
 }

@@ -3,13 +3,12 @@ package com.minecolonies.coremod.event;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityBarbarian;
 import com.minecolonies.api.util.Log;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class BarbarianSpawnEventHandler
 {
-
     @SubscribeEvent
-    public void onEntityJoinWorld(final EntityJoinWorldEvent event)
+    public static void onEntityJoinWorld(final EntityJoinWorldEvent event)
     {
         if (event.getEntity() instanceof EntityBarbarian)
         {

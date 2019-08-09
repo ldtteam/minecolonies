@@ -261,7 +261,7 @@ public final class EntityFishHook extends Entity
      * If a hook gets loaded, kill it immediately.
      */
     @Override
-    public void read(final CompoundNBT unused)
+    public void readAdditional(final CompoundNBT unused)
     {
         this.remove();
     }

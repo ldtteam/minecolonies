@@ -2,6 +2,7 @@ package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -423,7 +424,7 @@ public final class BlockPosUtil
     }
 
     /**
-     * {@link EntityUtils#tryMoveLivingToXYZ(LivingEntity, int, int, int)}.
+     * {@link EntityUtils#tryMoveLivingToXYZ(net.minecraft.entity.MobEntity, int, int, int)}.
      *
      * @param living      A living entity.
      * @param destination chunk coordinates to check moving to.
@@ -440,13 +441,13 @@ public final class BlockPosUtil
     }
 
     /**
-     * {@link EntityUtils#tryMoveLivingToXYZ(LivingEntity, int, int, int)}.
+     * {@link EntityUtils#tryMoveLivingToXYZ(net.minecraft.entity.MobEntity, int, int, int)}.
      *
      * @param living      A living entity.
      * @param destination chunk coordinates to check moving to.
      * @return True when XYZ is found, an set moving to, otherwise false.
      */
-    public static boolean tryMoveLivingToXYZ(@NotNull final LivingEntity living, @NotNull final BlockPos destination)
+    public static boolean tryMoveLivingToXYZ(@NotNull final MobEntity living, @NotNull final BlockPos destination)
     {
         return EntityUtils.tryMoveLivingToXYZ(living, destination.getX(), destination.getY(), destination.getZ());
     }

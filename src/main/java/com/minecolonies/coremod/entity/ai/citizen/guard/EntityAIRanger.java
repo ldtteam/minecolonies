@@ -169,7 +169,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
     @Override
     public void wearWeapon()
     {
-        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.BOW, 0, buildingGuards.getMaxToolLevel());
+        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.BOW, 0, buildingGuards.getMaxToolLevel());
         if (bowSlot != -1)
         {
             worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, bowSlot);
