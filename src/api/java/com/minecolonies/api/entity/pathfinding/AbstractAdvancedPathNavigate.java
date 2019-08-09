@@ -4,9 +4,9 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.pathfinding.Path;
-import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +28,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
     protected       Future<Path> calculationFuture;
 
     public AbstractAdvancedPathNavigate(
-      final LivingEntity entitylivingIn,
+      final MobEntity entitylivingIn,
       final World worldIn,
       @NotNull final LivingEntity entity)
     {

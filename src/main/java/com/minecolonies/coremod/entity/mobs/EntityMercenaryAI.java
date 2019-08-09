@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.mobs;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
@@ -8,13 +9,12 @@ import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
-import net.minecraft.entity.ai.Goal;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 
@@ -139,7 +139,7 @@ public class EntityMercenaryAI extends Goal
      */
     private boolean hasTarget()
     {
-        if (entity.getAttackTarget() != null && !entity.getAttackTarget().isDead)
+        if (entity.getAttackTarget() != null && entity.getAttackTarget().isAlive())
         {
             entity.getAttackTarget().setRevengeTarget(entity);
             return true;
@@ -213,7 +213,7 @@ public class EntityMercenaryAI extends Goal
      */
     private boolean fighting()
     {
-        if (entity.getAttackTarget() == null || entity.getAttackTarget().isDead)
+        if (entity.getAttackTarget() == null || !entity.getAttackTarget().isAlive())
         {
             entity.getNavigator().clearPath();
             attackPath = null;
@@ -228,7 +228,7 @@ public class EntityMercenaryAI extends Goal
         if (attackPath == null || !attackPath.isInProgress())
         {
             entity.getNavigator().moveToLivingEntity(entity.getAttackTarget(), 1);
-            entity.getLookHelper().setLookPositionWithEntity(entity.getAttackTarget(), 180f, 180f);
+            entity.getLookController().setLookPositionWithEntity(entity.getAttackTarget(), 180f, 180f);
         }
 
         final int distance = BlockPosUtil.getMaxDistance2D(entity.getPosition(), entity.getAttackTarget().getPosition());
@@ -238,7 +238,7 @@ public class EntityMercenaryAI extends Goal
         {
             entity.swingArm(Hand.MAIN_HAND);
             entity.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, 0.55f, 1.0f);
-            entity.getAttackTarget().attackEntityFrom(new EntityDamageSource(entity.getName(), entity), 15);
+            entity.getAttackTarget().attackEntityFrom(new EntityDamageSource(entity.getName().getFormattedText(), entity), 15);
             entity.getAttackTarget().setFire(3);
             attacktimer = ATTACK_DELAY;
         }
@@ -261,13 +261,13 @@ public class EntityMercenaryAI extends Goal
     @Override
     public boolean shouldExecute()
     {
-        return entity != null && !entity.isDead && !entity.isInvisible() && entity.getColony() != null && entity.getState() == State.ALIVE;
+        return entity != null && entity.isAlive() && !entity.isInvisible() && entity.getColony() != null && entity.getState() == State.ALIVE;
     }
 
     @Override
     public boolean shouldContinueExecuting()
     {
         stateMachine.tick();
-        return entity != null && !entity.isDead && !entity.isInvisible() && entity.getColony() != null && entity.getState() == State.ALIVE;
+        return entity != null && entity.isAlive() && !entity.isInvisible() && entity.getColony() != null && entity.getState() == State.ALIVE;
     }
 }

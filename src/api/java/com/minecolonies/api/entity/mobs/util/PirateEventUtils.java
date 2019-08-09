@@ -3,17 +3,18 @@ package com.minecolonies.api.entity.mobs.util;
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.items.ItemScanTool;
 import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InstantStructurePlacer;
-import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import net.minecraft.block.Blocks;
-import net.minecraft.tileentity.TileEntityMobSpawner;
+import net.minecraft.entity.EntityType;
+import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.util.Mirror;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -69,7 +70,7 @@ public final class PirateEventUtils
             Log.getLogger().info("Failed to save schematics for Pirate ship spawn");
             return;
         }
-        colony.getRaiderManager().registerRaiderOriginSchematic(Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, targetSpawnPoint.down(3), world.getWorldTime());
+        colony.getRaiderManager().registerRaiderOriginSchematic(Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, targetSpawnPoint.down(3), world.getGameTime());
         InstantStructurePlacer.loadAndPlaceStructureWithRotation(world, Structures.SCHEMATICS_PREFIX + PIRATESHIP_FOLDER + shipSize, targetSpawnPoint.down(3), 0, Mirror.NONE, false);
         loadSpawners(world, targetSpawnPoint, shipSize);
         LanguageHandler.sendPlayersMessage(
@@ -89,27 +90,27 @@ public final class PirateEventUtils
         switch (shipSize)
         {
             case SMALL_PIRATE_SHIP:
-                setupSpawner(targetSpawnPoint.up(2).north(), world, PIRATE);
+                setupSpawner(targetSpawnPoint.up(2).north(), world, ModEntities.PIRATE);
                 break;
             case MEDIUM_PIRATE_SHIP:
-                setupSpawner(targetSpawnPoint.up(3).north(10), world, PIRATE_CHIEF);
-                setupSpawner(targetSpawnPoint.up(1), world, PIRATE);
-                setupSpawner(targetSpawnPoint.up(5).south(6), world, PIRATE_ARCHER);
+                setupSpawner(targetSpawnPoint.up(3).north(10), world, ModEntities.CHIEFPIRATE);
+                setupSpawner(targetSpawnPoint.up(1), world, ModEntities.PIRATE);
+                setupSpawner(targetSpawnPoint.up(5).south(6), world, ModEntities.ARCHERPIRATE);
                 break;
             case BIG_PIRATE_SHIP:
-                setupSpawner(targetSpawnPoint.up(3).south(), world, PIRATE);
-                setupSpawner(targetSpawnPoint.up(3).north(), world, PIRATE);
-                setupSpawner(targetSpawnPoint.down(1).south(5), world, PIRATE);
-                setupSpawner(targetSpawnPoint.down(1).north(5).east(2), world, PIRATE);
-                setupSpawner(targetSpawnPoint.down(1).north(8), world, PIRATE);
-                setupSpawner(targetSpawnPoint.up(2).south(12), world, PIRATE);
+                setupSpawner(targetSpawnPoint.up(3).south(), world, ModEntities.PIRATE);
+                setupSpawner(targetSpawnPoint.up(3).north(), world, ModEntities.PIRATE);
+                setupSpawner(targetSpawnPoint.down(1).south(5), world, ModEntities.PIRATE);
+                setupSpawner(targetSpawnPoint.down(1).north(5).east(2), world, ModEntities.PIRATE);
+                setupSpawner(targetSpawnPoint.down(1).north(8), world, ModEntities.PIRATE);
+                setupSpawner(targetSpawnPoint.up(2).south(12), world, ModEntities.PIRATE);
 
-                setupSpawner(targetSpawnPoint.up(3).north(10), world, PIRATE_CHIEF);
-                setupSpawner(targetSpawnPoint.up(6).north(12), world, PIRATE_CHIEF);
+                setupSpawner(targetSpawnPoint.up(3).north(10), world, ModEntities.CHIEFPIRATE);
+                setupSpawner(targetSpawnPoint.up(6).north(12), world, ModEntities.CHIEFPIRATE);
 
-                setupSpawner(targetSpawnPoint.up(9).north(13), world, PIRATE_ARCHER);
-                setupSpawner(targetSpawnPoint.up(22).south(), world, PIRATE_ARCHER);
-                setupSpawner(targetSpawnPoint.up(6).south(11), world, PIRATE_ARCHER);
+                setupSpawner(targetSpawnPoint.up(9).north(13), world, ModEntities.ARCHERPIRATE);
+                setupSpawner(targetSpawnPoint.up(22).south(), world, ModEntities.ARCHERPIRATE);
+                setupSpawner(targetSpawnPoint.up(6).south(11), world, ModEntities.ARCHERPIRATE);
                 break;
             default:
                 Log.getLogger().warn("Invalid ship size detected!");
@@ -124,13 +125,13 @@ public final class PirateEventUtils
      * @param world    the world to place it in.
      * @param mob      the mob to spawn.
      */
-    private static void setupSpawner(final BlockPos location, final World world, final ResourceLocation mob)
+    private static void setupSpawner(final BlockPos location, final World world, final EntityType mob)
     {
-        world.setBlockState(location, Blocks.MOB_SPAWNER.getDefaultState());
-        final TileEntityMobSpawner spawner = new TileEntityMobSpawner();
+        world.setBlockState(location, Blocks.SPAWNER.getDefaultState());
+        final MobSpawnerTileEntity spawner = new MobSpawnerTileEntity();
 
-        spawner.getSpawnerBaseLogic().activatingRangeFromPlayer = MineColonies.getConfig().getCommon().gameplay.workingRangeTownHallChunks / SPAWNER_DISTANCE_DIVIDER * BLOCKS_PER_CHUNK;
-        spawner.getSpawnerBaseLogic().setEntityId(mob);
+        spawner.getSpawnerBaseLogic().activatingRangeFromPlayer = MinecoloniesAPIProxy.getInstance().getConfig().getCommon().workingRangeTownHallChunks.get() / SPAWNER_DISTANCE_DIVIDER * BLOCKS_PER_CHUNK;
+        spawner.getSpawnerBaseLogic().setEntityType(mob);
 
         world.setTileEntity(location, spawner);
     }

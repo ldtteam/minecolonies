@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.mobs.pirates;
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import com.minecolonies.api.entity.mobs.pirates.IMeleePirateEntity;
 import com.minecolonies.api.util.constant.LootTableConstants;
+import net.minecraft.entity.EntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -18,9 +19,9 @@ public class EntityPirate extends AbstractEntityPirate implements IMeleePirateEn
      * Constructor of the entity.
      * @param worldIn world to construct it in.
      */
-    public EntityPirate(final World worldIn)
+    public EntityPirate(final EntityType type, final World worldIn)
     {
-        super(worldIn);
+        super(type, worldIn);
     }
 
     @Nullable

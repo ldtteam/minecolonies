@@ -2,6 +2,7 @@ package com.minecolonies.api.entity.mobs.barbarians;
 
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.sounds.BarbarianSounds;
+import net.minecraft.entity.EntityType;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 
@@ -18,15 +19,16 @@ public abstract class AbstractEntityBarbarian extends AbstractEntityMinecolonies
     /**
      * Constructor method for Abstract Barbarians.
      *
+     * @param type the type.
      * @param world the world.
      */
-    public AbstractEntityBarbarian(final World world)
+    public AbstractEntityBarbarian(final EntityType type, final World world)
     {
-        super(world);
+        super(type, world);
     }
 
     @Override
-    public void playLivingSound()
+    public void playAmbientSound()
     {
         final SoundEvent soundevent = this.getAmbientSound();
 
