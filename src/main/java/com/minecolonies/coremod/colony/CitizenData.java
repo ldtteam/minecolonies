@@ -38,7 +38,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MAX_HEALTH;
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
@@ -677,13 +676,9 @@ public class CitizenData implements ICitizenData
     public void updateCitizenEntityIfNecessary()
     {
         final List<AbstractEntityCitizen> list = colony.getWorld()
-                                            .getLoadedEntityList()
-                                            .stream()
-                                                   .filter(e -> e instanceof AbstractEntityCitizen)
-                                                   .map(e -> (AbstractEntityCitizen) e)
-                                            .filter(
-                                              entityCitizen -> entityCitizen.getCitizenColonyHandler().getColonyId() == colony.getID()
-                                                                 && entityCitizen.getCitizenData().getId() == getId()).collect(Collectors.toList());
+                                                   .getEntities(AbstractEntityCitizen.class,
+                                                     entityCitizen -> entityCitizen.getCitizenColonyHandler().getColonyId() == colony.getID()
+                                                                        && entityCitizen.getCitizenData().getId() == getId());
 
         if (!list.isEmpty())
         {
