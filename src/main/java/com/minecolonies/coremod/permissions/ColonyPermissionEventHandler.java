@@ -538,7 +538,7 @@ public class ColonyPermissionEventHandler
     {
         if (checkEventCancelation(Action.TOSS_ITEM, event.getPlayer(), event.getPlayer().getEntityWorld(), event, event.getPlayer().getPosition()))
         {
-            event.getPlayer().inventory.addItemStackToInventory(event.getItemEntity().getItem());
+            event.getPlayer().inventory.addItemStackToInventory(event.getEntityItem().getItem());
         }
     }
 
@@ -553,9 +553,9 @@ public class ColonyPermissionEventHandler
      * @param event ItemEntityPickupEvent
      */
     @SubscribeEvent
-    public void on(final ItemEntityPickupEvent event)
+    public void on(final EntityItemPickupEvent event)
     {
-        checkEventCancelation(Action.PICKUP_ITEM, event.getEntityPlayer(), event.getEntityPlayer().getEntityWorld(), event, event.getEntityPlayer().getPosition());
+        checkEventCancelation(Action.PICKUP_ITEM, event.getPlayer(), event.getPlayer().getEntityWorld(), event, event.getPlayer().getPosition());
     }
 
     /**

@@ -11,9 +11,12 @@ import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.compatibility.IFurnaceRecipes;
+import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.render.modeltype.registry.ModelTypeRegistry;
 import com.minecolonies.coremod.colony.CitizenDataManager;
 import com.minecolonies.coremod.colony.ColonyManager;
@@ -21,6 +24,7 @@ import com.minecolonies.coremod.colony.buildings.registry.BuildingDataManager;
 import com.minecolonies.coremod.colony.jobs.registry.JobDataManager;
 import com.minecolonies.coremod.entity.ai.registry.MobAIRegistry;
 import com.minecolonies.coremod.entity.pathfinding.registry.PathNavigateRegistry;
+import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -122,6 +126,18 @@ public class MinecoloniesAPIImpl implements IMinecoloniesAPI
     public IModelTypeRegistry getModelTypeRegistry()
     {
         return modelTypeRegistry;
+    }
+
+    @Override
+    public Configuration getConfig()
+    {
+        return MineColonies.getConfig();
+    }
+
+    @Override
+    public IFurnaceRecipes getFurnaceRecipes()
+    {
+        return FurnaceRecipes.getInstance();
     }
 
     public void onRegistryNewRegistry(final RegistryEvent.NewRegistry event)
