@@ -1,8 +1,9 @@
 package com.minecolonies.coremod.colony;
 
-import com.minecolonies.api.colony.IChunkmanagerCapability;
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.compatibility.CompatibilityManager;
@@ -13,9 +14,6 @@ import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
-import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRecipeManager;
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
@@ -48,6 +46,7 @@ import static com.minecolonies.coremod.MineColonies.*;
 /**
  * Singleton class that links colonies to minecraft.
  */
+@SuppressWarnings("PMD.ExcessiveClassLength")
 public final class ColonyManager implements IColonyManager
 {
     /**
@@ -69,7 +68,7 @@ public final class ColonyManager implements IColonyManager
     /**
      * Pseudo unique id for the server
      */
-    private volatile UUID serverUUID = null;
+    private UUID serverUUID = null;
 
     /**
      * Indicate if a schematic have just been downloaded.
@@ -81,11 +80,6 @@ public final class ColonyManager implements IColonyManager
      * If the manager finished loading already.
      */
     private boolean loaded = false;
-
-    public ColonyManager()
-    {
-        //Hides default constructor.
-    }
 
     /**
      * Create a new Colony in the given world and at that location.

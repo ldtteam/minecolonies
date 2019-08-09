@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.IColonyView;
-import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.network.messages.ChangeFreeToInteractBlockMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;

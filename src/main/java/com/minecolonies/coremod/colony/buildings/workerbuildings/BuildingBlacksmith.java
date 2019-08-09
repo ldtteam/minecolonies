@@ -1,5 +1,12 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -7,12 +14,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
-import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobBlacksmith;
 import net.minecraft.item.*;
 import net.minecraft.util.math.BlockPos;
@@ -37,7 +39,7 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
      * @param c the colony.
      * @param l the location.
      */
-    public BuildingBlacksmith(final Colony c, final BlockPos l)
+    public BuildingBlacksmith(final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -103,6 +105,12 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
 
         final ItemStack output = storage.getPrimaryOutput();
         return output.getItem() instanceof ItemTool || output.getItem() instanceof ItemSword || output.getItem() instanceof ItemArmor || output.getItem() instanceof ItemHoe || Compatibility.isTinkersWeapon(output) || ingots == size;
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.blacksmith;
     }
 
     /**

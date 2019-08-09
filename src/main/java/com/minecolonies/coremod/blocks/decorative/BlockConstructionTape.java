@@ -1,10 +1,9 @@
 package com.minecolonies.coremod.blocks.decorative;
 
+import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
+import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.blocks.AbstractBlockMinecoloniesFalling;
-import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -30,7 +29,7 @@ import static net.minecraft.util.EnumFacing.*;
  * This block is used as a border to show the size of the building.
  * It also shows that the building is in the progress of being built.
  */
-public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<BlockConstructionTape> implements IBlockConstructionTape<BlockConstructionTape>
+public class BlockConstructionTape extends AbstractBlockMinecoloniesConstructionTape<BlockConstructionTape>
 {
 
     /**
@@ -260,7 +259,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<Bloc
     public AxisAlignedBB getBoundingBox(final IBlockState stateIn, final IBlockAccess source, final BlockPos pos)
     {
         final IBlockState state = getActualState(stateIn, source, pos);
-        if(state.getValue(VARIANT).equals(ConstructionTapeType.CORNER))
+        if(state.getValue(VARIANT).equals(AbstractBlockMinecoloniesConstructionTape.ConstructionTapeType.CORNER))
         {
             if (state.getValue(FACING).equals(NORTH))
             {
@@ -346,9 +345,9 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<Bloc
 
         if((connectors[0] && connectors[2]) || (connectors[0] && connectors[3]) || (connectors[1] && connectors[3]) || (connectors[1] && connectors[2]))
         {
-            return state.withProperty(VARIANT, ConstructionTapeType.CORNER);
+            return state.withProperty(VARIANT, AbstractBlockMinecoloniesConstructionTape.ConstructionTapeType.CORNER);
         }
-        return state.withProperty(VARIANT, ConstructionTapeType.STRAIGHT);
+        return state.withProperty(VARIANT, AbstractBlockMinecoloniesConstructionTape.ConstructionTapeType.STRAIGHT);
     }
 
     /**
@@ -426,6 +425,6 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesFalling<Bloc
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, new IProperty[] {FACING, VARIANT});
+        return new BlockStateContainer(this, FACING, VARIANT);
     }
 }

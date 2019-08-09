@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
-import com.minecolonies.coremod.util.BuildingUtils;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ISchematicProvider;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.util.BuildingUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -80,24 +81,14 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     public NBTTagCompound serializeNBT()
     {
         final NBTTagCompound compound = new NBTTagCompound();
-        final String s = BuildingRegistry.getNameToClassMap().inverse().get(this.getClass());
-
-        if (s == null)
+        BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
+        final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
+        if (Structures.hasMD5(structureName))
         {
-            throw new IllegalStateException(this.getClass() + " is missing a mapping! This is a bug!");
-        }
-        else
-        {
-            compound.setString(TAG_BUILDING_TYPE, s);
-            BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
-            final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
-            if (Structures.hasMD5(structureName))
-            {
-                compound.setString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName.toString()));
-            }
+            compound.setString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName.toString()));
         }
 
-        compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
+        compound.setInteger(TAG_SCHEMATIC_LEVEL, buildingLevel);
         compound.setInteger(TAG_ROTATION, rotation);
         compound.setString(TAG_STYLE, style);
 
@@ -116,33 +107,12 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
     @Override
     public void deserializeNBT(final NBTTagCompound compound)
     {
-        buildingLevel = compound.getInteger(TAG_BUILDING_LEVEL);
+        buildingLevel = compound.getInteger(TAG_SCHEMATIC_LEVEL);
 
         rotation = compound.getInteger(TAG_ROTATION);
         style = compound.getString(TAG_STYLE);
 
-        final String md5 = compound.getString(TAG_SCHEMATIC_MD5);
-        final int testLevel = buildingLevel == 0 ? 1 : buildingLevel;
-        final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + testLevel);
-
-        if (!Structures.hasMD5(sn))
-        {
-            final StructureName newStructureName = Structures.getStructureNameByMD5(md5);
-            if (newStructureName != null
-                  && newStructureName.getPrefix().equals(sn.getPrefix())
-                  && newStructureName.getSchematic().equals(sn.getSchematic()))
-            {
-                //We found the new location for the schematic, update the style accordingly
-                style = newStructureName.getStyle();
-                Log.getLogger().warn("AbstractBuilding.readFromNBT: " + sn + " have been moved to " + newStructureName);
-            }
-        }
-
-        if (style.isEmpty())
-        {
-            Log.getLogger().warn("Loaded empty style, setting to wooden");
-            style = "wooden";
-        }
+        deserializerStructureInformationFrom(compound);
 
         isBuildingMirrored = compound.getBoolean(TAG_MIRROR);
 
@@ -157,6 +127,32 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider
         if (compound.hasKey(TAG_HEIGHT))
         {
             this.height = compound.getInteger(TAG_HEIGHT);
+        }
+    }
+
+    private void deserializerStructureInformationFrom(final NBTTagCompound compound)
+    {
+        final String md5 = compound.getString(TAG_SCHEMATIC_MD5);
+        final int testLevel = buildingLevel == 0 ? 1 : buildingLevel;
+        final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + testLevel);
+
+        if (!Structures.hasMD5(sn))
+        {
+            final StructureName newStructureName = Structures.getStructureNameByMD5(md5);
+            if (newStructureName != null
+                  && newStructureName.getPrefix().equals(sn.getPrefix())
+                  && newStructureName.getSchematic().equals(sn.getSchematic()))
+            {
+                //We found the new location for the schematic, update the style accordingly
+                style = newStructureName.getStyle();
+                Log.getLogger().warn(String.format("AbstractBuilding.readFromNBT: %s have been moved to %s", sn, newStructureName));
+            }
+        }
+
+        if (style.isEmpty())
+        {
+            Log.getLogger().warn("Loaded empty style, setting to wooden");
+            style = "wooden";
         }
     }
 

@@ -2,7 +2,13 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.HiringMode;
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
@@ -14,7 +20,7 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
@@ -68,7 +74,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
      * @param c the colony
      * @param l the position
      */
-    public AbstractBuildingWorker(@NotNull final Colony c, final BlockPos l)
+    public AbstractBuildingWorker(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
     }

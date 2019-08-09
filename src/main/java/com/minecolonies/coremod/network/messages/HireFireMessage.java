@@ -1,14 +1,10 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -118,11 +114,11 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
             if (message.hire)
             {
 
-                ((AbstractBuildingWorker) colony.getBuildingManager().getBuilding(message.buildingId)).assignCitizen(citizen);
+                colony.getBuildingManager().getBuilding(message.buildingId).assignCitizen(citizen);
             }
             else
             {
-                ((IBuildingWorker) colony.getBuildingManager().getBuilding(message.buildingId)).removeCitizen(citizen);
+                colony.getBuildingManager().getBuilding(message.buildingId).removeCitizen(citizen);
             }
         }
     }

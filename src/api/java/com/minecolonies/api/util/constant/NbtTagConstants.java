@@ -121,7 +121,7 @@ public final class NbtTagConstants
     /**
      * The tag to store the level of the building.
      */
-    public static final String TAG_BUILDING_LEVEL = "level";
+    public static final String TAG_SCHEMATIC_LEVEL = "level";
 
     /**
      * The tag to store the rotation of the building.
@@ -435,6 +435,8 @@ public final class NbtTagConstants
     public static final String TAG_DAILY         = "daily";
     public static final String TAG_CURRENT_DAILY = "currentDaily";
     public static final String TAG_CRUSHER_MODE  = "Crushermode";
+    public static final String TAG_JOB_TYPE      = "type";
+    public static final String NBT_SLOT          = "Slot";
 
     /**
      * Private constructor to hide the implicit one.

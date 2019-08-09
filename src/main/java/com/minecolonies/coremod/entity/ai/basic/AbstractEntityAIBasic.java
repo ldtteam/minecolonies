@@ -3,6 +3,8 @@ package com.minecolonies.coremod.entity.ai.basic;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
@@ -10,24 +12,22 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
+import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.inventory.InventoryCitizen;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIStatePausedHandler;
-import com.minecolonies.coremod.entity.ai.statemachine.AIEventTarget;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
-import com.minecolonies.coremod.inventory.InventoryCitizen;
-import com.minecolonies.coremod.tileentities.ITileEntityColonyBuilding;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -49,12 +49,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.BuildingConstants.MAX_PRIO;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.RAWTYPES;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
@@ -649,7 +649,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityChest)
                 {
-                    hasItem = isInTileEntity((TileEntityChest) entity, is);
+                    hasItem = isInTileEntity(entity, is);
 
                     if (hasItem)
                     {
@@ -711,9 +711,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return walkToBlock(stand, DEFAULT_RANGE_FOR_DELAY);
     }
 
-    public boolean isInTileEntity(final ITileEntityColonyBuilding entity, final ItemStack is)
+    public boolean isInTileEntity(final AbstractTileEntityColonyBuilding entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
-        return isInTileEntity((TileEntity) entity, is);
+        return isInTileEntity((TileEntity) entity, itemStackSelectionPredicate);
     }
 
     /**
@@ -773,9 +773,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         this.delay = timeout;
     }
 
-    public boolean isInTileEntity(final ITileEntityColonyBuilding entity, @NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
+    public boolean isInTileEntity(final AbstractTileEntityColonyBuilding entity, final ItemStack is)
     {
-        return isInTileEntity((TileEntity) entity, itemStackSelectionPredicate);
+        return isInTileEntity((TileEntity) entity, is);
     }
 
     /**
@@ -964,7 +964,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if (building != null)
         {
-            if (retrieveToolInTileEntity((TileEntity) building.getTileEntity(), toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
+            if (retrieveToolInTileEntity(building.getTileEntity(), toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
             {
                 return true;
             }
@@ -1045,6 +1045,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return true if is has to dump more.
      */
+    @SuppressWarnings("PMD.PrematureDeclaration")
     private boolean dumpOneMoreSlot()
     {
         if (walkToBuilding())

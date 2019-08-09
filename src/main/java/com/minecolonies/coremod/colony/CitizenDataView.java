@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

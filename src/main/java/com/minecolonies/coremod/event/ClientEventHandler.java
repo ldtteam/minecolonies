@@ -2,19 +2,18 @@ package com.minecolonies.coremod.event;
 
 import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structures.client.BlueprintRenderHandler;
-import com.ldtteam.structurize.util.PlacementSettings;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.IColonyView;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
-import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
-import com.minecolonies.coremod.items.ModItems;
 import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.colony.CitizenDataView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
+import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,7 +43,7 @@ public class ClientEventHandler
     /**
      * The currently displayed citizen.
      */
-    private CitizenDataView citizen = null;
+    private final CitizenDataView citizen = null;
 
     /**
      * The ticks passed since showing the sign.
@@ -64,7 +63,7 @@ public class ClientEventHandler
     /**
      * The colony view required here.
      */
-    private IColonyView view = null;
+    private final IColonyView view = null;
 
     /**
      * Used to catch the renderWorldLastEvent in order to draw the debug nodes for pathfinding.

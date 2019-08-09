@@ -1,12 +1,11 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.api.colony.managers.interfaces.IStatisticAchievementManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.managers.interfaces.IStatisticAchievementManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -226,7 +225,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
 
         if (tool != null && damageTool)
         {
-            tool.getItem().onUpdate(tool, world, (Entity) worker, worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(tool.getItem(), tool.getItemDamage()), true);
+            tool.getItem().onUpdate(tool, world, worker, worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(tool.getItem(), tool.getItemDamage()), true);
         }
         worker.getCitizenExperienceHandler().addExperience(XP_PER_BLOCK);
         this.incrementActionsDone();

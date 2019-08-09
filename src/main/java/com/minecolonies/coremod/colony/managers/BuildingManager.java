@@ -2,29 +2,27 @@ package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
+import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
+import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
+import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.tileentities.AbstractScarescrowTileEntity;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
-import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
-import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
-import com.minecolonies.coremod.colony.managers.interfaces.IBuildingManager;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.network.messages.ColonyViewBuildingViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveBuildingMessage;
-import com.minecolonies.coremod.tileentities.IScarecrow;
-import com.minecolonies.coremod.tileentities.ITileEntityColonyBuilding;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
 import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -103,7 +101,7 @@ public class BuildingManager implements IBuildingManager
         for (int i = 0; i < buildingTagList.tagCount(); ++i)
         {
             final NBTTagCompound buildingCompound = buildingTagList.getCompoundTagAt(i);
-            @Nullable final IBuilding b = BuildingRegistry.createFromNBT(colony, buildingCompound);
+            @Nullable final IBuilding b = IBuildingDataManager.getInstance().createFrom(colony, buildingCompound);
             if (b != null)
             {
                 addBuilding(b);
@@ -223,7 +221,7 @@ public class BuildingManager implements IBuildingManager
         {
             if (event.world.isBlockLoaded(pos))
             {
-                final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) event.world.getTileEntity(pos);
+                final TileEntityScarecrow scarecrow = (TileEntityScarecrow) event.world.getTileEntity(pos);
                 if (scarecrow == null)
                 {
                     removeField(pos);
@@ -281,17 +279,11 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public ScarecrowTileEntity getFreeField(final int owner, final World world)
+    public void addNewField(final AbstractScarescrowTileEntity tileEntity, final BlockPos pos, final World world)
     {
-        for (@NotNull final BlockPos pos : fields)
-        {
-            final TileEntity field = world.getTileEntity(pos);
-            if (field instanceof ScarecrowTileEntity && !((ScarecrowTileEntity) field).isTaken())
-            {
-                return (ScarecrowTileEntity) field;
-            }
-        }
-        return null;
+        addField(pos);
+        tileEntity.calculateSize(world, pos.down());
+        markFieldsDirty();
     }
 
     @Override
@@ -309,20 +301,26 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void addNewField(final IScarecrow tileEntity, final BlockPos pos, final World world)
+    public TileEntityScarecrow getFreeField(final int owner, final World world)
     {
-        addField(pos);
-        tileEntity.calculateSize(world, pos.down());
-        markFieldsDirty();
+        for (@NotNull final BlockPos pos : fields)
+        {
+            final TileEntity field = world.getTileEntity(pos);
+            if (field instanceof TileEntityScarecrow && !((TileEntityScarecrow) field).isTaken())
+            {
+                return (TileEntityScarecrow) field;
+            }
+        }
+        return null;
     }
 
     @Override
-    public IBuilding addNewBuilding(@NotNull final ITileEntityColonyBuilding tileEntity, final World world)
+    public IBuilding addNewBuilding(@NotNull final AbstractTileEntityColonyBuilding tileEntity, final World world)
     {
         tileEntity.setColony(colony);
         if (!buildings.containsKey(tileEntity.getPosition()))
         {
-            @Nullable final IBuilding building = BuildingRegistry.create(colony, tileEntity);
+            @Nullable final IBuilding building = IBuildingDataManager.getInstance().createFrom(colony, tileEntity);
             if (building != null)
             {
                 addBuilding(building);
@@ -427,7 +425,7 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public BlockPos getBestRestaurant(final IEntityCitizen citizen)
+    public BlockPos getBestRestaurant(final AbstractEntityCitizen citizen)
     {
         double distance = Double.MAX_VALUE;
         BlockPos goodCook = null;

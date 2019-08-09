@@ -1,13 +1,17 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutStoneSmelter;
-import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobStoneSmeltery;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockGlazedTerracotta;
@@ -39,7 +43,7 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
      * @param c the colony.
      * @param l the location
      */
-    public BuildingStoneSmeltery(final Colony c, final BlockPos l)
+    public BuildingStoneSmeltery(final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -115,6 +119,12 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
         }
 
         return item == Items.BRICK || item == Items.COAL;
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.stoneSmelter;
     }
 
     /**

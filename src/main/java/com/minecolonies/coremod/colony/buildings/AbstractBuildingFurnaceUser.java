@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.item.ItemStack;
@@ -51,7 +51,7 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableList
      * @param c the colony.
      * @param l the location
      */
-    public AbstractBuildingFurnaceUser(final Colony c, final BlockPos l)
+    public AbstractBuildingFurnaceUser(final IColony c, final BlockPos l)
     {
         super(c, l);
     }

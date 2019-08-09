@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.client.render;
 
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.constant.Literals;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
-import com.minecolonies.coremod.entity.IEntityCitizen;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -69,7 +69,7 @@ public class RenderFishHook extends Render<EntityFishHook>
         GlStateManager.disableRescaleNormal();
         GlStateManager.popMatrix();
 
-        IEntityCitizen citizen = entity.getCitizen();
+        AbstractEntityCitizen citizen = entity.getCitizen();
 
         //If the citizen is null (Which he probably is) get the nearest citizen to the fishHook position.
         //Check if he is a fisherman -> Through his texture
@@ -77,7 +77,7 @@ public class RenderFishHook extends Render<EntityFishHook>
         {
             for (@NotNull final Object citizenX : CompatibilityUtils.getWorldFromEntity(entity).getEntitiesWithinAABB(EntityCitizen.class, entity.getEntityBoundingBox().expand(10, 10, 10)))
             {
-                if (((EntityCitizen) citizenX).getModelID().textureBase.contains("Fisherman"))
+                if (((EntityCitizen) citizenX).getModelType().getTextureBase().contains("Fisherman"))
                 {
                     citizen = (EntityCitizen) citizenX;
                     break;

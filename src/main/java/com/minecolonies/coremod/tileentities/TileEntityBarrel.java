@@ -1,15 +1,15 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.items.ModItems;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-public class TileEntityBarrel extends TileEntity implements ITileEntityBarrel
+public class TileEntityBarrel extends AbstractTileEntityBarrel
 {
     /**
      * True if the barrel has finished composting and the items are ready to harvest
@@ -66,7 +66,7 @@ public class TileEntityBarrel extends TileEntity implements ITileEntityBarrel
      */
     public void updateTick(final World worldIn, final BlockPos pos, final IBlockState state, final Random rand)
     {
-        if(getItems() == ITileEntityBarrel.MAX_ITEMS)
+        if (getItems() == AbstractTileEntityBarrel.MAX_ITEMS)
         {
             doBarrelCompostTick(worldIn, pos, state);
         }
@@ -109,12 +109,12 @@ public class TileEntityBarrel extends TileEntity implements ITileEntityBarrel
             return true;
         }
 
-        if (!this.checkCorrectItem(itemstack))
+        if (!checkCorrectItem(itemstack))
         {
             return false;
         }
 
-        if (items == ITileEntityBarrel.MAX_ITEMS)
+        if (items == AbstractTileEntityBarrel.MAX_ITEMS)
         {
             playerIn.sendMessage(new TextComponentTranslation("entity.barrel.working"));
             return false;
@@ -137,7 +137,7 @@ public class TileEntityBarrel extends TileEntity implements ITileEntityBarrel
         //The available items the player has in his hand (Rotten Flesh counts as the double)
         final int availableItems = itemStack.getCount()*factor;
         //The items we need to complete the barrel
-        final int neededItems = ITileEntityBarrel.MAX_ITEMS - items;
+        final int neededItems = AbstractTileEntityBarrel.MAX_ITEMS - items;
         //The quantity of items that we are going to take from the player
         int itemsToRemove = Math.min(neededItems, availableItems);
 
@@ -246,7 +246,7 @@ public class TileEntityBarrel extends TileEntity implements ITileEntityBarrel
     @Override
     public boolean checkIfWorking()
     {
-        return this.items == this.MAX_ITEMS;
+        return this.items == MAX_ITEMS;
     }
 
     /***
@@ -257,7 +257,7 @@ public class TileEntityBarrel extends TileEntity implements ITileEntityBarrel
     @Override
     public boolean addItem(final ItemStack item)
     {
-        if(checkCorrectItem(item) && this.items < this.MAX_ITEMS)
+        if (checkCorrectItem(item) && this.items < MAX_ITEMS)
         {
             this.consumeNeededItems(item);
             this.updateBlock(this.world, this.world.getBlockState(this.pos));

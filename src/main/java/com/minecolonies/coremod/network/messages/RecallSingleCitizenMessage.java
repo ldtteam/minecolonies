@@ -1,15 +1,13 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -98,7 +96,7 @@ public class RecallSingleCitizenMessage extends AbstractMessage<RecallSingleCiti
             }
 
             final ICitizenData citizenData = colony.getCitizenManager().getCitizen(message.citizenId);
-            Optional<IEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
+            Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
             if (!optionalEntityCitizen.isPresent())
             {
                 citizenData.updateCitizenEntityIfNecessary();

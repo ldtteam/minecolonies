@@ -2,18 +2,19 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
-import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHay;
 import net.minecraft.init.Blocks;
@@ -64,7 +65,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
      * @param c the colony
      * @param l the position
      */
-    public BuildingCombatAcademy(@NotNull final Colony c, final BlockPos l)
+    public BuildingCombatAcademy(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -173,7 +174,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
      * @return the entityCitizen partner or null.
      * @param citizen the worker to get the partner for.
      */
-    public IEntityCitizen getRandomCombatPartner(final IEntityCitizen citizen)
+    public AbstractEntityCitizen getRandomCombatPartner(final AbstractEntityCitizen citizen)
     {
         final ICitizenData citizenData = citizen.getCitizenData();
         if (citizenData != null)
@@ -195,11 +196,22 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     }
 
     /**
+     * Check if the worker has a combat partner assigned to him right now.
+     *
+     * @param citizen the citizen to check for.
+     * @return true if so.
+     */
+    public boolean hasCombatPartner(final AbstractEntityCitizen citizen)
+    {
+        return getCombatPartner(citizen) != null;
+    }
+
+    /**
      * Get the citizen of the combat partner or null if not existing or available.
      * @param citizen the citizen.
      * @return the citizen or null.
      */
-    public IEntityCitizen getCombatPartner(final IEntityCitizen citizen)
+    public AbstractEntityCitizen getCombatPartner(final AbstractEntityCitizen citizen)
     {
         final ICitizenData data = citizen.getCitizenData();
         if (data != null)
@@ -228,20 +240,10 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     }
 
     /**
-     * Check if the worker has a combat partner assigned to him right now.
-     * @param citizen the citizen to check for.
-     * @return true if so.
-     */
-    public boolean hasCombatPartner(final IEntityCitizen citizen)
-    {
-        return getCombatPartner(citizen) != null;
-    }
-
-    /**
      * Reset the combat partner for a worker.
      * @param worker the worker to reset it for.
      */
-    public void resetPartner(final IEntityCitizen worker)
+    public void resetPartner(final AbstractEntityCitizen worker)
     {
         final ICitizenData data = worker.getCitizenData();
         if (data != null)
@@ -257,8 +259,14 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
         }
     }
 
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.combatAcademy;
+    }
+
     /**
-     * The client view for the baker building.
+     * The client view for the bakery building.
      */
     public static class View extends AbstractBuildingWorker.View
     {

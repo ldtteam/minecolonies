@@ -2,12 +2,15 @@ package com.minecolonies.coremod.colony.workorders;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.workorders.IWorkManager;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
+import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;

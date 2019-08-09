@@ -4,9 +4,9 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.network.PacketUtils;
 import com.minecolonies.coremod.util.AchievementUtils;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
@@ -702,19 +702,17 @@ public class Permissions implements IPermissions
     /**
      * Adds a player to the rankings.
      *
-     * @param gameprofile GameProfile of the player.
-     * @param rank        Desired rank.
+     * @param id UUID of the player..
+     * @param rank Desired rank.
+     * @param name name of the player.
      * @return True if succesful, otherwise false.
      */
     @Override
-    public boolean addPlayer(@NotNull final GameProfile gameprofile, final Rank rank)
+    public boolean addPlayer(@NotNull final UUID id, final String name, final Rank rank)
     {
-        @NotNull final Player p = new Player(gameprofile.getId(), gameprofile.getName(), rank);
+        @NotNull final Player p = new Player(id, name, rank);
 
-        if (players.containsKey(p.getID()))
-        {
-            players.remove(p.getID());
-        }
+        players.remove(p.getID());
         players.put(p.getID(), p);
 
         markDirty();
@@ -759,20 +757,16 @@ public class Permissions implements IPermissions
     /**
      * Adds a player to the rankings.
      *
-     * @param id UUID of the player..
-     * @param rank Desired rank.
-     * @param name name of the player.
+     * @param gameprofile GameProfile of the player.
+     * @param rank        Desired rank.
      * @return True if succesful, otherwise false.
      */
     @Override
-    public boolean addPlayer(@NotNull final UUID id, final String name, final Rank rank)
+    public boolean addPlayer(@NotNull final GameProfile gameprofile, final Rank rank)
     {
-        @NotNull final Player p = new Player(id, name, rank);
+        @NotNull final Player p = new Player(gameprofile.getId(), gameprofile.getName(), rank);
 
-        if (players.containsKey(p.getID()))
-        {
-            players.remove(p.getID());
-        }
+        players.remove(p.getID());
         players.put(p.getID(), p);
 
         markDirty();

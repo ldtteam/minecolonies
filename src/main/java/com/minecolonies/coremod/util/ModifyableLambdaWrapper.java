@@ -10,10 +10,6 @@ public class ModifyableLambdaWrapper<T>
         this.value = value;
     }
 
-    public ModifyableLambdaWrapper()
-    {
-    }
-
     public T getValue()
     {
         return value;

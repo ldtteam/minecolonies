@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.event;
 
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.ServerUUIDMessage;
-import com.minecolonies.coremod.sounds.ModSoundEvents;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.config.Config;

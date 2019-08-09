@@ -2,14 +2,13 @@ package com.minecolonies.coremod.test;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.colony.ICitizenDataManager;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.apiimp.MinecoloniesApiImpl;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ICitizenDataManager;
-import com.minecolonies.coremod.colony.IColonyManager;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraft.init.Bootstrap;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -40,6 +39,7 @@ public abstract class AbstractMockStaticsTest
     @Before
     public void setupStaticMocks() throws Exception
     {
+        Bootstrap.register();
         IMinecoloniesAPI mockedMinecoloniesApi = Mockito.mock(IMinecoloniesAPI.class);
 
         colonyManagerToMock = Mockito.mock(IColonyManager.class);

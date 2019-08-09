@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.entity.ai.citizen.trainingcamps;
 
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingArchery;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
 import com.minecolonies.coremod.entity.ai.citizen.guard.GuardArrow;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.util.SoundUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.EntityTippedArrow;
@@ -18,9 +18,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTraining>

@@ -1,9 +1,13 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.*;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
@@ -16,14 +20,9 @@ import com.minecolonies.blockout.views.DropDownList;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.ITownHallView;
-import com.minecolonies.coremod.colony.permissions.PermissionEvent;
-import com.minecolonies.coremod.colony.workorders.WorkOrderView;
 import com.minecolonies.coremod.network.messages.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -48,6 +47,7 @@ import static com.minecolonies.coremod.commands.colonycommands.ListColoniesComma
 /**
  * Window for the town hall.
  */
+@SuppressWarnings("PMD.ExcessiveClassLength")
 public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 {
     /**
@@ -747,7 +747,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 final long distance = BlockPosUtil.getDistance2D(IColonyView.getCenter(), building.getPosition());
                 rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText((int) distance + "b");
                 final Button button = rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class);
-                if (townHall.getBuildingLevel() < Configurations.gameplay.minThLevelToTeleport || !Configurations.gameplay.canPlayerUseColonyTPCommand)
+                if (townHall.getBuildingLevel() < Configurations.gameplay.minThLevelToTeleport || !townHall.canPlayerUseTP())
                 {
                     button.setLabel(LanguageHandler.format(TH_TOO_LOW));
                     button.disable();
@@ -1003,7 +1003,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 //Searches citizen of id x
                 for (@NotNull final IBuildingView buildingView : building.getColony().getBuildings())
                 {
-                    if (buildingView.getLocation().equals(workOrder.getClaimedBy()) && buildingView instanceof AbstractBuildingBuilderView)
+                    if (buildingView.getPosition().equals(workOrder.getClaimedBy()) && buildingView instanceof AbstractBuildingBuilderView)
                     {
                         claimingCitizen = ((AbstractBuildingBuilderView) buildingView).getWorkerName();
                         break;

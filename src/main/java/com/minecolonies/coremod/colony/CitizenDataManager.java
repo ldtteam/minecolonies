@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICitizenDataManager;
+import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.Log;
 import io.netty.buffer.ByteBuf;
@@ -15,7 +18,7 @@ public class CitizenDataManager implements ICitizenDataManager
     {
         final int id = compound.getInteger(TAG_ID);
         final @NotNull CitizenData citizen = new CitizenData(id, colony);
-        citizen.readFromNBT(compound);
+        citizen.deserializeNBT(compound);
         return citizen;
     }
 

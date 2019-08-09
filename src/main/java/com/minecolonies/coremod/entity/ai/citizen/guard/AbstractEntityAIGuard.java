@@ -1,24 +1,24 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IGuardBuilding;
+import com.minecolonies.api.colony.buildings.views.MobEntryView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
+import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
-import com.minecolonies.coremod.entity.ai.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.coremod.entity.ai.statemachine.AIOneTimeEventTarget;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,10 +32,10 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Class taking of the abstract guard methods for all fighting AIs.
@@ -97,7 +97,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
     /**
      * The guard building assigned to this job.
      */
-    protected final AbstractBuildingGuards buildingGuards;
+    protected final IGuardBuilding buildingGuards;
 
     /**
      * Creates the abstract part of the AI.
@@ -317,7 +317,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         // Check if we're ready to attack the target
         if (worker.getEntitySenses().canSee(target) && isWithinPersecutionDistance(target.getPosition()))
         {
-            target.setRevengeTarget((EntityLivingBase) worker);
+            target.setRevengeTarget(worker);
             return getAttackState();
         }
 
@@ -440,6 +440,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      *
      * @return The next IAIState to go to.
      */
+    @SuppressWarnings("PMD.PrematureDeclaration")
     protected EntityLivingBase getTarget()
     {
         reduceAttackDelay(1);
@@ -480,7 +481,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                         {
                             return entity;
                         }
-                        else if (entity instanceof EntityCitizen && worker.canEntityBeSeen(entity) && (((IEntityCitizen) entity).getCitizenJobHandler()
+                        else if (entity instanceof EntityCitizen && worker.canEntityBeSeen(entity) && (((AbstractEntityCitizen) entity).getCitizenJobHandler()
                                                                                                          .getColonyJob() instanceof AbstractJobGuard))
                         {
                             return entity;
@@ -511,7 +512,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                     {
                         return entity;
                     }
-                    else if (entity instanceof EntityCitizen && colony.isValidAttackingGuard((IEntityCitizen) entity))
+                    else if (entity instanceof EntityCitizen && colony.isValidAttackingGuard((AbstractEntityCitizen) entity))
                     {
                         return entity;
                     }
@@ -624,7 +625,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
      */
     private AxisAlignedBB getSearchArea()
     {
-        final AbstractBuildingGuards building = getOwnBuilding();
+        final IGuardBuilding building = getOwnBuilding();
 
         final double x1 = worker.getPosition().getX() + (building.getBonusVision() + DEFAULT_VISION);
         final double x2 = worker.getPosition().getX() - (building.getBonusVision() + DEFAULT_VISION);

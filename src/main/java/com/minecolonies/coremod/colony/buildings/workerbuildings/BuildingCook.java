@@ -1,17 +1,17 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutCook;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobCook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
@@ -48,7 +48,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
      * @param c the colony.
      * @param l the location
      */
-    public BuildingCook(final Colony c, final BlockPos l)
+    public BuildingCook(final IColony c, final BlockPos l)
     {
         super(c, l);
         keepX.put(ItemStackUtils.ISFOOD, new Tuple<>(STACKSIZE, true));
@@ -127,6 +127,12 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
         }
 
         return super.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, inventory);
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.cook;
     }
 
     /**

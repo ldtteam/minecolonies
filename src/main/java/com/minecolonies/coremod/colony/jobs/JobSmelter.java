@@ -1,8 +1,9 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.BipedModelType;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.smelter.EntityAIWorkSmelter;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +21,12 @@ public class JobSmelter extends AbstractJob
     public JobSmelter(final ICitizenData entity)
     {
         super(entity);
+    }
+
+    @Override
+    public JobEntry getJobRegistryEntry()
+    {
+        return ModJobs.smelter;
     }
 
     /**

@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.creativetab.ModCreativeTabs;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import com.minecolonies.coremod.tileentities.ITileEntityColonyBuilding;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -70,12 +70,12 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
 
         if (entity instanceof TileEntityColonyBuilding)
         {
-            compound.setInteger(TAG_COLONY_ID, ((ITileEntityColonyBuilding) entity).getColonyId());
-            BlockPosUtil.writeToNBT(compound, TAG_BUILDER, ((ITileEntityColonyBuilding) entity).getPosition());
+            compound.setInteger(TAG_COLONY_ID, ((AbstractTileEntityColonyBuilding) entity).getColonyId());
+            BlockPosUtil.writeToNBT(compound, TAG_BUILDER, ((AbstractTileEntityColonyBuilding) entity).getPosition());
 
             if (!worldIn.isRemote)
             {
-                LanguageHandler.sendPlayerMessage(playerIn, TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET, ((ITileEntityColonyBuilding) entity).getColonyId());
+                LanguageHandler.sendPlayerMessage(playerIn, TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET, ((AbstractTileEntityColonyBuilding) entity).getColonyId());
             }
         }
         else if (compound.hasKey(TAG_COLONY_ID) && compound.hasKey(TAG_BUILDER) && worldIn.isRemote)

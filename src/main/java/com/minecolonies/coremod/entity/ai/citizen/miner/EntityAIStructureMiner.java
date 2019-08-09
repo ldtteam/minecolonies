@@ -1,26 +1,24 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
 import com.ldtteam.structures.helpers.Structure;
+import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.util.WorkerUtil;
-import com.ldtteam.structurize.management.Structures;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -32,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Class which handles the miner behaviour.
@@ -799,7 +797,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     private int getLastLadder(@NotNull final BlockPos pos)
     {
-        if (world.getBlockState(pos).getBlock().isLadder(world.getBlockState(pos), world, pos, (EntityLivingBase) worker))
+        if (world.getBlockState(pos).getBlock().isLadder(world.getBlockState(pos), world, pos, worker))
         {
             return getLastLadder(pos.down());
         }
@@ -811,7 +809,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     private int getFirstLadder(@NotNull final BlockPos pos)
     {
-        if (world.getBlockState(pos).getBlock().isLadder(world.getBlockState(pos), world, pos, (EntityLivingBase) worker))
+        if (world.getBlockState(pos).getBlock().isLadder(world.getBlockState(pos), world, pos, worker))
         {
             return getFirstLadder(pos.up());
         }

@@ -2,22 +2,24 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
-import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.IJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +47,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
      * @param c the colony.
      * @param l the location
      */
-    public BuildingDeliveryman(final Colony c, final BlockPos l)
+    public BuildingDeliveryman(final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -98,6 +100,12 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
         return builder.build();
     }
 
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.deliveryman;
+    }
+
     @NotNull
     @Override
     public IJob createJob(final ICitizenData citizen)
@@ -123,7 +131,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
     {
         if (citizen != null)
         {
-            final Optional<IEntityCitizen> optCitizen = citizen.getCitizenEntity();
+            final Optional<AbstractEntityCitizen> optCitizen = citizen.getCitizenEntity();
             optCitizen.ifPresent(entityCitizen -> entityCitizen.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
                                                     .setBaseValue(BASE_MOVEMENT_SPEED));
         }

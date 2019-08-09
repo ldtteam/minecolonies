@@ -1,19 +1,22 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.minecolonies.api.colony.HappinessData;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICitizenDataManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.*;
+import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.colony.managers.interfaces.ICitizenManager;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.ColonyViewRemoveCitizenMessage;
 import com.minecolonies.coremod.network.messages.HappinessDataMessage;
@@ -23,6 +26,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -97,7 +101,7 @@ public class CitizenManager implements ICitizenManager
     {
         compound.setInteger(TAG_MAX_CITIZENS, maxCitizens);
 
-        @NotNull final NBTTagList citizenTagList = citizens.values().stream().map(citizen -> citizen.writeToNBT(new NBTTagCompound())).collect(NBTUtils.toNBTTagList());
+        @NotNull final NBTTagList citizenTagList = citizens.values().stream().map(INBTSerializable::serializeNBT).collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_CITIZENS, citizenTagList);
     }
 
@@ -147,38 +151,48 @@ public class CitizenManager implements ICitizenManager
 
         if (spawnPoint != null)
         {
-
-            ICitizenData citizenData = data;
-            if (citizenData == null)
-            {
-                citizenData = createAndRegisterNewCitizenData();
-
-                if (getMaxCitizens() == getCitizens().size() && !force)
-                {
-                    LanguageHandler.sendPlayersMessage(
-                      colony.getMessageEntityPlayers(),
-                      "tile.blockHutTownHall.messageMaxSize",
-                      colony.getName());
-                }
-            }
-            final EntityCitizen entity = new EntityCitizen(world);
-            citizenData.setCitizenEntity(entity);
-
-            entity.getCitizenColonyHandler().initEntityCitizenValues(colony, citizenData);
-
-            entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
-            world.spawnEntity(entity);
-
-            colony.getProgressManager().progressCitizenSpawn(citizens.size(), citizens.values().stream().filter(tempDate -> tempDate.getJob() != null).collect(Collectors.toList()).size());
-            colony.getStatsManager().checkAchievements();
-            markCitizensDirty();
-            return citizenData;
+            return spawnCitizenOnPosition(data, world, force, spawnPoint);
         }
         else
         {
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.citizens.nospace");
         }
         return data;
+    }
+
+    @NotNull
+    private ICitizenData spawnCitizenOnPosition(
+      @Nullable final ICitizenData data,
+      @NotNull final World world,
+      final boolean force,
+      final BlockPos spawnPoint)
+    {
+        ICitizenData citizenData = data;
+        if (citizenData == null)
+        {
+            citizenData = createAndRegisterNewCitizenData();
+
+            if (getMaxCitizens() == getCitizens().size() && !force)
+            {
+                LanguageHandler.sendPlayersMessage(
+                  colony.getMessageEntityPlayers(),
+                  "tile.blockHutTownHall.messageMaxSize",
+                  colony.getName());
+            }
+        }
+        final EntityCitizen entity = new EntityCitizen(world);
+        citizenData.setCitizenEntity(entity);
+
+        entity.getCitizenColonyHandler().initEntityCitizenValues(colony, citizenData);
+
+        entity.setPosition(spawnPoint.getX() + HALF_BLOCK, spawnPoint.getY() + SLIGHTLY_UP, spawnPoint.getZ() + HALF_BLOCK);
+        world.spawnEntity(entity);
+
+        colony.getProgressManager()
+          .progressCitizenSpawn(citizens.size(), citizens.values().stream().filter(tempDate -> tempDate.getJob() != null).collect(Collectors.toList()).size());
+        colony.getStatsManager().checkAchievements();
+        markCitizensDirty();
+        return citizenData;
     }
 
     @Override

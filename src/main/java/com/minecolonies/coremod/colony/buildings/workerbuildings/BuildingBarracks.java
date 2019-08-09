@@ -1,16 +1,18 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowBarracksBuilding;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -58,7 +60,7 @@ public class BuildingBarracks extends AbstractBuilding
      * @param colony Colony the building belongs to.
      * @param pos    Location of the building (it's Hut Block).
      */
-    public BuildingBarracks(@NotNull final Colony colony, final BlockPos pos)
+    public BuildingBarracks(@NotNull final IColony colony, final BlockPos pos)
     {
         super(colony, pos);
     }
@@ -128,6 +130,12 @@ public class BuildingBarracks extends AbstractBuilding
             }
         }
         return Math.max(1, sum / getMaxBuildingLevel());
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.barracks;
     }
 
     @Override

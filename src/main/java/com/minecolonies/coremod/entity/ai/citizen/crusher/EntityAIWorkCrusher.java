@@ -2,25 +2,23 @@ package com.minecolonies.coremod.entity.ai.citizen.crusher;
 
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.CraftingUtils;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
-import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.network.messages.LocalizedParticleEffectMessage;
-import com.minecolonies.coremod.util.SoundUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.entity.Entity;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Crusher AI class.
@@ -145,9 +143,9 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
         }
         if (check == CRAFT)
         {
-            MineColonies.getNetwork().sendToAllTracking(new LocalizedParticleEffectMessage(currentRecipeStorage.getInput().get(0).copy(), crusherBuilding.getID()), (Entity) worker);
+            MineColonies.getNetwork().sendToAllTracking(new LocalizedParticleEffectMessage(currentRecipeStorage.getInput().get(0).copy(), crusherBuilding.getID()), worker);
             MineColonies.getNetwork().sendToAllTracking(new LocalizedParticleEffectMessage(currentRecipeStorage.getPrimaryOutput().copy(), crusherBuilding.getID().down()),
-              (Entity) worker);
+              worker);
 
             SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.BLOCK_STONE_BREAK);
         }
@@ -175,7 +173,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
 
         if (maxCraftingCount == 0)
         {
-            PublicCrafting crafting = (PublicCrafting) job.getCurrentTask().getRequest();
+            final PublicCrafting crafting = (PublicCrafting) job.getCurrentTask().getRequest();
             maxCraftingCount = CraftingUtils.calculateMaxCraftingCount(crafting.getCount(), currentRecipeStorage);
         }
 

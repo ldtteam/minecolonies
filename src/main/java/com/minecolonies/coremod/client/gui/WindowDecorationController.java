@@ -1,6 +1,10 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
+import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Log;
@@ -9,11 +13,7 @@ import com.minecolonies.blockout.controls.ButtonHandler;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.controls.TextField;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.workorders.WorkOrderType;
-import com.minecolonies.coremod.colony.workorders.WorkOrderView;
 import com.minecolonies.coremod.network.messages.DecorationBuildRequestMessage;
 import com.minecolonies.coremod.network.messages.DecorationControllUpdateMessage;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;

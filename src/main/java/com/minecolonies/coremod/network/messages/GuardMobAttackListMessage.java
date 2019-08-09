@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.views.MobEntryView;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.views.MobEntryView;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;

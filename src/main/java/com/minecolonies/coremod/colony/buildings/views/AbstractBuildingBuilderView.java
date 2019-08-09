@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.views;
 
-import com.minecolonies.coremod.colony.IColonyView;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;

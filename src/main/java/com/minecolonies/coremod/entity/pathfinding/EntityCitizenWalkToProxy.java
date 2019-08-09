@@ -1,16 +1,16 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.entity.ai.pathfinding.AbstractWalkToProxy;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.Vec2i;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.EnumFacing;
@@ -29,16 +29,16 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
     /**
      * The worker entity associated with the proxy.
      */
-    private final IEntityCitizen citizen;
+    private final AbstractEntityCitizen citizen;
 
     /**
      * Creates a walkToProxy for a certain worker.
      *
      * @param entity the citizen entity.
      */
-    public EntityCitizenWalkToProxy(final IEntityCitizen entity)
+    public EntityCitizenWalkToProxy(final AbstractEntityCitizen entity)
     {
-        super((EntityLiving) entity);
+        super(entity);
         this.citizen = entity;
     }
 

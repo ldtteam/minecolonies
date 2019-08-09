@@ -1,14 +1,15 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.sounds.FishermanSounds;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.client.render.BipedModelType;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.entity.IEntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.fisherman.EntityAIWorkFisherman;
-import com.minecolonies.coremod.sounds.FishermanSounds;
 import net.minecraft.entity.monster.EntityGuardian;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -79,6 +80,12 @@ public class JobFisherman extends AbstractJob
         {
             ponds.add(BlockPosUtil.readFromNBTTagList(listOfPonds, i));
         }
+    }
+
+    @Override
+    public JobEntry getJobRegistryEntry()
+    {
+        return ModJobs.fisherman;
     }
 
     /**
@@ -198,7 +205,7 @@ public class JobFisherman extends AbstractJob
     }
 
     @Override
-    public void triggerDeathAchievement(final DamageSource source, final IEntityCitizen citizen)
+    public void triggerDeathAchievement(final DamageSource source, final AbstractEntityCitizen citizen)
     {
         super.triggerDeathAchievement(source, citizen);
         if (source.getTrueSource() instanceof EntityGuardian)

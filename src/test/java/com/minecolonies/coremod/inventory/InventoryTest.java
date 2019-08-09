@@ -1,28 +1,42 @@
 package com.minecolonies.coremod.inventory;
 
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.ITownHall;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
+import com.minecolonies.coremod.test.AbstractMockStaticsTest;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 import static org.junit.Assert.*;
+import static org.powermock.api.mockito.PowerMockito.when;
 
-public class InventoryTest
+public class InventoryTest extends AbstractMockStaticsTest
 {
     private IInventory inventory;
 
-    @InjectMocks
+    @Mock
     private ITownHall building;
 
     @Before
     public void setupInventories()
     {
-        final TileEntityColonyBuilding buildingTileEntity = new TileEntityColonyBuilding();
+        BuildingEntry entry = new BuildingEntry.Builder().setBuildingBlock(new BlockHutTownHall())
+                                .setBuildingProducer((c, p) -> null)
+                                .setBuildingViewProducer((c, p) -> null)
+                                .setRegistryName(new ResourceLocation(ModBuildings.TOWNHALL_ID))
+                                .createBuildingEntry();
+
+        when(building.getBuildingRegistryEntry()).thenReturn(entry);
+
+        final TileEntityColonyBuilding buildingTileEntity = new TileEntityColonyBuilding(building.getBuildingRegistryEntry().getRegistryName());
         buildingTileEntity.setBuilding(building);
         this.inventory = buildingTileEntity;
     }

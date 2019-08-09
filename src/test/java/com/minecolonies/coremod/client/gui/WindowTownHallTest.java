@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.IColonyView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.ITownHallView;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

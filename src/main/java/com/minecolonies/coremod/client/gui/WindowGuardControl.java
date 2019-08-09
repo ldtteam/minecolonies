@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
@@ -9,14 +10,12 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.colony.ICitizenDataView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.GuardJob;
 import com.minecolonies.coremod.network.messages.GuardRecalculateMessage;
 import com.minecolonies.coremod.network.messages.GuardScepterMessage;
 import com.minecolonies.coremod.network.messages.GuardTaskMessage;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,11 +61,6 @@ public class WindowGuardControl extends AbstractWindowSkeleton
      * The GuardTask of the guard.
      */
     private GuardTask task = GuardTask.GUARD;
-
-    /**
-     * The GuardJob of the guard.
-     */
-    private GuardJob job = null;
 
     /**
      * The list of manual patrol targets.
@@ -172,7 +166,7 @@ public class WindowGuardControl extends AbstractWindowSkeleton
                     final BlockPos pos = citizenDataView.getPosition();
                     rowPane.findPaneOfTypeByID(NAME_LABEL, Label.class).setLabelText(citizenDataView.getName());
                     rowPane.findPaneOfTypeByID(POSITION_LABEL, Label.class).setLabelText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
-                    rowPane.findPaneOfTypeByID(LEVEL_LABEL, Label.class).setLabelText("Level: " + Integer.toString(citizenDataView.getLevel()));
+                    rowPane.findPaneOfTypeByID(LEVEL_LABEL, Label.class).setLabelText("Level: " + citizenDataView.getLevel());
                     WindowCitizen.createHealthBar(citizenDataView, rowPane.findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class));
                 }
             }
@@ -213,7 +207,6 @@ public class WindowGuardControl extends AbstractWindowSkeleton
         this.retrieveOnLowHealth = building.isRetrieveOnLowHealth();
         this.tightGrouping = building.isTightGrouping();
         this.task = building.getTask();
-        this.job = building.getJob();
         this.patrolTargets = building.getPatrolTargets();
     }
 
@@ -222,8 +215,9 @@ public class WindowGuardControl extends AbstractWindowSkeleton
      */
     private void sendChangesToServer()
     {
-        final int ordinal = building.getJob() == null ? -1 : job.ordinal();
-        MineColonies.getNetwork().sendToServer(new GuardTaskMessage(building, ordinal, building.isAssignManually(), patrolManually, retrieveOnLowHealth, task.ordinal(), tightGrouping));
+        final ResourceLocation resourceName = building.getGuardType() == null ? new ResourceLocation("") : building.getGuardType().getRegistryName();
+        MineColonies.getNetwork()
+          .sendToServer(new GuardTaskMessage(building, resourceName, building.isAssignManually(), patrolManually, retrieveOnLowHealth, task.ordinal(), tightGrouping));
     }
 
     /**

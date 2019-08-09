@@ -3,6 +3,9 @@ package com.minecolonies.coremod.colony.buildings.views;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -14,8 +17,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ICitizenDataView;
-import com.minecolonies.coremod.colony.IColonyView;
+import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
 import com.minecolonies.coremod.network.messages.HutRenameMessage;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import io.netty.buffer.ByteBuf;
@@ -542,7 +544,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     @Override
     public ILocation getLocation()
     {
-        return null;
+        return new StaticLocation(this.getPosition(), colony.getDimension());
     }
 
     /**
@@ -562,7 +564,7 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @return boolean, delivery priority state.
      */
     @Override
-    public boolean getBuildingDmPrioState()
+    public boolean isBuildingDmPrioState()
     {
         return buildingDmPrioState;
     }

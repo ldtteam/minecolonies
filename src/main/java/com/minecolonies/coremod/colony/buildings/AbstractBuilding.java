@@ -6,7 +6,11 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -20,11 +24,11 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.buildings.registry.BuildingRegistry;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
@@ -36,13 +40,12 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestRe
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
-import com.minecolonies.coremod.tileentities.ITileEntityColonyBuilding;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -74,14 +77,16 @@ import static com.minecolonies.api.util.constant.Suppression.*;
  * We suppress the warning which warns you about referencing child classes in the parent because that's how we register the instances of the childClasses
  * to their views and blocks.
  */
-@SuppressWarnings("squid:S2390")
+@SuppressWarnings({"squid:S2390", "PMD.ExcessiveClassLength"})
 public abstract class AbstractBuilding extends AbstractBuildingContainer implements IBuilding
 {
+    public static final int       MAX_BUILD_HEIGHT = 256;
+    public static final int       MIN_BUILD_HEIGHT = 1;
     /**
      * The data store id for request system related data.
      */
     @NotNull
-    private IToken<?> rsDataStoreToken;
+    private             IToken<?> rsDataStoreToken;
 
     /**
      * The ID of the building. Needed in the request system to identify it.
@@ -109,7 +114,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
      * @param colony Colony the building belongs to.
      * @param pos    Location of the building (it's Hut Block).
      */
-    protected AbstractBuilding(@NotNull final Colony colony, final BlockPos pos)
+    protected AbstractBuilding(@NotNull final IColony colony, final BlockPos pos)
     {
         super(pos, colony);
 
@@ -186,8 +191,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public boolean isMatchingBlock(@NotNull final Block block)
     {
-        final Class<?> c = BuildingRegistry.getBlockClassToBuildingClassMap().get(block.getClass());
-        return getClass().equals(c);
+        return getBuildingRegistryEntry().getBuildingBlock() == block;
     }
 
     @Override
@@ -213,6 +217,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public NBTTagCompound serializeNBT()
     {
         final NBTTagCompound compound = super.serializeNBT();
+        compound.setString(TAG_BUILDING_TYPE, this.getBuildingRegistryEntry().getRegistryName().toString());
+
         writeRequestSystemToNBT(compound);
         compound.setBoolean(TAG_IS_BUILT, isBuilt);
         compound.setString(TAG_CUSTOM_NAME, customName);
@@ -233,13 +239,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void onDestroyed()
     {
-        final ITileEntityColonyBuilding tileEntityNew = this.getTileEntity();
+        final AbstractTileEntityColonyBuilding tileEntityNew = this.getTileEntity();
         final World world = colony.getWorld();
         final Block block = world.getBlockState(this.getPosition()).getBlock();
 
         if (tileEntityNew != null)
         {
-            InventoryHelper.dropInventoryItems(world, this.getPosition(), (IInventory) tileEntityNew);
+            InventoryHelper.dropInventoryItems(world, this.getPosition(), tileEntityNew);
             world.updateComparatorOutputLevel(this.getPosition(), block);
         }
 
@@ -289,14 +295,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
               "entity.builder.messageBuildersTooFar");
             return;
         }
-        
-        if(getPosition().getY() + getHeight() >= 256)
+
+        if (getPosition().getY() + getHeight() >= MAX_BUILD_HEIGHT)
         {
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
               "entity.builder.messageBuildTooHigh");
             return;
         }
-        else if(getPosition().getY() <= 1)
+        else if (getPosition().getY() <= MIN_BUILD_HEIGHT)
         {
             LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
               "entity.builder.messageBuildTooLow");
@@ -433,7 +439,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void serializeToView(@NotNull final ByteBuf buf)
     {
-        buf.writeInt(this.getClass().getName().hashCode());
+        ByteBufUtils.writeUTF8String(buf, getBuildingRegistryEntry().getRegistryName().toString());
         buf.writeInt(getBuildingLevel());
         buf.writeInt(getMaxBuildingLevel());
         buf.writeInt(getPickUpPriority());
@@ -564,6 +570,40 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
                 }
             }
         }
+    }
+
+    @Override
+    public AbstractTileEntityColonyBuilding getTileEntity()
+    {
+        if ((tileEntity == null || tileEntity.isInvalid())
+              && colony != null
+              && colony.getWorld() != null
+              && getPosition() != null
+              && colony.getWorld().getBlockState(getPosition())
+                   != Blocks.AIR && colony.getWorld().getBlockState(this.getPosition()).getBlock() instanceof AbstractBlockHut)
+        {
+            final TileEntity te = getColony().getWorld().getTileEntity(getPosition());
+            if (te instanceof TileEntityColonyBuilding)
+            {
+                tileEntity = (TileEntityColonyBuilding) te;
+                if (tileEntity.getBuilding() == null)
+                {
+                    tileEntity.setColony(colony);
+                    tileEntity.setBuilding(this);
+                }
+            }
+            else
+            {
+                Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be!");
+                Log.getLogger().error("Trying to restore order!");
+
+                final AbstractTileEntityColonyBuilding tileEntityColonyBuilding = new TileEntityColonyBuilding(getBuildingRegistryEntry().getRegistryName());
+                colony.getWorld().setTileEntity(getPosition(), tileEntityColonyBuilding);
+                this.tileEntity = tileEntityColonyBuilding;
+            }
+        }
+
+        return tileEntity;
     }
 
     /**
@@ -997,15 +1037,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
         getCompletedRequests(data).forEach(request -> getColony().getRequestManager().updateRequestState(request.getId(), RequestState.RECEIVED));
 
-        if (getOpenRequestsByCitizen().containsKey(data.getId()))
-        {
-            getOpenRequestsByCitizen().remove(data.getId());
-        }
+        getOpenRequestsByCitizen().remove(data.getId());
 
-        if (getCompletedRequestsByCitizen().containsKey(data.getId()))
-        {
-            getCompletedRequestsByCitizen().remove(data.getId());
-        }
+        getCompletedRequestsByCitizen().remove(data.getId());
 
         markDirty();
     }

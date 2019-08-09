@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.IColonyView;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -41,7 +42,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
      * @param c the colony
      * @param l the position
      */
-    public BuildingBarracksTower(@NotNull final Colony c, final BlockPos l)
+    public BuildingBarracksTower(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -84,6 +85,12 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         {
             player.sendMessage(new TextComponentTranslation("com.minecolonies.coremod.worker.needBarracks"));
         }
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.barracksTower;
     }
 
     @Override
@@ -139,7 +146,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     }
 
     /**
-     * The client view for the baker building.
+     * The client view for the bakery building.
      */
     public static class View extends AbstractBuildingGuards.View
     {

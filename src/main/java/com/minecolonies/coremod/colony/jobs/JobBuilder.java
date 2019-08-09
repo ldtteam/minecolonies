@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.BipedModelType;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.ICitizenData;
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.sounds.BuilderSounds;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.builder.EntityAIStructureBuilder;
-import com.minecolonies.coremod.sounds.BuilderSounds;
 import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +24,12 @@ public class JobBuilder extends AbstractJobStructure
     public JobBuilder(final ICitizenData entity)
     {
         super(entity);
+    }
+
+    @Override
+    public JobEntry getJobRegistryEntry()
+    {
+        return ModJobs.builder;
     }
 
     @NotNull

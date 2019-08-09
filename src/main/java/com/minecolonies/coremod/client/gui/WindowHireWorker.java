@@ -1,5 +1,9 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.HiringMode;
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Pane;
@@ -9,12 +13,7 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.colony.ICitizenData;
-import com.minecolonies.coremod.colony.ICitizenDataView;
-import com.minecolonies.coremod.colony.IColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.HiringMode;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.network.messages.HireFireMessage;
 import com.minecolonies.coremod.network.messages.PauseCitizenMessage;
 import com.minecolonies.coremod.network.messages.RestartCitizenMessage;

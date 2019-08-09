@@ -2,14 +2,14 @@ package com.minecolonies.coremod.entity.ai.citizen.guard;
 
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.pathfinding.PathResult;
-import com.minecolonies.coremod.util.SoundUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
@@ -17,16 +17,14 @@ import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.DECIDE;
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_RANGED;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.DECIDE;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.GUARD_ATTACK_RANGED;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
@@ -354,7 +352,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger>
                 worker.move(MoverType.SELF, goToX, 0, goToZ);
 
                 timeCanSee = 0;
-                target.setRevengeTarget((EntityLivingBase) worker);
+                target.setRevengeTarget(worker);
                 currentAttackDelay = getAttackDelay();
                 worker.getCitizenItemHandler().damageItemInHand(EnumHand.MAIN_HAND, 1);
                 worker.resetActiveHand();

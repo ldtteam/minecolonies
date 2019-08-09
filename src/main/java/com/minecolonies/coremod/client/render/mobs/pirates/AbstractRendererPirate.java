@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.client.render.mobs.pirates;
 
-import com.minecolonies.coremod.entity.ai.mobs.pirates.AbstractEntityPirate;
+import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;

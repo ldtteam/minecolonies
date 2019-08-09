@@ -1,14 +1,12 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.colony.ICitizenDataView;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
 import com.minecolonies.coremod.network.messages.ChangeDeliveryPriorityMessage;
 import com.minecolonies.coremod.network.messages.ChangeDeliveryPriorityStateMessage;
 import com.minecolonies.coremod.network.messages.OpenCraftingGUIMessage;
@@ -91,7 +89,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
 
     private int prio = building.getBuildingDmPrio();
 
-    private boolean state = building.getBuildingDmPrioState();
+    private boolean state = building.isBuildingDmPrioState();
 
     private String stateString = state ? DP_MODE_STATIC : DP_MODE_AUTOMATIC;
 

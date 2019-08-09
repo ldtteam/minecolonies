@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.commands;
 
-import com.minecolonies.coremod.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyManager;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;

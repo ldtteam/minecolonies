@@ -1,26 +1,29 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.management.Structures;
+import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
-import com.minecolonies.coremod.colony.*;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
 import com.minecolonies.coremod.entity.ai.citizen.baker.ProductState;
 import com.minecolonies.coremod.event.EventHandler;
-import com.ldtteam.structurize.management.StructureName;
-import com.ldtteam.structurize.management.Structures;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -174,7 +177,7 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
             return;
         }
 
-        @Nullable IBuilding oldBuilding = IColonyManager.getInstance().getBuilding(world, oldBuildingId);
+        @Nullable final IBuilding oldBuilding = IColonyManager.getInstance().getBuilding(world, oldBuildingId);
         if (oldBuilding instanceof BuildingTownHall)
         {
             if (tempColony != null)

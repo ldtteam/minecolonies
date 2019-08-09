@@ -1,18 +1,15 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuildingContainer;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.blockout.Log;
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.tileentities.ITileEntityColonyBuilding;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -55,7 +52,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     /**
      * The tileEntity of the building.
      */
-    private ITileEntityColonyBuilding tileEntity;
+    protected AbstractTileEntityColonyBuilding tileEntity;
 
     /**
      * Priority of the building in the pickUpList.
@@ -71,7 +68,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
      * The constructor for the building container.
      * @param pos the position of it.
      */
-    public AbstractBuildingContainer(final BlockPos pos, final Colony colony)
+    public AbstractBuildingContainer(final BlockPos pos, final IColony colony)
     {
         super(pos, colony);
     }
@@ -267,50 +264,25 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     }
 
     /**
-     * Sets the tile entity for the building.
-     *
-     * @param te {@link ITileEntityColonyBuilding} that will fill the {@link #tileEntity} field.
-     */
-    @Override
-    public void setTileEntity(final ITileEntityColonyBuilding te)
-    {
-        tileEntity = te;
-    }
-
-    /**
      * Returns the tile entity that belongs to the colony building.
      *
      * @return {@link TileEntityColonyBuilding} object of the building.
      */
     @Override
-    public ITileEntityColonyBuilding getTileEntity()
+    public AbstractTileEntityColonyBuilding getTileEntity()
     {
-        if ((tileEntity == null || tileEntity.isInvalid())
-                && colony != null
-                && colony.getWorld() != null
-                && getPosition() != null
-                && colony.getWorld().getBlockState(getPosition())
-                != Blocks.AIR && colony.getWorld().getBlockState(this.getPosition()).getBlock() instanceof AbstractBlockHut)
-        {
-            final TileEntity te = getColony().getWorld().getTileEntity(getPosition());
-            if (te instanceof TileEntityColonyBuilding)
-            {
-                tileEntity = (TileEntityColonyBuilding) te;
-                if (tileEntity.getBuilding() == null)
-                {
-                    tileEntity.setColony(colony);
-                    tileEntity.setBuilding(this);
-                }
-            }
-            else
-            {
-                Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be!");
-                Log.getLogger().error("Trying to restore order!");
-                colony.getWorld().setTileEntity(getPosition(), new TileEntityColonyBuilding());
-            }
-        }
-
         return tileEntity;
+    }
+
+    /**
+     * Sets the tile entity for the building.
+     *
+     * @param te {@link AbstractTileEntityColonyBuilding} that will fill the {@link #tileEntity} field.
+     */
+    @Override
+    public void setTileEntity(final AbstractTileEntityColonyBuilding te)
+    {
+        tileEntity = te;
     }
 
     //------------------------- !Start! Capabilities handling for minecolonies buildings -------------------------//

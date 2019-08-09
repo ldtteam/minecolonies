@@ -1,9 +1,8 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.ai.pathfinding.AbstractWalkToProxy;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;

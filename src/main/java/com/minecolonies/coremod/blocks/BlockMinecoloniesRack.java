@@ -1,15 +1,16 @@
 package com.minecolonies.coremod.blocks;
 
+import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
+import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.creativetab.ModCreativeTabs;
+import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.blocks.types.RackType;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
@@ -40,7 +41,7 @@ import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 /**
  * Block for the shelves of the warehouse.
  */
-public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMinecoloniesRack> implements IBlockMinecoloniesRack<BlockMinecoloniesRack>
+public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMinecoloniesRack>
 {
 
     /**
@@ -124,23 +125,23 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
             return super.getActualState(state, worldIn, pos);
         }
 
-        final TileEntityRack rack = (TileEntityRack) entity;
+        final AbstractTileEntityRack rack = (AbstractTileEntityRack) entity;
         if (rack.isEmpty() && (rack.getOtherChest() == null || rack.getOtherChest().isEmpty()))
         {
             if (rack.getOtherChest() != null)
             {
                 if (rack.isMain())
                 {
-                     return state.withProperty(IBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE).withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
+                     return state.withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE).withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
                 }
                 else
                 {
-                    return state.withProperty(IBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
+                    return state.withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
                 }
             }
             else
             {
-                return state.withProperty(IBlockMinecoloniesRack.VARIANT, RackType.DEFAULT);
+                return state.withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULT);
             }
         }
         else
@@ -149,17 +150,17 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
             {
                 if (rack.isMain())
                 {
-                    return state.withProperty(IBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
+                    return state.withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
                              .withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
                 }
                 else
                 {
-                    return state.withProperty(IBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
+                    return state.withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
                 }
             }
             else
             {
-                return state.withProperty(IBlockMinecoloniesRack.VARIANT, RackType.FULL);
+                return state.withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULL);
             }
         }
     }
@@ -222,7 +223,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
                 if (rack instanceof TileEntityRack && pos.getY() == neighbor.getY() && !pos.equals(neighbor) && !pos.equals(BlockPos.ORIGIN)
                       && (block instanceof BlockMinecoloniesRack || blockIn instanceof BlockMinecoloniesRack))
                 {
-                    ((TileEntityRack) rack).neighborChanged(neighbor);
+                    ((AbstractTileEntityRack) rack).neighborChanged(neighbor);
                 }
             }
         }
@@ -236,7 +237,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
 
         if (tileentity instanceof TileEntityRack)
         {
-            final IItemHandler handler = ((TileEntityRack) tileentity).getInventory();
+            final IItemHandler handler = ((AbstractTileEntityRack) tileentity).getInventory();
             InventoryUtils.dropItemHandler(handler, worldIn, pos.getX(), pos.getY(), pos.getZ());
         }
 

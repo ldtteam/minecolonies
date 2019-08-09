@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.event;
 
 import com.ldtteam.structurize.items.ModItems;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.coremod.colony.IColonyManager;
-import com.minecolonies.coremod.colony.IColonyView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;

@@ -1,29 +1,32 @@
 package com.minecolonies.coremod.entity.ai.citizen.deliveryman;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IBuildingContainer;
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
+import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.InventoryFunctions;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.Log;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.IBuilding;
-import com.minecolonies.coremod.colony.buildings.IBuildingContainer;
-import com.minecolonies.coremod.colony.buildings.IBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.entity.ai.statemachine.AIEventTarget;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.tileentities.ITileEntityColonyBuilding;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
@@ -41,10 +44,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
@@ -508,7 +511,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return START_WORKING;
         }
 
-        final ITileEntityColonyBuilding ITileEntityColonyBuilding = (ITileEntityColonyBuilding) tileEntity;
+        final AbstractTileEntityColonyBuilding ITileEntityColonyBuilding = (AbstractTileEntityColonyBuilding) tileEntity;
         final IBuildingContainer building = ITileEntityColonyBuilding.getBuilding();
 
         boolean success = true;
