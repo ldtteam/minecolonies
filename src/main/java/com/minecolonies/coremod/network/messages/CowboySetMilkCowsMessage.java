@@ -55,7 +55,7 @@ public class CowboySetMilkCowsMessage implements IMessage
     public void fromBytes(final PacketBuffer byteBuf)
     {
         colonyId = byteBuf.readInt();
-        buildingId = BlockPosUtil.readFromByteBuf(byteBuf);
+        buildingId = byteBuf.readBlockPos();
         milkCows = byteBuf.readBoolean();
         dimension = byteBuf.readInt();
     }
@@ -64,7 +64,7 @@ public class CowboySetMilkCowsMessage implements IMessage
     public void toBytes(final PacketBuffer byteBuf)
     {
         byteBuf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(byteBuf, buildingId);
+        byteBuf.writeBlockPos(buildingId);
         byteBuf.writeBoolean(milkCows);
         byteBuf.writeInt(dimension);
     }

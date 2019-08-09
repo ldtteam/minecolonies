@@ -30,9 +30,6 @@ public class TileEntityInitializer
         MinecoloniesTileEntities.DECO_CONTROLLER = TileEntityType.Builder.create(TileEntityDecorationController::new,
           ModBlocks.blockDecorationPlaceholder).build(null).setRegistryName(Constants.MOD_ID, "decorationcontroller");
 
-        MinecoloniesTileEntities.INFO_POSTER = TileEntityType.Builder.create(TileEntityInfoPoster::new,
-          ModBlocks.blockInfoPoster).build(null).setRegistryName(Constants.MOD_ID, "infoposter");
-
         MinecoloniesTileEntities.RACK = TileEntityType.Builder.create(TileEntityRack::new,
           ModBlocks.blockRack).build(null).setRegistryName(Constants.MOD_ID, "rack");
 

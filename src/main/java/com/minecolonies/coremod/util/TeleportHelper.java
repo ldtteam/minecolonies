@@ -38,7 +38,7 @@ public final class TeleportHelper
             citizen.getCitizenSleepHandler().onWakeUp();
         }
 
-        citizen.dismountRidingEntity();
+        citizen.stopRiding();
         citizen.setLocationAndAngles(
           spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
           spawnPoint.getY(),

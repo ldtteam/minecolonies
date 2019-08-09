@@ -4,30 +4,28 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.Log;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.init.Blocks;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapedRecipes;
-import net.minecraft.stats.StatList;
+import net.minecraft.item.crafting.ShapedRecipe;
+import net.minecraft.stats.Stats;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
  * To check if a townhall can be crafted.
  */
-public class TownHallRecipe extends ShapedRecipes
+public class TownHallRecipe extends ShapedRecipe
 {
     /**
      * List of crafting ingredients.
@@ -36,15 +34,15 @@ public class TownHallRecipe extends ShapedRecipes
 
     static
     {
-        ingredients.add(0, Ingredient.fromItem(Item.getItemFromBlock(Blocks.PLANKS)));
-        ingredients.add(1, Ingredient.fromItem(com.ldtteam.structurize.items.ModItems.buildTool));
-        ingredients.add(2, Ingredient.fromItem(Item.getItemFromBlock(Blocks.PLANKS)));
-        ingredients.add(3, Ingredient.fromItem(Item.getItemFromBlock(Blocks.PLANKS)));
-        ingredients.add(4, Ingredient.fromItem(com.ldtteam.structurize.items.ModItems.buildTool));
-        ingredients.add(5, Ingredient.fromItem(Item.getItemFromBlock(Blocks.PLANKS)));
-        ingredients.add(6, Ingredient.fromItem(Item.getItemFromBlock(Blocks.PLANKS)));
-        ingredients.add(7, Ingredient.fromItem(Item.getItemFromBlock(Blocks.PLANKS)));
-        ingredients.add(8, Ingredient.fromItem(Item.getItemFromBlock(Blocks.PLANKS)));
+        ingredients.add(0, Ingredient.fromItems(Items.OAK_PLANKS));
+        ingredients.add(1, Ingredient.fromItems(com.ldtteam.structurize.items.ModItems.buildTool));
+        ingredients.add(2, Ingredient.fromItems(Items.OAK_PLANKS));
+        ingredients.add(3, Ingredient.fromItems(Items.OAK_PLANKS));
+        ingredients.add(4, Ingredient.fromItems(com.ldtteam.structurize.items.ModItems.buildTool));
+        ingredients.add(5, Ingredient.fromItems(Items.OAK_PLANKS));
+        ingredients.add(6, Ingredient.fromItems(Items.OAK_PLANKS));
+        ingredients.add(7, Ingredient.fromItems(Items.OAK_PLANKS));
+        ingredients.add(8, Ingredient.fromItems(Items.OAK_PLANKS));
 
     }
 
@@ -53,28 +51,27 @@ public class TownHallRecipe extends ShapedRecipes
      */
     public TownHallRecipe()
     {
-        super(Constants.MOD_ID, 3, 3, ingredients, new ItemStack(ModBlocks.blockHutTownHall));
-        this.setRegistryName(Constants.MOD_ID + ":townhall.recipe");
+        super(new ResourceLocation(Constants.MOD_ID, "townhall.recipe"),"" , 3, 3, ingredients, new ItemStack(ModBlocks.blockHutTownHall));
     }
 
     @Override
-    public boolean matches(@NotNull final InventoryCrafting inventoryCrafting, @NotNull final World world)
+    public boolean matches(@NotNull final CraftingInventory inventoryCrafting, @NotNull final World world)
     {
-        if (inventoryCrafting.eventHandler != null)
+        if (inventoryCrafting.field_70465_c != null)
         {
             try
             {
 
-                final Optional<Field> playerField = Arrays.stream(inventoryCrafting.eventHandler.getClass().getDeclaredFields())
+                final Optional<Field> playerField = Arrays.stream(inventoryCrafting.field_70465_c.getClass().getDeclaredFields())
                                                       .filter(string -> string.getName().equals("player") || string.getName().equals("field_192390_i"))
                                                       .findFirst();
                 if (playerField.isPresent())
                 {
                     playerField.get().setAccessible(true);
-                    final PlayerEntity player = (PlayerEntity) playerField.get().get(inventoryCrafting.eventHandler);
+                    final PlayerEntity player = (PlayerEntity) playerField.get().get(inventoryCrafting.field_70465_c);
                     if (player instanceof ServerPlayerEntity)
                     {
-                        return ((ServerPlayerEntity) player).getStatFile().readStat(Objects.requireNonNull(StatList.getObjectUseStats(ModItems.supplyChest))) > 0
+                        return ((ServerPlayerEntity) player).getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0
                                  && hasSufficientResources(inventoryCrafting);
                     }
                     else
@@ -97,7 +94,7 @@ public class TownHallRecipe extends ShapedRecipes
      * @param inv the inv to check in.
      * @return true if so.
      */
-    private boolean hasSufficientResources(final InventoryCrafting inv)
+    private boolean hasSufficientResources(final CraftingInventory inv)
     {
         int plankCount = 0;
         int hasBuildToolCount = 0;
@@ -114,13 +111,9 @@ public class TownHallRecipe extends ShapedRecipes
                 hasBuildToolCount++;
             }
 
-            for (final int oreId : OreDictionary.getOreIDs(stack))
+            if (stack.getItem().isIn(ItemTags.PLANKS))
             {
-                if (OreDictionary.getOreName(oreId).contains("plankWood"))
-                {
-                    plankCount++;
-                    break;
-                }
+                plankCount++;
             }
         }
         return hasBuildToolCount == 2 && plankCount == 7;
@@ -128,7 +121,7 @@ public class TownHallRecipe extends ShapedRecipes
 
     @NotNull
     @Override
-    public ItemStack getCraftingResult(@NotNull final InventoryCrafting inventoryCrafting)
+    public ItemStack getCraftingResult(@NotNull final CraftingInventory inventoryCrafting)
     {
         return getRecipeOutput();
     }

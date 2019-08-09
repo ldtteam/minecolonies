@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,6 +34,11 @@ public class TileEntityDecorationController extends TileEntity
      * The basic direction this block is facing.
      */
     private Direction basicFacing = Direction.NORTH;
+
+    public TileEntityDecorationController(final TileEntityType<?> type)
+    {
+        super(type);
+    }
 
     /**
      * Geter for the name stored in this.

@@ -1,6 +1,7 @@
 package com.minecolonies.api.configuration;
 
 import com.ldtteam.structurize.api.util.constant.Constants;
+import com.ldtteam.structurize.util.LanguageHandler;
 import net.minecraftforge.common.ForgeConfigSpec.*;
 
 import java.util.List;

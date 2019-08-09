@@ -1,6 +1,7 @@
 package com.minecolonies.api.util;
 
 import com.google.common.collect.Lists;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -10,8 +11,6 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.item.ItemFrameEntity;
-import net.minecraft.block.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -19,7 +18,6 @@ import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.*;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.world.World;
@@ -82,23 +80,23 @@ public final class ItemStackUtils
     /**
      * Predicate describing food.
      */
-    public static final Predicate<ItemStack> ISFOOD = itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood;
+    public static final Predicate<ItemStack> ISFOOD = itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().isFood();
 
     /**
      * Predicate describing things which work in the furnace.
      */
-    public static final Predicate<ItemStack> IS_SMELTABLE = itemStack -> !ItemStackUtils.isEmpty(FurnaceRecipes.instance().getSmeltingResult(itemStack));
+    public static final Predicate<ItemStack> IS_SMELTABLE = itemStack -> !ItemStackUtils.isEmpty(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(itemStack));
 
     /**
      * Predicate describing food which can be eaten (is not raw).
      */
     public static final Predicate<ItemStack> CAN_EAT =
-      itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof ItemFood && !ISFOOD.test(FurnaceRecipes.instance().getSmeltingResult(itemStack));
+      itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().isFood() && !ISFOOD.test(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(itemStack));
 
     /**
      * Predicate describing cookables.
      */
-    public static final Predicate<ItemStack> ISCOOKABLE = itemStack -> ISFOOD.test(FurnaceRecipes.instance().getSmeltingResult(itemStack));
+    public static final Predicate<ItemStack> ISCOOKABLE = itemStack -> ISFOOD.test(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(itemStack));
 
     /**
      * Private constructor to hide the implicit one.
@@ -286,8 +284,8 @@ public final class ItemStackUtils
         {
             if (stack.getItem() instanceof HoeItem)
             {
-                final HoeItem HoeItem = (HoeItem) stack.getItem();
-                return getToolLevel(HoeItem.getMaterialName());
+                final HoeItem hoeItem = (HoeItem) stack.getItem();
+                return hoeItem.getTier().getHarvestLevel();
             }
         }
         else if (ToolType.SWORD.equals(toolType))
@@ -295,7 +293,7 @@ public final class ItemStackUtils
             if (stack.getItem() instanceof SwordItem)
             {
                 final SwordItem SwordItem = (SwordItem) stack.getItem();
-                return getToolLevel(SwordItem.getToolMaterialName());
+                return SwordItem.getTier().getHarvestLevel();
             }
             else if (Compatibility.isTinkersWeapon(stack))
             {
@@ -320,7 +318,7 @@ public final class ItemStackUtils
         }
         else
         {
-            return stack.getItem().getHarvestLevel(stack, toolType.getName(), null, null);
+            return stack.getItem().getHarvestLevel(stack, net.minecraftforge.common.ToolType.get(toolType.getName()), null, null);
         }
         return -1;
     }
@@ -450,7 +448,7 @@ public final class ItemStackUtils
      * @param material type of material of the armor
      * @return armor level
      */
-    private static int getArmorLevel(final ArmorMaterial material)
+    private static int getArmorLevel(final IArmorMaterial material)
     {
         final int damageReductionAmount = material.getDamageReductionAmount(EquipmentSlotType.CHEST);
         if (damageReductionAmount <= ArmorMaterial.LEATHER.getDamageReductionAmount(EquipmentSlotType.CHEST))

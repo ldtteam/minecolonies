@@ -2,7 +2,7 @@ package com.minecolonies.api.entity.ai.util;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.util.text.TextComponentBase;
+import net.minecraft.util.text.TextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -65,7 +65,7 @@ public class ChatSpamFilter
      *
      * @param chat the Item Name
      */
-    public void requestTextComponentWithoutSpam(@NotNull final TextComponentBase chat)
+    public void requestTextComponentWithoutSpam(@NotNull final TextComponent chat)
     {
         talkWithoutSpam("entity.miner.messageNeedBlockAndItem", chat);
     }
@@ -129,9 +129,9 @@ public class ChatSpamFilter
         final StringBuilder tempString = new StringBuilder();
         for (final Object object : chat)
         {
-            if (object instanceof TextComponentBase)
+            if (object instanceof TextComponent)
             {
-                tempString.append(((TextComponentBase) object).getUnformattedText());
+                tempString.append(((TextComponent) object).getUnformattedComponentText());
             }
             else
             {

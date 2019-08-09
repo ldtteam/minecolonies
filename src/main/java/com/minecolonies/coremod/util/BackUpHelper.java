@@ -4,14 +4,14 @@ import com.google.common.io.Files;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,20 +48,19 @@ public final class BackUpHelper
         BackUpHelper.saveColonies(true);
         try(FileOutputStream fos = new FileOutputStream(getBackupSaveLocation(new Date())))
         {
-            @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+            @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
             final ZipOutputStream zos = new ZipOutputStream(fos);
 
-            for (int dim = 0; dim < ServerLifecycleHooks.getCurrentServer().worlds.length; dim++)
-            {
+            DimensionType.getAll().forEach(dimensionType -> {
                 for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
                 {
-                    @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dim));
+                    @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dimensionType.getId()));
                     if (file.exists())
                     {
-                        addToZipFile(String.format(FILENAME_COLONY, i, dim), zos, saveDir);
+                        addToZipFile(String.format(FILENAME_COLONY, i, dimensionType.getId()), zos, saveDir);
                     }
                 }
-            }
+            });
             addToZipFile(getSaveLocation().getName(), zos, saveDir);
             zos.close();
         }
@@ -86,7 +85,7 @@ public final class BackUpHelper
     @NotNull
     private static File getBackupSaveLocation(final Date date)
     {
-        @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, String.format(FILENAME_MINECOLONIES_BACKUP, new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(date)));
     }
 
@@ -121,7 +120,7 @@ public final class BackUpHelper
     @NotNull
     public static File getSaveLocation()
     {
-        @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, FILENAME_MINECOLONIES);
     }
 
@@ -180,7 +179,7 @@ public final class BackUpHelper
 
         @NotNull final File file = getSaveLocation();
         saveNBTToPath(file, compound);
-        @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
         for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
             final CompoundNBT colonyCompound = new CompoundNBT();
@@ -196,7 +195,7 @@ public final class BackUpHelper
      */
     public static void loadColonyBackup(final int colonyId, final int dimension)
     {
-        @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
         final CompoundNBT compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension)));
         if (compound == null)
         {
@@ -212,11 +211,11 @@ public final class BackUpHelper
         else
         {
             Log.getLogger().warn("Colony is null, creating new colony!");
-            final World colonyWorld = ServerLifecycleHooks.getCurrentServer().getWorld(dimension);
+            final World colonyWorld = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(dimension));
             colony = Colony.loadColony(compound, colonyWorld);
-            colonyWorld.getCapability(COLONY_MANAGER_CAP, null).addColony(colony);
+            colonyWorld.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null).addColony(colony);
 
-            if (MineColonies.getConfig().getCommon().gameplay.enableDynamicColonySizes)
+            if (MineColonies.getConfig().getCommon().enableDynamicColonySizes.get())
             {
                 for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
                 {

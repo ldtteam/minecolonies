@@ -111,7 +111,7 @@ public class BuildToolPasteMessage implements IMessage
     }
 
     /**
-     * Reads this packet from a {@link ByteBuf}.
+     * Reads this packet from a {@link PacketBuffer}.
      *
      * @param buf The buffer begin read from.
      */
@@ -141,7 +141,7 @@ public class BuildToolPasteMessage implements IMessage
     }
 
     /**
-     * Writes this packet to a {@link ByteBuf}.
+     * Writes this packet to a {@link PacketBuffer}.
      *
      * @param buf The buffer being written to.
      */
@@ -216,7 +216,7 @@ public class BuildToolPasteMessage implements IMessage
         }
         else if(freeMode !=  null )
         {
-            if(player.getStats().get(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getCommon().allowInfiniteSupplyChests.get())
+            if(player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getCommon().allowInfiniteSupplyChests.get())
             {
                 LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.error.supplyChestAlreadyPlaced");
                 return;
@@ -279,7 +279,7 @@ public class BuildToolPasteMessage implements IMessage
 
         final String hut = sn.getSection();
 
-        final Block block = ForgeRegistries.BLOCKS.get(new ResourceLocation(Constants.MOD_ID, "blockHut" + hut));
+        final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(Constants.MOD_ID, "blockHut" + hut));
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {
             world.destroyBlock(buildPos, true);

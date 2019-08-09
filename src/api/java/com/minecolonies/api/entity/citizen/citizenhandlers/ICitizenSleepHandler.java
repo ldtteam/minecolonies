@@ -1,8 +1,8 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public interface ICitizenSleepHandler
 {

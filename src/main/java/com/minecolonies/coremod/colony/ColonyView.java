@@ -633,7 +633,7 @@ public final class ColonyView implements IColonyView
         final int posListSize = buf.readInt();
         for (int i = 0; i < posListSize; i++)
         {
-            freePositions.add(BlockPosUtil.readFromByteBuf(buf));
+            freePositions.add(buf.readBlockPos());
         }
         this.overallHappiness = buf.readDouble();
         this.hasColonyWarehouse = buf.readBoolean();
@@ -641,7 +641,7 @@ public final class ColonyView implements IColonyView
         final int wayPointListSize = buf.readInt();
         for (int i = 0; i < wayPointListSize; i++)
         {
-            wayPoints.put(BlockPosUtil.readFromByteBuf(buf), Block.getStateById(buf.readInt()));
+            wayPoints.put(buf.readBlockPos(), Block.getStateById(buf.readInt()));
         }
         this.lastContactInHours = buf.readInt();
         this.manualHousing = buf.readBoolean();
@@ -657,7 +657,7 @@ public final class ColonyView implements IColonyView
         final int barbSpawnListSize = buf.readInt();
         for (int i = 0; i < barbSpawnListSize; i++)
         {
-            lastSpawnPoints.add(BlockPosUtil.readFromByteBuf(buf));
+            lastSpawnPoints.add(buf.readBlockPos());
         }
         Collections.reverse(lastSpawnPoints);
 

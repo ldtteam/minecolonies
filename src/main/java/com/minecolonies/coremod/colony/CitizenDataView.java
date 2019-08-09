@@ -389,8 +389,8 @@ public class CitizenDataView implements ICitizenDataView
         paused = buf.readBoolean();
         isChild = buf.readBoolean();
 
-        homeBuilding = buf.readBoolean() ? BlockPosUtil.readFromByteBuf(buf) : null;
-        workBuilding = buf.readBoolean() ? BlockPosUtil.readFromByteBuf(buf) : null;
+        homeBuilding = buf.readBoolean() ? buf.readBlockPos() : null;
+        workBuilding = buf.readBoolean() ? buf.readBlockPos() : null;
 
         // Attributes
         level = buf.readInt();

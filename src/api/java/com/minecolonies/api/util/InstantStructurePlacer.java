@@ -11,7 +11,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -102,7 +103,7 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
                 for (int i = 0; i < structure.getWidth(); i++)
                 {
                     @NotNull final BlockPos localPos = new BlockPos(i, j, k);
-                    final BlockState localState = this.structure.getBlockState(localPos);
+                    final BlockState localState = this.structure.getBlockState(localPos).getBlockState();
                     final Block localBlock = localState.getBlock();
 
                     final BlockPos worldPos = pos.add(localPos);
@@ -126,7 +127,7 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
 
         for (@NotNull final BlockPos coords : delayedBlocks)
         {
-            final BlockState localState = this.structure.getBlockState(coords);
+            final BlockState localState = this.structure.getBlockState(coords).getBlockState();
             final BlockPos newWorldPos = pos.add(coords);
 
             handleBlockPlacement(newWorldPos, localState, complete, this.structure.getBlockInfo(coords).getTileEntityData(), structure.getWorld());
@@ -138,11 +139,15 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
             {
                 try
                 {
-                    final Entity entity = EntityList.createEntityFromNBT(compound, structure.getWorld());
-                    entity.setUniqueId(UUID.randomUUID());
-                    final Vec3d worldPos = entity.getPositionVector().add(pos.getX(), pos.getY(), pos.getZ());
-                    entity.setPosition(worldPos.x, worldPos.y, worldPos.z);
-                    structure.getWorld().addEntity(entity);
+                    final Optional<EntityType<?>> entityType = EntityType.readEntityType(compound);
+                    if (entityType.isPresent())
+                    {
+                        final Entity entity = entityType.get().create(structure.getWorld());
+                        entity.setUniqueId(UUID.randomUUID());
+                        final Vec3d worldPos = entity.getPositionVector().add(pos.getX(), pos.getY(), pos.getZ());
+                        entity.setPosition(worldPos.x, worldPos.y, worldPos.z);
+                        structure.getWorld().addEntity(entity);
+                    }
                 }
                 catch (final RuntimeException e)
                 {

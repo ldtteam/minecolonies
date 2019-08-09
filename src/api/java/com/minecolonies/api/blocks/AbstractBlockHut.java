@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.block.HorizontalBlock;
@@ -98,7 +99,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @Override
     public TileEntity createTileEntity(final BlockState state, final IBlockReader world)
     {
-        return new TileEntityColonyBuilding(getBuildingEntry().getRegistryName());
+        return new TileEntityColonyBuilding(MinecoloniesTileEntities.BUILDING);
     }
 
     /**
