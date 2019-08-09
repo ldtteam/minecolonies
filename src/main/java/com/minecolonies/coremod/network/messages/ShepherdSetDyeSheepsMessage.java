@@ -51,7 +51,7 @@ public class ShepherdSetDyeSheepsMessage implements IMessage
     public void fromBytes(final PacketBuffer byteBuf)
     {
         colonyId = byteBuf.readInt();
-        buildingId = BlockPosUtil.readFromByteBuf(byteBuf);
+        buildingId = byteBuf.readBlockPos();
         dyeSheeps = byteBuf.readBoolean();
         dimension = byteBuf.readInt();
     }
@@ -60,7 +60,7 @@ public class ShepherdSetDyeSheepsMessage implements IMessage
     public void toBytes(final PacketBuffer byteBuf)
     {
         byteBuf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(byteBuf, buildingId);
+        byteBuf.writeBlockPos(buildingId);
         byteBuf.writeBoolean(dyeSheeps);
         byteBuf.writeInt(dimension);
     }

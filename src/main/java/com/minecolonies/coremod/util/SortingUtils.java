@@ -7,7 +7,7 @@ import com.minecolonies.api.util.Log;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 
 import java.util.HashMap;
@@ -81,7 +81,7 @@ public final class SortingUtils
       final AtomicInteger requiredSlots,
       final double totalSlots, final double totalRequirement, final Map<Integer, Integer> creativeTabs)
     {
-        final int creativeTabId = entry.getKey().getCreativeTabIndex();
+        final int creativeTabId = entry.getKey().getCreativeTabIndex().get(0);
 
         int slotLimit = 0;
         final ItemStack stack = entry.getKey().getItemStack();
@@ -125,8 +125,8 @@ public final class SortingUtils
      */
     private static int compare(final Map.Entry<ItemStorage, Integer> t1, final Map.Entry<ItemStorage, Integer> t2)
     {
-        final int creativeTabId1 = t1.getKey().getCreativeTabIndex();
-        final int creativeTabId2 = t2.getKey().getCreativeTabIndex();
+        final int creativeTabId1 = t1.getKey().getCreativeTabIndex().get(0);
+        final int creativeTabId2 = t2.getKey().getCreativeTabIndex().get(0);
 
         if (creativeTabId1 != creativeTabId2)
         {
@@ -166,7 +166,7 @@ public final class SortingUtils
         for (final Map.Entry<ItemStorage, Integer> entry : map.entrySet())
         {
             sum += Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize());
-            creativeTabs.put(entry.getKey().getCreativeTabIndex(),
+            creativeTabs.put(entry.getKey().getCreativeTabIndex().get(0),
               creativeTabs.getOrDefault(entry.getKey().getCreativeTabIndex(), 0) + (int) Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize()));
         }
 

@@ -317,7 +317,7 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             if (tag.getPath().contains(ORE_STRING))
             {
-                return !FurnaceRecipes.instance().getSmeltingResult(stack).isEmpty();
+                return !MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack).isEmpty();
             }
         }
 

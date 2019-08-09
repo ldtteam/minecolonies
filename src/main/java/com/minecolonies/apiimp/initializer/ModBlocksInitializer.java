@@ -73,7 +73,6 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutCrusher = new BlockHutCrusher().registerBlock(registry);
         ModBlocks.blockHutSifter = new BlockHutSifter().registerBlock(registry);
 
-        ModBlocks.blockInfoPoster = new BlockInfoPoster().registerBlock(registry);
         ModBlocks.blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
         ModBlocks.blockBarracksTowerSubstitution = new BlockBarracksTowerSubstitution().registerBlock(registry);
         ModBlocks.blockRack = new BlockMinecoloniesRack().registerBlock(registry);
@@ -133,7 +132,6 @@ public final class ModBlocksInitializer
         ModBlocks.blockBarracksTowerSubstitution.registerBlockItem(registry, properties);
         ModBlocks.blockRack.registerBlockItem(registry, properties);
         ModBlocks.blockWayPoint.registerBlockItem(registry, properties);
-        ModBlocks.blockInfoPoster.registerBlockItem(registry, properties);
         ModBlocks.blockBarrel.registerBlockItem(registry, properties);
         ModBlocks.blockPostBox.registerBlockItem(registry, properties);
         ModBlocks.blockDecorationPlaceholder.registerBlockItem(registry, properties);

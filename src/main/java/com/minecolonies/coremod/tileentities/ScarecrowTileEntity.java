@@ -494,7 +494,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
         colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
         if (colony != null && !colony.getBuildingManager().getFields().contains(pos))
         {
-            @Nullable final Entity entity = EntityUtils.getEntityFromUUID(world, colony.getPermissions().getOwner());
+            @Nullable final Entity entity = EntityUtils.getPlayerByUUID(world, colony.getPermissions().getOwner());
 
             if (entity instanceof PlayerEntity)
             {

@@ -54,7 +54,7 @@ public class GuardMobAttackListMessage implements IMessage
     public void fromBytes(final PacketBuffer byteBuf)
     {
         this.colonyId = byteBuf.readInt();
-        this.buildingId = BlockPosUtil.readFromByteBuf(byteBuf);
+        this.buildingId = byteBuf.readBlockPos();
 
         final int mobSize = byteBuf.readInt();
         for (int i = 0; i < mobSize; i++)
@@ -68,7 +68,7 @@ public class GuardMobAttackListMessage implements IMessage
     public void toBytes(final PacketBuffer byteBuf)
     {
         byteBuf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(byteBuf, buildingId);
+        byteBuf.writeBlockPos(buildingId);
 
         byteBuf.writeInt(this.mobsToAttack.size());
         for (final MobEntryView entry : this.mobsToAttack)

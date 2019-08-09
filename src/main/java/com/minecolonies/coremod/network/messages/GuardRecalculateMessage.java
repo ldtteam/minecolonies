@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
-import com.minecolonies.api.util.BlockPosUtil;
 
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -57,7 +56,7 @@ public class GuardRecalculateMessage implements IMessage
     public void fromBytes(final PacketBuffer byteBuf)
     {
         this.colonyId = byteBuf.readInt();
-        this.buildingId = BlockPosUtil.readFromByteBuf(byteBuf);
+        this.buildingId = byteBuf.readBlockPos();
         dimension = byteBuf.readInt();
     }
 
@@ -65,7 +64,7 @@ public class GuardRecalculateMessage implements IMessage
     public void toBytes(final PacketBuffer byteBuf)
     {
         byteBuf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(byteBuf, buildingId);
+        byteBuf.writeBlockPos(buildingId);
         byteBuf.writeInt(dimension);
     }
 

@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.google.common.collect.Lists;
-import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;

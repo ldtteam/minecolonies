@@ -2,8 +2,8 @@ package com.minecolonies.api.util;
 
 import com.google.common.collect.Multimap;
 import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.IArcherMobEntity;
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
@@ -13,13 +13,12 @@ import com.minecolonies.api.entity.mobs.pirates.ICaptainPirateEntity;
 import com.minecolonies.api.entity.mobs.pirates.IPirateEntity;
 import com.minecolonies.api.entity.mobs.util.MobEventsUtils;
 import com.minecolonies.api.items.ModItems;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.Goal;
-import net.minecraft.init.Items;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -47,10 +46,10 @@ public final class MobSpawnUtils
     public static void setupMobAi(final AbstractEntityMinecoloniesMob mob)
     {
         final Multimap<Integer, Goal> aiTasks = IMinecoloniesAPI.getInstance().getMobAIRegistry().getEntityAiTasksForMobs(mob);
-        aiTasks.keySet().forEach(priority -> aiTasks.get(priority).forEach(task -> mob.tasks.addTask(priority, task)));
+        aiTasks.keySet().forEach(priority -> aiTasks.get(priority).forEach(task -> mob.goalSelector.addGoal(priority, task)));
 
         final Multimap<Integer, Goal> aiTargetTasks = IMinecoloniesAPI.getInstance().getMobAIRegistry().getEntityAiTargetTasksForMobs(mob);
-        aiTargetTasks.keySet().forEach(priority -> aiTasks.get(priority).forEach(task -> mob.tasks.addTask(priority, task)));
+        aiTargetTasks.keySet().forEach(priority -> aiTasks.get(priority).forEach(task -> mob.goalSelector.addGoal(priority, task)));
     }
 
     /**
@@ -61,22 +60,22 @@ public final class MobSpawnUtils
      */
     public static void setMobAttributes(final LivingEntity mob, final IColony colony)
     {
-        mob.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
-        mob.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
+        mob.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(FOLLOW_RANGE);
+        mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(MOVEMENT_SPEED);
 
-        final double attackDamage = MineColonies.getConfig().getCommon().gameplay.barbarianHordeDifficulty >= 10 ? ATTACK_DAMAGE * 2 : ATTACK_DAMAGE;
-        mob.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attackDamage);
+        final double attackDamage = MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get() >= 10 ? ATTACK_DAMAGE * 2 : ATTACK_DAMAGE;
+        mob.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attackDamage);
         if (mob instanceof IChiefBarbarianEntity)
         {
-            final double chiefArmor = MineColonies.getConfig().getCommon().gameplay.barbarianHordeDifficulty > 5 ? CHIEF_ARMOR * 2 : CHIEF_ARMOR;
-            mob.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(chiefArmor);
+            final double chiefArmor =MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get() > 5 ? CHIEF_ARMOR * 2 : CHIEF_ARMOR;
+            mob.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(chiefArmor);
         }
         else
         {
-            final double armor = MineColonies.getConfig().getCommon().gameplay.barbarianHordeDifficulty * ARMOR;
-            mob.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(armor);
+            final double armor = MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get() * ARMOR;
+            mob.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(armor);
         }
-        mob.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getHealthBasedOnRaidLevel(colony));
+        mob.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(getHealthBasedOnRaidLevel(colony));
         mob.setHealth(mob.getMaxHealth());
     }
 
@@ -90,7 +89,7 @@ public final class MobSpawnUtils
         if (colony != null)
         {
             final int raidLevel = (int) (MobEventsUtils.getColonyRaidLevel(colony) * BARBARIAN_HEALTH_MULTIPLIER);
-            return Math.max(BARBARIAN_BASE_HEALTH, (BARBARIAN_BASE_HEALTH + raidLevel) * ((double) MineColonies.getConfig().getCommon().gameplay.barbarianHordeDifficulty * 0.1));
+            return Math.max(BARBARIAN_BASE_HEALTH, (BARBARIAN_BASE_HEALTH + raidLevel) * ((double)MinecoloniesAPIProxy.getInstance().getConfig().getCommon().barbarianHordeDifficulty.get() * 0.1));
         }
         return BARBARIAN_BASE_HEALTH;
     }

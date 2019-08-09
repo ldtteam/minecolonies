@@ -2,12 +2,13 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.block.BlockLeaves;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.init.Blocks;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -62,7 +63,7 @@ public final class EntityUtils
     {
         if (player instanceof FakePlayer)
         {
-            final PlayerEntity tempPlayer = world.getPlayerEntityByUUID(player.getUniqueID());
+            final PlayerEntity tempPlayer = world.getPlayerByUuid(player.getUniqueID());
             if (tempPlayer != null)
             {
                 return tempPlayer;
@@ -78,46 +79,9 @@ public final class EntityUtils
      * @param id    the entity's UUID
      * @return the Entity
      */
-    public static Entity getEntityFromUUID(@NotNull final World world, @NotNull final UUID id)
+    public static Entity getPlayerByUUID(@NotNull final World world, @NotNull final UUID id)
     {
-        for (int i = 0; i < world.loadedEntityList.size(); ++i)
-        {
-            if (id.equals(world.loadedEntityList.get(i).getUniqueID()))
-            {
-                return world.loadedEntityList.get(i);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns a list of loaded entities whose UUID's match the ones provided.
-     *
-     * @param world the world the entities are in.
-     * @param ids   List of UUIDs
-     * @return list of Entity's
-     */
-    @NotNull
-    public static List<Entity> getEntitiesFromUUID(@NotNull final World world, @NotNull final Collection<UUID> ids)
-    {
-        @NotNull final List<Entity> entities = new ArrayList<>();
-
-        for (final Object o : world.loadedEntityList)
-        {
-            if (o instanceof Entity)
-            {
-                @NotNull final Entity entity = (Entity) o;
-                if (ids.contains(entity.getUniqueID()))
-                {
-                    entities.add(entity);
-                    if (entities.size() == ids.size())
-                    {
-                        return entities;
-                    }
-                }
-            }
-        }
-        return entities;
+        return world.getPlayerByUuid(id);
     }
 
     /**
@@ -174,7 +138,7 @@ public final class EntityUtils
     {
         for (int i = 1; i < AIR_SPACE_ABOVE_TO_CHECK; i++)
         {
-            if (solidOrLiquid(world, groundPosition.up(i)) || world.getBlockState(groundPosition.up(i)).getBlock() instanceof BlockLeaves)
+            if (solidOrLiquid(world, groundPosition.up(i)) || world.getBlockState(groundPosition.up(i)).getBlock().isIn(BlockTags.LEAVES))
             {
                 return false;
             }
@@ -217,17 +181,14 @@ public final class EntityUtils
           1,
           2,
           Blocks.AIR,
-          Blocks.SNOW_LAYER,
-          Blocks.TALLGRASS,
-          Blocks.RED_FLOWER,
-          Blocks.YELLOW_FLOWER,
-          Blocks.CARPET);
+          Blocks.SNOW,
+          Blocks.TALL_GRASS);
     }
 
     /**
      * Sets the movement of the entity to specific point.
      * Returns true if direction is set, otherwise false.
-     * {@link #tryMoveLivingToXYZ(LivingEntity, int, int, int, double)}
+     * {@link #tryMoveLivingToXYZ(MobEntity, int, int, int, double)}
      *
      * @param living Entity to move
      * @param x      x-coordinate
@@ -235,7 +196,7 @@ public final class EntityUtils
      * @param z      z-coordinate
      * @return True if the path is set to destination, otherwise false
      */
-    public static boolean tryMoveLivingToXYZ(@NotNull final LivingEntity living, final int x, final int y, final int z)
+    public static boolean tryMoveLivingToXYZ(@NotNull final MobEntity living, final int x, final int y, final int z)
     {
         return tryMoveLivingToXYZ(living, x, y, z, 1.0D);
     }
@@ -251,7 +212,7 @@ public final class EntityUtils
      * @param speed  Speed to move with
      * @return True if the path is set to destination, otherwise false
      */
-    public static boolean tryMoveLivingToXYZ(@NotNull final LivingEntity living, final int x, final int y, final int z, final double speed)
+    public static boolean tryMoveLivingToXYZ(@NotNull final MobEntity living, final int x, final int y, final int z, final double speed)
     {
         return living.getNavigator().tryMoveToXYZ(x, y, z, speed);
     }
@@ -297,11 +258,8 @@ public final class EntityUtils
                 new BlockPos(x, y, z),
                 SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS, 2,
                 Blocks.AIR,
-                Blocks.SNOW_LAYER,
-                Blocks.TALLGRASS,
-                Blocks.RED_FLOWER,
-                Blocks.YELLOW_FLOWER,
-                Blocks.CARPET);
+                Blocks.SNOW,
+                Blocks.TALL_GRASS);
 
             if (spawnPoint == null)
             {

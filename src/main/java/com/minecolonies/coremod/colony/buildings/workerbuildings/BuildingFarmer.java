@@ -404,12 +404,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 {
                     if (getAssignedCitizen().isEmpty() || ((ScarecrowTileEntity) scareCrow).getOwnerId() == getMainCitizen().getId())
                     {
-                        BlockPosUtil.writeToByteBuf(buf, field);
+                        buf.writeBlockPos(field);
                     }
                 }
                 else
                 {
-                    BlockPosUtil.writeToByteBuf(buf, field);
+                    buf.writeBlockPos(field);
                 }
             }
         }

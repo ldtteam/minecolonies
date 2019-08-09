@@ -1,6 +1,7 @@
 package com.minecolonies.api.util.constant;
 
 import net.minecraft.potion.Potion;
+import net.minecraft.potion.Potions;
 
 /**
  * Barbarian constants class.
@@ -29,7 +30,7 @@ public final class RaiderConstants
     /**
      * Values used for sword effect.
      */
-    public static final Potion SPEED_EFFECT                = Potion.getPotionById(1);
+    public static final Potion SPEED_EFFECT                = Potions.STRONG_SWIFTNESS;
     public static final int    TIME_TO_COUNTDOWN           = 240;
     public static final int    COUNTDOWN_SECOND_MULTIPLIER = 4;
     public static final int    SPEED_EFFECT_DISTANCE       = 7;

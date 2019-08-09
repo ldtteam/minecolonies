@@ -1,6 +1,6 @@
 package com.minecolonies.api.util.constant;
 
-import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.util.MathUtils;
 import net.minecraft.util.ResourceLocation;
 
@@ -58,12 +58,12 @@ public final class ColonyConstants
     /**
      * Distance of when to add new subscribers.
      */
-    public static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(MineColonies.getConfig().getCommon().gameplay.workingRangeTownHall + 16D);
+    public static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(MinecoloniesAPIProxy.getInstance().getConfig().getCommon().workingRangeTownHallChunks.get() * 16 + 16D);
 
     /**
      * Distance of when to remove old subscribers.
      */
-    public static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(MineColonies.getConfig().getCommon().gameplay.workingRangeTownHall * 2D);
+    public static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(MinecoloniesAPIProxy.getInstance().getConfig().getCommon().workingRangeTownHallChunks.get() * 16 * 2D);
 
     /**
      * Size of a chunk.

@@ -2,13 +2,11 @@ package com.minecolonies.api.entity.ai.util;
 
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.BlockUtils;
 import net.minecraft.block.*;
-import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundNBT;
@@ -251,7 +249,7 @@ public class StructureIterator
     @NotNull
     private Result advanceBlocks(@NotNull final Supplier<Boolean> moveOneBlock, @NotNull final Function<StructureBlock, Boolean> checkIfApplies)
     {
-        for (int i = 0; i < MineColonies.getConfig().getCommon().gameplay.maxBlocksCheckedByBuilder; i++)
+        for (int i = 0; i < MinecoloniesAPIProxy.getInstance().getConfig().getCommon().maxBlocksCheckedByBuilder.get(); i++)
         {
             if (!moveOneBlock.get())
             {
@@ -284,7 +282,7 @@ public class StructureIterator
         }
         return new StructureBlock(this.theStructure.getBlock(),
                                    this.theStructure.getBlockPosition(),
-                                   this.theStructure.getBlockstate(),
+                                   this.theStructure.getBlockstate().getBlockState(),
                                     entityData,
                                    this.theStructure.getItem(),
                                    BlockPosUtil.getBlock(targetWorld, this.theStructure.getBlockPosition()),
@@ -294,9 +292,9 @@ public class StructureIterator
     private boolean isAtPos(@NotNull final CompoundNBT entityData, final BlockPos pos)
     {
         final ListNBT list = entityData.getList("Pos", 6);
-        final int x = (int) list.getDoubleAt(0);
-        final int y = (int) list.getDoubleAt(1);
-        final int z = (int) list.getDoubleAt(2);
+        final int x = (int) list.getDouble(0);
+        final int y = (int) list.getDouble(1);
+        final int z = (int) list.getDouble(2);
         return new BlockPos(x, y, z).equals(pos);
     }
 
@@ -422,7 +420,7 @@ public class StructureIterator
         /**
          * The metadata of the block.
          */
-        public final IBlockState metadata;
+        public final BlockState metadata;
 
         /**
          * The item of the block.
@@ -437,12 +435,12 @@ public class StructureIterator
         /**
          * The metadata of the world block at the same position.
          */
-        public final IBlockState worldMetadata;
+        public final BlockState worldMetadata;
 
         /**
          * The entityInfo block.
          */
-        public final NBTTagCompound[] entity;
+        public final CompoundNBT[] entity;
 
         /**
          * Create one immutable Block containing all information needed.
@@ -456,8 +454,8 @@ public class StructureIterator
          * @param worldMetadata the metadata of the world block
          */
         public StructureBlock(
-          final Block block, final BlockPos blockPosition, final IBlockState metadata, final NBTTagCompound[] entity,
-          final Item item, final Block worldBlock, final IBlockState worldMetadata)
+          final Block block, final BlockPos blockPosition, final BlockState metadata, final CompoundNBT[] entity,
+          final Item item, final Block worldBlock, final BlockState worldMetadata)
         {
             this.block = block;
             this.blockPosition = blockPosition;
@@ -480,7 +478,7 @@ public class StructureIterator
                 return true;
             }
 
-            final IBlockState structureBlockState = metadata;
+            final BlockState structureBlockState = metadata;
             final Block structureBlock = structureBlockState.getBlock();
 
             //All worldBlocks are equal the substitution block
@@ -489,16 +487,15 @@ public class StructureIterator
                 return true;
             }
 
-            final IBlockState worldBlockState = worldMetadata;
+            final BlockState worldBlockState = worldMetadata;
 
             //list of things to only check block for.
             //For the time being any flower pot is equal to each other.
-            if (structureBlock instanceof BlockDoor || structureBlock == Blocks.FLOWER_POT)
+            if (structureBlock instanceof DoorBlock || structureBlock == Blocks.FLOWER_POT)
             {
                 return structureBlock == worldBlockState.getBlock();
             }
-            else if ((structureBlock instanceof BlockStairs && structureBlockState.equals(worldBlockState))
-                       || BlockUtils.isGrassOrDirt(structureBlock, worldBlock, structureBlockState, worldBlockState)
+            else if ((structureBlock instanceof StairsBlock && structureBlockState.equals(worldBlockState))
                        || (worldBlock instanceof AbstractBlockMinecoloniesRack && AbstractBlockMinecoloniesRack.shouldBlockBeReplacedWithRack(structureBlock)))
             {
                 return true;
@@ -509,7 +506,7 @@ public class StructureIterator
 
         private static boolean structureBlockEqualsWorldBlock(
           @NotNull final Block structureBlock,
-          @NotNull final Block worldBlock, @NotNull final IBlockState worldMetadata)
+          @NotNull final Block worldBlock, @NotNull final BlockState worldMetadata)
         {
             return structureBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution || (
               structureBlock == com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution

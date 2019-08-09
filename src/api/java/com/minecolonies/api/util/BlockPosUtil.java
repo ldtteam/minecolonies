@@ -1,5 +1,6 @@
 package com.minecolonies.api.util;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Block;
@@ -163,34 +164,6 @@ public final class BlockPosUtil
         final int x = coordsCompound.getInt("x");
         final int y = coordsCompound.getInt("y");
         final int z = coordsCompound.getInt("z");
-        return new BlockPos(x, y, z);
-    }
-
-    /**
-     * Writes chunk coordinates to a {@link ByteBuf}.
-     *
-     * @param buf Buf to write to.
-     * @param pos Coordinate to write.
-     */
-    public static void writeToByteBuf(@NotNull final PacketBuffer buf, @NotNull final BlockPos pos)
-    {
-        buf.writeInt(pos.getX());
-        buf.writeInt(pos.getY());
-        buf.writeInt(pos.getZ());
-    }
-
-    /**
-     * Read chunk coordinates from a {@link ByteBuf}.
-     *
-     * @param buf Buf to read from.
-     * @return Chunk coordinate that was read.
-     */
-    @NotNull
-    public static BlockPos readFromByteBuf(@NotNull final PacketBuffer buf)
-    {
-        final int x = buf.readInt();
-        final int y = buf.readInt();
-        final int z = buf.readInt();
         return new BlockPos(x, y, z);
     }
 

@@ -4,11 +4,11 @@ import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyTagCapability;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.network.messages.UpdateChunkCapabilityMessage;
 import net.minecraft.nbt.CompoundNBT;
@@ -16,7 +16,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +36,7 @@ public final class ChunkDataHelper
     /**
      * If colony is farther away from a capability then this times the default colony distance it will delete the capability.
      */
-    private static final int DISTANCE_TO_DELETE = MineColonies.getConfig().getCommon().gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK * 2 * 5;
+    private static final int DISTANCE_TO_DELETE = MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get() * BLOCKS_PER_CHUNK * 2 * 5;
 
     /**
      * Private constructor to hide implicit one.
@@ -54,21 +56,21 @@ public final class ChunkDataHelper
      */
     public static void loadChunk(final Chunk chunk, final World world)
     {
-        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);
+        final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
         if (cap == null)
         {
             return;
         }
         if (cap.getMissingChunksToLoad() > 0)
         {
-            final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
+            final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).orElseGet(null);
             if (chunkManager == null)
             {
                 Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT);
                 return;
             }
 
-            final ChunkLoadStorage existingStorage = chunkManager.getChunkStorage(chunk.x, chunk.z);
+            final ChunkLoadStorage existingStorage = chunkManager.getChunkStorage(chunk.getPos().x, chunk.getPos().z);
             if (existingStorage != null)
             {
                 addStorageToChunk(chunk, existingStorage);
@@ -76,18 +78,18 @@ public final class ChunkDataHelper
             }
             else
             {
-                if (MineColonies.getConfig().getCommon().gameplay.fixOrphanedChunks)
+                if (MineColonies.getConfig().getCommon().fixOrphanedChunks.get())
                 {
-                    final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+                    final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
                     if (closeCap != null)
                     {
                         boolean dirty = false;
                         for (final int colony : closeCap.getAllCloseColonies())
                         {
                             if (colony != 0 && (cap.getColony(colony) == null
-                                                  ||  BlockPosUtil.getDistance2D(cap.getColony(colony).getCenter(), new BlockPos(chunk.x * BLOCKS_PER_CHUNK, 0, chunk.z * BLOCKS_PER_CHUNK)) > DISTANCE_TO_DELETE))
+                                                  ||  BlockPosUtil.getDistance2D(cap.getColony(colony).getCenter(), new BlockPos(chunk.getPos().x * BLOCKS_PER_CHUNK, 0, chunk.getPos().z * BLOCKS_PER_CHUNK)) > DISTANCE_TO_DELETE))
                             {
-                                Log.getLogger().warn("Removing orphaned chunk at:  " + chunk.x * BLOCKS_PER_CHUNK + " 100 " + chunk.z * BLOCKS_PER_CHUNK);
+                                Log.getLogger().warn("Removing orphaned chunk at:  " + chunk.getPos().x * BLOCKS_PER_CHUNK + " 100 " + chunk.getPos().z * BLOCKS_PER_CHUNK);
                                 closeCap.removeColony(colony);
                                 dirty = true;
                             }
@@ -95,7 +97,7 @@ public final class ChunkDataHelper
                         if (dirty)
                         {
                             chunk.markDirty();
-                            Network.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(closeCap, chunk.x, chunk.z));
+                            Network.getNetwork().sendToEveryone(new UpdateChunkCapabilityMessage(closeCap, chunk.getPos().x, chunk.getPos().z));
                         }
                     }
                 }
@@ -111,13 +113,13 @@ public final class ChunkDataHelper
      */
     public static void addStorageToChunk(final Chunk chunk, final ChunkLoadStorage storage)
     {
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
         storage.applyToCap(cap);
         chunk.markDirty();
 
         if (cap != null)
         {
-            Network.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
+            Network.getNetwork().sendToEveryone(new UpdateChunkCapabilityMessage(cap, chunk.getPos().x, chunk.getPos().z));
         }
     }
 
@@ -128,13 +130,13 @@ public final class ChunkDataHelper
      */
     public static void loadChunkStorageToWorldCapability(final World world)
     {
-        @NotNull final File chunkDir = new File(world.getSaveHandler().getWorldDirectory(), CHUNK_INFO_PATH);
+        @NotNull final File chunkDir = new File(((ServerWorld) world).getSaveHandler().getWorldDirectory(), CHUNK_INFO_PATH);
         if (!chunkDir.exists())
         {
             return;
         }
 
-        final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
+        final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).orElseGet(null);
         if (chunkManager == null)
         {
             Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT);
@@ -171,8 +173,8 @@ public final class ChunkDataHelper
      */
     public static void claimColonyChunks(final World world, final boolean add, final int id, final BlockPos center, final int dimension)
     {
-        final int range = MineColonies.getConfig().getCommon().gameplay.workingRangeTownHallChunks;
-        final int buffer = MineColonies.getConfig().getCommon().gameplay.townHallPaddingChunk;
+        final int range = MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get();
+        final int buffer = MineColonies.getConfig().getCommon().townHallPaddingChunk.get();
 
         claimChunksInRange(id, dimension, add, center, range, buffer, world);
     }
@@ -207,26 +209,26 @@ public final class ChunkDataHelper
      */
     public static boolean canClaimChunksInRange(final World w, final BlockPos pos, final int range)
     {
-        final IChunkmanagerCapability worldCapability = w.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
+        final IChunkmanagerCapability worldCapability = w.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).orElseGet(null);
         if (worldCapability == null)
         {
             return true;
         }
-        final Chunk centralChunk = w.getChunk(pos);
-        final int chunkX = centralChunk.x;
-        final int chunkZ = centralChunk.z;
+        final Chunk centralChunk = w.getChunkAt(pos);
+        final int chunkX = centralChunk.getPos().x;
+        final int chunkZ = centralChunk.getPos().z;
 
         for (int i = chunkX - range; i <= chunkX + range; i++)
         {
             for (int j = chunkZ - range; j <= chunkZ + range; j++)
             {
                 final Chunk chunk = w.getChunk(i, j);
-                final IColonyTagCapability colonyCap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+                final IColonyTagCapability colonyCap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
                 if (colonyCap == null)
                 {
                     return false;
                 }
-                final ChunkLoadStorage storage = worldCapability.getChunkStorage(chunk.x, chunk.z);
+                final ChunkLoadStorage storage = worldCapability.getChunkStorage(chunk.getPos().x, chunk.getPos().z);
                 if (storage != null)
                 {
                     storage.applyToCap(colonyCap);
@@ -261,13 +263,13 @@ public final class ChunkDataHelper
       final World world,
       final BlockPos center)
     {
-        final Chunk centralChunk = world.getChunk(center);
+        final Chunk centralChunk = world.getChunkAt(center);
         loadChunkAndAddData(world, center, add, colonyId, center);
 
-        final int chunkX = centralChunk.x;
-        final int chunkZ = centralChunk.z;
+        final int chunkX = centralChunk.getPos().x;
+        final int chunkZ = centralChunk.getPos().z;
 
-        final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
+        final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).orElseGet(null);
         if (chunkManager == null)
         {
             Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT);
@@ -286,11 +288,6 @@ public final class ChunkDataHelper
             for (int j = chunkZ - range; j <= chunkZ + range; j++)
             {
                 final BlockPos pos = new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK);
-                if (MineColonies.getConfig().getCommon().gameplay.workingRangeTownHall != 0 && pos.distanceSq(colony.getCenter()) > Math.pow(MineColonies.getConfig().getCommon().gameplay.workingRangeTownHall, 2))
-                {
-                    continue;
-                }
-
                 if (i == chunkX && j == chunkZ)
                 {
                     continue;
@@ -307,7 +304,7 @@ public final class ChunkDataHelper
                 }
             }
         }
-        final IColonyManagerCapability cap = ServerLifecycleHooks.getCurrentServer().getWorld(dimension).getCapability(COLONY_MANAGER_CAP, null);
+        final IColonyManagerCapability cap = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(dimension)).getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
         cap.setMissingChunksToLoad(cap.getMissingChunksToLoad() + additionalChunksToLoad);
     }
 
@@ -331,13 +328,13 @@ public final class ChunkDataHelper
       final int buffer,
       final World world)
     {
-        final Chunk centralChunk = world.getChunk(center);
+        final Chunk centralChunk = world.getChunkAt(center);
         loadChunkAndAddData(world, center, add, colonyId);
 
-        final int chunkX = centralChunk.x;
-        final int chunkZ = centralChunk.z;
+        final int chunkX = centralChunk.getPos().x;
+        final int chunkZ = centralChunk.getPos().z;
 
-        final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
+        final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).orElseGet(null);
         if (chunkManager == null)
         {
             Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT);
@@ -371,7 +368,7 @@ public final class ChunkDataHelper
                 }
             }
         }
-        final IColonyManagerCapability cap = ServerLifecycleHooks.getCurrentServer().getWorld(dimension).getCapability(COLONY_MANAGER_CAP, null);
+        final IColonyManagerCapability cap = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(dimension)).getCapability(COLONY_MANAGER_CAP, null).orElseGet(null);
         cap.setMissingChunksToLoad(cap.getMissingChunksToLoad() + additionalChunksToLoad);
     }
 
@@ -386,7 +383,7 @@ public final class ChunkDataHelper
      */
     public static void debugChunksInRange(final int chunkX, final int chunkZ, final int range, final int buffer, final World world)
     {
-        final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null);
+        final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).orElseGet(null);
         if (chunkManager == null)
         {
             Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT);
@@ -399,8 +396,8 @@ public final class ChunkDataHelper
             for (int j = chunkZ - maxRange; j <= chunkZ + maxRange; j++)
             {
                 final BlockPos pos = new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK);
-                final Chunk chunk = world.getChunk(pos);
-                if (chunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() != 0)
+                final Chunk chunk = world.getChunkAt(pos);
+                if (chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null).getOwningColony() != 0)
                 {
                     Log.getLogger().warn("Has owner: " + pos.toString());
                 }
@@ -424,12 +421,12 @@ public final class ChunkDataHelper
             return false;
         }
 
-        final Chunk chunk = world.getChunk(pos);
-        if (chunk.getCapability(CLOSE_COLONY_CAP, null).getOwningColony() == id && add)
+        final Chunk chunk = world.getChunkAt(pos);
+        if (chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null).getOwningColony() == id && add)
         {
             return false;
         }
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
 
         if (cap == null)
         {
@@ -447,7 +444,7 @@ public final class ChunkDataHelper
         }
 
         chunk.markDirty();
-        Network.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
+        Network.getNetwork().sendToEveryone(new UpdateChunkCapabilityMessage(cap, chunk.getPos().x, chunk.getPos().z));
         return true;
     }
 
@@ -470,8 +467,8 @@ public final class ChunkDataHelper
             return false;
         }
 
-        final Chunk chunk = world.getChunk(pos);
-        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null);
+        final Chunk chunk = world.getChunkAt(pos);
+        final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
         if (cap == null)
         {
             return false;
@@ -487,7 +484,7 @@ public final class ChunkDataHelper
         }
 
         chunk.markDirty();
-        Network.getNetwork().sendToAll(new UpdateChunkCapabilityMessage(cap, chunk.x, chunk.z));
+        Network.getNetwork().sendToEveryone(new UpdateChunkCapabilityMessage(cap, chunk.getPos().x, chunk.getPos().z));
         return true;
     }
 }

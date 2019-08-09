@@ -19,9 +19,6 @@ public class MinecoloniesTileEntities
     @ObjectHolder("decorationcontroller")
     public static TileEntityType<?> DECO_CONTROLLER;
 
-    @ObjectHolder("infoposter")
-    public static TileEntityType<?> INFO_POSTER;
-
     @ObjectHolder("rack")
     public static TileEntityType<?> RACK;
 

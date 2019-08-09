@@ -52,7 +52,6 @@ public final class ModBlocks
     public static AbstractBlockMinecoloniesFalling    blockConstructionTape;
     public static AbstractBlockMinecolonies           blockRack;
     public static AbstractBlockMinecolonies           blockWayPoint;
-    public static AbstractBlockMinecolonies           blockInfoPoster;
     public static AbstractBlockBarrel                 blockBarrel;
     public static AbstractBlockMinecoloniesHorizontal blockDecorationPlaceholder;
     public static AbstractBlockMinecolonies           blockScarecrow;
