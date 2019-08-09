@@ -2,6 +2,7 @@ package com.minecolonies.coremod.util;
 
 import com.ldtteam.structurize.api.util.constant.Constants;
 import com.minecolonies.api.colony.requestsystem.token.StandardToken;
+import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.coremod.Network;
@@ -25,7 +26,7 @@ import java.util.Map;
 
 @ObjectHolder(Constants.MOD_ID)
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class FurnaceRecipes
+public class FurnaceRecipes implements IFurnaceRecipes
 {
     /**
      * Furnace recipes.
