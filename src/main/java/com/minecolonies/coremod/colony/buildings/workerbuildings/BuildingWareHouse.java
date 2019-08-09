@@ -153,7 +153,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         {
             final IColony colony = getColony();
             if (colony != null && colony.getWorld() != null
-                  && (!(colony.getWorld().getBlockState(new BlockPos(pos)) instanceof BlockHutDeliveryman) || colony.isCoordInColony(colony.getWorld(), new BlockPos(pos))))
+                  && (!(colony.getWorld().getBlockState(new BlockPos(pos)).getBlock() instanceof BlockHutDeliveryman) || colony.isCoordInColony(colony.getWorld(), new BlockPos(pos))))
             {
                 registeredDeliverymen.remove(pos);
             }
