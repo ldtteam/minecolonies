@@ -32,7 +32,7 @@ public class DebugRendererChunkBorder
     private Map<Tuple<Integer, Integer>, Integer> colonies = new HashMap<>();
 
     @SubscribeEvent
-    public void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
+    public static void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
     {
         final double partialTicks = event.getPartialTicks();
         final PlayerEntity PlayerEntity = Minecraft.getInstance().player;

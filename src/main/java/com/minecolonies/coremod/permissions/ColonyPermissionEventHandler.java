@@ -97,7 +97,7 @@ public class ColonyPermissionEventHandler
      * @param event BlockEvent.PlaceEvent
      */
     @SubscribeEvent
-    public void on(final BlockEvent.EntityPlaceEvent event)
+    public static void on(final BlockEvent.EntityPlaceEvent event)
     {
         final Action action = event.getPlacedBlock().getBlock() instanceof AbstractBlockHut ? Action.PLACE_HUTS : Action.PLACE_BLOCKS;
         if (MineColonies.getConfig().getCommon().enableColonyProtection.get() && checkBlockEventDenied(event.getWorld(),
@@ -201,7 +201,7 @@ public class ColonyPermissionEventHandler
      * @param event BlockEvent.BreakEvent
      */
     @SubscribeEvent
-    public void on(final BlockEvent.BreakEvent event)
+    public static void on(final BlockEvent.BreakEvent event)
     {
         final IWorld world = event.getWorld();
         if (!MineColonies.getConfig().getCommon().enableColonyProtection.get() || world.isRemote())
@@ -250,7 +250,7 @@ public class ColonyPermissionEventHandler
      * @param event ExplosionEvent.Detonate
      */
     @SubscribeEvent
-    public void on(final ExplosionEvent.Detonate event)
+    public static void on(final ExplosionEvent.Detonate event)
     {
         if (!MineColonies.getConfig().getCommon().turnOffExplosionsInColonies.get())
         {
@@ -279,7 +279,7 @@ public class ColonyPermissionEventHandler
      * @param event ExplosionEvent.Detonate
      */
     @SubscribeEvent
-    public void on(final ExplosionEvent.Start event)
+    public static void on(final ExplosionEvent.Start event)
     {
         if (MineColonies.getConfig().getCommon().enableColonyProtection.get()
               && MineColonies.getConfig().getCommon().turnOffExplosionsInColonies.get()
@@ -301,7 +301,7 @@ public class ColonyPermissionEventHandler
      * @param event PlayerInteractEvent
      */
     @SubscribeEvent
-    public void on(final PlayerInteractEvent event)
+    public static void on(final PlayerInteractEvent event)
     {
         if (colony.isCoordInColony(event.getWorld(), event.getPos())
               && !(event instanceof PlayerInteractEvent.EntityInteract || event instanceof PlayerInteractEvent.EntityInteractSpecific))
@@ -390,7 +390,7 @@ public class ColonyPermissionEventHandler
      * @param event PlayerInteractEvent
      */
     @SubscribeEvent
-    public void on(final PlayerInteractEvent.EntityInteract event)
+    public static void on(final PlayerInteractEvent.EntityInteract event)
     {
         if (isFreeToInteractWith(null, event.getPos())
               && colony.getPermissions().hasPermission(event.getEntityPlayer(), Action.ACCESS_FREE_BLOCKS))
@@ -412,7 +412,7 @@ public class ColonyPermissionEventHandler
      * @param event PlayerInteractEvent
      */
     @SubscribeEvent
-    public void on(final PlayerEvent.BreakSpeed event)
+    public static void on(final PlayerEvent.BreakSpeed event)
     {
         if (colony.isCoordInColony(event.getEntity().world, event.getPos()) && MineColonies.getConfig().getCommon().pvp_mode.get() && event.getState().getBlock() == ModBlocks.blockHutTownHall
               && event.getEntityPlayer().world instanceof ServerWorld)
@@ -513,7 +513,7 @@ public class ColonyPermissionEventHandler
      * @param event PlayerInteractEvent
      */
     @SubscribeEvent
-    public void on(final PlayerInteractEvent.EntityInteractSpecific event)
+    public static void on(final PlayerInteractEvent.EntityInteractSpecific event)
     {
         if (isFreeToInteractWith(null, event.getPos())
               && colony.getPermissions().hasPermission(event.getEntityPlayer(), Action.ACCESS_FREE_BLOCKS))
@@ -534,7 +534,7 @@ public class ColonyPermissionEventHandler
      * @param event ItemTossEvent
      */
     @SubscribeEvent
-    public void on(final ItemTossEvent event)
+    public static void on(final ItemTossEvent event)
     {
         if (checkEventCancelation(Action.TOSS_ITEM, event.getPlayer(), event.getPlayer().getEntityWorld(), event, event.getPlayer().getPosition()))
         {
@@ -553,7 +553,7 @@ public class ColonyPermissionEventHandler
      * @param event ItemEntityPickupEvent
      */
     @SubscribeEvent
-    public void on(final EntityItemPickupEvent event)
+    public static void on(final EntityItemPickupEvent event)
     {
         checkEventCancelation(Action.PICKUP_ITEM, event.getPlayer(), event.getPlayer().getEntityWorld(), event, event.getPlayer().getPosition());
     }
@@ -569,7 +569,7 @@ public class ColonyPermissionEventHandler
      * @param event ItemEntityPickupEvent
      */
     @SubscribeEvent
-    public void on(final FillBucketEvent event)
+    public static void on(final FillBucketEvent event)
     {
         @Nullable BlockPos targetBlockPos = null;
         if (event.getTarget() instanceof BlockRayTraceResult)
@@ -594,7 +594,7 @@ public class ColonyPermissionEventHandler
      * @param event ItemEntityPickupEvent
      */
     @SubscribeEvent
-    public void on(final ArrowLooseEvent event)
+    public static void on(final ArrowLooseEvent event)
     {
         checkEventCancelation(Action.SHOOT_ARROW, event.getEntityPlayer(), event.getEntityPlayer().getEntityWorld(), event, event.getEntity().getPosition());
     }
@@ -610,7 +610,7 @@ public class ColonyPermissionEventHandler
      * @param event ItemEntityPickupEvent
      */
     @SubscribeEvent
-    public void on(final AttackEntityEvent event)
+    public static void on(final AttackEntityEvent event)
     {
         if (event.getTarget() instanceof MobEntity)
         {

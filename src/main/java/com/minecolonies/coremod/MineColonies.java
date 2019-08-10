@@ -85,7 +85,7 @@ public class MineColonies
      * @param event the forge pre init event.
      */
     @SubscribeEvent
-    public void preInit(@NotNull final FMLCommonSetupEvent event)
+    public static void preInit(@NotNull final FMLCommonSetupEvent event)
     {
         MinecoloniesAPIProxy.getInstance().setApiInstance(MinecoloniesAPIImpl.getInstance());
 
@@ -122,7 +122,7 @@ public class MineColonies
     }
 
     @SubscribeEvent
-    public void registerEntities(final RegistryEvent.Register<EntityType<?>> event)
+    public static void registerEntities(final RegistryEvent.Register<EntityType<?>> event)
     {
         //Register Barbarian loot tables.
         LootTableList.register(EntityBarbarian.LOOT_TABLE);

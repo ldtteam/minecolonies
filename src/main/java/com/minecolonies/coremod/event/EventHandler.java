@@ -30,6 +30,7 @@ import com.minecolonies.coremod.network.messages.UpdateChunkRangeCapabilityMessa
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.SilverfishBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -86,10 +87,11 @@ public class EventHandler
 
     /**
      * On Entity join do this.
+     *
      * @param event the event.
      */
     @SubscribeEvent
-    public void onEntityAdded(@NotNull final EntityJoinWorldEvent event)
+    public static void onEntityAdded(@NotNull final EntityJoinWorldEvent event)
     {
         if (event.getEntity() instanceof EntityCitizen)
         {
@@ -99,8 +101,9 @@ public class EventHandler
 
     //todo on entity removed event!
     @SubscribeEvent
-    public void onEntityRemoved(@NotNull final EntityEv entity)
+    public static void onEntityRemoved(@NotNull final EntityEv entity)
     {
+        EntityEvent
         if (entity instanceof EntityCitizen)
         {
             final ICitizenData citizen = ((AbstractEntityCitizen) entity).getCitizenData();
@@ -120,39 +123,36 @@ public class EventHandler
      */
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public void onDebugOverlay(final RenderGameOverlayEvent.Text event)
+    public static void onDebugOverlay(final RenderGameOverlayEvent.Text event)
     {
-        if (FMLCommonHandler.instance().getEffectiveSide().isClient())
+        final Minecraft mc = Minecraft.getInstance();
+        if (mc.gameSettings.showDebugInfo)
         {
-            final Minecraft mc = Minecraft.getInstance();
-            if (mc.gameSettings.showDebugInfo)
+            final ClientWorld world = mc.world;
+            final ClientPlayerEntity player = mc.player;
+            IColony colony = IColonyManager.getInstance().getIColony(world, player.getPosition());
+            if (colony == null)
             {
-                final ClientWorld world = mc.world;
-                final ClientPlayerEntity player = mc.player;
-                IColony colony = IColonyManager.getInstance().getIColony(world, player.getPosition());
+                if (!IColonyManager.getInstance().isTooCloseToColony(world, player.getPosition()))
+                {
+                    event.getLeft().add(LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.noCloseColony"));
+                    return;
+                }
+                colony = IColonyManager.getInstance().getClosestIColony(world, player.getPosition());
+
                 if (colony == null)
                 {
-                    if (!IColonyManager.getInstance().isTooCloseToColony(world, player.getPosition()))
-                    {
-                        event.getLeft().add(LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.noCloseColony"));
-                        return;
-                    }
-                    colony = IColonyManager.getInstance().getClosestIColony(world, player.getPosition());
-
-                    if (colony == null)
-                    {
-                        return;
-                    }
-
-                    event.getLeft().add(LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.nextColony",
-                      (int) Math.sqrt(colony.getDistanceSquared(player.getPosition())), IColonyManager.getInstance().getMinimumDistanceBetweenTownHalls()));
                     return;
                 }
 
-                event.getLeft().add(colony.getName() + " : "
-                                      + LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.blocksFromCenter",
-                  (int) Math.sqrt(colony.getDistanceSquared(player.getPosition()))));
+                event.getLeft().add(LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.nextColony",
+                  (int) Math.sqrt(colony.getDistanceSquared(player.getPosition())), IColonyManager.getInstance().getMinimumDistanceBetweenTownHalls()));
+                return;
             }
+
+            event.getLeft().add(colony.getName() + " : "
+                                  + LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.blocksFromCenter",
+              (int) Math.sqrt(colony.getDistanceSquared(player.getPosition()))));
         }
     }
 
@@ -162,7 +162,7 @@ public class EventHandler
      * @param event the event.
      */
     @SubscribeEvent
-    public void onAttachingCapabilitiesChunk(@NotNull final AttachCapabilitiesEvent<Chunk> event)
+    public static void onAttachingCapabilitiesChunk(@NotNull final AttachCapabilitiesEvent<Chunk> event)
     {
         event.addCapability(new ResourceLocation(Constants.MOD_ID, "closeColony"), new MinecoloniesChunkCapabilityProvider());
     }
@@ -173,7 +173,7 @@ public class EventHandler
      * @param event the event.
      */
     @SubscribeEvent
-    public void onAttachingCapabilitiesWorld(@NotNull final AttachCapabilitiesEvent<World> event)
+    public static void onAttachingCapabilitiesWorld(@NotNull final AttachCapabilitiesEvent<World> event)
     {
         event.addCapability(new ResourceLocation(Constants.MOD_ID, "chunkUpdate"), new MinecoloniesWorldCapabilityProvider());
         event.addCapability(new ResourceLocation(Constants.MOD_ID, "colonyManager"), new MinecoloniesWorldColonyManagerCapabilityProvider());
@@ -183,11 +183,11 @@ public class EventHandler
      * Called when a chunk gets loaded for some reason.
      */
     @SubscribeEvent
-    public void onChunkLoad(@NotNull final ChunkEvent.Load event)
+    public static void onChunkLoad(@NotNull final ChunkEvent.Load event)
     {
         if (event.getWorld() instanceof ServerWorld)
         {
-            ChunkDataHelper.loadChunk(event.getChunk(), event.getWorld());
+            ChunkDataHelper.loadChunk((Chunk) event.getChunk(), (ServerWorld) event.getWorld());
         }
     }
 
@@ -197,7 +197,7 @@ public class EventHandler
      * @param event the event.
      */
     @SubscribeEvent
-    public void onEnteringChunk(@NotNull final PlayerEvent.EnteringChunk event)
+    public static void onEnteringChunk(@NotNull final PlayerEvent.EnteringChunk event)
     {
         final Entity entity = event.getEntity();
 
@@ -205,7 +205,11 @@ public class EventHandler
         if (entity instanceof ServerPlayerEntity)
         {
             final World world = entity.getEntityWorld();
-            Network.getNetwork().sendToPlayer(new UpdateChunkRangeCapabilityMessage(world, event.getNewChunkX(), event.getNewChunkZ(), MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get()), (ServerPlayerEntity) event.getEntity());
+            Network.getNetwork()
+              .sendToPlayer(new UpdateChunkRangeCapabilityMessage(world,
+                event.getNewChunkX(),
+                event.getNewChunkZ(),
+                MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get()), (ServerPlayerEntity) event.getEntity());
 
             final Chunk newChunk = world.getChunk(event.getNewChunkX(), event.getNewChunkZ());
             ChunkDataHelper.loadChunk(newChunk, entity.world);
@@ -267,7 +271,7 @@ public class EventHandler
      * @param event Spawnevent
      */
     @SubscribeEvent
-    public void onEvent(final EntityJoinWorldEvent event)
+    public static void onEvent(final EntityJoinWorldEvent event)
     {
         if (MineColonies.getConfig().getCommon().mobAttackCitizens.get() && (event.getEntity() instanceof MobEntity))
         {
@@ -282,7 +286,7 @@ public class EventHandler
      * @param event the event.
      */
     @SubscribeEvent
-    public void onEnteringChunkEntity(@NotNull final EntityEvent.EnteringChunk event)
+    public static void onEnteringChunkEntity(@NotNull final EntityEvent.EnteringChunk event)
     {
         if (MineColonies.getConfig().getCommon().pvp_mode.get() && event.getEntity() instanceof EntityCitizen)
         {
@@ -318,7 +322,7 @@ public class EventHandler
      * @param event {@link net.minecraftforge.event.world.BlockEvent.BreakEvent}
      */
     @SubscribeEvent
-    public void onBlockBreak(@NotNull final BlockEvent.BreakEvent event)
+    public static void onBlockBreak(@NotNull final BlockEvent.BreakEvent event)
     {
         if (event.getPlayer() != null && event.getPlayer().getHeldItem(Hand.MAIN_HAND).getItem() == ModItems.scanTool)
         {
@@ -345,7 +349,7 @@ public class EventHandler
      * @param event {@link PlayerInteractEvent.RightClickBlock}
      */
     @SubscribeEvent
-    public void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickBlock event)
+    public static void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickBlock event)
     {
         final PlayerEntity player = event.getPlayer();
         final World world = event.getWorld();
@@ -367,8 +371,8 @@ public class EventHandler
 
                 return;
             }
-            else if ("pmardle".equalsIgnoreCase(event.getPlayer().getName())
-                       && Block.getBlockFromItem(event.getItemStack().getItem()) instanceof BlockSilverfish)
+            else if ("pmardle".equalsIgnoreCase(event.getPlayer().getName().getFormattedText())
+                       && Block.getBlockFromItem(event.getItemStack().getItem()) instanceof SilverfishBlock)
             {
                 LanguageHandler.sendPlayerMessage(event.getPlayer(), "Stop that you twat!!!");
                 event.setCanceled(true);
@@ -426,12 +430,12 @@ public class EventHandler
     }
 
     @SubscribeEvent
-    public void onBlockPlaced(@NotNull final BlockEvent.EntityPlaceEvent event)
+    public static void onBlockPlaced(@NotNull final BlockEvent.EntityPlaceEvent event)
     {
         if (event.getEntity() instanceof PlayerEntity)
         {
-            final PlayerEntity player = event.getEntity();
-            final World world = event.getWorld();
+            final PlayerEntity player = (PlayerEntity) event.getEntity();
+            final World world = player.world;
             if (event.getPlacedBlock().getBlock() instanceof AbstractBlockHut && event.getPlacedBlock().getBlock() != ModBlocks.blockPostBox)
             {
                 final IColony colony = IColonyManager.getInstance().getIColony(world, event.getPos());
@@ -443,10 +447,10 @@ public class EventHandler
 
                 if (MineColonies.getConfig().getCommon().suggestBuildToolPlacement.get())
                 {
-                    final ItemStack stack = event.getEntity().getHeldItem(event.getHand());
+                    final ItemStack stack = new ItemStack(event.getPlacedBlock().getBlock());
                     if (!stack.isEmpty() && !world.isRemote)
                     {
-                        Network.getNetwork().sendToEveryone(new OpenSuggestionWindowMessage(event.getPlacedBlock(), event.getPos(), stack), (ServerPlayerEntity) event.getPlayer());
+                        Network.getNetwork().sendToPlayer(new OpenSuggestionWindowMessage(event.getPlacedBlock(), event.getPos(), stack), (ServerPlayerEntity) player);
                     }
                     event.setCanceled(true);
                 }
@@ -455,7 +459,7 @@ public class EventHandler
     }
 
     @SubscribeEvent
-    public void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickItem event)
+    public static void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickItem event)
     {
         if (event.getHand() == Hand.MAIN_HAND && event.getItemStack().getItem() == ModItems.buildTool && event.getWorld().isRemote)
         {
@@ -496,7 +500,7 @@ public class EventHandler
         {
             if (event.getWorld().isRemote)
             {
-                event.setCanceled(MineColonies.getConfig().getCommon().gameplay.suggestBuildToolPlacement);
+                event.setCanceled(MineColonies.getConfig().getCommon().suggestBuildToolPlacement.get());
             }
             else
             {
@@ -517,7 +521,7 @@ public class EventHandler
      */
     public static boolean onBlockHutPlaced(@NotNull final World world, @NotNull final PlayerEntity player, final Block block, final BlockPos pos)
     {
-        if (!MineColonies.getConfig().getCommon().gameplay.allowOtherDimColonies && world.world.getDimension().getType().getId() != 0)
+        if (!MineColonies.getConfig().getCommon().allowOtherDimColonies.get() && world.getDimension().getType().getId() != 0)
         {
             LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_IN_OTHER_DIM);
             return false;
@@ -545,22 +549,22 @@ public class EventHandler
             return canOwnerPlaceTownHallHere(world, player, colony, pos);
         }
 
-        if (MineColonies.getConfig().getCommon().gameplay.restrictColonyPlacement)
+        if (MineColonies.getConfig().getCommon().restrictColonyPlacement.get())
         {
             final double spawnDistance = Math.sqrt(BlockPosUtil.getDistanceSquared2D(pos, world.getSpawnPoint()));
-            if (spawnDistance < MineColonies.getConfig().getCommon().gameplay.minDistanceFromWorldSpawn)
+            if (spawnDistance < MineColonies.getConfig().getCommon().minDistanceFromWorldSpawn.get())
             {
                 if (!world.isRemote)
                 {
-                    LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, MineColonies.getConfig().getCommon().gameplay.minDistanceFromWorldSpawn);
+                    LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, MineColonies.getConfig().getCommon().minDistanceFromWorldSpawn.get());
                 }
                 return false;
             }
-            else if (spawnDistance > MineColonies.getConfig().getCommon().gameplay.maxDistanceFromWorldSpawn)
+            else if (spawnDistance > MineColonies.getConfig().getCommon().maxDistanceFromWorldSpawn.get())
             {
                 if (!world.isRemote)
                 {
-                    LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, MineColonies.getConfig().getCommon().gameplay.maxDistanceFromWorldSpawn);
+                    LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, MineColonies.getConfig().getCommon().maxDistanceFromWorldSpawn.get());
                 }
                 return false;
             }
@@ -581,7 +585,7 @@ public class EventHandler
         if (onBlockHutPlaced(world, player, pos))
         {
             final IColony colony = IColonyManager.getInstance().getClosestIColony(world, pos);
-            if (colony != null && (!MineColonies.getConfig().getCommon().gameplay.limitToOneWareHousePerColony || !colony.hasWarehouse()))
+            if (colony != null && (!MineColonies.getConfig().getCommon().limitToOneWareHousePerColony.get() || !colony.hasWarehouse()))
             {
                 return true;
             }
@@ -631,7 +635,7 @@ public class EventHandler
             return false;
         }
 
-        if (!colony.isCoordInColony(world, pos) && (!MineColonies.getConfig().getCommon().gameplay.enableDynamicColonySizes || colony.hasTownHall()))
+        if (!colony.isCoordInColony(world, pos) && (!MineColonies.getConfig().getCommon().enableDynamicColonySizes.get() || colony.hasTownHall()))
         {
             if (!world.isRemote)
             {
@@ -641,7 +645,7 @@ public class EventHandler
                                                           String.format(DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED,
                                                             colony.getID(), true
                                                           ))));
-                if (MineColonies.getConfig().getCommon().gameplay.allowInfiniteColonies)
+                if (MineColonies.getConfig().getCommon().allowInfiniteColonies.get())
                 {
                     final ITextComponent abandonButton = new TranslationTextComponent("tile.blockHutTownHall.abandonMessageLink")
                                                            .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD)
@@ -714,13 +718,13 @@ public class EventHandler
 
 
         if (!world.isRemote
-              && MineColonies.getConfig().getCommon().gameplay.protectVillages
-                  && world.getVillageCollection().getNearestVillage(pos, MineColonies.getConfig().getCommon().gameplay.workingRangeTownHallChunks * BLOCKS_PER_CHUNK) != null)
+              && MineColonies.getConfig().getCommon().protectVillages.get()
+              && ((ServerWorld) world).getVillageCollection().getNearestVillage(pos, MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get() * BLOCKS_PER_CHUNK) != null)
         {
-                Log.getLogger().warn("Village close by!");
-                LanguageHandler.sendPlayerMessage(player,
-                        "tile.blockHutTownHall.messageTooCloseToVillage");
-                return false;
+            Log.getLogger().warn("Village close by!");
+            LanguageHandler.sendPlayerMessage(player,
+              "tile.blockHutTownHall.messageTooCloseToVillage");
+            return false;
         }
         return true;
     }
@@ -732,7 +736,7 @@ public class EventHandler
      * @param event {@link net.minecraftforge.event.getEntity().getEntity()Event.getEntity()Constructing}
      */
     /*@SubscribeEvent
-    public void onEntityConstructing(@NotNull EntityEvent.EntityConstructing event)
+    public static void onEntityConstructing(@NotNull EntityEvent.EntityConstructing event)
     {
         if (event.getEntity() instanceof PlayerEntity)
         {
@@ -752,7 +756,7 @@ public class EventHandler
      * @param event {@link LivingDeathEvent}
      */
     /*@SubscribeEvent
-    public void onLivingDeath(@NotNull LivingDeathEvent event)
+    public static void onLivingDeath(@NotNull LivingDeathEvent event)
     {
         if (!event.getEntity().worldObj.isRemote && event.getEntity() instanceof PlayerEntity)
         {
@@ -767,7 +771,7 @@ public class EventHandler
      * @param event {@link EntityJoinWorldEvent}
      */
     /*@SubscribeEvent
-    public void onEntityJoinWorld(@NotNull EntityJoinWorldEvent event)
+    public static void onEntityJoinWorld(@NotNull EntityJoinWorldEvent event)
     {
         if (!event.getEntity().worldObj.isRemote && event.getEntity() instanceof PlayerEntity)
         {
@@ -782,9 +786,12 @@ public class EventHandler
      * @param event {@link net.minecraftforge.event.world.WorldEvent.Load}
      */
     @SubscribeEvent
-    public void onWorldLoad(@NotNull final WorldEvent.Load event)
+    public static void onWorldLoad(@NotNull final WorldEvent.Load event)
     {
-        IColonyManager.getInstance().onWorldLoad(event.getWorld());
+        if (event.getWorld() instanceof World)
+        {
+            IColonyManager.getInstance().onWorldLoad((World) event.getWorld());
+        }
     }
 
     /**
@@ -794,8 +801,11 @@ public class EventHandler
      * @param event {@link net.minecraftforge.event.world.WorldEvent.Unload}
      */
     @SubscribeEvent
-    public void onWorldUnload(@NotNull final WorldEvent.Unload event)
+    public static void onWorldUnload(@NotNull final WorldEvent.Unload event)
     {
-        IColonyManager.getInstance().onWorldUnload(event.getWorld());
+        if (event.getWorld() instanceof World)
+        {
+            IColonyManager.getInstance().onWorldUnload((World) event.getWorld());
+        }
     }
 }
