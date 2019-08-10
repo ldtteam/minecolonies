@@ -4,14 +4,15 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
+
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -37,24 +38,26 @@ public class ContainerField extends Container
     private final IColony colony;
 
     /**
-     * Creates an instance of our field container, this may be serve to open the GUI.
-     *
-     * @param scarecrowTileEntity the tileEntity of the field containing the inventory.
-     * @param playerInventory     the player inventory.
-     * @param world               the world.
-     * @param location            the position of the field.
+     * The tile entity.
      */
-    public ContainerField(@NotNull final ScarecrowTileEntity scarecrowTileEntity,
-            final PlayerInventory playerInventory,
-            @NotNull final World world,
-            @NotNull final BlockPos location)
+    private final ScarecrowTileEntity tileEntity;
+
+    /**
+     * Constructs the GUI with the player.
+     * @param windowId the window id.
+     * @param playerInventory the player inventory.
+     * @param extra extra data.
+     */
+    public ContainerField(final int windowId, final PlayerInventory playerInventory, final PacketBuffer extra)
     {
-        super();
-        this.colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, location);
-        this.inventory = scarecrowTileEntity.getInventory();
+        super(MinecoloniesContainers.field, windowId);
+        final BlockPos pos = extra.readBlockPos();
+        this.colony = IColonyManager.getInstance().getColonyByPosFromWorld(playerInventory.player.world, pos);
+        this.tileEntity = ((ScarecrowTileEntity) playerInventory.player.world.getTileEntity(pos));
+        this.inventory = this.tileEntity.getInventory();
         final int extraOffset = 0;
 
-        addSlotToContainer(new SlotItemHandler(inventory, 0, X_OFFSET, Y_OFFSET));
+        addSlot(new SlotItemHandler(inventory, 0, X_OFFSET, Y_OFFSET));
 
         // Player inventory slots
         // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
@@ -63,7 +66,7 @@ public class ContainerField extends Container
         {
             for (int j = 0; j < INVENTORY_COLUMNS; j++)
             {
-                addSlotToContainer(new Slot(
+                addSlot(new Slot(
                         playerInventory,
                         j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
                         PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
@@ -75,18 +78,12 @@ public class ContainerField extends Container
 
         for (i = 0; i < INVENTORY_COLUMNS; i++)
         {
-            addSlotToContainer(new Slot(
+            addSlot(new Slot(
                     playerInventory, i,
                     PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
                     PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * LINES_PER_OFFSET
             ));
         }
-    }
-
-    @Override
-    protected final Slot addSlotToContainer(final Slot slotToAdd)
-    {
-        return super.addSlotToContainer(slotToAdd);
     }
 
     @Nullable
@@ -103,7 +100,7 @@ public class ContainerField extends Container
             final int playerIndex = slotIndex < MAX_INVENTORY_INDEX ? (slotIndex + INVENTORY_BAR_SIZE) : (slotIndex - MAX_INVENTORY_INDEX);
             if (playerIn.inventory.getStackInSlot(playerIndex) != ItemStackUtils.EMPTY)
             {
-                @NotNull final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);
+                @NotNull final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).split(1);
                 inventory.insertItem(0, stack, false);
                 if (ItemStackUtils.getSize(playerIn.inventory.getStackInSlot(playerIndex)) == 0)
                 {
@@ -121,4 +118,12 @@ public class ContainerField extends Container
         return colony.getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS);
     }
 
+    /**
+     * Get the assigned tile entity.
+     * @return
+     */
+    public ScarecrowTileEntity getTileEntity()
+    {
+        return tileEntity;
+    }
 }

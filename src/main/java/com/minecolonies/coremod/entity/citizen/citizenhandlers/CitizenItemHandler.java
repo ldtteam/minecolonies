@@ -70,7 +70,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
             final ItemStack itemStack = ItemEntity.getItem();
             final ItemStack compareStack = itemStack.copy();
 
-            final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(citizen.getInventoryCitizen()), itemStack);
+            final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(citizen.getInventoryCitizen(), itemStack);
             final int resultingStackSize = ItemStackUtils.isEmpty(resultStack) ? 0 : ItemStackUtils.getSize(resultStack);
 
             if (ItemStackUtils.isEmpty(resultStack) || ItemStackUtils.getSize(resultStack) != ItemStackUtils.getSize(compareStack))
@@ -241,7 +241,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
         //check if tool breaks
         if (ItemStackUtils.isEmpty(heldItem))
         {
-            citizen.getInventoryCitizen().setInventorySlotContents(citizen.getInventoryCitizen().getHeldItemSlot(hand), ItemStackUtils.EMPTY);
+            citizen.getInventoryCitizen().insertItem(citizen.getInventoryCitizen().getHeldItemSlot(hand), ItemStackUtils.EMPTY, false);
             citizen.setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStackUtils.EMPTY);
         }
     }

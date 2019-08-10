@@ -103,7 +103,6 @@ public class EventHandler
     @SubscribeEvent
     public static void onEntityRemoved(@NotNull final EntityEv entity)
     {
-        EntityEvent
         if (entity instanceof EntityCitizen)
         {
             final ICitizenData citizen = ((AbstractEntityCitizen) entity).getCitizenData();

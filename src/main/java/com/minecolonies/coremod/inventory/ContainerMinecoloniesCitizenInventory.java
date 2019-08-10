@@ -9,6 +9,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -67,7 +69,7 @@ public class ContainerMinecoloniesCitizenInventory extends Container
             {
                 if (index < size)
                 {
-                    this.addSlotToContainer(
+                    this.addSlot(
                             new Slot(inventory, index,
                                     INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
                                     PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH)

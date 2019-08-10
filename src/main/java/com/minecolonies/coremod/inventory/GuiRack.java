@@ -2,19 +2,19 @@ package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
+import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 @OnlyIn(Dist.CLIENT)
-public class GuiRack extends GuiContainer
+public class GuiRack extends ContainerScreen
 {
     /**
      * The resource LOCATION of the texture.
@@ -121,22 +121,22 @@ public class GuiRack extends GuiContainer
      */
     protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY)
     {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(getCorrectTextureForSlots(inventoryRows));
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        this.minecraft.getTextureManager().bindTexture(getCorrectTextureForSlots(inventoryRows));
         final int i = (this.width - this.xSize) / 2;
         final int j = (this.height - this.ySize) / 2;
 
         if (inventoryRows < SLOTS_EACH_ROW)
         {
-            drawModalRectWithCustomSizedTexture(i, j, 0, 0, this.xSize, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
-            drawModalRectWithCustomSizedTexture(i, j + this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, 0,
+            blit(i, j, 0, 0, this.xSize, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
+            blit(i, j + this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, 0,
               TEXTURE_OFFSET, this.xSize, TEXTURE_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);
         }
         else
         {
             final int textureOffset = TEXTURE_OFFSET - EXTRA_OFFSET;
-            drawModalRectWithCustomSizedTexture(i, j, 0, 0, (this.xSize * SIZE_MULTIPLIER) / 2, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
-            drawModalRectWithCustomSizedTexture(i,
+            blit(i, j, 0, 0, (this.xSize * SIZE_MULTIPLIER) / 2, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
+            blit(i,
               j + Math.min(SLOTS_EACH_ROW, this.inventoryRows) * SLOT_OFFSET + SLOT_OFFSET - 1, 0,
               textureOffset, (this.xSize * SIZE_MULTIPLIER) / 2, TEXTURE_HEIGHT + EXTRA_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);
         }
@@ -163,7 +163,7 @@ public class GuiRack extends GuiContainer
     @Override
     public void drawScreen(final int mouseX, final int mouseY, final float partialTicks)
     {
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        super.d(mouseX, mouseY, partialTicks);
         this.renderHoveredToolTip(mouseX, mouseY);
     }
 }

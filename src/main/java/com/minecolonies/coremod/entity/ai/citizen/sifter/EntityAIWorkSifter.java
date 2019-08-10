@@ -96,7 +96,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
     private IAIState checkForSievableBlock(final ItemStorage storage, final BuildingSifter sifterBuilding)
     {
         final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(storage.getItemStack());
-        if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), predicate))
+        if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), predicate))
         {
             if (InventoryUtils.hasItemInProvider(sifterBuilding, predicate))
             {
@@ -142,7 +142,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
 
         final BuildingSifter sifterBuilding = getOwnBuilding(BuildingSifter.class);
 
-        if (InventoryUtils.isItemHandlerFull(new InvWrapper(worker.getInventoryCitizen())))
+        if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
         {
             incrementActionsDone();
             return START_WORKING;
@@ -169,9 +169,9 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
                   IColonyManager.getInstance().getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getA(), sifterBuilding.getSievableBlock());
                 if (!result.isEmpty())
                 {
-                    InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), result);
+                    InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), result);
                 }
-                InventoryUtils.reduceStackInItemHandler(new InvWrapper(worker.getInventoryCitizen()), sifterBuilding.getSievableBlock().getItemStack());
+                InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), sifterBuilding.getSievableBlock().getItemStack());
 
                 if (worker.getRandom().nextDouble() * 100 < sifterBuilding.getMesh().getB())
                 {

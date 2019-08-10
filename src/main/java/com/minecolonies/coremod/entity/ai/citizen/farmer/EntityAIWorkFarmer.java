@@ -163,7 +163,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
 
         final int amountOfCompostInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), this::isCompost);
-        final int amountOfCompostInInv = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), this::isCompost);
+        final int amountOfCompostInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), this::isCompost);
 
         if (amountOfCompostInBuilding + amountOfCompostInInv <= 0)
         {
@@ -628,13 +628,13 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 return true;
             }
-            final int amountOfCompostInInv = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), this::isCompost);
+            final int amountOfCompostInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), this::isCompost);
             if (amountOfCompostInInv == 0)
             {
                 return false;
             }
 
-            if (InventoryUtils.shrinkItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), this::isCompost))
+            if (InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), this::isCompost))
             {
                 Network.getNetwork().sendToPosition(new CompostParticleMessage(position.up()),
                   new PacketDistributor.TargetPoint(position.getX(), position.getY(), position.getZ(), BLOCK_BREAK_SOUND_RANGE, world.getDimension().getType()));
@@ -677,7 +677,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         state.getDrops(new LootContext.Builder((ServerWorld) world));
         for (final ItemStack item : drops)
         {
-            InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), item);
+            InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), item);
         }
 
         if (state.getBlock() instanceof CropsBlock)

@@ -2,7 +2,6 @@ package com.minecolonies.api.entity.ai.pathfinding;
 
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -184,7 +183,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
      *
      * @return the entity.
      */
-    public LivingEntity getEntity()
+    public MobEntity getEntity()
     {
         return entity;
     }

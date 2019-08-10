@@ -38,7 +38,7 @@ public class ContainerGUICraftingFurnace extends AbstractFurnaceContainer
     public final BlockPos buildingPos;
 
     /**
-     * Constructs the GUI with the player and furnace inventory.
+     * Constructs the GUI with the player.
      * @param windowId the window id.
      * @param inv the player inventory.
      * @param extra extra data.

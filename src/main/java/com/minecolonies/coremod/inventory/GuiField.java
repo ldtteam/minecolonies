@@ -2,20 +2,19 @@ package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
+import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Class which creates the GUI of our field inventory.
  */
 @OnlyIn(Dist.CLIENT)
-public class GuiField extends GuiContainer
+public class GuiField extends ContainerScreen<ContainerField>
 {
     /**
      * The resource location of the GUI background.
@@ -43,17 +42,15 @@ public class GuiField extends GuiContainer
     private final ScarecrowTileEntity tileEntity;
 
     /**
-     * Constructor of the GUI.
-     *
-     * @param parPlayerInventory the player inventory.
-     * @param tileEntity         the tileEntity of the field, contains the inventory.
-     * @param world              the world the field is in.
-     * @param location           the location the field is at.
+     * Create the field GUI.
+     * @param container the container.
+     * @param playerInventory the player inv.
+     * @param iTextComponent the display text component.
      */
-    protected GuiField(final PlayerInventory parPlayerInventory, final ScarecrowTileEntity tileEntity, final World world, final BlockPos location)
+    public GuiField(final ContainerField container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
     {
-        super(new ContainerField(tileEntity, parPlayerInventory, world, location));
-        this.tileEntity = tileEntity;
+        super(container, playerInventory, iTextComponent);
+        this.tileEntity = container.getTileEntity();
     }
 
     /**
@@ -65,7 +62,7 @@ public class GuiField extends GuiContainer
     @Override
     protected void drawGuiContainerForegroundLayer(final int layer1, final int layer2)
     {
-        this.fontRenderer.drawString(tileEntity.getDesc(), X_OFFSET, Y_OFFSET, TEXT_COLOR);
+        this.font.drawString(tileEntity.getDesc(), X_OFFSET, Y_OFFSET, TEXT_COLOR);
     }
 
     /**
@@ -78,10 +75,10 @@ public class GuiField extends GuiContainer
     @Override
     protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY)
     {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.getTextureManager().bindTexture(TEXTURE);
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        minecraft.getTextureManager().bindTexture(TEXTURE);
         final int marginHorizontal = (width - xSize) / 2;
         final int marginVertical = (height - ySize) / 2;
-        drawTexturedModalRect(marginHorizontal, marginVertical, 0, 0, xSize, ySize);
+        blit(marginHorizontal, marginVertical, 0, 0, xSize, ySize);
     }
 }

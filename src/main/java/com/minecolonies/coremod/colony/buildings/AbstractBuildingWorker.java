@@ -297,7 +297,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         final List<IItemHandler> handlers = new ArrayList<>();
         for(final ICitizenData workerEntity: this.getAssignedCitizen())
         {
-            handlers.add(new InvWrapper(workerEntity.getInventory()));
+            handlers.add(workerEntity.getInventory());
         }
         handlers.add(new InvWrapper(getTileEntity()));
         

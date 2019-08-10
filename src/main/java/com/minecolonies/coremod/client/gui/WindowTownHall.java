@@ -44,7 +44,6 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-import static com.minecolonies.coremod.commands.colonycommands.ListColoniesCommand.TELEPORT_COMMAND;
 
 /**
  * Window for the town hall.
@@ -323,14 +322,15 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      */
     private void teleportToColony(@NotNull final Button button)
     {
-        final int row = alliesList.getListElementIndexByPane(button);
+        /*final int row = alliesList.getListElementIndexByPane(button);
         final IColonyView ally = allies.get(row);
         final ITextComponent teleport = new StringTextComponent(LanguageHandler.format(DO_REALLY_WANNA_TP, ally.getName()))
                                           .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
                                             new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + ally.getID())
                                           ));
+        */
+        Minecraft.getInstance().player.sendMessage(new StringTextComponent("Feature currently disabled"));
 
-        Minecraft.getInstance().player.sendMessage(teleport);
     }
 
     /**

@@ -8,31 +8,50 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.MinecoloniesAPIImpl;
 import com.minecolonies.coremod.client.gui.WindowGuiCrafting;
 import com.minecolonies.coremod.client.gui.WindowGuiFurnaceCrafting;
+import com.minecolonies.coremod.client.render.EmptyTileEntitySpecialRenderer;
+import com.minecolonies.coremod.client.render.RenderBipedCitizen;
+import com.minecolonies.coremod.client.render.RenderFishHook;
+import com.minecolonies.coremod.client.render.TileEntityScarecrowRenderer;
+import com.minecolonies.coremod.client.render.mobs.RenderMercenary;
+import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
+import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
+import com.minecolonies.coremod.client.render.mobs.pirates.RendererArcherPirate;
+import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
+import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
-import com.minecolonies.coremod.commands.CommandEntryPoint;
-import com.minecolonies.coremod.commands.CommandEntryPointNew;
+import com.minecolonies.coremod.entity.EntityFishHook;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import com.minecolonies.coremod.entity.mobs.EntityMercenary;
+import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
+import com.minecolonies.coremod.entity.mobs.barbarians.EntityBarbarian;
+import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
+import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
+import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
+import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.event.*;
 import com.minecolonies.coremod.inventory.MinecoloniesContainers;
 import com.minecolonies.coremod.placementhandlers.MinecoloniesPlacementHandlers;
 import com.minecolonies.coremod.proxy.ClientProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
+import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.RecipeHandler;
 import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.entity.EntityType;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -97,7 +116,6 @@ public class MineColonies
         Network.getNetwork().registerCommonMessages();
 
         StandardFactoryControllerInitializer.onPreInit();
-        proxy.registerEntityRendering();
     }
 
     /**
@@ -110,6 +128,9 @@ public class MineColonies
     {
         Structurize.getLogger().warn("FMLLoadCompleteEvent");
         LanguageHandler.setMClanguageLoaded();
+        MinecoloniesPlacementHandlers.initHandlers();
+        RecipeHandler.init(MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get(), MineColonies.getConfig().getCommon().supplyChests.get());
+        RequestSystemInitializer.onPostInit();
     }
 
     //todo this here stays!
@@ -119,92 +140,18 @@ public class MineColonies
         ScreenManager.registerFactory(MinecoloniesContainers.craftingFurnace, WindowGuiFurnaceCrafting::new);
         ScreenManager.registerFactory(MinecoloniesContainers.craftingGrid, WindowGuiCrafting::new);
 
-    }
+        RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, RenderBipedCitizen::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityFishHook.class, RenderFishHook::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityBarbarian.class, RendererBarbarian::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityArcherBarbarian.class, RendererBarbarian::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityChiefBarbarian.class, RendererChiefBarbarian::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityPirate.class, RendererPirate::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityArcherPirate.class, RendererArcherPirate::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityCaptainPirate.class, RendererChiefPirate::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityMercenary.class, RenderMercenary::new);
 
-    @SubscribeEvent
-    public static void registerEntities(final RegistryEvent.Register<EntityType<?>> event)
-    {
-        //Register Barbarian loot tables.
-        LootTableList.register(EntityBarbarian.LOOT_TABLE);
-        LootTableList.register(EntityArcherBarbarian.LOOT_TABLE);
-        LootTableList.register(EntityChiefBarbarian.LOOT_TABLE);
-
-        //Register Pirate loot tables.
-        LootTableList.register(EntityPirate.LOOT_TABLE);
-        LootTableList.register(EntityArcherPirate.LOOT_TABLE);
-        LootTableList.register(EntityCaptainPirate.LOOT_TABLE);
-    }
-
-    /**
-     * Event handler for forge init event.
-     *
-     * @param event the forge init event.
-     */
-    @Mod.EventHandler
-    public void init(final FMLInitializationEvent event)
-    {
-        initializeNetwork();
-
-
-        proxy.registerTileEntityRendering();
-
-        proxy.registerRenderer();
-
-        MinecoloniesPlacementHandlers.initHandlers();
-
-        RecipeHandler.init(MineColonies.getConfig().getCommon().gameplay.enableInDevelopmentFeatures, MineColonies.getConfig().getCommon().gameplay.supplyChests);
-
-        //Register Vanilla items with tags
-
-        //FOOD
-        OreDictionary.registerOre("food", Items.APPLE);
-        OreDictionary.registerOre("food", Items.PORKCHOP);
-        OreDictionary.registerOre("food", Items.BEEF);
-        OreDictionary.registerOre("food", Items.BAKED_POTATO);
-        OreDictionary.registerOre("food", Items.WHEAT);
-        OreDictionary.registerOre("food", Items.BEETROOT);
-        OreDictionary.registerOre("food", Items.BREAD);
-        OreDictionary.registerOre("food", Items.CARROT);
-        OreDictionary.registerOre("food", Items.CAKE);
-        OreDictionary.registerOre("food", Items.CHICKEN);
-        OreDictionary.registerOre("food", Items.COOKED_BEEF);
-        OreDictionary.registerOre("food", Items.COOKED_CHICKEN);
-        OreDictionary.registerOre("food", Items.COOKED_FISH);
-        OreDictionary.registerOre("food", Items.COOKED_MUTTON);
-        OreDictionary.registerOre("food", Items.COOKED_PORKCHOP);
-        OreDictionary.registerOre("food", Items.COOKED_RABBIT);
-        OreDictionary.registerOre("food", Items.COOKIE);
-        OreDictionary.registerOre("food", Items.EGG);
-        OreDictionary.registerOre("food", Items.FISH);
-        OreDictionary.registerOre("food", Items.MELON);
-        OreDictionary.registerOre("food", Items.MUTTON);
-        OreDictionary.registerOre("food", Items.POTATO);
-        OreDictionary.registerOre("food", Items.RABBIT);
-
-        //SEEDS
-        OreDictionary.registerOre("seed", Items.BEETROOT_SEEDS);
-        OreDictionary.registerOre("seed", Items.MELON_SEEDS);
-        OreDictionary.registerOre("seed", Items.PUMPKIN_SEEDS);
-        OreDictionary.registerOre("seed", Items.WHEAT_SEEDS);
-    }
-
-    public static SimpleNetworkWrapper getNetwork()
-    {
-        return network;
-    }
-
-    @Mod.EventHandler
-    public void postInit(final FMLPostInitializationEvent event)
-    {
-        RequestSystemInitializer.onPostInit();
-    }
-
-    @Mod.EventHandler
-    public void serverLoad(final FMLServerStartingEvent event)
-    {
-        // register server commands
-        event.registerServerCommand(new CommandEntryPoint());
-        event.registerServerCommand(new CommandEntryPointNew());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(ScarecrowTileEntity.class, new TileEntityScarecrowRenderer());
     }
 
     /**

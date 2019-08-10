@@ -6,6 +6,8 @@
 
 package com.minecolonies.coremod.client.model;
 
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
@@ -107,17 +109,8 @@ public class ModelScarecrowBoth extends EntityModel
         model.rotateAngleZ = z;
     }
 
-    @Override
-    public void render(
-      final Entity entityIn,
-      final float limbSwing,
-      final float limbSwingAmount,
-      final float ageInTicks,
-      final float netHeadYaw,
-      final float headPitch,
-      final float scaleFactor)
+    public void render(final float scaleFactor)
     {
-        super.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
         Head.render(scaleFactor);
         Post.render(scaleFactor);
         LeftArmPeg.render(scaleFactor);

@@ -5,27 +5,9 @@ import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.Structures;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.*;
-import com.minecolonies.coremod.client.render.*;
-import com.minecolonies.coremod.client.render.mobs.RenderMercenary;
-import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
-import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
-import com.minecolonies.coremod.client.render.mobs.pirates.RendererArcherPirate;
-import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
-import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
-import com.minecolonies.coremod.entity.EntityFishHook;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import com.minecolonies.coremod.entity.mobs.EntityMercenary;
-import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
-import com.minecolonies.coremod.entity.mobs.barbarians.EntityBarbarian;
-import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
-import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
-import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
-import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -33,9 +15,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipeBook;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
@@ -60,26 +41,6 @@ public class ClientProxy extends CommonProxy
         return true;
     }
 
-    @Override
-    public void registerEntityRendering()
-    {
-        RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, RenderBipedCitizen::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityFishHook.class, RenderFishHook::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityBarbarian.class, RendererBarbarian::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityArcherBarbarian.class, RendererBarbarian::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityChiefBarbarian.class, RendererChiefBarbarian::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityPirate.class, RendererPirate::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityArcherPirate.class, RendererArcherPirate::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityCaptainPirate.class, RendererChiefPirate::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityMercenary.class, RenderMercenary::new);
-    }
-
-    @Override
-    public void registerTileEntityRendering()
-    {
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
-        ClientRegistry.bindTileEntitySpecialRenderer(ScarecrowTileEntity.class, new TileEntityScarecrowRenderer());
-    }
 
     @Override
     public void showCitizenWindow(final ICitizenDataView citizen)
@@ -110,6 +71,12 @@ public class ClientProxy extends CommonProxy
 
         @Nullable final WindowDecorationController window = new WindowDecorationController(pos);
         window.open();
+    }
+
+    @Override
+    public World getWorld(final int dimension)
+    {
+        return Minecraft.getInstance().world;
     }
 
     @Override

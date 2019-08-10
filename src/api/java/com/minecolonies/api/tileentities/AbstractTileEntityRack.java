@@ -20,7 +20,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SIZE;
 
-public abstract class AbstractTileEntityRack extends TileEntity
+public abstract class AbstractTileEntityRack extends TileEntity implements INamedContainerProvider
 {
     /**
      * Variable which determines if it is a single or doublechest.

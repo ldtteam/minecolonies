@@ -414,7 +414,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
         for (final ItemStack item : items)
         {
-            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, new InvWrapper(worker.getInventoryCitizen()));
+            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, worker.getInventoryCitizen());
         }
     }
 
@@ -486,7 +486,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
                 if (result instanceof ItemStack)
                 {
-                    final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(worker.getInventoryCitizen()), s -> s.isItemEqual((ItemStack) result));
+                    final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), s -> s.isItemEqual((ItemStack) result));
                     if (slot != -1)
                     {
                         final ItemStack itemStack = worker.getInventoryCitizen().getStackInSlot(slot);

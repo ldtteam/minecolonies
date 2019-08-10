@@ -109,7 +109,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
     {
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
                 new InvWrapper(furnace), RESULT_SLOT,
-                new InvWrapper(worker.getInventoryCitizen()));
+                worker.getInventoryCitizen());
         worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         this.incrementActionsDoneAndDecSaturation();
     }
@@ -193,7 +193,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             return getState();
         }
         InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoNextFreeSlotInItemHandler(
-                new InvWrapper(worker.getInventoryCitizen()),
+                worker.getInventoryCitizen(),
                 ItemStackUtils.CAN_EAT,
                 getOwnBuilding().getBuildingLevel() * AMOUNT_OF_FOOD_TO_SERVE, handler
                 );
@@ -263,7 +263,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             citizenToServe.addAll(citizenList);
             playerToServe.addAll(playerList);
 
-            if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), ItemStackUtils.CAN_EAT))
+            if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), ItemStackUtils.CAN_EAT))
             {
                 return COOK_SERVE_FOOD_TO_CITIZEN;
             }

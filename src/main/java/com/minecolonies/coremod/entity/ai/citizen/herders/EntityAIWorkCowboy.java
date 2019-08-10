@@ -75,7 +75,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, CowEnt
         final IAIState result = super.decideWhatToDo();
         final BuildingCowboy building = getOwnBuilding();
 
-        final boolean hasBucket = InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), Items.BUCKET, 0);
+        final boolean hasBucket = InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), Items.BUCKET, 0);
         if (building != null && building.isMilkingCows() && result.equals(START_WORKING) && hasBucket)
         {
             return COWBOY_MILK;
@@ -138,7 +138,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, CowEnt
             {
                 worker.getCitizenItemHandler().removeHeldItem();
                 equipItem(Hand.MAIN_HAND, new ItemStack(Items.MILK_BUCKET));
-                InventoryUtils.removeStackFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(Items.BUCKET, 1));
+                InventoryUtils.removeStackFromItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.BUCKET, 1));
             }
 
             incrementActionsDoneAndDecSaturation();

@@ -5,23 +5,9 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.LootTableConstants;
 import com.minecolonies.apiimp.MinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
-import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.entity.EntityFishHook;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import com.minecolonies.coremod.entity.mobs.EntityMercenary;
-import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
-import com.minecolonies.coremod.entity.mobs.barbarians.EntityBarbarian;
-import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
-import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
-import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
-import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.util.TownHallRecipe;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -29,19 +15,18 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.RecipeBook;
+import net.minecraft.item.crafting.ShapedRecipe;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.minecolonies.api.util.constant.ColonyConstants.*;
 
 /**
  * CommonProxy of the minecolonies mod (Server and Client).
@@ -110,18 +95,6 @@ public abstract class CommonProxy implements IProxy
     }
 
     @SubscribeEvent
-    public static void registerBuildingTypes(@NotNull final RegistryEvent.Register<BuildingEntry> event)
-    {
-        ModBuildingsInitializer.init(event);
-    }
-
-    @SubscribeEvent
-    public static void registerJobTypes(final RegistryEvent.Register<JobEntry> event)
-    {
-        ModJobsInitializer.init(event);
-    }
-
-    @SubscribeEvent
     public static void registerGuardTypes(final RegistryEvent.Register<GuardType> event)
     {
         ModGuardTypesInitializer.init(event);
@@ -155,22 +128,6 @@ public abstract class CommonProxy implements IProxy
     public boolean isClient()
     {
         return false;
-    }
-
-    @Override
-    public void registerEntityRendering()
-    {
-        /*
-         * Intentionally left empty.
-         */
-    }
-
-    @Override
-    public void registerTileEntityRendering()
-    {
-        /*
-         * Intentionally left empty.
-         */
     }
 
     @Override
@@ -215,14 +172,6 @@ public abstract class CommonProxy implements IProxy
 
     @Override
     public void openResourceScrollWindow(final int colonyId, final BlockPos pos)
-    {
-        /*
-         * Intentionally left empty.
-         */
-    }
-
-    @Override
-    public void registerRenderer()
     {
         /*
          * Intentionally left empty.
