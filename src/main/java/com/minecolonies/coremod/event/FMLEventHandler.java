@@ -2,20 +2,15 @@ package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.sounds.ModSoundEvents;
-import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.ServerUUIDMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,71 +18,36 @@ import org.jetbrains.annotations.NotNull;
  */
 public class FMLEventHandler
 {
-    /**
-     * Called when the server ticks.
-     * Calls {@link ColonyManager#onServerTick(TickEvent.ServerTickEvent)}.
-     *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}.
-     */
     @SubscribeEvent
-    public void onServerTick(final TickEvent.ServerTickEvent event)
+    public static void onServerTick(final TickEvent.ServerTickEvent event)
     {
         IColonyManager.getInstance().onServerTick(event);
     }
 
-    /**
-     * Called when the client ticks.
-     * Calls {@link ColonyManager#onClientTick(TickEvent.ClientTickEvent)}.
-     *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent}.
-     */
     @SubscribeEvent
-    public void onClientTick(final TickEvent.ClientTickEvent event)
+    public static void onClientTick(final TickEvent.ClientTickEvent event)
     {
         IColonyManager.getInstance().onClientTick(event);
     }
 
-    /**
-     * Called when the world ticks.
-     * Calls {@link ColonyManager#onWorldTick(TickEvent.WorldTickEvent)}.
-     *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}.
-     */
     @SubscribeEvent
-    public void onWorldTick(final TickEvent.WorldTickEvent event)
+    public static void onWorldTick(final TickEvent.WorldTickEvent event)
     {
         IColonyManager.getInstance().onWorldTick(event);
     }
 
-    /**
-     * Called when a player logs in. If the joining player is a MP-Player, sends
-     * all possible styles in a message.
-     *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent}
-     */
     @SubscribeEvent
-    public void onPlayerLogin(@NotNull final PlayerEvent.PlayerLoggedInEvent event)
+    public static void onPlayerLogin(@NotNull final PlayerEvent.PlayerLoggedInEvent event)
     {
-        if (event.player instanceof ServerPlayerEntity)
+        if (event.getPlayer() instanceof ServerPlayerEntity)
         {
-            Network.getNetwork().sendTo(new ServerUUIDMessage(), (ServerPlayerEntity) event.player);
-            Network.getNetwork().sendTo(new ColonyStylesMessage(), (ServerPlayerEntity) event.player);
+            Network.getNetwork().sendToPlayer(new ServerUUIDMessage(), (ServerPlayerEntity) event.getPlayer());
+            Network.getNetwork().sendToPlayer(new ColonyStylesMessage(), (ServerPlayerEntity) event.getPlayer());
 
             // This automatically reloads the owner of the colony if failed.
-            IColonyManager.getInstance().getIColonyByOwner(((ServerPlayerEntity) event.player).getServerWorld(), event.player);
+            IColonyManager.getInstance().getIColonyByOwner(((ServerPlayerEntity) event.getPlayer()).getServerWorld(), event.getPlayer());
             //ColonyManager.syncAllColoniesAchievements();
         }
-    }
-
-    /**
-     * Called when the config is changed, used to synch between file and game.
-     *
-     * @param event the on config changed event.
-     */
-    @SubscribeEvent
-    public void onConfigChanged(@NotNull final ConfigChangedEvent.OnConfigChangedEvent event)
-    {
-        ConfigManager.sync(Constants.MOD_ID, Config.Type.INSTANCE);
     }
 
     /**
@@ -97,7 +57,7 @@ public class FMLEventHandler
      * @param event the registery event for items.
      */
     @SubscribeEvent
-    public void registerSounds(@NotNull final RegistryEvent.Register<SoundEvent> event)
+    public static void registerSounds(@NotNull final RegistryEvent.Register<SoundEvent> event)
     {
         ModSoundEvents.registerSounds(event.getRegistry());
     }
