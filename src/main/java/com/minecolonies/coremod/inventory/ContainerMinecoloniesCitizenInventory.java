@@ -77,7 +77,7 @@ public class ContainerMinecoloniesCitizenInventory extends Container
                                 @Override
                                 public void putStack(final ItemStack stack)
                                 {
-                                    if (buildingId != null && FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !ItemStackUtils.isEmpty(stack))
+                                    if (buildingId != null && !playerInventory.player.world.isRemote && !ItemStackUtils.isEmpty(stack))
                                     {
                                         final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, world);
                                         final IBuilding building = colony.getBuildingManager().getBuilding(buildingId);
@@ -100,7 +100,7 @@ public class ContainerMinecoloniesCitizenInventory extends Container
         {
             for (int j = 0; j < INVENTORY_COLUMNS; j++)
             {
-                addSlotToContainer(new Slot(
+                addSlot(new Slot(
                         playerInventory,
                         j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
                         PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
@@ -112,7 +112,7 @@ public class ContainerMinecoloniesCitizenInventory extends Container
 
         for (i = 0; i < INVENTORY_COLUMNS; i++)
         {
-            addSlotToContainer(new Slot(
+            addSlot(new Slot(
                     playerInventory, i,
                     PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
                     PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,

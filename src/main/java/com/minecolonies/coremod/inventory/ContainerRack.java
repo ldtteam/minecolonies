@@ -4,7 +4,8 @@ import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -17,7 +18,7 @@ import static com.minecolonies.api.util.constant.InventoryConstants.*;
 /**
  * The container class for the rack.
  */
-public class ContainerRack extends net.minecraft.inventory.Container
+public class ContainerRack extends Container
 {
     /**
      * The inventory.
@@ -82,7 +83,7 @@ public class ContainerRack extends net.minecraft.inventory.Container
             {
                 if (index < size)
                 {
-                    this.addSlotToContainer(
+                    this.addSlot(
                       new SlotItemHandler(inventory, index,
                                            INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
                                            PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH));
@@ -98,7 +99,7 @@ public class ContainerRack extends net.minecraft.inventory.Container
         {
             for (int j = 0; j < INVENTORY_COLUMNS; j++)
             {
-                addSlotToContainer(new Slot(
+                addSlot(new Slot(
                                              playerInventory,
                                              j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
                                              PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
@@ -110,19 +111,13 @@ public class ContainerRack extends net.minecraft.inventory.Container
 
         for (i = 0; i < INVENTORY_COLUMNS; i++)
         {
-            addSlotToContainer(new Slot(
+            addSlot(new Slot(
                                          playerInventory, i,
                                          PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
                                          PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
                                            INVENTORY_BAR_SIZE)
             ));
         }
-    }
-
-    @Override
-    protected final Slot addSlotToContainer(final Slot slotToAdd)
-    {
-        return super.addSlotToContainer(slotToAdd);
     }
 
     @Override
