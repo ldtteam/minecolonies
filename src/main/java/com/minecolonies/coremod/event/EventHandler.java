@@ -73,7 +73,6 @@ import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.NbtTagConstants.FIRST_POS_STRING;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
-import static com.minecolonies.coremod.commands.colonycommands.DeleteColonyCommand.DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED;
 
 /**
  * Handles all forge events.
@@ -638,7 +637,8 @@ public class EventHandler
         {
             if (!world.isRemote)
             {
-                final ITextComponent deleteButton = new TranslationTextComponent("tile.blockHutTownHall.deleteMessageLink")
+                //todo temporarely disabled because of missing commands
+                /*final ITextComponent deleteButton = new TranslationTextComponent("tile.blockHutTownHall.deleteMessageLink")
                                                       .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
                                                         new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                                           String.format(DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED,
@@ -658,7 +658,7 @@ public class EventHandler
                 {
                     player.sendMessage(new TranslationTextComponent("tile.blockHutTownHall.messagePlacedAlreadyDel"));
                 }
-                player.sendMessage(deleteButton);
+                player.sendMessage(deleteButton);*/
             }
 
             //  Players are currently only allowed a single colony
