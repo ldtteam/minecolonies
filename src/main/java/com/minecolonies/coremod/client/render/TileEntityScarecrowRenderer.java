@@ -6,19 +6,19 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
 import com.minecolonies.coremod.client.model.ModelScarecrowBoth;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Class to render the scarecrow.
  */
 @OnlyIn(Dist.CLIENT)
-public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<ScarecrowTileEntity>
+public class TileEntityScarecrowRenderer extends TileEntityRenderer<ScarecrowTileEntity>
 {
     /**
      * Offset to the block middle.
@@ -80,16 +80,16 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
     }
 
     @Override
-    public void render(final ScarecrowTileEntity te, final double x, final double y, final double z, final float partialTicks, final int destroyStage, final float alpha)
+    public void render(final ScarecrowTileEntity te, final double x, final double y, final double z, final float partialTicks, final int destroyStage)
     {
         //Store the transformation
         GlStateManager.pushMatrix();
         //Set viewport to tile entity position to render it
-        GlStateManager.translate(x + BLOCK_MIDDLE, y + YOFFSET, z + BLOCK_MIDDLE);
+        GlStateManager.translated(x + BLOCK_MIDDLE, y + YOFFSET, z + BLOCK_MIDDLE);
 
         this.bindTexture(getResourceLocation(te));
 
-        GlStateManager.rotate(ROTATION, XROTATIONOFFSET, YROTATIONOFFSET, ZROTATIONOFFSET);
+        GlStateManager.rotated(ROTATION, XROTATIONOFFSET, YROTATIONOFFSET, ZROTATIONOFFSET);
 
         //In the case of worldLags tileEntities may sometimes disappear.
         if (getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockScarecrow)
@@ -98,20 +98,20 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
             switch (facing)
             {
                 case EAST:
-                    GlStateManager.rotate((float) (BASIC_ROTATION * ROTATE_EAST), 0, 1, 0);
+                    GlStateManager.rotated((float) (BASIC_ROTATION * ROTATE_EAST), 0, 1, 0);
                     break;
                 case SOUTH:
-                    GlStateManager.rotate((float) (BASIC_ROTATION * ROTATE_SOUTH), 0, 1, 0);
+                    GlStateManager.rotated((float) (BASIC_ROTATION * ROTATE_SOUTH), 0, 1, 0);
                     break;
                 case WEST:
-                    GlStateManager.rotate((float) (BASIC_ROTATION * ROTATE_WEST), 0, 1, 0);
+                    GlStateManager.rotated((float) (BASIC_ROTATION * ROTATE_WEST), 0, 1, 0);
                     break;
                 default:
                     //don't rotate at all.
             }
         }
 
-        this.model.render((float) SIZERATIO);
+        this.model.render((float)SIZERATIO);
 
         /* ============ Rendering Code stops here =========== */
         //Restore the transformation, so other renderer's are not messed up.
@@ -129,7 +129,7 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
     {
         final String loc;
 
-        if (tileEntity.getType() == ScareCrowType.PUMPKINHEAD)
+        if (tileEntity.getScarecrowType() == ScareCrowType.PUMPKINHEAD)
         {
             loc = "textures/blocks/blockscarecrowpumpkin.png";
         }

@@ -399,7 +399,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 	            list.add(copy);
 	        }
 
-            InventoryUtils.removeStacksFromItemHandler(new InvWrapper(worker.getInventoryCitizen()), list);
+            InventoryUtils.removeStacksFromItemHandler(worker.getInventoryCitizen(), list);
             currentBakingProduct.nextState();
             getOwnBuilding().removeFromTasks(ProductState.UNCRAFTED, currentBakingProduct);
             getOwnBuilding().addToTasks(ProductState.RAW, currentBakingProduct);
@@ -446,7 +446,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
             getOwnBuilding().removeFromTasks(ProductState.BAKED, currentBakingProduct);
             if (newItem != null)
             {
-                InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), newItem);
+                InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), newItem);
             }
             worker.getCitizenExperienceHandler().addExperience(XP_PER_PRODUCT);
             incrementActionsDoneAndDecSaturation();

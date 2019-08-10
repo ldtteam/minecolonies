@@ -146,7 +146,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
         if (ItemStackUtils.isEmpty(worker.getHeldItem(Hand.MAIN_HAND)))
         {
             progress = 0;
-            if (InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableToolOrWeapon) <= 0)
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), EntityAIWorkSmelter::isSmeltableToolOrWeapon) <= 0)
             {
                 if (!InventoryUtils.hasItemInProvider(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableToolOrWeapon))
                 {
@@ -155,10 +155,10 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
                 InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(
                   getOwnBuilding(),
                   InventoryUtils.findFirstSlotInProviderNotEmptyWith(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableToolOrWeapon),
-                  new InvWrapper(worker.getInventoryCitizen()));
+                  worker.getInventoryCitizen());
             }
 
-            final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableToolOrWeapon);
+            final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), EntityAIWorkSmelter::isSmeltableToolOrWeapon);
 
             if (slot == -1)
             {
@@ -174,7 +174,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
         {
             progress = 0;
 
-            final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableToolOrWeapon);
+            final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), EntityAIWorkSmelter::isSmeltableToolOrWeapon);
 
             if (slot == -1)
             {
@@ -182,26 +182,26 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
                 return START_WORKING;
             }
 
-            final ItemStack stack = new InvWrapper(worker.getInventoryCitizen()).extractItem(slot, 1, false);
+            final ItemStack stack = worker.getInventoryCitizen().extractItem(slot, 1, false);
             final Tuple<ItemStack, Integer> materialTuple = getMaterialAndAmount(stack);
             final ItemStack material = materialTuple.getA();
             if (!ItemStackUtils.isEmpty(material))
             {
                 material.setCount(materialTuple.getB());
-                new InvWrapper(worker.getInventoryCitizen()).setStackInSlot(slot, material);
+                worker.getInventoryCitizen().setStackInSlot(slot, material);
                 if (getOwnBuilding().getBuildingLevel() > 0 && stack.isEnchanted() &&
                       ENCHANTED_BOOK_CHANCE[getOwnBuilding().getBuildingLevel() - 1] < new Random().nextInt(MAX_ENCHANTED_BOOK_CHANCE))
                 {
                     final ItemStack book = extractEnchantFromItem(stack);
-                    new InvWrapper(worker.getInventoryCitizen()).insertItem(InventoryUtils.findFirstSlotInItemHandlerWith(
-                      new InvWrapper(worker.getInventoryCitizen()),
+                    worker.getInventoryCitizen().insertItem(InventoryUtils.findFirstSlotInItemHandlerWith(
+                      worker.getInventoryCitizen(),
                       ItemStack::isEmpty), book, false);
                 }
                 incrementActionsDoneAndDecSaturation();
             }
             else
             {
-                new InvWrapper(worker.getInventoryCitizen()).setStackInSlot(slot, stack);
+                worker.getInventoryCitizen().setStackInSlot(slot, stack);
             }
 
             worker.decreaseSaturationForAction();
@@ -287,7 +287,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
             }
             amount -= copyStack.getCount();
 
-            final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(worker.getInventoryCitizen()), copyStack);
+            final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(worker.getInventoryCitizen(), copyStack);
             if (!ItemStackUtils.isEmpty(resultStack))
             {
                 resultStack.setCount(resultStack.getCount() + amount / multiplier);
@@ -309,7 +309,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
     {
         final int amountOfTools = InventoryUtils.getItemCountInProvider(getOwnBuilding(), EntityAIWorkSmelter::isSmeltableToolOrWeapon)
                                     + InventoryUtils.getItemCountInItemHandler(
-          new InvWrapper(worker.getInventoryCitizen()), EntityAIWorkSmelter::isSmeltableToolOrWeapon);
+          worker.getInventoryCitizen(), EntityAIWorkSmelter::isSmeltableToolOrWeapon);
 
         if (amountOfTools > 0)
         {

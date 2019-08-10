@@ -5,11 +5,11 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.constant.Literals;
 import com.minecolonies.coremod.entity.EntityFishHook;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Determines how the fish hook is rendered.
  */
-public class RenderFishHook extends Render<EntityFishHook>
+public class RenderFishHook extends EntityRenderer<EntityFishHook>
 {
     /**
      * The resource location containing the particle textures (Spawned by the fishHook).
@@ -31,7 +31,7 @@ public class RenderFishHook extends Render<EntityFishHook>
      *
      * @param renderManagerIn RenderManager that we use.
      */
-    public RenderFishHook(final RenderManager renderManagerIn)
+    public RenderFishHook(final EntityRendererManager renderManagerIn)
     {
         super(renderManagerIn);
     }
@@ -51,15 +51,15 @@ public class RenderFishHook extends Render<EntityFishHook>
     public void doRender(@NotNull final EntityFishHook entity, final double x, final double y, final double z, final float entityYaw, final float partialTicks)
     {
         GlStateManager.pushMatrix();
-        GlStateManager.translate((float) x, (float) y, (float) z);
+        GlStateManager.translated((float) x, (float) y, (float) z);
         GlStateManager.enableRescaleNormal();
-        GlStateManager.scale(0.5F, 0.5F, 0.5F);
+        GlStateManager.scaled(0.5F, 0.5F, 0.5F);
         this.bindEntityTexture(entity);
         final Tessellator tessellator = Tessellator.getInstance();
         final BufferBuilder vertexBuffer = tessellator.getBuffer();
 
-        GlStateManager.rotate((float) (180.0D - this.renderManager.playerViewY), 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotate(-this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
+        GlStateManager.rotated((float) (180.0D - this.renderManager.playerViewY), 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotated(-this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
         vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
         vertexBuffer.pos(-0.5D, -0.5D, 0.0D).tex(0.0625D, 0.1875D).normal(0.0F, 1.0F, 0.0F).endVertex();
         vertexBuffer.pos(0.5D, -0.5D, 0.0D).tex(0.125D, 0.1875D).normal(0.0F, 1.0F, 0.0F).endVertex();
@@ -75,7 +75,7 @@ public class RenderFishHook extends Render<EntityFishHook>
         //Check if he is a fisherman -> Through his texture
         if (citizen == null)
         {
-            for (@NotNull final Object citizenX : CompatibilityUtils.getWorldFromEntity(entity).getEntitiesWithinAABB(EntityCitizen.class, entity.getEntityBoundingBox().expand(10, 10, 10)))
+            for (@NotNull final Object citizenX : CompatibilityUtils.getWorldFromEntity(entity).getEntitiesWithinAABB(EntityCitizen.class, entity.getBoundingBox().expand(10, 10, 10)))
             {
                 if (((EntityCitizen) citizenX).getModelType().getTextureBase().contains("Fisherman"))
                 {
@@ -115,7 +115,7 @@ public class RenderFishHook extends Render<EntityFishHook>
             final double correctionY = correctedPosY - distY + eyeHeight;
             final double correctionZ = correctedPosZ - distZ;
 
-            GlStateManager.disableTexture2D();
+            GlStateManager.disableTexture();
             GlStateManager.disableLighting();
             vertexBuffer.begin(3, DefaultVertexFormats.POSITION_COLOR);
 
@@ -127,7 +127,7 @@ public class RenderFishHook extends Render<EntityFishHook>
 
             tessellator.draw();
             GlStateManager.enableLighting();
-            GlStateManager.enableTexture2D();
+            GlStateManager.enableTexture();
             super.doRender(entity, x, y, z, entityYaw, partialTicks);
         }
     }

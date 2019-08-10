@@ -835,7 +835,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public void takeItemStackFromProvider(@NotNull final ICapabilityProvider provider, final int slotIndex)
     {
-        InventoryUtils.transferItemStackIntoNextBestSlotFromProvider(provider, slotIndex, new InvWrapper(worker.getInventoryCitizen()));
+        InventoryUtils.transferItemStackIntoNextBestSlotFromProvider(provider, slotIndex, worker.getInventoryCitizen());
     }
 
     /**
@@ -944,7 +944,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         final int maxToolLevel = worker.getCitizenColonyHandler().getWorkBuilding().getMaxToolLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
-        if (InventoryUtils.isToolInItemHandler(new InvWrapper(inventory), toolType, minimalLevel, maxToolLevel))
+        if (InventoryUtils.isToolInItemHandler(inventory, toolType, minimalLevel, maxToolLevel))
         {
             return false;
         }
@@ -1058,7 +1058,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         @Nullable final IBuildingWorker buildingWorker = getOwnBuilding();
 
         ItemStack stackToDump = worker.getInventoryCitizen().getStackInSlot(slotAt);
-        final int totalSize = worker.getInventoryCitizen().getSizeInventory();
+        final int totalSize = worker.getInventoryCitizen().getSlots();
 
         while (stackToDump.isEmpty())
         {
@@ -1073,7 +1073,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         boolean dumpAnyway = false;
         if (slotAt + MIN_OPEN_SLOTS * 2 >= totalSize)
         {
-            final long openSlots = InventoryUtils.openSlotCount(new InvWrapper(worker.getInventoryCitizen()));
+            final long openSlots = InventoryUtils.openSlotCount(worker.getInventoryCitizen());
             if (openSlots < MIN_OPEN_SLOTS * 2)
             {
                 if (stackToDump.getCount() < CHANCE_TO_DUMP_50)
@@ -1092,7 +1092,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             final int amount = dumpAnyway ? stackToDump.getCount() : buildingWorker.buildingRequiresCertainAmountOfItem(stackToDump, alreadyKept, true);
             if (amount > 0)
             {
-                final ItemStack activeStack = new InvWrapper(getInventory()).extractItem(slotAt, amount, false);
+                final ItemStack activeStack = getInventory().extractItem(slotAt, amount, false);
                 InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, buildingWorker.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null));
             }
         }
@@ -1207,7 +1207,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         @NotNull final InventoryCitizen inventory = worker.getInventoryCitizen();
         final int maxToolLevel = worker.getCitizenColonyHandler().getWorkBuilding().getMaxToolLevel();
 
-        for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
+        for (int i = 0; i < worker.getInventoryCitizen().getSlots(); i++)
         {
             final ItemStack item = inventory.getStackInSlot(i);
             final int level = ItemStackUtils.getMiningLevel(item, toolType);
@@ -1368,7 +1368,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean checkIfRequestForItemExistOrCreate(@NotNull final ItemStack stack)
     {
-        if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
+        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),
           s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack)))
         {
             return true;
@@ -1416,7 +1416,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final ItemStack stack)
     {
-        if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
+        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),
           s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack) && s.getCount() >= stack.getCount()))
         {
             return true;
@@ -1427,7 +1427,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                 getOwnBuilding(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true),
                 stack.getCount(),
-                new InvWrapper(worker.getInventoryCitizen())))
+                worker.getInventoryCitizen()))
         {
             return true;
         }
@@ -1461,7 +1461,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           entity,
           predicate,
           Constants.STACKSIZE,
-          new InvWrapper(worker.getInventoryCitizen()));
+          worker.getInventoryCitizen());
     }
 
     /**

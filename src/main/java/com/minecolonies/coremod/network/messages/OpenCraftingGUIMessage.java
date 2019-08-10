@@ -1,13 +1,12 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
@@ -97,7 +96,7 @@ public class OpenCraftingGUIMessage implements IMessage
         {
             final BlockPos pos = buildingId;
             //todo, which is our inventory?
-            player.openContainer(player.world.getTileEntity(pos));
+            player.openContainer((INamedContainerProvider) player.world.getTileEntity(pos));
         }
     }
 

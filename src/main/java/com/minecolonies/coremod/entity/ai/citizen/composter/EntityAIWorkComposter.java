@@ -118,12 +118,12 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(
               getOwnBuilding(),
               InventoryUtils.findFirstSlotInProviderNotEmptyWith(getOwnBuilding(), stack -> getOwnBuilding(BuildingComposter.class).isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack))),
-              new InvWrapper(worker.getInventoryCitizen()));
+              worker.getInventoryCitizen());
 
         }
 
         final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
-          new InvWrapper(worker.getInventoryCitizen()),
+          worker.getInventoryCitizen(),
           stack -> getOwnBuilding(BuildingComposter.class).isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack))
         );
         if(slot >= 0)
@@ -210,7 +210,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if(worker.getHeldItem(Hand.MAIN_HAND) == ItemStack.EMPTY)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
-                            new InvWrapper(worker.getInventoryCitizen()), stack -> getOwnBuilding(BuildingComposter.class).isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack)));
+                            worker.getInventoryCitizen(), stack -> getOwnBuilding(BuildingComposter.class).isAllowedItem(COMPOSTABLE_LIST, new ItemStorage(stack)));
 
             if(slot >= 0)
             {
@@ -268,11 +268,11 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
             if (getOwnBuilding(BuildingComposter.class).shouldRetrieveDirtFromCompostBin())
             {
-                InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), new ItemStack(Blocks.DIRT, MineColonies.getConfig().getCommon().dirtFromCompost.get()));
+                InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Blocks.DIRT, MineColonies.getConfig().getCommon().dirtFromCompost.get()));
             }
             else
             {
-                InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), compost);
+                InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), compost);
             }
 
             worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);

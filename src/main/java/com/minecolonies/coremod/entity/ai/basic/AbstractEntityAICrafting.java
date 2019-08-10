@@ -184,7 +184,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         for(final ItemStorage inputStorage : input)
         {
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
-            if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), predicate))
+            if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), predicate))
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
                 {

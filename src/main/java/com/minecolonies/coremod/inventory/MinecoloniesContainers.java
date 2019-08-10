@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.inventory;
 
 import com.ldtteam.structurize.api.util.constant.Constants;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
@@ -18,9 +17,13 @@ public class MinecoloniesContainers
     @ObjectHolder("crafting_building")
     public static ContainerType<?> craftingGrid;
 
+    @ObjectHolder("field")
+    public static ContainerType<ContainerField> field;
+
     public static void registerContainers(final RegistryEvent.Register<ContainerType<?>> event)
     {
         craftingFurnace = IForgeContainerType.create(ContainerGUICraftingFurnace::new).setRegistryName("crafting_furnace");
         craftingGrid = IForgeContainerType.create(CraftingGUIBuilding::new).setRegistryName("crafting_building");
+        field = IForgeContainerType.create(GuiField::new).setRegistryName("field");
     }
 }

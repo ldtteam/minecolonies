@@ -3,8 +3,6 @@ package com.minecolonies.coremod.util;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
-import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -88,12 +86,12 @@ public final class TeleportToColony
             return;
         }
 
-        if (MinecoloniesCommand.canExecuteCommand((PlayerEntity) sender.getEntity()))
+        //if (MinecoloniesCommand.canExecuteCommand((PlayerEntity) sender.getEntity()))
         {
             teleportPlayer(playerToTeleport, colonyId, sender);
             return;
         }
-        sender.getEntity().sendMessage(new StringTextComponent("Please wait at least " + MineColonies.getConfig().getCommon().teleportBuffer.get() + " seconds to teleport again"));
+        //sender.getEntity().sendMessage(new StringTextComponent("Please wait at least " + MineColonies.getConfig().getCommon().teleportBuffer.get() + " seconds to teleport again"));
     }
 
     /**

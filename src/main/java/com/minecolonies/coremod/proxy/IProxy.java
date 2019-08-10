@@ -27,16 +27,6 @@ public interface IProxy
     boolean isClient();
 
     /**
-     * Method to register entity rendering in.
-     */
-    void registerEntityRendering();
-
-    /**
-     * Method to register tile entity rendering in.
-     */
-    void registerTileEntityRendering();
-
-    /**
      * Method to display the citizen window.
      *
      * @param citizen {@link CitizenDataView}
@@ -80,11 +70,6 @@ public interface IProxy
      * @param colonyId the colony id.
      */
     void openResourceScrollWindow(final int colonyId, final BlockPos pos);
-
-    /**
-     * Registers all block and item renderer.
-     */
-    void registerRenderer();
 
     /**
      * Get the file representation of the additional schematics' folder.

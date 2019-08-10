@@ -152,7 +152,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             neededItemsList.add(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), itemstack, true, true));
         }
 
-        if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(new InvWrapper(worker.getInventoryCitizen())) <= MIN_OPEN_SLOTS)
+        if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= MIN_OPEN_SLOTS)
         {
             pickUpCount = 0;
             return START_WORKING;
@@ -171,7 +171,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             needsCurrently = needsCurrently.and(stack -> !ItemStackUtils.isDecoration(stack));
         }
 
-        if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), needsCurrently))
+        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), needsCurrently))
         {
             return getState();
         }

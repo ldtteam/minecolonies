@@ -94,7 +94,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         for(final ItemStorage inputStorage : input)
         {
             final Predicate<ItemStack> predicate = stack -> !isEmpty(stack) && new Stack(stack).matches(inputStorage.getItemStack());
-            if (!InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), predicate))
+            if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), predicate))
             {
                 if (InventoryUtils.hasItemInProvider(getOwnBuilding(), predicate))
                 {
@@ -158,7 +158,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
         extractFromFurnace((FurnaceTileEntity) entity);
         //Do we have the requested item in the inventory now?
-        final int resultCount = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), stack -> currentRecipeStorage.getPrimaryOutput().isItemEqual(stack));
+        final int resultCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> currentRecipeStorage.getPrimaryOutput().isItemEqual(stack));
         if (resultCount > 0)
         {
             currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
@@ -177,7 +177,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     {
         InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
           new InvWrapper(furnace), RESULT_SLOT,
-          new InvWrapper(worker.getInventoryCitizen()));
+          worker.getInventoryCitizen());
         worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
         this.incrementActionsDoneAndDecSaturation();
     }
@@ -241,19 +241,19 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
 
             final Predicate<ItemStack> smeltable  = stack -> currentRecipeStorage.getCleanedInput().get(0).getItemStack().isItemEqual(stack);
-            if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), smeltable)
+            if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), smeltable)
                   && (hasFuelInFurnaceAndNoSmeltable(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
             {
                 InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                  new InvWrapper(worker.getInventoryCitizen()), smeltable, STACKSIZE,
+                  worker.getInventoryCitizen(), smeltable, STACKSIZE,
                   new InvWrapper(furnace), SMELTABLE_SLOT);
             }
 
-            if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()), FurnaceTileEntity::isFuel)
+            if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), FurnaceTileEntity::isFuel)
                   && (hasSmeltableInFurnaceAndNoFuel(furnace) || hasNeitherFuelNorSmeltAble(furnace)))
             {
                 InventoryUtils.transferXOfFirstSlotInItemHandlerWithIntoInItemHandler(
-                  new InvWrapper(worker.getInventoryCitizen()), FurnaceTileEntity::isFuel, STACKSIZE,
+                  worker.getInventoryCitizen(), FurnaceTileEntity::isFuel, STACKSIZE,
                   new InvWrapper(furnace), FUEL_SLOT);
             }
         }
@@ -298,7 +298,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         }
 
         final int amountOfFuelInBuilding = InventoryUtils.getItemCountInProvider(getOwnBuilding(), FurnaceTileEntity::isFuel);
-        final int amountOfFuelInInv = InventoryUtils.getItemCountInItemHandler(new InvWrapper(worker.getInventoryCitizen()), FurnaceTileEntity::isFuel);
+        final int amountOfFuelInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), FurnaceTileEntity::isFuel);
 
         if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(StackList.class)))
         {

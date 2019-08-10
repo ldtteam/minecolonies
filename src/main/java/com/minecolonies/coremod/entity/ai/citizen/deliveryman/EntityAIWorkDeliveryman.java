@@ -334,7 +334,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         hasGathered = true;
         final ItemStack activeStack = handler.extractItem(currentSlot, amount, false);
-        InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, new InvWrapper(worker.getInventoryCitizen()));
+        InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, worker.getInventoryCitizen());
         building.markDirty();
         setDelay(DUMP_AND_GATHER_DELAY);
         worker.decreaseSaturationForContinuousAction();
@@ -355,7 +355,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             return false;
         }
-        return InventoryUtils.getAmountOfStacksInItemHandler(new InvWrapper(worker.getInventoryCitizen())) >= Math.pow(2, getOwnBuilding().getBuildingLevel() - 1.0D) + 1;
+        return InventoryUtils.getAmountOfStacksInItemHandler(worker.getInventoryCitizen()) >= Math.pow(2, getOwnBuilding().getBuildingLevel() - 1.0D) + 1;
     }
 
     private BlockPos getWeightedRandom()
@@ -514,8 +514,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final IBuildingContainer building = ITileEntityColonyBuilding.getBuilding();
 
         boolean success = true;
-        final InvWrapper workerInventory = new InvWrapper(worker.getInventoryCitizen());
-        for (int i = 0; i < new InvWrapper(worker.getInventoryCitizen()).getSlots(); i++)
+        final IItemHandler workerInventory = worker.getInventoryCitizen();
+        for (int i = 0; i < worker.getInventoryCitizen().getSlots(); i++)
         {
             final ItemStack stack = workerInventory.extractItem(i, Integer.MAX_VALUE, false);
             if (ItemStackUtils.isEmpty(stack))
@@ -588,7 +588,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     return DUMPING;
                 }
                 ((IBuildingDeliveryman) ownBuilding).setBuildingToDeliver(request.getRequest().getTarget());
-                if (InventoryUtils.hasItemInItemHandler(new InvWrapper(worker.getInventoryCitizen()),
+                if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),
                   itemStack -> request.getRequest().getStack().isItemEqualIgnoreDurability(itemStack)))
                 {
                     return DELIVERY;
@@ -667,7 +667,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                       .matchFirstInProviderWithAction(
                         entity,
                         stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack, true, true),
-                        (provider, index) -> InventoryUtils.transferXOfItemStackIntoNextFreeSlotFromProvider(provider, index, is.getCount() == 1 ? is.getMaxStackSize() : is.getCount(), new InvWrapper(worker.getInventoryCitizen()))
+                        (provider, index) -> InventoryUtils.transferXOfItemStackIntoNextFreeSlotFromProvider(provider, index, is.getCount() == 1 ? is.getMaxStackSize() : is.getCount(), worker.getInventoryCitizen())
                       );
     }
 
