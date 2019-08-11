@@ -464,7 +464,7 @@ public class StructureIterator
             this.block = block;
             this.blockPosition = blockPosition;
             this.metadata = metadata;
-            this.entity = entity.clone();
+            this.entity = entity == null ? null : entity.clone();
             this.item = item;
             this.worldBlock = worldBlock;
             this.worldMetadata = worldMetadata;
