@@ -125,7 +125,7 @@ public interface IColony
      *
      * @return the {@link IRequestManager} for this colony, null if not supported.
      */
-    @Nullable
+    @NotNull
     IRequestManager getRequestManager();
 
     /**

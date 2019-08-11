@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequ
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.LogHandler;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
@@ -147,7 +146,7 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
     @Override
     public void update()
     {
-        LogHandler.log("Starting reassignment.");
+        manager.getLogger().debug("Starting reassignment.");
 
         //Lets decrement all delays
         getAllAssignedRequests().forEach(t -> {
@@ -190,10 +189,10 @@ public class StandardRetryingRequestResolver implements IRetryingRequestResolver
         }).collect(Collectors.toSet());
 
         successfully.forEach(t -> {
-            LogHandler.log("Failed to reassign a retryable request: " + id);
+            manager.getLogger().debug("Failed to reassign a retryable request: " + id);
         });
 
-        LogHandler.log("Finished reassignment.");
+        manager.getLogger().debug("Finished reassignment.");
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.management.handlers;
 
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
-import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
@@ -11,14 +10,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
 public class TokenHandlerTest extends AbstractMockStaticsTest
 {
 
     @Mock
-    private IRequestManager requestManager;
+    private IStandardRequestManager requestManager;
 
     @Before
     public void setUp() throws Exception
@@ -37,7 +36,8 @@ public class TokenHandlerTest extends AbstractMockStaticsTest
     {
         when(requestManager.getFactoryController()).thenReturn(StandardFactoryController.getInstance());
 
-        final IToken<?> token = TokenHandler.generateNewToken(requestManager);
+        final ITokenHandler tokenHandler = new TokenHandler(requestManager);
+        final IToken<?> token = tokenHandler.generateNewToken();
 
         assertNotNull(token);
     }
