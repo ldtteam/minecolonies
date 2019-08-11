@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.client.renderer.texture.ITickable;
 import net.minecraftforge.common.util.INBTSerializable;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -214,4 +215,6 @@ public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickabl
      * Marks this manager dirty.
      */
     void markDirty();
+
+    Logger getLogger();
 }

@@ -34,9 +34,6 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.ProviderHandler;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.RequestHandler;
-import com.minecolonies.coremod.colony.requestsystem.management.handlers.ResolverHandler;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
@@ -1070,8 +1067,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
             for (final IRequestResolver<?> resolver :
               resolvers)
             {
+                final IStandardRequestManager requestManager = (IStandardRequestManager) getColony().getRequestManager();
+
                 final List<IRequest<? extends IDeliverable>> deliverableRequests =
-                  RequestHandler.getRequestsMadeByRequester((IStandardRequestManager) getColony().getRequestManager(), resolver)
+                  requestManager.getRequestHandler().getRequestsMadeByRequester(resolver)
                     .stream()
                     .filter(iRequest -> iRequest.getRequest() instanceof IDeliverable)
                     .map(iRequest -> (IRequest<? extends IDeliverable>) iRequest)
@@ -1223,14 +1222,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public final ImmutableCollection<IRequestResolver<?>> getResolvers()
     {
-        if (this.getColony() != null
-              && this.getColony().getRequestManager() != null
-              && this.getColony().getRequestManager() instanceof IStandardRequestManager
-              && !ProviderHandler.getRegisteredResolvers((IStandardRequestManager) this.getColony().getRequestManager(), this).isEmpty())
+        final IStandardRequestManager requestManager = (IStandardRequestManager) getColony().getRequestManager();
+        if (requestManager.getProviderHandler().getRegisteredResolvers(this).isEmpty())
         {
-            return ImmutableList.copyOf(ProviderHandler.getRegisteredResolvers((IStandardRequestManager) this.getColony().getRequestManager(), this)
+            return ImmutableList.copyOf(requestManager.getProviderHandler().getRegisteredResolvers(this)
                                           .stream()
-                                          .map(token -> ResolverHandler.getResolver((IStandardRequestManager) this.getColony().getRequestManager(), token))
+                                          .map(token -> requestManager.getResolverHandler().getResolver(token))
                                           .collect(
                                             Collectors.toList()));
         }

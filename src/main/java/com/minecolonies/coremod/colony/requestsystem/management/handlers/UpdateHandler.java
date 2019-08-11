@@ -1,25 +1,36 @@
 package com.minecolonies.coremod.colony.requestsystem.management.handlers;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Lists;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.IUpdateStep;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.implementation.CraftingUpdate;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.implementation.InitialUpdate;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class UpdateHandler
+public class UpdateHandler implements IUpdateHandler
 {
-    private static final List<IUpdateStep> steps = new ArrayList<>();
+    @VisibleForTesting
+    private static final List<IUpdateStep> UPDATE_STEPS = Lists.newArrayList(
+      new InitialUpdate(),
+      new CraftingUpdate()
+    );
 
-    static {
-        steps.add(new InitialUpdate());
-        steps.add(new CraftingUpdate());
+    private final IStandardRequestManager manager;
+
+    public UpdateHandler(final IStandardRequestManager manager) {this.manager = manager;}
+
+    @Override
+    public IRequestManager getManager()
+    {
+        return manager;
     }
 
-    public static void handleUpdate(@NotNull final IStandardRequestManager manager)
+    @Override
+    public void handleUpdate()
     {
         if (manager.getColony().isRemote())
         {
@@ -36,7 +47,8 @@ public class UpdateHandler
           });
     }
 
-    public static int getCurrentVersion()
+    @Override
+    public int getCurrentVersion()
     {
         return steps.stream().max(Comparator.comparing(IUpdateStep::updatesToVersion)).get().updatesToVersion();
     }
