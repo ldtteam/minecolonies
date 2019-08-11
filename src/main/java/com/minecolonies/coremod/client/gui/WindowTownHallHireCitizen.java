@@ -67,7 +67,7 @@ public class WindowTownHallHireCitizen extends Window implements ButtonHandler
         // Hay Bale
         findPaneOfTypeByID(BUTTON_HAY_BALE_ICON, ItemIcon.class).setItem(Item.getItemFromBlock(Blocks.HAY_BLOCK).getDefaultInstance());
         findPaneOfTypeByID(BUTTON_HAY_BALE, ButtonImage.class).setLabel(buyCitizenCost + "x");
-        if (InventoryUtils.getItemCountInItemHandler(playerInv, Item.getItemFromBlock(Blocks.HAY_BLOCK), 0) < buyCitizenCost)
+        if (InventoryUtils.getItemCountInItemHandler(playerInv, Item.getItemFromBlock(Blocks.HAY_BLOCK)) < buyCitizenCost)
         {
             findPaneOfTypeByID(BUTTON_HAY_BALE, ButtonImage.class).disable();
         }
@@ -75,7 +75,7 @@ public class WindowTownHallHireCitizen extends Window implements ButtonHandler
         // Books
         findPaneOfTypeByID(BUTTON_BOOKS_ICON, ItemIcon.class).setItem(Items.BOOK.getDefaultInstance());
         findPaneOfTypeByID(BUTTON_BOOKS, ButtonImage.class).setLabel(buyCitizenCost + "x");
-        if (InventoryUtils.getItemCountInItemHandler(playerInv, Items.BOOK, 0) < buyCitizenCost)
+        if (InventoryUtils.getItemCountInItemHandler(playerInv, Items.BOOK) < buyCitizenCost)
         {
             findPaneOfTypeByID(BUTTON_BOOKS, ButtonImage.class).disable();
         }
@@ -83,7 +83,7 @@ public class WindowTownHallHireCitizen extends Window implements ButtonHandler
         // Emerald
         findPaneOfTypeByID(BUTTON_EMERALD_ICON, ItemIcon.class).setItem(Items.EMERALD.getDefaultInstance());
         findPaneOfTypeByID(BUTTON_EMERALD, ButtonImage.class).setLabel(buyCitizenCost + "x");
-        if (InventoryUtils.getItemCountInItemHandler(playerInv, Items.EMERALD, 0) < buyCitizenCost)
+        if (InventoryUtils.getItemCountInItemHandler(playerInv, Items.EMERALD) < buyCitizenCost)
         {
             findPaneOfTypeByID(BUTTON_EMERALD, ButtonImage.class).disable();
         }
@@ -91,7 +91,7 @@ public class WindowTownHallHireCitizen extends Window implements ButtonHandler
         // Diamond
         findPaneOfTypeByID(BUTTON_DIAMOND_ICON, ItemIcon.class).setItem(Items.DIAMOND.getDefaultInstance());
         findPaneOfTypeByID(BUTTON_DIAMOND, ButtonImage.class).setLabel(buyCitizenCost + "x");
-        if (InventoryUtils.getItemCountInItemHandler(playerInv, Items.DIAMOND, 0) < buyCitizenCost)
+        if (InventoryUtils.getItemCountInItemHandler(playerInv, Items.DIAMOND) < buyCitizenCost)
         {
             findPaneOfTypeByID(BUTTON_DIAMOND, ButtonImage.class).disable();
         }

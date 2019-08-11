@@ -4,7 +4,6 @@ import com.ldtteam.structurize.api.util.constant.Constants;
 import com.minecolonies.coremod.inventory.container.*;
 import com.minecolonies.coremod.inventory.gui.*;
 import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.gui.screen.inventory.ChestScreen;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
@@ -40,7 +39,7 @@ public class ModContainers
     {
         craftingFurnace = (ContainerType<ContainerCraftingFurnace>) IForgeContainerType.create(ContainerCraftingFurnace::new).setRegistryName("crafting_furnace");
         buildingInv = (ContainerType<ContainerBuildingInventory>) IForgeContainerType.create(ContainerBuildingInventory::new).setRegistryName("bulding_inv");
-        citizenInv = IForgeContainerType.create(ContainerCitizenInventory::new).setRegistryName("citizen_inv");
+        citizenInv =  (ContainerType<ContainerCitizenInventory>) IForgeContainerType.create(ContainerCitizenInventory::new).setRegistryName("citizen_inv");
         rackInv = (ContainerType<ContainerRack>) IForgeContainerType.create(ContainerRack::new).setRegistryName("rack_inv");
         craftingGrid = (ContainerType<ContainerCrafting>) IForgeContainerType.create(ContainerCrafting::new).setRegistryName("crafting_building");
         field = (ContainerType<ContainerField>) IForgeContainerType.create(ContainerField::new).setRegistryName("field");

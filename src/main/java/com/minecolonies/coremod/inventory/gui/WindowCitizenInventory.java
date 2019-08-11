@@ -2,35 +2,30 @@ package com.minecolonies.coremod.inventory.gui;
 
 import com.minecolonies.coremod.inventory.container.ContainerCitizenInventory;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 
 /**
  * ------------ Class not Documented ------------
  */
-public class WindowCitizenInventory extends ContainerScreen
+public class WindowCitizenInventory extends ContainerScreen<ContainerCitizenInventory>
 {
     /**
      * The ResourceLocation containing the chest GUI texture.
      */
     private static final ResourceLocation CHEST_GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
-    private final IInventory upperChestInventory;
-    private final IInventory lowerChestInventory;
+
     /**
      * window height is calculated with these values; the more rows, the heigher
      */
     private final int        inventoryRows;
 
-    public WindowCitizenInventory(final ContainerCitizenInventory containerMinecoloniesBuildingInventory)
+    public WindowCitizenInventory(final ContainerCitizenInventory container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
     {
-        super(containerMinecoloniesBuildingInventory);
-        this.upperChestInventory = containerMinecoloniesBuildingInventory.getPlayerInventory();
-        this.lowerChestInventory = containerMinecoloniesBuildingInventory.getLowerChestInventory();
-        this.allowUserInput = false;
-        this.inventoryRows = containerMinecoloniesBuildingInventory.getLowerChestInventory().getSizeInventory() / 9;
+        super(container, playerInventory, iTextComponent);
+        this.inventoryRows = container.getInventory().size()/ 9;
         this.ySize = 114 + this.inventoryRows * 18;
     }
 
@@ -39,8 +34,8 @@ public class WindowCitizenInventory extends ContainerScreen
      */
     protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
     {
-        this.font.drawString(this.lowerChestInventory.getDisplayName().getUnformattedText(), 8, 6, 4210752);
-        this.font.drawString(this.upperChestInventory.getDisplayName().getUnformattedText(), 8, this.ySize - 96 + 2, 4210752);
+        this.font.drawString(this.container.getDisplayName(), 8, 6, 4210752);
+        this.font.drawString(this.playerInventory.getDisplayName().getFormattedText(), 8, this.ySize - 96 + 2, 4210752);
     }
 
     /**
@@ -48,7 +43,7 @@ public class WindowCitizenInventory extends ContainerScreen
      */
     protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY)
     {
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.minecraft.getTextureManager().bindTexture(CHEST_GUI_TEXTURE);
         final int i = (this.width - this.xSize) / 2;
         final int j = (this.height - this.ySize) / 2;

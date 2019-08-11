@@ -32,6 +32,7 @@ public class ContainerCitizenInventory extends Container
      * Amount of rows.
      */
     private final int inventorySize;
+    private String displayName;
 
     /**
      * Creating the citizen inventory container.
@@ -55,6 +56,7 @@ public class ContainerCitizenInventory extends Container
         }
 
         final ICitizenData data = colony.getCitizenManager().getCitizen(citizenId);
+        this.displayName = data.getName();
         final InventoryCitizen inventory = data.getInventory();
 
         this.inventorySize = inventory.getSlots() / INVENTORY_COLUMNS;
@@ -175,5 +177,14 @@ public class ContainerCitizenInventory extends Container
     public boolean canInteractWith(@NotNull final PlayerEntity playerIn)
     {
         return true;
+    }
+
+    /**
+     * Getter for the display name.
+     * @return the display name.
+     */
+    public String getDisplayName()
+    {
+        return displayName;
     }
 }

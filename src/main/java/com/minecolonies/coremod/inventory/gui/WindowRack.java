@@ -89,25 +89,24 @@ public class WindowRack extends ContainerScreen<ContainerRack>
     public WindowRack(final ContainerRack container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
     {
         super(container, playerInventory, iTextComponent);
-        if (neighborRack != null)
+        if (container.neighborRack != null)
         {
-            if (tileEntity.isMain())
+            if (container.rack.isMain())
             {
-                this.jointChestInventory = new CombinedInvWrapper(tileEntity.getInventory(), neighborRack.getInventory());
+                this.jointChestInventory = new CombinedInvWrapper(container.rack.getInventory(), container.neighborRack.getInventory());
             }
             else
             {
-                this.jointChestInventory = new CombinedInvWrapper(neighborRack.getInventory(), tileEntity.getInventory());
+                this.jointChestInventory = new CombinedInvWrapper(container.neighborRack.getInventory(), container.rack.getInventory());
             }
         }
         else
         {
-            this.jointChestInventory = tileEntity.getInventory();
+            this.jointChestInventory = container.rack.getInventory();
         }
 
         this.inventoryRows = jointChestInventory.getSlots() / SLOTS_EACH_ROW;
 
-        this.allowUserInput = false;
         this.ySize = Y_OFFSET + Math.min(SLOTS_EACH_ROW, this.inventoryRows) * SLOT_OFFSET;
         if (this.inventoryRows > SLOTS_EACH_ROW - 1)
         {
@@ -160,9 +159,9 @@ public class WindowRack extends ContainerScreen<ContainerRack>
     }
 
     @Override
-    public void drawScreen(final int mouseX, final int mouseY, final float partialTicks)
+    public void render(final int mouseX, final int mouseY, final float partialTicks)
     {
-        super.draw(mouseX, mouseY, partialTicks);
+        super.render(mouseX, mouseY, partialTicks);
         this.renderHoveredToolTip(mouseX, mouseY);
     }
 }
