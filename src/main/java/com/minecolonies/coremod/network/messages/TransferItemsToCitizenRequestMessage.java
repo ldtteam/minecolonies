@@ -150,7 +150,7 @@ public class TransferItemsToCitizenRequestMessage implements IMessage
         final ItemStack itemStackToTake = itemStack.copy();
         ItemStackUtils.setSize(itemStackToTake, quantity);
         final AbstractEntityCitizen citizen = optionalEntityCitizen.get();
-        final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(new InvWrapper(citizen.getInventoryCitizen()), itemStackToTake);
+        final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(citizen.getInventoryCitizen(), itemStackToTake);
         if (!isCreative)
         {
             int amountToRemoveFromPlayer = amountToTake - ItemStackUtils.getSize(remainingItemStack);

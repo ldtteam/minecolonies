@@ -6,7 +6,6 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenInventoryHand
 import com.minecolonies.api.util.InventoryUtils;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.minecraftforge.items.wrapper.InvWrapper;
 
 /**
  * Handles the inventory of the citizen.
@@ -36,7 +35,7 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
     @Override
     public int findFirstSlotInInventoryWith(final Item targetItem)
     {
-        return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(citizen.getInventoryCitizen()), targetItem);
+        return InventoryUtils.findFirstSlotInItemHandlerWith(citizen.getInventoryCitizen(), targetItem);
     }
 
     /**
@@ -48,7 +47,7 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
     @Override
     public int findFirstSlotInInventoryWith(final Block block)
     {
-        return InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(citizen.getInventoryCitizen()), block);
+        return InventoryUtils.findFirstSlotInItemHandlerWith(citizen.getInventoryCitizen(), block);
     }
 
     /**
@@ -60,7 +59,7 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
     @Override
     public int getItemCountInInventory(final Block block)
     {
-        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(citizen.getInventoryCitizen()), block);
+        return InventoryUtils.getItemCountInItemHandler(citizen.getInventoryCitizen(), block);
     }
 
     /**
@@ -72,7 +71,7 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
     @Override
     public int getItemCountInInventory(final Item targetItem)
     {
-        return InventoryUtils.getItemCountInItemHandler(new InvWrapper(citizen.getInventoryCitizen()), targetItem);
+        return InventoryUtils.getItemCountInItemHandler(citizen.getInventoryCitizen(), targetItem);
     }
 
     /**
@@ -84,7 +83,7 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
     @Override
     public boolean hasItemInInventory(final Block block)
     {
-        return InventoryUtils.hasItemInItemHandler(new InvWrapper(citizen.getInventoryCitizen()), block);
+        return InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), block);
     }
 
     /**
@@ -96,7 +95,7 @@ public class CitizenInventoryHandler implements ICitizenInventoryHandler
     @Override
     public boolean hasItemInInventory(final Item item)
     {
-        return InventoryUtils.hasItemInItemHandler(new InvWrapper(citizen.getInventoryCitizen()), item);
+        return InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), item);
     }
 
     /**

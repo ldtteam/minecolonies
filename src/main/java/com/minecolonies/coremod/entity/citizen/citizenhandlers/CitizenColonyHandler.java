@@ -16,6 +16,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,7 +93,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         citizen.setCitizenData(data);
 
         citizen.setIsChild(data.isChild());
-        citizen.setCustomNameTag(citizen.getCitizenData().getName());
+        citizen.setCustomName(new StringTextComponent(citizen.getCitizenData().getName()));
 
         citizen.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(data.getMaxHealth());
         citizen.setHealth((float) data.getHealth());

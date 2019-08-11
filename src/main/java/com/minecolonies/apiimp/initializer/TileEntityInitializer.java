@@ -3,7 +3,7 @@ package com.minecolonies.apiimp.initializer;
 import com.ldtteam.structurize.api.util.constant.Constants;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.*;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
@@ -40,7 +40,6 @@ public class TileEntityInitializer
           MinecoloniesTileEntities.BARREL,
           MinecoloniesTileEntities.BUILDING,
           MinecoloniesTileEntities.DECO_CONTROLLER,
-          MinecoloniesTileEntities.INFO_POSTER,
           MinecoloniesTileEntities.RACK,
           MinecoloniesTileEntities.WAREHOUSE);
     }

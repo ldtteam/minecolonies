@@ -45,7 +45,7 @@ public class ColonyViewBuildingViewMessage implements IMessage
         super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
-        this.buildingData = Unpooled.buffer();
+        this.buildingData = new PacketBuffer(Unpooled.buffer());
         building.serializeToView(this.buildingData);
         this.dimension = building.getColony().getDimension();
     }
@@ -57,7 +57,7 @@ public class ColonyViewBuildingViewMessage implements IMessage
         buildingId = buf.readBlockPos();
         dimension = buf.readInt();
         dimension = buf.readInt();
-        buildingData = Unpooled.buffer(buf.readableBytes());
+        buildingData = new PacketBuffer(Unpooled.buffer(buf.readableBytes()));
         buf.readBytes(buildingData, buf.readableBytes());
     }
 

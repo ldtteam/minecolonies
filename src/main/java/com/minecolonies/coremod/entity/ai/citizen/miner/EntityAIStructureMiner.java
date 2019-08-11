@@ -768,7 +768,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         }
         if (slot != -1)
         {
-            new InvWrapper(getInventory()).extractItem(slot, 1, false);
+            getInventory().extractItem(slot, 1, false);
             //Flag 1+2 is needed for updates
             world.setBlockState(location, metadata, 0x03);
         }

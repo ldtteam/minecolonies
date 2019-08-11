@@ -9,7 +9,6 @@ import net.minecraft.network.PacketBuffer;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 
-import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +40,7 @@ public class ColonyViewWorkOrderMessage implements IMessage
     public ColonyViewWorkOrderMessage(@NotNull final Colony colony, @NotNull final IWorkOrder workOrder)
     {
         this.colonyId = colony.getID();
-        this.workOrderBuffer = Unpooled.buffer();
+        this.workOrderBuffer = new PacketBuffer(Unpooled.buffer());
         this.workOrderId = workOrder.getID();
         workOrder.serializeViewNetworkData(workOrderBuffer);
     }
@@ -49,7 +48,7 @@ public class ColonyViewWorkOrderMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        final PacketBuffer newbuf = buf.retain();
+        final PacketBuffer newbuf = new PacketBuffer(buf.retain());
         colonyId = newbuf.readInt();
         workOrderId = newbuf.readInt();
         workOrderBuffer = newbuf;

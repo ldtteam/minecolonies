@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
-import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
@@ -16,7 +15,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -622,7 +620,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         doDebugPrinting(points);
 
-        return new Path(points);
+        return new Path(Arrays.asList(points), targetNode.pos, false);
     }
 
     /**

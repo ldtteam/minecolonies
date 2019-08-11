@@ -5,11 +5,13 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static com.minecolonies.coremod.MineColonies.CHUNK_STORAGE_UPDATE_CAP;
+import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
  * Capability provider for the world capability of Minecolonies.
@@ -41,10 +43,10 @@ public class MinecoloniesWorldCapabilityProvider implements ICapabilitySerializa
         CHUNK_STORAGE_UPDATE_CAP.getStorage().readNBT(CHUNK_STORAGE_UPDATE_CAP, chunkMap, null, nbt);
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final Direction facing)
+    public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, final Direction direction)
     {
-        return capability == CHUNK_STORAGE_UPDATE_CAP ? CHUNK_STORAGE_UPDATE_CAP.cast(chunkMap) : null;
+        return cap == CHUNK_STORAGE_UPDATE_CAP ? LazyOptional.of(() -> (T) chunkMap) : null;
     }
 }

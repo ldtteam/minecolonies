@@ -46,7 +46,7 @@ public class ColonyViewCitizenViewMessage implements IMessage
         super();
         this.colonyId = colony.getID();
         this.citizenId = citizen.getId();
-        this.citizenBuffer = Unpooled.buffer();
+        this.citizenBuffer = new PacketBuffer(Unpooled.buffer());
         this.dimension = citizen.getColony().getDimension();
         citizen.serializeViewNetworkData(citizenBuffer);
     }
@@ -57,7 +57,7 @@ public class ColonyViewCitizenViewMessage implements IMessage
         colonyId = buf.readInt();
         citizenId = buf.readInt();
         dimension = buf.readInt();
-        this.citizenBuffer = buf.retain();
+        this.citizenBuffer = new PacketBuffer(buf.retain());
     }
 
     @Override

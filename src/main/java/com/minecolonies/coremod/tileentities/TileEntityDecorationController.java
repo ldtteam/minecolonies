@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
@@ -35,9 +36,9 @@ public class TileEntityDecorationController extends TileEntity
      */
     private Direction basicFacing = Direction.NORTH;
 
-    public TileEntityDecorationController(final TileEntityType<?> type)
+    public TileEntityDecorationController()
     {
-        super(type);
+        super(MinecoloniesTileEntities.DECO_CONTROLLER);
     }
 
     /**

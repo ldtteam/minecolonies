@@ -245,7 +245,7 @@ public class EntityAIEatTask extends Goal
 
         final Food itemFood = stack.getItem().getFood();
         citizenData.increaseSaturation(itemFood.getHealing() / 2.0);
-        citizenData.getInventory().decrStackSize(foodSlot, 1);
+        citizenData.getInventory().extractItem(foodSlot, 1, false);
         citizenData.markDirty();
         citizen.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
 
@@ -287,7 +287,7 @@ public class EntityAIEatTask extends Goal
               cookBuilding.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
               CAN_EAT,
               AMOUNT_OF_FOOD_TO_SERVE,
-              new InvWrapper(citizen.getInventoryCitizen()));
+              citizen.getInventoryCitizen());
             return WAIT_FOR_FOOD;
         }
 
@@ -385,7 +385,7 @@ public class EntityAIEatTask extends Goal
                   buildingWorker.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
                   CAN_EAT,
                   buildingWorker.getBuildingLevel() * AMOUNT_OF_FOOD_TO_SERVE,
-                  new InvWrapper(citizen.getInventoryCitizen()));
+                  citizen.getInventoryCitizen());
                 return CHECK_FOR_FOOD;
             }
             return SEARCH_RESTAURANT;

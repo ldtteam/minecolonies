@@ -107,7 +107,7 @@ public class BuildingMoveMessage implements IMessage
     }
 
     /**
-     * Reads this packet from a {@link ByteBuf}.
+     * Reads this packet from a {@link PacketBuffer}.
      *
      * @param buf The buffer begin read from.
      */
@@ -124,7 +124,7 @@ public class BuildingMoveMessage implements IMessage
     }
 
     /**
-     * Writes this packet to a {@link ByteBuf}.
+     * Writes this packet to a {@link PacketBuffer}.
      *
      * @param buf The buffer being written to.
      */
@@ -179,7 +179,7 @@ public class BuildingMoveMessage implements IMessage
     {
         final String hut = sn.getSection();
 
-        final Block block = ForgeRegistries.BLOCKS.get(new ResourceLocation(Constants.MOD_ID, "blockHut" + hut));
+        final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(Constants.MOD_ID, "blockHut" + hut));
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (tempColony != null
               && (!tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
@@ -273,7 +273,7 @@ public class BuildingMoveMessage implements IMessage
             {
                 for (final Map.Entry<ProductState, List<BakingProduct>> task : ((BuildingBaker) oldBuilding).getTasks().entrySet())
                 {
-                    for (final BakingProduct product : task.get())
+                    for (final BakingProduct product : task.getValue())
                     {
                         ((BuildingBaker) building).addToTasks(task.getKey(), product);
                     }

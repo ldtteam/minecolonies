@@ -142,7 +142,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     {
         double localXp = xp;
 
-        final int toolSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(citizen.getInventoryCitizen()), stack -> stack.isEnchanted() && EnchantmentHelper.getEnchantments(stack).containsKey(Enchantments.MENDING));
+        final int toolSlot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventoryCitizen(), stack -> stack.isEnchanted() && EnchantmentHelper.getEnchantments(stack).containsKey(Enchantments.MENDING));
         if (toolSlot == -1)
         {
             return localXp;

@@ -589,7 +589,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             if (job.getTree().isDynamicTree() && Compatibility.isDynamicTreeSapling(stack))
             {
                 Compatibility.plantDynamicSapling(world, location, stack);
-                new InvWrapper(getInventory()).extractItem(saplingSlot, 1, false);
+                getInventory().extractItem(saplingSlot, 1, false);
                 worker.swingArm(worker.getActiveHand());
                 timeWaited = 0;
                 incrementActionsDoneAndDecSaturation();
@@ -681,7 +681,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
     private int findSaplingSlot()
     {
-        for (int slot = 0; slot < new InvWrapper(getInventory()).getSlots(); slot++)
+        for (int slot = 0; slot < getInventory().getSlots(); slot++)
         {
             final ItemStack stack = getInventory().getStackInSlot(slot);
             if (isCorrectSapling(stack))
@@ -703,7 +703,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                   || Objects.equals(world.getBlockState(pos), block.getDefaultState()))
             {
 
-                new InvWrapper(getInventory()).extractItem(saplingSlot, 1, false);
+                getInventory().extractItem(saplingSlot, 1, false);
                 job.getTree().removeStump(pos);
             }
             else
@@ -806,6 +806,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private boolean hasLogs()
     {
-        return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventory()), this::isStackLog);
+        return InventoryUtils.hasItemInItemHandler(getInventory(), this::isStackLog);
     }
 }

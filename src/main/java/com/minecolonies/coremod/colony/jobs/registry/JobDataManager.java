@@ -19,7 +19,7 @@ public final class JobDataManager implements IJobDataManager
       final ICitizenData citizen, @NotNull final CompoundNBT compound)
     {
         final ResourceLocation jobType =
-          compound.hasKey(NbtTagConstants.TAG_JOB_TYPE) ? new ResourceLocation(compound.getString(NbtTagConstants.TAG_JOB_TYPE)) : ModJobs.PLACEHOLDER_ID;
+          compound.keySet().contains(NbtTagConstants.TAG_JOB_TYPE) ? new ResourceLocation(compound.getString(NbtTagConstants.TAG_JOB_TYPE)) : ModJobs.PLACEHOLDER_ID;
         final IJob job = IJobRegistry.getInstance().getValue(jobType).getJobProducer().apply(citizen);
 
         if (job != null)

@@ -10,7 +10,7 @@ import com.minecolonies.api.tileentities.ScareCrowType;
 import com.minecolonies.api.tileentities.ScarecrowFieldStage;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.inventory.container.ContainerField;
+import com.minecolonies.api.inventory.container.ContainerField;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;

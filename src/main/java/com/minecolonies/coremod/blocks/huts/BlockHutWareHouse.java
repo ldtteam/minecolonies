@@ -35,7 +35,7 @@ public class BlockHutWareHouse extends AbstractBlockHut<BlockHutWareHouse>
     @Override
     public TileEntity createTileEntity(final BlockState state, final IBlockReader world)
     {
-        return new TileEntityWareHouse(getBuildingEntry().getRegistryName());
+        return new TileEntityWareHouse();
     }
 
     @Override

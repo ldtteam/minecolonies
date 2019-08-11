@@ -513,7 +513,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      */
     public static boolean checkForListInInvAndRequest(@NotNull final AbstractEntityAIStructure<?> placer, final List<ItemStack> itemList, final boolean force)
     {
-        final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(new InvWrapper(placer.getWorker().getInventoryCitizen()),
+        final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(placer.getWorker().getInventoryCitizen(),
           itemStack -> itemList.stream().anyMatch(targetStack -> targetStack.isItemEqual(targetStack)));
         if (force)
         {
@@ -649,10 +649,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                 if (slot != -1)
                 {
                     final ItemStack container = tempStack.getItem().getContainerItem(tempStack);
-                    new InvWrapper(getInventory()).extractItem(slot, tempStack.getCount(), false);
+                    getInventory().extractItem(slot, tempStack.getCount(), false);
                     if (!ItemStackUtils.isEmpty(container))
                     {
-                        new InvWrapper(getInventory()).insertItem(slot, container, false);
+                        getInventory().insertItem(slot, container, false);
                     }
                     reduceNeededResources(tempStack);
                 }
@@ -1080,7 +1080,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                             final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(stack.getItem());
                             if (slot != -1)
                             {
-                                new InvWrapper(getInventory()).extractItem(slot, 1, false);
+                                getInventory().extractItem(slot, 1, false);
                                 reduceNeededResources(stack);
                             }
                         }

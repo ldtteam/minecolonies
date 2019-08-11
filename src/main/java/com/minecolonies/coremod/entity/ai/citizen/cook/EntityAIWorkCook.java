@@ -183,7 +183,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook>
             return getState();
         }
 
-        final IItemHandler handler = citizenToServe.isEmpty() ? new InvWrapper(playerToServe.get(0).inventory) : new InvWrapper(citizenToServe.get(0).getInventoryCitizen());
+        final IItemHandler handler = citizenToServe.isEmpty() ? new InvWrapper(playerToServe.get(0).inventory) : citizenToServe.get(0).getInventoryCitizen();
 
         if (InventoryUtils.isItemHandlerFull(handler))
         {

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.management.handlers;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
@@ -41,9 +42,9 @@ public class ProviderHandler implements IProviderHandler
     {
         final Collection<IToken<?>> result = manager.getProviderResolverAssignmentDataStore().getAssignments().get(provider.getId());
         if (result == null)
-	{
+        {
             return ImmutableList.of();
-	}
+        }
 
         return result;
     }
@@ -76,6 +77,7 @@ public class ProviderHandler implements IProviderHandler
      * @param token   The token of the provider that is being removed.
      * @throws IllegalArgumentException is thrown when the token is not registered to a provider, or when the data stored in the manager is in conflict.
      */
+    @VisibleForTesting
     @SuppressWarnings(Suppression.UNCHECKED)
     void removeProviderInternal(final IToken<?> token)
     {
@@ -103,9 +105,8 @@ public class ProviderHandler implements IProviderHandler
         //Check if we have resolvers that need to be processed.
         if (assignedResolvers != null && !assignedResolvers.isEmpty())
         {
-            //Skip if the resolver has no requests assigned.
-            if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolverToken)
-                    || manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken).isEmpty())
+            //For each resolver process them.
+            for (final IToken<?> resolverToken : assignedResolvers)
             {
                 processResolverForRemoval(assignedResolvers, resolverToken);
             }
@@ -168,7 +169,10 @@ public class ProviderHandler implements IProviderHandler
         final Collection<IToken<?>> assignedRequests = new ArrayList<>(manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolverToken));
         manager.getLogger().debug("Starting reassignment of already registered requests registered to resolver with token: " + resolverToken);
 
-            LogHandler.log("Finished reassignment of already registered requests registered to resolver with token: " + resolverToken);
+        //Get all assigned requests and reassign them.
+        for (final IToken<?> requestToken : assignedRequests)
+        {
+            manager.reassignRequest(requestToken, assignedResolvers);
         }
 
         removeResolverWithoutAssignedRequests(resolverToken);
@@ -190,9 +194,9 @@ public class ProviderHandler implements IProviderHandler
         Collection<IToken<?>> result =  manager.getProviderResolverAssignmentDataStore().getAssignments().get(token);
 
         if (result == null)
-	{
+        {
             return ImmutableList.of();
-	}
+        }
 
         return result;
     }

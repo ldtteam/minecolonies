@@ -274,7 +274,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             }
 
             if (block != Blocks.AIR
-                  && !AbstractEntityAIStructure.isBlockFree(block, 0)
+                  && !AbstractEntityAIStructure.isBlockFree(block)
                   && block != com.ldtteam.structurize.blocks.ModBlocks.blockSolidSubstitution
                   && block != com.ldtteam.structurize.blocks.ModBlocks.blockSubstitution)
             {
