@@ -5,9 +5,9 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
@@ -41,10 +41,10 @@ public class MinecoloniesChunkCapabilityProvider implements ICapabilitySerializa
         CLOSE_COLONY_CAP.getStorage().readNBT(CLOSE_COLONY_CAP, colonyList, null, nbt);
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public <T> T getCapability(@Nonnull final Capability<T> capability, @Nullable final Direction facing)
+    public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, final Direction direction)
     {
-        return capability == CLOSE_COLONY_CAP ? CLOSE_COLONY_CAP.cast(colonyList) : null;
+        return cap == CLOSE_COLONY_CAP ? LazyOptional.of(() -> (T) colonyList) : null;
     }
 }

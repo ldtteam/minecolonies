@@ -188,7 +188,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
             if (!ItemStackUtils.isEmpty(material))
             {
                 material.setCount(materialTuple.getB());
-                worker.getInventoryCitizen().setStackInSlot(slot, material);
+                worker.getInventoryCitizen().insertItem(slot, material, false);
                 if (getOwnBuilding().getBuildingLevel() > 0 && stack.isEnchanted() &&
                       ENCHANTED_BOOK_CHANCE[getOwnBuilding().getBuildingLevel() - 1] < new Random().nextInt(MAX_ENCHANTED_BOOK_CHANCE))
                 {
@@ -201,7 +201,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter>
             }
             else
             {
-                worker.getInventoryCitizen().setStackInSlot(slot, stack);
+                worker.getInventoryCitizen().insertItem(slot, stack, false);
             }
 
             worker.decreaseSaturationForAction();

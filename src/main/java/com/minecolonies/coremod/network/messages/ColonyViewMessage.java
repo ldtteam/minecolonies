@@ -57,13 +57,13 @@ public class ColonyViewMessage implements IMessage
         this.colonyId = colony.getID();
         this.isNewSubscription = isNewSubscription;
         this.dim = colony.getDimension();
-        this.colonyBuffer = buf.copy();
+        this.colonyBuffer = new PacketBuffer(buf.copy());
     }
 
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        final PacketBuffer newBuf = buf.retain();
+        final PacketBuffer newBuf = new PacketBuffer(buf.retain());
         colonyId = newBuf.readInt();
         isNewSubscription = newBuf.readBoolean();
         dim = newBuf.readInt();

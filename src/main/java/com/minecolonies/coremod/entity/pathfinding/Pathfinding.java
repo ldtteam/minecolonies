@@ -66,14 +66,14 @@ public final class Pathfinding
         final double dz = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * frame;
 
         GlStateManager.pushMatrix();
-        GlStateManager.pushAttribute();
+        GlStateManager.pushTextureAttributes();
         GlStateManager.translated(-dx, -dy, -dz);
 
-        GlStateManager.disableTexture2D();
+        GlStateManager.disableTexture();
         GlStateManager.disableBlend();
         GlStateManager.disableLighting();
         GlStateManager.enableCull();
-        GlStateManager.enableDepth();
+        GlStateManager.enableDepthTest();
 
         final Set<Node> debugNodesNotVisited;
         final Set<Node> debugNodesVisited;
@@ -108,7 +108,7 @@ public final class Pathfinding
             Log.getLogger().catching(exc);
         }
 
-        GlStateManager.popAttrib();
+        GlStateManager.popAttributes();
         GlStateManager.popMatrix();
     }
 
@@ -193,10 +193,10 @@ public final class Pathfinding
         final String s1 = String.format("F: %.3f [%d]", n.getCost(), n.getCounterAdded());
         final String s2 = String.format("G: %.3f [%d]", n.getScore(), n.getCounterVisited());
         final FontRenderer fontrenderer = Minecraft.getInstance().fontRenderer;
-        GlStateManager.pushAttrib();
+        GlStateManager.pushTextureAttributes();
         GlStateManager.pushMatrix();
         GlStateManager.translated(0.0F, 0.75F, 0.0F);
-        GlStateManager.glNormal3f(0.0F, 1.0F, 0.0F);
+        GlStateManager.normal3f(0.0F, 1.0F, 0.0F);
 
         final EntityRendererManager renderManager = Minecraft.getInstance().getRenderManager();
         GlStateManager.rotated(-renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
@@ -205,15 +205,15 @@ public final class Pathfinding
         GlStateManager.translated(0.0F, 18F, 0.0F);
 
         GlStateManager.depthMask(false);
-        GlStateManager.disableDepth();
+        GlStateManager.disableDepthTest();
 
         GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(
+        GlStateManager.blendFuncSeparate(
           GlStateManager.SourceFactor.SRC_ALPHA,
           GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
           GlStateManager.SourceFactor.ONE,
           GlStateManager.DestFactor.ZERO);
-        GlStateManager.disableTexture2D();
+        GlStateManager.disableTexture();
 
         final int i = Math.max(fontrenderer.getStringWidth(s1), fontrenderer.getStringWidth(s2)) / 2;
 
@@ -225,14 +225,14 @@ public final class Pathfinding
         vertexBuffer.pos((double) (i + 1), 12.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
         vertexBuffer.pos((double) (i + 1), -5.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
         tessellator.draw();
-        GlStateManager.enableTexture2D();
+        GlStateManager.enableTexture();
 
         GlStateManager.translated(0.0F, -5F, 0.0F);
         fontrenderer.drawString(s1, -fontrenderer.getStringWidth(s1) / 2, 0, 0xFFFFFFFF);
         GlStateManager.translated(0.0F, 8F, 0.0F);
         fontrenderer.drawString(s2, -fontrenderer.getStringWidth(s2) / 2, 0, 0xFFFFFFFF);
 
-        GlStateManager.enableDepth();
+        GlStateManager.enableDepthTest();
         GlStateManager.depthMask(true);
         GlStateManager.translated(0.0F, -8F, 0.0F);
         fontrenderer.drawString(s1, -fontrenderer.getStringWidth(s1) / 2, 0, 0xFFFFFFFF);
@@ -240,6 +240,6 @@ public final class Pathfinding
         fontrenderer.drawString(s2, -fontrenderer.getStringWidth(s2) / 2, 0, 0xFFFFFFFF);
 
         GlStateManager.popMatrix();
-        GlStateManager.popAttrib();
+        GlStateManager.popAttributes();
     }
 }

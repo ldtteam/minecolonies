@@ -108,7 +108,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     @Override
     public void dumpInventoryIntoWareHouse(@NotNull final InventoryCitizen inventoryCitizen)
     {
-        for (int i = 0; i < new InvWrapper(inventoryCitizen).getSlots(); i++)
+        for (int i = 0; i < inventoryCitizen.getSlots(); i++)
         {
             final ItemStack stack = inventoryCitizen.getStackInSlot(i);
             if (ItemStackUtils.isEmpty(stack))
@@ -124,7 +124,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
             final IItemHandler handler = chest.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null);
             if (handler != null)
             {
-                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(new InvWrapper(inventoryCitizen), i, handler);
+                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(inventoryCitizen, i, handler);
             }
         }
     }

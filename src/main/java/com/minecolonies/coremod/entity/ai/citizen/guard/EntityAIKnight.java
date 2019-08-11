@@ -67,13 +67,13 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     @Override
     public boolean hasMainWeapon()
     {
-        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.SWORD, 0, buildingGuards.getMaxToolLevel()) != -1;
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.SWORD, 0, buildingGuards.getMaxToolLevel()) != -1;
     }
 
     @Override
     public void wearWeapon()
     {
-        final int weaponSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.SWORD, 0, buildingGuards.getMaxToolLevel());
+        final int weaponSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.SWORD, 0, buildingGuards.getMaxToolLevel());
 
         if (weaponSlot != -1)
         {
@@ -113,9 +113,8 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight>
     protected IAIState attackProtect()
     {
         setDelay(2);
-        final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(getInventory()),
-          Items.SHIELD,
-          -1);
+        final int shieldSlot = InventoryUtils.findFirstSlotInItemHandlerWith(getInventory(),
+          Items.SHIELD);
 
         if (target != null && target.isAlive())
         {

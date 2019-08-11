@@ -71,7 +71,7 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
 
         if(getMainCitizen() != null && getMainCitizen().getInventory() != null)
         {
-            final int invSIze = getMainCitizen().getInventory().getSizeInventory();
+            final int invSIze = getMainCitizen().getInventory().getSlots();
             int keptStacks = 0;
             for (int i = 0; i < invSIze; i++)
             {

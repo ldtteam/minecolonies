@@ -261,7 +261,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         setDelay(Constants.TICKS_SECOND);
         for (final ToolType toolType : toolsNeeded)
         {
-            if (!InventoryUtils.hasItemHandlerToolWithLevel(new InvWrapper(getInventory()), toolType, 0, buildingGuards.getMaxToolLevel()))
+            if (!InventoryUtils.hasItemHandlerToolWithLevel(getInventory(), toolType, 0, buildingGuards.getMaxToolLevel()))
             {
                 setDelay(STANDARD_DELAY);
                 return false;

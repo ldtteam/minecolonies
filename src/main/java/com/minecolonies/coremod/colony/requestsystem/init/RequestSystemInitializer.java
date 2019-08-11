@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.colony.requestsystem.init;
 
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.manager.RequestMappingHandler;
 import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
-import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
@@ -39,7 +39,7 @@ public class RequestSystemInitializer
         final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         final Configuration config = ctx.getConfiguration();
         final LoggerConfig loggerConfig = config.getLoggerConfig(String.format("%s.requestsystem", Constants.MOD_ID));
-        loggerConfig.addFilter(LevelRangeFilter.createFilter(Configurations.requestSystem.enableDebugLogging ? Level.DEBUG : Level.INFO, Level.FATAL, Filter.Result.NEUTRAL,
+        loggerConfig.addFilter(LevelRangeFilter.createFilter(MinecoloniesAPIProxy.getInstance().getConfig().getCommon().enableDebugLogging.get() ? Level.DEBUG : Level.INFO, Level.FATAL, Filter.Result.NEUTRAL,
           Filter.Result.DENY));
 
         ctx.updateLoggers();

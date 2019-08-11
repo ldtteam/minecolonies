@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
-import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -11,7 +10,7 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
@@ -24,6 +23,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -45,9 +45,9 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
      * @param entity the ourEntity.
      * @param world  the world it is in.
      */
-    public MinecoloniesAdvancedPathNavigate(@NotNull final LivingEntity entity, final World world)
+    public MinecoloniesAdvancedPathNavigate(@NotNull final MobEntity entity, final World world)
     {
-        super(entity, world, entity);
+        super(entity, world);
 
         this.nodeProcessor = new WalkNodeProcessor();
     }
@@ -98,7 +98,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Override
-    public void onUpdateNavigation()
+    public void tick()
     {
         if (calculationFuture != null)
         {
@@ -123,7 +123,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         }
 
         int oldIndex = this.noPath() ? 0 : this.getPath().getCurrentPathIndex();
-        super.onUpdateNavigation();
+        super.tick();
 
         if (handleLadders(oldIndex))
         {
@@ -178,9 +178,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         return true;
     }
 
-    @Nullable
     @Override
-    protected PathFinder getPathFinder()
+    protected PathFinder getPathFinder(final int p_179679_1_)
     {
         return null;
     }
@@ -198,9 +197,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         return this.ourEntity.getPositionVector();
     }
 
-    @Nullable
     @Override
-    public Path getPathToPos(@NotNull final BlockPos pos)
+    public Path getPathToPos(final BlockPos pos, final int p_179680_2_)
     {
         //Because this directly returns Path we can't do it async.
         return null;
@@ -247,9 +245,9 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Override
-    public boolean tryMoveToLivingEntity(@NotNull final Entity e, final double speed)
+    public boolean tryMoveToEntityLiving(final Entity entityIn, final double speedIn)
     {
-        return tryMoveToBlockPos(e.getPosition(), speed);
+        return tryMoveToBlockPos(entityIn.getPosition(), speed);
     }
 
     @Override
@@ -274,7 +272,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 newPoints[i] = new PathPointExtended(new BlockPos(point.x, point.y, point.z));
             }
 
-            tempPath = new Path(newPoints);
+            tempPath = new Path(Arrays.asList(newPoints), getTargetPos(), false);
 
             final PathPointExtended finalPoint = newPoints[pathLength - 1];
             destination = new BlockPos(finalPoint.x, finalPoint.y, finalPoint.z);
@@ -324,7 +322,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
             else
             {
-                if (BlockUtils.isPathBlock(world.getBlockState(ourEntity.getPosition().down()).getBlock()))
+                if (WorkerUtil.isPathBlock(world.getBlockState(ourEntity.getPosition().down()).getBlock()))
                 {
                     speed = ON_PATH_SPEED_MULTIPLIER * getSpeed();
                 }

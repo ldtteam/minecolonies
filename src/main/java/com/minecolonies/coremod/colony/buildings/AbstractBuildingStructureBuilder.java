@@ -264,7 +264,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 if (structureBuilderInventory != null)
                 {
 
-                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(new InvWrapper(structureBuilderInventory),
+                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(structureBuilderInventory,
                             stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 

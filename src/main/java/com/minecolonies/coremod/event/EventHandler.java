@@ -51,6 +51,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -95,21 +96,6 @@ public class EventHandler
         if (event.getEntity() instanceof EntityCitizen)
         {
             ((AbstractEntityCitizen) event.getEntity()).getCitizenColonyHandler().updateColonyServer();
-        }
-    }
-
-    //todo on entity removed event!
-    @SubscribeEvent
-    public static void onEntityRemoved(@NotNull final EntityEv entity)
-    {
-        if (entity instanceof EntityCitizen)
-        {
-            final ICitizenData citizen = ((AbstractEntityCitizen) entity).getCitizenData();
-            if (citizen != null)
-            {
-                citizen.setLastPosition(((AbstractEntityCitizen) entity).getCurrentPosition());
-                citizen.setCitizenEntity(null);
-            }
         }
     }
 
@@ -718,7 +704,7 @@ public class EventHandler
 
         if (!world.isRemote
               && MineColonies.getConfig().getCommon().protectVillages.get()
-              && ((ServerWorld) world).getVillageCollection().getNearestVillage(pos, MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get() * BLOCKS_PER_CHUNK) != null)
+              && world.getChunkProvider().getChunkGenerator().findNearestStructure(world, "Village", pos, MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get() * BLOCKS_PER_CHUNK, false) != null)
         {
             Log.getLogger().warn("Village close by!");
             LanguageHandler.sendPlayerMessage(player,

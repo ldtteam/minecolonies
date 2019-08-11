@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.ICitizenDataManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.EntityUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.NBTUtils;
@@ -101,7 +102,7 @@ public class CitizenManager implements ICitizenManager
     {
         compound.putInt(TAG_MAX_CITIZENS, maxCitizens);
 
-        @NotNull final ListNBT citizenTagList = citizens.values().stream().map(citizen -> citizen.write(new CompoundNBT())).collect(NBTUtils.toListNBT());
+        @NotNull final ListNBT citizenTagList = citizens.values().stream().map(citizen -> citizen.serializeNBT()).collect(NBTUtils.toListNBT());
         compound.put(TAG_CITIZENS, citizenTagList);
     }
 
@@ -180,7 +181,7 @@ public class CitizenManager implements ICitizenManager
                   colony.getName());
             }
         }
-        final EntityCitizen entity = new EntityCitizen(world);
+        final EntityCitizen entity = (EntityCitizen) ModEntities.CITIZEN.create(world);
         citizenData.setCitizenEntity(entity);
 
         entity.getCitizenColonyHandler().initEntityCitizenValues(colony, citizenData);

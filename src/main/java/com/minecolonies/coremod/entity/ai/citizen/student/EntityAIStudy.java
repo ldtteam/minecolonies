@@ -108,7 +108,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
 
             for (final StudyItem studyItem : getOwnBuilding(BuildingLibrary.class).getStudyItems())
             {
-                final int bSlot = InventoryUtils.findFirstSlotInProviderWith(getOwnBuilding(), studyItem.getItem(), 0);
+                final int bSlot = InventoryUtils.findFirstSlotInProviderWith(getOwnBuilding(), studyItem.getItem());
                 if (bSlot > -1)
                 {
                     if (walkToBuilding())
@@ -135,7 +135,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
             // Break item rand
             if (world.rand.nextInt(100) <= chosenItem.getBreakPct())
             {
-                data.getInventory().decrStackSize(chosenItem.getSlot(), 1);
+                data.getInventory().extractItem(chosenItem.getSlot(), 1, false);
             }
         }
 

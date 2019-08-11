@@ -8,7 +8,7 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.MinecoloniesAPIImpl;
 import com.minecolonies.coremod.client.render.EmptyTileEntitySpecialRenderer;
@@ -24,7 +24,7 @@ import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
-import com.minecolonies.coremod.entity.EntityFishHook;
+import com.minecolonies.coremod.entity.NewBobberEntity;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
@@ -135,7 +135,7 @@ public class MineColonies
     public static void doClientStuff(final FMLClientSetupEvent event)
     {
         RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, RenderBipedCitizen::new);
-        RenderingRegistry.registerEntityRenderingHandler(EntityFishHook.class, RenderFishHook::new);
+        RenderingRegistry.registerEntityRenderingHandler(NewBobberEntity.class, RenderFishHook::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityBarbarian.class, RendererBarbarian::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityArcherBarbarian.class, RendererBarbarian::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityChiefBarbarian.class, RendererChiefBarbarian::new);

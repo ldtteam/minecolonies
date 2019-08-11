@@ -3,7 +3,7 @@ package com.minecolonies.coremod.client.render;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.constant.Literals;
-import com.minecolonies.coremod.entity.EntityFishHook;
+import com.minecolonies.coremod.entity.NewBobberEntity;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Determines how the fish hook is rendered.
  */
-public class RenderFishHook extends EntityRenderer<EntityFishHook>
+public class RenderFishHook extends EntityRenderer<NewBobberEntity>
 {
     /**
      * The resource location containing the particle textures (Spawned by the fishHook).
@@ -48,7 +48,7 @@ public class RenderFishHook extends EntityRenderer<EntityFishHook>
      * @param entityYaw the angle thrown
      */
     @Override
-    public void doRender(@NotNull final EntityFishHook entity, final double x, final double y, final double z, final float entityYaw, final float partialTicks)
+    public void doRender(@NotNull final NewBobberEntity entity, final double x, final double y, final double z, final float entityYaw, final float partialTicks)
     {
         GlStateManager.pushMatrix();
         GlStateManager.translated((float) x, (float) y, (float) z);
@@ -69,7 +69,7 @@ public class RenderFishHook extends EntityRenderer<EntityFishHook>
         GlStateManager.disableRescaleNormal();
         GlStateManager.popMatrix();
 
-        AbstractEntityCitizen citizen = entity.getCitizen();
+        AbstractEntityCitizen citizen = entity.getAngler();
 
         //If the citizen is null (Which he probably is) get the nearest citizen to the fishHook position.
         //Check if he is a fisherman -> Through his texture
@@ -140,7 +140,7 @@ public class RenderFishHook extends EntityRenderer<EntityFishHook>
      */
     @NotNull
     @Override
-    protected ResourceLocation getEntityTexture(final EntityFishHook entity)
+    protected ResourceLocation getEntityTexture(final NewBobberEntity entity)
     {
         return getTexture();
     }

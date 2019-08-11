@@ -11,7 +11,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -75,7 +74,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, CowEnt
         final IAIState result = super.decideWhatToDo();
         final BuildingCowboy building = getOwnBuilding();
 
-        final boolean hasBucket = InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), Items.BUCKET, 0);
+        final boolean hasBucket = InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), Items.BUCKET);
         if (building != null && building.isMilkingCows() && result.equals(START_WORKING) && hasBucket)
         {
             return COWBOY_MILK;
@@ -133,8 +132,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, CowEnt
 
         if (!walkingToAnimal(cow) && equipItem(Hand.MAIN_HAND, new ItemStack(Items.BUCKET, 1)))
         {
-
-            if (!worker.getInventoryCitizen().addItemStackToInventory(new ItemStack(Items.MILK_BUCKET)))
+            if (!InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.MILK_BUCKET)))
             {
                 worker.getCitizenItemHandler().removeHeldItem();
                 equipItem(Hand.MAIN_HAND, new ItemStack(Items.MILK_BUCKET));

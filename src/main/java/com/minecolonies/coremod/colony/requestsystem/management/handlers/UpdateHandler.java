@@ -37,7 +37,7 @@ public class UpdateHandler implements IUpdateHandler
             return;
         }
 
-        steps.stream()
+        UPDATE_STEPS.stream()
           .filter(s -> s.updatesToVersion() > manager.getCurrentVersion())
           .sorted(Comparator.comparing(IUpdateStep::updatesToVersion))
           .forEachOrdered(s ->
@@ -50,6 +50,6 @@ public class UpdateHandler implements IUpdateHandler
     @Override
     public int getCurrentVersion()
     {
-        return steps.stream().max(Comparator.comparing(IUpdateStep::updatesToVersion)).get().updatesToVersion();
+        return UPDATE_STEPS.stream().max(Comparator.comparing(IUpdateStep::updatesToVersion)).get().updatesToVersion();
     }
 }

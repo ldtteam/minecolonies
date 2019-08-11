@@ -72,15 +72,18 @@ public abstract class CommonProxy implements IProxy
         return playerPropertiesData.remove(name);
     }
 
+
     /**
      * Called when registering recipes.
      * @param event the registery event for recipes.
      */
+    /*
     @SubscribeEvent
     public static void registerRecipes(@NotNull final RegistryEvent.Register<IRecipe> event)
     {
+        //todo handle
         event.getRegistry().register(new TownHallRecipe());
-    }
+    }*/
 
     /**
      * Called when registering items,

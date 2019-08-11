@@ -32,7 +32,7 @@ import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
-import com.minecolonies.coremod.inventory.container.ContainerCitizenInventory;
+import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.util.PermissionUtils;
 import com.minecolonies.coremod.util.TeleportHelper;
@@ -48,7 +48,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.NameTagItem;
 import net.minecraft.item.ShieldItem;
@@ -1527,5 +1526,16 @@ public class EntityCitizen extends AbstractEntityCitizen
         buffer.writeInt(citizenColonyHandler.getColonyId());
         buffer.writeInt(citizenId);
         return new ContainerCitizenInventory(id, inv, buffer);
+    }
+
+    @Override
+    public void remove()
+    {
+        if (citizenData != null)
+        {
+            citizenData.setLastPosition(getCurrentPosition());
+            citizenData.setCitizenEntity(null);
+        }
+        super.remove();
     }
 }

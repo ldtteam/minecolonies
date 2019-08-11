@@ -18,7 +18,7 @@ import java.util.concurrent.Future;
 public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
 {
     //  Parent class private members
-    protected final LivingEntity ourEntity;
+    protected final MobEntity ourEntity;
     @Nullable
     protected       BlockPos     destination;
     protected       double       walkSpeed = 1.0D;
@@ -28,11 +28,10 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
     protected       Future<Path> calculationFuture;
 
     public AbstractAdvancedPathNavigate(
-      final MobEntity entitylivingIn,
-      final World worldIn,
-      @NotNull final LivingEntity entity)
+      final MobEntity entityLiving,
+      final World worldIn)
     {
-        super(entitylivingIn, worldIn);
+        super(entityLiving, worldIn);
         this.ourEntity = entity;
     }
 

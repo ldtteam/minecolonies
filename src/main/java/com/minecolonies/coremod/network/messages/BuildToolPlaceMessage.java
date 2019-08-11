@@ -109,7 +109,7 @@ public class BuildToolPlaceMessage implements IMessage
     }
 
     /**
-     * Reads this packet from a {@link ByteBuf}.
+     * Reads this packet from a {@link PacketBuffer}.
      *
      * @param buf The buffer begin read from.
      */
@@ -132,7 +132,7 @@ public class BuildToolPlaceMessage implements IMessage
     }
 
     /**
-     * Writes this packet to a {@link ByteBuf}.
+     * Writes this packet to a {@link PacketBuffer}.
      *
      * @param buf The buffer being written to.
      */
@@ -202,7 +202,7 @@ public class BuildToolPlaceMessage implements IMessage
       final BlockState state)
     {
         final String hut = sn.getSection();
-        final Block block =  ForgeRegistries.BLOCKS.get(new ResourceLocation(Constants.MOD_ID, "blockHut" + hut));
+        final Block block =  ForgeRegistries.BLOCKS.getValue(new ResourceLocation(Constants.MOD_ID, "blockHut" + hut));
 
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (tempColony != null

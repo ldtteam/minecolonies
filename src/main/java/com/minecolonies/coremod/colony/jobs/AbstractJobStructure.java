@@ -121,7 +121,6 @@ public abstract class AbstractJobStructure extends AbstractJob
         getCitizen().getColony().getWorkManager().removeWorkOrder(workOrderId);
         setWorkOrder(null);
         setStructure(null);
-        this.getColony().getStatsManager().incrementStatistic("huts");
     }
 
     /**

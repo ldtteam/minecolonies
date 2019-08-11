@@ -13,6 +13,7 @@ import com.minecolonies.coremod.network.messages.ChangeDeliveryPriorityStateMess
 import com.minecolonies.coremod.network.messages.OpenCraftingGUIMessage;
 import com.minecolonies.coremod.network.messages.RecallCitizenMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -156,7 +157,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
     public void craftingClicked()
     {
         final BlockPos pos = building.getPosition();
-        Minecraft.getInstance().player.openGui(MineColonies.instance, 0, Minecraft.getInstance().world, pos.getX(), pos.getY(), pos.getZ());
+        Minecraft.getInstance().player.openContainer((INamedContainerProvider) Minecraft.getInstance().world.getTileEntity(pos));
         Network.getNetwork().sendToServer(new OpenCraftingGUIMessage(building, 2));
     }
 

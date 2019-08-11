@@ -27,9 +27,9 @@ import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 public class DebugRendererChunkBorder
 {
 
-    private Tuple<Integer, Integer> center = new Tuple<>(0, 0);
+    private static Tuple<Integer, Integer> center = new Tuple<>(0, 0);
 
-    private Map<Tuple<Integer, Integer>, Integer> colonies = new HashMap<>();
+    private static Map<Tuple<Integer, Integer>, Integer> colonies = new HashMap<>();
 
     @SubscribeEvent
     public static void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)

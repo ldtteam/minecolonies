@@ -2,7 +2,7 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.entity.EntityFishHook;
+import com.minecolonies.coremod.entity.NewBobberEntity;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
@@ -37,7 +37,7 @@ public class EntityInitializer
                                 .build(Constants.MOD_ID + ":citizen")
                                 .setRegistryName("citizen");
 
-        ModEntities.FISHHOOK = EntityType.Builder.create(EntityFishHook::new, EntityClassification.MISC)
+        ModEntities.FISHHOOK = EntityType.Builder.create(NewBobberEntity::new, EntityClassification.MISC)
                                 .setTrackingRange(ENTITY_TRACKING_RANGE)
                                 .setUpdateInterval(ENTITY_UPDATE_FREQUENCY_FISHHOOK)
                                 .size(0.25F, 0.25F)

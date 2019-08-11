@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.fisherman;
 
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -13,8 +14,9 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFisherman;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
-import com.minecolonies.coremod.entity.EntityFishHook;
+import com.minecolonies.coremod.entity.NewBobberEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.FishingRodItem;
@@ -26,7 +28,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -160,7 +161,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * Connects the citizen with the fishingHook.
      */
     @Nullable
-    private EntityFishHook entityFishHook;
+    private NewBobberEntity entityFishHook;
 
     /**
      * Constructor for the Fisherman.
@@ -291,7 +292,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean hasFish()
     {
-        return InventoryUtils.hasItemInItemHandler(new InvWrapper(getInventory()), item -> item.getItem().isIn(ItemTags.FISHES));
+        return InventoryUtils.hasItemInItemHandler(getInventory(), item -> item.getItem().isIn(ItemTags.FISHES));
     }
 
     /**
@@ -536,7 +537,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
               SoundCategory.NEUTRAL,
               0.5F,
               (float) (0.4D / (this.world.rand.nextFloat() * 0.4D + 0.8D)));
-            this.entityFishHook = new EntityFishHook(world, this.getCitizen());
+            this.entityFishHook = (NewBobberEntity) ModEntities.FISHHOOK.create(world);
+            this.entityFishHook.setAngler((EntityCitizen) worker, 0, fishingSkill);
             world.addEntity(this.entityFishHook);
         }
 
@@ -552,7 +554,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean isFishHookStuck()
     {
-        return (!entityFishHook.isInWater() && (entityFishHook.onGround || entityFishHook.fishHookIsOverTimeToLive())) || !entityFishHook.isAlive();
+        return (!entityFishHook.isInWater() && (entityFishHook.onGround || entityFishHook.shouldStopFishing())) || !entityFishHook.isAlive();
     }
 
     /**
@@ -620,7 +622,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private int getRodSlot()
     {
-        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.FISHINGROD,
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.FISHINGROD,
           TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
     }
 
@@ -636,7 +638,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         {
             return false;
         }
-        if (!entityFishHook.caughtFish())
+        if (entityFishHook.caughtEntity == null)
         {
             return false;
         }
@@ -654,7 +656,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     private void retrieveRod()
     {
         worker.swingArm(worker.getActiveHand());
-        final int i = entityFishHook.getDamage(this.getCitizen());
+        final int i = entityFishHook.getDamage();
         worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, i);
         entityFishHook = null;
     }

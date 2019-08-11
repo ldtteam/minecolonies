@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSleepHandler;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.block.BedBlock;
@@ -168,7 +169,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         final BlockPos spawn;
         if (!getBedLocation().equals(BlockPos.ZERO) && citizen.world.getBlockState(getBedLocation()).getBlock().isIn(BlockTags.BEDS))
         {
-            spawn = BedBlock.func_220172_a(citizen, citizen.world, getBedLocation(), 0);
+            spawn = new BlockPos(BedBlock.func_220172_a(ModEntities.CITIZEN, citizen.world, getBedLocation(), 0).get());
         }
         else
         {

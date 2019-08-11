@@ -601,7 +601,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         world.setBlockState(position.up(), seed.getPlant(world, position));
         worker.decreaseSaturationForContinuousAction();
-        new InvWrapper(getInventory()).extractItem(slot, 1, false);
+        getInventory().extractItem(slot, 1, false);
         return true;
     }
 
@@ -698,7 +698,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private int getHoeSlot()
     {
-        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(new InvWrapper(getInventory()), ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getWorkBuilding().getMaxToolLevel());
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getWorkBuilding().getMaxToolLevel());
     }
 
     /**
