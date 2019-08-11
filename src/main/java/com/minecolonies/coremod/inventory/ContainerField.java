@@ -50,7 +50,7 @@ public class ContainerField extends Container
      */
     public ContainerField(final int windowId, final PlayerInventory playerInventory, final PacketBuffer extra)
     {
-        super(MinecoloniesContainers.field, windowId);
+        super(ModContainers.field, windowId);
         final BlockPos pos = extra.readBlockPos();
         this.colony = IColonyManager.getInstance().getColonyByPosFromWorld(playerInventory.player.world, pos);
         this.tileEntity = ((ScarecrowTileEntity) playerInventory.player.world.getTileEntity(pos));

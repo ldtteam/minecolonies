@@ -14,7 +14,6 @@ import net.minecraft.item.crafting.ICraftingRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SSetSlotPacket;
-import net.minecraft.util.NonNullList;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +23,7 @@ import static com.minecolonies.api.util.constant.InventoryConstants.*;
 /**
  * Crafting container for the recipe teaching of normal crafting recipes.
  */
-public class CraftingGUIBuilding extends Container
+public class ContainerGUICrafting extends Container
 {
     /**
      * The crafting matrix inventory (2x2).
@@ -57,9 +56,9 @@ public class CraftingGUIBuilding extends Container
      * @param inv the inventory.
      * @param extra some extra data.
      */
-    public CraftingGUIBuilding(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
+    public ContainerGUICrafting(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
     {
-        super(MinecoloniesContainers.craftingGrid, windowId);
+        super(ModContainers.craftingGrid, windowId);
         this.world = inv.player.world;
         this.inv = inv;
         this.complete = extra.readBoolean();

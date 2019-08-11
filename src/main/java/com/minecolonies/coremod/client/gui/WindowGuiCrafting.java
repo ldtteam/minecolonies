@@ -8,7 +8,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.inventory.ContainerGUICraftingFurnace;
-import com.minecolonies.coremod.inventory.CraftingGUIBuilding;
+import com.minecolonies.coremod.inventory.ContainerGUICrafting;
 import com.minecolonies.coremod.network.messages.AddRemoveRecipeMessage;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * AbstractCrafting gui.
  */
-public class WindowGuiCrafting<T extends CraftingGUIBuilding> extends ContainerScreen
+public class WindowGuiCrafting<T extends ContainerGUICrafting> extends ContainerScreen
 {
     private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES = new ResourceLocation(Constants.MOD_ID, "textures/gui/crafting2x2.png");
 

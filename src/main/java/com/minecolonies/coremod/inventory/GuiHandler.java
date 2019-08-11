@@ -50,7 +50,7 @@ public class GuiHandler implements IGuiHandler
                 }
                 else if (building instanceof AbstractBuildingWorker)
                 {
-                    return new CraftingGUIBuilding(player.inventory, world, ((IBuildingWorker) building).canCraftComplexRecipes());
+                    return new ContainerGUICrafting(player.inventory, world, ((IBuildingWorker) building).canCraftComplexRecipes());
                 }
                 return null;
             }
