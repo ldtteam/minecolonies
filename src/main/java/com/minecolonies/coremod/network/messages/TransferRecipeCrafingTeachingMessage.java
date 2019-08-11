@@ -2,7 +2,7 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.inventory.ContainerGUICrafting;
+import com.minecolonies.coremod.inventory.container.ContainerGUICrafting;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.item.ItemStack;

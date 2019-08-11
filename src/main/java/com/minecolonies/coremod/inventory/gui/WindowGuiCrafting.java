@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.client.gui;
+package com.minecolonies.coremod.inventory.gui;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -7,8 +7,8 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.inventory.ContainerGUICraftingFurnace;
-import com.minecolonies.coremod.inventory.ContainerGUICrafting;
+import com.minecolonies.coremod.inventory.container.ContainerGUICraftingFurnace;
+import com.minecolonies.coremod.inventory.container.ContainerGUICrafting;
 import com.minecolonies.coremod.network.messages.AddRemoveRecipeMessage;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;

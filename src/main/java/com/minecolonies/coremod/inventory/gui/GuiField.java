@@ -1,6 +1,7 @@
-package com.minecolonies.coremod.inventory;
+package com.minecolonies.coremod.inventory.gui;
 
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.inventory.container.ContainerField;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
