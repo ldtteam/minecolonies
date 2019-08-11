@@ -1,21 +1,20 @@
 package com.minecolonies.coremod.inventory.gui;
 
-import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.inventory.container.ContainerRack;
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.gui.screen.inventory.ChestScreen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 @OnlyIn(Dist.CLIENT)
-public class GuiRack extends ContainerScreen
+public class WindowRack extends ContainerScreen<ContainerRack>
 {
     /**
      * The resource LOCATION of the texture.
@@ -87,10 +86,9 @@ public class GuiRack extends ContainerScreen
      */
     private final int inventoryRows;
 
-    public GuiRack(final PlayerInventory parPlayerInventory, final AbstractTileEntityRack tileEntity, final AbstractTileEntityRack neighborRack, final World world, final BlockPos location)
+    public WindowRack(final ContainerRack container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
     {
-        super(new ContainerRack(tileEntity, neighborRack, parPlayerInventory));
-
+        super(container, playerInventory, iTextComponent);
         if (neighborRack != null)
         {
             if (tileEntity.isMain())
@@ -164,7 +162,7 @@ public class GuiRack extends ContainerScreen
     @Override
     public void drawScreen(final int mouseX, final int mouseY, final float partialTicks)
     {
-        super.d(mouseX, mouseY, partialTicks);
+        super.draw(mouseX, mouseY, partialTicks);
         this.renderHoveredToolTip(mouseX, mouseY);
     }
 }

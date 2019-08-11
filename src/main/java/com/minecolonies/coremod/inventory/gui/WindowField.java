@@ -15,7 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * Class which creates the GUI of our field inventory.
  */
 @OnlyIn(Dist.CLIENT)
-public class GuiField extends ContainerScreen<ContainerField>
+public class WindowField extends ContainerScreen<ContainerField>
 {
     /**
      * The resource location of the GUI background.
@@ -48,7 +48,7 @@ public class GuiField extends ContainerScreen<ContainerField>
      * @param playerInventory the player inv.
      * @param iTextComponent the display text component.
      */
-    public GuiField(final ContainerField container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
+    public WindowField(final ContainerField container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
     {
         super(container, playerInventory, iTextComponent);
         this.tileEntity = container.getTileEntity();

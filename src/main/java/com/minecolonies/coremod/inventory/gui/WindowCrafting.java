@@ -7,15 +7,13 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.inventory.container.ContainerGUICraftingFurnace;
-import com.minecolonies.coremod.inventory.container.ContainerGUICrafting;
+import com.minecolonies.coremod.inventory.container.ContainerCrafting;
 import com.minecolonies.coremod.network.messages.AddRemoveRecipeMessage;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -25,7 +23,7 @@ import java.util.List;
 /**
  * AbstractCrafting gui.
  */
-public class WindowGuiCrafting<T extends ContainerGUICrafting> extends ContainerScreen
+public class WindowCrafting extends ContainerScreen<ContainerCrafting>
 {
     private static final ResourceLocation CRAFTING_TABLE_GUI_TEXTURES = new ResourceLocation(Constants.MOD_ID, "textures/gui/crafting2x2.png");
 
@@ -92,10 +90,10 @@ public class WindowGuiCrafting<T extends ContainerGUICrafting> extends Container
      * @param playerInventory the player inv.
      * @param iTextComponent the display text component.
      */
-    public WindowGuiCrafting(final Container container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
+    public WindowCrafting(final ContainerCrafting container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
     {
         super(container, playerInventory, iTextComponent);
-        this.building = (AbstractBuildingSmelterCrafter.View) IColonyManager.getInstance().getBuildingView(playerInventory.player.dimension.getId(), ((ContainerGUICraftingFurnace) container).buildingPos);
+        this.building = (AbstractBuildingSmelterCrafter.View) IColonyManager.getInstance().getBuildingView(playerInventory.player.dimension.getId(), container.getPos());
         completeCrafting = building.canCraftComplexRecipes();
     }
 
@@ -108,7 +106,7 @@ public class WindowGuiCrafting<T extends ContainerGUICrafting> extends Container
          * The button to click done after finishing the recipe.
          */
         final Button
-          doneButton = new Button(guiLeft + BUTTON_X_OFFSET, guiTop + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, buttonDisplay, new WindowGuiCrafting.OnButtonPress());
+          doneButton = new Button(guiLeft + BUTTON_X_OFFSET, guiTop + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, buttonDisplay, new WindowCrafting.OnButtonPress());
         this.addButton(doneButton);
         if(!building.canRecipeBeAdded())
         {

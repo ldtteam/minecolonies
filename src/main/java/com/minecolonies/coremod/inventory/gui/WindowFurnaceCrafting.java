@@ -6,7 +6,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
-import com.minecolonies.coremod.inventory.container.ContainerGUICraftingFurnace;
+import com.minecolonies.coremod.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.coremod.network.messages.AddRemoveRecipeMessage;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Furnace crafting gui.
  */
-public class WindowGuiFurnaceCrafting<T extends ContainerGUICraftingFurnace> extends ContainerScreen
+public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurnace>
 {
     private static final ResourceLocation CRAFTING_FURNACE = new ResourceLocation(Constants.MOD_ID, "textures/gui/furnace.png");
 
@@ -50,7 +50,7 @@ public class WindowGuiFurnaceCrafting<T extends ContainerGUICraftingFurnace> ext
     /**
      * The building the window belongs to.
      */
-    private final ContainerGUICraftingFurnace container;
+    private final ContainerCraftingFurnace container;
 
     /**
      * The building assigned to this.
@@ -63,11 +63,11 @@ public class WindowGuiFurnaceCrafting<T extends ContainerGUICraftingFurnace> ext
      * @param playerInventory the player inv.
      * @param iTextComponent the display text component.
      */
-    public WindowGuiFurnaceCrafting(final Container container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
+    public WindowFurnaceCrafting(final ContainerCraftingFurnace container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
     {
         super(container, playerInventory, iTextComponent);
-        this.container = (ContainerGUICraftingFurnace) container;
-        this.building = (AbstractBuildingSmelterCrafter.View) IColonyManager.getInstance().getBuildingView(playerInventory.player.dimension.getId(), ((ContainerGUICraftingFurnace) container).buildingPos);
+        this.container = container;
+        this.building = (AbstractBuildingSmelterCrafter.View) IColonyManager.getInstance().getBuildingView(playerInventory.player.dimension.getId(), container.getPos());
     }
 
     @Override

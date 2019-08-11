@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.BlockState;
@@ -99,7 +98,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @Override
     public TileEntity createTileEntity(final BlockState state, final IBlockReader world)
     {
-        return new TileEntityColonyBuilding(MinecoloniesTileEntities.BUILDING);
+        return MinecoloniesTileEntities.BUILDING.create();
     }
 
     /**
@@ -164,9 +163,9 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         }
 
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
-        if (placer instanceof PlayerEntity && tileEntity instanceof TileEntityColonyBuilding)
+        if (placer instanceof PlayerEntity && tileEntity instanceof AbstractTileEntityColonyBuilding)
         {
-            @NotNull final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
+            @NotNull final AbstractTileEntityColonyBuilding hut = (AbstractTileEntityColonyBuilding) tileEntity;
             @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, hut.getPosition());
 
             if (colony != null)
@@ -224,7 +223,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
                                           final BlockState state, final LivingEntity placer, final ItemStack stack, final boolean mirror, final String style)
     {
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
-        if (tileEntity instanceof TileEntityColonyBuilding)
+        if (tileEntity instanceof AbstractTileEntityColonyBuilding)
         {
             ((AbstractTileEntityColonyBuilding) tileEntity).setMirror(mirror);
             ((AbstractTileEntityColonyBuilding) tileEntity).setStyle(style);

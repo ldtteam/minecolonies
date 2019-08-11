@@ -4,20 +4,22 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.inventory.ModContainers;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.network.PacketBuffer;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
 
 /**
  * Container for Mie
  */
-public class ContainerMinecoloniesBuildingInventory extends Container
+public class ContainerBuildingInventory extends Container
 {
     /**
      * Lower chest inventory.
@@ -25,32 +27,22 @@ public class ContainerMinecoloniesBuildingInventory extends Container
     private final IInventory lowerChestInventory;
 
     /**
-     * Player inventory.
-     */
-    private final IInventory playerInventory;
-
-    /**
      * Amount of rows.
      */
     private final int inventorySize;
 
     /**
-     * Public constructor to create the minecolonies building container.
-     * @param playerInventory the player inv.
-     * @param inventory the inv itself.
-     * @param colonyId the colony id.
-     * @param buildingId the building id.
-     * @param world the world.
+     * Constructor to create an instance of this container.
+     * @param windowId the id of the window.
+     * @param inv the player inventory.
+     * @param extra some extra data
      */
-    public ContainerMinecoloniesBuildingInventory(
-                                                   final IInventory playerInventory,
-                                                   final IInventory inventory,
-                                                   final int colonyId,
-                                                   final BlockPos buildingId, final World world)
+    public ContainerBuildingInventory(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
     {
-        this.lowerChestInventory = inventory;
-        this.inventorySize = inventory.getSizeInventory() / INVENTORY_COLUMNS;
-        final int size = inventory.getSizeInventory();
+        super(ModContainers.buildingInv, windowId);
+        this.lowerChestInventory = inv;
+        this.inventorySize = inv.getSizeInventory() / INVENTORY_COLUMNS;
+        final int size = inv.getSizeInventory();
 
         final int columns = inventorySize <= INVENTORY_BAR_SIZE ? INVENTORY_COLUMNS : ((size / INVENTORY_BAR_SIZE) + 1);
         final int extraOffset = inventorySize <= INVENTORY_BAR_SIZE ? 0 : 2;
@@ -63,7 +55,7 @@ public class ContainerMinecoloniesBuildingInventory extends Container
                 if (index < size)
                 {
                     this.addSlot(
-                      new Slot(inventory, index,
+                      new Slot(inv, index,
                                 INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
                                 PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH)
                       {
@@ -71,10 +63,10 @@ public class ContainerMinecoloniesBuildingInventory extends Container
                           public void putStack(final ItemStack stack)
                           {
                               super.putStack(stack);
-                              if (!playerInventory.player.world.isRemote && !ItemStackUtils.isEmpty(stack))
+                              if (!inv.player.world.isRemote && !ItemStackUtils.isEmpty(stack))
                               {
-                                  final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, world);
-                                  final IBuilding building = colony.getBuildingManager().getBuilding(buildingId);
+                                  final IColony colony = IColonyManager.getInstance().getColonyByWorld(extra.readInt(), inv.player.world);
+                                  final IBuilding building = colony.getBuildingManager().getBuilding(extra.readBlockPos());
                                   if (building != null)
                                   {
                                       building.overruleNextOpenRequestWithStack(stack);
@@ -95,7 +87,7 @@ public class ContainerMinecoloniesBuildingInventory extends Container
             for (int j = 0; j < INVENTORY_COLUMNS; j++)
             {
                 addSlot(new Slot(
-                                             playerInventory,
+                                             inv,
                                              j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
                                              PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
                                              PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
@@ -107,13 +99,12 @@ public class ContainerMinecoloniesBuildingInventory extends Container
         for (i = 0; i < INVENTORY_COLUMNS; i++)
         {
             addSlot(new Slot(
-                                         playerInventory, i,
+              inv, i,
                                          PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
                                          PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
                                            INVENTORY_BAR_SIZE)
             ));
         }
-        this.playerInventory = playerInventory;
     }
 
     /**
@@ -175,21 +166,18 @@ public class ContainerMinecoloniesBuildingInventory extends Container
     /**
      * Determines whether supplied player can use this container
      */
-    public boolean canInteractWith(final PlayerEntity playerIn)
+    @Override
+    public boolean canInteractWith(@NotNull final PlayerEntity playerIn)
     {
         return this.lowerChestInventory.isUsableByPlayer(playerIn);
     }
 
     /**
-     * Return this chest container's lower chest inventory.
+     * Get the size of the inventory.
+     * @return the size.
      */
-    public IInventory getLowerChestInventory()
+    public int getSlots()
     {
-        return this.lowerChestInventory;
-    }
-
-    public IInventory getPlayerInventory()
-    {
-        return playerInventory;
+        return inventorySlots.size();
     }
 }

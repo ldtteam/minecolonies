@@ -15,6 +15,7 @@ import net.minecraft.item.crafting.ICraftingRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SSetSlotPacket;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +25,7 @@ import static com.minecolonies.api.util.constant.InventoryConstants.*;
 /**
  * Crafting container for the recipe teaching of normal crafting recipes.
  */
-public class ContainerGUICrafting extends Container
+public class ContainerCrafting extends Container
 {
     /**
      * The crafting matrix inventory (2x2).
@@ -52,17 +53,23 @@ public class ContainerGUICrafting extends Container
     private final PlayerInventory inv;
 
     /**
+     * Position of container.
+     */
+    private final BlockPos pos;
+
+    /**
      * Creates a crafting container.
      * @param windowId the window id.
      * @param inv the inventory.
      * @param extra some extra data.
      */
-    public ContainerGUICrafting(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
+    public ContainerCrafting(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
     {
         super(ModContainers.craftingGrid, windowId);
         this.world = inv.player.world;
         this.inv = inv;
         this.complete = extra.readBoolean();
+        this.pos = extra.readBlockPos();
         if(complete)
         {
             craftMatrix = new CraftingInventory(this, 3, 3);
@@ -327,5 +334,14 @@ public class ContainerGUICrafting extends Container
     public CraftingInventory getInv()
     {
         return craftMatrix;
+    }
+
+    /**
+     * Get for the container position.
+     * @return the position.
+     */
+    public BlockPos getPos()
+    {
+        return pos;
     }
 }
