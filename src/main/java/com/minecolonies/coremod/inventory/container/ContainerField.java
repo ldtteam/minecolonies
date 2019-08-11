@@ -1,9 +1,10 @@
-package com.minecolonies.coremod.inventory;
+package com.minecolonies.coremod.inventory.container;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.inventory.ModContainers;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;

@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.inventory;
+package com.minecolonies.coremod.inventory.container;
 
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.ItemStackUtils;

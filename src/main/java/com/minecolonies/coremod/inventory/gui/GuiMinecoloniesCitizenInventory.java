@@ -1,5 +1,6 @@
-package com.minecolonies.coremod.inventory;
+package com.minecolonies.coremod.inventory.gui;
 
+import com.minecolonies.coremod.inventory.container.ContainerMinecoloniesCitizenInventory;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;

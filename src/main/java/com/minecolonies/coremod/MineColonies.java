@@ -11,8 +11,8 @@ import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.MinecoloniesAPIImpl;
-import com.minecolonies.coremod.client.gui.WindowGuiCrafting;
-import com.minecolonies.coremod.client.gui.WindowGuiFurnaceCrafting;
+import com.minecolonies.coremod.inventory.gui.WindowGuiCrafting;
+import com.minecolonies.coremod.inventory.gui.WindowGuiFurnaceCrafting;
 import com.minecolonies.coremod.client.render.EmptyTileEntitySpecialRenderer;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.client.render.RenderFishHook;
@@ -36,8 +36,8 @@ import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.event.*;
-import com.minecolonies.coremod.inventory.GuiField;
-import com.minecolonies.coremod.inventory.GuiRack;
+import com.minecolonies.coremod.inventory.gui.GuiField;
+import com.minecolonies.coremod.inventory.gui.GuiRack;
 import com.minecolonies.coremod.inventory.ModContainers;
 import com.minecolonies.coremod.placementhandlers.MinecoloniesPlacementHandlers;
 import com.minecolonies.coremod.proxy.ClientProxy;
@@ -138,16 +138,8 @@ public class MineColonies
 
     //todo this here stays!
     @SubscribeEvent
-    private void doClientStuff(final FMLClientSetupEvent event)
+    public static void doClientStuff(final FMLClientSetupEvent event)
     {
-        ScreenManager.registerFactory(ModContainers.craftingFurnace, WindowGuiFurnaceCrafting::new);
-        ScreenManager.registerFactory(ModContainers.craftingGrid, WindowGuiCrafting::new);
-
-        ScreenManager.registerFactory(ModContainers.buildingInv, ChestScreen::new);
-        ScreenManager.registerFactory(ModContainers.citizenInv, ChestScreen::new);
-        ScreenManager.registerFactory(ModContainers.rackInv, GuiRack::new);
-        ScreenManager.registerFactory(ModContainers.field, GuiField::new);
-        
         RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, RenderBipedCitizen::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityFishHook.class, RenderFishHook::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityBarbarian.class, RendererBarbarian::new);

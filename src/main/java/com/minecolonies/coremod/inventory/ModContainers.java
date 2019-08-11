@@ -1,11 +1,19 @@
 package com.minecolonies.coremod.inventory;
 
 import com.ldtteam.structurize.api.util.constant.Constants;
+import com.minecolonies.coremod.inventory.container.*;
+import com.minecolonies.coremod.inventory.gui.GuiField;
+import com.minecolonies.coremod.inventory.gui.GuiRack;
+import com.minecolonies.coremod.inventory.gui.WindowGuiCrafting;
+import com.minecolonies.coremod.inventory.gui.WindowGuiFurnaceCrafting;
+import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.gui.screen.inventory.ChestScreen;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(Constants.MOD_ID)
@@ -41,5 +49,17 @@ public class ModContainers
         field = IForgeContainerType.create(GuiField::new).setRegistryName("field");
 
         event.getRegistry().registerAll(craftingFurnace, buildingInv, citizenInv, rackInv, craftingGrid, field);
+    }
+
+    @SubscribeEvent
+    public static void doClientStuff(final FMLClientSetupEvent event)
+    {
+        ScreenManager.registerFactory(ModContainers.craftingFurnace, WindowGuiFurnaceCrafting::new);
+        ScreenManager.registerFactory(ModContainers.craftingGrid, WindowGuiCrafting::new);
+
+        ScreenManager.registerFactory(ModContainers.buildingInv, ChestScreen::new);
+        ScreenManager.registerFactory(ModContainers.citizenInv, ChestScreen::new);
+        ScreenManager.registerFactory(ModContainers.rackInv, GuiRack::new);
+        ScreenManager.registerFactory(ModContainers.field, GuiField::new);
     }
 }

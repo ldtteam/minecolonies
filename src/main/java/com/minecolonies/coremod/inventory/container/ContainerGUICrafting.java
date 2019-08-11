@@ -1,6 +1,7 @@
-package com.minecolonies.coremod.inventory;
+package com.minecolonies.coremod.inventory.container;
 
 import com.ldtteam.structurize.api.util.ItemStackUtils;
+import com.minecolonies.coremod.inventory.ModContainers;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
