@@ -71,7 +71,7 @@ public class MineColonies
     /**
      * Our mod logger.
      */
-    private static final Logger logger = LogManager.getLogger(com.ldtteam.structurize.api.util.constant.Constants.MOD_ID);
+    private static final Logger logger = LogManager.getLogger(Constants.MOD_ID);
 
     /**
      * The config instance.
@@ -123,7 +123,7 @@ public class MineColonies
     @SubscribeEvent
     public static void onLoadComplete(final FMLLoadCompleteEvent event)
     {
-        Structurize.getLogger().warn("FMLLoadCompleteEvent");
+        logger.warn("FMLLoadCompleteEvent");
         LanguageHandler.setMClanguageLoaded();
         MinecoloniesPlacementHandlers.initHandlers();
         RecipeHandler.init(MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get(), MineColonies.getConfig().getCommon().supplyChests.get());
