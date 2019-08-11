@@ -30,12 +30,12 @@ public class ContainerRack extends Container
     /**
      * The tileEntity.
      */
-    private final AbstractTileEntityRack rack;
+    public final AbstractTileEntityRack rack;
 
     /**
      * The tileEntity.
      */
-    private final AbstractTileEntityRack neighborRack;
+    public final AbstractTileEntityRack neighborRack;
 
     /**
      * Amount of rows.

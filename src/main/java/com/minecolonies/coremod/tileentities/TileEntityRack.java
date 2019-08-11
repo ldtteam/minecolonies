@@ -8,16 +8,24 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
+import com.minecolonies.coremod.inventory.container.ContainerRack;
+import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -510,5 +518,22 @@ public class TileEntityRack extends AbstractTileEntityRack
             this.relativeNeighbor = this.pos.subtract(neighbor);
             markDirty();
         }
+    }
+
+    @Nullable
+    @Override
+    public Container createMenu(final int id, final PlayerInventory inv, final PlayerEntity player)
+    {
+        final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+        buffer.writeBlockPos(this.getPos());
+        buffer.writeBlockPos(this.getOtherChest() == null ? BlockPos.ZERO : this.getOtherChest().getPos());
+
+        return new ContainerRack(id, inv, buffer);
+    }
+
+    @Override
+    public ITextComponent getDisplayName()
+    {
+        return new StringTextComponent("Rack");
     }
 }
