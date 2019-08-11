@@ -2,7 +2,7 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.inventory.container.ContainerGUICrafting;
+import com.minecolonies.coremod.inventory.container.ContainerCrafting;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.item.ItemStack;
@@ -82,9 +82,9 @@ public class TransferRecipeCrafingTeachingMessage implements IMessage
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
         final PlayerEntity player = ctxIn.getSender();
-        if (player.openContainer instanceof ContainerGUICrafting)
+        if (player.openContainer instanceof ContainerCrafting)
         {
-            final ContainerGUICrafting container = (ContainerGUICrafting) player.openContainer;
+            final ContainerCrafting container = (ContainerCrafting) player.openContainer;
 
             if(complete)
             {

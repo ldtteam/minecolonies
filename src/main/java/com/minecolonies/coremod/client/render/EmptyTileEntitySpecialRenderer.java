@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.client.render;
 
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 
 /**

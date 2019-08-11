@@ -26,7 +26,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
@@ -61,7 +61,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

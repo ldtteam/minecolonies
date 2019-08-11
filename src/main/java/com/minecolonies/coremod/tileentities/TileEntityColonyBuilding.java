@@ -1,4 +1,4 @@
-package com.minecolonies.api.tileentities;
+package com.minecolonies.coremod.tileentities;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.AbstractBlockHut;
@@ -9,13 +9,21 @@ import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.AbstractTileEntityRack;
+import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.inventory.container.ContainerBuildingInventory;
+import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -476,5 +484,16 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
             return LazyOptional.of(() -> (T) this.combinedInv);
         }
         return super.getCapability(capability);
+    }
+
+   @Nullable
+    @Override
+    public Container createMenu(
+      final int id, final PlayerInventory inv, final PlayerEntity player)
+    {
+        final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+        buffer.writeInt(colonyId);
+        buffer.writeBlockPos(getPos());
+        return new ContainerBuildingInventory(id, inv, buffer);
     }
 }

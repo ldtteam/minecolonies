@@ -21,7 +21,7 @@ import static com.minecolonies.api.util.constant.InventoryConstants.*;
 /**
  * Crafting container for the recipe teaching of furnace recipes.
  */
-public class ContainerGUICraftingFurnace extends AbstractFurnaceContainer
+public class ContainerCraftingFurnace extends AbstractFurnaceContainer
 {
     /**
      * The furnace inventory.
@@ -44,7 +44,7 @@ public class ContainerGUICraftingFurnace extends AbstractFurnaceContainer
      * @param inv the player inventory.
      * @param extra extra data.
      */
-    public ContainerGUICraftingFurnace(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
+    public ContainerCraftingFurnace(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
     {
         super(ModContainers.craftingFurnace, IRecipeType.SMELTING, windowId, inv);
         this.furnaceInventory = new FurnaceTileEntity();
@@ -244,5 +244,14 @@ public class ContainerGUICraftingFurnace extends AbstractFurnaceContainer
     public boolean canMergeSlot(final ItemStack stack, final Slot slotIn)
     {
         return !(slotIn instanceof FurnaceResultSlot) && super.canMergeSlot(stack, slotIn);
+    }
+
+    /**
+     * Get the position of the container.
+     * @return the position.
+     */
+    public BlockPos getPos()
+    {
+        return buildingPos;
     }
 }

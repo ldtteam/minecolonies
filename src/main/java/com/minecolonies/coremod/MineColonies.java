@@ -8,11 +8,9 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.MinecoloniesAPIImpl;
-import com.minecolonies.coremod.inventory.gui.WindowGuiCrafting;
-import com.minecolonies.coremod.inventory.gui.WindowGuiFurnaceCrafting;
 import com.minecolonies.coremod.client.render.EmptyTileEntitySpecialRenderer;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.client.render.RenderFishHook;
@@ -36,17 +34,12 @@ import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.event.*;
-import com.minecolonies.coremod.inventory.gui.GuiField;
-import com.minecolonies.coremod.inventory.gui.GuiRack;
-import com.minecolonies.coremod.inventory.ModContainers;
 import com.minecolonies.coremod.placementhandlers.MinecoloniesPlacementHandlers;
 import com.minecolonies.coremod.proxy.ClientProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.RecipeHandler;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.gui.screen.inventory.ChestScreen;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -83,7 +76,7 @@ public class MineColonies
     /**
      * The config instance.
      */
-    private static final Configuration config = new Configuration(ModLoadingContext.get().getActiveContainer());
+    private static Configuration config;
 
     /**
      * The proxy.
@@ -99,6 +92,7 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DebugRendererChunkBorder.class);
 
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(this.getClass());
+        config = new Configuration(ModLoadingContext.get().getActiveContainer());
     }
 
     /**

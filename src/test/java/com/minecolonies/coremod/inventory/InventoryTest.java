@@ -7,6 +7,7 @@ import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.test.AbstractMockStaticsTest;
+import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

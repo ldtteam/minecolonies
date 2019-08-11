@@ -3,7 +3,6 @@ package com.minecolonies.api.tileentities;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

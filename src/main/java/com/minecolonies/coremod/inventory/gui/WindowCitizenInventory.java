@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.inventory.gui;
 
-import com.minecolonies.coremod.inventory.container.ContainerMinecoloniesCitizenInventory;
+import com.minecolonies.coremod.inventory.container.ContainerCitizenInventory;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -11,7 +11,7 @@ import net.minecraft.util.ResourceLocation;
 /**
  * ------------ Class not Documented ------------
  */
-public class GuiMinecoloniesCitizenInventory extends ContainerScreen
+public class WindowCitizenInventory extends ContainerScreen
 {
     /**
      * The ResourceLocation containing the chest GUI texture.
@@ -24,7 +24,7 @@ public class GuiMinecoloniesCitizenInventory extends ContainerScreen
      */
     private final int        inventoryRows;
 
-    public GuiMinecoloniesCitizenInventory(final ContainerMinecoloniesCitizenInventory containerMinecoloniesBuildingInventory)
+    public WindowCitizenInventory(final ContainerCitizenInventory containerMinecoloniesBuildingInventory)
     {
         super(containerMinecoloniesBuildingInventory);
         this.upperChestInventory = containerMinecoloniesBuildingInventory.getPlayerInventory();

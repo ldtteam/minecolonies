@@ -6,7 +6,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.inventory.container.ContainerGUICrafting;
+import com.minecolonies.coremod.inventory.container.ContainerCrafting;
 import com.minecolonies.coremod.network.messages.TransferRecipeCrafingTeachingMessage;
 import io.netty.buffer.Unpooled;
 import mezz.jei.api.gui.IRecipeLayout;
@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHandler<ContainerGUICrafting>
+public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCrafting>
 {
     private final IRecipeTransferHandlerHelper handlerHelper;
 
@@ -40,15 +40,15 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
     }
 
     @Override
-    public Class<ContainerGUICrafting> getContainerClass()
+    public Class<ContainerCrafting> getContainerClass()
     {
-        return ContainerGUICrafting.class;
+        return ContainerCrafting.class;
     }
 
     @Nullable
     @Override
     public IRecipeTransferError transferRecipe(
-            final ContainerGUICrafting craftingGUIBuilding,
+            final ContainerCrafting craftingGUIBuilding,
             final IRecipeLayout recipeLayout,
             final PlayerEntity player,
             final boolean b,

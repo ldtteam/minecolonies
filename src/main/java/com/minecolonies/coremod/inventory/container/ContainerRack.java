@@ -2,16 +2,18 @@ package com.minecolonies.coremod.inventory.container;
 
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.inventory.ModContainers;
+import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
 
@@ -41,17 +43,20 @@ public class ContainerRack extends Container
     private final int inventorySize;
 
     /**
-     * Creates an instance of our field container, this may be serve to open the GUI.
-     *
-     * @param abstractTileEntityRack  the tileEntity of the field containing the inventory.
-     * @param neighborRack    the neighboring rack.
-     * @param playerInventory the player inventory.
+     * The container constructor.
+     * @param windowId the window id.
+     * @param inv the inventory.
+     * @param extra some extra data.
      */
-    public ContainerRack(
-                          @NotNull final AbstractTileEntityRack abstractTileEntityRack, @Nullable final AbstractTileEntityRack neighborRack,
-                          final PlayerInventory playerInventory)
+    public ContainerRack(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
     {
-        super();
+        super(ModContainers.rackInv, windowId);
+        final BlockPos rack = extra.readBlockPos();
+        final BlockPos neighbor = extra.readBlockPos();
+
+        final TileEntityRack abstractTileEntityRack = (TileEntityRack) inv.player.world.getTileEntity(rack);
+        final TileEntityRack neighborRack = (TileEntityRack) inv.player.world.getTileEntity(neighbor);
+
         if (neighborRack != null)
         {
             if (abstractTileEntityRack.isMain())
@@ -100,7 +105,7 @@ public class ContainerRack extends Container
             for (int j = 0; j < INVENTORY_COLUMNS; j++)
             {
                 addSlot(new Slot(
-                                             playerInventory,
+                  inv,
                                              j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
                                              PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
                                              PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
@@ -112,7 +117,7 @@ public class ContainerRack extends Container
         for (i = 0; i < INVENTORY_COLUMNS; i++)
         {
             addSlot(new Slot(
-                                         playerInventory, i,
+              inv, i,
                                          PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
                                          PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
                                            INVENTORY_BAR_SIZE)
