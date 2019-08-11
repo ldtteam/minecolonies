@@ -3,7 +3,7 @@ package com.minecolonies.api.util;
 import net.minecraft.block.Blocks;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +30,7 @@ public final class Pond
      * @param water the coordinates to check.
      * @return a Pond object if the pond is valid, else null.
      */
-    public static Pond createWater(@NotNull final IWorld world, @NotNull final BlockPos water)
+    public static Pond createWater(@NotNull final IWorldReader world, @NotNull final BlockPos water)
     {
         if (checkWater(world, water, WATER_POOL_WIDTH_REQUIREMENT, WATER_POOL_LENGTH_REQUIREMENT))
         {
@@ -41,13 +41,12 @@ public final class Pond
 
     /**
      * Checks if on position "water" really is water, if the water is connected to land and if the pond is big enough ( > 20).
-     *
-     * @param world The world the player is in.
+     *  @param world The world the player is in.
      * @param water The coordinate to check.
      * @param width which has to be water.
      * @param length which has to be water.
      */
-    public static boolean checkWater(@NotNull final IWorld world, @NotNull final BlockPos water, final int width, final int length)
+    public static boolean checkWater(@NotNull final IWorldReader world, @NotNull final BlockPos water, final int width, final int length)
     {
         if (world.getBlockState(water).getBlock() != Blocks.WATER || !world.isAirBlock(water.up()))
         {
@@ -79,7 +78,7 @@ public final class Pond
      * @return true if all blocks are water, else false.
      */
     private static boolean checkWaterPoolInDirectionXThenZ(
-      @NotNull final IWorld world,
+      @NotNull final IWorldReader world,
       final int x,
       final int y,
       final int z,
@@ -114,7 +113,7 @@ public final class Pond
      * @return true if all blocks are water, else false.
      */
     private static boolean checkWaterPoolInDirectionZThenX(
-      @NotNull final IWorld world,
+      @NotNull final IWorldReader world,
       final int x,
       final int y,
       final int z,
@@ -145,7 +144,7 @@ public final class Pond
      * @param vector direction.
      * @return true if all blocks are water, else false.
      */
-    private static boolean checkWaterPoolInDirectionZ(@NotNull final IWorld world, final int x, final int y, final int z, final int vector)
+    private static boolean checkWaterPoolInDirectionZ(@NotNull final IWorldReader world, final int x, final int y, final int z, final int vector)
     {
         //Check 3 blocks in direction +/- z
         for (int dz = z + WATER_POOL_LENGTH_REQUIREMENT * vector; dz <= z + WATER_POOL_LENGTH_REQUIREMENT * vector; dz++)
@@ -168,7 +167,7 @@ public final class Pond
      * @param vector direction.
      * @return true if all blocks are water, else false.
      */
-    private static boolean checkWaterPoolInDirectionX(@NotNull final IWorld world, final int x, final int y, final int z, final int vector)
+    private static boolean checkWaterPoolInDirectionX(@NotNull final IWorldReader world, final int x, final int y, final int z, final int vector)
     {
         //Check 3 blocks in direction +/- x
         for (int dx = x + WATER_POOL_LENGTH_REQUIREMENT * vector; dx <= x + WATER_POOL_LENGTH_REQUIREMENT * vector; dx++)
