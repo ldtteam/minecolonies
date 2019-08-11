@@ -45,7 +45,7 @@ public class ContainerGUICraftingFurnace extends AbstractFurnaceContainer
      */
     public ContainerGUICraftingFurnace(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
     {
-        super(MinecoloniesContainers.craftingFurnace, IRecipeType.SMELTING, windowId, inv);
+        super(ModContainers.craftingFurnace, IRecipeType.SMELTING, windowId, inv);
         this.furnaceInventory = new FurnaceTileEntity();
         this.playerInventory = inv;
         buildingPos = extra.readBlockPos();

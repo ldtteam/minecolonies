@@ -36,7 +36,9 @@ import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.event.*;
-import com.minecolonies.coremod.inventory.MinecoloniesContainers;
+import com.minecolonies.coremod.inventory.GuiField;
+import com.minecolonies.coremod.inventory.GuiRack;
+import com.minecolonies.coremod.inventory.ModContainers;
 import com.minecolonies.coremod.placementhandlers.MinecoloniesPlacementHandlers;
 import com.minecolonies.coremod.proxy.ClientProxy;
 import com.minecolonies.coremod.proxy.IProxy;
@@ -44,6 +46,7 @@ import com.minecolonies.coremod.proxy.ServerProxy;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.RecipeHandler;
 import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.gui.screen.inventory.ChestScreen;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -137,9 +140,14 @@ public class MineColonies
     @SubscribeEvent
     private void doClientStuff(final FMLClientSetupEvent event)
     {
-        ScreenManager.registerFactory(MinecoloniesContainers.craftingFurnace, WindowGuiFurnaceCrafting::new);
-        ScreenManager.registerFactory(MinecoloniesContainers.craftingGrid, WindowGuiCrafting::new);
+        ScreenManager.registerFactory(ModContainers.craftingFurnace, WindowGuiFurnaceCrafting::new);
+        ScreenManager.registerFactory(ModContainers.craftingGrid, WindowGuiCrafting::new);
 
+        ScreenManager.registerFactory(ModContainers.buildingInv, ChestScreen::new);
+        ScreenManager.registerFactory(ModContainers.citizenInv, ChestScreen::new);
+        ScreenManager.registerFactory(ModContainers.rackInv, GuiRack::new);
+        ScreenManager.registerFactory(ModContainers.field, GuiField::new);
+        
         RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, RenderBipedCitizen::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityFishHook.class, RenderFishHook::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityBarbarian.class, RendererBarbarian::new);
