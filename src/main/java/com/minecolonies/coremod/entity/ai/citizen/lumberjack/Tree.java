@@ -21,21 +21,19 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.event.world.SaplingGrowTreeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import static com.minecolonies.api.compatibility.CompatibilityManager.DYN_PROP_HYDRO;
-import static com.minecolonies.api.util.constant.Constants.SAPLINGS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -293,7 +291,7 @@ public class Tree
      * @param treesToNotCut the trees the lumberjack is not supposed to cut.
      * @return true if the log is part of a tree.
      */
-    public static boolean checkTree(@NotNull final IWorld world, final BlockPos pos, final List<ItemStorage> treesToNotCut)
+    public static boolean checkTree(@NotNull final IWorldReader world, final BlockPos pos, final List<ItemStorage> treesToNotCut)
     {
 
         //Is the first block a log?
@@ -332,7 +330,7 @@ public class Tree
      */
     @NotNull
     private static Tuple<BlockPos, BlockPos> getBottomAndTopLog(
-      @NotNull final IWorld world,
+      @NotNull final IWorldReader world,
       @NotNull final BlockPos log,
       @NotNull final LinkedList<BlockPos> woodenBlocks,
       final BlockPos bottomLog,
@@ -384,7 +382,7 @@ public class Tree
      * @param treesToNotCut the trees the lj is not supposed to cut.
      * @return true if so.
      */
-    private static boolean hasEnoughLeavesAndIsSupposedToCut(@NotNull final IWorld world, final BlockPos pos, final List<ItemStorage> treesToNotCut)
+    private static boolean hasEnoughLeavesAndIsSupposedToCut(@NotNull final IWorldReader world, final BlockPos pos, final List<ItemStorage> treesToNotCut)
     {
         boolean checkedLeaves = false;
         int leafCount = 0;
@@ -431,7 +429,7 @@ public class Tree
      * @param leafPos       the position a leaf is at.
      * @return false if not.
      */
-    private static boolean supposedToCut(final IWorld world, final List<ItemStorage> treesToNotCut, final BlockPos leafPos)
+    private static boolean supposedToCut(final IWorldReader world, final List<ItemStorage> treesToNotCut, final BlockPos leafPos)
     {
         final ItemStack sap = IColonyManager.getInstance().getCompatibilityManager().getSaplingForLeaf(world.getBlockState(leafPos));
 

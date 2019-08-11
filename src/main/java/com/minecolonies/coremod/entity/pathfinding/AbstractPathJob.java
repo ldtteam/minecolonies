@@ -19,6 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -99,7 +100,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     @NotNull
     protected final  BlockPos           start;
     @NotNull
-    protected final  IWorld             world;
+    protected final  IWorldReader       world;
     protected final  PathResult         result;
     private final    int                maxRange;
     private final    Queue<Node>        nodesOpen                    = new PriorityQueue<>(500);
@@ -235,12 +236,11 @@ public abstract class AbstractPathJob implements Callable<Path>
 
     /**
      * Sets the direction where the ladder is facing.
-     *
-     * @param world the world in.
+     *  @param world the world in.
      * @param pos   the position.
      * @param p     the path.
      */
-    private static void setLadderFacing(@NotNull final IWorld world, final BlockPos pos, @NotNull final PathPointExtended p)
+    private static void setLadderFacing(@NotNull final IWorldReader world, final BlockPos pos, @NotNull final PathPointExtended p)
     {
         final BlockState state = world.getBlockState(pos);
         if (state.getBlock() instanceof VineBlock)
@@ -348,7 +348,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return node != null && node.isClosed();
     }
 
-    private static boolean calculateSwimming(@NotNull final IWorld world, @NotNull final BlockPos pos, @Nullable final Node node)
+    private static boolean calculateSwimming(@NotNull final IWorldReader world, @NotNull final BlockPos pos, @Nullable final Node node)
     {
         return (node == null) ? world.getBlockState(pos.down()).getMaterial().isLiquid() : node.isSwimming();
     }
