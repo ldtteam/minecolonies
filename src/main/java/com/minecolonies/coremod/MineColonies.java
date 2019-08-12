@@ -52,11 +52,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-@Mod(com.ldtteam.structurize.api.util.constant.Constants.MOD_ID)
+@Mod(Constants.MOD_ID)
 public class MineColonies
 {
     @CapabilityInject(IColonyTagCapability.class)
@@ -92,7 +93,6 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DebugRendererChunkBorder.class);
 
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(this.getClass());
-        config = new Configuration(ModLoadingContext.get().getActiveContainer());
     }
 
     /**
@@ -124,9 +124,12 @@ public class MineColonies
     public static void onLoadComplete(final FMLLoadCompleteEvent event)
     {
         logger.warn("FMLLoadCompleteEvent");
+        config = new Configuration(ModLoadingContext.get().getActiveContainer());
+
+        config.load();
         LanguageHandler.setMClanguageLoaded();
         MinecoloniesPlacementHandlers.initHandlers();
-        RecipeHandler.init(MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get(), MineColonies.getConfig().getCommon().supplyChests.get());
+        //RecipeHandler.init(MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get(), MineColonies.getConfig().getCommon().supplyChests.get());
         RequestSystemInitializer.onPostInit();
     }
 

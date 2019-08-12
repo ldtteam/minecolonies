@@ -1,9 +1,15 @@
 package com.minecolonies.api.configuration;
 
+import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.io.WritingMode;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.commons.lang3.tuple.Pair;
+
+import java.nio.file.Path;
 
 /**
  * Mod root configuration.
@@ -45,6 +51,37 @@ public class Configuration
         modContainer.addConfig(common);
         modContainer.addConfig(client);
         modContainer.addConfig(server);
+    }
+
+    /**
+     * Correctly load the config.
+     */
+    public void load()
+    {
+        Configuration.loadConfig(
+          common.getSpec(),
+          FMLPaths.CONFIGDIR.get().resolve(Constants.MOD_ID + "-client.toml")
+        );
+        Configuration.loadConfig(
+          client.getSpec(),
+          FMLPaths.CONFIGDIR.get().resolve(Constants.MOD_ID + "-common.toml")
+        );
+
+        Configuration.loadConfig(
+          server.getSpec(),
+          FMLPaths.CONFIGDIR.get().resolve(Constants.MOD_ID + "-common.toml")
+        );
+    }
+
+    private static void loadConfig(final ForgeConfigSpec forgeConfigSpec, final Path path) {
+        final CommentedFileConfig commentedFileConfig = CommentedFileConfig.builder(path)
+                                                          .sync()
+                                                          .autosave()
+                                                          .writingMode(WritingMode.REPLACE)
+                                                          .build();
+
+        commentedFileConfig.load();
+        forgeConfigSpec.setConfig(commentedFileConfig);
     }
 
     public CommonConfiguration getCommon()
