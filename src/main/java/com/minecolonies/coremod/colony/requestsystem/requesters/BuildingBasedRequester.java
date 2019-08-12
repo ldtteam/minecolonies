@@ -71,22 +71,22 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
     }
 
     @Override
-    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        getBuilding(manager, token).ifPresent(requester -> requester.onRequestComplete(manager, token));
+        getBuilding(manager, token).ifPresent(requester -> requester.onRequestedRequestComplete(manager, token));
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        getBuilding(manager, token).ifPresent(requester -> requester.onRequestCancelled(manager, token));
+        getBuilding(manager, token).ifPresent(requester -> requester.onRequestedRequestCancelled(manager, token));
     }
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        return getBuilding(manager, token).map(requester -> requester.getDisplayName(manager, token)).orElseGet(() -> new TextComponentString("<UNKNOWN>"));
+        return getBuilding(manager, token).map(requester -> requester.getRequesterDisplayName(manager, token)).orElseGet(() -> new TextComponentString("<UNKNOWN>"));
     }
 
     @Override

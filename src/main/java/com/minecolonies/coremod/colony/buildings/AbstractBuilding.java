@@ -1257,7 +1257,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         final IRequest<?> request = manager.getRequestForToken(token);
 
@@ -1287,7 +1287,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         final IRequest<?> request = manager.getRequestForToken(token);
 
@@ -1318,7 +1318,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         final IRequest<?> request = manager.getRequestForToken(token);
 

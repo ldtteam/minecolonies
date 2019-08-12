@@ -67,16 +67,30 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest requestToCheck)
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken token)
+    {
+        /**
+         * Nothing to do here right now.
+         */
+    }
+
+    @Override
+    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest requestToCheck)
     {
         return !manager.getColony().getWorld().isRemote;
     }
 
+    @Override
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken token)
+    {
+
+    }
+
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest request)
+    public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest request)
     {
-        if (canResolve(manager, request))
+        if (canResolveRequest(manager, request))
         {
             return Lists.newArrayList();
         }
@@ -84,8 +98,15 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
         return null;
     }
 
+    @NotNull
     @Override
-    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest request) throws RuntimeException
+    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken token)
+    {
+        return new TextComponentString("Player");
+    }
+
+    @Override
+    public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest request) throws RuntimeException
     {
         final IColony colony = manager.getColony();
         if (colony instanceof Colony)
@@ -134,13 +155,13 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                         players.remove(owner);
 
                         LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
-                          request.getRequester().getDisplayName(manager, request.getId()).getFormattedText(),
+                          request.getRequester().getRequesterDisplayName(manager, request.getId()).getFormattedText(),
                           getRequestMessage(request).getFormattedText(),
                           request.getRequester().getLocation().toString()
                         );
                     }
                     LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
-                      colonyDescription.getFormattedText() + " " + request.getRequester().getDisplayName(manager, request.getId()).getFormattedText(),
+                      colonyDescription.getFormattedText() + " " + request.getRequester().getRequesterDisplayName(manager, request.getId()).getFormattedText(),
                       getRequestMessage(request).getFormattedText(),
                       request.getRequester().getLocation().toString());
                 }
@@ -170,7 +191,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
     @Nullable
     @Override
-    public IRequest<?> onRequestCancelled(
+    public IRequest<?> onAssignedRequestBeingCancelled(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRequestable> request)
     {
         getFollowupRequestForCompletion(manager, request);
@@ -201,27 +222,6 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     public ILocation getLocation()
     {
         return location;
-    }
-
-    @Override
-    public void onRequestComplete(@NotNull final IRequestManager manager,@NotNull final IToken token)
-    {
-        /**
-         * Nothing to do here right now.
-         */
-    }
-
-    @Override
-    public void onRequestCancelled(@NotNull final IRequestManager manager,@NotNull final IToken token)
-    {
-
-    }
-
-    @NotNull
-    @Override
-    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken token)
-    {
-        return new TextComponentString("Player");
     }
 
     @Override

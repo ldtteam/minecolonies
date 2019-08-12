@@ -30,7 +30,7 @@ public abstract class AbstractBuildingDependentRequestResolver<R extends IReques
     }
 
     @Override
-    public boolean canResolve(
+    public boolean canResolveRequest(
       @NotNull final IRequestManager manager, final IRequest<? extends R> requestToCheck)
     {
         if (!manager.getColony().getWorld().isRemote)
@@ -68,7 +68,7 @@ public abstract class AbstractBuildingDependentRequestResolver<R extends IReques
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolve(
+    public List<IToken<?>> attemptResolveRequest(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
     {
         final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
@@ -80,7 +80,7 @@ public abstract class AbstractBuildingDependentRequestResolver<R extends IReques
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request, @NotNull final AbstractBuilding building);
 
     @Override
-    public void resolve(
+    public void resolveRequest(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
     {
         final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();

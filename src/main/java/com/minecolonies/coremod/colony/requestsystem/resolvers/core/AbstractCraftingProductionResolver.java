@@ -66,7 +66,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     }
 
     @Override
-    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends C> requestToCheck)
+    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends C> requestToCheck)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
@@ -79,7 +79,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request)
+    public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request)
     {
         final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
         return attemptResolveForBuilding(manager, request, building);
@@ -147,6 +147,22 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
         return manager.createRequest(this, new Stack(stack.copy()));
     }
 
+    @Override
+    public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request)
+    {
+        final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
+        resolveForBuilding(manager, request, building);
+    }
+
+    protected void onAssignedToThisResolverForBuilding(
+      @NotNull final IRequestManager manager,
+      @NotNull final IRequest<? extends C> request,
+      final boolean simulation,
+      @NotNull final AbstractBuilding building)
+    {
+        //Noop
+    }
+
     /**
      * Called by the manager given to indicate that this request has been assigned to you.
      *
@@ -155,22 +171,10 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
      * @param simulation True when simulating.
      */
     @Override
-    public void onAssignedToThisResolver(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, final boolean simulation)
+    public void onRequestAssigned(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, final boolean simulation)
     {
         final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
         onAssignedToThisResolverForBuilding(manager, request, simulation, building);
-    }
-
-    protected void onAssignedToThisResolverForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, final boolean simulation, @NotNull final AbstractBuilding building)
-    {
-        //Noop
-    }
-
-    @Override
-    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request)
-    {
-        final AbstractBuilding building = getBuilding(manager, request.getId()).map(r -> (AbstractBuilding) r).get();
-        resolveForBuilding(manager, request, building);
     }
 
     /**

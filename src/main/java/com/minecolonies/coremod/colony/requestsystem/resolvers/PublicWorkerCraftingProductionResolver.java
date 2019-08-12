@@ -71,9 +71,16 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         return null;
     }
 
+    @Override
+    public void onRequestBeingOverruled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request)
+    {
+        this.onAssignedRequestBeingCancelled(manager, request);
+    }
+
     @Nullable
     @Override
-    public IRequest<?> onRequestCancelled(
+    public IRequest<?> onAssignedRequestBeingCancelled(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request)
     {
         if (!manager.getColony().getWorld().isRemote)
@@ -99,25 +106,18 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         return null;
     }
 
-    @Override
-    public void onRequestBeingOverruled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends PublicCrafting> request)
-    {
-        this.onRequestCancelled(manager, request);
-    }
-
     @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         //Nice!
     }
 
     @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        this.onRequestCancelled(manager, (IRequest<? extends PublicCrafting>) Objects.requireNonNull(manager.getRequestForToken(token)));
+        this.onAssignedRequestBeingCancelled(manager, (IRequest<? extends PublicCrafting>) Objects.requireNonNull(manager.getRequestForToken(token)));
     }
 
     @Override
@@ -147,7 +147,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
         if (freeCrafter == null)
         {
-            onRequestCancelled(manager, request);
+            onAssignedRequestBeingCancelled(manager, request);
             return;
         }
 
@@ -171,7 +171,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
         if (freeCrafter == null)
         {
-            onRequestCancelled(manager, request);
+            onAssignedRequestBeingCancelled(manager, request);
             return;
         }
 
