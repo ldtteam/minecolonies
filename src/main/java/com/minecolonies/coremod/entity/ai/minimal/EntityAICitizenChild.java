@@ -10,7 +10,7 @@ import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
-import com.ldtteam.structurize.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;

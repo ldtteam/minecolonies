@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.workorders;
 
-import com.ldtteam.structurize.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.minecolonies.api.colony.ICitizenData;

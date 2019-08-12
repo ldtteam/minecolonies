@@ -1,6 +1,6 @@
 package com.minecolonies.api.util;
 
-import com.ldtteam.structurize.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.network.PacketBuffer;
