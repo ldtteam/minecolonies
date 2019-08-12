@@ -199,7 +199,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
         citizens = colony.getCitizens().values().stream()
                      .filter(citizen -> !citizen.isChild())
                      .filter(citizen -> (citizen.getWorkBuilding() == null && !building.hasEnoughWorkers())
-                                          || building.getLocation().equals(citizen.getWorkBuilding())).sorted(Comparator.comparing(ICitizenDataView::getName))
+                                          || building.getPosition().equals(citizen.getWorkBuilding())).sorted(Comparator.comparing(ICitizenDataView::getName))
                      .collect(Collectors.toList());
     }
 
