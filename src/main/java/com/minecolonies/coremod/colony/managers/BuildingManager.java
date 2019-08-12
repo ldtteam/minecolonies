@@ -28,6 +28,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -347,7 +348,7 @@ public class BuildingManager implements IBuildingManager
                 {
                     building.onPlacement();
 
-                    building.setRotation(BlockUtils.getRotationFromFacing(world.getBlockState(building.getPosition()).get(AbstractBlockHut.FACING)));
+                    building.setRotation(getRotationFromFacing(world.getBlockState(building.getPosition()).get(AbstractBlockHut.FACING)));
                     final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
                     final Structure wrapper = new Structure(world, workOrder.getStructureName(), new PlacementSettings());
                     final Tuple<Tuple<Integer, Integer>, Tuple<Integer, Integer>> corners
@@ -378,6 +379,27 @@ public class BuildingManager implements IBuildingManager
             return building;
         }
         return null;
+    }
+
+    /**
+     * Gets a rotation from a block facing.
+     *
+     * @param facing the block facing.
+     * @return the int rotation.
+     */
+    public static int getRotationFromFacing(final Direction facing)
+    {
+        switch (facing)
+        {
+            case SOUTH:
+                return 2;
+            case EAST:
+                return 1;
+            case WEST:
+                return 3;
+            default:
+                return 0;
+        }
     }
 
     @Override

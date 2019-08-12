@@ -114,16 +114,16 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         final Button buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
         if (building.getBuildingLevel() == 0)
         {
-            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.build"));
+            buttonBuild.setLabel(com.ldtteam.structurize.api.util.LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.build"));
             findPaneOfTypeByID(BUTTON_MOVE_BUILDING, Button.class).hide();
         }
         else if (building.getBuildingLevel() == building.getBuildingMaxLevel())
         {
-            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.switchStyle"));
+            buttonBuild.setLabel(com.ldtteam.structurize.api.util.LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.switchStyle"));
         }
         else
         {
-            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.upgrade"));
+            buttonBuild.setLabel(com.ldtteam.structurize.api.util.LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.upgrade"));
         }
     }
 
@@ -178,7 +178,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     private void updateBuilders()
     {
         builders.clear();
-        builders.add(new Tuple<>(LanguageHandler.format("com.minecolonies.coremod.job.Builder") + ":", BlockPos.ZERO));
+        builders.add(new Tuple<>(com.ldtteam.structurize.api.util.LanguageHandler.format("com.minecolonies.coremod.job.Builder") + ":", BlockPos.ZERO));
         builders.addAll(building.getColony().getBuildings().stream()
                           .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty() && !(build instanceof BuildingMiner.View))
                           .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
