@@ -1,6 +1,6 @@
 package com.minecolonies.api.entity.mobs.util;
 
-import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.structurize.api.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.BlockPosUtil;

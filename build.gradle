@@ -58,14 +58,6 @@ sourceSets {
         compileClasspath += compileClasspath += sourceSets.api.output
         compileClasspath += compileClasspath += sourceSets.api.compileClasspath
     }
-    test {
-        java {
-            srcDir 'src/test/java'
-        }
-        resources {
-            srcDir 'src/test/resources'
-        }
-    }
 }
 
 ext.configFile = file "build.properties"

@@ -2,7 +2,7 @@ package com.minecolonies.api.entity.mobs.util;
 
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.structurize.api.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
