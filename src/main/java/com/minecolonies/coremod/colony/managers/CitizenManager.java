@@ -8,7 +8,7 @@ import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.EntityUtils;
-import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.structurize.api.util.LanguageHandler;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;

@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structures.helpers.Structure;
-import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.structurize.api.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;

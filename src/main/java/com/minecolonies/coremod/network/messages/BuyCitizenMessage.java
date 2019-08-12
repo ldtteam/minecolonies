@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.InventoryUtils;
-import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.structurize.api.util.LanguageHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

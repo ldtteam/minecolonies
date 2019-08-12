@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.managers;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ColonyProgressType;
-import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.structurize.api.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.IProgressManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;

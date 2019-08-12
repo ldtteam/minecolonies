@@ -6,7 +6,7 @@ import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.EntityUtils;
-import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.structurize.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
