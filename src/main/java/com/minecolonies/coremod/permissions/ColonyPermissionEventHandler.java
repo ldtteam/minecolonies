@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.permissions.PermissionEvent;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.ldtteam.structurize.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;

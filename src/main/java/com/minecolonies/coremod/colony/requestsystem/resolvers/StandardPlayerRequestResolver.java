@@ -16,7 +16,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestR
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.ldtteam.structurize.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;

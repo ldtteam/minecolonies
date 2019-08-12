@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.structurize.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.controls.Text;
 import com.minecolonies.coremod.Network;

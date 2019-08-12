@@ -7,7 +7,7 @@ import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.ldtteam.structurize.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.ChestTileEntity;

@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
-import com.ldtteam.structurize.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenChatHandler;
 import com.minecolonies.api.util.CompatibilityUtils;

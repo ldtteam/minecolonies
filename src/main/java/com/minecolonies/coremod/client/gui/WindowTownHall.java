@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.ldtteam.structurize.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.Color;

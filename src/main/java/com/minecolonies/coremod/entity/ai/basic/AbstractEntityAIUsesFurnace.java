@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.ldtteam.structurize.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;

@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.ldtteam.structurize.api.util.LanguageHandler;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Label;
