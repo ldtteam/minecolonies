@@ -293,7 +293,8 @@ public abstract class AbstractEntityCitizen extends EntityAgeable implements ICo
             this.pathNavigate = IPathNavigateRegistry.getInstance().getNavigateFor(this);
             this.navigator = pathNavigate;
             this.pathNavigate.setCanSwim(true);
-            this.pathNavigate.setEnterDoors(false);
+            this.pathNavigate.setEnterDoors(true);
+            this.pathNavigate.getNodeProcessor().setCanOpenDoors(true);
         }
         return pathNavigate;
     }
