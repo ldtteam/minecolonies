@@ -50,6 +50,9 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         super(entity, world);
 
         this.nodeProcessor = new WalkNodeProcessor();
+        this.nodeProcessor.setCanEnterDoors(true);
+        this.nodeProcessor.setCanOpenDoors(true);
+        this.nodeProcessor.setCanSwim(true);
     }
 
     /**

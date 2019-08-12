@@ -130,12 +130,12 @@ public class GuardTaskMessage implements IMessage
             @Nullable final AbstractBuildingGuards building = colony.getBuildingManager().getBuilding(buildingId, AbstractBuildingGuards.class);
             if (building != null)
             {
-                building.setAssignManually(assignmentMode);
-                building.setGuardType(IGuardTypeRegistry.getInstance().getValue(job));
-                building.setPatrolManually(patrollingMode);
-                building.setTightGrouping(tightGrouping);
-                building.setRetrieveOnLowHealth(retrieval);
-                building.setTask(GuardTask.values()[task]);
+                building.setGuardType(IGuardTypeRegistry.getInstance().getValue(message.job));
+                building.setAssignManually(message.assignmentMode);
+                building.setPatrolManually(message.patrollingMode);
+                building.setTightGrouping(message.tightGrouping);
+                building.setRetrieveOnLowHealth(message.retrieval);
+                building.setTask(GuardTask.values()[message.task]);
 
                 if (building.getTask().equals(GuardTask.FOLLOW))
                 {
