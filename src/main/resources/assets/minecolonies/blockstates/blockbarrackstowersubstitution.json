@@ -1,22 +1,22 @@
 {
   "variants": {
     "facing=up": {
-      "model": "minecolonies:blockbarrackstowersubstitution"
+      "model": "minecolonies:block/blockbarrackstowersubstitution"
     },
     "facing=east": {
-      "model": "minecolonies:blockbarrackstowersubstitution",
+      "model": "minecolonies:block/blockbarrackstowersubstitution",
       "y": 0
     },
     "facing=south": {
-      "model": "minecolonies:blockbarrackstowersubstitution",
+      "model": "minecolonies:block/blockbarrackstowersubstitution",
       "y": 90
     },
     "facing=west": {
-      "model": "minecolonies:blockbarrackstowersubstitution",
+      "model": "minecolonies:block/blockbarrackstowersubstitution",
       "y": 180
     },
     "facing=north": {
-      "model": "minecolonies:blockbarrackstowersubstitution",
+      "model": "minecolonies:block/blockbarrackstowersubstitution",
       "y": 270
     }
   }

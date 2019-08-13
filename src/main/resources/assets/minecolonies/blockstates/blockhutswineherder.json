@@ -23,10 +23,10 @@
       "y": 270
     },
     "base": [{
-      "model": "minecolonies:blockhutswineherder"
+      "model": "minecolonies:block/blockutswineherder"
     }],
     "overlay": [{
-      "model": "minecolonies:blockhutswineherderitems"
+      "model": "minecolonies:block/blockutswineherderitems"
     }]
   }
 }

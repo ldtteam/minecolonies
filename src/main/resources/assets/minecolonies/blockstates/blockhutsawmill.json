@@ -1,22 +1,22 @@
 {
   "variants": {
     "facing=up": {
-      "model": "minecolonies:blockhutsawmill"
+      "model": "minecolonies:block/blockutsawmill"
     },
     "facing=east": {
-      "model": "minecolonies:blockhutsawmill",
+      "model": "minecolonies:block/blockutsawmill",
       "y": 0
     },
     "facing=south": {
-      "model": "minecolonies:blockhutsawmill",
+      "model": "minecolonies:block/blockutsawmill",
       "y": 90
     },
     "facing=west": {
-      "model": "minecolonies:blockhutsawmill",
+      "model": "minecolonies:block/blockutsawmill",
       "y": 180
     },
     "facing=north": {
-      "model": "minecolonies:blockhutsawmill",
+      "model": "minecolonies:block/blockutsawmill",
       "y": 270
     }
   }

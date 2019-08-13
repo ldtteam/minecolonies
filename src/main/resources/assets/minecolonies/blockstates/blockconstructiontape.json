@@ -8,8 +8,8 @@
       "west": {"y": 270}
     },
     "variant": {
-      "straight":  { "model": "minecolonies:blockconstructiontape" },
-      "corner":  { "model": "minecolonies:blockconstructiontapecorner" }
+      "straight":  { "model": "minecolonies:block/blockconstructiontape" },
+      "corner":  { "model": "minecolonies:block/blockconstructiontapecorner" }
     }
   }
 }

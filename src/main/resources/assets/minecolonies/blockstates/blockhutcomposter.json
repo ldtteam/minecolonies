@@ -1,22 +1,22 @@
 {
   "variants": {
     "facing=up": {
-      "model": "minecolonies:blockhutcomposter"
+      "model": "minecolonies:block/blockutcomposter"
     },
     "facing=east": {
-      "model": "minecolonies:blockhutcomposter",
+      "model": "minecolonies:block/blockutcomposter",
       "y": 0
     },
     "facing=south": {
-      "model": "minecolonies:blockhutcomposter",
+      "model": "minecolonies:block/blockutcomposter",
       "y": 90
     },
     "facing=west": {
-      "model": "minecolonies:blockhutcomposter",
+      "model": "minecolonies:block/blockutcomposter",
       "y": 180
     },
     "facing=north": {
-      "model": "minecolonies:blockhutcomposter",
+      "model": "minecolonies:block/blockutcomposter",
       "y": 270
     }
   }

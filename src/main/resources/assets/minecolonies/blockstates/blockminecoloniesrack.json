@@ -20,19 +20,19 @@
     },
     "variant": {
       "blockrackempty": {
-        "model": "minecolonies:blockrackemptydouble"
+        "model": "minecolonies:block/blockrackemptydouble"
       },
       "blockrackfull": {
-        "model": "minecolonies:blockrackfulldouble"
+        "model": "minecolonies:block/blockrackfulldouble"
       },
       "blockrackemptysingle": {
-        "model": "minecolonies:blockrackempty"
+        "model": "minecolonies:block/blockrackempty"
       },
       "blockrackfullsingle": {
-        "model": "minecolonies:blockrackfull"
+        "model": "minecolonies:block/blockrackfull"
       },
       "blockrackair": {
-        "model": "minecolonies:blockairrack"
+        "model": "minecolonies:block/blockairrack"
       }
     }
   }
