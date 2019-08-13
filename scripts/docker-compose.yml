@@ -1,0 +1,22 @@
+version: '3.1'
+
+services:
+  minecraft-server:
+    image: docker.minecolonies.com/minecraft/forge/test:${build_number}
+    ports:
+      - "${port_number}:25565"
+    deploy:
+      retstart_policy:
+        condition: any
+      replicas: 1
+      placement:
+        constraints:
+          - node.minecraft == ${node_number}
+      labels:
+        - node.minecraft=${node_number}
+        - port=${port_number}
+    volumes:
+      - minecraft-save:/home/server
+
+volumes:
+  minecraft-save:
