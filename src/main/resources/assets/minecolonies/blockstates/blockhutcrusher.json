@@ -1,22 +1,19 @@
 {
   "variants": {
-    "facing=up": {
-      "model": "minecolonies:block/blockutcrusher"
-    },
     "facing=east": {
-      "model": "minecolonies:block/blockutcrusher",
+      "model": "minecolonies:block/blockhutcrusher",
       "y": 90
     },
     "facing=south": {
-      "model": "minecolonies:block/blockutcrusher",
+      "model": "minecolonies:block/blockhutcrusher",
       "y": 180
     },
     "facing=west": {
-      "model": "minecolonies:block/blockutcrusher",
+      "model": "minecolonies:block/blockhutcrusher",
       "y": 270
     },
     "facing=north": {
-      "model": "minecolonies:block/blockutcrusher",
+      "model": "minecolonies:block/blockhutcrusher",
       "y": 0
     }
   }

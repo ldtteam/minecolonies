@@ -3,7 +3,7 @@
   "textures": {
     "0": "blocks/planks_oak",
     "1": "minecolonies:blocks/citizenhut/table",
-    "2": "minecolonies:blocks/citizenhut/drawer(side)",
+    "2": "minecolonies:blocks/citizenhut/drawer_side",
     "3": "blocks/hardened_clay",
     "4": "blocks/hardened_clay_stained_lime",
     "5": "blocks/hardened_clay_stained_red",

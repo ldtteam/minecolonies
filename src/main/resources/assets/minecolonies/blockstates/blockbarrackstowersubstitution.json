@@ -1,8 +1,5 @@
 {
   "variants": {
-    "facing=up": {
-      "model": "minecolonies:block/blockbarrackstowersubstitution"
-    },
     "facing=east": {
       "model": "minecolonies:block/blockbarrackstowersubstitution",
       "y": 0
