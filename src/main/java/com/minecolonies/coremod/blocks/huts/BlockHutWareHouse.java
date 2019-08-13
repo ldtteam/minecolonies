@@ -28,7 +28,7 @@ public class BlockHutWareHouse extends AbstractBlockHut<BlockHutWareHouse>
     @Override
     public String getName()
     {
-        return "blockHutWareHouse";
+        return "blockhutwarehouse";
     }
 
     @Nullable

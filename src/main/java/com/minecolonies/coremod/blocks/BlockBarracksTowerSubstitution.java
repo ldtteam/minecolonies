@@ -33,7 +33,7 @@ public class BlockBarracksTowerSubstitution extends AbstractBlockMinecolonies<Bl
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME = "blockBarracksTowerSubstitution";
+    private static final String BLOCK_NAME = "blockbarrackstowersubstitution";
 
     /**
      * The resistance this block has.

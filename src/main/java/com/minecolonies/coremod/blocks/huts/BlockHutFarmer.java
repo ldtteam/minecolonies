@@ -22,7 +22,7 @@ public class BlockHutFarmer extends AbstractBlockHut<BlockHutFarmer>
     @Override
     public String getName()
     {
-        return "blockHutFarmer";
+        return "blockhutfarmer";
     }
 
     @Override

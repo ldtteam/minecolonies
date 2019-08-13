@@ -15,7 +15,7 @@ public class BlockHutCrusher extends AbstractBlockHut<BlockHutCrusher>
     @Override
     public String getName()
     {
-        return "blockHutCrusher";
+        return "blockhutcrusher";
     }
 
     @Override

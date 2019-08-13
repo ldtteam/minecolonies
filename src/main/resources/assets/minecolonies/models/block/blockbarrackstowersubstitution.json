@@ -6,7 +6,7 @@
     "2": "blocks/wool_colored_white",
     "3": "blocks/stone_andesite_smooth",
     "4": "blocks/iron_block",
-    "5": "minecolonies:blocks/guardPaper",
+    "5": "minecolonies:blocks/guardpaper",
     "particle": "blocks/planks_oak"
   },
   "elements": [

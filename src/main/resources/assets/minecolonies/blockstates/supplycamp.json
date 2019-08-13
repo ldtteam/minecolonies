@@ -1,7 +1,7 @@
 {
   "parent": "builtin/generated",
   "textures": {
-    "layer0": "minecolonies:items/supplyCampDeployer.png"
+    "layer0": "minecolonies:items/supplycampdeployer.png"
   },
   "display": {
     "thirdperson": {

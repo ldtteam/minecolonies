@@ -1,22 +1,22 @@
 {
   "variants": {
     "facing=up": {
-      "model": "minecolonies:blockHutBlacksmith"
+      "model": "minecolonies:blockhutblacksmith"
     },
     "facing=east": {
-      "model": "minecolonies:blockHutBlacksmith",
+      "model": "minecolonies:blockhutblacksmith",
       "y": 0
     },
     "facing=south": {
-      "model": "minecolonies:blockHutBlacksmith",
+      "model": "minecolonies:blockhutblacksmith",
       "y": 90
     },
     "facing=west": {
-      "model": "minecolonies:blockHutBlacksmith",
+      "model": "minecolonies:blockhutblacksmith",
       "y": 180
     },
     "facing=north": {
-      "model": "minecolonies:blockHutBlacksmith",
+      "model": "minecolonies:blockhutblacksmith",
       "y": 270
     }
   }

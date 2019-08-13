@@ -38,7 +38,7 @@ public abstract class AbstractBlockMinecoloniesDefault<B extends AbstractBlockMi
     /**
      * Registry name for this block.
      */
-    public static final String            REGISTRY_NAME    = "blockHutField";
+    public static final String            REGISTRY_NAME    = "blockhutfield";
 
     public AbstractBlockMinecoloniesDefault(final Properties properties)
     {
