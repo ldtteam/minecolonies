@@ -80,23 +80,22 @@ public final class ItemStackUtils
     /**
      * Predicate describing food.
      */
-    public static final Predicate<ItemStack> ISFOOD = itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().isFood();
+    public static Predicate<ItemStack> ISFOOD;
 
     /**
      * Predicate describing things which work in the furnace.
      */
-    public static final Predicate<ItemStack> IS_SMELTABLE = itemStack -> !ItemStackUtils.isEmpty(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(itemStack));
+    public static Predicate<ItemStack> IS_SMELTABLE;
 
     /**
      * Predicate describing food which can be eaten (is not raw).
      */
-    public static final Predicate<ItemStack> CAN_EAT =
-      itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().isFood() && !ISFOOD.test(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(itemStack));
+    public static Predicate<ItemStack> CAN_EAT;
 
     /**
      * Predicate describing cookables.
      */
-    public static final Predicate<ItemStack> ISCOOKABLE = itemStack -> ISFOOD.test(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(itemStack));
+    public static Predicate<ItemStack> ISCOOKABLE;
 
     /**
      * Private constructor to hide the implicit one.

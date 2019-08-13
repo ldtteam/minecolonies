@@ -1,7 +1,6 @@
 package com.minecolonies.coremod;
 
 import com.ldtteam.structurize.Network;
-import com.ldtteam.structurize.Structurize;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.minecolonies.api.MinecoloniesAPIProxy;
@@ -9,6 +8,7 @@ import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.MinecoloniesAPIImpl;
 import com.minecolonies.coremod.client.render.EmptyTileEntitySpecialRenderer;
@@ -39,7 +39,6 @@ import com.minecolonies.coremod.proxy.ClientProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.minecolonies.coremod.util.RecipeHandler;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -52,7 +51,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -93,6 +91,7 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DebugRendererChunkBorder.class);
 
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(this.getClass());
+        config = new Configuration(ModLoadingContext.get().getActiveContainer());
     }
 
     /**
@@ -124,9 +123,6 @@ public class MineColonies
     public static void onLoadComplete(final FMLLoadCompleteEvent event)
     {
         logger.warn("FMLLoadCompleteEvent");
-        config = new Configuration(ModLoadingContext.get().getActiveContainer());
-
-        config.load();
         LanguageHandler.setMClanguageLoaded();
         MinecoloniesPlacementHandlers.initHandlers();
         //RecipeHandler.init(MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get(), MineColonies.getConfig().getCommon().supplyChests.get());

@@ -503,7 +503,7 @@ public class CompatibilityManager implements ICompatibilityManager
                     continue;
                 }
 
-                final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0], split[1]));
+                final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(split[0]));
                 if (item == null || item == Items.AIR)
                 {
                     Log.getLogger().warn("Invalid lucky block: " + ore);
@@ -622,14 +622,13 @@ public class CompatibilityManager implements ICompatibilityManager
                 final String[] item = drop[2].split(":");
                 final Item theItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(item[0], item[1]));
 
-                if (theItem == null)
+                if (theItem == null || theItem == Items.AIR)
                 {
                     Log.getLogger().warn("Couldn't find item for siftable block: " + string);
                     continue;
                 }
 
                 final ItemStack stack = new ItemStack(theItem, 1);
-
                 final double probability = Double.parseDouble(drop[3]);
 
                 final Map<ItemStorage, Map<ItemStorage, Double>> map;

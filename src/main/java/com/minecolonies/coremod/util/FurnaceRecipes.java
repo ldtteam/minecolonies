@@ -1,10 +1,12 @@
 package com.minecolonies.coremod.util;
 
-import com.ldtteam.structurize.api.util.constant.Constants;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.UpdateClientWithRecipesMessage;
 import net.minecraft.block.Blocks;
@@ -17,6 +19,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.registries.ObjectHolder;
 
@@ -57,14 +60,20 @@ public class FurnaceRecipes implements IFurnaceRecipes
     }
 
     @SubscribeEvent
-    public static void onServerStarting(final FMLServerStartedEvent event)
+    public static void onServerStarting(final FMLServerAboutToStartEvent event)
     {
         instance = new FurnaceRecipes();
         instance.loadRecipes(event.getServer());
+
+
+        ItemStackUtils.ISFOOD = itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().isFood();
+        ItemStackUtils.IS_SMELTABLE = itemStack -> !ItemStackUtils.isEmpty(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(itemStack));
+        ItemStackUtils.CAN_EAT = itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().isFood() && !ItemStackUtils.ISFOOD.test(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(itemStack));
+        ItemStackUtils.ISCOOKABLE = itemStack -> ItemStackUtils.ISFOOD.test(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(itemStack));
     }
 
     @SubscribeEvent
-    public static void onServerStarting(final PlayerEvent.PlayerLoggedInEvent event)
+    public static void onPlayerLogin(final PlayerEvent.PlayerLoggedInEvent event)
     {
         if (!event.getPlayer().world.isRemote)
         {
