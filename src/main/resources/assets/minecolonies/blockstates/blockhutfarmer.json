@@ -1,22 +1,22 @@
 {
   "variants": {
     "facing=up": {
-      "model": "minecolonies:blockhutfarmer"
+      "model": "minecolonies:block/blockutfarmer"
     },
     "facing=east": {
-      "model": "minecolonies:blockhutfarmer",
+      "model": "minecolonies:block/blockutfarmer",
       "y": 0
     },
     "facing=south": {
-      "model": "minecolonies:blockhutfarmer",
+      "model": "minecolonies:block/blockutfarmer",
       "y": 90
     },
     "facing=west": {
-      "model": "minecolonies:blockhutfarmer",
+      "model": "minecolonies:block/blockutfarmer",
       "y": 180
     },
     "facing=north": {
-      "model": "minecolonies:blockhutfarmer",
+      "model": "minecolonies:block/blockutfarmer",
       "y": 270
     }
   }

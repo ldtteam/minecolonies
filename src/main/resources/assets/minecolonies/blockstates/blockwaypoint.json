@@ -1,7 +1,7 @@
 {
   "variants": {
     "normal": {
-      "model": "minecolonies:blockwaypoint"
+      "model": "minecolonies:block/blockwaypoint"
     }
   }
 }

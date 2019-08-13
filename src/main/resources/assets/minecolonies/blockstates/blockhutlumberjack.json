@@ -23,10 +23,10 @@
       "y": 270
     },
     "base": [{
-      "model": "minecolonies:blockhutlumberjack"
+      "model": "minecolonies:block/blockutlumberjack"
     }],
     "overlay": [{
-      "model": "minecolonies:blockhutlumberjacksapling"
+      "model": "minecolonies:block/blockutlumberjacksapling"
     }]
   }
 }

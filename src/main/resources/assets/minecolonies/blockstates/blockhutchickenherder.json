@@ -1,7 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "minecolonies:blockhutchickenherder"
+    "model": "minecolonies:block/blockutchickenherder"
   },
   "variants": {
     "facing": {
