@@ -4,9 +4,9 @@
     "particle": "blocks/planks_oak",
     "down": "blocks/planks_oak",
     "up": "minecolonies:blocks/blockhutcombatacademy",
-    "north": "minecolonies:blocks/sideChest",
-    "east": "minecolonies:blocks/sideChest",
-    "south": "minecolonies:blocks/sideChest",
-    "west": "minecolonies:blocks/sideChest"
+    "north": "minecolonies:blocks/sidechest",
+    "east": "minecolonies:blocks/sidechest",
+    "south": "minecolonies:blocks/sidechest",
+    "west": "minecolonies:blocks/sidechest"
   }
 }

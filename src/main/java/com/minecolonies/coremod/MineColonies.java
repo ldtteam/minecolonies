@@ -83,6 +83,9 @@ public class MineColonies
 
     public MineColonies()
     {
+        MinecoloniesAPIProxy.getInstance().setApiInstance(MinecoloniesAPIImpl.getInstance());
+        config = new Configuration(ModLoadingContext.get().getActiveContainer());
+
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(BarbarianSpawnEventHandler.class);
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(EventHandler.class);
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(FMLEventHandler.class);
@@ -90,7 +93,6 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DebugRendererChunkBorder.class);
 
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(this.getClass());
-        config = new Configuration(ModLoadingContext.get().getActiveContainer());
     }
 
     /**
@@ -101,7 +103,6 @@ public class MineColonies
     @SubscribeEvent
     public static void preInit(@NotNull final FMLCommonSetupEvent event)
     {
-        MinecoloniesAPIProxy.getInstance().setApiInstance(MinecoloniesAPIImpl.getInstance());
 
         StructureLoadingUtils.originFolders.add(Constants.MOD_ID);
         CapabilityManager.INSTANCE.register(IColonyTagCapability.class, new IColonyTagCapability.Storage(), IColonyTagCapability.Impl::new);

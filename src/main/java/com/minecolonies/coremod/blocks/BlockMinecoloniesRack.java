@@ -51,7 +51,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME = "blockMinecoloniesRack";
+    private static final String BLOCK_NAME = "blockminecoloniesrack";
 
     /**
      * The resistance this block has.

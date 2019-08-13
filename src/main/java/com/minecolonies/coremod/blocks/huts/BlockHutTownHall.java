@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,14 +34,20 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
 
     public BlockHutTownHall()
     {
-        super(Properties.create(Material.WOOD).hardnessAndResistance(MineColonies.getConfig().getCommon().pvp_mode.get() ? PVP_MODE_HARDNESS : HARDNESS, RESISTANCE));
+        super(Properties.create(Material.WOOD).hardnessAndResistance(HARDNESS, RESISTANCE));
+    }
+
+    @Override
+    public float getBlockHardness(final BlockState blockState, final IBlockReader worldIn, final BlockPos pos)
+    {
+        return MineColonies.getConfig().getCommon().pvp_mode.get() ? PVP_MODE_HARDNESS : HARDNESS;
     }
 
     @NotNull
     @Override
     public String getName()
     {
-        return "blockHutTownHall";
+        return "blockhuttownhall";
     }
 
     @Override

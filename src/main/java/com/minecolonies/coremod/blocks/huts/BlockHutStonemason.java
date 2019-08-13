@@ -15,7 +15,7 @@ public class BlockHutStonemason extends AbstractBlockHut<BlockHutStonemason>
     @Override
     public String getName()
     {
-        return "blockHutStonemason";
+        return "blockhutstonemason";
     }
 
     @Override

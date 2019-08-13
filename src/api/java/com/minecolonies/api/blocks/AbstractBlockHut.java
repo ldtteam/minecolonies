@@ -68,9 +68,15 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      */
     public AbstractBlockHut()
     {
-        super(Properties.create(Material.WOOD).hardnessAndResistance(MinecoloniesAPIProxy.getInstance().getConfig().getCommon().pvp_mode.get() ? HARDNESS * HARDNESS_PVP_FACTOR : HARDNESS, RESISTANCE));
+        super(Properties.create(Material.WOOD).hardnessAndResistance(HARDNESS, RESISTANCE));
         setRegistryName(getName());
         this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH));
+    }
+
+    @Override
+    public float getBlockHardness(final BlockState blockState, final IBlockReader worldIn, final BlockPos pos)
+    {
+        return MinecoloniesAPIProxy.getInstance().getConfig().getCommon().pvp_mode.get() ? HARDNESS * HARDNESS_PVP_FACTOR : HARDNESS;
     }
 
     /**

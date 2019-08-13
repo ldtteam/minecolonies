@@ -26,7 +26,7 @@ public class BlockWaypoint extends AbstractBlockMinecolonies<BlockWaypoint>
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME = "blockWayPoint";
+    private static final String BLOCK_NAME = "blockwaypoint";
 
     /**
      * The resistance this block has.

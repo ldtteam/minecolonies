@@ -15,7 +15,7 @@ public class BlockHutSifter extends AbstractBlockHut<BlockHutSifter>
     @Override
     public String getName()
     {
-        return "blockHutSifter";
+        return "blockhutsifter";
     }
 
     @Override
