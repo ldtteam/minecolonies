@@ -27,7 +27,7 @@ VOLUME /home/server/world
 
 # Copy mod files
 RUN mkdir /home/server/mods
-COPY build/libs/* /home/server/mods
+COPY build/libs/* /home/server/mods/
 RUN ls /home/server/mods
 
 # Expose ports
