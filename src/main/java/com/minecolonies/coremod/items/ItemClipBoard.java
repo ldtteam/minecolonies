@@ -38,19 +38,6 @@ public class ItemClipBoard extends AbstractItemMinecolonies
         super("clipboard", properties.maxStackSize(STACKSIZE).group(ModCreativeTabs.MINECOLONIES));
     }
 
-    /**
-     * Used when clicking on block in world.
-     *
-     * @param playerIn the player
-     * @param worldIn  the world
-     * @param pos      the position
-     * @param hand     the hand
-     * @param facing   the facing hit
-     * @param hitX     the x coordinate
-     * @param hitY     the y coordinate
-     * @param hitZ     the z coordinate
-     * @return the result
-     */
     @Override
     @NotNull
     public ActionResultType onItemUse(final ItemUseContext ctx)

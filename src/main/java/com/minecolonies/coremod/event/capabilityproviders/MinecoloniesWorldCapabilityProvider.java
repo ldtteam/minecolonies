@@ -47,6 +47,6 @@ public class MinecoloniesWorldCapabilityProvider implements ICapabilitySerializa
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, final Direction direction)
     {
-        return cap == CHUNK_STORAGE_UPDATE_CAP ? LazyOptional.of(() -> (T) chunkMap) : null;
+        return cap == CHUNK_STORAGE_UPDATE_CAP ? LazyOptional.of(() -> (T) chunkMap) : LazyOptional.empty();
     }
 }

@@ -323,7 +323,7 @@ public class CommonConfiguration extends AbstractConfiguration
         sifterMeshes = defineList(builder, "siftermeshes",
           Arrays.asList
                    ("minecraft:string,0",
-                     "minecraft:flfinal ForgeConfigSpec.IntValue,0.1",
+                     "minecraft:flint,0.1",
                      "minecraft:iron_ingot,0.1",
                      "minecraft:diamond,0.1" ),
           s -> s instanceof String);
@@ -404,13 +404,13 @@ public class CommonConfiguration extends AbstractConfiguration
 
                      //Gravel with string mesh
                      "2,0,minecraft:iron_nugget,5",
-                     "2,0,minecraft:flfinal ForgeConfigSpec.IntValue,5",
+                     "2,0,minecraft:flint,5",
                      "2,0,minecraft:coal,5",
 
-                     //Gravel with flfinal ForgeConfigSpec.IntValue mesh
+                     //Gravel with flint mesh
                      "2,1,minecraft:redstone,10",
                      "2,1,minecraft:iron_nugget,10",
-                     "2,1,minecraft:flfinal ForgeConfigSpec.IntValue,10",
+                     "2,1,minecraft:flint,10",
                      "2,1,minecraft:coal,10",
 
                      //Gravel with iron mesh
@@ -436,7 +436,7 @@ public class CommonConfiguration extends AbstractConfiguration
                      "3,0,minecraft:nether_wart,5",
                      "3,0,minecraft:quartz,5",
 
-                     //Soulsand with flfinal ForgeConfigSpec.IntValue mesh
+                     //Soulsand with flint mesh
                      "3,1,minecraft:nether_wart,10",
                      "3,1,minecraft:quartz,10",
                      "3,1,minecraft:glowstone_dust,5",

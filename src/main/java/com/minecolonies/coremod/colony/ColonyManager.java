@@ -11,11 +11,13 @@ import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.util.ChunkLoadStorage;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRecipeManager;
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
+import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
@@ -824,7 +826,7 @@ public final class ColonyManager implements IColonyManager
             colonyViews.clear();
         }
 
-        if (!compatibilityManager.isDiscoveredAlready())
+        if (!compatibilityManager.isDiscoveredAlready() && ItemStackUtils.ISFOOD != null)
         {
             compatibilityManager.discover();
         }

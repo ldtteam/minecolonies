@@ -148,7 +148,7 @@ public class EventHandler
     @SubscribeEvent
     public static void onAttachingCapabilitiesChunk(@NotNull final AttachCapabilitiesEvent<Chunk> event)
     {
-        event.addCapability(new ResourceLocation(Constants.MOD_ID, "closeColony"), new MinecoloniesChunkCapabilityProvider());
+        event.addCapability(new ResourceLocation(Constants.MOD_ID, "closecolony"), new MinecoloniesChunkCapabilityProvider());
     }
 
     /**
@@ -159,8 +159,8 @@ public class EventHandler
     @SubscribeEvent
     public static void onAttachingCapabilitiesWorld(@NotNull final AttachCapabilitiesEvent<World> event)
     {
-        event.addCapability(new ResourceLocation(Constants.MOD_ID, "chunkUpdate"), new MinecoloniesWorldCapabilityProvider());
-        event.addCapability(new ResourceLocation(Constants.MOD_ID, "colonyManager"), new MinecoloniesWorldColonyManagerCapabilityProvider());
+        event.addCapability(new ResourceLocation(Constants.MOD_ID, "chunkupdate"), new MinecoloniesWorldCapabilityProvider());
+        event.addCapability(new ResourceLocation(Constants.MOD_ID, "colonymanager"), new MinecoloniesWorldColonyManagerCapabilityProvider());
     }
 
     /**

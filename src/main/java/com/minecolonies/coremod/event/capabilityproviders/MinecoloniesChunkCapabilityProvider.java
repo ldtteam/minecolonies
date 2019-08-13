@@ -45,6 +45,6 @@ public class MinecoloniesChunkCapabilityProvider implements ICapabilitySerializa
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, final Direction direction)
     {
-        return cap == CLOSE_COLONY_CAP ? LazyOptional.of(() -> (T) colonyList) : null;
+        return cap == CLOSE_COLONY_CAP ? LazyOptional.of(() -> (T) colonyList) : LazyOptional.empty();
     }
 }
