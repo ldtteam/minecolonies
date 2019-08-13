@@ -97,6 +97,11 @@ public class EventHandler
         {
             ((AbstractEntityCitizen) event.getEntity()).getCitizenColonyHandler().updateColonyServer();
         }
+        else if (MineColonies.getConfig().getCommon().mobAttackCitizens.get() && (event.getEntity() instanceof MobEntity))
+        {
+            ((MobEntity) event.getEntity()).goalSelector.addGoal(6, new NearestAttackableTargetGoal<>((MobEntity) event.getEntity(), EntityCitizen.class, true));
+            ((MobEntity) event.getEntity()).goalSelector.addGoal(7, new NearestAttackableTargetGoal((MobEntity) event.getEntity(), EntityMercenary.class, true));
+        }
     }
 
     /**
@@ -246,21 +251,6 @@ public class EventHandler
                     colony.addVisitingPlayer(player);
                 }
             }
-        }
-    }
-
-    /**
-     * Add an AI task to attack Citizens to mobs
-     *
-     * @param event Spawnevent
-     */
-    @SubscribeEvent
-    public static void onEvent(final EntityJoinWorldEvent event)
-    {
-        if (MineColonies.getConfig().getCommon().mobAttackCitizens.get() && (event.getEntity() instanceof MobEntity))
-        {
-            ((MobEntity) event.getEntity()).goalSelector.addGoal(6, new NearestAttackableTargetGoal<>((MobEntity) event.getEntity(), EntityCitizen.class, true));
-            ((MobEntity) event.getEntity()).goalSelector.addGoal(7, new NearestAttackableTargetGoal((MobEntity) event.getEntity(), EntityMercenary.class, true));
         }
     }
 
@@ -715,56 +705,6 @@ public class EventHandler
     }
 
     /**
-     * Called when an entity is being constructed
-     * Used to register player properties
-     *
-     * @param event {@link net.minecraftforge.event.getEntity().getEntity()Event.getEntity()Constructing}
-     */
-    /*@SubscribeEvent
-    public static void onEntityConstructing(@NotNull EntityEvent.EntityConstructing event)
-    {
-        if (event.getEntity() instanceof PlayerEntity)
-        {
-            @NotNull PlayerEntity player = (PlayerEntity) event.getEntity();
-            if (PlayerProperties.get(player) == null)
-            {
-                PlayerProperties.register(player);
-            }
-
-        }
-    }*/
-
-    /**
-     * Called when an entity dies
-     * Player property data is saved when a player dies
-     *
-     * @param event {@link LivingDeathEvent}
-     */
-    /*@SubscribeEvent
-    public static void onLivingDeath(@NotNull LivingDeathEvent event)
-    {
-        if (!event.getEntity().worldObj.isRemote && event.getEntity() instanceof PlayerEntity)
-        {
-            PlayerProperties.saveProxyData((PlayerEntity) event.getEntity());
-        }
-    }*/
-
-    /**
-     * Called when an entity joins the world
-     * Loads player property data when player enters
-     *
-     * @param event {@link EntityJoinWorldEvent}
-     */
-    /*@SubscribeEvent
-    public static void onEntityJoinWorld(@NotNull EntityJoinWorldEvent event)
-    {
-        if (!event.getEntity().worldObj.isRemote && event.getEntity() instanceof PlayerEntity)
-        {
-            PlayerProperties.loadProxyData((PlayerEntity) event.getEntity());
-        }
-    }*/
-
-    /**
      * Gets called when world loads.
      * Calls {@link ColonyManager#onWorldLoad(World)}
      *
@@ -773,6 +713,7 @@ public class EventHandler
     @SubscribeEvent
     public static void onWorldLoad(@NotNull final WorldEvent.Load event)
     {
+        Log.getLogger().warn("World load");
         if (event.getWorld() instanceof World)
         {
             IColonyManager.getInstance().onWorldLoad((World) event.getWorld());
@@ -788,6 +729,8 @@ public class EventHandler
     @SubscribeEvent
     public static void onWorldUnload(@NotNull final WorldEvent.Unload event)
     {
+        Log.getLogger().warn("World unload");
+
         if (event.getWorld() instanceof World)
         {
             IColonyManager.getInstance().onWorldUnload((World) event.getWorld());

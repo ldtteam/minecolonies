@@ -2,6 +2,7 @@ package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.sounds.ModSoundEvents;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.ServerUUIDMessage;
@@ -21,18 +22,23 @@ public class FMLEventHandler
     @SubscribeEvent
     public static void onServerTick(final TickEvent.ServerTickEvent event)
     {
+        Log.getLogger().warn("Server tick");
+
         IColonyManager.getInstance().onServerTick(event);
     }
 
     @SubscribeEvent
     public static void onClientTick(final TickEvent.ClientTickEvent event)
     {
+        Log.getLogger().warn("Client tick");
         IColonyManager.getInstance().onClientTick(event);
     }
 
     @SubscribeEvent
     public static void onWorldTick(final TickEvent.WorldTickEvent event)
     {
+        Log.getLogger().warn("World tick");
+
         IColonyManager.getInstance().onWorldTick(event);
     }
 
