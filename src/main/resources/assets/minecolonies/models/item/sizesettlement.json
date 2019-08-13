@@ -1,7 +1,7 @@
 {
   "parent": "builtin/generated",
   "textures": {
-    "layer0": "minecolonies:items/sizeSettlement"
+    "layer0": "minecolonies:items/sizesettlement"
   },
   "display": {
     "thirdperson": {

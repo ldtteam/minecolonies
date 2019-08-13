@@ -2,9 +2,9 @@
   "textures": {
     "0": "minecolonies:blocks/rack/wood",
     "1": "minecolonies:blocks/rack/stone",
-    "2": "minecolonies:blocks/rack/blockSet1",
-    "3": "minecolonies:blocks/rack/blockSet2",
-    "4": "minecolonies:blocks/rack/blockSet3",
+    "2": "minecolonies:blocks/rack/blockset1",
+    "3": "minecolonies:blocks/rack/blockset2",
+    "4": "minecolonies:blocks/rack/blockset3",
     "particle": "minecolonies:blocks/rack/wood"
   },
   "elements": [

@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:block/blockHutTownHall",
+  "parent": "minecolonies:block/blockhuttownhall",
   "display": {
     "gui": {
       "rotation": [30, 225, 0],

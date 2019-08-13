@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:block/blockConstructionTape",
+  "parent": "minecolonies:block/blockconstructiontape",
   "display": {
     "gui": {
       "rotation": [0, 0, 0],

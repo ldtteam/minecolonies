@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:block/blockHutCitizen",
+  "parent": "minecolonies:block/blockhutcitizen",
   "display": {
     "gui": {
       "rotation": [30, 135, 0],

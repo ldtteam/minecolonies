@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:block/blockHutCook",
+  "parent": "minecolonies:block/blockhutcook",
   "display": {
     "thirdperson": {
       "rotation": [

@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:block/blockRackEmpty",
+  "parent": "minecolonies:block/blockrackempty",
   "display": {
     "gui": {
       "rotation": [30, 135, 0],

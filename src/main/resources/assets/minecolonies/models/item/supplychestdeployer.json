@@ -1,7 +1,7 @@
 {
   "parent": "builtin/generated",
   "textures": {
-    "layer0": "minecolonies:items/supplyChestDeployer"
+    "layer0": "minecolonies:items/supplychestdeployer"
   },
   "display": {
     "thirdperson": {

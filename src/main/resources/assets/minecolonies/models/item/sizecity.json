@@ -1,7 +1,7 @@
 {
   "parent": "builtin/generated",
   "textures": {
-    "layer0": "minecolonies:items/sizeCity"
+    "layer0": "minecolonies:items/sizecity"
   },
   "display": {
     "thirdperson": {

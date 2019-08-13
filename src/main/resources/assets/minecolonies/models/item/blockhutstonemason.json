@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:block/blockHutStonemason",
+  "parent": "minecolonies:block/blockhutstonemason",
   "display": {
     "thirdperson": {
       "rotation": [
