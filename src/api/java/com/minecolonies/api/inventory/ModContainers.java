@@ -1,7 +1,7 @@
 package com.minecolonies.api.inventory;
 
-import com.ldtteam.structurize.api.util.constant.Constants;
 import com.minecolonies.api.inventory.container.*;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraftforge.registries.ObjectHolder;
 

@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.network;
 
 import com.ldtteam.structurize.Structurize;
-import com.ldtteam.structurize.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.network.messages.*;
 import net.minecraft.entity.Entity;
