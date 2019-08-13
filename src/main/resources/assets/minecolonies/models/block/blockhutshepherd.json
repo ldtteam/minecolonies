@@ -1,20 +1,20 @@
 {
   "credit": "created by:OddRobbia02 with Blockbench",
   "textures": {
-    "5": "items/shears",
-    "7": "blocks/wool_colored_black",
-    "8": "blocks/wool_colored_green",
-    "9": "blocks/wool_colored_orange",
-    "10": "blocks/wool_colored_red",
-    "11": "blocks/wool_colored_white",
-    "12": "blocks/hay_block_side",
-    "13": "blocks/hay_block_top",
+    "5": "item/shears",
+    "7": "block/black_wool",
+    "8": "block/green_wool",
+    "9": "block/orange_wool",
+    "10": "block/red_wool",
+    "11": "block/white_wool",
+    "12": "block/hay_block_side",
+    "13": "block/hay_block_top",
     "14": "entity/chest/normal",
-    "15": "items/bucket_empty",
-    "16": "blocks/planks_oak",
-    "17": "blocks/water_still",
+    "15": "item/bucket",
+    "16": "block/oak_planks",
+    "17": "block/water_still",
     "18": "minecolonies:blocks/tallgrass",
-    "particle": "items/bucket_empty"
+    "particle": "item/bucket"
   },
   "elements": [
     {

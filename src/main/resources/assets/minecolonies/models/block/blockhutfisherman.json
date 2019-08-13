@@ -1,7 +1,7 @@
 {
   "__comment": "Model and textures created by D3miurge",
   "textures": {
-    "particle": "blocks/planks_oak",
+    "particle": "block/oak_planks",
     "0": "minecolonies:blocks/fisherman/fishermans_hut_base_front",
     "1": "minecolonies:blocks/fisherman/fishermans_hut_base_side_fishnet",
     "2": "minecolonies:blocks/fisherman/fishermans_hut_base_back",

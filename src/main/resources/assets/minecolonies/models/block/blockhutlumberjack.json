@@ -1,11 +1,11 @@
 {
   "credit": "Made with Blockbench",
   "textures": {
-    "2": "blocks/hardened_clay",
-    "4": "blocks/log_oak",
-    "5": "blocks/log_oak_top",
-    "6": "items/iron_axe",
-    "particle": "blocks/sapling_oak"
+    "2": "block/terracotta",
+    "4": "block/oak_log",
+    "5": "block/oak_log_top",
+    "6": "item/iron_axe",
+    "particle": "block/oak_sapling"
   },
   "elements": [
     {

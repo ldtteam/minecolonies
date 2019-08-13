@@ -1,13 +1,13 @@
 {
   "credit": "Made with Blockbench, a free, modern block model editor by JannisX11",
   "textures": {
-    "0": "blocks/planks_spruce",
-    "1": "blocks/planks_big_oak",
-    "2": "blocks/wool_colored_white",
-    "3": "blocks/stone_andesite_smooth",
-    "4": "blocks/iron_block",
+    "0": "block/spruce_planks",
+    "1": "block/dark_oak_planks",
+    "2": "block/white_wool",
+    "3": "block/polished_andesite",
+    "4": "block/iron_block",
     "5": "minecolonies:blocks/guardpaper",
-    "particle": "blocks/planks_oak"
+    "particle": "block/oak_planks"
   },
   "elements": [
     {

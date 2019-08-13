@@ -1,12 +1,12 @@
 {
   "credit": "Made with Blockbench",
   "textures": {
-    "0": "blocks/log_oak",
-    "1": "blocks/log_oak_top",
-    "2": "blocks/planks_oak",
+    "0": "block/oak_log",
+    "1": "block/oak_log_top",
+    "2": "block/oak_planks",
     "3": "entity/chest/normal",
     "4": "minecolonies:blocks/plate",
-    "particle": "blocks/log_oak"
+    "particle": "block/oak_log"
   },
   "elements": [
     {

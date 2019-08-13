@@ -1,17 +1,17 @@
 {
   "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
   "textures": {
-    "0": "blocks/planks_oak",
+    "0": "block/oak_planks",
     "1": "minecolonies:blocks/citizenhut/table",
     "2": "minecolonies:blocks/citizenhut/drawer_side",
-    "3": "blocks/hardened_clay",
-    "4": "blocks/hardened_clay_stained_lime",
-    "5": "blocks/hardened_clay_stained_red",
-    "6": "blocks/hardened_clay_stained_green",
-    "7": "blocks/stone",
-    "8": "blocks/water_overlay",
-    "9": "blocks/dirt",
-    "10": "blocks/coal_block",
+    "3": "block/terracotta",
+    "4": "block/lime_terracotta",
+    "5": "block/red_terracotta",
+    "6": "block/green_terracotta",
+    "7": "block/stone",
+    "8": "block/water_overlay",
+    "9": "block/dirt",
+    "10": "block/coal_block",
     "11": "minecolonies:blocks/citizenhut/sketchbook"
   },
   "elements": [

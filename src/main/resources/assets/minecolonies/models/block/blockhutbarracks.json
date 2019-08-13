@@ -1,12 +1,12 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "0": "blocks/planks_oak",
-    "1": "blocks/iron_block",
-    "2": "blocks/log_oak_top",
-    "3": "blocks/log_oak",
+    "0": "block/oak_planks",
+    "1": "block/iron_block",
+    "2": "block/oak_log_top",
+    "3": "block/oak_log",
     "5": "minecolonies:blocks/barrackstextures",
-    "particle": "blocks/planks_oak"
+    "particle": "block/oak_planks"
   },
   "elements": [
     {

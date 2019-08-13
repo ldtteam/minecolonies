@@ -1,9 +1,9 @@
 {
 	"__comment": "Library Block",
 	"textures": {
-		"particle": "blocks/planks_oak",
-		"planks": "blocks/planks_oak",
-		"books": "blocks/bookshelf",
+		"particle": "block/oak_planks",
+		"planks": "block/oak_planks",
+		"books": "block/bookshelf",
 		"drawer": "minecolonies:blocks/blockhutlibrary"
 	},
 	"elements": [ 	 

@@ -1,10 +1,10 @@
 {
   "credit": "Made with Blockbench",
   "textures": {
-    "0": "blocks/magma",
-    "1": "blocks/stone",
-    "2": "blocks/anvil_top_damaged_0",
-    "particle": "blocks/magma"
+    "0": "block/magma",
+    "1": "block/stone",
+    "2": "block/anvil_top",
+    "particle": "block/magma"
   },
   "elements": [
     {

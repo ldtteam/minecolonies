@@ -1,9 +1,9 @@
 {
   "__comment": "MineColonies Construction Tape Corner",
   "textures": {
-    "particle": "blocks/planks_oak",
-    "0": "blocks/door_iron_lower",
-    "1": "blocks/planks_oak"
+    "particle": "block/oak_planks",
+    "0": "block/iron_door_bottom",
+    "1": "block/oak_planks"
   },
   "elements": [
     {
