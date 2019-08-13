@@ -1,6 +1,6 @@
 package com.minecolonies.apiimp.initializer;
 
-import com.ldtteam.structurize.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.blocks.*;

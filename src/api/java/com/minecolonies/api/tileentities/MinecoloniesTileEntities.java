@@ -1,6 +1,6 @@
 package com.minecolonies.api.tileentities;
 
-import com.ldtteam.structurize.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ObjectHolder;
 

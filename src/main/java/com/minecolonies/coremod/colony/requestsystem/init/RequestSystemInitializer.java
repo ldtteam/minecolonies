@@ -43,7 +43,7 @@ public class RequestSystemInitializer
         final LoggerConfig loggerConfig = config.getLoggerConfig(String.format("%s.requestsystem", Constants.MOD_ID));
         final boolean log = MinecoloniesAPIProxy.getInstance().getConfig().getCommon().enableDebugLogging.get();
         final LevelRangeFilter filter = LevelRangeFilter.createFilter(log ? Level.DEBUG : Level.INFO, Level.FATAL, Filter.Result.NEUTRAL, Filter.Result.DENY);
-        //loggerConfig.addFilter(filter);
+        loggerConfig.addFilter(filter);
 
         ctx.updateLoggers();
     }
