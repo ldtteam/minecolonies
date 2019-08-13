@@ -1,13 +1,13 @@
 {
   "credit": "Made with Blockbench",
   "textures": {
-    "0": "blocks/dirt_podzol_top",
-    "1": "blocks/door_iron_lower",
-    "3": "blocks/hay_block_top",
-    "4": "blocks/planks_oak",
-    "5": "blocks/iron_block",
+    "0": "block/podzol_top",
+    "1": "block/iron_door_bottom",
+    "3": "block/hay_block_top",
+    "4": "block/oak_planks",
+    "5": "block/iron_block",
     "10": "entity/chest/normal",
-    "particle": "blocks/dirt_podzol_top"
+    "particle": "block/podzol_top"
   },
   "elements": [
     {

@@ -1,14 +1,14 @@
 {
   "credit": "Made with Blockbench",
   "textures": {
-    "0": "blocks/anvil_base",
-    "1": "blocks/log_oak",
-    "2": "blocks/log_oak_top",
-    "3": "blocks/iron_block",
-    "4": "blocks/gravel",
-    "5": "blocks/sand",
-    "6": "blocks/clay",
-    "particle": "blocks/anvil_base"
+    "0": "block/anvil",
+    "1": "block/oak_log",
+    "2": "block/oak_log_top",
+    "3": "block/iron_block",
+    "4": "block/gravel",
+    "5": "block/sand",
+    "6": "block/clay",
+    "particle": "block/anvil"
   },
   "elements": [
     {

@@ -1,13 +1,13 @@
 {
   "credit": "Made with Blockbench",
   "textures": {
-    "0": "blocks/log_oak",
+    "0": "block/oak_log",
     "1": "minecolonies:blocks/blockhuttownhalltop",
-    "2": "blocks/iron_block",
-    "3": "blocks/planks_birch",
-    "4": "blocks/planks_spruce",
-    "5": "blocks/planks_oak",
-    "particle": "blocks/log_oak"
+    "2": "block/iron_block",
+    "3": "block/birch_planks",
+    "4": "block/spruce_planks",
+    "5": "block/oak_planks",
+    "particle": "block/oak_log"
   },
   "elements": [
     {

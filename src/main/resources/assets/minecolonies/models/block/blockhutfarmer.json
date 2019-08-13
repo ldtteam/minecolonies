@@ -1,12 +1,12 @@
 {
   "credit": "created by:OddRobbia02 with Blockbench",
   "textures": {
-    "1": "items/iron_hoe",
+    "1": "item/iron_hoe",
     "5": "minecolonies:blocks/map",
     "11": "minecolonies:blocks/sketchbook",
-    "12": "blocks/hay_block_side",
-    "13": "blocks/hay_block_top",
-    "particle": "blocks/hay_block_side"
+    "12": "block/hay_block_side",
+    "13": "block/hay_block_top",
+    "particle": "block/hay_block_side"
   },
   "elements": [
     {

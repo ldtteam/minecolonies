@@ -1,7 +1,7 @@
 {
   "credit": "Made by d3miurge.vallek@gmail.com",
   "textures": {
-    "particle": "blocks/planks_oak",
+    "particle": "block/oak_planks",
     "0": "minecolonies:blocks/miner/miners_hut_base_down",
     "1": "minecolonies:blocks/miner/miners_hut_base_west",
     "2": "minecolonies:blocks/miner/miners_hut_base_east",

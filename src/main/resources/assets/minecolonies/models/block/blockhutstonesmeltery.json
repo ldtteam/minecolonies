@@ -2,12 +2,12 @@
   "credit": "created by:OddRobbia02 with Blockbench",
   "parent": "block/cube_all",
   "textures": {
-    "1": "blocks/cobblestone",
-    "3": "blocks/coal_block",
+    "1": "block/cobblestone",
+    "3": "block/coal_block",
     "4": "minecolonies:blocks/paper",
-    "5": "blocks/log_oak_top",
-    "6":"blocks/log_spruce",
-    "particle": "blocks/cobblestone"
+    "5": "block/oak_log_top",
+    "6":"block/spruce_log",
+    "particle": "block/cobblestone"
   },
   "elements": [
     {

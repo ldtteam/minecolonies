@@ -1,10 +1,10 @@
 {
   "credit": "Made with Blockbench",
   "textures": {
-    "6": "items/carrot",
-    "7": "items/beetroot",
-    "8": "items/beef_raw",
-    "9": "items/bread"
+    "6": "item/carrot",
+    "7": "item/beetroot",
+    "8": "item/beef_raw",
+    "9": "item/bread"
   },
   "elements": [
     {

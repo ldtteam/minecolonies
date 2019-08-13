@@ -1,9 +1,9 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"13": "blocks/quartz_block_bottom",
-		"1_2": "blocks/cauldron_inner",
-        "particle": "blocks/quartz_block_bottom"
+		"13": "block/quartz_block_bottom",
+		"1_2": "block/cauldron_inner",
+        "particle": "block/quartz_block_bottom"
     },
 	"elements": [
 		{
