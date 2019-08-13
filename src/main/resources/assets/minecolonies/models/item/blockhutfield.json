@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:block/blockHutField",
+  "parent": "minecolonies:block/blockhutfield",
   "textures": {
     "layer0": "minecolonies:items/scarecrow"
   }

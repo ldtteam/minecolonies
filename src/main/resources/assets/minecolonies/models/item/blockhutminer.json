@@ -1,5 +1,5 @@
 {
-  "parent": "minecolonies:block/blockHutMiner",
+  "parent": "minecolonies:block/blockhutminer",
   "display": {
     "gui": {
       "rotation": [30, 220, 0],
