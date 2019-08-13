@@ -1,8 +1,5 @@
 {
   "variants": {
-    "facing=up": {
-      "model": "minecolonies:block/blockhutarchery"
-    },
     "facing=east": {
       "model": "minecolonies:block/blockhutarchery",
       "y": 0

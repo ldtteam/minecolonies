@@ -2,13 +2,13 @@
   "__comment": "Model and textures created by D3miurge",
   "textures": {
     "particle": "blocks/planks_oak",
-    "0": "minecolonies:blocks/fisherman/fisherman's_hut_base_front",
-    "1": "minecolonies:blocks/fisherman/fisherman's_hut_base_side_fishnet",
-    "2": "minecolonies:blocks/fisherman/fisherman's_hut_base_back",
-    "3": "minecolonies:blocks/fisherman/fisherman's_hut_base_sides",
-    "4": "minecolonies:blocks/fisherman/fisherman's_hut_base_top",
-    "5": "minecolonies:blocks/fisherman/fisherman's_hut_base_bottom",
-    "6": "minecolonies:blocks/fisherman/fisherman's_hut_misc"
+    "0": "minecolonies:blocks/fisherman/fishermans_hut_base_front",
+    "1": "minecolonies:blocks/fisherman/fishermans_hut_base_side_fishnet",
+    "2": "minecolonies:blocks/fisherman/fishermans_hut_base_back",
+    "3": "minecolonies:blocks/fisherman/fishermans_hut_base_sides",
+    "4": "minecolonies:blocks/fisherman/fishermans_hut_base_top",
+    "5": "minecolonies:blocks/fisherman/fishermans_hut_base_bottom",
+    "6": "minecolonies:blocks/fisherman/fishermans_hut_misc"
   },
   "elements": [
     {
@@ -257,7 +257,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#-1",
+          "texture": "#missing",
           "uv": [
             0.0,
             0.0,

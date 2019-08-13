@@ -4,7 +4,6 @@
   "variants":
   {
     "facing": {
-        "up":    {},
         "east":  {"y": 270},
         "south": {"y": 0},
         "west":  {"y": 90},

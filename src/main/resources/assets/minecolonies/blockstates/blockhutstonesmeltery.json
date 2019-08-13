@@ -1,7 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "minecolonies:block/blockutstonesmeltery"
+    "model": "minecolonies:block/blockhutstonesmeltery"
   },
   "variants": {
     "facing": {

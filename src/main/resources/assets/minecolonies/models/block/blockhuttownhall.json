@@ -1,11 +1,11 @@
 {
   "textures": {
     "particle": "blocks/planks_oak",
-    "0": "minecolonies:blocks/blockHutTownHallFrontBack",
-    "1": "minecolonies:blocks/blockHutTownHallSide",
-    "2": "minecolonies:blocks/blockHutTownHallTop",
-    "3": "minecolonies:blocks/blockHutTownHallBottom",
-    "4": "minecolonies:blocks/blockHutTownHallBook"
+    "0": "minecolonies:blocks/blockhuttownhallfrontback",
+    "1": "minecolonies:blocks/blockhuttownhallside",
+    "2": "minecolonies:blocks/blockhuttownhalltop",
+    "3": "minecolonies:blocks/blockhuttownhallbottom",
+    "4": "minecolonies:blocks/blockhuttownhallbook"
   },
   "elements": [
     {
@@ -127,7 +127,7 @@
           ]
         },
         "up": {
-          "texture": "#-1",
+          "texture": "#missing",
           "uv": [
             0.0,
             1.0,
@@ -196,7 +196,7 @@
           ]
         },
         "up": {
-          "texture": "#-1",
+          "texture": "#missing",
           "uv": [
             0.0,
             0.0,
@@ -265,7 +265,7 @@
           ]
         },
         "up": {
-          "texture": "#-1",
+          "texture": "#missing",
           "uv": [
             0.0,
             0.0,
@@ -307,7 +307,7 @@
           ]
         },
         "east": {
-          "texture": "#-1",
+          "texture": "#missing",
           "uv": [
             0.0,
             0.0,
@@ -325,7 +325,7 @@
           ]
         },
         "west": {
-          "texture": "#-1",
+          "texture": "#missing",
           "uv": [
             0.0,
             0.0,
@@ -334,7 +334,7 @@
           ]
         },
         "up": {
-          "texture": "#-1",
+          "texture": "#missing",
           "uv": [
             0.0,
             0.0,
@@ -415,7 +415,7 @@
           ]
         },
         "down": {
-          "texture": "#-1",
+          "texture": "#missing",
           "uv": [
             0.0,
             0.0,

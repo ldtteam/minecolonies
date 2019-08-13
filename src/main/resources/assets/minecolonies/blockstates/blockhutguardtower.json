@@ -1,22 +1,19 @@
 {
   "variants": {
-    "facing=up": {
-      "model": "minecolonies:block/blockutguardtower"
-    },
     "facing=east": {
-      "model": "minecolonies:block/blockutguardtower",
+      "model": "minecolonies:block/blockhutguardtower",
       "y": 0
     },
     "facing=south": {
-      "model": "minecolonies:block/blockutguardtower",
+      "model": "minecolonies:block/blockhutguardtower",
       "y": 90
     },
     "facing=west": {
-      "model": "minecolonies:block/blockutguardtower",
+      "model": "minecolonies:block/blockhutguardtower",
       "y": 180
     },
     "facing=north": {
-      "model": "minecolonies:block/blockutguardtower",
+      "model": "minecolonies:block/blockhutguardtower",
       "y": 270
     }
   }
