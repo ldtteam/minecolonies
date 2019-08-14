@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.render.mobs.barbarians;
 
+import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.entity.MobEntity;
@@ -22,7 +23,7 @@ public class RendererBarbarian extends AbstractRendererBarbarian
      */
     public RendererBarbarian(final EntityRendererManager renderManagerIn)
     {
-        super(renderManagerIn, new BipedModel(1.0F), 0.5F);
+        super(renderManagerIn, new BipedModel<AbstractEntityBarbarian>(1.0F), 0.5F);
     }
 
     @Override

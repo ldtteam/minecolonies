@@ -6,9 +6,11 @@ import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.StateContainer;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import org.jetbrains.annotations.NotNull;
@@ -159,9 +161,9 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     private static final VoxelShape SHAPE_NORTH = Block.makeCuboidShape(N_START_COLLISION_X, BOTTOM_COLLISION, N_START_COLLISION_Z, N_END_COLLISION_X, HEIGHT_COLLISION, N_END_COLLISION_Z);
     private static final VoxelShape SHAPE_WEST  = Block.makeCuboidShape(W_START_COLLISION_X, BOTTOM_COLLISION, W_START_COLLISION_Z, W_END_COLLISION_X, HEIGHT_COLLISION, W_END_COLLISION_Z);
     private static final VoxelShape SHAPE_SOUTH = Block.makeCuboidShape(S_START_COLLISION_X, BOTTOM_COLLISION, S_START_COLLISION_Z, S_END_COLLISION_X, HEIGHT_COLLISION, S_END_COLLISION_Z);;
-    private static final VoxelShape SHAPE_EAST         = Block.makeCuboidShape(E_START_COLLISION_X, BOTTOM_COLLISION, E_START_COLLISION_Z, E_END_COLLISION_X, HEIGHT_COLLISION, E_END_COLLISION_Z);
-    private static final VoxelShape CORNER_EAST_WEST   = Block.makeCuboidShape(WE_START_COLLISION_X, BOTTOM_COLLISION, WE_START_COLLISION_Z, WE_END_COLLISION_X, HEIGHT_COLLISION, WE_END_COLLISION_Z);
-    private static final VoxelShape CORNER_NORTH_SOUTH = Block.makeCuboidShape(SN_START_COLLISION_X, BOTTOM_COLLISION, SN_START_COLLISION_Z, SN_END_COLLISION_X, HEIGHT_COLLISION, SN_END_COLLISION_Z);
+    private static final VoxelShape SHAPE_EAST  = Block.makeCuboidShape(E_START_COLLISION_X, BOTTOM_COLLISION, E_START_COLLISION_Z, E_END_COLLISION_X, HEIGHT_COLLISION, E_END_COLLISION_Z);
+    private static final VoxelShape EAST_WEST   = Block.makeCuboidShape(WE_START_COLLISION_X, BOTTOM_COLLISION, WE_START_COLLISION_Z, WE_END_COLLISION_X, HEIGHT_COLLISION, WE_END_COLLISION_Z);
+    private static final VoxelShape NORTH_SOUTH = Block.makeCuboidShape(SN_START_COLLISION_X, BOTTOM_COLLISION, SN_START_COLLISION_Z, SN_END_COLLISION_X, HEIGHT_COLLISION, SN_END_COLLISION_Z);
 
     /**
      * Constructor for the Substitution block.
@@ -172,6 +174,37 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         super(Properties.create(Material.TALL_PLANTS).hardnessAndResistance(0.0f).doesNotBlockMovement().noDrops());
         setRegistryName(BLOCK_NAME);
         this.setDefaultState(this.getDefaultState().with(FACING, NORTH));
+    }
+
+    @Override
+    public VoxelShape getRaytraceShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos)
+    {
+        if(state.get(VARIANT).equals(AbstractBlockMinecoloniesConstructionTape.ConstructionTapeType.CORNER))
+        {
+            if (state.get(FACING).equals(NORTH))
+            {
+                return SHAPE_NORTH;
+            }
+            if (state.get(FACING).equals(WEST))
+            {
+                return SHAPE_WEST;
+            }
+            if (state.get(FACING).equals(SOUTH))
+            {
+                return SHAPE_SOUTH;
+            }
+
+            return SHAPE_EAST;
+        }
+
+        if (state.get(FACING).equals(EAST) || state.get(FACING).equals(WEST))
+        {
+            return EAST_WEST;
+        }
+        else
+        {
+            return NORTH_SOUTH;
+        }
     }
 
     @NotNull
@@ -198,11 +231,11 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
 
         if (state.get(FACING).equals(EAST) || state.get(FACING).equals(WEST))
         {
-            return CORNER_EAST_WEST;
+            return EAST_WEST;
         }
         else
         {
-            return CORNER_NORTH_SOUTH;
+            return NORTH_SOUTH;
         }
     }
 
@@ -245,7 +278,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     @Override
     public BlockState getStateForPlacement(final BlockItemUseContext context)
     {
-        return getTapeShape(getDefaultState(), context.getWorld(), context.getPos());
+        return getTapeShape(getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite()), context.getWorld(), context.getPos());
     }
 
     @Override

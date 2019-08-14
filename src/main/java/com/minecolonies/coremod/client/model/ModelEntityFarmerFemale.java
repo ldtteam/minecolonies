@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.client.model;
 
-import net.minecraft.client.renderer.entity.model.BipedModel;
+import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelEntityFarmerFemale extends BipedModel
+public class ModelEntityFarmerFemale extends CitizenModel
 {
     RendererModel chest;
     RendererModel ponytailBase;

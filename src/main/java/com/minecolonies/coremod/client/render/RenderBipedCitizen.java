@@ -1,14 +1,15 @@
 package com.minecolonies.coremod.client.render;
 
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
+import com.minecolonies.api.client.render.modeltype.CitizenModel;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.client.model.ModelEntityCitizenFemaleCitizen;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.client.renderer.model.Model;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.util.HandSide;
@@ -20,15 +21,13 @@ import static com.minecolonies.api.util.constant.Constants.BED_HEIGHT;
 /**
  * Renderer for the citizens.
  */
-public class RenderBipedCitizen<T extends EntityCitizen, M extends BipedModel<T>> extends BipedRenderer<T, M>
+public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, CitizenModel>
 {
-    private static final BipedModel defaultModelMale   = new BipedModel();
-    private static final BipedModel defaultModelFemale = new ModelEntityCitizenFemaleCitizen();
+    private static final CitizenModel defaultModelMale   = new CitizenModel();
+    private static final CitizenModel defaultModelFemale = new ModelEntityCitizenFemaleCitizen();
     private static final double     SHADOW_SIZE        = 0.5F;
     private static final int        THREE_QUARTERS     = 270;
 
-    private Model mainModel;
-    
     /**
      * Renders model, see {@link BipedRenderer}.
      *
@@ -36,14 +35,13 @@ public class RenderBipedCitizen<T extends EntityCitizen, M extends BipedModel<T>
      */
     public RenderBipedCitizen(final EntityRendererManager renderManagerIn)
     {
-        super(renderManagerIn, (M) defaultModelMale, (float) SHADOW_SIZE);
+        super(renderManagerIn, defaultModelMale, (float) SHADOW_SIZE);
         super.addLayer(new BipedArmorLayer(this, defaultModelMale, defaultModelMale));
-        this.mainModel = getEntityModel();
     }
 
     @Override
     protected void renderModel(
-      final T citizen,
+      final AbstractEntityCitizen citizen,
       final float limbSwing,
       final float limbSwingAmount,
       final float ageInTicks,
@@ -51,9 +49,9 @@ public class RenderBipedCitizen<T extends EntityCitizen, M extends BipedModel<T>
       final float headPitch,
       final float scaleFactor)
     {
-        setupMainModelFrom((T) citizen);
+        setupMainModelFrom(citizen);
 
-        final BipedModel citizenModel = (BipedModel) mainModel;
+        final CitizenModel citizenModel = entityModel;
 
         final ItemStack mainHandStack = citizen.getHeldItemMainhand();
         final ItemStack offHandStack = citizen.getHeldItemOffhand();
@@ -64,19 +62,19 @@ public class RenderBipedCitizen<T extends EntityCitizen, M extends BipedModel<T>
         super.renderModel(citizen, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
     }
 
-    private void setupMainModelFrom(@NotNull final T citizen)
+    private void setupMainModelFrom(@NotNull final AbstractEntityCitizen citizen)
     {
-        mainModel = citizen.isFemale()
+        entityModel = citizen.isFemale()
                       ? IModelTypeRegistry.getInstance().getFemaleMap().get(citizen.getModelType())
                       : IModelTypeRegistry.getInstance().getMaleMap().get(citizen.getModelType());
 
-        if (mainModel == null)
+        if (entityModel == null)
         {
-            mainModel = citizen.isFemale() ? defaultModelFemale : defaultModelMale;
+            entityModel = citizen.isFemale() ? defaultModelFemale : defaultModelMale;
         }
     }
 
-    private BipedModel.ArmPose getArmPoseFrom(@NotNull final T citizen, final ItemStack mainHandStack, BipedModel.ArmPose armPoseMainHand)
+    private BipedModel.ArmPose getArmPoseFrom(@NotNull final AbstractEntityCitizen citizen, final ItemStack mainHandStack, BipedModel.ArmPose armPoseMainHand)
     {
         final UseAction enumActionMainHand;
         if (!mainHandStack.isEmpty())
@@ -99,7 +97,7 @@ public class RenderBipedCitizen<T extends EntityCitizen, M extends BipedModel<T>
     }
 
     private void updateArmPose(
-      @NotNull final T citizen,
+      @NotNull final AbstractEntityCitizen citizen,
       final BipedModel citizenModel,
       final BipedModel.ArmPose armPoseMainHand,
       final BipedModel.ArmPose armPoseOffHand)
@@ -117,7 +115,7 @@ public class RenderBipedCitizen<T extends EntityCitizen, M extends BipedModel<T>
     }
 
     @Override
-    protected void renderLivingAt(final T LivingEntityIn, final double x, final double y, final double z)
+    protected void renderLivingAt(final AbstractEntityCitizen LivingEntityIn, final double x, final double y, final double z)
     {
         if (LivingEntityIn.isAlive() && LivingEntityIn.getCitizenSleepHandler().isAsleep())
         {
@@ -130,7 +128,7 @@ public class RenderBipedCitizen<T extends EntityCitizen, M extends BipedModel<T>
     }
 
     @Override
-    protected void applyRotations(final T entityLiving, final float rotationHead, final float rotationYaw, final float partialTicks)
+    protected void applyRotations(final AbstractEntityCitizen entityLiving, final float rotationHead, final float rotationYaw, final float partialTicks)
     {
         if (entityLiving.isAlive() && entityLiving.getCitizenSleepHandler().isAsleep())
         {
@@ -145,7 +143,7 @@ public class RenderBipedCitizen<T extends EntityCitizen, M extends BipedModel<T>
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(@NotNull final EntityCitizen entity)
+    protected ResourceLocation getEntityTexture(@NotNull final AbstractEntityCitizen entity)
     {
         return entity.getTexture();
     }

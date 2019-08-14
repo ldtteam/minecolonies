@@ -1,12 +1,11 @@
 package com.minecolonies.coremod.client.model;
 
-import net.minecraft.client.renderer.entity.model.BipedModel;
+import com.minecolonies.api.client.render.modeltype.CitizenModel;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.client.renderer.entity.model.RendererModel;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelEntityFishermanMale extends BipedModel
+public class ModelEntityFishermanMale extends CitizenModel
 {
     //fields
     private final RendererModel string;
@@ -235,7 +234,7 @@ public class ModelEntityFishermanMale extends BipedModel
         model.rotateAngleZ = z;
     }
 
-    public void render(final LivingEntity entity, final float f, final float f1, final float f2, final float f3, final float f4, final float f5)
+    public void render(final EntityCitizen entity, final float f, final float f1, final float f2, final float f3, final float f4, final float f5)
     {
         super.render(entity, f, f1, f2, f3, f4, f5);
 
