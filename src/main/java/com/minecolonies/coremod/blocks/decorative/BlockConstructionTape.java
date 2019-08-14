@@ -1,18 +1,15 @@
 package com.minecolonies.coremod.blocks.decorative;
 
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.StateContainer;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.IWorld;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,21 +22,10 @@ import static net.minecraft.util.Direction.*;
  */
 public class BlockConstructionTape extends AbstractBlockMinecoloniesConstructionTape<BlockConstructionTape>
 {
-
-    /**
-     * The hardness this block has.
-     */
-    private static final float BLOCK_HARDNESS = 0.0F;
-
     /**
      * This blocks name.
      */
     private static final String BLOCK_NAME = "blockconstructiontape";
-
-    /**
-     * The resistance this block has.
-     */
-    private static final float RESISTANCE = 0.0F;
 
     /**
      * Start of the collision box at y.
@@ -170,27 +156,22 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
      */
     private static final double E_END_COLLISION_Z = 0.6375;
 
+    private static final VoxelShape SHAPE_NORTH = Block.makeCuboidShape(N_START_COLLISION_X, BOTTOM_COLLISION, N_START_COLLISION_Z, N_END_COLLISION_X, HEIGHT_COLLISION, N_END_COLLISION_Z);
+    private static final VoxelShape SHAPE_WEST  = Block.makeCuboidShape(W_START_COLLISION_X, BOTTOM_COLLISION, W_START_COLLISION_Z, W_END_COLLISION_X, HEIGHT_COLLISION, W_END_COLLISION_Z);
+    private static final VoxelShape SHAPE_SOUTH = Block.makeCuboidShape(S_START_COLLISION_X, BOTTOM_COLLISION, S_START_COLLISION_Z, S_END_COLLISION_X, HEIGHT_COLLISION, S_END_COLLISION_Z);;
+    private static final VoxelShape SHAPE_EAST         = Block.makeCuboidShape(E_START_COLLISION_X, BOTTOM_COLLISION, E_START_COLLISION_Z, E_END_COLLISION_X, HEIGHT_COLLISION, E_END_COLLISION_Z);
+    private static final VoxelShape CORNER_EAST_WEST   = Block.makeCuboidShape(WE_START_COLLISION_X, BOTTOM_COLLISION, WE_START_COLLISION_Z, WE_END_COLLISION_X, HEIGHT_COLLISION, WE_END_COLLISION_Z);
+    private static final VoxelShape CORNER_NORTH_SOUTH = Block.makeCuboidShape(SN_START_COLLISION_X, BOTTOM_COLLISION, SN_START_COLLISION_Z, SN_END_COLLISION_X, HEIGHT_COLLISION, SN_END_COLLISION_Z);
+
     /**
      * Constructor for the Substitution block.
      * sets the creative tab, as well as the resistance and the hardness.
      */
     public BlockConstructionTape()
     {
-        super(Properties.create(Material.ORGANIC).hardnessAndResistance(BLOCK_HARDNESS, RESISTANCE).doesNotBlockMovement());
+        super(Properties.create(Material.TALL_PLANTS).hardnessAndResistance(0.0f).doesNotBlockMovement().noDrops());
         setRegistryName(BLOCK_NAME);
         this.setDefaultState(this.getDefaultState().with(FACING, NORTH));
-    }
-
-    @Override
-    public boolean doesSideBlockRendering(final BlockState state, final IEnviromentBlockReader world, final BlockPos pos, final Direction face)
-    {
-        return false;
-    }
-
-    @NotNull
-    @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
     }
 
     @NotNull
@@ -201,66 +182,35 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         {
             if (state.get(FACING).equals(NORTH))
             {
-                return Block.makeCuboidShape((float) N_START_COLLISION_X,
-                  (float) BOTTOM_COLLISION,
-                  (float) N_START_COLLISION_Z,
-                  (float) N_END_COLLISION_X,
-                  (float) HEIGHT_COLLISION,
-                  (float) N_END_COLLISION_Z);
+                return SHAPE_NORTH;
             }
             if (state.get(FACING).equals(WEST))
             {
-                return Block.makeCuboidShape((float) W_START_COLLISION_X,
-                  (float) BOTTOM_COLLISION,
-                  (float) W_START_COLLISION_Z,
-                  (float) W_END_COLLISION_X,
-                  (float) HEIGHT_COLLISION,
-                  (float) W_END_COLLISION_Z);
+                return SHAPE_WEST;
             }
             if (state.get(FACING).equals(SOUTH))
             {
-                return Block.makeCuboidShape((float) S_START_COLLISION_X,
-                  (float) BOTTOM_COLLISION,
-                  (float) S_START_COLLISION_Z,
-                  (float) S_END_COLLISION_X,
-                  (float) HEIGHT_COLLISION,
-                  (float) S_END_COLLISION_Z);
+                return SHAPE_SOUTH;
             }
-            else
-            {
-                return Block.makeCuboidShape((float) E_START_COLLISION_X,
-                  (float) BOTTOM_COLLISION,
-                  (float) E_START_COLLISION_Z,
-                  (float) E_END_COLLISION_X,
-                  (float) HEIGHT_COLLISION,
-                  (float) E_END_COLLISION_Z);
-            }
+
+            return SHAPE_EAST;
         }
 
         if (state.get(FACING).equals(EAST) || state.get(FACING).equals(WEST))
         {
-            return Block.makeCuboidShape((float) WE_START_COLLISION_X,
-              (float) BOTTOM_COLLISION,
-              (float) WE_START_COLLISION_Z,
-              (float) WE_END_COLLISION_X,
-              (float) HEIGHT_COLLISION,
-              (float) WE_END_COLLISION_Z);
+            return CORNER_EAST_WEST;
         }
         else
         {
-            return Block.makeCuboidShape((float) SN_START_COLLISION_X,
-              (float) BOTTOM_COLLISION,
-              (float) SN_START_COLLISION_Z,
-              (float) SN_END_COLLISION_X,
-              (float) HEIGHT_COLLISION,
-              (float) SN_END_COLLISION_Z);
+            return CORNER_NORTH_SOUTH;
         }
     }
 
     @NotNull
     @Override
-    public BlockState updatePostPlacement(@NotNull final BlockState stateIn, final Direction HORIZONTAL_FACING, final BlockState HORIZONTAL_FACINGState, final IWorld worldIn, @NotNull final BlockPos currentPos, final BlockPos HORIZONTAL_FACINGPos)
+    public BlockState updatePostPlacement(@NotNull final BlockState stateIn, final Direction dir, final BlockState state, final IWorld worldIn, @NotNull final BlockPos currentPos, final BlockPos pos)
     {
+        super.updatePostPlacement(stateIn, dir, state, worldIn, currentPos, pos);
         return getTapeShape(stateIn, worldIn, currentPos);
     }
 
@@ -286,7 +236,8 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     }
 
     @Override
-    public boolean propagatesSkylightDown(final BlockState state, @NotNull final IBlockReader reader, @NotNull final BlockPos pos) {
+    public boolean propagatesSkylightDown(final BlockState state, @NotNull final IBlockReader reader, @NotNull final BlockPos pos)
+    {
         return true;
     }
 
@@ -298,7 +249,8 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void fillStateContainer(final StateContainer.Builder<Block, BlockState> builder)
+    {
         builder.add(FACING, VARIANT);
     }
 }
