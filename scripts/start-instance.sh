@@ -1,9 +1,10 @@
+#!/bin/bash
 port_number=25565
 build_number=$1
 node_number=1
 teamcity_build_branch=$2
 
-if [docker stack ls | grep -q ldtteam-testserver-$teamcity_build_branch]
+if [ "$(docker stack ls | grep -q ldtteam-testserver-$teamcity_build_branch)" ]
 then
   candidatePorts=$(seq 25565 1 25585)
   stacks=$(docker stack ls --format '{{.Name}}' | grep 'ldtteam-testserver-')
