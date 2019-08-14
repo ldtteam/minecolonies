@@ -22,7 +22,9 @@ then
     done
   done
 
-  for i in "${!candidatePorts[@]}"; do
+  new_candidatePorts=()
+  for i in "${!candidatePorts[@]}"
+  do
     new_candidatePorts+=("${candidatePorts[i]}")
   done
   candidatePorts=("${new_candidatePorts[@]}")
