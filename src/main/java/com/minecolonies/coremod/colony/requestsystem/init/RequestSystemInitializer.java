@@ -22,7 +22,7 @@ public class RequestSystemInitializer
 
     public static void onPostInit()
     {
-        reconfigureLogging();
+        //reconfigureLogging();
 
         Log.getLogger().warn("Register mappings");
         RequestMappingHandler.registerRequestableTypeMapping(Stack.class, StandardRequests.ItemStackRequest.class);
