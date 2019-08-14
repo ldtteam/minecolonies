@@ -577,18 +577,18 @@ public class EventHandler
             //  Not in a colony
             if (IColonyManager.getInstance().getIColonyByOwner(world, player) == null)
             {
-                LanguageHandler.sendPlayerMessage(player, "tile.blockHut.messageNoTownHall");
+                LanguageHandler.sendPlayerMessage(player, "tile.blockhut.messagenotownhall");
             }
             else
             {
-                LanguageHandler.sendPlayerMessage(player, "tile.blockHut.messageTooFarFromTownHall");
+                LanguageHandler.sendPlayerMessage(player, "tile.blockhut.messagetoofarfromtownhall");
             }
             return false;
         }
         else if (!colony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
         {
             //  No permission to place hut in colony
-            LanguageHandler.sendPlayerMessage(player, "tile.blockHut.messageNoPermission", colony.getName());
+            LanguageHandler.sendPlayerMessage(player, "tile.blockhut.messagenopermission", colony.getName());
             return false;
         }
         else

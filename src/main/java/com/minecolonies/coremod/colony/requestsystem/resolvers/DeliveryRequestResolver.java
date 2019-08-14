@@ -128,7 +128,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
             if (freeDeliveryMan == null)
             {
-                MineColonies.getLogger().error("Parent cancellation of delivery request failed! Unknown request: " + request.getId());
+                Log.getLogger().error("Parent cancellation of delivery request failed! Unknown request: " + request.getId());
             }
             else
             {

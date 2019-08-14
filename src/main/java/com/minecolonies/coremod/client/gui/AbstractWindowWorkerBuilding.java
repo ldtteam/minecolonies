@@ -6,6 +6,7 @@ import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.ChangeDeliveryPriorityMessage;
@@ -142,7 +143,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
 
         Network.getNetwork().sendToServer(new ChangeDeliveryPriorityStateMessage(building));
         findPaneOfTypeByID(BUTTON_DP_STATE, Button.class).setLabel(LanguageHandler.format(stateString));
-        MineColonies.getLogger().info(state);
+        Log.getLogger().info(state);
     }
 
     private void recipeListClicked()

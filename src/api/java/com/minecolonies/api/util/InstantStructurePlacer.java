@@ -151,7 +151,7 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
                 }
                 catch (final RuntimeException e)
                 {
-                    com.ldtteam.structurize.api.util.Log.getLogger().info("Couldn't restore entitiy", e);
+                    Log.getLogger().info("Couldn't restore entitiy", e);
                 }
             }
         }

@@ -364,7 +364,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             }
             catch (final Exception e)
             {
-                MineColonies.getLogger().warn("Warning: Updating data structures:", e);
+                Log.getLogger().warn("Warning: Updating data structures:", e);
                 final ICitizenData worker = getColony().getCitizenManager().getCitizen(compound.getInt(TAG_WORKER));
                 assignCitizen(worker);
             }

@@ -1,5 +1,6 @@
 package com.minecolonies.api.util;
 
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.util.constant.Constants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +13,7 @@ public final class Log
     /**
      * Mod logger.
      */
-    private static Logger logger = null;
+    private static Logger logger = LogManager.getLogger(Constants.MOD_ID);
 
     /**
      * Private constructor to hide the public one.
@@ -31,11 +32,6 @@ public final class Log
      */
     public static Logger getLogger()
     {
-        //Only create logger if current logger is empty.
-        if (logger == null)
-        {
-            Log.logger = LogManager.getLogger(Constants.MOD_ID);
-        }
         return logger;
     }
 }
