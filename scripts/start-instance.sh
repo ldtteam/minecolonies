@@ -1,8 +1,9 @@
-export port_number=25565
-export build_number=${build.number}
-export node_number=1
+port_number=25565
+build_number=$1
+node_number=1
+teamcity_build_branch=$2
 
-if docker stack ls | grep -q ldtteam-testserver-"${teamcity.build.branch}"
+if docker stack ls | grep -q ldtteam-testserver-$teamcity_build_branch
 then
   mapfile -t candidatePorts < <(seq 25565 1 25585)
   stacks=$(docker stack ls --format '{{.Name}}' | grep 'ldtteam-testserver-')
@@ -32,14 +33,14 @@ then
     exit 2;
   fi
 
-  export port_number=candidatePorts[0];
+  port_number=candidatePorts[0];
 
-  echo "Creating new service stack for PR: $teamcity.build.branch"
+  echo "Creating new service stack for PR: $teamcity_build_branch"
 else
-	server=$(docker stack services ldtteam-testserver-%env.Version% --format '{{.Name}} {{.ID}}' | grep minecraft-server)
-	id=${server: -12}
-	export port_number=$(docker inspect $id | jq ".[].Spec.Labels.\"port\"")
-  export node_number=$(docker inspect $id | jq ".[].Spec.Labels.\"node.minecraft\"")
+        server=$(docker stack services ldtteam-testserver-$teamcity_build_branch --format '{{.Name}} {{.ID}}' | grep minecraft-server)
+        id=${server: -12}
+        port_number=$(docker inspect $id | jq ".[].Spec.Labels.\"port\"")
+        node_number=$(docker inspect $id | jq ".[].Spec.Labels.\"node.minecraft\"")
 fi
 
-docker stack deploy -c docker-compose.yml ldtteam-testserver-"${teamcity.build.branch}"
+docker stack deploy -c docker-compose.yml ldtteam-testserver-$teamcity_build_branch
