@@ -29,7 +29,7 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     /**
      * Description of the block used to set this block.
      */
-    private static final String TOWN_HALL = "TownHall";
+    private static final String TOWN_HALL = "townhall";
 
     /**
      * Max building level of the hut.

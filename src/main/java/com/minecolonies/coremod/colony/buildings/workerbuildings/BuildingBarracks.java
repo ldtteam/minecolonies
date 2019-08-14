@@ -37,7 +37,7 @@ public class BuildingBarracks extends AbstractBuilding
     /**
      * Name of our building's Schematics.
      */
-    private static final String SCHEMATIC_NAME = "Barracks";
+    private static final String SCHEMATIC_NAME = "barracks";
 
     /**
      * Max hut level of the Barracks.

@@ -7,21 +7,16 @@ import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.apiimp.MinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
-import com.minecolonies.coremod.util.TownHallRecipe;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.RecipeBook;
-import net.minecraft.item.crafting.ShapedRecipe;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -31,7 +26,6 @@ import java.util.Map;
 /**
  * CommonProxy of the minecolonies mod (Server and Client).
  */
-@Mod.EventBusSubscriber
 public abstract class CommonProxy implements IProxy
 {
     /**
@@ -85,18 +79,6 @@ public abstract class CommonProxy implements IProxy
         event.getRegistry().register(new TownHallRecipe());
     }*/
 
-    /**
-     * Called when registering items,
-     * we have to register all our mod items here.
-     *
-     * @param event the registery event for items.
-     */
-    @SubscribeEvent
-    public static void registerItems(@NotNull final RegistryEvent.Register<Item> event)
-    {
-        ModItemsInitializer.init(event.getRegistry());
-    }
-
     @SubscribeEvent
     public static void registerGuardTypes(final RegistryEvent.Register<GuardType> event)
     {
@@ -119,12 +101,6 @@ public abstract class CommonProxy implements IProxy
     public static void registerJobTypes(final RegistryEvent.Register<JobEntry> event)
     {
         ModJobsInitializer.init(event);
-    }
-
-    @SubscribeEvent
-    public static void onRegistryNewRegistry(final RegistryEvent.NewRegistry event)
-    {
-        MinecoloniesAPIImpl.getInstance().onRegistryNewRegistry(event);
     }
 
     @Override

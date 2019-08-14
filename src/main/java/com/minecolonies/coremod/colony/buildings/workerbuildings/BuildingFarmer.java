@@ -47,7 +47,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     /**
      * Descriptive string of the profession.
      */
-    private static final String FARMER = "Farmer";
+    private static final String FARMER = "farmer";
 
     /**
      * The maximum building level of the hut.

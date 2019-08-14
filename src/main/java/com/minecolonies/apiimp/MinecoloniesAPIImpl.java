@@ -161,7 +161,7 @@ public final class MinecoloniesAPIImpl implements IMinecoloniesAPI
                         .create();
 
         guardTypeRegistry = new RegistryBuilder<GuardType>()
-                              .setName(new ResourceLocation(Constants.MOD_ID, "guardTypes"))
+                              .setName(new ResourceLocation(Constants.MOD_ID, "guardtypes"))
                               .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
                               .disableSaving()
                               .allowModification()

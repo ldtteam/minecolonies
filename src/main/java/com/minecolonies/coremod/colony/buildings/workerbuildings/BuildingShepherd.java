@@ -25,7 +25,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
     /**
      * Description of the job executed in the hut.
      */
-    private static final String SHEPHERD = "Shepherd";
+    private static final String SHEPHERD = "shepherd";
 
     /**
      * NBT Tag for dyeSheeps boolean.

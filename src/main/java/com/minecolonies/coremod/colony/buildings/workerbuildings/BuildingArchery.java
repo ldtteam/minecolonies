@@ -42,12 +42,12 @@ public class BuildingArchery extends AbstractBuildingWorker
     /**
      * The Schematic name.
      */
-    private static final String SCHEMATIC_NAME = "Archery";
+    private static final String SCHEMATIC_NAME = "archery";
 
     /**
      * The Schematic name.
      */
-    private static final String DESC = "Archery";
+    private static final String DESC = "archery";
 
     /**
      * List of shooting stands in the building.

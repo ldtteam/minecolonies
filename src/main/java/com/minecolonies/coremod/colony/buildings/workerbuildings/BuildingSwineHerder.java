@@ -21,12 +21,12 @@ public class BuildingSwineHerder extends AbstractBuildingWorker
     /**
      * Description of the job executed in the hut.
      */
-    private static final String JOB          = "SwineHerder";
+    private static final String JOB          = "swineherder";
 
     /**
      * Description of the block used to set this block.
      */
-    private static final String HUT_NAME = "swineHerderHut";
+    private static final String HUT_NAME = "swineherderhut";
 
     /**
      * Max building level of the hut.

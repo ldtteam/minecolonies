@@ -38,7 +38,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
     /**
      * The job description.
      */
-    private static final String BUILDER     = "Builder";
+    private static final String BUILDER     = "builder";
 
     /**
      * NBT tag to store if mobs already got purged.

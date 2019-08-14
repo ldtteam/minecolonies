@@ -38,7 +38,7 @@ public class BuildingStonemason extends AbstractBuildingCrafter
     /**
      * Description string of the building.
      */
-    private static final String STONEMASON = "Stonemason";
+    private static final String STONEMASON = "stonemason";
 
     /**
      * The min percentage something has to have out of stone to be craftable by this worker.

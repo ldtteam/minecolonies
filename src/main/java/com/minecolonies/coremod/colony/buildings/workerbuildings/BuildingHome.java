@@ -42,7 +42,7 @@ public class BuildingHome extends AbstractBuilding
     /**
      * The string describing the hut.
      */
-    private static final String CITIZEN = "Citizen";
+    private static final String CITIZEN = "citizen";
 
     /**
      * List of all bedList.

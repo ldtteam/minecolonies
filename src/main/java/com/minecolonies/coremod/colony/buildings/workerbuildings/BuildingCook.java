@@ -35,7 +35,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser
     /**
      * The cook string.
      */
-    private static final String COOK_DESC = "Cook";
+    private static final String COOK_DESC = "cook";
 
     /**
      * Max building level of the cook.

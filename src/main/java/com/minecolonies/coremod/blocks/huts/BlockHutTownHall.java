@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.blocks.huts;
 
+import com.ldtteam.blockout.controls.Image;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -62,7 +63,6 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
       @NotNull final World worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack)
     {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-        Log.getLogger().warn("Go");
         if (worldIn.isRemote)
         {
             return;

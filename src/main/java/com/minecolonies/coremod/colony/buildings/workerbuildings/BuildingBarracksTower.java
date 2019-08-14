@@ -27,7 +27,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     /**
      * Our constants. The Schematic names, Defence bonus, and Offence bonus.
      */
-    private static final String SCHEMATIC_NAME = "BarracksTower";
+    private static final String SCHEMATIC_NAME = "barrackstower";
     private static final int    DEFENCE_BONUS  = 0;
     private static final int    OFFENCE_BONUS  = 5;
 

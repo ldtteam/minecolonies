@@ -45,7 +45,7 @@ public class BuildingBaker extends AbstractFilterableListBuilding
     /**
      * General bakery description key.
      */
-    private static final String BAKER = "Baker";
+    private static final String BAKER = "baker";
 
     /**
      * Max hut level of the bakery.

@@ -45,7 +45,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     /**
      * The job description.
      */
-    private static final String MINER = "Miner";
+    private static final String MINER = "miner";
 
     /**
      * Stores the levels of the miners mine. This could be a map with (depth,level).

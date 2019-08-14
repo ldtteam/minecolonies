@@ -3,6 +3,7 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -25,210 +26,210 @@ public final class ModBuildingsInitializer
                                  .setBuildingBlock(ModBlocks.blockHutArchery)
                                  .setBuildingProducer(BuildingArchery::new)
                                  .setBuildingViewProducer(BuildingArchery.View::new)
-                                 .setRegistryName(new ResourceLocation(ModBuildings.ARCHERY_ID))
+                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ARCHERY_ID))
                                  .createBuildingEntry();
 
         ModBuildings.bakery = new BuildingEntry.Builder()
                                 .setBuildingBlock(ModBlocks.blockHutBaker)
                                 .setBuildingProducer(BuildingBaker::new)
                                 .setBuildingViewProducer(BuildingBaker.View::new)
-                                .setRegistryName(new ResourceLocation(ModBuildings.BAKERY_ID))
+                                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BAKERY_ID))
                                 .createBuildingEntry();
 
         ModBuildings.barracks = new BuildingEntry.Builder()
                                   .setBuildingBlock(ModBlocks.blockHutBarracks)
                                   .setBuildingProducer(BuildingBarracks::new)
                                   .setBuildingViewProducer(BuildingBarracks.View::new)
-                                  .setRegistryName(new ResourceLocation(ModBuildings.BARRACKS_ID))
+                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BARRACKS_ID))
                                   .createBuildingEntry();
 
         ModBuildings.barracksTower = new BuildingEntry.Builder()
                                        .setBuildingBlock(ModBlocks.blockHutBarracksTower)
                                        .setBuildingProducer(BuildingBarracksTower::new)
                                        .setBuildingViewProducer(BuildingBarracksTower.View::new)
-                                       .setRegistryName(new ResourceLocation(ModBuildings.BARRACKS_TOWER_ID))
+                                       .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BARRACKS_TOWER_ID))
                                        .createBuildingEntry();
 
         ModBuildings.blacksmith = new BuildingEntry.Builder()
                                     .setBuildingBlock(ModBlocks.blockHutBlacksmith)
                                     .setBuildingProducer(BuildingBlacksmith::new)
                                     .setBuildingViewProducer(BuildingBlacksmith.View::new)
-                                    .setRegistryName(new ResourceLocation(ModBuildings.BLACKSMITH_ID))
+                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BLACKSMITH_ID))
                                     .createBuildingEntry();
 
         ModBuildings.builder = new BuildingEntry.Builder()
                                  .setBuildingBlock(ModBlocks.blockHutBuilder)
                                  .setBuildingProducer(BuildingBuilder::new)
                                  .setBuildingViewProducer(BuildingBuilder.View::new)
-                                 .setRegistryName(new ResourceLocation(ModBuildings.BUILDER_ID))
+                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BUILDER_ID))
                                  .createBuildingEntry();
 
         ModBuildings.chickenHerder = new BuildingEntry.Builder()
                                        .setBuildingBlock(ModBlocks.blockHutChickenHerder)
                                        .setBuildingProducer(BuildingChickenHerder::new)
                                        .setBuildingViewProducer(BuildingChickenHerder.View::new)
-                                       .setRegistryName(new ResourceLocation(ModBuildings.CHICKENHERDER_ID))
+                                       .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.CHICKENHERDER_ID))
                                        .createBuildingEntry();
 
         ModBuildings.combatAcademy = new BuildingEntry.Builder()
                                        .setBuildingBlock(ModBlocks.blockHutCombatAcademy)
                                        .setBuildingProducer(BuildingCombatAcademy::new)
                                        .setBuildingViewProducer(BuildingCombatAcademy.View::new)
-                                       .setRegistryName(new ResourceLocation(ModBuildings.COMBAT_ACADEMY_ID))
+                                       .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COMBAT_ACADEMY_ID))
                                        .createBuildingEntry();
 
         ModBuildings.composter = new BuildingEntry.Builder()
                                    .setBuildingBlock(ModBlocks.blockHutComposter)
                                    .setBuildingProducer(BuildingComposter::new)
                                    .setBuildingViewProducer(BuildingComposter.View::new)
-                                   .setRegistryName(new ResourceLocation(ModBuildings.COMPOSTER_ID))
+                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COMPOSTER_ID))
                                    .createBuildingEntry();
 
         ModBuildings.cook = new BuildingEntry.Builder()
                               .setBuildingBlock(ModBlocks.blockHutCook)
                               .setBuildingProducer(BuildingCook::new)
                               .setBuildingViewProducer(BuildingCook.View::new)
-                              .setRegistryName(new ResourceLocation(ModBuildings.COOK_ID))
+                              .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COOK_ID))
                               .createBuildingEntry();
 
         ModBuildings.cowboy = new BuildingEntry.Builder()
                                 .setBuildingBlock(ModBlocks.blockHutCowboy)
                                 .setBuildingProducer(BuildingCowboy::new)
                                 .setBuildingViewProducer(BuildingCowboy.View::new)
-                                .setRegistryName(new ResourceLocation(ModBuildings.COWBOY_ID))
+                                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COWBOY_ID))
                                 .createBuildingEntry();
 
         ModBuildings.crusher = new BuildingEntry.Builder()
                                  .setBuildingBlock(ModBlocks.blockHutCrusher)
                                  .setBuildingProducer(BuildingCrusher::new)
                                  .setBuildingViewProducer(BuildingCrusher.View::new)
-                                 .setRegistryName(new ResourceLocation(ModBuildings.CRUSHER_ID))
+                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.CRUSHER_ID))
                                  .createBuildingEntry();
 
         ModBuildings.deliveryman = new BuildingEntry.Builder()
                                      .setBuildingBlock(ModBlocks.blockHutDeliveryman)
                                      .setBuildingProducer(BuildingDeliveryman::new)
                                      .setBuildingViewProducer(BuildingDeliveryman.View::new)
-                                     .setRegistryName(new ResourceLocation(ModBuildings.DELIVERYMAN_ID))
+                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.DELIVERYMAN_ID))
                                      .createBuildingEntry();
 
         ModBuildings.farmer = new BuildingEntry.Builder()
                                 .setBuildingBlock(ModBlocks.blockHutFarmer)
                                 .setBuildingProducer(BuildingFarmer::new)
                                 .setBuildingViewProducer(BuildingFarmer.View::new)
-                                .setRegistryName(new ResourceLocation(ModBuildings.FARMER_ID))
+                                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FARMER_ID))
                                 .createBuildingEntry();
 
         ModBuildings.fisherman = new BuildingEntry.Builder()
                                    .setBuildingBlock(ModBlocks.blockHutFisherman)
                                    .setBuildingProducer(BuildingFisherman::new)
                                    .setBuildingViewProducer(BuildingFisherman.View::new)
-                                   .setRegistryName(new ResourceLocation(ModBuildings.FISHERMAN_ID))
+                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FISHERMAN_ID))
                                    .createBuildingEntry();
 
         ModBuildings.guardTower = new BuildingEntry.Builder()
                                     .setBuildingBlock(ModBlocks.blockHutGuardTower)
                                     .setBuildingProducer(BuildingGuardTower::new)
                                     .setBuildingViewProducer(BuildingGuardTower.View::new)
-                                    .setRegistryName(new ResourceLocation(ModBuildings.GUARD_TOWER_ID))
+                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GUARD_TOWER_ID))
                                     .createBuildingEntry();
 
         ModBuildings.home = new BuildingEntry.Builder()
                               .setBuildingBlock(ModBlocks.blockHutHome)
                               .setBuildingProducer(BuildingHome::new)
                               .setBuildingViewProducer(BuildingHome.View::new)
-                              .setRegistryName(new ResourceLocation(ModBuildings.HOME_ID))
+                              .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOME_ID))
                               .createBuildingEntry();
 
         ModBuildings.library = new BuildingEntry.Builder()
                                  .setBuildingBlock(ModBlocks.blockHutLibrary)
                                  .setBuildingProducer(BuildingLibrary::new)
                                  .setBuildingViewProducer(BuildingLibrary.View::new)
-                                 .setRegistryName(new ResourceLocation(ModBuildings.LIBRARY_ID))
+                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.LIBRARY_ID))
                                  .createBuildingEntry();
 
         ModBuildings.lumberjack = new BuildingEntry.Builder()
                                     .setBuildingBlock(ModBlocks.blockHutLumberjack)
                                     .setBuildingProducer(BuildingLumberjack::new)
                                     .setBuildingViewProducer(BuildingLumberjack.View::new)
-                                    .setRegistryName(new ResourceLocation(ModBuildings.LUMBERJACK_ID))
+                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.LUMBERJACK_ID))
                                     .createBuildingEntry();
 
         ModBuildings.miner = new BuildingEntry.Builder()
                                .setBuildingBlock(ModBlocks.blockHutMiner)
                                .setBuildingProducer(BuildingMiner::new)
                                .setBuildingViewProducer(BuildingMiner.View::new)
-                               .setRegistryName(new ResourceLocation(ModBuildings.MINER_ID))
+                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MINER_ID))
                                .createBuildingEntry();
 
         ModBuildings.sawmill = new BuildingEntry.Builder()
                                  .setBuildingBlock(ModBlocks.blockHutSawmill)
                                  .setBuildingProducer(BuildingSawmill::new)
                                  .setBuildingViewProducer(BuildingSawmill.View::new)
-                                 .setRegistryName(new ResourceLocation(ModBuildings.SAWMILL_ID))
+                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SAWMILL_ID))
                                  .createBuildingEntry();
 
         ModBuildings.shepherd = new BuildingEntry.Builder()
                                   .setBuildingBlock(ModBlocks.blockHutShepherd)
                                   .setBuildingProducer(BuildingShepherd::new)
                                   .setBuildingViewProducer(BuildingShepherd.View::new)
-                                  .setRegistryName(new ResourceLocation(ModBuildings.SHEPHERD_ID))
+                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SHEPHERD_ID))
                                   .createBuildingEntry();
 
         ModBuildings.sifter = new BuildingEntry.Builder()
                                 .setBuildingBlock(ModBlocks.blockHutSifter)
                                 .setBuildingProducer(BuildingSifter::new)
                                 .setBuildingViewProducer(BuildingSifter.View::new)
-                                .setRegistryName(new ResourceLocation(ModBuildings.SIFTER_ID))
+                                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIFTER_ID))
                                 .createBuildingEntry();
 
         ModBuildings.smeltery = new BuildingEntry.Builder()
                                   .setBuildingBlock(ModBlocks.blockHutSmeltery)
                                   .setBuildingProducer(BuildingSmeltery::new)
                                   .setBuildingViewProducer(BuildingSmeltery.View::new)
-                                  .setRegistryName(new ResourceLocation(ModBuildings.SMELTERY_ID))
+                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SMELTERY_ID))
                                   .createBuildingEntry();
 
         ModBuildings.stoneMason = new BuildingEntry.Builder()
                                     .setBuildingBlock(ModBlocks.blockHutStonemason)
                                     .setBuildingProducer(BuildingStonemason::new)
                                     .setBuildingViewProducer(BuildingStonemason.View::new)
-                                    .setRegistryName(new ResourceLocation(ModBuildings.STONE_MASON_ID))
+                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STONE_MASON_ID))
                                     .createBuildingEntry();
 
         ModBuildings.stoneSmelter = new BuildingEntry.Builder()
                                       .setBuildingBlock(ModBlocks.blockHutStoneSmeltery)
                                       .setBuildingProducer(BuildingStoneSmeltery::new)
                                       .setBuildingViewProducer(BuildingStoneSmeltery.View::new)
-                                      .setRegistryName(new ResourceLocation(ModBuildings.STONE_SMELTERY_ID))
+                                      .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STONE_SMELTERY_ID))
                                       .createBuildingEntry();
 
         ModBuildings.swineHerder = new BuildingEntry.Builder()
                                      .setBuildingBlock(ModBlocks.blockHutSwineHerder)
                                      .setBuildingProducer(BuildingSwineHerder::new)
                                      .setBuildingViewProducer(BuildingSwineHerder.View::new)
-                                     .setRegistryName(new ResourceLocation(ModBuildings.SWINE_HERDER_ID))
+                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SWINE_HERDER_ID))
                                      .createBuildingEntry();
 
         ModBuildings.townHall = new BuildingEntry.Builder()
                                   .setBuildingBlock(ModBlocks.blockHutTownHall)
                                   .setBuildingProducer(BuildingTownHall::new)
                                   .setBuildingViewProducer(BuildingTownHall.View::new)
-                                  .setRegistryName(new ResourceLocation(ModBuildings.TOWNHALL_ID))
+                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.TOWNHALL_ID))
                                   .createBuildingEntry();
 
         ModBuildings.wareHouse = new BuildingEntry.Builder()
                                    .setBuildingBlock(ModBlocks.blockHutWareHouse)
                                    .setBuildingProducer(BuildingWareHouse::new)
                                    .setBuildingViewProducer(BuildingWareHouse.View::new)
-                                   .setRegistryName(new ResourceLocation(ModBuildings.WAREHOUSE_ID))
+                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.WAREHOUSE_ID))
                                    .createBuildingEntry();
 
         ModBuildings.postBox = new BuildingEntry.Builder()
                                  .setBuildingBlock(ModBlocks.blockPostBox)
                                  .setBuildingProducer(PostBox::new)
                                  .setBuildingViewProducer(PostBox.View::new)
-                                 .setRegistryName(new ResourceLocation(ModBuildings.POSTBOX_ID))
+                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.POSTBOX_ID))
                                  .createBuildingEntry();
 
         reg.register(ModBuildings.archery);

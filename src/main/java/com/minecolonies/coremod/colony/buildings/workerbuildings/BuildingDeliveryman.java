@@ -34,7 +34,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_
 public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuildingDeliveryman
 {
 
-    private static final String DELIVERYMAN = "Deliveryman";
+    private static final String DELIVERYMAN = "deliveryman";
 
     /**
      * Building the deliveryman will deliver somethingTo
