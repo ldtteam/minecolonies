@@ -2,7 +2,6 @@ package com.minecolonies.api.util.constant;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.util.MathUtils;
-import net.minecraft.util.ResourceLocation;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
@@ -25,10 +24,6 @@ public final class ColonyConstants
     public static final int ONWORLD_TICK_AVERAGE = TICKS_SECOND;
 
     public static final int NUM_ACHIEVEMENT_FIRST  = 1;
-    public static final int NUM_ACHIEVEMENT_SECOND = 25;
-    public static final int NUM_ACHIEVEMENT_THIRD  = 100;
-    public static final int NUM_ACHIEVEMENT_FOURTH = 500;
-    public static final int NUM_ACHIEVEMENT_FIFTH  = 1000;
 
     /**
      * The default spawn radius required for barbarians.
@@ -78,10 +73,6 @@ public final class ColonyConstants
     /**
      * Barbarian Constants.
      */
-    public static final ResourceLocation BARBARIAN                    = new ResourceLocation(Constants.MOD_ID, "Barbarian");
-    public static final ResourceLocation MERCENARY                    = new ResourceLocation(Constants.MOD_ID, "Mercenary");
-    public static final ResourceLocation ARCHER                       = new ResourceLocation(Constants.MOD_ID, "ArcherBarbarian");
-    public static final ResourceLocation CHIEF                        = new ResourceLocation(Constants.MOD_ID, "ChiefBarbarian");
     public static final double           ARCHER_BARBARIANS_MULTIPLIER = 0.30;
     public static final double           CHIEF_BARBARIANS_MULTIPLIER  = 0.1;
     public static final int              MIN_CITIZENS_FOR_RAID        = 5;
@@ -102,10 +93,6 @@ public final class ColonyConstants
     /**
      * Pirate Constants.
      */
-    public static final ResourceLocation PIRATE        = new ResourceLocation(Constants.MOD_ID, "Pirate");
-    public static final ResourceLocation PIRATE_ARCHER = new ResourceLocation(Constants.MOD_ID, "ArcherPirate");
-    public static final ResourceLocation PIRATE_CHIEF  = new ResourceLocation(Constants.MOD_ID, "ChiefPirate");
-
     public static final String SMALL_PIRATE_SHIP = "small_pirate_ship";
     public static final String MEDIUM_PIRATE_SHIP = "medium_pirate_ship";
     public static final String BIG_PIRATE_SHIP = "big_pirate_ship";

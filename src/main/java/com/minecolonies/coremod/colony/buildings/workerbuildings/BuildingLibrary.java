@@ -42,12 +42,12 @@ public class BuildingLibrary extends AbstractBuildingWorker
     /**
      * Description of the job executed in the hut.
      */
-    private static final String STUDENT = "Student";
+    private static final String STUDENT = "student";
 
     /**
      * Description of the block used to set this block.
      */
-    private static final String LIBRARY_HUT_NAME = "Library";
+    private static final String LIBRARY_HUT_NAME = "library";
 
     /**
      * List of registered barrels.

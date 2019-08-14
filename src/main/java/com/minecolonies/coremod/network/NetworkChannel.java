@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.network;
 
 import com.ldtteam.structurize.Structurize;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.network.messages.*;
@@ -160,7 +161,7 @@ public class NetworkChannel
             ctx.setPacketHandled(true);
             if (msg.getExecutionSide() != null && packetOrigin.equals(msg.getExecutionSide()))
             {
-                Structurize.getLogger().warn("Receving {} at wrong side!", msg.getClass().getName());
+                Log.getLogger().warn("Receving {} at wrong side!", msg.getClass().getName());
                 return;
             }
             // boolean param MUST equals true if packet arrived at logical server

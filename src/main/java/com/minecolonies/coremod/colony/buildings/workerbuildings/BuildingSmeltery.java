@@ -36,7 +36,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
     /**
      * The cook string.
      */
-    private static final String SMELTERY_DESC = "Smeltery";
+    private static final String SMELTERY_DESC = "smeltery";
 
     /**
      * Max building level of the cook.

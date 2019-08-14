@@ -25,7 +25,7 @@ public class BuildingCowboy extends AbstractBuildingWorker
     /**
      * Description of the job executed in the hut.
      */
-    private static final String COWBOY          = "Cowboy";
+    private static final String COWBOY          = "cowboy";
 
     /**
      * NBT Tag for milkCows boolean.

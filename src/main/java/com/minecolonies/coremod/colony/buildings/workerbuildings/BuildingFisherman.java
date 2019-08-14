@@ -31,7 +31,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
     /**
      * The job description.
      */
-    private static final String FISHERMAN          = "Fisherman";
+    private static final String FISHERMAN          = "fisherman";
 
     /**
      * Public constructor of the building, creates an object of the building.

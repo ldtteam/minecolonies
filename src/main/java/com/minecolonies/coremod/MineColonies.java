@@ -35,6 +35,7 @@ import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.event.*;
 import com.minecolonies.coremod.placementhandlers.MinecoloniesPlacementHandlers;
 import com.minecolonies.coremod.proxy.ClientProxy;
+import com.minecolonies.coremod.proxy.CommonProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
@@ -84,6 +85,7 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(FMLEventHandler.class);
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(ClientEventHandler.class);
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DebugRendererChunkBorder.class);
+        Mod.EventBusSubscriber.Bus.MOD.bus().get().register(CommonProxy.class);
 
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(this.getClass());
     }

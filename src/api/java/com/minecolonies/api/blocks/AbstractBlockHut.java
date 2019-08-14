@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import net.minecraft.block.Block;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.BlockState;
@@ -104,7 +105,15 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @Override
     public TileEntity createTileEntity(final BlockState state, final IBlockReader world)
     {
-        return MinecoloniesTileEntities.BUILDING.create();
+        final TileEntityColonyBuilding building = (TileEntityColonyBuilding) MinecoloniesTileEntities.BUILDING.create();
+        building.registryName =  this.getBuildingEntry().getRegistryName();
+        return building;
+    }
+
+    @Override
+    public boolean hasTileEntity(final BlockState state)
+    {
+        return true;
     }
 
     /**

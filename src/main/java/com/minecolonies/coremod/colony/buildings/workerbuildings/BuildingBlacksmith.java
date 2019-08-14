@@ -32,7 +32,7 @@ public class BuildingBlacksmith extends AbstractBuildingCrafter
     /**
      * Description of the job executed in the hut.
      */
-    private static final String BLACKSMITH = "Blacksmith";
+    private static final String BLACKSMITH = "blacksmith";
 
     /**
      * Instantiates the building.

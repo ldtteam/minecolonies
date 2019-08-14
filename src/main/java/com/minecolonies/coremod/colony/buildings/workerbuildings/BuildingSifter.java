@@ -42,7 +42,7 @@ public class BuildingSifter extends AbstractBuildingWorker
     /**
      * The sifter string.
      */
-    private static final String SIFTER_DESC = "Sifter";
+    private static final String SIFTER_DESC = "sifter";
 
     /**
      * Max building level of the sifter.

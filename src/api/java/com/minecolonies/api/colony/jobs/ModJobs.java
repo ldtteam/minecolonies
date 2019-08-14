@@ -1,37 +1,38 @@
 package com.minecolonies.api.colony.jobs;
 
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.util.ResourceLocation;
 
 public final class ModJobs
 {
 
-    public static final ResourceLocation PLACEHOLDER_ID    = new ResourceLocation("Placeholder");
-    public static final ResourceLocation BUILDER_ID        = new ResourceLocation("Builder");
-    public static final ResourceLocation DELIVERY_ID       = new ResourceLocation("Deliveryman");
-    public static final ResourceLocation MINER_ID          = new ResourceLocation("Miner");
-    public static final ResourceLocation LUMBERJACK_ID     = new ResourceLocation("Lumberjack");
-    public static final ResourceLocation FARMER_ID         = new ResourceLocation("Farmer");
-    public static final ResourceLocation FISHERMAN_ID      = new ResourceLocation("Fisherman");
-    public static final ResourceLocation BAKER_ID          = new ResourceLocation("Baker");
-    public static final ResourceLocation COOK_ID           = new ResourceLocation("Cook");
-    public static final ResourceLocation SHEPHERD_ID       = new ResourceLocation("Shepherd");
-    public static final ResourceLocation COWBOY_ID         = new ResourceLocation("Cowboy");
-    public static final ResourceLocation SWINE_HERDER_ID   = new ResourceLocation("SwineHerder");
-    public static final ResourceLocation CHICKEN_HERDER_ID = new ResourceLocation("ChickenHerder");
-    public static final ResourceLocation SMELTER_ID        = new ResourceLocation("Smelter");
-    public static final ResourceLocation RANGER_ID         = new ResourceLocation("Ranger");
-    public static final ResourceLocation KNIGHT_ID         = new ResourceLocation("Knight");
-    public static final ResourceLocation COMPOSTER_ID      = new ResourceLocation("Composter");
-    public static final ResourceLocation STUDENT_ID        = new ResourceLocation("Student");
-    public static final ResourceLocation ARCHER_ID         = new ResourceLocation("ArcherTraining");
-    public static final ResourceLocation COMBAT_ID         = new ResourceLocation("CombatTraining");
-    public static final ResourceLocation SAWMILL_ID        = new ResourceLocation("Sawmill");
-    public static final ResourceLocation BLACKSMITH_ID     = new ResourceLocation("Blacksmith");
-    public static final ResourceLocation STONEMASON_ID     = new ResourceLocation("Stonemason");
-    public static final ResourceLocation STONE_SMELTERY_ID = new ResourceLocation("StoneSmeltery");
-    public static final ResourceLocation CRUSHER_ID        = new ResourceLocation("Crusher");
-    public static final ResourceLocation SIFTER_ID         = new ResourceLocation("Sifter");
+    public static final ResourceLocation PLACEHOLDER_ID    = new ResourceLocation(Constants.MOD_ID, "placeholder");
+    public static final ResourceLocation BUILDER_ID        = new ResourceLocation(Constants.MOD_ID,"builder");
+    public static final ResourceLocation DELIVERY_ID       = new ResourceLocation(Constants.MOD_ID,"deliveryman");
+    public static final ResourceLocation MINER_ID          = new ResourceLocation(Constants.MOD_ID,"miner");
+    public static final ResourceLocation LUMBERJACK_ID     = new ResourceLocation(Constants.MOD_ID,"lumberjack");
+    public static final ResourceLocation FARMER_ID         = new ResourceLocation(Constants.MOD_ID,"farmer");
+    public static final ResourceLocation FISHERMAN_ID      = new ResourceLocation(Constants.MOD_ID,"fisherman");
+    public static final ResourceLocation BAKER_ID          = new ResourceLocation(Constants.MOD_ID,"baker");
+    public static final ResourceLocation COOK_ID           = new ResourceLocation(Constants.MOD_ID,"cook");
+    public static final ResourceLocation SHEPHERD_ID       = new ResourceLocation(Constants.MOD_ID,"shepherd");
+    public static final ResourceLocation COWBOY_ID         = new ResourceLocation(Constants.MOD_ID,"cowboy");
+    public static final ResourceLocation SWINE_HERDER_ID   = new ResourceLocation(Constants.MOD_ID,"swineherder");
+    public static final ResourceLocation CHICKEN_HERDER_ID = new ResourceLocation(Constants.MOD_ID,"chickenherder");
+    public static final ResourceLocation SMELTER_ID        = new ResourceLocation(Constants.MOD_ID,"smelter");
+    public static final ResourceLocation RANGER_ID         = new ResourceLocation(Constants.MOD_ID,"ranger");
+    public static final ResourceLocation KNIGHT_ID         = new ResourceLocation(Constants.MOD_ID,"knight");
+    public static final ResourceLocation COMPOSTER_ID      = new ResourceLocation(Constants.MOD_ID,"composter");
+    public static final ResourceLocation STUDENT_ID        = new ResourceLocation(Constants.MOD_ID,"student");
+    public static final ResourceLocation ARCHER_ID         = new ResourceLocation(Constants.MOD_ID,"archertraining");
+    public static final ResourceLocation COMBAT_ID         = new ResourceLocation(Constants.MOD_ID,"combattraining");
+    public static final ResourceLocation SAWMILL_ID        = new ResourceLocation(Constants.MOD_ID,"sawmill");
+    public static final ResourceLocation BLACKSMITH_ID     = new ResourceLocation(Constants.MOD_ID,"blacksmith");
+    public static final ResourceLocation STONEMASON_ID     = new ResourceLocation(Constants.MOD_ID,"stonemason");
+    public static final ResourceLocation STONE_SMELTERY_ID = new ResourceLocation(Constants.MOD_ID,"stonesmeltery");
+    public static final ResourceLocation CRUSHER_ID        = new ResourceLocation(Constants.MOD_ID,"crusher");
+    public static final ResourceLocation SIFTER_ID         = new ResourceLocation(Constants.MOD_ID,"sifter");
     public static       JobEntry         placeHolder;
     public static       JobEntry         builder;
     public static       JobEntry         delivery;

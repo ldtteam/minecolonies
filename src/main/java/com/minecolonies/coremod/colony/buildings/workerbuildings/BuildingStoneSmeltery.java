@@ -34,7 +34,7 @@ public class BuildingStoneSmeltery extends AbstractBuildingSmelterCrafter
     /**
      * Description string of the building.
      */
-    private static final String STONE_SMELTERY = "StoneSmeltery";
+    private static final String STONE_SMELTERY = "stonesmeltery";
 
     /**
      * Instantiates a new stone smeltery building.

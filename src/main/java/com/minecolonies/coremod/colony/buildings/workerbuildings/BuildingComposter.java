@@ -33,7 +33,7 @@ public class BuildingComposter extends AbstractFilterableListBuilding
     /**
      * Description of the job for this building
      */
-    private static final String COMPOSTER = "Composter";
+    private static final String COMPOSTER = "composter";
 
     /**
      * Maximum building level

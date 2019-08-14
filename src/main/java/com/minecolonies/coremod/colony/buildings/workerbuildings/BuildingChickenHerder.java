@@ -21,7 +21,7 @@ public class BuildingChickenHerder extends AbstractBuildingWorker
     /**
      * Description of the job executed in the hut.
      */
-    private static final String JOB          = "ChickenHerder";
+    private static final String JOB          = "chickenherder";
 
     /**
      * Description of the block used to set this block.

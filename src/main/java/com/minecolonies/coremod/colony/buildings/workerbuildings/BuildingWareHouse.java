@@ -54,12 +54,12 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     /**
      * String describing the Warehouse.
      */
-    private static final String WAREHOUSE = "WareHouse";
+    private static final String WAREHOUSE = "warehouse";
 
     /**
      * Tag to store the deliverymen.
      */
-    private static final String TAG_DELIVERYMAN = "Deliveryman";
+    private static final String TAG_DELIVERYMAN = "deliveryman";
 
     /**
      * The storage tag for the storage capacity.

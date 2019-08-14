@@ -41,12 +41,12 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     /**
      * The Schematic name.
      */
-    private static final String SCHEMATIC_NAME = "CombatAcademy";
+    private static final String SCHEMATIC_NAME = "combatacademy";
 
     /**
      * The Schematic name.
      */
-    private static final String DESC = "CombatAcademy";
+    private static final String DESC = "combatacademy";
 
 
     /**

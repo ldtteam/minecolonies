@@ -96,7 +96,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     /**
      * The name of the building location.
      */
-    private ResourceLocation registryName;
+    public ResourceLocation registryName;
 
     /**
      * Default constructor used to create a new TileEntity via reflection. Do not use.
@@ -112,7 +112,6 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     public TileEntityColonyBuilding(final TileEntityType type)
     {
         super(type);
-        this.registryName = ((AbstractBlockHut) getBlockState().getBlock()).getBuildingEntry().getRegistryName();
     }
 
     /**
