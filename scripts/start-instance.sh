@@ -11,7 +11,7 @@ then
   do
     servicesInStack=$(docker stack services "$stack")
     for serviceInStack in "${servicesInStack[@]}"; do
-      portsInUse=$(docker inspect "$serviceInStack" | jq ".[].Endpoint.Ports" | jq ".[].PublishedPort")
+      portsInUse=$(docker inspect $serviceInStack | jq ".[].Endpoint.Ports" | jq ".[].PublishedPort")
       for candidatePortIndex in "${!candidatePorts[@]}"; do
         for inUsePortIndex in "${!portsInUse[@]}"; do
           if [[ ${candidatePorts[candidatePortIndex]} = "${portsInUse[inUsePortIndex]}" ]]; then
@@ -23,7 +23,7 @@ then
   done
 
   for i in "${!candidatePorts[@]}"; do
-    new_candidatePorts+=( "${candidatePorts[i]}" )
+    new_candidatePorts+=("${candidatePorts[i]}")
   done
   candidatePorts=("${new_candidatePorts[@]}")
   unset new_candidatePorts
