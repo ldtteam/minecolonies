@@ -30,6 +30,11 @@ RUN mkdir /home/server/mods
 COPY build/libs/*-universal.jar /home/server/mods/
 RUN ls /home/server/mods
 
+# Copy server setup file
+COPY scripts/server.properties /home/server/server.properties
+COPY scripts/users.json /home/server/ops.json
+COPY scripts/users.json /home/server/whitelist.json
+
 # Expose ports
 EXPOSE 25565
 
