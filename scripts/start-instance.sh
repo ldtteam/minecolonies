@@ -3,18 +3,22 @@ build_number=$1
 node_number=1
 teamcity_build_branch=$2
 
-if docker stack ls | grep -q ldtteam-testserver-$teamcity_build_branch
+if [docker stack ls | grep -q ldtteam-testserver-$teamcity_build_branch]
 then
   candidatePorts=$(seq 25565 1 25585)
   stacks=$(docker stack ls --format '{{.Name}}' | grep 'ldtteam-testserver-')
   for stack in "${stacks[@]}"
   do
     servicesInStack=$(docker stack services "$stack")
-    for serviceInStack in "${servicesInStack[@]}"; do
+    for serviceInStack in "${servicesInStack[@]}"
+    do
       portsInUse=$(docker inspect $serviceInStack | jq ".[].Endpoint.Ports" | jq ".[].PublishedPort")
-      for candidatePortIndex in "${!candidatePorts[@]}"; do
-        for inUsePortIndex in "${!portsInUse[@]}"; do
-          if [[ ${candidatePorts[candidatePortIndex]} = "${portsInUse[inUsePortIndex]}" ]]; then
+      for candidatePortIndex in "${!candidatePorts[@]}"
+      do
+        for inUsePortIndex in "${!portsInUse[@]}"
+        do
+          if [[ ${candidatePorts[candidatePortIndex]} = "${portsInUse[inUsePortIndex]}" ]]
+          then
             unset 'candidatePorts[candidatePortIndex]'
           fi
         done
@@ -30,12 +34,13 @@ then
   candidatePorts=("${new_candidatePorts[@]}")
   unset new_candidatePorts
 
-  if [ "${#candidatePorts[@]}" -eq "0" ]; then
-    echo "Failed to determine port to use. No port available";
-    exit 2;
+  if [ "${#candidatePorts[@]}" -eq "0" ]
+  then
+    echo "Failed to determine port to use. No port available"
+    exit 2
   fi
 
-  port_number=candidatePorts[0];
+  port_number=candidatePorts[0]
 
   echo "Creating new service stack for PR: $teamcity_build_branch"
 else
