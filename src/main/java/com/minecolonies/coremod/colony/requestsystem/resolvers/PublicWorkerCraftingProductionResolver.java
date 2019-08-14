@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -87,7 +88,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
             if (holdingCrafter == null)
             {
-                MineColonies.getLogger().error("Parent cancellation of crafting production failed! Unknown request: " + request.getId());
+                Log.getLogger().error("Parent cancellation of crafting production failed! Unknown request: " + request.getId());
             }
             else
             {

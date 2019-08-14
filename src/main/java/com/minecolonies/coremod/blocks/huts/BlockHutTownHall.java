@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.block.BlockState;
@@ -61,7 +62,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
       @NotNull final World worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack)
     {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-
+        Log.getLogger().warn("Go");
         if (worldIn.isRemote)
         {
             return;

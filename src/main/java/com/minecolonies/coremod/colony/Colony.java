@@ -29,6 +29,7 @@ import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -274,18 +275,21 @@ public class Colony implements IColony
 
         for (final String s : MineColonies.getConfig().getCommon().freeToInteractBlocks.get())
         {
-            final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
-            if (block == null)
+            try
+            {
+                final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(s));
+                if (block != null && block != Blocks.AIR)
+                {
+                    freeBlocks.add(block);
+                }
+            }
+            catch(final Exception ex)
             {
                 final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
                 if (pos != null)
                 {
                     freePositions.add(pos);
                 }
-            }
-            else
-            {
-                freeBlocks.add(block);
             }
         }
     }

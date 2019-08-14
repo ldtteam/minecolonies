@@ -81,7 +81,7 @@ public abstract class CommonProxy implements IProxy
     @SubscribeEvent
     public static void registerRecipes(@NotNull final RegistryEvent.Register<IRecipe> event)
     {
-        //todo handle
+        //todo handle 1.14
         event.getRegistry().register(new TownHallRecipe());
     }*/
 

@@ -7,6 +7,7 @@ import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.MinecoloniesAPIImpl;
 import com.minecolonies.coremod.client.render.EmptyTileEntitySpecialRenderer;
@@ -49,8 +50,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 @Mod(Constants.MOD_ID)
@@ -64,11 +63,6 @@ public class MineColonies
 
     @CapabilityInject(IColonyManagerCapability.class)
     public static Capability<IColonyManagerCapability> COLONY_MANAGER_CAP;
-
-    /**
-     * Our mod logger.
-     */
-    private static final Logger logger = LogManager.getLogger(Constants.MOD_ID);
 
     /**
      * The config instance.
@@ -121,14 +115,13 @@ public class MineColonies
     @SubscribeEvent
     public static void onLoadComplete(final FMLLoadCompleteEvent event)
     {
-        logger.warn("FMLLoadCompleteEvent");
+        Log.getLogger().warn("FMLLoadCompleteEvent");
         LanguageHandler.setMClanguageLoaded();
         MinecoloniesPlacementHandlers.initHandlers();
         //RecipeHandler.init(MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get(), MineColonies.getConfig().getCommon().supplyChests.get());
         RequestSystemInitializer.onPostInit();
     }
 
-    //todo this here stays!
     @SubscribeEvent
     public static void doClientStuff(final FMLClientSetupEvent event)
     {
@@ -144,16 +137,6 @@ public class MineColonies
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(ScarecrowTileEntity.class, new TileEntityScarecrowRenderer());
-    }
-
-    /**
-     * Getter for the minecolonies Logger.
-     *
-     * @return the logger.
-     */
-    public static Logger getLogger()
-    {
-        return logger;
     }
 
     /**

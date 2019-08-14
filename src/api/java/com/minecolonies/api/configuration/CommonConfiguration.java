@@ -263,7 +263,7 @@ public class CommonConfiguration extends AbstractConfiguration
           s -> s instanceof String);
         freeToInteractBlocks = defineList(builder, "freetointeractblocks",
           Arrays.asList
-                   ("block:dirt",
+                   ("dirt",
                      "0 0 0" ),
           s -> s instanceof String);
         secondsBetweenPermissionMessages = defineInteger(builder, "secondsBetweenPermissionMessages",  30, 1, 1000);

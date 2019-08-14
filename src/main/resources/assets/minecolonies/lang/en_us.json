@@ -1,5 +1,5 @@
 {
-  "itemgroup.minecolonies": "MineColonies",
+  "itemGroup.minecolonies": "MineColonies",
 
 
   "com.minecolonies.configgui.title": "MineColonies Config",
@@ -221,9 +221,9 @@
 
   "block.minecolonies.blockhutcitizen": "Citizen's Hut",
   "block.minecolonies.blockhutshepherd": "Shepherd's Hut",
-  "block.minecolonies.blockhutswineHerder": "SwineHerders's Hut",
+  "block.minecolonies.blockhutswineherder": "SwineHerders's Hut",
   "block.minecolonies.blockhutcowboy": "Cowboy's Hut",
-  "block.minecolonies.blockhutchickenHerder": "ChickenHerders's Hut",
+  "block.minecolonies.blockhutchickenherder": "ChickenHerders's Hut",
   "block.minecolonies.blockhutbaker": "Bakery",
   "block.minecolonies.blockhutblacksmith": "Blacksmith",
   "block.minecolonies.blockhutbuilder": "Builder's Hut",
@@ -618,7 +618,6 @@
   "com.minecolonies.coremod.status.gathering": "Gathering",
   "com.minecolonies.coremod.status.spawning": "Spawning entities",
   "com.minecolonies.coremod.status.waitingForBuild": "Waiting for request",
-  "com.minecolonies.coremod.status.gathering": "Gathering",
   "com.minecolonies.coremod.status.delivering": "Delivering",
   "com.minecolonies.coremod.status.dumping": "Dumping",
   "com.minecolonies.coremod.status.hoeing": "Hoeing",
@@ -706,12 +705,7 @@
   "com.minecolonies.coremod.citizen.rename.same": "Renaming failed: 2 Citizens are not allowed to have the same name!",
   "com.minecolonies.coremod.citizen.rename.notallowed": "Renaming failed: You're not allowed to rename your Citizen.",
 
-
-
   "com.minecolonies.coremod.request.smeltableore": "Smeltable Ore",
-  "block.minecolonies.blockhutsmeltery": "Smeltery",
-
-
   "block.minecolonies.blockhutsmeltery": "Smeltery",
   "com.minecolonies.coremod.enteringcolony": "Beware, you're entering %s's colony.",
   "com.minecolonies.coremod.leavingcolony": "Farewell, you're leaving %s's colony.",
@@ -963,7 +957,7 @@
   "com.minecolonies.coremod.gui.workerhuts.blacksmith": "Blacksmith",
   "com.minecolonies.coremod.gui.workerhuts.stonemason": "Stonemason",
   "com.minecolonies.coremod.gui.workerhuts.smelter": "Metal Smeltery",
-  "com.minecolonies.coremod.gui.workerhuts.STONESMELTER": "Stone Smeltery",
+  "com.minecolonies.coremod.gui.workerhuts.stonesmelter": "Stone Smeltery",
   "block.minecolonies.blockhutstonesmeltery": "Stone Smeltery",
 
 
@@ -1015,5 +1009,7 @@
   "com.minecolonies.coremod.gui.placement.warning": "We suggest to use the buildtool GUI to place the building to be able to adjust the exact position of placement.",
   "com.minecolonies.coremod.gui.placement.buildtool": "Use Buildtool",
   "com.minecolonies.coremod.gui.placement.direct": "Place anyway",
-  "com.minecolonies.coremod.gui.townhall.population.childs": "Children: %d"
+  "com.minecolonies.coremod.gui.townhall.population.childs": "Children: %d",
+
+
 }
