@@ -5,7 +5,7 @@ teamcity_build_branch=$2
 
 if docker stack ls | grep -q ldtteam-testserver-$teamcity_build_branch
 then
-  mapfile -t candidatePorts < <(seq 25565 1 25585)
+  candidatePorts=$(seq 25565 1 25585)
   stacks=$(docker stack ls --format '{{.Name}}' | grep 'ldtteam-testserver-')
   for stack in "${stacks[@]}"
   do
