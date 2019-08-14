@@ -155,7 +155,7 @@ public class PermissionsMessage
         @Override
         public LogicalSide getExecutionSide()
         {
-            return LogicalSide.CLIENT;
+            return LogicalSide.SERVER;
         }
 
         @Override
@@ -266,7 +266,7 @@ public class PermissionsMessage
         @Override
         public LogicalSide getExecutionSide()
         {
-            return LogicalSide.CLIENT;
+            return LogicalSide.SERVER;
         }
 
         @Override
@@ -345,7 +345,7 @@ public class PermissionsMessage
         @Override
         public LogicalSide getExecutionSide()
         {
-            return LogicalSide.CLIENT;
+            return LogicalSide.SERVER;
         }
 
         @Override
@@ -433,7 +433,7 @@ public class PermissionsMessage
         @Override
         public LogicalSide getExecutionSide()
         {
-            return LogicalSide.CLIENT;
+            return LogicalSide.SERVER;
         }
 
         @Override
@@ -518,7 +518,7 @@ public class PermissionsMessage
         @Override
         public LogicalSide getExecutionSide()
         {
-            return LogicalSide.CLIENT;
+            return LogicalSide.SERVER;
         }
 
         @Override

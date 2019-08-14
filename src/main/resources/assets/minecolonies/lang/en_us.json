@@ -925,7 +925,7 @@
   "com.minecolonies.coremod.gui.hiring.restart": "Restart",
   "com.minecolonies.coremod.gui.hiring.restartmessage": "Restart for citizen %s scheduled.",
   "com.minecolonies.coremod.gui.hiring.restartmessagedone": "Citizen %s succesfully restarted.",
-  "com.minecolonies.coremod.gui.townhall.buildingLevel": "Building level",
+  "com.minecolonies.coremod.gui.townhall.buildinglevel": "Building level",
 
 
   "com.minecolonies.coremod.gui.warehouse.sort": "Sort",

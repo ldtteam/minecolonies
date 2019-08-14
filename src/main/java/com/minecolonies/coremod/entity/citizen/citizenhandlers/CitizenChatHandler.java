@@ -15,10 +15,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 
@@ -63,8 +60,9 @@ public class CitizenChatHandler implements ICitizenChatHandler
      *
      * @param msg the message string.
      */
-    private void sendChat(final String key, @Nullable final Object... msg)
+    private void sendChat(final String keyIn, @Nullable final Object... msg)
     {
+        final String key = keyIn.toLowerCase(Locale.US);
         if (msg == null || statusMessages.containsKey(key))
         {
             return;
