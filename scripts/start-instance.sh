@@ -1,7 +1,7 @@
 #!/bin/bash
-port_number=25565
-build_number=$1
-node_number=1
+export port_number=25565
+export build_number=$1
+export node_number=1
 teamcity_build_branch=$2
 
 if [ ! "$(docker stack ls | grep -q ldtteam-testserver-$teamcity_build_branch)" ]
@@ -41,14 +41,14 @@ then
     exit 2
   fi
 
-  port_number=candidatePorts[0]
+  export port_number=candidatePorts[0]
 
   echo "Creating new service stack for PR: $teamcity_build_branch"
 else
         server=$(docker stack services ldtteam-testserver-$teamcity_build_branch --format '{{.Name}} {{.ID}}' | grep minecraft-server)
         id=${server: -12}
-        port_number=$(docker inspect $id | jq ".[].Spec.Labels.\"port\"")
-        node_number=$(docker inspect $id | jq ".[].Spec.Labels.\"node.minecraft\"")
+        export port_number=$(docker inspect $id | jq ".[].Spec.Labels.\"port\"")
+        export node_number=$(docker inspect $id | jq ".[].Spec.Labels.\"node.minecraft\"")
 fi
 
-docker stack deploy -c docker-compose.yml ldtteam-testserver-$teamcity_build_branch
+docker stack deploy -c scripts/docker-compose.yml ldtteam-testserver-$teamcity_build_branch
