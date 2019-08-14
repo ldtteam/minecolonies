@@ -6,15 +6,11 @@
 
 package com.minecolonies.coremod.client.model;
 
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.client.renderer.entity.model.EntityModel;
+import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import net.minecraft.client.renderer.entity.model.RendererModel;
-import net.minecraft.client.renderer.model.Model;
-import net.minecraft.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelScarecrowBoth extends EntityModel
+public class ModelScarecrowBoth extends CitizenModel
 {
     //fields
     RendererModel Head;

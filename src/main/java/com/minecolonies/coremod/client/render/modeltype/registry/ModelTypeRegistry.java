@@ -2,9 +2,12 @@ package com.minecolonies.coremod.client.render.modeltype.registry;
 
 import com.google.common.collect.Maps;
 import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.client.model.*;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 
 import java.util.Collections;
@@ -12,16 +15,16 @@ import java.util.Map;
 
 public class ModelTypeRegistry implements IModelTypeRegistry
 {
-    private final Map<IModelType, BipedModel> maleMap   = Maps.newHashMap();
-    private final Map<IModelType, BipedModel> femaleMap = Maps.newHashMap();
+    private final Map<IModelType, CitizenModel> maleMap   = Maps.newHashMap();
+    private final Map<IModelType, CitizenModel> femaleMap = Maps.newHashMap();
 
     public ModelTypeRegistry()
     {
-        register(BipedModelType.NOBLE, new BipedModel(), new ModelEntityCitizenFemaleNoble());
-        register(BipedModelType.ARISTOCRAT, new BipedModel(), new ModelEntityCitizenFemaleAristocrat());
-        register(BipedModelType.BUILDER, new BipedModel(), new ModelEntityBuilderFemale());
+        register(BipedModelType.NOBLE, new CitizenModel(), new ModelEntityCitizenFemaleNoble());
+        register(BipedModelType.ARISTOCRAT, new CitizenModel(), new ModelEntityCitizenFemaleAristocrat());
+        register(BipedModelType.BUILDER, new CitizenModel(), new ModelEntityBuilderFemale());
         register(BipedModelType.DELIVERYMAN, new ModelEntityDeliverymanMale(), new ModelEntityDeliverymanFemale());
-        register(BipedModelType.MINER, new BipedModel(), new ModelEntityMinerFemale());
+        register(BipedModelType.MINER, new CitizenModel(), new ModelEntityMinerFemale());
         register(BipedModelType.LUMBERJACK, new ModelEntityLumberjackMale(), new ModelEntityLumberjackFemale());
         register(BipedModelType.FARMER, new ModelEntityFarmerMale(), new ModelEntityFarmerFemale());
         register(BipedModelType.FISHERMAN, new ModelEntityFishermanMale(), new ModelEntityFishermanFemale());
@@ -36,12 +39,12 @@ public class ModelTypeRegistry implements IModelTypeRegistry
         register(BipedModelType.STUDENT, new ModelEntityStudentMale(), new ModelEntityStudentFemale());
         register(BipedModelType.CRAFTER, new ModelEntityCrafterMale(), new ModelEntityCrafterFemale());
         register(BipedModelType.BLACKSMITH, new ModelEntityBlacksmithMale(), new ModelEntityBlacksmithFemale());
-        register(BipedModelType.ARCHER_GUARD, new BipedModel(), new BipedModel());
-        register(BipedModelType.KNIGHT_GUARD, new BipedModel(), new BipedModel());
+        register(BipedModelType.ARCHER_GUARD, new CitizenModel(), new CitizenModel());
+        register(BipedModelType.KNIGHT_GUARD, new CitizenModel(), new CitizenModel());
     }
 
     @Override
-    public IModelTypeRegistry register(final IModelType type, final BipedModel maleModel, final BipedModel femaleModel)
+    public IModelTypeRegistry register(final IModelType type, final CitizenModel maleModel, final CitizenModel femaleModel)
     {
         this.maleMap.put(type, maleModel);
         this.femaleMap.put(type, femaleModel);
@@ -50,13 +53,13 @@ public class ModelTypeRegistry implements IModelTypeRegistry
     }
 
     @Override
-    public Map<IModelType, BipedModel> getMaleMap()
+    public Map<IModelType, CitizenModel> getMaleMap()
     {
         return Collections.unmodifiableMap(maleMap);
     }
 
     @Override
-    public Map<IModelType, BipedModel> getFemaleMap()
+    public Map<IModelType, CitizenModel> getFemaleMap()
     {
         return Collections.unmodifiableMap(femaleMap);
     }

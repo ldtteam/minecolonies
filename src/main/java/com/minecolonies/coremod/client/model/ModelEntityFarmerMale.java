@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.client.model;
 
-import net.minecraft.client.renderer.entity.model.BipedModel;
+import com.minecolonies.api.client.render.modeltype.CitizenModel;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.client.renderer.entity.model.RendererModel;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelEntityFarmerMale extends BipedModel
+public class ModelEntityFarmerMale extends CitizenModel
 {
     RendererModel boxBottom;
     RendererModel boxFront;
@@ -217,7 +217,7 @@ public class ModelEntityFarmerMale extends BipedModel
     }
 
     @Override
-    public void setRotationAngles(final LivingEntity entityIn,
+    public void setRotationAngles(final AbstractEntityCitizen entityIn,
                                    final float limbSwing,
                                    final float limbSwingAmount,
                                    final float ageInTicks,

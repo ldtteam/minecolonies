@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.client.model;
 
-import net.minecraft.client.renderer.entity.model.BipedModel;
+import com.minecolonies.api.client.render.modeltype.CitizenModel;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.client.renderer.entity.model.RendererModel;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 
-public class ModelEntityBakerMale extends BipedModel
+public class ModelEntityBakerMale extends CitizenModel
 {
     //fields
     RendererModel top;
@@ -96,7 +96,7 @@ public class ModelEntityBakerMale extends BipedModel
 
     @Override
     public void setRotationAngles(
-      final LivingEntity entityIn,
+      final AbstractEntityCitizen entityIn,
       final float limbSwing,
       final float limbSwingAmount,
       final float ageInTicks,

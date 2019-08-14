@@ -25,7 +25,7 @@ public class RenderMercenary<T extends EntityMercenary, M extends BipedModel<T>>
      */
     public RenderMercenary(final EntityRendererManager renderManagerIn)
     {
-        super(renderManagerIn, (M) new BipedModel(1.0F), 0.5f);
+        super(renderManagerIn, (M) new BipedModel<EntityMercenary>(1.0F), 0.5f);
 
         this.addLayer(new HeldItemLayer<>(this));
         this.addLayer(new BipedArmorLayer<>(this, new BipedModel(1.0F), new BipedModel(1.0F)));

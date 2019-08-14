@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.client.model;
 
-import net.minecraft.client.renderer.entity.model.BipedModel;
+import com.minecolonies.api.client.render.modeltype.CitizenModel;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.client.renderer.entity.model.RendererModel;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
-public class ModelEntityCowFarmerFemale extends BipedModel
+public class ModelEntityCowFarmerFemale extends CitizenModel
 {
     public ModelEntityCowFarmerFemale()
     {
@@ -204,7 +204,7 @@ public class ModelEntityCowFarmerFemale extends BipedModel
 
     @Override
     public void render(
-      @NotNull final LivingEntity entity,
+      @NotNull final AbstractEntityCitizen entity,
       final float limbSwing,
       final float limbSwingAmount,
       final float ageInTicks,
