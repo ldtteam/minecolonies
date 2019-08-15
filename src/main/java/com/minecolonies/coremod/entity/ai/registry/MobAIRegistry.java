@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.registry;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.IArcherMobEntity;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -46,7 +47,7 @@ public class MobAIRegistry implements IMobAIRegistry
           .registerNewAiTaskForMobs(PRIORITY_ZERO, SwimGoal::new)
           .registerNewAiTaskForMobs(PRIORITY_FOUR, mob -> new EntityAIWalkToRandomHuts(mob, AI_MOVE_SPEED))
           .registerNewAiTargetTaskForMobs(PRIORITY_TWO, mob -> new NearestAttackableTargetGoal<>(mob, PlayerEntity.class, true))
-          .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new NearestAttackableTargetGoal<>(mob, EntityCitizen.class, true))
+          .registerNewAiTargetTaskForMobs(PRIORITY_THREE, mob -> new NearestAttackableTargetGoal<>(mob, AbstractEntityCitizen.class, true))
           .registerNewAiTaskForMobs(PRIORITY_FIVE, mob -> new LookAtGoal(mob, PlayerEntity.class, MAX_WATCH_DISTANCE))
           .registerNewAiTaskForMobs(PRIORITY_SIX, mob -> new LookAtGoal(mob, EntityCitizen.class, MAX_WATCH_DISTANCE))
           .registerNewAiTaskForMobs(PRIORITY_ONE, EntityAIAttackArcher::new, mob -> mob instanceof IArcherMobEntity)

@@ -463,12 +463,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
                 final List<IItemHandler> handlers = providers.stream()
                                                       .flatMap(provider -> InventoryUtils.getItemHandlersFromProvider(provider).stream())
                                                       .collect(Collectors.toList());
-                final T cap = super.getCapability(capability).orElseGet(null);
-                if (cap instanceof IItemHandler)
-                {
-                    handlers.add((IItemHandler) cap);
-                }
-                
+                handlers.add(getInventory());
                 this.combinedInv = new CombinedItemHandler(building.getSchematicName(), handlers.stream()
                                                                                           .map(handler -> (IItemHandlerModifiable) handler)
                                                                                           .distinct()
@@ -487,7 +482,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
     {
         final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-        buffer.writeInt(colonyId);
+        buffer.writeVarInt(colonyId);
         buffer.writeBlockPos(getPos());
         return new ContainerBuildingInventory(id, inv, buffer);
     }

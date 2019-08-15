@@ -2,12 +2,8 @@ package com.minecolonies.coremod.entity.mobs.barbarians;
 
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.api.entity.mobs.barbarians.IChiefBarbarianEntity;
-import com.minecolonies.api.util.constant.LootTableConstants;
 import net.minecraft.entity.EntityType;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-
-import javax.annotation.Nullable;
 
 /**
  * Class for the Chief Barbarian entity.
@@ -22,12 +18,5 @@ public class EntityChiefBarbarian extends AbstractEntityBarbarian implements ICh
     public EntityChiefBarbarian(final EntityType type, final World worldIn)
     {
         super(type, worldIn);
-    }
-
-    @Nullable
-    @Override
-    protected ResourceLocation getLootTable()
-    {
-        return LootTableConstants.CHIEF_BARBARIAN_DROPS;
     }
 }

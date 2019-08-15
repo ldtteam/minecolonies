@@ -657,7 +657,7 @@ public class CitizenData implements ICitizenData
                     entityCitizen.getTasks().removeGoal(entityCitizen.getTasks().getRunningGoals()
                                                           .filter(task -> task.getGoal() instanceof AbstractAISkeleton)
                                                           .findFirst()
-                                                          .orElse(null).getGoal());
+                                                          .orElseGet(null).getGoal());
                 });
 
                 //  No place of employment, get rid of our job

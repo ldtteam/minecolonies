@@ -71,7 +71,7 @@ public class TownHallRenameMessage implements IMessage
     @Override
     public LogicalSide getExecutionSide()
     {
-        return LogicalSide.SERVER;
+        return null;
     }
 
     @Override
@@ -83,13 +83,17 @@ public class TownHallRenameMessage implements IMessage
             final PlayerEntity player = ctxIn.getSender();
 
             //Verify player has permission to change this huts settings
-            if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
+            if (player != null && !colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
             {
                 return;
             }
             name = (name.length() <= MAX_NAME_LENGTH) ? name : name.substring(0, SUBSTRING_LENGTH);
             colony.setName(name);
-            Network.getNetwork().sendToEveryone(this);
+
+            if (player != null)
+            {
+                Network.getNetwork().sendToEveryone(this);
+            }
         }
     }
 }

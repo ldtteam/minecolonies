@@ -1,18 +1,18 @@
 package com.minecolonies.api.inventory.container;
 
-import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.inventory.ModContainers;
+import com.sun.corba.se.impl.interceptors.SlotTable;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,11 +43,19 @@ public class ContainerCitizenInventory extends Container
     public ContainerCitizenInventory(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
     {
         super(ModContainers.citizenInv, windowId);
-        final int colonyId = extra.readInt();
-        final int citizenId = extra.readInt();
+        final int colonyId = extra.readVarInt();
+        final int citizenId = extra.readVarInt();
         this.playerInventory = inv;
 
-        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.world);
+        final IColony colony;
+        if (inv.player.world.isRemote)
+        {
+            colony = IColonyManager.getInstance().getColonyView(colonyId, inv.player.dimension.getId());
+        }
+        else
+        {
+            colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.world);
+        }
 
         if (colony == null)
         {
@@ -55,9 +63,23 @@ public class ContainerCitizenInventory extends Container
             return;
         }
 
-        final ICitizenData data = colony.getCitizenManager().getCitizen(citizenId);
-        this.displayName = data.getName();
-        final InventoryCitizen inventory = data.getInventory();
+        final InventoryCitizen inventory;
+        final BlockPos workBuilding;
+
+        if (inv.player.world.isRemote)
+        {
+            final ICitizenDataView data = ((IColonyView) colony).getCitizen(citizenId);
+            inventory = data.getInventory();
+            this.displayName = data.getName();
+            workBuilding = data.getWorkBuilding();
+        }
+        else
+        {
+            final ICitizenData data = colony.getCitizenManager().getCitizen(citizenId);
+            inventory = data.getInventory();
+            this.displayName = data.getName();
+            workBuilding = data.getWorkBuilding() == null ? null : data.getWorkBuilding().getID();
+        }
 
         this.inventorySize = inventory.getSlots() / INVENTORY_COLUMNS;
         final int size = inventory.getSlots();
@@ -80,10 +102,10 @@ public class ContainerCitizenInventory extends Container
                                 @Override
                                 public void putStack(@NotNull final ItemStack stack)
                                 {
-                                    if (data.getWorkBuilding() != null && !playerInventory.player.world.isRemote && !ItemStackUtils.isEmpty(stack))
+                                    if (workBuilding != null && !playerInventory.player.world.isRemote && !ItemStackUtils.isEmpty(stack))
                                     {
                                         final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, inv.player.world);
-                                        final IBuilding building = colony.getBuildingManager().getBuilding(data.getWorkBuilding().getID());
+                                        final IBuilding building = colony.getBuildingManager().getBuilding(workBuilding);
                                         final ICitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
 
                                         building.overruleNextOpenRequestOfCitizenWithStack(citizenData, stack);
@@ -132,6 +154,7 @@ public class ContainerCitizenInventory extends Container
      * @param index    Index of the {@link Slot}. This index is relative to the list of slots in this {@code Container},
      *                 {@link #inventorySlots}.
      */
+    @NotNull
     @Override
     public ItemStack transferStackInSlot(final PlayerEntity playerIn, final int index)
     {

@@ -31,14 +31,14 @@ public final class DeliverymanSounds extends AbstractWorkerSounds
      */
     public static final class Female
     {
-        public static final SoundEvent generalPhrases    = ModSoundEvents.getSoundID("mob.deliveryman.female.generalPhrases");
+        public static final SoundEvent generalPhrases    = ModSoundEvents.getSoundID("mob.deliveryman.female.generalphrases");
         public static final SoundEvent noises            = ModSoundEvents.getSoundID("mob.deliveryman.female.noise");
         public static final SoundEvent hostile           = ModSoundEvents.getSoundID("mob.deliveryman.female.hostile");
-        public static final SoundEvent offToBed          = ModSoundEvents.getSoundID("mob.deliveryman.female.offToBed");
-        public static final SoundEvent badWeather        = ModSoundEvents.getSoundID("mob.deliveryman.female.badWeather");
-        public static final SoundEvent saturationVeryLow = ModSoundEvents.getSoundID("mob.deliveryman.female.saturationVeryLow");
-        public static final SoundEvent saturationLow     = ModSoundEvents.getSoundID("mob.deliveryman.female.saturationLow");
-        public static final SoundEvent saturationHigh    = ModSoundEvents.getSoundID("mob.deliveryman.female.saturationHigh");
+        public static final SoundEvent offToBed          = ModSoundEvents.getSoundID("mob.deliveryman.female.offtobed");
+        public static final SoundEvent badWeather        = ModSoundEvents.getSoundID("mob.deliveryman.female.badweather");
+        public static final SoundEvent saturationVeryLow = ModSoundEvents.getSoundID("mob.deliveryman.female.saturationverylow");
+        public static final SoundEvent saturationLow     = ModSoundEvents.getSoundID("mob.deliveryman.female.saturationlow");
+        public static final SoundEvent saturationHigh    = ModSoundEvents.getSoundID("mob.deliveryman.female.saturationhigh");
 
         /**
          * Private constructor to hide the implicit public one.

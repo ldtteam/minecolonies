@@ -30,14 +30,14 @@ public final class ArcherSounds extends AbstractWorkerSounds
      */
     public static final class Female
     {
-        public static final SoundEvent generalPhrases    = ModSoundEvents.getSoundID("mob.guard.archer.female.generalPhrases");
+        public static final SoundEvent generalPhrases    = ModSoundEvents.getSoundID("mob.guard.archer.female.generalphrases");
         public static final SoundEvent noises            = ModSoundEvents.getSoundID("mob.guard.archer.female.noise");
         public static final SoundEvent retrieve          = ModSoundEvents.getSoundID("mob.guard.archer.female.retrieve");
-        public static final SoundEvent offToBed          = ModSoundEvents.getSoundID("mob.guard.archer.female.offToBed");
-        public static final SoundEvent badWeather        = ModSoundEvents.getSoundID("mob.guard.archer.female.badWeather");
-        public static final SoundEvent saturationVeryLow = ModSoundEvents.getSoundID("mob.guard.archer.female.saturationVeryLow");
-        public static final SoundEvent saturationLow     = ModSoundEvents.getSoundID("mob.guard.archer.female.saturationLow");
-        public static final SoundEvent saturationHigh    = ModSoundEvents.getSoundID("mob.guard.archer.female.saturationHigh");
+        public static final SoundEvent offToBed          = ModSoundEvents.getSoundID("mob.guard.archer.female.offtobed");
+        public static final SoundEvent badWeather        = ModSoundEvents.getSoundID("mob.guard.archer.female.badweather");
+        public static final SoundEvent saturationVeryLow = ModSoundEvents.getSoundID("mob.guard.archer.female.saturationverylow");
+        public static final SoundEvent saturationLow     = ModSoundEvents.getSoundID("mob.guard.archer.female.saturationlow");
+        public static final SoundEvent saturationHigh    = ModSoundEvents.getSoundID("mob.guard.archer.female.saturationhigh");
         public static final SoundEvent levelUp           = ModSoundEvents.getSoundID("mob.guard.archer.female.levelup");
         public static final SoundEvent greeting          = ModSoundEvents.getSoundID("mob.guard.archer.female.greeting");
         public static final SoundEvent farewell          = ModSoundEvents.getSoundID("mob.guard.archer.female.farewell");
