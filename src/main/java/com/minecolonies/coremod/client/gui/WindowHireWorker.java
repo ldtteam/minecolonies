@@ -195,6 +195,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton implements ButtonHa
         citizens.clear();
         citizens.addAll(colony.getCitizens().values());
 
+
         //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
                      .filter(citizen -> !citizen.isChild())

@@ -3,15 +3,26 @@ package com.minecolonies.coremod.network.messages;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import io.netty.buffer.Unpooled;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.IContainerProvider;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -96,7 +107,23 @@ public class OpenCraftingGUIMessage implements IMessage
         {
             final BlockPos pos = buildingId;
             //todo, which is our inventory?
-            player.openContainer((INamedContainerProvider) player.world.getTileEntity(pos));
+            NetworkHooks.openGui(player, new INamedContainerProvider() {
+                @Override
+                public ITextComponent getDisplayName()
+                {
+                    return new StringTextComponent("Crafting GUI");
+                }
+
+                @NotNull
+                @Override
+                public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
+                {
+                    final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+                    buffer.writeBoolean(gridSize > 4);
+                    buffer.writeBlockPos(pos);
+                    return new ContainerCrafting(id, inv, buffer);
+                }
+            }, buffer -> new PacketBuffer(buffer.writeBoolean(gridSize > 4)).writeBlockPos(pos));
         }
     }
 

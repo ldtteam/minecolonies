@@ -20,6 +20,8 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
+
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
 
 /**
@@ -166,14 +168,14 @@ public class ContainerCrafting extends Container
         if (!world.isRemote)
         {
             final ServerPlayerEntity player = (ServerPlayerEntity) inv.player;
-            final ICraftingRecipe iRecipe = ((ServerPlayerEntity) inv.player).server.getRecipeManager().getRecipe(IRecipeType.CRAFTING, craftMatrix, world).orElseGet(null);
+            final Optional<ICraftingRecipe> iRecipe = ((ServerPlayerEntity) inv.player).server.getRecipeManager().getRecipe(IRecipeType.CRAFTING, craftMatrix, world);
             final ItemStack stack;
-            if (iRecipe != null && (iRecipe.isDynamic()
+            if (iRecipe.isPresent() && (iRecipe.get().isDynamic()
                     || !world.getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING)
-                    || player.getRecipeBook().isUnlocked(iRecipe)
+                    || player.getRecipeBook().isUnlocked(iRecipe.get())
                     || player.isCreative()))
             {
-                stack = iRecipe.getCraftingResult(this.craftMatrix);
+                stack = iRecipe.get().getCraftingResult(this.craftMatrix);
                 this.craftResult.putStack(stack);
                 player.connection.sendPacket(new SSetSlotPacket(this.windowId, 0, stack));
             }

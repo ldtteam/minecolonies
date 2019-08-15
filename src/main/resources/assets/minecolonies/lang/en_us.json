@@ -460,7 +460,7 @@
   "com.minecolonies.coremod.gui.workerhuts.farmer": "Farmer",
 
   "com.minecolonies.coremod.gui.townhall.build": "Build Town Hall",
-  "com.minecolonies.coremod.gui.workerhuts.workOrder": "Work Orders",
+  "com.minecolonies.coremod.gui.workerhuts.workorder": "Work Orders",
   "com.minecolonies.coremod.gui.citizen.skills": "Skills",
 
   "com.minecolonies.coremod.gui.workerhuts.minernodelist": "Levels",
@@ -659,12 +659,10 @@
   "com.minecolonies.coremod.gui.workerhuts.buildbarracks": "Barracks",
 
   "com.minecolonies.coremod.permission.teleport_to_colony": "Teleport to Colony",
-  "com.minecolonies.coremod.gui.hiring.buttonFire": "Fire",
+  "com.minecolonies.coremod.gui.hiring.buttonfire": "Fire",
   "com.minecolonies.coremod.worker.noupgrade": "No Upgrade available.",
   "com.minecolonies.coremod.worker.needbarracks": "Please upgrade the Barracks first.",
   "com.minecolonies.coremod.gui.warehouse.upgrade": "Upgrade Storage",
-
-
 
   "com.minecolonies.coremod.gui.workerhuts.cook": "Cook",
   "block.minecolonies.blockhutcook": "Restaurant",
