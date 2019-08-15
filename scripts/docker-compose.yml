@@ -15,6 +15,7 @@ services:
       labels:
         - node.minecraft=${node_number}
         - port=${port_number}
+        - pr=${teamcity.build.branch}
     volumes:
       - minecraft-save:/home/server
 
