@@ -134,7 +134,6 @@ public class MineColonies
         {
             configuration.save();
         }
-        throw new NullPointerException();
     }
 
     /**
