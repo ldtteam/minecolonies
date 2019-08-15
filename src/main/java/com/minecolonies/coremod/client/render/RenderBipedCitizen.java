@@ -27,7 +27,7 @@ import static com.minecolonies.api.util.constant.Constants.BED_HEIGHT;
  */
 public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends CitizenModel> extends MobRenderer
 {
-    private static final CitizenModel defaultModelMale   = new CitizenModel();
+    private static final CitizenModel defaultModelMale   = new CitizenModel(1.0F);
     private static final CitizenModel defaultModelFemale = new ModelEntityCitizenFemaleCitizen();
     private static final double     SHADOW_SIZE        = 0.5F;
     private static final int        THREE_QUARTERS     = 270;
@@ -40,7 +40,7 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
     public RenderBipedCitizen(final EntityRendererManager renderManagerIn)
     {
         super(renderManagerIn, (M) defaultModelMale, (float) SHADOW_SIZE);
-        super.addLayer(new BipedArmorLayer<>(this, defaultModelMale, defaultModelMale));
+        super.addLayer(new BipedArmorLayer<>(this, new CitizenModel(0.5F), new CitizenModel(1.0F)));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.render.mobs.barbarians;
 
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
+import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
@@ -14,8 +15,8 @@ public abstract class AbstractRendererBarbarian<T extends AbstractEntityBarbaria
 {
     public AbstractRendererBarbarian(final EntityRendererManager renderManagerIn, final M modelBipedIn, final float shadowSize)
     {
-        super(renderManagerIn, modelBipedIn, shadowSize);
+        super(renderManagerIn, (M) new BipedModel(0.0F), shadowSize);
         this.addLayer(new HeldItemLayer(this));
-        this.addLayer(new BipedArmorLayer<>(this, modelBipedIn, modelBipedIn));
+        this.addLayer(new BipedArmorLayer<>(this, new BipedModel(0.5F), new BipedModel(1.0F)));
     }
 }
