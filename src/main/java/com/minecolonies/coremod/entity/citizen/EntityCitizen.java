@@ -1522,8 +1522,8 @@ public class EntityCitizen extends AbstractEntityCitizen
     public Container createMenu(final int id, final PlayerInventory inv, final PlayerEntity player)
     {
         final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-        buffer.writeInt(citizenColonyHandler.getColonyId());
-        buffer.writeInt(citizenId);
+        buffer.writeVarInt(citizenColonyHandler.getColonyId());
+        buffer.writeVarInt(citizenId);
         return new ContainerCitizenInventory(id, inv, buffer);
     }
 

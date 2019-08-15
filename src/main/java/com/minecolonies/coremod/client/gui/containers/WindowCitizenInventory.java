@@ -35,19 +35,18 @@ public class WindowCitizenInventory extends ContainerScreen<ContainerCitizenInve
     protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
     {
         this.font.drawString(this.container.getDisplayName(), 8, 6, 4210752);
-        this.font.drawString(this.playerInventory.getDisplayName().getFormattedText(), 8, this.ySize - 96 + 2, 4210752);
+        this.font.drawString(this.playerInventory.getDisplayName().getFormattedText(), 8, this.ySize - 168 + 2, 4210752);
     }
 
-    /**
+     /**
      * Draws the background layer of this container (behind the items).
      */
-    protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY)
-    {
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.minecraft.getTextureManager().bindTexture(CHEST_GUI_TEXTURE);
-        final int i = (this.width - this.xSize) / 2;
-        final int j = (this.height - this.ySize) / 2;
-        this.blit(i, j, 0, 0, this.xSize, this.inventoryRows * 18 + 17);
-        this.blit(i, j + this.inventoryRows * 18 + 17, 0, 126, this.xSize, 96);
+        int i = (this.width - this.xSize) / 2;
+        int j = (this.height - this.ySize) / 2;
+        this.blit(i, j, 0, 0, this.xSize, 3 * 18 + 17);
+        this.blit(i, j + 3 * 18 + 17, 0, 126, this.xSize, 96);
     }
 }

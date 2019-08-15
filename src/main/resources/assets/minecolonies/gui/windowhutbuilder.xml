@@ -17,7 +17,7 @@
             <list id="resources" size="164 163" pos="13 62">
                 <box size="100% 30" linewidth="2">
                     <itemicon id="resourceIcon" size="16 16" pos="1 1"/>
-                    <label id="registryName" size="100 12" pos="20 3" textalign="MIDDLE_LEFT" color="black"/>
+                    <label id="v" size="100 12" pos="20 3" textalign="MIDDLE_LEFT" color="black"/>
                     <label id="resourceMissing" size="50 12" pos="2 18" textalign="MIDDLE_LEFT" color="black"/>
                     <label id="resourceAvailableNeeded" size="100% 12" pos="0 18" textalign="MIDDLE" color="black"/>
 

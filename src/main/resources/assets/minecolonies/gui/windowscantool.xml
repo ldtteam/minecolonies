@@ -24,7 +24,7 @@
     <list id="resources" size="200 120" pos="10 100">
         <box size="100% 30" linewidth="2">
             <itemicon id="resourceIcon" size="17 17" pos="1 1"/>
-            <label id="registryName" size="140 12" pos="30 1" color="white"/>
+            <label id="resourceName" size="140 12" pos="30 1" color="white"/>
             <label id="resourceQuantity" size="12 12" pos="170 1" color="white"/>
             <buttonimage label="$(com.minecolonies.coremod.gui.scanTool.remove)" id="removeBlock" pos="20 13" size="86 17"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
@@ -35,7 +35,7 @@
 
     <list id="entities" size="200 100" pos="220 100">
         <box size="100% 30" linewidth="2">
-            <label id="registryName" size="140 12" pos="30 1" color="white"/>
+            <label id="resourceName" size="140 12" pos="30 1" color="white"/>
             <buttonimage label="$(com.minecolonies.coremod.gui.scanTool.remove)" id="removeEntity" pos="40 13" size="86 17"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
         </box>

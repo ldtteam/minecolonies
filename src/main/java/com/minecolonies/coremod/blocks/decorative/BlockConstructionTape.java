@@ -158,12 +158,12 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
      */
     private static final double E_END_COLLISION_Z = 0.6375;
 
-    private static final VoxelShape SHAPE_NORTH = Block.makeCuboidShape(N_START_COLLISION_X, BOTTOM_COLLISION, N_START_COLLISION_Z, N_END_COLLISION_X, HEIGHT_COLLISION, N_END_COLLISION_Z);
-    private static final VoxelShape SHAPE_WEST  = Block.makeCuboidShape(W_START_COLLISION_X, BOTTOM_COLLISION, W_START_COLLISION_Z, W_END_COLLISION_X, HEIGHT_COLLISION, W_END_COLLISION_Z);
-    private static final VoxelShape SHAPE_SOUTH = Block.makeCuboidShape(S_START_COLLISION_X, BOTTOM_COLLISION, S_START_COLLISION_Z, S_END_COLLISION_X, HEIGHT_COLLISION, S_END_COLLISION_Z);;
-    private static final VoxelShape SHAPE_EAST  = Block.makeCuboidShape(E_START_COLLISION_X, BOTTOM_COLLISION, E_START_COLLISION_Z, E_END_COLLISION_X, HEIGHT_COLLISION, E_END_COLLISION_Z);
-    private static final VoxelShape EAST_WEST   = Block.makeCuboidShape(WE_START_COLLISION_X, BOTTOM_COLLISION, WE_START_COLLISION_Z, WE_END_COLLISION_X, HEIGHT_COLLISION, WE_END_COLLISION_Z);
-    private static final VoxelShape NORTH_SOUTH = Block.makeCuboidShape(SN_START_COLLISION_X, BOTTOM_COLLISION, SN_START_COLLISION_Z, SN_END_COLLISION_X, HEIGHT_COLLISION, SN_END_COLLISION_Z);
+    private static final VoxelShape SHAPE_NORTH = VoxelShapes.create(N_START_COLLISION_X, BOTTOM_COLLISION, N_START_COLLISION_Z, N_END_COLLISION_X, HEIGHT_COLLISION, N_END_COLLISION_Z);
+    private static final VoxelShape SHAPE_WEST  = VoxelShapes.create(W_START_COLLISION_X, BOTTOM_COLLISION, W_START_COLLISION_Z, W_END_COLLISION_X, HEIGHT_COLLISION, W_END_COLLISION_Z);
+    private static final VoxelShape SHAPE_SOUTH = VoxelShapes.create(S_START_COLLISION_X, BOTTOM_COLLISION, S_START_COLLISION_Z, S_END_COLLISION_X, HEIGHT_COLLISION, S_END_COLLISION_Z);;
+    private static final VoxelShape SHAPE_EAST  = VoxelShapes.create(E_START_COLLISION_X, BOTTOM_COLLISION, E_START_COLLISION_Z, E_END_COLLISION_X, HEIGHT_COLLISION, E_END_COLLISION_Z);
+    private static final VoxelShape EAST_WEST   = VoxelShapes.create(WE_START_COLLISION_X, BOTTOM_COLLISION, WE_START_COLLISION_Z, WE_END_COLLISION_X, HEIGHT_COLLISION, WE_END_COLLISION_Z);
+    private static final VoxelShape NORTH_SOUTH = VoxelShapes.create(SN_START_COLLISION_X, BOTTOM_COLLISION, SN_START_COLLISION_Z, SN_END_COLLISION_X, HEIGHT_COLLISION, SN_END_COLLISION_Z);
 
     /**
      * Constructor for the Substitution block.
@@ -174,37 +174,6 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
         super(Properties.create(Material.TALL_PLANTS).hardnessAndResistance(0.0f).doesNotBlockMovement().noDrops());
         setRegistryName(BLOCK_NAME);
         this.setDefaultState(this.getDefaultState().with(FACING, NORTH));
-    }
-
-    @Override
-    public VoxelShape getRaytraceShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos)
-    {
-        if(state.get(VARIANT).equals(AbstractBlockMinecoloniesConstructionTape.ConstructionTapeType.CORNER))
-        {
-            if (state.get(FACING).equals(NORTH))
-            {
-                return SHAPE_NORTH;
-            }
-            if (state.get(FACING).equals(WEST))
-            {
-                return SHAPE_WEST;
-            }
-            if (state.get(FACING).equals(SOUTH))
-            {
-                return SHAPE_SOUTH;
-            }
-
-            return SHAPE_EAST;
-        }
-
-        if (state.get(FACING).equals(EAST) || state.get(FACING).equals(WEST))
-        {
-            return EAST_WEST;
-        }
-        else
-        {
-            return NORTH_SOUTH;
-        }
     }
 
     @NotNull

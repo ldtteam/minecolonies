@@ -127,7 +127,7 @@ public abstract class AbstractEntityCitizen extends AgeableEntity implements ICa
     @Override
     public boolean canPickUpLoot()
     {
-        return super.canPickUpLoot();
+        return true;
     }
 
     public float getPreviousRotationPitch()

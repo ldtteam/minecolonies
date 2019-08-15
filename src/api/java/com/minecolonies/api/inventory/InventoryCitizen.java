@@ -13,6 +13,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -20,7 +21,7 @@ import javax.annotation.Nonnull;
 /**
  * Basic inventory for the citizens.
  */
-public class InventoryCitizen implements IItemHandler, INameable
+public class InventoryCitizen implements IItemHandlerModifiable, INameable
 {
     /**
      * The returned slot if a slot hasn't been found.
@@ -28,9 +29,9 @@ public class InventoryCitizen implements IItemHandler, INameable
     private static final int NO_SLOT = -1;
 
     /**
-     * The inventory. (36 main inventory, 4 armor slots, 1 offhand slot)
+     * The inventory. (27 main inventory, 4 armor slots, 1 offhand slot)
      */
-    private final NonNullList<ItemStack> mainInventory = NonNullList.withSize(41, ItemStackUtils.EMPTY);
+    private final NonNullList<ItemStack> mainInventory = NonNullList.withSize(32, ItemStackUtils.EMPTY);
 
     /**
      * The index of the currently held items (0-8).
@@ -187,9 +188,22 @@ public class InventoryCitizen implements IItemHandler, INameable
     public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
     {
         final ItemStack inSlot = mainInventory.get(slot);
-        if (inSlot.getCount() >= inSlot.getMaxStackSize() || !inSlot.isItemEqual(stack))
+        if (inSlot.getCount() >= inSlot.getMaxStackSize() || (!inSlot.isEmpty() && !inSlot.isItemEqual(stack)))
         {
             return stack;
+        }
+
+        if (inSlot.isEmpty())
+        {
+            if (!simulate)
+            {
+                mainInventory.set(slot, stack);
+                return ItemStack.EMPTY;
+            }
+            else
+            {
+                return ItemStack.EMPTY;
+            }
         }
 
         final int avail = inSlot.getMaxStackSize() - inSlot.getCount();
@@ -197,7 +211,7 @@ public class InventoryCitizen implements IItemHandler, INameable
         {
             if (!simulate)
             {
-                inSlot.setCount(inSlot.getMaxStackSize());
+                inSlot.setCount(inSlot.getCount() + stack.getCount());
             }
             return ItemStack.EMPTY;
         }
@@ -242,18 +256,12 @@ public class InventoryCitizen implements IItemHandler, INameable
     @Override
     public int getSlotLimit(final int slot)
     {
-        return mainInventory.size() - 1;
+        return 64;
     }
 
     @Override
     public boolean isItemValid(final int slot, @Nonnull final ItemStack stack)
     {
-        final ItemStack inSlot = mainInventory.get(slot);
-        if (inSlot.getCount() >= inSlot.getMaxStackSize() || !inSlot.isItemEqual(stack))
-        {
-            return false;
-        }
-
         if (slot == 36)
         {
             return stack.getEquipmentSlot() == EquipmentSlotType.HEAD;
@@ -341,5 +349,11 @@ public class InventoryCitizen implements IItemHandler, INameable
                 }
             }
         }
+    }
+
+    @Override
+    public void setStackInSlot(final int slot, @Nonnull final ItemStack stack)
+    {
+        mainInventory.set(slot, stack);
     }
 }

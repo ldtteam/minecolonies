@@ -11,6 +11,8 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -138,4 +140,13 @@ public abstract class AbstractTileEntityColonyBuilding extends ChestTileEntity
      * @return The buildings name.
      */
     public abstract ResourceLocation getBuildingName();
+
+    /**
+     * Get the inventory of this building.
+     * @return the chest inventory.
+     */
+    public IItemHandler getInventory()
+    {
+        return super.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElseGet(null);
+    }
 }

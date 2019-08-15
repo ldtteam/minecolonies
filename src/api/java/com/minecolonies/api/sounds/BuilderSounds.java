@@ -30,13 +30,13 @@ public final class BuilderSounds extends AbstractWorkerSounds
      */
     public static final class Female
     {
-        public static final SoundEvent generalPhrases    = ModSoundEvents.getSoundID("mob.builder.female.generalPhrases");
+        public static final SoundEvent generalPhrases    = ModSoundEvents.getSoundID("mob.builder.female.generalphrases");
         public static final SoundEvent noises            = ModSoundEvents.getSoundID("mob.builder.female.noise");
         public static final SoundEvent hostile           = ModSoundEvents.getSoundID("mob.builder.female.hostile");
-        public static final SoundEvent offToBed          = ModSoundEvents.getSoundID("mob.builder.female.offToBed");
-        public static final SoundEvent badWeather        = ModSoundEvents.getSoundID("mob.builder.female.badWeather");
-        public static final SoundEvent saturationVeryLow = ModSoundEvents.getSoundID("mob.builder.female.saturationVeryLow");
-        public static final SoundEvent saturationLow     = ModSoundEvents.getSoundID("mob.builder.female.saturationLow");
+        public static final SoundEvent offToBed          = ModSoundEvents.getSoundID("mob.builder.female.offtobed");
+        public static final SoundEvent badWeather        = ModSoundEvents.getSoundID("mob.builder.female.badweather");
+        public static final SoundEvent saturationVeryLow = ModSoundEvents.getSoundID("mob.builder.female.saturationverylow");
+        public static final SoundEvent saturationLow     = ModSoundEvents.getSoundID("mob.builder.female.saturationlow");
         public static final SoundEvent greeting          = ModSoundEvents.getSoundID("mob.builder.female.greeting");
         public static final SoundEvent farewell          = ModSoundEvents.getSoundID("mob.builder.female.farewell");
         public static final SoundEvent interaction       = ModSoundEvents.getSoundID("mob.builder.female.interaction");
