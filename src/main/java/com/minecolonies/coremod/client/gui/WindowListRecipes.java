@@ -36,7 +36,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
     /**
      * Link to the xml file of the window.
      */
-    private static final String BUILDING_NAME_RESOURCE_SUFFIX = ":gui/windowListRecipes.xml";
+    private static final String BUILDING_NAME_RESOURCE_SUFFIX = ":gui/windowlistrecipes.xml";
 
     /**
      * The output item icon.

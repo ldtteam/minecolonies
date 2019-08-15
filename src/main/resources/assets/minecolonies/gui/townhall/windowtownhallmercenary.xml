@@ -7,7 +7,7 @@
     <image source="minecolonies:textures/gui/citizen/colonist_wax_male.png" pos="160 110" size="30 30"/>
     <image source="minecolonies:textures/items/moneygold.png" pos="170 60" size="20 20"/>
     <image source="minecolonies:textures/items/moneygold.png" pos="170 90" size="20 20"/>
-    <image source="minecraft:textures/items/diamond_sword.png" pos="200 60" size="40 40"/>
+    <image source="minecraft:textures/item/diamond_sword.png" pos="200 60" size="40 40"/>
 
     <button id="done" size="200 20" pos="110 170" label="$(com.minecolonies.coremod.gui.townHall.mercenaryHire)"/>
     <button id="cancel" size="200 20" pos="110 194" label="$(gui.cancel)"/>
