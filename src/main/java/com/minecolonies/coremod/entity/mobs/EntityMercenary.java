@@ -21,6 +21,7 @@ import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -121,13 +122,13 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
      *
      * @param world the world.
      */
-    public EntityMercenary(final EntityType type, final World world)
+    public EntityMercenary(final EntityType<EntityMercenary> type, final World world)
     {
         super(type, world);
 
         this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(1, new EntityMercenaryAI(this));
-        this.goalSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, MobEntity.class, false));
+        this.goalSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, MonsterEntity.class, false));
 
         this.forceSpawn = true;
         setCustomNameVisible(true);
@@ -317,6 +318,13 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
     public void registerWithColony()
     {
         //Does not need to register.
+    }
+
+    @Override
+    protected void registerAttributes()
+    {
+        super.registerAttributes();
+        this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
     }
 
     @Override

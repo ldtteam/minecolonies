@@ -13,6 +13,7 @@ import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -196,10 +197,10 @@ public class EntityAIWalkToRandomHuts extends Goal
               .intersects(new AxisAlignedBB(lastPos)))
         {
             final BlockPos front = entity.getPosition().down().offset(entity.getHorizontalFacing());
-            final AxisAlignedBB collisionBox = world.getBlockState(entity.getPosition()).getCollisionShape(world, entity.getPosition()).getBoundingBox();
+            final VoxelShape collisionBox = world.getBlockState(entity.getPosition()).getCollisionShape(world, entity.getPosition());
             if (!world.getBlockState(front).getMaterial().isSolid()
                   || world.getBlockState(entity.getPosition().up().offset(entity.getHorizontalFacing())).getMaterial().isSolid()
-                  || (collisionBox != null && collisionBox.maxY > 1.0))
+                  || (!collisionBox.isEmpty() && collisionBox.getBoundingBox().maxY > 1.0))
             {
                 stuckTime++;
             }

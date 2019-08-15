@@ -50,7 +50,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
      */
     public ItemScepterPermission(final Item.Properties properties)
     {
-        super("scepterPermission", properties.maxStackSize(1).maxDamage(2).group(ModCreativeTabs.MINECOLONIES));
+        super("scepterpermission", properties.maxStackSize(1).maxDamage(2).group(ModCreativeTabs.MINECOLONIES));
     }
 
     @NotNull

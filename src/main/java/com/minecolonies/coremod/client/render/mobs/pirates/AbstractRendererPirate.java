@@ -16,6 +16,6 @@ public abstract class AbstractRendererPirate<T extends AbstractEntityPirate, M e
     {
         super(renderManagerIn, modelBipedIn, shadowSize);
         this.addLayer(new HeldItemLayer(this));
-        this.addLayer(new BipedArmorLayer<>(this, modelBipedIn, modelBipedIn));
+        //this.addLayer(new BipedArmorLayer<>(this, modelBipedIn, modelBipedIn));
     }
 }

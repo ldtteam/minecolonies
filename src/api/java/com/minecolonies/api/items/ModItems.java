@@ -33,11 +33,6 @@ public final class ModItems
     public static Item pirateLegs_2;
     public static Item pirateBoots_2;
 
-    public static Item itemAchievementProxySettlement;
-    public static Item itemAchievementProxyTown;
-    public static Item itemAchievementProxyCity;
-    public static Item itemAchievementProxyMetropolis;
-
     public static Item santaHat;
 
     /**

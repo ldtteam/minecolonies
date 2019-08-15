@@ -330,8 +330,8 @@
   "com.minecolonies.coremod.gui.workerhuts.cowboyhut": "Cowboy's Hut",
   "com.minecolonies.coremod.gui.workerhuts.chickenherderhut": "ChickenHerder's Hut",
   "com.minecolonies.coremod.gui.workerhuts.homehut": "Citizen's Hut",
-  "com.minecolonies.coremod.gui.workerhuts.buildersHut": "Builder's Hut",
-  "com.minecolonies.coremod.gui.workerhuts.lumberjackHut": "Lumberjack's Hut",
+  "com.minecolonies.coremod.gui.workerhuts.buildershut": "Builder's Hut",
+  "com.minecolonies.coremod.gui.workerhuts.lumberjackhut": "Lumberjack's Hut",
 
   "com.minecolonies.coremod.gui.townhall.rename": "Rename Colony",
   "com.minecolonies.coremod.gui.workerhuts.minerminenode": "Mine Level",

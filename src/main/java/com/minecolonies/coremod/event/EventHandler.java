@@ -93,14 +93,17 @@ public class EventHandler
     @SubscribeEvent
     public static void onEntityAdded(@NotNull final EntityJoinWorldEvent event)
     {
-        if (event.getEntity() instanceof EntityCitizen)
+        if (!event.getWorld().isRemote)
         {
-            ((AbstractEntityCitizen) event.getEntity()).getCitizenColonyHandler().updateColonyServer();
-        }
-        else if (MineColonies.getConfig().getCommon().mobAttackCitizens.get() && (event.getEntity() instanceof MobEntity))
-        {
-            ((MobEntity) event.getEntity()).goalSelector.addGoal(6, new NearestAttackableTargetGoal<>((MobEntity) event.getEntity(), EntityCitizen.class, true));
-            ((MobEntity) event.getEntity()).goalSelector.addGoal(7, new NearestAttackableTargetGoal((MobEntity) event.getEntity(), EntityMercenary.class, true));
+            if (event.getEntity() instanceof EntityCitizen)
+            {
+                ((AbstractEntityCitizen) event.getEntity()).getCitizenColonyHandler().updateColonyServer();
+            }
+            else if (MineColonies.getConfig().getCommon().mobAttackCitizens.get() && (event.getEntity() instanceof MobEntity))
+            {
+                ((MobEntity) event.getEntity()).goalSelector.addGoal(6, new NearestAttackableTargetGoal<>((MobEntity) event.getEntity(), EntityCitizen.class, true));
+                ((MobEntity) event.getEntity()).goalSelector.addGoal(7, new NearestAttackableTargetGoal((MobEntity) event.getEntity(), EntityMercenary.class, true));
+            }
         }
     }
 

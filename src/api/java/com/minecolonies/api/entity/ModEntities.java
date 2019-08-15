@@ -1,14 +1,17 @@
 package com.minecolonies.api.entity;
 
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.entity.AgeableEntity;
+import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MobEntity;
 import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(Constants.MOD_ID)
 public class ModEntities
 {
     @ObjectHolder("citizen")
-    public static EntityType<?> CITIZEN;
+    public static EntityType<? extends AgeableEntity> CITIZEN;
 
     @ObjectHolder("fishhook")
     public static EntityType<?> FISHHOOK;
@@ -17,7 +20,7 @@ public class ModEntities
     public static EntityType<?> BARBARIAN;
 
     @ObjectHolder("mercenary")
-    public static EntityType<?> MERCENARY;
+    public static EntityType<? extends CreatureEntity> MERCENARY;
 
     @ObjectHolder("archerbarbarian")
     public static EntityType<?> ARCHERBARBARIAN;

@@ -44,7 +44,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
      */
     public ItemScepterGuard(final Item.Properties properties)
     {
-        super("scepterGuard", properties.maxStackSize(1).maxDamage(2));
+        super("scepterguard", properties.maxStackSize(1).maxDamage(2));
     }
 
     @NotNull

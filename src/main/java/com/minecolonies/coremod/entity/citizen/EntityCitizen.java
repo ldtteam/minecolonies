@@ -1519,8 +1519,7 @@ public class EntityCitizen extends AbstractEntityCitizen
 
     @javax.annotation.Nullable
     @Override
-    public Container createMenu(
-      final int id, final PlayerInventory inv, final PlayerEntity player)
+    public Container createMenu(final int id, final PlayerInventory inv, final PlayerEntity player)
     {
         final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         buffer.writeInt(citizenColonyHandler.getColonyId());
@@ -1536,6 +1535,7 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenData.setLastPosition(getCurrentPosition());
             citizenData.setCitizenEntity(null);
         }
+        Log.getLogger().warn("Removing");
         super.remove();
     }
 }
