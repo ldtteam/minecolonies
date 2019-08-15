@@ -25,14 +25,18 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.Tags;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -119,7 +123,79 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     /**
      * Inventory of the field.
      */
-    private final IItemHandlerModifiable inventory = new ItemStackHandler(1);
+    private final IItemHandlerModifiable inventory = new IItemHandlerModifiable() {
+
+        private ItemStack stack = ItemStack.EMPTY;
+
+        @Override
+        public void setStackInSlot(final int slot, @Nonnull final ItemStack stack)
+        {
+            if (slot == 0)
+            {
+                this.stack = stack;
+            }
+        }
+
+        @Override
+        public int getSlots()
+        {
+            return 1;
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack getStackInSlot(final int slot)
+        {
+            if (slot == 0)
+            {
+                return this.stack;
+            }
+            return ItemStack.EMPTY;
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
+        {
+            if (slot == 0)
+            {
+                final ItemStack output = stack.copy();
+                output.setCount(output.getCount() - 1);
+
+                if (!simulate)
+                {
+                    this.stack = stack.copy();
+                    this.stack.setCount(1);
+                }
+
+                return output;
+            }
+            return stack;
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
+        {
+            if (slot == 0)
+            {
+                return stack;
+            }
+            return ItemStack.EMPTY;
+        }
+
+        @Override
+        public int getSlotLimit(final int slot)
+        {
+            return 1;
+        }
+
+        @Override
+        public boolean isItemValid(final int slot, @Nonnull final ItemStack stack)
+        {
+            return stack.getItem() instanceof IPlantable;
+        }
+    };
 
     /**
      * Creates an instance of the tileEntity.
@@ -150,7 +226,6 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     public void setName(final String name)
     {
         this.name = name;
-        setCustomName(new StringTextComponent(name));
     }
 
     /**
@@ -596,5 +671,12 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
         final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         buffer.writeBlockPos(this.getPos());
         return new ContainerField(id, inv, buffer);
+    }
+
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName()
+    {
+        return new StringTextComponent(name);
     }
 }

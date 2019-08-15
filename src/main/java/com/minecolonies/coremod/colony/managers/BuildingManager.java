@@ -222,8 +222,15 @@ public class BuildingManager implements IBuildingManager
         {
             if (event.world.isBlockLoaded(pos))
             {
-                final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) event.world.getTileEntity(pos);
-                if (scarecrow == null)
+                if (event.world.getTileEntity(pos) instanceof ScarecrowTileEntity)
+                {
+                    final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) event.world.getTileEntity(pos);
+                    if (scarecrow == null)
+                    {
+                        removeField(pos);
+                    }
+                }
+                else
                 {
                     removeField(pos);
                 }

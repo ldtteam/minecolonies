@@ -22,6 +22,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -62,6 +63,11 @@ public class TileEntityRack extends AbstractTileEntityRack
      * The combined inv wrapper for double racks.
      */
     private CombinedInvWrapper combinedHandler;
+
+    public TileEntityRack(final TileEntityType tileEntityType)
+    {
+        super(tileEntityType);
+    }
 
     public TileEntityRack()
     {

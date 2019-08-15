@@ -10,6 +10,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
@@ -21,7 +22,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.*;
+import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,7 +47,6 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
         super(Properties.create(Material.WOOD).hardnessAndResistance(HARDNESS, RESISTANCE));
         setRegistryName(REGISTRY_NAME);
         this.setDefaultState(this.getDefaultState().with(FACING, NORTH));
-
     }
 
     @NotNull
@@ -59,7 +61,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     public VoxelShape getShape(
       final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
     {
-        return Block.makeCuboidShape((float) START_COLLISION,
+        return VoxelShapes.create((float) START_COLLISION,
           (float) BOTTOM_COLLISION,
           (float) START_COLLISION,
           (float) END_COLLISION,
@@ -95,7 +97,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
             final TileEntity entity = worldIn.getTileEntity(pos);
             if (entity instanceof ScarecrowTileEntity)
             {
-                player.openContainer((ScarecrowTileEntity) entity);
+                NetworkHooks.openGui((ServerPlayerEntity) player, (ScarecrowTileEntity) entity, pos);
                 return true;
             }
         }

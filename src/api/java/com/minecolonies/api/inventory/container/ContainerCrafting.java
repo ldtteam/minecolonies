@@ -32,12 +32,17 @@ public class ContainerCrafting extends Container
     /**
      * The crafting matrix inventory (2x2).
      */
-    private final CraftingInventory craftMatrix;
+    public final CraftingInventory craftMatrix;
+
+    /**
+     * The crafting matrix inventory (2x2).
+     */
+    public final CraftResultInventory craftResult = new CraftResultInventory();
 
     /**
      * The crafting result slot.
      */
-    private final Slot craftResult;
+    private final Slot craftResultSlot;
 
     /**
      * Boolean variable defining if complete grid or not 3x3(true), 2x2(false).
@@ -81,7 +86,7 @@ public class ContainerCrafting extends Container
             craftMatrix = new CraftingInventory(this, 2, 2);
         }
 
-        this.craftResult = this.addSlot(new CraftingResultSlot(inv.player, this.craftMatrix, this.craftMatrix, 0, X_CRAFT_RESULT, Y_CRAFT_RESULT)
+        this.craftResultSlot = this.addSlot(new CraftingResultSlot(inv.player, this.craftMatrix, craftResult, 0, X_CRAFT_RESULT, Y_CRAFT_RESULT)
         {
             @Override
             public boolean canTakeStack(final PlayerEntity playerIn)
@@ -176,8 +181,13 @@ public class ContainerCrafting extends Container
                     || player.isCreative()))
             {
                 stack = iRecipe.get().getCraftingResult(this.craftMatrix);
-                this.craftResult.putStack(stack);
+                this.craftResultSlot.putStack(stack);
                 player.connection.sendPacket(new SSetSlotPacket(this.windowId, 0, stack));
+            }
+            else
+            {
+                this.craftResultSlot.putStack(ItemStack.EMPTY);
+                player.connection.sendPacket(new SSetSlotPacket(this.windowId, 0, ItemStack.EMPTY));
             }
         }
 
@@ -299,7 +309,7 @@ public class ContainerCrafting extends Container
     @Override
     public boolean canMergeSlot(final ItemStack stack, final Slot slotIn)
     {
-        return slotIn.inventory != this.craftResult && super.canMergeSlot(stack, slotIn);
+        return slotIn.inventory != this.craftResultSlot && super.canMergeSlot(stack, slotIn);
     }
 
     /**

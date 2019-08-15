@@ -282,7 +282,7 @@ public class StructureIterator
         }
         return new StructureBlock(this.theStructure.getBlock(),
                                    this.theStructure.getBlockPosition(),
-                                   this.theStructure.getBlockstate().getBlockState(),
+                                   this.theStructure.getBlockstate() == null ? null : this.theStructure.getBlockstate().getBlockState(),
                                     entityData,
                                    this.theStructure.getItem(),
                                    BlockPosUtil.getBlock(targetWorld, this.theStructure.getBlockPosition()),

@@ -123,22 +123,23 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
             {
                 final List<ItemStack> input = new LinkedList<>();
 
-                for(int i = 1; i <= (completeCrafting ? MAX_CRAFTING_GRID_SIZE : CRAFTING_GRID_SIZE); i++)
+                for(int i = 0; i < (completeCrafting ? MAX_CRAFTING_GRID_SIZE : CRAFTING_GRID_SIZE); i++)
                 {
-                    final ItemStack stack = playerInventory.getStackInSlot(i);
+                    final ItemStack stack = container.craftMatrix.getStackInSlot(i);
                     final ItemStack copy = stack.copy();
                     ItemStackUtils.setSize(copy, 1);
 
                     input.add(copy);
                 }
 
-                final ItemStack primaryOutput =  playerInventory.getStackInSlot(0).getStack().copy();
+                final ItemStack primaryOutput =  container.craftResult.getStackInSlot(0).getStack().copy();
 
                 if(!ItemStackUtils.isEmpty(primaryOutput))
                 {
                     Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(input, completeCrafting ? 3 : 2, primaryOutput, building, false));
                 }
             }
+            onClose();
         }
     }
 

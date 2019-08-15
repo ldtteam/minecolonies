@@ -16,6 +16,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
@@ -28,6 +29,7 @@ import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.loot.LootContext;
+import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -168,18 +170,17 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     @Override
     public BlockState updatePostPlacement(@NotNull final BlockState stateIn, final Direction facing, final BlockState state, final IWorld worldIn, final BlockPos currentPos, final BlockPos pos)
     {
-        if (state.getBlock() instanceof BlockMinecoloniesRack)
+        if (state.getBlock() instanceof BlockMinecoloniesRack || stateIn.getBlock() instanceof BlockMinecoloniesRack)
         {
             final TileEntity rack = worldIn.getTileEntity(pos);
-            for (final Direction offsetFacing : HorizontalBlock.HORIZONTAL_FACING.getAllowedValues())
+            if (rack instanceof TileEntityRack)
             {
-                final BlockPos neighbor = pos.offset(offsetFacing);
-                final Block block = worldIn.getBlockState(neighbor).getBlock();
-                if (rack instanceof TileEntityRack && pos.getY() == neighbor.getY() && !pos.equals(neighbor) && !pos.equals(BlockPos.ZERO)
-                      && (block instanceof BlockMinecoloniesRack || state.getBlock() instanceof BlockMinecoloniesRack))
-                {
-                    ((AbstractTileEntityRack) rack).neighborChanged(neighbor);
-                }
+                ((AbstractTileEntityRack) rack).neighborChanged(currentPos);
+            }
+            final TileEntity rack2 = worldIn.getTileEntity(currentPos);
+            if (rack2 instanceof TileEntityRack)
+            {
+                ((AbstractTileEntityRack) rack2).neighborChanged(pos);
             }
         }
         return super.updatePostPlacement(stateIn, facing, state, worldIn, currentPos, pos);
@@ -207,9 +208,10 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         if ((colony == null || colony.getPermissions().hasPermission(player, Action.ACCESS_HUTS))
               && tileEntity instanceof TileEntityRack)
         {
+            final TileEntityRack rack = (TileEntityRack) tileEntity;
             if (!worldIn.isRemote)
             {
-                player.openContainer((AbstractTileEntityRack) tileEntity);
+                NetworkHooks.openGui((ServerPlayerEntity) player, rack, buf -> buf.writeBlockPos(rack.getPos()).writeBlockPos(rack.getOtherChest() == null ? BlockPos.ZERO : rack.getOtherChest().getPos()));
             }
             return true;
         }
