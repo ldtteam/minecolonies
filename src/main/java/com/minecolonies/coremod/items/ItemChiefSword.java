@@ -31,7 +31,7 @@ public class ItemChiefSword extends SwordItem implements IChiefSwordItem
     public ItemChiefSword(final Properties properties)
     {
         super(ItemTier.DIAMOND, 3, -2.4f, properties.group(ModCreativeTabs.MINECOLONIES));
-        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + CHIEFSWORD_NAME);
+        setRegistryName(CHIEFSWORD_NAME);
     }
 
     @Override

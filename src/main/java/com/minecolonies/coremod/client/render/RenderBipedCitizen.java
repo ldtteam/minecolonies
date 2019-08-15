@@ -10,18 +10,22 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
+
 import static com.minecolonies.api.util.constant.Constants.BED_HEIGHT;
 
 /**
  * Renderer for the citizens.
  */
-public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, CitizenModel>
+public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends CitizenModel> extends MobRenderer
 {
     private static final CitizenModel defaultModelMale   = new CitizenModel();
     private static final CitizenModel defaultModelFemale = new ModelEntityCitizenFemaleCitizen();
@@ -35,13 +39,13 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
      */
     public RenderBipedCitizen(final EntityRendererManager renderManagerIn)
     {
-        super(renderManagerIn, defaultModelMale, (float) SHADOW_SIZE);
-        super.addLayer(new BipedArmorLayer(this, defaultModelMale, defaultModelMale));
+        super(renderManagerIn, (M) defaultModelMale, (float) SHADOW_SIZE);
+        super.addLayer(new BipedArmorLayer<>(this, defaultModelMale, defaultModelMale));
     }
 
     @Override
     protected void renderModel(
-      final AbstractEntityCitizen citizen,
+      @NotNull final LivingEntity entity,
       final float limbSwing,
       final float limbSwingAmount,
       final float ageInTicks,
@@ -49,9 +53,10 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
       final float headPitch,
       final float scaleFactor)
     {
+        final AbstractEntityCitizen citizen = (AbstractEntityCitizen) entity;
         setupMainModelFrom(citizen);
 
-        final CitizenModel citizenModel = entityModel;
+        final CitizenModel citizenModel = (CitizenModel) entityModel;
 
         final ItemStack mainHandStack = citizen.getHeldItemMainhand();
         final ItemStack offHandStack = citizen.getHeldItemOffhand();
@@ -59,18 +64,18 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
         final BipedModel.ArmPose armPoseOffHand = getArmPoseFrom(citizen, offHandStack, BipedModel.ArmPose.EMPTY);
 
         updateArmPose(citizen, citizenModel, armPoseMainHand, armPoseOffHand);
-        super.renderModel(citizen, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
+        super.renderModel(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
     }
 
     private void setupMainModelFrom(@NotNull final AbstractEntityCitizen citizen)
     {
-        entityModel = citizen.isFemale()
-                      ? IModelTypeRegistry.getInstance().getFemaleMap().get(citizen.getModelType())
-                      : IModelTypeRegistry.getInstance().getMaleMap().get(citizen.getModelType());
+        entityModel = (M) (citizen.isFemale()
+                                      ? IModelTypeRegistry.getInstance().getFemaleMap().get(citizen.getModelType())
+                                      : IModelTypeRegistry.getInstance().getMaleMap().get(citizen.getModelType()));
 
         if (entityModel == null)
         {
-            entityModel = citizen.isFemale() ? defaultModelFemale : defaultModelMale;
+            entityModel = (M) (citizen.isFemale() ? defaultModelFemale : defaultModelMale);
         }
     }
 
@@ -115,24 +120,26 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
     }
 
     @Override
-    protected void renderLivingAt(final AbstractEntityCitizen LivingEntityIn, final double x, final double y, final double z)
+    protected void renderLivingAt(final LivingEntity entity, final double x, final double y, final double z)
     {
-        if (LivingEntityIn.isAlive() && LivingEntityIn.getCitizenSleepHandler().isAsleep())
+        final AbstractEntityCitizen entityCitizen = (AbstractEntityCitizen) entity;
+        if (entityCitizen.isAlive() && entityCitizen.getCitizenSleepHandler().isAsleep())
         {
-            super.renderLivingAt(LivingEntityIn, x + (double)LivingEntityIn.getCitizenSleepHandler().getRenderOffsetX(), y + BED_HEIGHT, z + (double)LivingEntityIn.getCitizenSleepHandler().getRenderOffsetZ());
+            super.renderLivingAt(entity, x + (double)entityCitizen.getCitizenSleepHandler().getRenderOffsetX(), y + BED_HEIGHT, z + (double)entityCitizen.getCitizenSleepHandler().getRenderOffsetZ());
         }
         else
         {
-            super.renderLivingAt(LivingEntityIn, x, y, z);
+            super.renderLivingAt(entity, x, y, z);
         }
     }
 
     @Override
-    protected void applyRotations(final AbstractEntityCitizen entityLiving, final float rotationHead, final float rotationYaw, final float partialTicks)
+    protected void applyRotations(final LivingEntity entityLiving, final float rotationHead, final float rotationYaw, final float partialTicks)
     {
-        if (entityLiving.isAlive() && entityLiving.getCitizenSleepHandler().isAsleep())
+        final AbstractEntityCitizen entityCitizen = (AbstractEntityCitizen) entityLiving;
+        if (entityCitizen.isAlive() && entityCitizen.getCitizenSleepHandler().isAsleep())
         {
-            GlStateManager.rotated(entityLiving.getCitizenSleepHandler().getBedOrientationInDegrees(), 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotated(entityCitizen.getCitizenSleepHandler().getBedOrientationInDegrees(), 0.0F, 1.0F, 0.0F);
             GlStateManager.rotated(this.getDeathMaxRotation(entityLiving), 0.0F, 0.0F, 1.0F);
             GlStateManager.rotated(THREE_QUARTERS, 0.0F, 1.0F, 0.0F);
         }
@@ -142,9 +149,10 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
         }
     }
 
+    @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(@NotNull final AbstractEntityCitizen entity)
+    protected ResourceLocation getEntityTexture(final Entity entity)
     {
-        return entity.getTexture();
+        return ((AbstractEntityCitizen) entity).getTexture();
     }
 }

@@ -31,18 +31,6 @@ public class ItemCompost extends AbstractItemMinecolonies
         super("compost", properties.maxStackSize(Constants.STACKSIZE).group(ModCreativeTabs.MINECOLONIES));
     }
 
-    /***
-     * Called whenever the player uses the item
-     * @param player the player that is using the item
-     * @param worldIn the world
-     * @param pos the position
-     * @param hand the hand of hte player (will contain a stack of ItemCompost)
-     * @param facing the direction the player is facing
-     * @param hitX the X coord to where the player used the item
-     * @param hitY the Y coord to where the player used the item
-     * @param hitZ the Z coord to where the player used the item
-     * @return ActionResultType.SUCCESS if it could apply the event, ActionResultType.FAIL if not
-     */
     @Override
     public ActionResultType onItemUse(final ItemUseContext ctx)
     {
@@ -58,15 +46,7 @@ public class ItemCompost extends AbstractItemMinecolonies
         return ActionResultType.FAIL;
     }
 
-    /***
-     * If the target is a IGrowable, it makes it grow
-     * @param stack the stack of items that is used to apply the bone meal event (ItemCompost)
-     * @param worldIn the world
-     * @param target the target for the bone meal event
-     * @param player the player using triggering the event
-     * @param hand the hand of the player
-     * @return true if it could apply the event, false if not
-     */
+
     public static boolean applyBonemeal(final ItemStack stack, final World worldIn, final BlockPos target, final PlayerEntity player)
     {
         final BlockState BlockState = worldIn.getBlockState(target);

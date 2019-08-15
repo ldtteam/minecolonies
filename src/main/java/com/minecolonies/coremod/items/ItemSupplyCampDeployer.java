@@ -55,7 +55,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      */
     public ItemSupplyCampDeployer(final Item.Properties properties)
     {
-        super("supplyCampDeployer", properties.maxStackSize(1).group(ModCreativeTabs.MINECOLONIES));
+        super("supplycampdeployer", properties.maxStackSize(1).group(ModCreativeTabs.MINECOLONIES));
     }
 
     @NotNull

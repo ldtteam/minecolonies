@@ -321,6 +321,13 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity
         }
     }
 
+    @Override
+    protected void registerAttributes()
+    {
+        super.registerAttributes();
+        this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+    }
+
     /**
      * Set the colony to raid.
      * @param colony the colony to set.
