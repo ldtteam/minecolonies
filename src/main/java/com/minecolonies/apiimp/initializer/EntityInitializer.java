@@ -47,49 +47,49 @@ public class EntityInitializer
         ModEntities.MERCENARY = (EntityType<? extends CreatureEntity>) EntityType.Builder.create(EntityMercenary::new, EntityClassification.CREATURE)
                                                                          .setTrackingRange(ENTITY_TRACKING_RANGE)
                                                                          .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                                                                         .size(1.0f, 2.0f)
+                                                                         .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
                                                                          .build(Constants.MOD_ID + ":mercenary")
                                                                          .setRegistryName("mercenary");
 
         ModEntities.BARBARIAN = EntityType.Builder.create(EntityBarbarian::new, EntityClassification.MONSTER)
                                   .setTrackingRange(ENTITY_TRACKING_RANGE)
                                   .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                                  .size(1.0f, 2.0f)
+                                  .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
                                   .build(Constants.MOD_ID + ":barbarian")
                                   .setRegistryName("barbarian");
 
         ModEntities.ARCHERBARBARIAN = EntityType.Builder.create(EntityArcherBarbarian::new, EntityClassification.MONSTER)
                                         .setTrackingRange(ENTITY_TRACKING_RANGE)
                                         .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                                        .size(1.0f, 2.0f)
+                                        .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
                                         .build(Constants.MOD_ID + ":archerbarbarian")
                                         .setRegistryName("archerbarbarian");
 
         ModEntities.CHIEFBARBARIAN = EntityType.Builder.create(EntityChiefBarbarian::new, EntityClassification.MONSTER)
                                        .setTrackingRange(ENTITY_TRACKING_RANGE)
                                        .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                                       .size(1.0f, 2.2f)
+                                       .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
                                        .build(Constants.MOD_ID + ":chiefbarbarian")
                                        .setRegistryName("chiefbarbarian");
 
         ModEntities.PIRATE = EntityType.Builder.create(EntityPirate::new, EntityClassification.MONSTER)
                                .setTrackingRange(ENTITY_TRACKING_RANGE)
                                .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                               .size(1.0f, 2.0f)
+                               .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
                                .build(Constants.MOD_ID + ":pirate")
                                .setRegistryName("pirate");
 
         ModEntities.ARCHERPIRATE = EntityType.Builder.create(EntityArcherPirate::new, EntityClassification.MONSTER)
                                      .setTrackingRange(ENTITY_TRACKING_RANGE)
                                      .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                                     .size(1.0f, 2.0f)
+                                     .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
                                      .build(Constants.MOD_ID + ":archerpirate")
                                      .setRegistryName("archerpirate");
 
         ModEntities.CHIEFPIRATE = EntityType.Builder.create(EntityCaptainPirate::new, EntityClassification.MONSTER)
                                     .setTrackingRange(ENTITY_TRACKING_RANGE)
                                     .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
-                                    .size(1.0f, 2.2f)
+                                    .size((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT)
                                     .build(Constants.MOD_ID + ":chiefpirate")
                                     .setRegistryName("chiefpirate");
     }

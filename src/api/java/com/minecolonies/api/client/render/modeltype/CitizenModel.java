@@ -8,5 +8,12 @@ import net.minecraft.client.renderer.entity.model.BipedModel;
  */
 public class CitizenModel extends BipedModel<AbstractEntityCitizen>
 {
+    public CitizenModel(final float size)
+    {
+        super(size);
+    }
 
+    public CitizenModel() {
+        this(0.0F);
+    }
 }
