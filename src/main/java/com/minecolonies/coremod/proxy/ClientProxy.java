@@ -10,6 +10,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
 import com.minecolonies.coremod.client.gui.*;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.RenderMercenary;
@@ -67,6 +68,11 @@ public class ClientProxy extends CommonProxy
      * Inventory description string.
      */
     private static final String INVENTORY = "inventory";
+
+    public ClientProxy()
+    {
+        this.apiImpl = new ClientMinecoloniesAPIImpl();
+    }
 
     @Override
     public boolean isClient()

@@ -14,7 +14,6 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.client.render.modeltype.registry.ModelTypeRegistry;
 import com.minecolonies.coremod.colony.CitizenDataManager;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingDataManager;
@@ -27,10 +26,8 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 import org.jetbrains.annotations.NotNull;
 
-public final class MinecoloniesAPIImpl implements IMinecoloniesAPI
+public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
 {
-    private static MinecoloniesAPIImpl  ourInstance         = new MinecoloniesAPIImpl();
-
     private final IColonyManager                colonyManager        = new ColonyManager();
     private final ICitizenDataManager           citizenDataManager   = new CitizenDataManager();
     private final IMobAIRegistry                mobAIRegistry        = new MobAIRegistry();
@@ -41,16 +38,6 @@ public final class MinecoloniesAPIImpl implements IMinecoloniesAPI
     private final IGuardTypeDataManager         guardTypeDataManager = new com.minecolonies.coremod.colony.buildings.registry.GuardTypeDataManager();
     private       IForgeRegistry<JobEntry>      jobRegistry;
     private       IForgeRegistry<GuardType>     guardTypeRegistry;
-    private final IModelTypeRegistry            modelTypeRegistry    = new ModelTypeRegistry();
-
-    private MinecoloniesAPIImpl()
-    {
-    }
-
-    public static MinecoloniesAPIImpl getInstance()
-    {
-        return ourInstance;
-    }
 
     @Override
     @NotNull
@@ -121,10 +108,10 @@ public final class MinecoloniesAPIImpl implements IMinecoloniesAPI
     @Override
     public IModelTypeRegistry getModelTypeRegistry()
     {
-        return modelTypeRegistry;
+        return null;
     }
 
-    public void onRegistryNewRegistry(final RegistryEvent.NewRegistry event)
+    public void registerCustomRegistries(final RegistryEvent.NewRegistry event)
     {
         buildingRegistry = new RegistryBuilder<BuildingEntry>()
                              .setName(new ResourceLocation(Constants.MOD_ID, "buildings"))
