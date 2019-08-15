@@ -149,7 +149,12 @@ public final class WorkerUtil
      */
     public static IToolType getBestToolForBlock(final Block target)
     {
-        final IToolType toolType = ToolType.getToolType(target.getHarvestTool(target.getDefaultState()).getName());
+        final net.minecraftforge.common.ToolType tool = target.getHarvestTool(target.getDefaultState());
+        if (tool == null)
+        {
+            return ToolType.NONE;
+        }
+        final IToolType toolType = ToolType.getToolType(tool.getName());
 
         if (toolType == ToolType.NONE && target.getDefaultState().getMaterial() == Material.WOOD)
         {

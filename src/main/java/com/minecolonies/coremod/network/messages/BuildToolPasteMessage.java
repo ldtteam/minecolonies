@@ -279,7 +279,7 @@ public class BuildToolPasteMessage implements IMessage
 
         final String hut = sn.getSection();
 
-        final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(Constants.MOD_ID, "blockHut" + hut));
+        final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(Constants.MOD_ID, "blockhut" + hut));
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {
             world.destroyBlock(buildPos, true);

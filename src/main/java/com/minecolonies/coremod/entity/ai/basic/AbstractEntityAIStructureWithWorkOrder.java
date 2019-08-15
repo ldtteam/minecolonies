@@ -393,7 +393,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             return true;
         }
         else return job.getWorkOrder() != null
-                      && ( !!world.isBlockLoaded(job.getWorkOrder().getBuildingLocation())
+                      && ( !world.isBlockLoaded(job.getWorkOrder().getBuildingLocation())
                              || (currentStructure != null && !world.isBlockLoaded(incrementBlock(currentStructure.getCurrentBlockPosition(), new BlockPos(currentStructure.getWidth(), currentStructure.getLength(), currentStructure.getHeight())))));
     }
 

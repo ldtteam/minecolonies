@@ -1,16 +1,25 @@
 package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.colony.IColonyView;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractScarescrowTileEntity extends ChestTileEntity
+public abstract class AbstractScarescrowTileEntity extends TileEntity implements INamedContainerProvider
 {
+    /**
+     * Default constructor.
+     */
+    public AbstractScarescrowTileEntity()
+    {
+        super(MinecoloniesTileEntities.SCARECROW);
+    }
+
     /**
      * Getter of the name of the tileEntity.
      *

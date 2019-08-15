@@ -87,7 +87,7 @@ public class ContainerField extends Container
         }
     }
 
-    @Nullable
+    @NotNull
     @Override
     public ItemStack transferStackInSlot(@NotNull final PlayerEntity playerIn, final int slotIndex)
     {
@@ -121,7 +121,7 @@ public class ContainerField extends Container
 
     /**
      * Get the assigned tile entity.
-     * @return
+     * @return the tile.
      */
     public AbstractScarescrowTileEntity getTileEntity()
     {

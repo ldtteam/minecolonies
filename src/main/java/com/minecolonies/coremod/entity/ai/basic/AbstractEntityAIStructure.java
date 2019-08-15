@@ -411,7 +411,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      */
     private void handleBuildingOverBlock(@NotNull final BlockPos pos)
     {
-        final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
+        final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0, worker.getHeldItemMainhand());
         for (final ItemStack item : items)
         {
             InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(item, worker.getInventoryCitizen());

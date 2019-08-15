@@ -22,6 +22,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootParameters;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -380,9 +381,12 @@ public final class BlockPosUtil
      * @param fortune Level of fortune on the pickaxe.
      * @return List of {@link ItemStack} with possible drops.
      */
-    public static List<ItemStack> getBlockDrops(@NotNull final World world, @NotNull final BlockPos coords, final int fortune)
+    public static List<ItemStack> getBlockDrops(@NotNull final World world, @NotNull final BlockPos coords, final int fortune, final ItemStack stack)
     {
-        return world.getBlockState(coords).getDrops(new LootContext.Builder((ServerWorld) world).withLuck(fortune));
+        return world.getBlockState(coords).getDrops(new LootContext.Builder((ServerWorld) world)
+                                                      .withLuck(fortune)
+                                                      .withParameter(LootParameters.TOOL, stack)
+                                                      .withParameter(LootParameters.POSITION, coords));
     }
 
     /**
