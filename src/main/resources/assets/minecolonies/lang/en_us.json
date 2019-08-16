@@ -449,7 +449,7 @@
   "com.minecolonies.coremod.gui.workerhuts.upgrade": "Upgrade",
 
   "com.minecolonies.coremod.gui.warehouse.visitcitizenchests": "Visit Citizen Chests:",
-  "com.minecolonies.coremod.gui.workerhuts.mobsList": "Mob Attack List",
+  "com.minecolonies.coremod.gui.workerhuts.mobslist": "Mob Attack List",
 
   "com.minecolonies.coremod.gui.townhall.population.unemployed": "Unemployed: %d",
   "com.minecolonies.coremod.gui.workerhuts.minernode": "Nodes",
@@ -535,6 +535,8 @@
   "com.minecolonies.coremod.job.deliveryman.workerchestfull": "Can't deliver because of a full worker chest.",
   "com.minecolonies.coremod.job.deliveryman.namedworkerchestfull": "Can't deliver because of a full %s's chest.",
   "block.minecolonies.blockhutwarehouse": "Warehouse",
+  "block.minecolonies.blockhutwarehouse.name": "Warehouse",
+
   "com.minecolonies.coremod.gui.workerhuts.buildingwarehouse": "Warehouse",
   "block.minecolonies.blockhutdeliveryman": "Deliveryman",
   "com.minecolonies.coremod.gui.workerhuts.deliveryman": "Deliveryman",
@@ -888,7 +890,7 @@
   "com.minecolonies.coremod.gui.resourcescroll.nobuilder": "Couldn't find a registered builder, please shift-right-click an existing builders hut.",
 
   "com.minecolonies.coremod.gui.workerhuts.baker.recipes": "Recipes",
-  "com.minecolonies.coremod.gui.workerhuts.getTool": "Get GuardTool",
+  "com.minecolonies.coremod.gui.workerhuts.gettool": "Get GuardTool",
 
   "com.minecolonies.coremod.progress.supplies_placed": "§6 Welcome to Minecolonies. Now that you have your supplies, how about searching a nice location to place your town hall to create your colony ... though far away from a village, if possible.",
   "com.minecolonies.coremod.progress.colony_founded": "§6 Word is out about a new colony. Soon the first settlers will join your newly founded colony, if there is enough space around the town hall. (Experienced magistrates can turn off these helpful messages in the Town Hall block.)",

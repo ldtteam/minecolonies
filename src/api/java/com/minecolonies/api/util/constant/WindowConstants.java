@@ -1128,7 +1128,7 @@ public final class WindowConstants
     /**
      * Link to the xml file of the window.
      */
-    public static final String ASSIGN_CITIZEN_RESOURCE_SUFFIX = ":gui/windowAssignCitizen.xml";
+    public static final String ASSIGN_CITIZEN_RESOURCE_SUFFIX = ":gui/windowassigncitizen.xml";
 
     /**
      * Id of the job label in the GUI.

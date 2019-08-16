@@ -53,7 +53,7 @@
         <view id="mobActions" size="100% 100%">
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
             <label size="130 11" pos="30 14" color="black" textalign="MIDDLE"
-                    label="$(com.minecolonies.coremod.gui.workerHuts.mobsList)"/>
+                    label="$(com.minecolonies.coremod.gui.workerhuts.mobsList)"/>
             <button id="recalculate" size="100 14" pos="45 29"
                     label="$(com.minecolonies.coremod.gui.workerHuts.calculate)"/>
             <list id="mobs" size="164 135" pos="13 48">

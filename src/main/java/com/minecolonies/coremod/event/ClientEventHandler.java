@@ -115,7 +115,7 @@ public class ClientEventHandler
 
             if (partolPointTemplate == null)
             {
-                partolPointTemplate = new Structure(world, "schematics/infrastructure/PatrolPoint", settings).getBluePrint();
+                partolPointTemplate = new Structure(world, "schematics/infrastructure/patrolpoint", settings).getBluePrint();
             }
 
             if (hut instanceof AbstractBuildingGuards.View)
