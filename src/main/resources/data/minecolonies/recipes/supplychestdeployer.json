@@ -7,13 +7,12 @@
   ],
   "conditions": [
     {
-      "type": "minecolonies:config_condition",
-      "key": "supply"
+      "type": "minecolonies:supplies"
     }
   ],
   "key": {
     "B": {
-      "item": "minecraft:boat"
+      "tag": "minecraft:boats"
     }
   },
   "result": {

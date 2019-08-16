@@ -3,7 +3,9 @@ package com.minecolonies.coremod.util;
 import com.google.gson.JsonObject;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.util.JSONUtils;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.IConditionSerializer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;
 
@@ -12,27 +14,16 @@ import java.util.function.BooleanSupplier;
  */
 public class ConfigCondition implements IConditionSerializer
 {
-    /**
-     * Supplyship string.
-     */
-    private static final String SUPPLIES = "supply";
-
-    /**
-     * Supplyship string.
-     */
-    private static final String IN_DEV = "inDev";
-
-    @Override
-    public BooleanSupplier parse(final JsonObject json)
+    public ConfigCondition()
     {
-        final String value = JSONUtils.getString(json , "key");
+        super();
+    }
 
-        if(!MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get() && IN_DEV.equalsIgnoreCase(value))
-        {
-            return () -> false;
-        }
-
-        if(!MineColonies.getConfig().getCommon().supplyChests.get() && SUPPLIES.equalsIgnoreCase(value))
+    @NotNull
+    @Override
+    public BooleanSupplier parse(@NotNull final JsonObject json)
+    {
+        if(!MineColonies.getConfig().getCommon().supplyChests.get())
         {
             return () -> false;
         }

@@ -9,12 +9,17 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
+import com.minecolonies.coremod.util.TownHallRecipe;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.RecipeBook;
+import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -40,7 +45,16 @@ public abstract class CommonProxy implements IProxy
      * Used to store IExtendedEntityProperties data temporarily between player death and respawn.
      */
     private static final Map<String, CompoundNBT> playerPropertiesData = new HashMap<>();
-    private              int                         nextEntityId         = 0;
+
+    /**
+     * The special townhall recipe.
+     */
+    public static IRecipeSerializer<?> SPECIAL_REC;
+
+    /**
+     * The next entity id.
+     */
+    private int nextEntityId = 0;
 
     /**
      * Creates instance of proxy.
@@ -49,7 +63,6 @@ public abstract class CommonProxy implements IProxy
     {
         apiImpl = new CommonMinecoloniesAPIImpl();
     }
-
 
     /**
      * Adds an entity's custom data to the map for temporary storage.
@@ -75,18 +88,13 @@ public abstract class CommonProxy implements IProxy
         return playerPropertiesData.remove(name);
     }
 
-
-    /**
-     * Called when registering recipes.
-     * @param event the registery event for recipes.
-     */
-    /*
     @SubscribeEvent
-    public static void registerRecipes(@NotNull final RegistryEvent.Register<IRecipe> event)
+    public static void registerRecipes(@NotNull final RegistryEvent.Register<IRecipeSerializer<?>> event)
     {
-        //todo handle 1.14
-        event.getRegistry().register(new TownHallRecipe());
-    }*/
+        SPECIAL_REC = new SpecialRecipeSerializer<>(TownHallRecipe::new);
+        SPECIAL_REC.setRegistryName(new ResourceLocation(Constants.MOD_ID, "townhall.recipe"));
+        event.getRegistry().register(SPECIAL_REC);
+    }
 
     @SubscribeEvent
     public static void registerGuardTypes(final RegistryEvent.Register<GuardType> event)

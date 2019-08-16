@@ -7,15 +7,13 @@
   ],
   "key": {
     "W": {
-      "type": "forge:ore_dict",
-      "ore": "plankWood"
+      "tag": "minecraft:planks"
     },
     "S": {
       "item": "minecraft:iron_ingot"
     },
     "G":{
-      "item": "minecraft:dirt",
-      "data": 0
+      "item": "minecraft:dirt"
     },
     "T":
     {
@@ -23,7 +21,6 @@
     }
   },
   "result": {
-    "item": "minecolonies:barrel_block",
-    "data": 0
+    "item": "minecolonies:barrel_block"
   }
 }
