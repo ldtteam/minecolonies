@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
 import com.minecolonies.coremod.client.gui.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -30,17 +31,16 @@ import java.io.File;
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientProxy extends CommonProxy
 {
-    /**
-     * Inventory description string.
-     */
-    private static final String INVENTORY = "inventory";
+    public ClientProxy()
+    {
+        apiImpl = new ClientMinecoloniesAPIImpl();
+    }
 
     @Override
     public boolean isClient()
     {
         return true;
     }
-
 
     @Override
     public void showCitizenWindow(final ICitizenDataView citizen)

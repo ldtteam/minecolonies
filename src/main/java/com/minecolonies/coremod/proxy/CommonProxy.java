@@ -1,10 +1,13 @@
 package com.minecolonies.coremod.proxy;
 
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.MinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
 import net.minecraft.block.BlockState;
@@ -17,6 +20,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ObjectHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -26,21 +30,28 @@ import java.util.Map;
 /**
  * CommonProxy of the minecolonies mod (Server and Client).
  */
+@Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public abstract class CommonProxy implements IProxy
 {
     /**
-     * Spawn egg colors.
+     * API instance.
      */
-    private static final int PRIMARY_COLOR_BARBARIAN   = 5;
-    private static final int SECONDARY_COLOR_BARBARIAN = 700;
-    private static final int PRIMARY_COLOR_PIRATE   = 7;
-    private static final int SECONDARY_COLOR_PIRATE = 600;
+    protected static CommonMinecoloniesAPIImpl apiImpl;
 
     /**
      * Used to store IExtendedEntityProperties data temporarily between player death and respawn.
      */
     private static final Map<String, CompoundNBT> playerPropertiesData = new HashMap<>();
     private              int                         nextEntityId         = 0;
+
+    /**
+     * Creates instance of proxy.
+     */
+    public CommonProxy()
+    {
+        apiImpl = new CommonMinecoloniesAPIImpl();
+    }
+
 
     /**
      * Adds an entity's custom data to the map for temporary storage.
@@ -88,7 +99,13 @@ public abstract class CommonProxy implements IProxy
     @SubscribeEvent
     public static void registerNewRegistries(final RegistryEvent.NewRegistry event)
     {
-        MinecoloniesAPIImpl.getInstance().onRegistryNewRegistry(event);
+        apiImpl.registerCustomRegistries(event);
+    }
+
+    @Override
+    public void setupApi()
+    {
+        MinecoloniesAPIProxy.getInstance().setApiInstance(new CommonMinecoloniesAPIImpl());
     }
 
     @SubscribeEvent
