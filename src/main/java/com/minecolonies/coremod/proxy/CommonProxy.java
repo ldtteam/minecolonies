@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
-import com.minecolonies.apiimp.MinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -20,7 +19,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ObjectHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -99,13 +97,13 @@ public abstract class CommonProxy implements IProxy
     @SubscribeEvent
     public static void registerNewRegistries(final RegistryEvent.NewRegistry event)
     {
-        apiImpl.registerCustomRegistries(event);
+        apiImpl.onRegistryNewRegistry(event);
     }
 
     @Override
     public void setupApi()
     {
-        MinecoloniesAPIProxy.getInstance().setApiInstance(new CommonMinecoloniesAPIImpl());
+        MinecoloniesAPIProxy.getInstance().setApiInstance(apiImpl);
     }
 
     @SubscribeEvent

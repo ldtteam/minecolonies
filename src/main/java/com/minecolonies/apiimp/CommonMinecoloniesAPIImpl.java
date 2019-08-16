@@ -11,17 +11,22 @@ import com.minecolonies.api.colony.guardtype.registry.IGuardTypeDataManager;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.compatibility.IFurnaceRecipes;
+import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataManager;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.registry.BuildingDataManager;
 import com.minecolonies.coremod.colony.jobs.registry.JobDataManager;
 import com.minecolonies.coremod.entity.ai.registry.MobAIRegistry;
 import com.minecolonies.coremod.entity.pathfinding.registry.PathNavigateRegistry;
+import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -111,7 +116,19 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
         return null;
     }
 
-    public void registerCustomRegistries(final RegistryEvent.NewRegistry event)
+    @Override
+    public Configuration getConfig()
+    {
+        return MineColonies.getConfig();
+    }
+
+    @Override
+    public IFurnaceRecipes getFurnaceRecipes()
+    {
+        return FurnaceRecipes.getInstance();
+    }
+
+    public void onRegistryNewRegistry(final RegistryEvent.NewRegistry event)
     {
         buildingRegistry = new RegistryBuilder<BuildingEntry>()
                              .setName(new ResourceLocation(Constants.MOD_ID, "buildings"))
@@ -132,7 +149,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
                         .create();
 
         guardTypeRegistry = new RegistryBuilder<GuardType>()
-                              .setName(new ResourceLocation(Constants.MOD_ID, "guardTypes"))
+                              .setName(new ResourceLocation(Constants.MOD_ID, "guardtypes"))
                               .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
                               .disableSaving()
                               .allowModification()

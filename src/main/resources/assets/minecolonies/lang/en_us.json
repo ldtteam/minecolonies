@@ -262,7 +262,7 @@
   "block.blockhut.messagenopermission": "You don't have permission to open huts in %s.",
   "block.blockhut.messagenopermissionplace": "You don't have permission to place hutes in %s.",
   "block.blockhut.messagetoofarfromtownhall": "You need to be closer to your town hall!",
-  "block.blockhut.messagenotownhall": "You need to place a town hall first!",
+  "tile.blockhut.messagenotownhall": "You need to place a town hall first!",
 
   "block.blockhuttownhall.messagemaxSize": "%d has reached max size",
   "block.blockhuttownhall.messagecolonistdead": "The colonist %s has died at %d %d %d of %s!",
