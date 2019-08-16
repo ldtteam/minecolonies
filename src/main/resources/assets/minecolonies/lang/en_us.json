@@ -326,7 +326,7 @@
   "com.minecolonies.coremod.status.shepherd.shearing": "Shearing",
 
   "com.minecolonies.coremod.gui.workerhuts.shepherdhut": "Shepherd's Hut",
-  "com.minecolonies.coremod.gui.workerhuts.swineHerderhut": "SwineHerder's Hut",
+  "com.minecolonies.coremod.gui.workerhuts.swineherderhut": "SwineHerder's Hut",
   "com.minecolonies.coremod.gui.workerhuts.cowboyhut": "Cowboy's Hut",
   "com.minecolonies.coremod.gui.workerhuts.chickenherderhut": "ChickenHerder's Hut",
   "com.minecolonies.coremod.gui.workerhuts.homehut": "Citizen's Hut",
@@ -474,7 +474,7 @@
   "com.minecolonies.coremod.gui.townhall.defaultname": "%s's Colony",
   "com.minecolonies.coremod.gui.townhall.jobhiring": "Worker hiring mode:",
   "com.minecolonies.coremod.gui.workerhuts.manage": "Manage Workers",
-  "com.minecolonies.coremod.gui.workerhuts.minerHut": "Miner",
+  "com.minecolonies.coremod.gui.workerhuts.minerhut": "Miner",
   "com.minecolonies.coremod.gui.townhall.currentspecialization": "Current Specialization:",
   "com.minecolonies.coremod.gui.inventory.scarecrow": "Scarecrow",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.fields": "Fields",
@@ -616,7 +616,7 @@
   "com.minecolonies.coremod.baker.nofurnace": "My building doesn't have any furnaces, please repair it.",
 
 
-  "com.minecolonies.coremod.gui.workerhuts.saplingList": "Tasklist",
+  "com.minecolonies.coremod.gui.workerhuts.saplinglist": "Tasklist",
 
   "com.minecolonies.coremod.gui.townhall.housing": "Housing assignment mode:",
   "com.minecolonies.coremod.gui.townhall.movein": "Citizens can move in:",
@@ -668,6 +668,8 @@
 
   "com.minecolonies.coremod.gui.workerhuts.cook": "Cook",
   "block.minecolonies.blockhutcook": "Restaurant",
+  "block.minecolonies.blockhutcook.name": "Restaurant",
+
   "com.minecolonies.coremod.ai.nochairs": "Restaurant does not have any chairs for me to eat something!",
   "com.minecolonies.coremod.ai.norestaurant": "Please build a restaurant or get me something to eat!",
   "com.minecolonies.coremod.ai.nowarehouse": "Build a warehouse or bring me food to serve to my clients!",
@@ -727,6 +729,8 @@
 
   "com.minecolonies.coremod.request.smeltableore": "Smeltable Ore",
   "block.minecolonies.blockhutsmeltery": "Smeltery",
+  "block.minecolonies.blockhutsmeltery.name": "Smeltery",
+
   "com.minecolonies.coremod.enteringcolony": "Beware, you're entering %s's colony.",
   "com.minecolonies.coremod.leavingcolony": "Farewell, you're leaving %s's colony.",
   "com.minecolonies.coremod.enteringcolonynotify": "Beware, %s just entered %s.",
@@ -866,6 +870,8 @@
   "block.minecolonies.barrel_block": "Barrel",
   "item.minecolonies.compost": "Compost",
   "block.minecolonies.blockhutcomposter": "Composter Hut",
+  "block.minecolonies.blockhutcomposter.name": "Composter Hut",
+
   "com.minecolonies.gui.workerhuts.composter.compostables": "Items to compost",
 
   "com.minecolonies.coremod.gui.townhall.citizens.unemployed": "Unemployed",
@@ -883,6 +889,8 @@
   "com.minecolonies.coremod.pvp.townhall.broke": "Beware!!! %s broke your town-hall by over %d%%! At 100%% it will be lost!!!",
   "com.minecolonies.coremod.gui.townhall.pickteamcolor": "Pick Team Color:",
   "block.minecolonies.blockhutlibrary": "Library",
+  "block.minecolonies.blockhutlibrary.name": "Library",
+
   "com.minecolonies.coremod.gui.workerhuts.library": "Library",
 
 
@@ -965,8 +973,11 @@
   "com.minecolonies.coremod.pirates.sailing.away": "A pirate ship close to %s just sailed away to search another victim.",
   "com.minecolonies.coremod.cook.serve.player": "%s: Here you go Sir, take this food!",
   "block.minecolonies.blockhutarchery": "Archery",
+  "block.minecolonies.blockhutarchery.name": "Archery",
   "com.minecolonies.coremod.gui.workerhuts.archery": "Archery",
   "block.minecolonies.blockhutcombatacademy": "Combat Academy",
+  "block.minecolonies.blockhutcombatacademy.name": "Combat Academy",
+
   "com.minecolonies.coremod.gui.workerhuts.combatacademy": "Combat Academy",
   "item.minecolonies.santa_hat": "Santa hat",
 
@@ -989,6 +1000,7 @@
   "com.minecolonies.coremod.gui.workerhuts.smelter": "Metal Smeltery",
   "com.minecolonies.coremod.gui.workerhuts.stonesmelter": "Stone Smeltery",
   "block.minecolonies.blockhutstonesmeltery": "Stone Smeltery",
+  "block.minecolonies.blockhutstonesmeltery.name": "Stone Smeltery",
 
 
   "com.minecolonies.coremod.ai.wrongfood": "The food I have is too raw to eat!",
@@ -996,6 +1008,7 @@
   "com.minecolonies.coremod.gui.homehut.current": "Current home:",
   "com.minecolonies.coremod.gui.homehut.currently": "Currently: %d blocks",
   "block.minecolonies.blockhutcrusher": "Crusher",
+  "block.minecolonies.blockhutcrusher.name": "Crusher",
   "com.minecolonies.coremod.gui.workerhuts.crusher": "Crusher",
   "com.minecolonies.coremod.gui.workerhuts.crushersettings": "Settings",
   "com.minecolonies.coremod.gui.workerhuts.save": "save",
@@ -1009,14 +1022,16 @@
   "block.blockHutTownHall.abandonmessagelink": "[ABANDON]",
   "block.blockHutTownHall.addofficermessagelink": "[ADD AS OFFICER]",
 
-  "com.minecolonies.coremod.gui.shepherd.autoDye": "Random sheep dyeing:",
-  "com.minecolonies.coremod.general.onBig": "On",
-  "com.minecolonies.coremod.general.offBig": "Off",
+  "com.minecolonies.coremod.gui.shepherd.autodye": "Random sheep dyeing:",
+  "com.minecolonies.coremod.general.onbig": "On",
+  "com.minecolonies.coremod.general.offbig": "Off",
 
   "com.minecolonies.coremod.general.canttakeequipped": "The only armour you have got is what you are wearing. Put it in your inventory if you want to give it to me.",
 
   "com.minecolonies.coremod.gui.workerhuts.siftersettings": "Daily limit",
   "block.minecolonies.blockhutsifter": "Sifter",
+  "block.minecolonies.blockhutsifter.name": "Sifter",
+
   "com.minecolonies.coremod.gui.workerhuts.sifter": "Sifter",
   "com.minecolonies.coremod.sifter.meshbroke": "My current mesh broke and I started to work with the default mesh again!",
   "com.minecolonies.coremod.gui.workerhuts.buy": "Buy",

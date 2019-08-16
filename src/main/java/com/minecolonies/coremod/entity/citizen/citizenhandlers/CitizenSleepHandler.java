@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSleepHandler;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.BlockState;
@@ -11,9 +12,12 @@ import net.minecraft.block.Blocks;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
+import java.util.Optional;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_BED_POS;
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_IS_ASLEEP;
@@ -169,7 +173,8 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         final BlockPos spawn;
         if (!getBedLocation().equals(BlockPos.ZERO) && citizen.world.getBlockState(getBedLocation()).getBlock().isIn(BlockTags.BEDS))
         {
-            spawn = new BlockPos(BedBlock.func_220172_a(ModEntities.CITIZEN, citizen.world, getBedLocation(), 0).get());
+            final Optional<Vec3d> spawnVec = BedBlock.func_220172_a(ModEntities.CITIZEN, citizen.world, getBedLocation(), 0);
+            spawn = spawnVec.map(BlockPos::new).orElseGet(() -> getBedLocation().up());
         }
         else
         {

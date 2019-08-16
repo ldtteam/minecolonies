@@ -12,7 +12,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 
@@ -137,7 +136,8 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     @Override
     public int getSlots()
     {
-        return this.mainInventory.size();
+        // Don't give armour and offhand slot.
+        return this.mainInventory.size() - 5;
     }
 
     /**
@@ -173,7 +173,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, INameable
     @Override
     public ItemStack getStackInSlot(final int index)
     {
-        if (index > mainInventory.size())
+        if (index >= mainInventory.size())
         {
             return ItemStack.EMPTY;
         }

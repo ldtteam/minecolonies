@@ -289,15 +289,12 @@ public class CommonConfiguration extends AbstractConfiguration
           Arrays.asList
                    ("minecraft:rotten_flesh",
                      "minecraft:tallgrass",
-                     "minecraft:yellow_flower",
-                     "minecraft:red_flower",
                      "minecraft:brown_mushroom",
                      "minecraft:red_mushroom",
-                     "minecraft:final ForgeConfigSpec.DoubleValue_plant",
+                     "minecraft:rose_bush",
                      "minecraft:feather",
-                     "food",
-                     "seed",
-                     "treeSapling"),
+                     "saplings",
+                     "small_flowers"),
           s -> s instanceof String);
         luckyBlocks = defineList(builder, "luckyblocks",
           Arrays.asList
@@ -339,67 +336,67 @@ public class CommonConfiguration extends AbstractConfiguration
           Arrays.asList
                    (//Dirt with String mesh
                      "0,0,minecraft:wheat_seeds,25",
-                     "0,0,minecraft:sapling:0,1",
-                     "0,0,minecraft:sapling:1,1",
-                     "0,0,minecraft:sapling:2,1",
-                     "0,0,minecraft:sapling:3,1",
+                     "0,0,minecraft:oak_sapling,1",
+                     "0,0,minecraft:birch_sapling,1",
+                     "0,0,minecraft:spruce_sapling,1",
+                     "0,0,minecraft:jungle_sapling,1",
 
                      //Dirt with flfinal ForgeConfigSpec.IntValue mesh
                      "0,1,minecraft:wheat_seeds,50",
-                     "0,1,minecraft:sapling:0,5",
-                     "0,1,minecraft:sapling:1,5",
-                     "0,1,minecraft:sapling:2,5",
-                     "0,1,minecraft:sapling:3,5",
+                     "0,1,minecraft:oak_sapling,5",
+                     "0,1,minecraft:birch_sapling,5",
+                     "0,1,minecraft:spruce_sapling,5",
+                     "0,1,minecraft:jungle_sapling,5",
                      "0,1,minecraft:carrot:0,1",
                      "0,1,minecraft:potato:0,1",
 
                      //Dirt with iron mesh
                      "0,2,minecraft:wheat_seeds,50",
-                     "0,2,minecraft:sapling:0,10",
-                     "0,2,minecraft:sapling:1,10",
-                     "0,2,minecraft:sapling:2,10",
-                     "0,2,minecraft:sapling:3,10",
+                     "0,2,minecraft:oak_sapling,10",
+                     "0,2,minecraft:birch_sapling,10",
+                     "0,2,minecraft:spruce_sapling,10",
+                     "0,2,minecraft:jungle_sapling,10",
                      "0,2,minecraft:pumpkin_seeds:0,1",
                      "0,2,minecraft:melon_seeds:0,1",
                      "0,2,minecraft:beetroot_seeds:0,1",
-                     "0,2,minecraft:carrot:0,1",
-                     "0,2,minecraft:potato:0,1",
-                     "0,2,minecraft:sapling:4,1",
-                     "0,2,minecraft:sapling:5,1",
+                     "0,2,minecraft:carrot,1",
+                     "0,2,minecraft:potato,1",
+                     "0,2,minecraft:dark_oak_sapling,1",
+                     "0,2,minecraft:acacia_sapling,1",
 
                      //Dirt with diamond mesh
                      "0,3,minecraft:wheat_seeds,25",
-                     "0,3,minecraft:sapling:0,10",
-                     "0,3,minecraft:sapling:1,10",
-                     "0,3,minecraft:sapling:2,10",
-                     "0,3,minecraft:sapling:3,10",
+                     "0,3,minecraft:oak_sapling,10",
+                     "0,3,minecraft:birch_sapling,10",
+                     "0,3,minecraft:spruce_sapling,10",
+                     "0,3,minecraft:jungle_sapling,10",
                      "0,3,minecraft:pumpkin_seeds:0,5",
                      "0,3,minecraft:melon_seeds:0,5",
                      "0,3,minecraft:beetroot_seeds:0,5",
                      "0,3,minecraft:carrot:0,5",
                      "0,3,minecraft:potato:0,5",
-                     "0,3,minecraft:sapling:4,5",
-                     "0,3,minecraft:sapling:5,5",
+                     "0,3,minecraft:dark_oak_sapling,5",
+                     "0,3,minecraft:acacia_sapling,5",
 
                      //Sand with string mesh
                      "1,0,minecraft:cactus,2.5",
-                     "1,0,minecraft:reeds,2.5",
+                     "1,0,minecraft:sugar_cane,2.5",
 
                      //Sand with flfinal ForgeConfigSpec.IntValue mesh
                      "1,1,minecraft:cactus,5",
-                     "1,1,minecraft:reeds,5",
+                     "1,1,minecraft:sugar_cane,5",
                      "1,1,minecraft:gold_nugget,5",
 
                      //Sand with iron mesh
                      "1,2,minecraft:cactus,10",
-                     "1,2,minecraft:reeds,10",
-                     "1,2,minecraft:dye:3,10",
+                     "1,2,minecraft:sugar_cane,10",
+                     "1,2,minecraft:cocoa_beans,10",
                      "1,2,minecraft:gold_nugget,10",
 
                      //Sand with diamond mesh
                      "1,3,minecraft:cactus,15",
-                     "1,3,minecraft:reeds,15",
-                     "1,3,minecraft:dye:3,15",
+                     "1,3,minecraft:sugar_cane,15",
+                     "1,3,minecraft:cocoa_beans,15",
                      "1,3,minecraft:gold_nugget,15",
 
                      //Gravel with string mesh
@@ -417,7 +414,7 @@ public class CommonConfiguration extends AbstractConfiguration
                      "2,2,minecraft:redstone,15",
                      "2,2,minecraft:iron_nugget,15",
                      "2,2,minecraft:coal,15",
-                     "2,2,minecraft:dye:4,5",
+                     "2,2,minecraft:lapis_lazuli,5",
                      "2,2,minecraft:iron_ingot,1",
                      "2,2,minecraft:gold_ingot,1",
                      "2,2,minecraft:emerald,1",
@@ -426,7 +423,7 @@ public class CommonConfiguration extends AbstractConfiguration
                      //Gravel with diamond mesh
                      "2,3,minecraft:redstone,20",
                      "2,3,minecraft:coal,20",
-                     "2,3,minecraft:dye:4,10",
+                     "2,3,minecraft:lapis_lazuli,10",
                      "2,3,minecraft:iron_ingot,2.5",
                      "2,3,minecraft:gold_ingot,2.5",
                      "2,3,minecraft:emerald,2.5",
@@ -454,7 +451,7 @@ public class CommonConfiguration extends AbstractConfiguration
                      "3,3,minecraft:glowstone_dust,15",
                      "3,3,minecraft:blaze_powder,5",
                      "3,3,minecraft:magma_cream,5",
-                     "3,3,minecraft:skull:3,5"),
+                     "3,3,minecraft:player_head,5"),
           s -> s instanceof String);
         dynamicTreeHarvestSize = defineInteger(builder,  "dynamictreeharvestsize", 5, 1, 5);
 
