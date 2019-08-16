@@ -76,7 +76,10 @@ public abstract class CommonProxy implements IProxy
     private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<>();
     private              int                         nextEntityId         = 0;
 
-    CommonProxy() {apiImpl = new CommonMinecoloniesAPIImpl();}
+    CommonProxy()
+    {
+        apiImpl = new CommonMinecoloniesAPIImpl();
+    }
 
     /**
      * Adds an entity's custom data to the map for temporary storage.
@@ -164,7 +167,7 @@ public abstract class CommonProxy implements IProxy
     @Override
     public void setupApi()
     {
-        MinecoloniesAPIProxy.getInstance().setApiInstance(new CommonMinecoloniesAPIImpl());
+        MinecoloniesAPIProxy.getInstance().setApiInstance(apiImpl);
     }
 
     @Override
