@@ -60,7 +60,7 @@ import static com.minecolonies.api.util.constant.ColonyConstants.*;
 @Mod.EventBusSubscriber
 public abstract class CommonProxy implements IProxy
 {
-    protected CommonMinecoloniesAPIImpl apiImpl;
+    static CommonMinecoloniesAPIImpl apiImpl;
 
     /**
      * Spawn egg colors.
@@ -155,9 +155,8 @@ public abstract class CommonProxy implements IProxy
         ModGuardTypesInitializer.init(event);
     }
 
-    @Override
     @SubscribeEvent
-    public void registerNewRegistries(final RegistryEvent.NewRegistry event)
+    public static void registerNewRegistries(final RegistryEvent.NewRegistry event)
     {
         apiImpl.registerCustomRegistries(event);
     }

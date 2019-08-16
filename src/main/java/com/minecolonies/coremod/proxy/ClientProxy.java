@@ -71,7 +71,7 @@ public class ClientProxy extends CommonProxy
 
     public ClientProxy()
     {
-        this.apiImpl = new ClientMinecoloniesAPIImpl();
+        apiImpl = new ClientMinecoloniesAPIImpl();
     }
 
     @Override

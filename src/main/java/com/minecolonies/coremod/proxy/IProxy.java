@@ -9,8 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.stats.RecipeBook;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,9 +20,6 @@ import java.io.File;
  */
 public interface IProxy
 {
-    @SubscribeEvent
-    void registerNewRegistries(RegistryEvent.NewRegistry event);
-
     /**
      * Sets up the API
      */
