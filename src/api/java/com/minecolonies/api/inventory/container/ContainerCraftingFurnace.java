@@ -1,32 +1,34 @@
 package com.minecolonies.api.inventory.container;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.inventory.ModContainers;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.*;
 import net.minecraft.inventory.container.*;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipe;
-import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SSetSlotPacket;
-import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
 
 /**
  * Crafting container for the recipe teaching of furnace recipes.
  */
-public class ContainerCraftingFurnace extends AbstractFurnaceContainer
+public class ContainerCraftingFurnace extends Container
 {
     /**
      * The furnace inventory.
      */
-    private final IInventory furnaceInventory;
+    private final IItemHandler furnaceInventory;
 
     /**
      * The player assigned to it.
@@ -46,11 +48,93 @@ public class ContainerCraftingFurnace extends AbstractFurnaceContainer
      */
     public ContainerCraftingFurnace(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
     {
-        super(ModContainers.craftingFurnace, IRecipeType.SMELTING, windowId, inv);
-        this.furnaceInventory = new FurnaceTileEntity();
+        super(ModContainers.craftingFurnace, windowId);
+        this.furnaceInventory = new IItemHandlerModifiable() {
+
+            ItemStack input = ItemStack.EMPTY;
+            ItemStack output = ItemStack.EMPTY;
+
+            @Override
+            public void setStackInSlot(final int slot, @Nonnull final ItemStack stack)
+            {
+                final ItemStack copy = stack.copy();
+                copy.setCount(1);
+                if (slot == 0)
+                {
+                    input = copy;
+                }
+                else
+                {
+                    output = copy;
+                }
+            }
+
+            @Override
+            public int getSlots()
+            {
+                return 3;
+            }
+
+            @Nonnull
+            @Override
+            public ItemStack getStackInSlot(final int slot)
+            {
+                if (slot == 0)
+                {
+                    return input;
+                }
+                else
+                {
+                    return output;
+                }
+            }
+
+            @Nonnull
+            @Override
+            public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
+            {
+                final ItemStack copy = stack.copy();
+                copy.setCount(1);
+                if (slot == 0)
+                {
+                    input = copy;
+                }
+                else
+                {
+                    output = copy;
+                }
+                return stack;
+            }
+
+            @Nonnull
+            @Override
+            public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
+            {
+                return ItemStack.EMPTY;
+            }
+
+            @Override
+            public int getSlotLimit(final int slot)
+            {
+                return 1;
+            }
+
+            @Override
+            public boolean isItemValid(final int slot, @Nonnull final ItemStack stack)
+            {
+                if (slot == 0)
+                {
+                    return !IMinecoloniesAPI.getInstance().getFurnaceRecipes().getSmeltingResult(stack).isEmpty();
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        };
         this.playerInventory = inv;
         buildingPos = extra.readBlockPos();
-        this.addSlot(new Slot(furnaceInventory, 0 , 56, 17)
+        this.addSlot(new SlotItemHandler(furnaceInventory, 0 , 56, 17)
         {
             @Override
             public int getSlotStackLimit()
@@ -85,7 +169,7 @@ public class ContainerCraftingFurnace extends AbstractFurnaceContainer
             }
         });
 
-        this.addSlot(new FurnaceResultSlot(playerInventory.player, furnaceInventory, 1, 116, 35));
+        this.addSlot(new SlotItemHandler(furnaceInventory, 1, 116, 35));
 
         // Player inventory slots
         // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
@@ -145,15 +229,14 @@ public class ContainerCraftingFurnace extends AbstractFurnaceContainer
             clickResult = super.slotClick(slotId, clickedButton, mode, playerInventory.player);
         }
 
-        if (!world.isRemote)
+        if (!playerInventory.player.world.isRemote)
         {
             final ServerPlayerEntity player = (ServerPlayerEntity) playerIn;
-            final FurnaceRecipe i = ((ServerPlayerEntity) playerIn).server.getRecipeManager().getRecipe(IRecipeType.SMELTING, furnaceInventory, world).orElseGet(null);
+            final ItemStack result = IMinecoloniesAPI.getInstance().getFurnaceRecipes().getSmeltingResult(furnaceInventory.getStackInSlot(0));
 
-            if (i != null)
+            if (result != ItemStack.EMPTY)
             {
-                final ItemStack result = i.getRecipeOutput();
-                this.furnaceInventory.setInventorySlotContents(1, result);
+                this.furnaceInventory.insertItem(1, result, false);
                 player.connection.sendPacket(new SSetSlotPacket(this.windowId, 1, result));
             }
         }

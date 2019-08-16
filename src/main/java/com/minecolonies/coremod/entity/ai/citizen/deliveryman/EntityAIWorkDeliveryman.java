@@ -130,7 +130,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
           /*
            * Check if tasks should be executed.
            */
-          new AIEventTarget(AIBlockingEventType.STATE_BLOCKING, this::checkIfExecute, IDLE),
           new AITarget(IDLE, () -> START_WORKING),
           new AITarget(START_WORKING, this::checkWareHouse),
           new AITarget(PREPARE_DELIVERY, this::prepareDelivery),

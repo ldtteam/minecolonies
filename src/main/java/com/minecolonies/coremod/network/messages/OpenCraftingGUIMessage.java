@@ -2,18 +2,19 @@ package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
+import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.api.network.IMessage;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.IContainerProvider;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.inventory.container.SimpleNamedContainerProvider;
+import net.minecraft.inventory.container.*;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 
@@ -107,23 +108,48 @@ public class OpenCraftingGUIMessage implements IMessage
         {
             final BlockPos pos = buildingId;
             //todo, which is our inventory?
-            NetworkHooks.openGui(player, new INamedContainerProvider() {
-                @Override
-                public ITextComponent getDisplayName()
+            final IBuilding building = colony.getBuildingManager().getBuilding(buildingId);
+            if (building instanceof AbstractBuildingSmelterCrafter)
+            {
+                NetworkHooks.openGui(player, new INamedContainerProvider()
                 {
-                    return new StringTextComponent("Crafting GUI");
-                }
+                    @Override
+                    public ITextComponent getDisplayName()
+                    {
+                        return new StringTextComponent("Furnace Crafting GUI");
+                    }
 
-                @NotNull
-                @Override
-                public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
+                    @NotNull
+                    @Override
+                    public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
+                    {
+                        final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+                        buffer.writeBlockPos(pos);
+                        return new ContainerCraftingFurnace(id, inv, buffer);
+                    }
+                }, pos);
+            }
+            else
+            {
+                NetworkHooks.openGui(player, new INamedContainerProvider()
                 {
-                    final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-                    buffer.writeBoolean(gridSize > 4);
-                    buffer.writeBlockPos(pos);
-                    return new ContainerCrafting(id, inv, buffer);
-                }
-            }, buffer -> new PacketBuffer(buffer.writeBoolean(gridSize > 4)).writeBlockPos(pos));
+                    @Override
+                    public ITextComponent getDisplayName()
+                    {
+                        return new StringTextComponent("Crafting GUI");
+                    }
+
+                    @NotNull
+                    @Override
+                    public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
+                    {
+                        final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+                        buffer.writeBoolean(gridSize > 2);
+                        buffer.writeBlockPos(pos);
+                        return new ContainerCrafting(id, inv, buffer);
+                    }
+                }, buffer -> new PacketBuffer(buffer.writeBoolean(gridSize > 2)).writeBlockPos(pos));
+            }
         }
     }
 

@@ -23,6 +23,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -210,15 +211,21 @@ public class CompatibilityManager implements ICompatibilityManager
             return false;
         }
 
+        if (itemStack.getItem().isFood() || (itemStack.getItem() instanceof BlockItem && ((BlockItem) itemStack.getItem()).getBlock() instanceof CropsBlock))
+        {
+            return true;
+        }
+
         for (final String string : MinecoloniesAPIProxy.getInstance().getConfig().getCommon().listOfCompostableItems.get())
         {
             if (itemStack.getItem().getRegistryName().toString().equals(string))
             {
                 return true;
             }
+
             for (final ResourceLocation tag : itemStack.getItem().getTags())
             {
-                if (tag.getPath().equals(string))
+                if (tag.toString().contains(string))
                 {
                     return true;
                 }
@@ -313,6 +320,11 @@ public class CompatibilityManager implements ICompatibilityManager
             return false;
         }
 
+        if (stack.getItem().isIn(Tags.Items.ORES))
+        {
+            return !MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack).isEmpty();
+        }
+
         for (final ResourceLocation tag : stack.getItem().getTags())
         {
             if (tag.getPath().contains(ORE_STRING))
@@ -330,6 +342,11 @@ public class CompatibilityManager implements ICompatibilityManager
         if (isEmpty(stack))
         {
             return false;
+        }
+
+        if (stack.getItem().isIn(Tags.Items.ORES))
+        {
+            return true;
         }
 
         for (final ResourceLocation tag : stack.getItem().getTags())

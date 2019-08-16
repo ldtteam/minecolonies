@@ -826,7 +826,7 @@ public final class ColonyManager implements IColonyManager
             colonyViews.clear();
         }
 
-        if (!compatibilityManager.isDiscoveredAlready() && ItemStackUtils.ISFOOD != null)
+        if (!compatibilityManager.isDiscoveredAlready() && ItemStackUtils.ISFOOD != null && FurnaceRecipes.getInstance().loaded())
         {
             compatibilityManager.discover();
         }
@@ -840,7 +840,7 @@ public final class ColonyManager implements IColonyManager
             getColonies(event.world).forEach(c -> c.onWorldTick(event));
         }
 
-        if (!compatibilityManager.isDiscoveredAlready())
+        if (!compatibilityManager.isDiscoveredAlready() && FurnaceRecipes.getInstance().loaded())
         {
             compatibilityManager.discover();
         }

@@ -60,11 +60,10 @@ public class FurnaceRecipes implements IFurnaceRecipes
     }
 
     @SubscribeEvent
-    public static void onServerStarting(final FMLServerAboutToStartEvent event)
+    public static void onServerStarting(final FMLServerStartedEvent event)
     {
         instance = new FurnaceRecipes();
         instance.loadRecipes(event.getServer());
-
 
         ItemStackUtils.ISFOOD = itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().isFood();
         ItemStackUtils.IS_SMELTABLE = itemStack -> !ItemStackUtils.isEmpty(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(itemStack));
@@ -113,5 +112,14 @@ public class FurnaceRecipes implements IFurnaceRecipes
     public static FurnaceRecipes getInstance()
     {
         return instance;
+    }
+
+    /**
+     * Method to check if the furnace recipes are loaded already.
+     * @return true if so.
+     */
+    public boolean loaded()
+    {
+        return !recipes.isEmpty();
     }
 }

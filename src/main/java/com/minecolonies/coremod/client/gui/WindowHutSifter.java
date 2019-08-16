@@ -132,7 +132,7 @@ public class WindowHutSifter extends AbstractWindowWorkerBuilding<BuildingSifter
                 if (resource.isItemEqual(mesh.getItemStack()))
                 {
                     resourceLabel.setColor(GREEN, GREEN);
-                    resourceLabel.setLabelText("§2" + resource.getDisplayName() + "§r");
+                    resourceLabel.setLabelText("§2" + resource.getDisplayName().getFormattedText() + "§r");
                     isSet = true;
                 }
                 else
