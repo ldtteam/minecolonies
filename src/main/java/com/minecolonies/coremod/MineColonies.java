@@ -39,9 +39,12 @@ import com.minecolonies.coremod.proxy.CommonProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import com.minecolonies.coremod.util.ConfigCondition;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -102,6 +105,8 @@ public class MineColonies
         CapabilityManager.INSTANCE.register(IChunkmanagerCapability.class, new IChunkmanagerCapability.Storage(), IChunkmanagerCapability.Impl::new);
         CapabilityManager.INSTANCE.register(IColonyManagerCapability.class, new IColonyManagerCapability.Storage(), IColonyManagerCapability.Impl::new);
         proxy.setupApi();
+
+        CraftingHelper.register(new ResourceLocation(Constants.MOD_ID, "supplies"), json -> new ConfigCondition().parse(json));
 
         Network.getNetwork().registerCommonMessages();
 

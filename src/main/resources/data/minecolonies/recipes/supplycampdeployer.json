@@ -1,20 +1,18 @@
 {
+  "conditions": [
+    {
+      "type": "minecolonies:supplies"
+    }
+  ],
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "   ",
     "C C",
     "CCC"
   ],
-  "conditions": [
-    {
-      "type": "minecolonies:config_condition",
-      "key": "supply"
-    }
-  ],
   "key": {
     "C": {
-      "type": "forge:ore_dict",
-      "ore": "chest"
+      "tag": "minecraft:chests"
     }
   },
     "result": {

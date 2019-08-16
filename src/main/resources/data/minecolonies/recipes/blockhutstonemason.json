@@ -7,12 +7,10 @@
   ],
   "key": {
     "X": {
-      "type": "forge:ore_dict",
-      "ore": "plankWood"
+      "tag": "minecraft:planks"
     },
     "A": {
-      "item": "minecraft:stonebrick",
-      "data": 0
+      "item": "minecraft:stone_bricks"
     },
     "T": {
       "item": "structurize:sceptergold"

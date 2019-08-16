@@ -2,16 +2,13 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecraft:tallgrass",
-      "data": 1
+      "item": "minecraft:grass"
     },
     {
-      "item": "minecraft:tallgrass",
-      "data": 1
+      "item": "minecraft:grass"
     }
   ],
   "result": {
-    "item": "minecraft:double_plant",
-    "data": 2
+    "item": "minecraft:tall_grass"
   }
 }

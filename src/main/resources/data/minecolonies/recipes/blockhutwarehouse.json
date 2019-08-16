@@ -7,12 +7,10 @@
   ],
   "key": {
     "X": {
-      "type": "forge:ore_dict",
-      "ore": "plankWood"
+      "tag": "minecraft:planks"
     },
     "C": {
-      "type": "forge:ore_dict",
-      "ore": "chest"
+      "tag" : "forge:chests"
     },
     "T": {
       "item": "structurize:sceptergold"
