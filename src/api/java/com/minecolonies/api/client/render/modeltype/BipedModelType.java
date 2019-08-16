@@ -18,7 +18,7 @@ public enum BipedModelType implements IModelType
     FISHERMAN("fisherman", 1),
     ARCHER_GUARD("archer", 1),
     KNIGHT_GUARD("knight", 1),
-    BAKER("bakery", 1),
+    BAKER("baker", 1),
     SHEEP_FARMER("sheepfarmer", 1),
     COW_FARMER("cowfarmer", 1),
     PIG_FARMER("pigfarmer", 1),

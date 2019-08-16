@@ -122,7 +122,7 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
             @Nullable final AbstractBuildingGuards building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingGuards.class);
             if (building != null)
             {
-                building.setGuardType(IGuardTypeRegistry.getInstance().getValue(job));
+                building.setGuardType(IGuardTypeRegistry.getInstance().getValue(message.job));
                 building.setAssignManually(message.assignmentMode);
                 building.setPatrolManually(message.patrollingMode);
                 building.setTightGrouping(message.tightGrouping);

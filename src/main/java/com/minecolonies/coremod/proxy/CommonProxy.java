@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.proxy;
 
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.guardtype.GuardType;
@@ -8,7 +9,7 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.LootTableConstants;
-import com.minecolonies.apiimp.MinecoloniesAPIImpl;
+import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.EntityFishHook;
@@ -59,6 +60,8 @@ import static com.minecolonies.api.util.constant.ColonyConstants.*;
 @Mod.EventBusSubscriber
 public abstract class CommonProxy implements IProxy
 {
+    static CommonMinecoloniesAPIImpl apiImpl;
+
     /**
      * Spawn egg colors.
      */
@@ -72,6 +75,8 @@ public abstract class CommonProxy implements IProxy
      */
     private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<>();
     private              int                         nextEntityId         = 0;
+
+    CommonProxy() {apiImpl = new CommonMinecoloniesAPIImpl();}
 
     /**
      * Adds an entity's custom data to the map for temporary storage.
@@ -153,7 +158,13 @@ public abstract class CommonProxy implements IProxy
     @SubscribeEvent
     public static void registerNewRegistries(final RegistryEvent.NewRegistry event)
     {
-        MinecoloniesAPIImpl.getInstance().onRegistryNewRegistry(event);
+        apiImpl.registerCustomRegistries(event);
+    }
+
+    @Override
+    public void setupApi()
+    {
+        MinecoloniesAPIProxy.getInstance().setApiInstance(new CommonMinecoloniesAPIImpl());
     }
 
     @Override

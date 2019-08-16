@@ -21,6 +21,11 @@ import java.io.File;
 public interface IProxy
 {
     /**
+     * Sets up the API
+     */
+    void setupApi();
+
+    /**
      * Returns whether or not the proxy is client sided or server sided.
      *
      * @return true when client, false when server.

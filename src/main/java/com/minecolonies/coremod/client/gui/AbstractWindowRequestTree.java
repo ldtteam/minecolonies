@@ -384,7 +384,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
             this.depth = depth;
             this.overruleable = request.getRequester().getId().equals(buildingView.getId())
                                   || buildingView.getResolverIds().contains(request.getRequester().getId())
-                                  || buildingView.getLocation().equals(request.getRequester().getLocation().getInDimensionLocation());
+                                  || buildingView.getPosition().equals(request.getRequester().getLocation().getInDimensionLocation());
         }
 
         /**
