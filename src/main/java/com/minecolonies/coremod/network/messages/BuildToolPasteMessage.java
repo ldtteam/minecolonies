@@ -222,20 +222,13 @@ public class BuildToolPasteMessage implements IMessage
                 return;
             }
             final List<ItemStack> stacks = new ArrayList<>();
-            final int chestHeight;
             if(freeMode == WindowBuildTool.FreeMode.SUPPLYSHIP)
             {
                 stacks.add(new ItemStack(ModItems.supplyChest));
-                chestHeight = SUPPLY_SHIP_CHEST_HEIGHT;
             }
             else if(freeMode == WindowBuildTool.FreeMode.SUPPLYCAMP)
             {
                 stacks.add(new ItemStack(ModItems.supplyCamp));
-                chestHeight = 1;
-            }
-            else
-            {
-                chestHeight = 0;
             }
 
             LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.progress.supplies_placed");
@@ -244,7 +237,6 @@ public class BuildToolPasteMessage implements IMessage
             {
                 InstantStructurePlacer.loadAndPlaceStructureWithRotation(player.world, structureName,
                   pos, rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, complete);
-                player.getEntityWorld().setBlockState(pos.up(chestHeight), Blocks.CHEST.getDefaultState().with(ChestBlock.FACING, player.getHorizontalFacing()));
             }
             else
             {

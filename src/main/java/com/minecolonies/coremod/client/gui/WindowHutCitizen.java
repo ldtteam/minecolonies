@@ -34,7 +34,7 @@ public class WindowHutCitizen extends AbstractWindowBuilding<BuildingHome.View>
     /**
      * Suffix describing the window xml.
      */
-    private static final String HOME_BUILDING_RESOURCE_SUFFIX = ":gui/windowHutHome.xml";
+    private static final String HOME_BUILDING_RESOURCE_SUFFIX = ":gui/windowhuthome.xml";
 
     /**
      * Id to identify the list of the citizen in the view.

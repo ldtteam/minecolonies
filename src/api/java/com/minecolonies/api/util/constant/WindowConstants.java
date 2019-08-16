@@ -606,7 +606,7 @@ public final class WindowConstants
     public static final String  GUI_PAGE_LEVEL_ACTIONS     = "levelActions";
     public static final String  GUI_PAGE_MOB_ACTIONS       = "mobActions";
     //GUI Resource
-    public static final String  GUI_RESOURCE               = ":gui/windowHutGuardTower.xml";
+    public static final String  GUI_RESOURCE               = ":gui/windowhutguardtower.xml";
     //GUI Other
     public static final Integer GUI_LIST_ELEMENT_NAME_POS  = 2;
     //Get GuardTool GUI

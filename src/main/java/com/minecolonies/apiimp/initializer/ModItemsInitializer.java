@@ -50,7 +50,6 @@ public final class ModItemsInitializer
 
         ModItems.supplyChest = new ItemSupplyChestDeployer(new Item.Properties());
         ModItems.permTool = new ItemScepterPermission(new Item.Properties());
-        ModItems.caliper = new ItemCaliper(new Item.Properties());
         ModItems.scepterGuard = new ItemScepterGuard(new Item.Properties());
         ModItems.supplyCamp = new ItemSupplyCampDeployer(new Item.Properties());
         ModItems.ancientTome = new ItemAncientTome(new Item.Properties());
@@ -74,7 +73,6 @@ public final class ModItemsInitializer
 
         registry.register(ModItems.supplyChest);
         registry.register(ModItems.permTool);
-        registry.register(ModItems.caliper);
         registry.register(ModItems.scepterGuard);
         registry.register(ModItems.supplyCamp);
         registry.register(ModItems.ancientTome);
