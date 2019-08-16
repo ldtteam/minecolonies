@@ -398,7 +398,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
     @Nullable
     public ItemStack getSeed()
     {
-        if (inventory.getStackInSlot(0) != ItemStackUtils.EMPTY && inventory.getStackInSlot(0).getItem() instanceof IPlantable)
+        if (inventory.getStackInSlot(0) != ItemStackUtils.EMPTY)
         {
             return inventory.getStackInSlot(0);
         }

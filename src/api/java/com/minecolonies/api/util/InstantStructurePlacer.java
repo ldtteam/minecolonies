@@ -169,6 +169,13 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
      */
     private void handleBlockPlacement(final BlockPos pos, final BlockState localState, final boolean complete, final CompoundNBT tileEntityData, final World world)
     {
+        final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
+        IBuilding building = null;
+        if (colony != null)
+        {
+            building = colony.getBuildingManager().getBuilding(structure.getPosition());
+        }
+
         for (final IPlacementHandler handlers : PlacementHandlers.handlers)
         {
             if (handlers.canHandle(world, pos, localState))
@@ -177,19 +184,10 @@ public final class InstantStructurePlacer extends com.ldtteam.structurize.util.I
                 if (result instanceof BlockState)
                 {
                     final BlockState blockState = (BlockState) result;
-
-                    final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
-                    if (colony != null)
+                    if (building != null)
                     {
-                        final IBuilding building = colony.getBuildingManager().getBuilding(structure.getPosition());
-
-                        if (building != null)
-                        {
-                            building.registerBlockPosition(blockState, pos, world);
-                        }
+                        building.registerBlockPosition(blockState, pos, world);
                     }
-
-                    return;
                 }
                 return;
             }

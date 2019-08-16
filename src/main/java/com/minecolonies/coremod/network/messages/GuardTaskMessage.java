@@ -97,8 +97,8 @@ public class GuardTaskMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(colonyId);
-        buf.writeResourceLocation(job);
         buf.writeBlockPos(buildingId);
+        buf.writeResourceLocation(job);
         buf.writeBoolean(assignmentMode);
         buf.writeBoolean(patrollingMode);
         buf.writeBoolean(tightGrouping);
