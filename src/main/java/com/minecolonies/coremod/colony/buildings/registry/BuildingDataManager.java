@@ -76,7 +76,7 @@ public class BuildingDataManager implements IBuildingDataManager
             return null;
         }
 
-        final IBuildingView view = entry.getBuildingViewProducer().apply(colony, position);
+        final IBuildingView view = entry.getBuildingViewProducer().get().apply(colony, position);
 
         if (view != null)
         {

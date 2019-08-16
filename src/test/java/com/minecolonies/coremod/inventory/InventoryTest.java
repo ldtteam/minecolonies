@@ -30,7 +30,7 @@ public class InventoryTest extends AbstractMockStaticsTest
     {
         BuildingEntry entry = new BuildingEntry.Builder().setBuildingBlock(new BlockHutTownHall())
                                 .setBuildingProducer((c, p) -> null)
-                                .setBuildingViewProducer((c, p) -> null)
+                                .setBuildingViewProducer(() -> (c, p) -> null)
                                 .setRegistryName(new ResourceLocation(ModBuildings.TOWNHALL_ID))
                                 .createBuildingEntry();
 

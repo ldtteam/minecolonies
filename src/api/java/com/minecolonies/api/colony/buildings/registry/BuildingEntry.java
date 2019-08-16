@@ -11,6 +11,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 /**
  * Entry for the {@link IBuilding} registry.
@@ -24,17 +25,15 @@ public final class BuildingEntry extends IForgeRegistryEntry.Impl<BuildingEntry>
     private final AbstractBlockHut<?> buildingBlock;
 
     private final BiFunction<IColony, BlockPos, IBuilding>         buildingProducer;
-    private final BiFunction<IColonyView, BlockPos, IBuildingView> buildingViewProducer;
-
     /**
      * A builder class for {@link BuildingEntry}.
      */
     public static final class Builder
     {
-        private AbstractBlockHut<?>                              buildingBlock;
-        private BiFunction<IColony, BlockPos, IBuilding>         buildingProducer;
-        private BiFunction<IColonyView, BlockPos, IBuildingView> buildingViewProducer;
-        private ResourceLocation                                 registryName;
+        private AbstractBlockHut<?>                                        buildingBlock;
+        private BiFunction<IColony, BlockPos, IBuilding>                   buildingProducer;
+        private Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer;
+        private ResourceLocation                                           registryName;
 
         /**
          * Sets the block that represents this building.
@@ -66,7 +65,7 @@ public final class BuildingEntry extends IForgeRegistryEntry.Impl<BuildingEntry>
          * @param buildingViewProducer The callback used to create the {@link IBuildingView}.
          * @return The builder.
          */
-        public Builder setBuildingViewProducer(final BiFunction<IColonyView, BlockPos, IBuildingView> buildingViewProducer)
+        public Builder setBuildingViewProducer(final Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer)
         {
             this.buildingViewProducer = buildingViewProducer;
             return this;
@@ -101,6 +100,8 @@ public final class BuildingEntry extends IForgeRegistryEntry.Impl<BuildingEntry>
         }
     }
 
+    private final Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer;
+
     public AbstractBlockHut<?> getBuildingBlock()
     {
         return buildingBlock;
@@ -111,19 +112,19 @@ public final class BuildingEntry extends IForgeRegistryEntry.Impl<BuildingEntry>
         return buildingProducer;
     }
 
-    public BiFunction<IColonyView, BlockPos, IBuildingView> getBuildingViewProducer()
-    {
-        return buildingViewProducer;
-    }
-
     private BuildingEntry(
       final AbstractBlockHut<?> buildingBlock,
       final BiFunction<IColony, BlockPos, IBuilding> buildingProducer,
-      final BiFunction<IColonyView, BlockPos, IBuildingView> buildingViewProducer)
+      final Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer)
     {
         super();
         this.buildingBlock = buildingBlock;
         this.buildingProducer = buildingProducer;
         this.buildingViewProducer = buildingViewProducer;
+    }
+
+    public Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> getBuildingViewProducer()
+    {
+        return buildingViewProducer;
     }
 }
