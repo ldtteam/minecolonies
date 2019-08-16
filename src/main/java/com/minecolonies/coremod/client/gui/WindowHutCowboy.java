@@ -29,7 +29,7 @@ public class WindowHutCowboy extends AbstractWindowWorkerBuilding<BuildingCowboy
      */
     public WindowHutCowboy(final BuildingCowboy.View building)
     {
-        super(building, Constants.MOD_ID + ":gui/windowHutCowboy.xml");
+        super(building, Constants.MOD_ID + ":gui/windowhutcowboy.xml");
 
         registerButton(BUTTON_MILK_COWS, this::milkCowsClicked);
 

@@ -17,6 +17,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -25,6 +26,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
@@ -193,7 +195,7 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
         @Override
         public boolean isItemValid(final int slot, @Nonnull final ItemStack stack)
         {
-            return stack.getItem() instanceof IPlantable;
+            return stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock() instanceof CropsBlock;
         }
     };
 
@@ -571,14 +573,17 @@ public class ScarecrowTileEntity extends AbstractScarescrowTileEntity
         super.onLoad();
         final World world = getWorld();
 
-        colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
-        if (colony != null && !colony.getBuildingManager().getFields().contains(pos))
+        if (world.getChunkProvider().isChunkLoaded(new ChunkPos(pos)))
         {
-            @Nullable final Entity entity = EntityUtils.getPlayerByUUID(world, colony.getPermissions().getOwner());
-
-            if (entity instanceof PlayerEntity)
+            colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
+            if (colony != null && !colony.getBuildingManager().getFields().contains(pos))
             {
-                colony.getBuildingManager().addNewField(this, pos, world);
+                @Nullable final Entity entity = EntityUtils.getPlayerByUUID(world, colony.getPermissions().getOwner());
+
+                if (entity instanceof PlayerEntity)
+                {
+                    colony.getBuildingManager().addNewField(this, pos, world);
+                }
             }
         }
     }

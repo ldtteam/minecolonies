@@ -38,7 +38,7 @@ public class WindowBarracksBuilding extends AbstractWindowBuilding<BuildingBarra
     /**
      * Suffix for the window.
      */
-    private static final String HOME_BUILDING_RESOURCE_SUFFIX = ":gui/windowHutBarracks.xml";
+    private static final String HOME_BUILDING_RESOURCE_SUFFIX = ":gui/windowhutbarracks.xml";
 
     /**
      * Required building level to see the barbarian spawnpoints in the GUI.

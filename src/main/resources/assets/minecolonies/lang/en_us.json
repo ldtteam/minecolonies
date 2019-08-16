@@ -718,8 +718,8 @@
   "block.minecolonies.blockpaperwall": "Paper wall",
 
   "com.minecolonies.coremod.gui.workerhuts.buildprio": "Delivery Priority:",
-  "item.supplyChestDeployer.invalid": "You must place it in a fitting pool of water.",
-  "item.supplyChestDeployer.missing": "Are you trying to trick me, pick up that Supplyship again?",
+  "item.supplychestdeployer.invalid": "You must place it in a fitting pool of water.",
+  "item.supplychestdeployer.missing": "Are you trying to trick me, pick up that Supplyship again?",
   "com.minecolonies.coremod.citizen.rename.same": "Renaming failed: 2 Citizens are not allowed to have the same name!",
   "com.minecolonies.coremod.citizen.rename.notallowed": "Renaming failed: You're not allowed to rename your Citizen.",
 
@@ -941,22 +941,32 @@
   "death.attack.entity.archerpirate": "%d was ravaged by an Archer Pirate",
   "item.minecolonies.iron_scimitar": "Scimitar",
 
-  "item.pirate_hat": "Pirate Hat",
-  "item.pirate_top": "Pirate Top",
-  "item.pirate_legs": "Pirate Legs",
-  "item.pirate_boots": "Pirate Boots",
+  "item.minecolonies.pirate_hat": "Pirate Hat",
+  "item.minecolonies.pirate_top": "Pirate Top",
+  "item.minecolonies.pirate_legs": "Pirate Legs",
+  "item.minecolonies.pirate_boots": "Pirate Boots",
 
-  "item.pirate_cap": "Pirate Cap",
-  "item.pirate_chest": "Pirate Chest",
-  "item.pirate_leggins": "Pirate Leggings",
-  "item.pirate_shoes": "Pirate Shoes",
+  "item.minecolonies.pirate_cap": "Pirate Cap",
+  "item.minecolonies.pirate_chest": "Pirate Chest",
+  "item.minecolonies.pirate_leggins": "Pirate Leggings",
+  "item.minecolonies.pirate_shoes": "Pirate Shoes",
+
+  "item.minecolonies.barbarianegg": "Barbarian Egg",
+  "item.minecolonies.barbarcheregg": "Barbarian Archer Egg",
+  "item.minecolonies.barbchiefegg": "Barbarian Chief Egg",
+  "item.minecolonies.pirateegg": "Pirate Egg",
+  "item.minecolonies.piratearcheregg": "Pirate Archer Egg",
+  "item.minecolonies.piratecaptainegg": "Pirate Captain Egg",
+  "item.minecolonies.mercegg": "Mercenary Egg",
+
+
   "com.minecolonies.coremod.pirates.sailing.away": "A pirate ship close to %s just sailed away to search another victim.",
   "com.minecolonies.coremod.cook.serve.player": "%s: Here you go Sir, take this food!",
   "block.minecolonies.blockhutarchery": "Archery",
   "com.minecolonies.coremod.gui.workerhuts.archery": "Archery",
   "block.minecolonies.blockhutcombatacademy": "Combat Academy",
   "com.minecolonies.coremod.gui.workerhuts.combatacademy": "Combat Academy",
-  "item.santa_hat": "Santa hat",
+  "item.minecolonies.santa_hat": "Santa hat",
 
   "com.minecolonies.coremod.gui.workerhuts.sawmill": "Sawmill",
   "block.minecolonies.blockhutsawmill": "Sawmill",
@@ -1011,7 +1021,6 @@
   "com.minecolonies.coremod.gui.workerhuts.meshsettings": "Mesh Settings",
   "com.minecolonies.coremod.sifter.toomuch": "Set to the current daily max of %d.",
   "com.minecolonies.coremod.gui.building.rename.title": "Rename Your Building",
-
 
   "com.minecolonies.coremod.gui.buildinghiremode": "Building Hiring Mode:",
   "com.minecolonies.coremod.gui.hiringmode.default": "Default (Colony override)",

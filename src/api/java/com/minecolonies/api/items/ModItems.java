@@ -12,7 +12,6 @@ public final class ModItems
 {
     public static Item supplyChest;
     public static Item permTool;
-    public static Item caliper;
     public static Item scepterGuard;
     public static Item supplyCamp;
     public static Item ancientTome;

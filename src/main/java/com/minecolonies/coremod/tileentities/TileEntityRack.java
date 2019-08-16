@@ -64,11 +64,6 @@ public class TileEntityRack extends AbstractTileEntityRack
      */
     private CombinedInvWrapper combinedHandler;
 
-    public TileEntityRack(final TileEntityType tileEntityType)
-    {
-        super(tileEntityType);
-    }
-
     public TileEntityRack()
     {
         super(MinecoloniesTileEntities.RACK);
