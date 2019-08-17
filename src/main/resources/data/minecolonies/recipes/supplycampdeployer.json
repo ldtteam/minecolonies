@@ -12,7 +12,7 @@
   ],
   "key": {
     "C": {
-      "tag": "minecraft:chests"
+      "tag": "forge:chests"
     }
   },
     "result": {
