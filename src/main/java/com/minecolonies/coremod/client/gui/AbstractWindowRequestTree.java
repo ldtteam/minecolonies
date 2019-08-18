@@ -10,10 +10,10 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
+import com.ldtteam.blockout.Log;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.Box;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
@@ -117,113 +117,21 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     }
 
     /**
-     * Updates request list.
+     * After request cancel has been clicked cancel it and update the server side.
+     *
+     * @param button the clicked button.
      */
-    protected void updateRequests()
+    private void cancel(@NotNull final Button button)
     {
-        resourceList.setDataProvider(new ScrollingList.DataProvider()
+        final int row = resourceList.getListElementIndexByPane(button);
+
+        if (getOpenRequestTreeOfBuilding().size() > row && row >= 0)
         {
-            private List<RequestWrapper> requestWrappers = null;
-
-            @Override
-            public int getElementCount()
-            {
-                requestWrappers = getOpenRequestTreeOfBuilding();
-                return requestWrappers.size();
-            }
-
-            @Override
-            public void updateElement(final int index, final Pane rowPane)
-            {
-                if (index < 0 || index >= requestWrappers.size())
-                {
-                    return;
-                }
-
-                final RequestWrapper wrapper = requestWrappers.get(index);
-                final Box wrapperBox = rowPane.findPaneOfTypeByID(WINDOW_ID_REQUEST_BOX, Box.class);
-                wrapperBox.setPosition(wrapperBox.getX() + 2 * wrapper.getDepth(), wrapperBox.getY());
-                wrapperBox.setSize(wrapperBox.getParent().getWidth() - 2 * wrapper.getDepth(), wrapperBox.getHeight());
-
-                rowPane.findPaneByID(REQUEST_FULLFIL).enable();
-
-                final IRequest<?> request = wrapper.getRequest();
-                final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
-                final List<ItemStack> displayStacks = request.getDisplayStacks();
-                final Image logo = rowPane.findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
-
-                if (!displayStacks.isEmpty())
-                {
-                    logo.setVisible(false);
-                    exampleStackDisplay.setVisible(true);
-                    exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
-                }
-                else
-                {
-                    exampleStackDisplay.setVisible(false);
-                    logo.setVisible(true);
-                    logo.setImage(request.getDisplayIcon());
-                }
-
-                rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-                  .setLabelText(request.getRequester().getDisplayName(colony.getRequestManager(), request.getId()).getFormattedText());
-                rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
-                  .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
-
-                if (wrapper.getDepth() > 0)
-                {
-                    rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();
-                }
-                else
-                {
-                    rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).show();
-                }
-
-                if (wrapper.overruleable && canFulFill())
-                {
-                    if (wrapper.getDepth() > 0)
-                    {
-                        if (!(request.getRequester() instanceof IBuildingBasedRequester)
-                              || !((IBuildingBasedRequester) request.getRequester())
-                                    .getBuilding(colony.getRequestManager(),
-                                      request.getId()).map(
-                            iRequester -> iRequester.getLocation()
-                                            .equals(building.getLocation())).isPresent())
-                        {
-                            rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                        }
-                        else
-                        {
-                            request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
-                                if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
-                                {
-                                    rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                                }
-                            });
-
-                            if (!(request.getRequest() instanceof IDeliverable))
-                            {
-                                rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                            }
-                        }
-                        rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();
-                    }
-                    else
-                    {
-                        request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
-                            if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
-                            {
-                                rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                            }
-                        });
-                    }
-                }
-                else
-                {
-                    rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
-                }
-            }
-        });
+            @NotNull final IRequest<?> request = getOpenRequestTreeOfBuilding().get(row).getRequest();
+            building.onRequestedRequestCancelled(colony.getRequestManager(), request);
+            Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony.getID(), request.getId(), RequestState.CANCELLED, null));
+        }
+        updateRequests();
     }
 
     /**
@@ -335,21 +243,113 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     }
 
     /**
-     * After request cancel has been clicked cancel it and update the server side.
-     *
-     * @param button the clicked button.
+     * Updates request list.
      */
-    private void cancel(@NotNull final Button button)
+    protected void updateRequests()
     {
-        final int row = resourceList.getListElementIndexByPane(button);
-
-        if (getOpenRequestTreeOfBuilding().size() > row && row >= 0)
+        resourceList.setDataProvider(new ScrollingList.DataProvider()
         {
-            @NotNull final IRequest<?> request = getOpenRequestTreeOfBuilding().get(row).getRequest();
-            building.onRequestCancelled(colony.getRequestManager(), request.getId());
-            Network.getNetwork().sendToServer(new UpdateRequestStateMessage(colony.getID(), request.getId(), RequestState.CANCELLED, null));
-        }
-        updateRequests();
+            private List<RequestWrapper> requestWrappers = null;
+
+            @Override
+            public int getElementCount()
+            {
+                requestWrappers = getOpenRequestTreeOfBuilding();
+                return requestWrappers.size();
+            }
+
+            @Override
+            public void updateElement(final int index, final Pane rowPane)
+            {
+                if (index < 0 || index >= requestWrappers.size())
+                {
+                    return;
+                }
+
+                final RequestWrapper wrapper = requestWrappers.get(index);
+                final Box wrapperBox = rowPane.findPaneOfTypeByID(WINDOW_ID_REQUEST_BOX, Box.class);
+                wrapperBox.setPosition(wrapperBox.getX() + 2 * wrapper.getDepth(), wrapperBox.getY());
+                wrapperBox.setSize(wrapperBox.getParent().getWidth() - 2 * wrapper.getDepth(), wrapperBox.getHeight());
+
+                rowPane.findPaneByID(REQUEST_FULLFIL).enable();
+
+                final IRequest<?> request = wrapper.getRequest();
+                final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_STACK, ItemIcon.class);
+                final List<ItemStack> displayStacks = request.getDisplayStacks();
+                final Image logo = rowPane.findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
+
+                if (!displayStacks.isEmpty())
+                {
+                    logo.setVisible(false);
+                    exampleStackDisplay.setVisible(true);
+                    exampleStackDisplay.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % displayStacks.size()));
+                }
+                else
+                {
+                    exampleStackDisplay.setVisible(false);
+                    logo.setVisible(true);
+                    logo.setImage(request.getDisplayIcon());
+                }
+
+                rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
+                  .setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getFormattedText());
+                rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
+                  .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
+
+                if (wrapper.getDepth() > 0)
+                {
+                    rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();
+                }
+                else
+                {
+                    rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).show();
+                }
+
+                if (wrapper.overruleable && canFulFill())
+                {
+                    if (wrapper.getDepth() > 0)
+                    {
+                        if (!(request.getRequester() instanceof IBuildingBasedRequester)
+                              || !((IBuildingBasedRequester) request.getRequester())
+                                    .getBuilding(colony.getRequestManager(),
+                                      request.getId()).map(
+                            iRequester -> iRequester.getLocation()
+                                            .equals(building.getLocation())).isPresent())
+                        {
+                            rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+                        }
+                        else
+                        {
+                            request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
+                                if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
+                                {
+                                    rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+                                }
+                            });
+
+                            if (!(request.getRequest() instanceof IDeliverable))
+                            {
+                                rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+                            }
+                        }
+                        rowPane.findPaneOfTypeByID(REQUEST_CANCEL, ButtonImage.class).hide();
+                    }
+                    else
+                    {
+                        request.getRequestOfType(IDeliverable.class).ifPresent((IDeliverable requestRequest) -> {
+                            if (!isCreative && !InventoryUtils.hasItemInItemHandler(new InvWrapper(inventory), requestRequest::matches))
+                            {
+                                rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+                            }
+                        });
+                    }
+                }
+                else
+                {
+                    rowPane.findPaneOfTypeByID(REQUEST_FULLFIL, ButtonImage.class).hide();
+                }
+            }
+        });
     }
 
     /**
