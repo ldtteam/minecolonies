@@ -76,7 +76,7 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
     @Override
     public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_PUBLIC_CRAFTING_RESOLVER_NAME);
+        return new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_PUBLIC_CRAFTING_RESOLVER_NAME);
     }
 
     @Override

@@ -171,7 +171,7 @@ public class WindowRequestDetail extends Window implements ButtonHandler
             logo.setImage(request.getDisplayIcon());
         }
 
-        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getMinecraft().world.provider.getDimension());
+        final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().world.getDimension().getType().getId());
         findPaneOfTypeByID(REQUESTER, Label.class).setLabelText(request.getRequester().getRequesterDisplayName(view.getRequestManager(), request).getFormattedText());
         final Label targetLabel = findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Label.class);
         targetLabel.setLabelText(request.getRequester().getLocation().toString());

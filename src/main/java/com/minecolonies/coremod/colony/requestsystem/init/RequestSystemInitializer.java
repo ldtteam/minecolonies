@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.colony.requestsystem.init;
 
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.manager.RequestMappingHandler;
 import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import org.apache.logging.log4j.Level;
@@ -42,13 +42,13 @@ public class RequestSystemInitializer
         final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         final Configuration config = ctx.getConfiguration();
         final LoggerConfig loggerConfig = getLoggerConfiguration(config, String.format("%s.requestsystem", Constants.MOD_ID));
-        loggerConfig.addFilter(LevelRangeFilter.createFilter(Level.FATAL, Configurations.requestSystem.enableDebugLogging ? Level.DEBUG : Level.INFO, Filter.Result.NEUTRAL,
+        loggerConfig.addFilter(LevelRangeFilter.createFilter(Level.FATAL, MineColonies.getConfig().getCommon().enableDebugLogging.get() ? Level.DEBUG : Level.INFO, Filter.Result.NEUTRAL,
           Filter.Result.DENY));
 
         ctx.updateLoggers();
 
         LogManager.getLogger(String.format("%s.requestsystem", Constants.MOD_ID)).warn(String.format("Updated logging config. RS Debug logging enabled: %s",
-          Configurations.requestSystem.enableDebugLogging));
+          MineColonies.getConfig().getCommon().enableDebugLogging.get()));
     }
 
     private static LoggerConfig getLoggerConfiguration(@NotNull final Configuration configuration, @NotNull final String loggerName)
