@@ -127,7 +127,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
         if (getOpenRequestTreeOfBuilding().size() > row && row >= 0)
         {
             @NotNull final IRequest<?> request = getOpenRequestTreeOfBuilding().get(row).getRequest();
-            building.onRequestedRequestCancelled(colony.getRequestManager(), request.getId());
+            building.onRequestedRequestCancelled(colony.getRequestManager(), request);
             MineColonies.getNetwork().sendToServer(new UpdateRequestStateMessage(colony.getID(), request.getId(), RequestState.CANCELLED, null));
         }
         updateRequests();
@@ -291,7 +291,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                 }
 
                 rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-                  .setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request.getId()).getFormattedText());
+                  .setLabelText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request).getFormattedText());
                 rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
                   .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));
 

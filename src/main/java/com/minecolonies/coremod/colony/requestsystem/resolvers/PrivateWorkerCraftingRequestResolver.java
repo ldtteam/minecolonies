@@ -79,7 +79,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
             return new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME);
         }
 
-        return request.getRequester().getRequesterDisplayName(manager, request.getId())
+        return request.getRequester().getRequesterDisplayName(manager, request)
                  .appendSibling(new TextComponentString(" ("))
                  .appendSibling(new TextComponentTranslation(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME))
                  .appendSibling(new TextComponentString(")"));

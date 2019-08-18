@@ -14,7 +14,6 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
@@ -190,7 +189,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
 
         if (storage == null)
         {
-            Log.getLogger().error("Failed to craft a crafting recipe of: " + request.getRequest().getStack().toString() + ". Its ingredients are missing.");
+            manager.updateRequestState(request.getId(), RequestState.CANCELLED);
             return;
         }
 

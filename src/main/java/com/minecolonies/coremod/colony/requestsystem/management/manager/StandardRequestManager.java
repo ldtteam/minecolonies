@@ -313,6 +313,17 @@ public class StandardRequestManager implements IStandardRequestManager
         }
     }
 
+    /**
+     * Method used to indicate to this manager that a new Provider has been added to the colony.
+     *
+     * @param provider The new provider.
+     */
+    @Override
+    public void onProviderAddedToColony(@NotNull final IRequestResolverProvider provider)
+    {
+        getProviderHandler().registerProvider(provider);
+    }
+
     @Override
     public void overruleRequest(@NotNull final IToken<?> token, @Nullable final ItemStack stack)
     {
@@ -324,17 +335,6 @@ public class StandardRequestManager implements IStandardRequestManager
         }
 
         updateRequestState(token, RequestState.OVERRULED);
-    }
-
-    /**
-     * Method used to indicate to this manager that a new Provider has been added to the colony.
-     *
-     * @param provider The new provider.
-     */
-    @Override
-    public void onProviderAddedToColony(@NotNull final IRequestResolverProvider provider)
-    {
-        getProviderHandler().registerProvider(provider);
     }
 
     /**
