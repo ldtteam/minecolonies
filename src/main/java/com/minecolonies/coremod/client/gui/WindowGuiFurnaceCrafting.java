@@ -123,7 +123,7 @@ public class WindowGuiFurnaceCrafting extends GuiContainer
     @Override
     protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY)
     {
-        this.fontRenderer.drawString(I18n.format("container.furnace", new Object[0]), X_OFFSET, Y_OFFSET, GUI_COLOR);
+        this.fontRenderer.drawString(I18n.format("container.furnace"), X_OFFSET, Y_OFFSET, GUI_COLOR);
     }
 
     /**

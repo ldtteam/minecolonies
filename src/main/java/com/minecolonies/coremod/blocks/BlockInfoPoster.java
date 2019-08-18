@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.blocks;
 
+import com.minecolonies.api.blocks.AbstractBlockMinecoloniesContainer;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 import static net.minecraft.util.EnumFacing.NORTH;
 import static net.minecraft.util.EnumFacing.fromAngle;
 
@@ -64,6 +65,7 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     }
 
     @Override
+    @SuppressWarnings(DEPRECATION)
     public IBlockState getStateFromMeta(final int meta)
     {
         EnumFacing enumfacing = EnumFacing.byIndex(meta);
@@ -79,22 +81,25 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     @Override
     public int getMetaFromState(final IBlockState state)
     {
-        return ((EnumFacing) state.getValue(FACING)).getIndex();
+        return state.getValue(FACING).getIndex();
     }
 
     @Override
+    @SuppressWarnings(DEPRECATION)
     public IBlockState withRotation(final IBlockState state, final Rotation rot)
     {
-        return state.withProperty(FACING, rot.rotate((EnumFacing) state.getValue(FACING)));
+        return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
     }
 
     @Override
+    @SuppressWarnings(DEPRECATION)
     public IBlockState withMirror(final IBlockState state, final Mirror mirrorIn)
     {
-        return state.withRotation(mirrorIn.toRotation((EnumFacing) state.getValue(FACING)));
+        return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
     }
 
     @Override
+    @SuppressWarnings(DEPRECATION)
     public boolean isFullCube(final IBlockState state)
     {
         return false;
@@ -107,6 +112,7 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     }
 
     @Override
+    @SuppressWarnings(DEPRECATION)
     public boolean isOpaqueCube(final IBlockState state)
     {
         return false;
@@ -122,7 +128,7 @@ public class BlockInfoPoster extends AbstractBlockMinecoloniesContainer<BlockInf
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, new IProperty[] {FACING});
+        return new BlockStateContainer(this, FACING);
     }
 
     @Override

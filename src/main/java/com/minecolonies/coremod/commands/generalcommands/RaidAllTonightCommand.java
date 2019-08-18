@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
@@ -71,7 +71,7 @@ public class RaidAllTonightCommand extends AbstractSingleCommand implements IAct
             return;
         }
 
-        for (final Colony colony : ColonyManager.getAllColonies())
+        for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
             colony.getRaiderManager().setWillRaidTonight(true);
         }

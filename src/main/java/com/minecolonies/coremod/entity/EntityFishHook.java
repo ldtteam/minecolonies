@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity;
 
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.MathUtils;
 import net.minecraft.block.material.Material;
@@ -108,35 +109,35 @@ public final class EntityFishHook extends Entity
      * entity creation time.
      * Used to check it the hook got stuck.
      */
-    private final long          creationTime;
+    private final long                  creationTime;
     /**
      * The citizen who threw this rod.
      */
-    private       EntityCitizen citizen;
+    private       AbstractEntityCitizen citizen;
     /**
      * The fishing speed enchantment level on the rod that threw this hook.
      */
-    private       int           fishingSpeedEnchantment;
+    private       int                   fishingSpeedEnchantment;
     /**
      * The fishing loot enchantment level on the rod that threw this hook.
      */
-    private       int           fishingLootEnchantment;
+    private       int                   fishingLootEnchantment;
     /**
      * If this hook is in the ground.
      */
-    private       boolean       inGround;
+    private       boolean               inGround;
     /**
      * A counter for at what position in the shaking movement the hook is.
      */
-    private       int           shake;
-    private       int           countdownNoFish;
-    private       int           countdownFishNear;
-    private       int           countdownFishBites;
-    private       double        relativeRotation;
+    private       int                   shake;
+    private       int                   countdownNoFish;
+    private       int                   countdownFishNear;
+    private       int                   countdownFishBites;
+    private       double                relativeRotation;
     /**
      * When a fish is on the hook, this will be true.
      */
-    private boolean isFishCaugth = false;
+    private       boolean               isFishCaugth = false;
 
     /**
      * Constructor for throwing out a hook.
@@ -144,15 +145,15 @@ public final class EntityFishHook extends Entity
      * @param world   the world the hook lives in.
      * @param citizen the citizen throwing the hook.
      */
-    public EntityFishHook(final World world, @NotNull final EntityCitizen citizen)
+    public EntityFishHook(final World world, @NotNull final AbstractEntityCitizen citizen)
     {
         this(world);
         this.citizen = citizen;
-        this.setLocationAndAngles(citizen.posX,
-          citizen.posY + 1.62 - citizen.getYOffset(),
-          citizen.posZ,
-          citizen.rotationYaw,
-          citizen.rotationPitch);
+        this.setLocationAndAngles(citizen.getPosX(),
+          citizen.getPosY() + 1.62 - citizen.getYOffset(),
+          citizen.getPosZ(),
+          citizen.getRotationYaw(),
+          citizen.getRotationPitch());
         this.posX -= Math.cos(this.rotationYaw / HALF_CIRCLE * Math.PI) * INITIAL_MOVEMENT_LIMITER;
         this.posY -= SUNKEN_OFFSET;
         this.posZ -= Math.sin(this.rotationYaw / HALF_CIRCLE * Math.PI) * INITIAL_MOVEMENT_LIMITER;
@@ -206,7 +207,7 @@ public final class EntityFishHook extends Entity
      *
      * @return a citizen.
      */
-    public EntityCitizen getCitizen()
+    public AbstractEntityCitizen getCitizen()
     {
         return citizen;
     }
@@ -374,7 +375,7 @@ public final class EntityFishHook extends Entity
                                                                              this.getEntityBoundingBox().maxZ);
 
             //If the hook is swimming
-            if (CompatibilityUtils.getWorld(this).isMaterialInBB(axisAlignedBB1, Material.WATER))
+            if (CompatibilityUtils.getWorldFromEntity(this).isMaterialInBB(axisAlignedBB1, Material.WATER))
             {
                 waterDensity += 1.0 / numSteps;
             }
@@ -442,12 +443,12 @@ public final class EntityFishHook extends Entity
      */
     private void checkIfFishBites(final double waterDensity)
     {
-        if (!CompatibilityUtils.getWorld(this).isRemote && waterDensity > 0.0)
+        if (!CompatibilityUtils.getWorldFromEntity(this).isRemote && waterDensity > 0.0)
         {
             int fishingProgressStep = 1;
 
             if (this.rand.nextDouble() < NO_CLEAR_SKY_CHANCE
-                  && !CompatibilityUtils.getWorld(this).canBlockSeeSky(new BlockPos(MathHelper.floor(this.posX), MathHelper.floor(this.posY) + 1, MathHelper.floor(this.posZ))))
+                  && !CompatibilityUtils.getWorldFromEntity(this).canBlockSeeSky(new BlockPos(MathHelper.floor(this.posX), MathHelper.floor(this.posY) + 1, MathHelper.floor(this.posZ))))
             {
                 --fishingProgressStep;
             }
@@ -458,7 +459,7 @@ public final class EntityFishHook extends Entity
                 return;
             }
 
-            @NotNull final WorldServer worldServer = (WorldServer) CompatibilityUtils.getWorld(this);
+            @NotNull final WorldServer worldServer = (WorldServer) CompatibilityUtils.getWorldFromEntity(this);
 
             if (this.countdownFishNear > 0)
             {
@@ -633,9 +634,9 @@ public final class EntityFishHook extends Entity
      * @param citizen the fisherman fishing.
      * @return the number of damage points to be deducted.
      */
-    public int getDamage(@NotNull final EntityCitizen citizen)
+    public int getDamage(@NotNull final AbstractEntityCitizen citizen)
     {
-        if (CompatibilityUtils.getWorld(this).isRemote)
+        if (CompatibilityUtils.getWorldFromEntity(this).isRemote)
         {
             this.setDead();
             return 0;
@@ -665,12 +666,12 @@ public final class EntityFishHook extends Entity
      *
      * @param citizen the fisherman getting the loot.
      */
-    private void spawnLootAndExp(@NotNull final EntityCitizen citizen)
+    private void spawnLootAndExp(@NotNull final AbstractEntityCitizen citizen)
     {
-        final double citizenPosX = citizen.posX;
-        final double citizenPosY = citizen.posY;
-        final double citizenPosZ = citizen.posZ;
-        @NotNull final EntityItem entityitem = new EntityItem(CompatibilityUtils.getWorld(this), this.posX, this.posY, this.posZ, this.getFishingLoot(citizen));
+        final double citizenPosX = citizen.getPosX();
+        final double citizenPosY = citizen.getPosY();
+        final double citizenPosZ = citizen.getPosZ();
+        @NotNull final EntityItem entityitem = new EntityItem(CompatibilityUtils.getWorldFromEntity(this), this.posX, this.posY, this.posZ, this.getFishingLoot(citizen));
         final double distanceX = citizenPosX - this.posX;
         final double distanceY = citizenPosY - this.posY;
         final double distanceZ = citizenPosZ - this.posZ;
@@ -678,8 +679,8 @@ public final class EntityFishHook extends Entity
         entityitem.motionX = distanceX * 0.1;
         entityitem.motionY = distanceY * 0.1 + Math.sqrt(Math.sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ)) * 0.08;
         entityitem.motionZ = distanceZ * 0.1;
-        CompatibilityUtils.getWorld(this).spawnEntity(entityitem);
-        CompatibilityUtils.getWorld(citizen).spawnEntity(new EntityXPOrb(CompatibilityUtils.getWorld(citizen),
+        CompatibilityUtils.getWorldFromEntity(this).spawnEntity(entityitem);
+        CompatibilityUtils.getWorldFromCitizen(citizen).spawnEntity(new EntityXPOrb(CompatibilityUtils.getWorldFromCitizen(citizen),
                                                                           citizenPosX,
                                                                           citizenPosY + 0.D,
                                                                           citizenPosZ + 0.5,
@@ -695,10 +696,10 @@ public final class EntityFishHook extends Entity
      * @param citizen the fisherman getting the loot.
      * @return an ItemStack randomly from the loot table.
      */
-    private ItemStack getFishingLoot(final EntityCitizen citizen)
+    private ItemStack getFishingLoot(final AbstractEntityCitizen citizen)
     {
         //Reduce random to get more fish drops
-        final int random = CompatibilityUtils.getWorld(this).rand.nextInt(INCREASE_RARENESS_MODIFIER);
+        final int random = CompatibilityUtils.getWorldFromEntity(this).rand.nextInt(INCREASE_RARENESS_MODIFIER);
         final int buildingLevel = citizen.getCitizenColonyHandler().getWorkBuilding().getBuildingLevel();
         //Cut to minimum value of 0.
         final int lootBonus = MathHelper.clamp(fishingLootEnchantment - fishingSpeedEnchantment, 0, Integer.MAX_VALUE);
@@ -726,8 +727,8 @@ public final class EntityFishHook extends Entity
      */
     private ItemStack getLootForLootTable(final ResourceLocation lootTable)
     {
-        final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) CompatibilityUtils.getWorld(this));
-        return CompatibilityUtils.getWorld(this).getLootTableManager()
+        final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) CompatibilityUtils.getWorldFromEntity(this));
+        return CompatibilityUtils.getWorldFromEntity(this).getLootTableManager()
                  .getLootTableFromLocation(lootTable)
                  .generateLootForPools(this.rand, lootContextBuilder.build()).stream().findFirst().orElse(null);
     }

@@ -1,8 +1,11 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,7 +42,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
      * @param c the colony
      * @param l the position
      */
-    public BuildingBarracksTower(@NotNull final Colony c, final BlockPos l)
+    public BuildingBarracksTower(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -73,7 +76,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     public void requestUpgrade(final EntityPlayer player, final BlockPos builder)
     {
         final int buildingLevel = getBuildingLevel();
-        final AbstractBuilding building = getColony().getBuildingManager().getBuilding(barracks);
+        final IBuilding building = getColony().getBuildingManager().getBuilding(barracks);
         if (building != null && buildingLevel < getMaxBuildingLevel() && buildingLevel < building.getBuildingLevel())
         {
             requestWorkOrder(buildingLevel + 1, builder);
@@ -85,20 +88,45 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public BuildingEntry getBuildingRegistryEntry()
     {
-        super.readFromNBT(compound);
+        return ModBuildings.barracksTower;
+    }
+
+    @Override
+    public boolean assignCitizen(final ICitizenData citizen)
+    {
+        final boolean assignalResult = super.assignCitizen(citizen);
+        if (citizen != null && assignalResult)
+        {
+            final IBuilding building = citizen.getHomeBuilding();
+            if (building != null && !(building instanceof AbstractBuildingGuards))
+            {
+                building.removeCitizen(citizen);
+            }
+            citizen.setHomeBuilding(this);
+            citizen.setWorkBuilding(this);
+        }
+        return assignalResult;
+    }
+
+    @Override
+    public void deserializeNBT(final NBTTagCompound compound)
+    {
+        super.deserializeNBT(compound);
         barracks = NBTUtil.getPosFromTag(compound.getCompoundTag(TAG_POS));
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public NBTTagCompound serializeNBT()
     {
-        super.writeToNBT(compound);
+        final NBTTagCompound compound = super.serializeNBT();
         if (barracks != null)
         {
             compound.setTag(TAG_POS, NBTUtil.createPosTag(barracks));
         }
+
+        return compound;
     }
 
     @Override
@@ -118,7 +146,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     }
 
     /**
-     * The client view for the baker building.
+     * The client view for the bakery building.
      */
     public static class View extends AbstractBuildingGuards.View
     {
@@ -128,7 +156,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
          * @param c the colony.
          * @param l the location.
          */
-        public View(final ColonyView c, @NotNull final BlockPos l)
+        public View(final IColonyView c, @NotNull final BlockPos l)
         {
             super(c, l);
         }

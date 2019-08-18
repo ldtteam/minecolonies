@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.api.entity.ai.DesiredActivity;
+import com.minecolonies.api.entity.ai.util.ChatSpamFilter;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
-import com.minecolonies.coremod.util.SoundUtils;
+import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
@@ -114,7 +114,7 @@ public class EntityAIGoHome extends EntityAIBase
 
         if (chance <= 1 && citizen.getCitizenColonyHandler().getWorkBuilding() != null && citizen.getCitizenJobHandler().getColonyJob() != null)
         {
-            SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorld(citizen), citizen.getPosition(), citizen.getCitizenJobHandler().getColonyJob().getBedTimeSound(), 1);
+            SoundUtils.playSoundAtCitizenWithChance(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getPosition(), citizen.getCitizenJobHandler().getColonyJob().getBedTimeSound(), 1);
             //add further workers as soon as available.
         }
     }

@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.api.inventory.api.IWorldNameableModifiable;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.inventory.api.IWorldNameableModifiable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;

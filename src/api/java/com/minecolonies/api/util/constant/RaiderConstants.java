@@ -64,12 +64,13 @@ public final class RaiderConstants
     /**
      * Values used for AI Task's Priorities.
      */
-    public static final int    PRIORITY_ZERO               = 0;
-    public static final int    PRIORITY_ONE                = 1;
-    public static final int    PRIORITY_TWO                = 2;
-    public static final int    PRIORITY_THREE              = 3;
-    public static final int    PRIORITY_FOUR               = 4;
-    public static final int    PRIORITY_FIVE               = 5;
+    public static final int PRIORITY_ZERO  = 0;
+    public static final int PRIORITY_ONE   = 1;
+    public static final int PRIORITY_TWO   = 2;
+    public static final int PRIORITY_THREE = 3;
+    public static final int PRIORITY_FOUR  = 4;
+    public static final int PRIORITY_FIVE  = 5;
+    public static final int PRIORITY_SIX   = 6;
 
     /**
      * Other various values used for AI Tasks.

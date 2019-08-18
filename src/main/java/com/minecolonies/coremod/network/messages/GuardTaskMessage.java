@@ -1,14 +1,17 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.guardtype.registry.IGuardTypeRegistry;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardTask;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,13 +21,13 @@ import org.jetbrains.annotations.Nullable;
  */
 public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage>
 {
-    private int      colonyId;
-    private BlockPos buildingId;
-    private int      job;
-    private boolean  assignmentMode;
-    private boolean  patrollingMode;
-    private boolean  retrieval;
-    private int      task;
+    private int              colonyId;
+    private BlockPos         buildingId;
+    private ResourceLocation job;
+    private boolean          assignmentMode;
+    private boolean          patrollingMode;
+    private boolean          retrieval;
+    private int              task;
 
     /**
      * The dimension of the message.
@@ -56,7 +59,7 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
      */
     public GuardTaskMessage(
                              @NotNull final AbstractBuildingGuards.View building,
-                             final int job,
+      final ResourceLocation job,
                              final boolean assignmentMode,
                              final boolean patrollingMode,
                              final boolean retrieval,
@@ -81,7 +84,7 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
-        job = buf.readInt();
+        job = new ResourceLocation(ByteBufUtils.readUTF8String(buf));
         assignmentMode = buf.readBoolean();
         patrollingMode = buf.readBoolean();
         tightGrouping = buf.readBoolean();
@@ -95,7 +98,7 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
-        buf.writeInt(job);
+        ByteBufUtils.writeUTF8String(buf, job.toString());
         buf.writeBoolean(assignmentMode);
         buf.writeBoolean(patrollingMode);
         buf.writeBoolean(tightGrouping);
@@ -107,7 +110,7 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
     @Override
     public void messageOnServerThread(final GuardTaskMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
@@ -119,10 +122,7 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
             @Nullable final AbstractBuildingGuards building = colony.getBuildingManager().getBuilding(message.buildingId, AbstractBuildingGuards.class);
             if (building != null)
             {
-                if (message.job != -1)
-                {
-                    building.setJob(AbstractBuildingGuards.GuardJob.values()[message.job]);
-                }
+                building.setGuardType(IGuardTypeRegistry.getInstance().getValue(message.job));
                 building.setAssignManually(message.assignmentMode);
                 building.setPatrolManually(message.patrollingMode);
                 building.setTightGrouping(message.tightGrouping);

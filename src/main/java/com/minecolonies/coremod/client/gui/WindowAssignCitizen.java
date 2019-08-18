@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
@@ -10,11 +13,8 @@ import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.AssignUnassignMessage;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +35,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
      *
      * The view of the current building.
      */
-    private final AbstractBuildingView building;
+    private final IBuildingView building;
 
     /**
      * List of citizens which can be assigned.
@@ -45,12 +45,12 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
     /**
      * The colony.
      */
-    private final ColonyView colony;
+    private final IColonyView colony;
 
     /**
      * Contains all the citizens.
      */
-    private List<CitizenDataView> citizens = new ArrayList<>();
+    private List<ICitizenDataView> citizens = new ArrayList<>();
 
     /**
      * Constructor for the window when the player wants to assign a worker for a certain home building.
@@ -58,7 +58,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
      * @param c          the colony view.
      * @param buildingId the building position.
      */
-    public WindowAssignCitizen(final ColonyView c, final BlockPos buildingId)
+    public WindowAssignCitizen(final IColonyView c, final BlockPos buildingId)
     {
         super(Constants.MOD_ID + ASSIGN_CITIZEN_RESOURCE_SUFFIX);
         this.colony = c;
@@ -78,7 +78,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
         //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
                      .filter(cit -> cit.getHomeBuilding() == null || !(colony.getBuilding(cit.getHomeBuilding()) instanceof BuildingBarracksTower.View) && !cit.getHomeBuilding().equals(building.getID()))
-                     .sorted(Comparator.comparing(CitizenDataView::getName)).collect(Collectors.toList());
+                     .sorted(Comparator.comparing(ICitizenDataView::getName)).collect(Collectors.toList());
     }
 
     /**
@@ -113,7 +113,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                @NotNull final CitizenDataView citizen = citizens.get(index);
+                @NotNull final ICitizenDataView citizen = citizens.get(index);
 
                 if (building instanceof BuildingHome.View)
                 {
@@ -123,7 +123,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
                     String workString = "";
                     if (work != null)
                     {
-                        workString = " " + BlockPosUtil.getDistance2D(work, building.getLocation()) + " blocks";
+                        workString = " " + BlockPosUtil.getDistance2D(work, building.getPosition()) + " blocks";
                     }
 
                     final BlockPos home = citizen.getHomeBuilding();
@@ -176,7 +176,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
         if (button.getID().equals(BUTTON_DONE))
         {
             final int row = citizenList.getListElementIndexByPane(button);
-            final CitizenDataView data = citizens.get(row);
+            final ICitizenDataView data = citizens.get(row);
             if (building instanceof BuildingHome.View)
             {
                 ((BuildingHome.View) building).addResident(data.getId());

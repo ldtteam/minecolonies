@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowPostBox;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.util.math.BlockPos;
@@ -29,7 +31,7 @@ public class PostBox extends AbstractBuilding
      * @param c the colony.
      * @param l the location.
      */
-    public PostBox(final Colony c, final BlockPos l)
+    public PostBox(final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -53,6 +55,12 @@ public class PostBox extends AbstractBuilding
         return false;
     }
 
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.postBox;
+    }
+
     /**
      * ClientSide representation of the building.
      */
@@ -64,7 +72,7 @@ public class PostBox extends AbstractBuilding
          * @param c the colonyView.
          * @param l the location of the block.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }
@@ -78,7 +86,7 @@ public class PostBox extends AbstractBuilding
 
         @NotNull
         @Override
-        public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+        public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken request)
         {
             return new TextComponentTranslation("tile.minecolonies.blockpostbox.name");
         }

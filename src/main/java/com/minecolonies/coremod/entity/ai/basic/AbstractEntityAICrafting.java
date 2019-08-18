@@ -1,18 +1,18 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -21,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Abstract class for the principal crafting AIs.
@@ -139,12 +139,12 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         {
             return START_WORKING;
         }
-        final AbstractBuildingWorker buildingWorker = getOwnBuilding();
+        final IBuildingWorker buildingWorker = getOwnBuilding();
         currentRecipeStorage = buildingWorker.getFirstFullFillableRecipe(currentTask.getRequest().getStack());
 
         if (currentRecipeStorage == null)
         {
-            worker.getCitizenColonyHandler().getColony().getRequestManager().updateRequestState(currentTask.getToken(), RequestState.CANCELLED);
+            worker.getCitizenColonyHandler().getColony().getRequestManager().updateRequestState(currentTask.getId(), RequestState.CANCELLED);
             setDelay(TICKS_20);
             return START_WORKING;
         }
@@ -219,12 +219,14 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
         if (maxCraftingCount == 0)
         {
-            maxCraftingCount = CraftingUtils.calculateMaxCraftingCount(job.getCurrentTask().getRequest().getCount(), currentRecipeStorage);
+            final IRequest<? extends PublicCrafting> craftingRequest = job.getCurrentTask();
+            final PublicCrafting crafting = craftingRequest.getRequest();
+            maxCraftingCount = CraftingUtils.calculateMaxCraftingCount(crafting.getCount(), currentRecipeStorage);
         }
 
         if (maxCraftingCount == 0)
         {
-            getOwnBuilding().getColony().getRequestManager().updateRequestState(job.getCurrentTask().getToken(), RequestState.CANCELLED);
+            getOwnBuilding().getColony().getRequestManager().updateRequestState(job.getCurrentTask().getId(), RequestState.CANCELLED);
             maxCraftingCount = 0;
             progress = 0;
             craftCounter = 0;
@@ -235,7 +237,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         progress++;
 
         worker.setHeldItem(EnumHand.MAIN_HAND, currentRecipeStorage.getInput().get(worker.getRandom().nextInt(currentRecipeStorage.getInput().size())).copy());
-        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getLocation());
+        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
         setDelay(HIT_DELAY);
 
         currentRequest = job.getCurrentTask();

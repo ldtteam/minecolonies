@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.achievements;
 
+import com.minecolonies.api.achievements.IMineColoniesAchievement;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -12,7 +13,7 @@ import net.minecraft.item.ItemStack;
  *
  * @since 0.2
  */
-public class MineColoniesAchievement
+public class MineColoniesAchievement implements IMineColoniesAchievement
 {
     //todo this will make new advancements at some point
     /**
@@ -23,7 +24,7 @@ public class MineColoniesAchievement
      * @param itemIcon The icon to show
      * @param parent   the parent achievement
      */
-    public MineColoniesAchievement(final String id, final int offsetX, final int offsetY, final Block itemIcon, final MineColoniesAchievement parent)
+    public MineColoniesAchievement(final String id, final int offsetX, final int offsetY, final Block itemIcon, final IMineColoniesAchievement parent)
     {
         //super(Constants.MOD_ID + "." + id, id, offsetX, offsetY, itemIcon, parent);
     }
@@ -36,7 +37,7 @@ public class MineColoniesAchievement
      * @param blockIcon The icon to show
      * @param parent    the parent achievement
      */
-    public MineColoniesAchievement(final String id, final int offsetX, final int offsetY, final Item blockIcon, final MineColoniesAchievement parent)
+    public MineColoniesAchievement(final String id, final int offsetX, final int offsetY, final Item blockIcon, final IMineColoniesAchievement parent)
     {
         //super(Constants.MOD_ID + "." + id, id, offsetX, offsetY, blockIcon, parent);
     }

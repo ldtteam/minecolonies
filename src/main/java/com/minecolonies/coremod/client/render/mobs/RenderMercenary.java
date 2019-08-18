@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.client.render.mobs;
 
-import com.minecolonies.coremod.entity.ai.mobs.EntityMercenary;
+import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;

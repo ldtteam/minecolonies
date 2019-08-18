@@ -1,12 +1,15 @@
 package com.minecolonies.coremod.colony.workorders;
 
-import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.workorders.IWorkManager;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
+import com.minecolonies.api.util.LanguageHandler;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -101,7 +104,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      * @param compound NBT Tag compound.
      */
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound, final WorkManager manager)
+    public void readFromNBT(@NotNull final NBTTagCompound compound, final IWorkManager manager)
     {
         super.readFromNBT(compound, manager);
         final StructureName sn = new StructureName(compound.getString(TAG_SCHEMATIC_NAME));
@@ -165,7 +168,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     @Override
-    public boolean isValid(final Colony colony)
+    public boolean isValid(final IColony colony)
     {
         return true;
     }
@@ -181,7 +184,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      * @return true if he is able to.
      */
     @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
-    protected boolean canBuild(@NotNull final CitizenData citizen)
+    protected boolean canBuild(@NotNull final ICitizenData citizen)
     {
         return true;
     }
@@ -224,7 +227,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     @Override
-    public void onAdded(final Colony colony, final boolean readingFromNbt)
+    public void onAdded(final IColony colony, final boolean readingFromNbt)
     {
         super.onAdded(colony, readingFromNbt);
         if (!readingFromNbt && colony != null && colony.getWorld() != null)
@@ -234,7 +237,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     @Override
-    public void onCompleted(final Colony colony)
+    public void onCompleted(final IColony colony)
     {
         super.onCompleted(colony);
 
@@ -249,7 +252,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     @Override
-    public void onRemoved(final Colony colony)
+    public void onRemoved(final IColony colony)
     {
         super.onRemoved(colony);
         ConstructionTapeHelper.removeConstructionTape(this, colony.getWorld());

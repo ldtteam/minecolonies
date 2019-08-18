@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.requests;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.AbstractCrafting;
@@ -12,7 +13,6 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.blockout.Log;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.util.text.NonSiblingFormattingTextComponent;
 import net.minecraft.creativetab.CreativeTabs;
@@ -480,7 +480,7 @@ public final class StandardRequests
                                 Log.getLogger().warn("Failed to get sub items from: " + item.getRegistryName());
                             }
 
-                            return stacks.stream().filter(ColonyManager.getCompatibilityManager()::isOre);
+                            return stacks.stream().filter(IColonyManager.getInstance().getCompatibilityManager()::isOre);
                         }).collect(Collectors.toList()));
             }
             return oreExamples;

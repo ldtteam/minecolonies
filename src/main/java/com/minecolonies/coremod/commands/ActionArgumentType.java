@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.commands;
 
 import com.google.common.primitives.Ints;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.coremod.commands.AbstractCommandParser.ModuleContext;
 import com.minecolonies.coremod.commands.CommandEntryPointNew.MineColonyDataProvider;
 import com.mojang.authlib.GameProfile;
@@ -91,18 +91,18 @@ public enum ActionArgumentType
     @NotNull
     private static List<String> getColonyIdStrings(@NotNull final MineColonyDataProvider mineColonyDataProvider)
     {
-        final List<Colony> colonyList = mineColonyDataProvider.getColonies();
+        final List<IColony> colonyList = mineColonyDataProvider.getColonies();
         final List<String> colonyIdList = new ArrayList<>(colonyList.size());
-        for (final Colony colony : colonyList)
+        for (final IColony colony : colonyList)
         {
             colonyIdList.add(String.valueOf(colony.getID()));
         }
         return colonyIdList;
     }
 
-    private static List<String> getCitizenNames(@NotNull final MineColonyDataProvider mineColonyDataProvider, @Nullable final Colony colonyToUse)
+    private static List<String> getCitizenNames(@NotNull final MineColonyDataProvider mineColonyDataProvider, @Nullable final IColony colonyToUse)
     {
-        final List<Colony> colonyList;
+        final List<IColony> colonyList;
         if (null != colonyToUse)
         {
             colonyList = Collections.singletonList(colonyToUse);
@@ -112,10 +112,10 @@ public enum ActionArgumentType
             colonyList = mineColonyDataProvider.getColonies();
         }
         final List<String> citizenNameList = new ArrayList<>();
-        for (final Colony colony : colonyList)
+        for (final IColony colony : colonyList)
         {
-            final List<CitizenData> citizenDataList = colony.getCitizenManager().getCitizens();
-            for (final CitizenData citizenData : citizenDataList)
+            final List<ICitizenData> citizenDataList = colony.getCitizenManager().getCitizens();
+            for (final ICitizenData citizenData : citizenDataList)
             {
                 citizenNameList.add(citizenData.getName());
             }
@@ -124,9 +124,9 @@ public enum ActionArgumentType
     }
 
     @NotNull
-    private static List<String> getCitizenIds(@NotNull final MineColonyDataProvider mineColonyDataProvider, @Nullable final Colony colonyToUse)
+    private static List<String> getCitizenIds(@NotNull final MineColonyDataProvider mineColonyDataProvider, @Nullable final IColony colonyToUse)
     {
-        final List<Colony> colonyList;
+        final List<IColony> colonyList;
         if (null != colonyToUse)
         {
             colonyList = Collections.singletonList(colonyToUse);
@@ -136,10 +136,10 @@ public enum ActionArgumentType
             colonyList = mineColonyDataProvider.getColonies();
         }
         final List<String> citizenNameList = new ArrayList<>();
-        for (final Colony colony : colonyList)
+        for (final IColony colony : colonyList)
         {
-            final List<CitizenData> citizenDataList = colony.getCitizenManager().getCitizens();
-            for (final CitizenData citizenData : citizenDataList)
+            final List<ICitizenData> citizenDataList = colony.getCitizenManager().getCitizens();
+            for (final ICitizenData citizenData : citizenDataList)
             {
                 citizenNameList.add(String.valueOf(citizenData.getId()));
             }
@@ -403,7 +403,7 @@ public enum ActionArgumentType
     {
         if (potentialArgumentValue.isEmpty())
         {
-            return Arrays.asList(new String[] {"true", "false" });
+            return Arrays.asList("true", "false");
         }
         if (("true".startsWith(potentialArgumentValue))
             || ("yes".startsWith(potentialArgumentValue))
@@ -458,7 +458,7 @@ public enum ActionArgumentType
     }
 
     @Nullable
-    private Colony parseColonyValue(@NotNull final ICommandSender sender, @NotNull final MineColonyDataProvider mineColonyDataProvider, final String potentialArgumentValue)
+    private IColony parseColonyValue(@NotNull final ICommandSender sender, @NotNull final MineColonyDataProvider mineColonyDataProvider, final String potentialArgumentValue)
     {
         final List<String> colonyNumberStrings = getColonyIdStrings(mineColonyDataProvider);
         final Integer result = Ints.tryParse(potentialArgumentValue);
@@ -486,11 +486,11 @@ public enum ActionArgumentType
     }
 
     @Nullable
-    private CitizenData parseCitizenDataValue(@NotNull final MineColonyDataProvider mineColonyDataProvider,
+    private ICitizenData parseCitizenDataValue(@NotNull final MineColonyDataProvider mineColonyDataProvider,
             @NotNull final ActionMenuState actionMenuState, final String potentialArgumentValue)
     {
         // Try to find a non-null colony value set
-        Colony colony = null;
+        IColony colony = null;
         final List<ActionArgument> actionArgumentList = actionMenuState.getActionMenu().getActionArgumentList();
         for (final ActionArgument actionArgument : actionArgumentList)
         {
@@ -509,11 +509,11 @@ public enum ActionArgumentType
         else
         {
             // no colony specified for citizen
-            final List<Colony> colonyList = mineColonyDataProvider.getColonies();
-            for (final Colony someColony : colonyList)
+            final List<IColony> colonyList = mineColonyDataProvider.getColonies();
+            for (final IColony someColony : colonyList)
             {
                 final ICitizenManager citizenManager = someColony.getCitizenManager();
-                final CitizenData citizen = findCitizenForCitizenManager(citizenManager, potentialArgumentValue);
+                final ICitizenData citizen = findCitizenForCitizenManager(citizenManager, potentialArgumentValue);
                 if (null != citizen)
                 {
                     return citizen;
@@ -524,10 +524,10 @@ public enum ActionArgumentType
     }
 
     @Nullable
-    private CitizenData findCitizenForCitizenManager(@NotNull final ICitizenManager citizenManager, final String potentialArgumentValue)
+    private ICitizenData findCitizenForCitizenManager(@NotNull final ICitizenManager citizenManager, final String potentialArgumentValue)
     {
-        final List<CitizenData> citizenDataList = citizenManager.getCitizens();
-        for (final CitizenData citizenData : citizenDataList)
+        final List<ICitizenData> citizenDataList = citizenManager.getCitizens();
+        for (final ICitizenData citizenData : citizenDataList)
         {
             if (citizenData.getName().equalsIgnoreCase(potentialArgumentValue))
             {

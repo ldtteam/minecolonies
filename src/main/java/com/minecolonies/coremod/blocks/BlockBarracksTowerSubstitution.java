@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.blocks;
 
+import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
+import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;

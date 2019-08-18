@@ -555,7 +555,7 @@ public final class StandardRequestFactories
         final NBTTagCompound compound = new NBTTagCompound();
 
         final NBTTagCompound requesterCompound = controller.serialize(request.getRequester());
-        final NBTTagCompound tokenCompound = controller.serialize(request.getToken());
+        final NBTTagCompound tokenCompound = controller.serialize(request.getId());
         final NBTTagInt stateCompound = request.getState().serializeNBT();
         final NBTTagCompound requestedCompound = typeSerialization.apply(controller, request.getRequest());
 

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
 import com.google.common.collect.Lists;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -10,7 +11,6 @@ import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCraf
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -57,7 +57,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
 
             completedRequest.getDeliveries().forEach(parentRequest::addDelivery);
             completedRequest.getDeliveries().forEach(itemStack -> {
-                final Delivery delivery = new Delivery(getRequesterLocation(), parentRequestRequester.getDeliveryLocation(), itemStack);
+                final Delivery delivery = new Delivery(getLocation(), parentRequestRequester.getDeliveryLocation(), itemStack);
 
                 final IToken<?> requestToken =
                   manager.createRequest(this,
@@ -79,20 +79,20 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         if (!manager.getColony().getWorld().isRemote)
         {
             final Colony colony = (Colony) manager.getColony();
-            final CitizenData holdingCrafter = colony.getCitizenManager().getCitizens()
+            final ICitizenData holdingCrafter = colony.getCitizenManager().getCitizens()
                                                  .stream()
-                                                 .filter(c -> c.getJob() instanceof AbstractJobCrafter && (((AbstractJobCrafter) c.getJob()).getTaskQueue().contains(request.getToken()) || ((AbstractJobCrafter) c.getJob()).getAssignedTasks().contains(request.getToken())))
+                                                 .filter(c -> c.getJob() instanceof AbstractJobCrafter && (((AbstractJobCrafter) c.getJob()).getTaskQueue().contains(request.getId()) || ((AbstractJobCrafter) c.getJob()).getAssignedTasks().contains(request.getId())))
                                                  .findFirst()
                                                  .orElse(null);
 
             if (holdingCrafter == null)
             {
-                MineColonies.getLogger().error("Parent cancellation of crafting production failed! Unknown request: " + request.getToken());
+                MineColonies.getLogger().error("Parent cancellation of crafting production failed! Unknown request: " + request.getId());
             }
             else
             {
                 final AbstractJobCrafter job = (AbstractJobCrafter) holdingCrafter.getJob();
-                job.onTaskDeletion(request.getToken());
+                job.onTaskDeletion(request.getId());
             }
         }
 
@@ -139,10 +139,10 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         if (manager.getColony().getWorld().isRemote)
             return;
 
-        final CitizenData freeCrafter = building.getAssignedCitizen()
+        final ICitizenData freeCrafter = building.getAssignedCitizen()
                                           .stream()
                                           .filter(c -> c.getJob() instanceof AbstractJobCrafter)
-                                          .min(Comparator.comparing((CitizenData c) -> ((AbstractJobCrafter) c.getJob()).getTaskQueue().size() + ((AbstractJobCrafter) c.getJob()).getAssignedTasks().size()))
+                                          .min(Comparator.comparing((ICitizenData c) -> ((AbstractJobCrafter) c.getJob()).getTaskQueue().size() + ((AbstractJobCrafter) c.getJob()).getAssignedTasks().size()))
                                           .orElse(null);
 
         if (freeCrafter == null)
@@ -152,7 +152,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         }
 
         final AbstractJobCrafter job = (AbstractJobCrafter) freeCrafter.getJob();
-        job.onTaskBeingScheduled(request.getToken());
+        job.onTaskBeingScheduled(request.getId());
     }
 
     @Override
@@ -162,10 +162,10 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         if (manager.getColony().getWorld().isRemote)
             return;
 
-        final CitizenData freeCrafter = building.getAssignedCitizen()
+        final ICitizenData freeCrafter = building.getAssignedCitizen()
                                              .stream()
                                              .filter(c -> c.getJob() instanceof AbstractJobCrafter)
-                                             .filter(c -> ((AbstractJobCrafter) c.getJob()).getAssignedTasks().contains(request.getToken()))
+                                             .filter(c -> ((AbstractJobCrafter) c.getJob()).getAssignedTasks().contains(request.getId()))
                                              .findFirst()
                                              .orElse(null);
 
@@ -176,6 +176,6 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         }
 
         final AbstractJobCrafter job = (AbstractJobCrafter) freeCrafter.getJob();
-        job.onTaskBeingResolved(request.getToken());
+        job.onTaskBeingResolved(request.getId());
     }
 }

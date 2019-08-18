@@ -1,27 +1,26 @@
 package com.minecolonies.coremod.blocks;
 
+import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
+import com.minecolonies.api.blocks.types.RackType;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.creativetab.ModCreativeTabs;
+import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.blocks.types.RackType;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -37,21 +36,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
+
 /**
  * Block for the shelves of the warehouse.
  */
-public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMinecoloniesRack>
+public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMinecoloniesRack>
 {
-    public static final PropertyEnum<RackType> VARIANT
-                                                                                  =
-      PropertyEnum.<RackType>create("variant", RackType.class);
-    public static final int                    DEFAULT_META = RackType.DEFAULT.getMetadata();
-    public static final int                    FULL_META    = RackType.FULL.getMetadata();
-
-    /**
-     * The position it faces.
-     */
-    public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
     /**
      * The hardness this block has.
@@ -95,17 +86,6 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
     }
 
     /**
-     * Check if a certain block should be replaced with a rack.
-     *
-     * @param block the block to check.
-     * @return true if so.
-     */
-    public static boolean shouldBlockBeReplacedWithRack(final Block block)
-    {
-        return block == Blocks.CHEST || block == ModBlocks.blockRack;
-    }
-
-    /**
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
     @Override
@@ -145,23 +125,23 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
             return super.getActualState(state, worldIn, pos);
         }
 
-        final TileEntityRack rack = (TileEntityRack) entity;
+        final AbstractTileEntityRack rack = (AbstractTileEntityRack) entity;
         if (rack.isEmpty() && (rack.getOtherChest() == null || rack.getOtherChest().isEmpty()))
         {
             if (rack.getOtherChest() != null)
             {
                 if (rack.isMain())
                 {
-                     return state.withProperty(BlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE).withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
+                     return state.withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE).withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
                 }
                 else
                 {
-                    return state.withProperty(BlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
+                    return state.withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
                 }
             }
             else
             {
-                return state.withProperty(BlockMinecoloniesRack.VARIANT, RackType.DEFAULT);
+                return state.withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULT);
             }
         }
         else
@@ -170,17 +150,17 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
             {
                 if (rack.isMain())
                 {
-                    return state.withProperty(BlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
+                    return state.withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
                              .withProperty(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
                 }
                 else
                 {
-                    return state.withProperty(BlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
+                    return state.withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
                 }
             }
             else
             {
-                return state.withProperty(BlockMinecoloniesRack.VARIANT, RackType.FULL);
+                return state.withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULL);
             }
         }
     }
@@ -230,6 +210,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
     }
 
     @Override
+    @SuppressWarnings(DEPRECATION)
     public void neighborChanged(final IBlockState state, final World worldIn, final BlockPos pos, final Block blockIn, final BlockPos fromPos)
     {
         if (state.getBlock() instanceof BlockMinecoloniesRack)
@@ -242,7 +223,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
                 if (rack instanceof TileEntityRack && pos.getY() == neighbor.getY() && !pos.equals(neighbor) && !pos.equals(BlockPos.ORIGIN)
                       && (block instanceof BlockMinecoloniesRack || blockIn instanceof BlockMinecoloniesRack))
                 {
-                    ((TileEntityRack) rack).neighborChanged(neighbor);
+                    ((AbstractTileEntityRack) rack).neighborChanged(neighbor);
                 }
             }
         }
@@ -256,7 +237,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
 
         if (tileentity instanceof TileEntityRack)
         {
-            final IItemHandler handler = ((TileEntityRack) tileentity).getInventory();
+            final IItemHandler handler = ((AbstractTileEntityRack) tileentity).getInventory();
             InventoryUtils.dropItemHandler(handler, worldIn, pos.getX(), pos.getY(), pos.getZ());
         }
 
@@ -265,6 +246,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
 
     @NotNull
     @Override
+    @SuppressWarnings(DEPRECATION)
     public BlockFaceShape getBlockFaceShape(final IBlockAccess worldIn, final IBlockState state, final BlockPos pos, final EnumFacing face)
     {
         return BlockFaceShape.CENTER_BIG;
@@ -290,7 +272,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
                                      final float hitY,
                                      final float hitZ)
     {
-        final Colony colony = ColonyManager.getColonyByPosFromWorld(worldIn, pos);
+        final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
 
         if ((colony == null || colony.getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS))
@@ -361,6 +343,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecolonies<BlockMineco
      * @return A ArrayList containing all items this block drops
      */
     @Override
+    @SuppressWarnings(DEPRECATION)
     public List<ItemStack> getDrops(final IBlockAccess world, final BlockPos pos, final IBlockState state, final int fortune)
     {
         final List<ItemStack> drops = new ArrayList<>();

@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
-import com.minecolonies.coremod.colony.workorders.WorkOrderView;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
@@ -34,7 +34,7 @@ public class ColonyViewWorkOrderMessage extends AbstractMessage<ColonyViewWorkOr
      * @param colony    colony of the workOrder.
      * @param workOrder workOrder of the colony to update view.
      */
-    public ColonyViewWorkOrderMessage(@NotNull final Colony colony, @NotNull final AbstractWorkOrder workOrder)
+    public ColonyViewWorkOrderMessage(@NotNull final Colony colony, @NotNull final IWorkOrder workOrder)
     {
         this.colonyId = colony.getID();
         this.workOrderBuffer = Unpooled.buffer();
@@ -62,7 +62,7 @@ public class ColonyViewWorkOrderMessage extends AbstractMessage<ColonyViewWorkOr
     @Override
     protected void messageOnClientThread(final ColonyViewWorkOrderMessage message, final MessageContext ctx)
     {
-        ColonyManager.handleColonyViewWorkOrderMessage(message.colonyId, message.workOrderBuffer, Minecraft.getMinecraft().world.provider.getDimension());
+        IColonyManager.getInstance().handleColonyViewWorkOrderMessage(message.colonyId, message.workOrderBuffer, Minecraft.getMinecraft().world.provider.getDimension());
     }
 }
 

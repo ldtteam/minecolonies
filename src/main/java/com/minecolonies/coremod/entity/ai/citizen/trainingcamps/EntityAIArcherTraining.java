@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.entity.ai.citizen.trainingcamps;
 
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingArchery;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
 import com.minecolonies.coremod.entity.ai.citizen.guard.GuardArrow;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.util.SoundUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.EntityTippedArrow;
@@ -18,9 +18,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTraining>
@@ -167,19 +167,19 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             worker.swingArm(EnumHand.MAIN_HAND);
 
             final EntityTippedArrow arrow = new GuardArrow(world, worker);
-            final double xVector = currentShootingTarget.getX() - worker.posX;
+            final double xVector = currentShootingTarget.getX() - worker.getPosX();
             final double yVector = currentShootingTarget.getY() - arrow.posY;
-            final double zVector = currentShootingTarget.getZ() - worker.posZ;
+            final double zVector = currentShootingTarget.getZ() - worker.getPosZ();
             final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
 
             final double chance = HIT_CHANCE_DIVIDER / (worker.getCitizenData().getLevel() + 1);
             arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
 
             worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) SoundUtils.getRandomPitch(worker.getRandom()));
-            worker.world.spawnEntity(arrow);
+            worker.getEntityWorld().spawnEntity(arrow);
 
-            final double xDiff = currentShootingTarget.getX() - worker.posX;
-            final double zDiff = currentShootingTarget.getZ() - worker.posZ;
+            final double xDiff = currentShootingTarget.getX() - worker.getPosX();
+            final double zDiff = currentShootingTarget.getZ() - worker.getPosZ();
             final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
             final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
             worker.move(MoverType.SELF, goToX, 0, goToZ);

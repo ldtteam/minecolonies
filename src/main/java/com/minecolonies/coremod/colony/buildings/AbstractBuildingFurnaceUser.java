@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.item.ItemStack;
@@ -51,7 +51,7 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableList
      * @param c the colony.
      * @param l the location
      */
-    public AbstractBuildingFurnaceUser(final Colony c, final BlockPos l)
+    public AbstractBuildingFurnaceUser(final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -67,9 +67,21 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableList
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
-        super.writeToNBT(compound);
+        super.deserializeNBT(compound);
+        final NBTTagList furnaceTagList = compound.getTagList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < furnaceTagList.tagCount(); ++i)
+        {
+            furnaces.add(NBTUtil.getPosFromTag(furnaceTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
+        }
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT()
+    {
+        final NBTTagCompound compound = super.serializeNBT();
+
         @NotNull final NBTTagList furnacesTagList = new NBTTagList();
         for (@NotNull final BlockPos entry : furnaces)
         {
@@ -78,17 +90,8 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractFilterableList
             furnacesTagList.appendTag(furnaceCompound);
         }
         compound.setTag(TAG_FURNACES, furnacesTagList);
-    }
 
-    @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-        final NBTTagList furnaceTagList = compound.getTagList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < furnaceTagList.tagCount(); ++i)
-        {
-            furnaces.add(NBTUtil.getPosFromTag(furnaceTagList.getCompoundTagAt(i).getCompoundTag(TAG_POS)));
-        }
+        return compound;
     }
 
     @Override

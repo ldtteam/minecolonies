@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
@@ -55,6 +55,6 @@ public class ColonyViewRemoveBuildingMessage extends AbstractMessage<ColonyViewR
     @Override
     protected void messageOnClientThread(final ColonyViewRemoveBuildingMessage message, final MessageContext ctx)
     {
-        ColonyManager.handleColonyViewRemoveBuildingMessage(message.colonyId, message.buildingId, Minecraft.getMinecraft().world.provider.getDimension());
+        IColonyManager.getInstance().handleColonyViewRemoveBuildingMessage(message.colonyId, message.buildingId, Minecraft.getMinecraft().world.provider.getDimension());
     }
 }

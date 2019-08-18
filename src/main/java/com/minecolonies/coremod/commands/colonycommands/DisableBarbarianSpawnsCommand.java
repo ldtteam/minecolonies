@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
@@ -56,7 +56,7 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand impleme
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        final Colony colony = actionMenuState.getColonyForArgument("colony");
+        final IColony colony = actionMenuState.getColonyForArgument("colony");
         final boolean canHaveBarbEvents = !actionMenuState.getBooleanValueForArgument("disableSpawns", true);
 
         if (colony == null)
@@ -81,7 +81,7 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand impleme
 
         colonyId = getIthArgument(args, 0, -1);
 
-        final Colony colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
 
         if (colony == null)
         {
@@ -95,7 +95,7 @@ public class DisableBarbarianSpawnsCommand extends AbstractSingleCommand impleme
         executeShared(server, sender, colony, canHaveBarbEvents);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final Colony colony, final boolean canHaveBarbEvents)
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final IColony colony, final boolean canHaveBarbEvents)
             throws CommandException
     {
 

@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -71,7 +71,7 @@ public class AssignmentModeMessage extends AbstractMessage<AssignmentModeMessage
     @Override
     public void messageOnServerThread(final AssignmentModeMessage message, final EntityPlayerMP player)
     {
-        final Colony colony = ColonyManager.getColonyByDimension(message.colonyId, message.dimension);
+        final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyId, message.dimension);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings

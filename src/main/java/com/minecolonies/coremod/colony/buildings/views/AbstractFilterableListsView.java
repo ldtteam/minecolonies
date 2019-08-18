@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.buildings.views;
 
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.AssignFilterableItemMessage;
 import io.netty.buffer.ByteBuf;
@@ -31,7 +31,7 @@ public abstract class AbstractFilterableListsView extends AbstractBuildingWorker
      * @param c the colony.
      * @param l the location.
      */
-    public AbstractFilterableListsView(final ColonyView c, @NotNull final BlockPos l)
+    public AbstractFilterableListsView(final IColonyView c, @NotNull final BlockPos l)
     {
         super(c, l);
     }

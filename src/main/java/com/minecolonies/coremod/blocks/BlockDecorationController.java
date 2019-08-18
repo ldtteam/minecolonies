@@ -1,10 +1,11 @@
 package com.minecolonies.coremod.blocks;
 
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
+import com.minecolonies.api.blocks.AbstractBlockMinecoloniesHorizontal;
+import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -165,6 +166,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
 
     @NotNull
     @Override
+    @SuppressWarnings(DEPRECATION)
     public IBlockState getStateFromMeta(final int meta)
     {
         int theMeta = meta;
@@ -180,6 +182,7 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
 
     @NotNull
     @Override
+    @SuppressWarnings(DEPRECATION)
     public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
     {
         if (facing.getAxis().isHorizontal())
