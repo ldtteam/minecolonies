@@ -229,7 +229,7 @@ public class RequestHandler implements IRequestHandler
             throw new IllegalArgumentException("Can not reassign a request that has children.");
         }
 
-        this.onRequestCancelledDirectly(request.getId());
+        this.processDirectCancellationOf(request);
 
         manager.updateRequestState(request.getId(), RequestState.REPORTED);
         IToken<?> resolver = assignRequest(request, resolverTokenBlackList);
@@ -360,14 +360,15 @@ public class RequestHandler implements IRequestHandler
         {
             this.onRequestCancelledDirectly(token);
         }
-    }
 
+        manager.markDirty();
+    }
 
     @Override
     public void onChildRequestCancelled(final IToken<?> token)
     {
         final IRequest<?> request = manager.getRequestForToken(token);
-        final IRequest<?> parent = request.getParent();
+        final IRequest<?> parent = manager.getRequestForToken(request.getParent());
         parent.getChildren().forEach(this::onRequestCancelledDirectly);
         this.reassignRequest(parent, ImmutableList.of());
     }
@@ -381,7 +382,22 @@ public class RequestHandler implements IRequestHandler
             request.getChildren().forEach(this::onRequestCancelledDirectly);
         }
 
-        final IRequestResolver resolver = manager.getResolverForRequest(token);
+        processDirectCancellationAndNotifyRequesterOf(request);
+
+        cleanRequestData(token);
+    }
+
+    @Override
+    public void processDirectCancellationAndNotifyRequesterOf(final IRequest<?> request)
+    {
+        processDirectCancellationOf(request);
+        request.getRequester().onRequestedRequestCancelled(manager, request);
+    }
+
+    @Override
+    public void processDirectCancellationOf(final IRequest<?> request)
+    {
+        final IRequestResolver resolver = manager.getResolverForRequest(request.getId());
         resolver.onAssignedRequestBeingCancelled(new WrappedStaticStateRequestManager(manager), request);
 
         if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolver.getId()))
@@ -393,13 +409,14 @@ public class RequestHandler implements IRequestHandler
             }
         }
 
+        if (request.hasParent())
+        {
+            getRequest(request.getParent()).removeChild(request.getId());
+        }
         request.setParent(null);
         request.setState(manager, RequestState.CANCELLED);
 
         resolver.onAssignedRequestCancelled(new WrappedStaticStateRequestManager(manager), request);
-        request.getRequester().onRequestedRequestCancelled(manager, request);
-
-        cleanRequestData(token);
     }
 
     /**

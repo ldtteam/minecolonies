@@ -1223,7 +1223,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     public final ImmutableCollection<IRequestResolver<?>> getResolvers()
     {
         final IStandardRequestManager requestManager = (IStandardRequestManager) getColony().getRequestManager();
-        if (requestManager.getProviderHandler().getRegisteredResolvers(this).isEmpty())
+        if (!requestManager.getProviderHandler().getRegisteredResolvers(this).isEmpty())
         {
             return ImmutableList.copyOf(requestManager.getProviderHandler().getRegisteredResolvers(this)
                                           .stream()

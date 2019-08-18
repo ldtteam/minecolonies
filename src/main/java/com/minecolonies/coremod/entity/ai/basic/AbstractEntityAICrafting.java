@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -144,7 +143,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
         if (currentRecipeStorage == null)
         {
-            worker.getCitizenColonyHandler().getColony().getRequestManager().updateRequestState(currentTask.getId(), RequestState.CANCELLED);
+            job.finishRequest(false);
             setDelay(TICKS_20);
             return START_WORKING;
         }
@@ -226,7 +225,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
         if (maxCraftingCount == 0)
         {
-            getOwnBuilding().getColony().getRequestManager().updateRequestState(job.getCurrentTask().getId(), RequestState.CANCELLED);
+            job.finishRequest(false);
             maxCraftingCount = 0;
             progress = 0;
             craftCounter = 0;
@@ -263,7 +262,12 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             }
             else
             {
-                return check;
+                job.finishRequest(false);
+                maxCraftingCount = 0;
+                progress = 0;
+                craftCounter = 0;
+                setDelay(TICKS_20);
+                return START_WORKING;
             }
         }
         return getState();
