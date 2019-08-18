@@ -3,6 +3,8 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -16,9 +18,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestR
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
@@ -90,11 +90,11 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
         final IColony colony = manager.getColony();
         if (colony instanceof Colony)
         {
-            if (MineColonies.getConfig().getCommon().creativeResolve.get() &&
-                    request.getRequest() instanceof IDeliverable &&
-                    request.getRequester() instanceof BuildingBasedRequester &&
-                    ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getId()).isPresent() &&
-                    ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getId()).get() instanceof AbstractBuilding)
+            if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().creativeResolve.get() &&
+                  request.getRequest() instanceof IDeliverable &&
+                  request.getRequester() instanceof BuildingBasedRequester &&
+                  ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getId()).isPresent() &&
+                  ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getId()).get() instanceof AbstractBuilding)
             {
                 final AbstractBuilding building = (AbstractBuilding) ((BuildingBasedRequester) request.getRequester()).getBuilding(manager, request.getId()).get();
                 final Optional<ICitizenData> citizenDataOptional = building.getCitizenForRequest(request.getId());
@@ -105,8 +105,8 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                     final ItemStack resolveStack = resolvablestacks.get(0);
                     resolveStack.setCount(Math.min(((IDeliverable) request.getRequest()).getCount(), resolveStack.getMaxStackSize()));
                     final ItemStack remainingItemStack = InventoryUtils.addItemStackToItemHandlerWithResult(
-                            citizenDataOptional.get().getInventory(),
-                            resolveStack);
+                      citizenDataOptional.get().getInventory(),
+                      resolveStack);
 
                     if (ItemStackUtils.isEmpty(remainingItemStack))
                     {
@@ -124,8 +124,8 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
             final IBuilding building = colony.getBuildingManager().getBuilding(requester.getInDimensionLocation());
 
             if (building == null || (building.getCitizenForRequest(request.getId()).isPresent() && !building.getCitizenForRequest(request.getId())
-                                                                                                         .get()
-                                                                                                         .isRequestAsync(request.getId())))
+                                                                                                      .get()
+                                                                                                      .isRequestAsync(request.getId())))
             {
                 if (manager.getColony().getWorld().isDaytime())
                 {
@@ -240,18 +240,18 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     public void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest> shouldTriggerReassign)
     {
         new ArrayList<>(assignedRequests).stream()
-                .map(manager::getRequestForToken)
-                .filter(shouldTriggerReassign)
-                .filter(Objects::nonNull)
-                .forEach(request ->
-                {
-                    final IToken newResolverToken = manager.reassignRequest(request.getId(), ImmutableList.of(token));
+          .map(manager::getRequestForToken)
+          .filter(shouldTriggerReassign)
+          .filter(Objects::nonNull)
+          .forEach(request ->
+          {
+              final IToken newResolverToken = manager.reassignRequest(request.getId(), ImmutableList.of(token));
 
-                    if (newResolverToken != null && !newResolverToken.equals(token))
-                    {
-                        assignedRequests.remove(request.getId());
-                    }
-                });
+              if (newResolverToken != null && !newResolverToken.equals(token))
+              {
+                  assignedRequests.remove(request.getId());
+              }
+          });
     }
 
     public void setAllAssignedRequests(final Set<IToken<?>> assignedRequests)

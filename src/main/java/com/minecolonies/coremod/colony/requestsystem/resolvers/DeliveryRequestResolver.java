@@ -37,7 +37,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     }
 
     @Override
-    public boolean canResolve(@NotNull final IRequestManager manager, final IRequest<? extends Delivery> requestToCheck)
+    public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends Delivery> requestToCheck)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -61,7 +61,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Nullable
     @Override
-    public List<IToken<?>> attemptResolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+    public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
         if (manager.getColony().getWorld().isRemote)
         {
@@ -101,7 +101,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     }
 
     @Override
-    public void resolve(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws RuntimeException
+    public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request) throws RuntimeException
     {
         //Noop. The delivery man will resolve it.
     }
@@ -115,7 +115,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Nullable
     @Override
-    public IRequest<?> onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+    public IRequest<?> onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
@@ -143,17 +143,17 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
     @Override
     public void onRequestBeingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
-        onRequestCancelled(manager, request);
+        onAssignedRequestBeingCancelled(manager, request);
     }
 
     @Override
-    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         //We are not scheduling any child requests. So this should never be called.
     }
 
     @Override
-    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         Log.getLogger().error("cancelled");
     }

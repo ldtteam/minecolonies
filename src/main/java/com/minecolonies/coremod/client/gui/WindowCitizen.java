@@ -468,7 +468,7 @@ public class WindowCitizen extends AbstractWindowRequestTree
 
             if (citizen.getWorkBuilding() != null)
             {
-                colony.getBuilding(citizen.getWorkBuilding()).onRequestComplete(colony.getRequestManager(), tRequest.getId());
+                colony.getBuilding(citizen.getWorkBuilding()).onRequestedRequestComplete(colony.getRequestManager(), tRequest.getId());
             }
             Network.getNetwork().sendToServer(
               new TransferItemsToCitizenRequestMessage(citizen, itemStack, isCreative ? amount : Math.min(amount, count), citizen.getColonyId()));

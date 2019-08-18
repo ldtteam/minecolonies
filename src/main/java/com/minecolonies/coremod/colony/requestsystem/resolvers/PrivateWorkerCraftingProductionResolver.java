@@ -36,7 +36,7 @@ public class PrivateWorkerCraftingProductionResolver extends AbstractCraftingPro
 
     @Nullable
     @Override
-    public IRequest<?> onRequestCancelled(
+    public IRequest<?> onAssignedRequestBeingCancelled(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends PrivateCrafting> request)
     {
         return null;
@@ -51,14 +51,14 @@ public class PrivateWorkerCraftingProductionResolver extends AbstractCraftingPro
 
     @NotNull
     @Override
-    public void onRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
 
     }
 
     @NotNull
     @Override
-    public void onRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
 
     }
