@@ -332,7 +332,6 @@ public class RequestHandler implements IRequestHandler
 
         //Cancellation complete
         manager.getResolverHandler().getResolverForRequest(token).onAssignedRequestCancelled(manager, request);
-        request.getRequester().onRequestedRequestComplete(manager, request);
     }
 
     /**
