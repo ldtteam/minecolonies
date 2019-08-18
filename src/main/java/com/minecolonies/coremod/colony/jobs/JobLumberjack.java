@@ -90,6 +90,7 @@ public class JobLumberjack extends AbstractJob
         {
             tree.writeToNBT(treeTag);
         }
+        compound.setTag(TAG_TREE, treeTag);
     }
 
     /**

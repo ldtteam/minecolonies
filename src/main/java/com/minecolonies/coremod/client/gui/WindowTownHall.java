@@ -747,7 +747,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 final long distance = BlockPosUtil.getDistance2D(colonyView.getCenter(), building.getLocation());
                 rowPane.findPaneOfTypeByID(DIST_LABEL, Label.class).setLabelText((int) distance + "b");
                 final Button button = rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class);
-                if (townHall.getBuildingLevel() < Configurations.gameplay.minThLevelToTeleport || !Configurations.gameplay.canPlayerUseColonyTPCommand)
+                if (townHall.getBuildingLevel() < Configurations.gameplay.minThLevelToTeleport || !townHall.canCanPlayerUseTP())
                 {
                     button.setLabel(LanguageHandler.format(TH_TOO_LOW));
                     button.disable();

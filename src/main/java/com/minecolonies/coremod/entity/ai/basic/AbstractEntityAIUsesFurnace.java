@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
@@ -171,7 +172,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob> extends
         {
             requestSmeltable();
         }
-        else if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(), req -> req.getShortDisplayString().getUnformattedText().equals(COM_MINECOLONIES_REQUESTS_BURNABLE)))
+        else if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(), req -> req.getShortDisplayString().getUnformattedText().equals(LanguageHandler.format(COM_MINECOLONIES_REQUESTS_BURNABLE))))
         {
             worker.getCitizenData().createRequestAsync(new StackList(getOwnBuilding(AbstractBuildingFurnaceUser.class).getAllowedFuel(), COM_MINECOLONIES_REQUESTS_BURNABLE));
         }

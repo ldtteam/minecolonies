@@ -269,16 +269,17 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
         for (final BlockPos wayPoint : getWayPoints())
         {
             final double simpleDistance = BlockPosUtil.getDistanceSquared(position, wayPoint);
-            final double currentWeight = simpleDistance * simpleDistance + BlockPosUtil.getDistanceSquared(wayPoint, target);
+            final double targetDistance = BlockPosUtil.getDistanceSquared(wayPoint, target);
+            final double currentWeight = simpleDistance * simpleDistance + targetDistance;
             if (currentWeight < weight
-                  && BlockPosUtil.getDistanceSquared(wayPoint, target) < distanceToPath
+                  && targetDistance < distanceToPath
                   && simpleDistance > MIN_DISTANCE
                   && simpleDistance < distanceToPath
                   && !proxyList.contains(wayPoint))
             {
                 proxyPoint = wayPoint;
                 weight = currentWeight;
-                distance = simpleDistance;
+                distance = targetDistance;
             }
         }
 
@@ -291,7 +292,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
         {
             proxyList.add(proxyPoint);
 
-            getProxy(target, proxyPoint, distanceToPath - distance);
+            getProxy(target, proxyPoint, distance);
 
             return proxyList.get(0);
         }
