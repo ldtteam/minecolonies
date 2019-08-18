@@ -164,7 +164,7 @@ public abstract class CommonProxy implements IProxy
     @Override
     public void setupApi()
     {
-        MinecoloniesAPIProxy.getInstance().setApiInstance(new CommonMinecoloniesAPIImpl());
+        MinecoloniesAPIProxy.getInstance().setApiInstance(apiImpl);
     }
 
     @Override
