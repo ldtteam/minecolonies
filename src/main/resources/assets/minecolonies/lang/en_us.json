@@ -721,6 +721,8 @@
   "com.minecolonies.coremod.item.clipboard.registered": "Registered to colony %d.",
   "com.minecolonies.requestsystem.playerresolver": "%s is in need of %s at %s.",
   "com.minecolonies.coremod.buildings.warehouse": "Warehouse",
+  "com.minecolonies.coremod.buildings.warehouse.name": "Warehouse",
+
   "block.minecolonies.blockpaperwall": "Paper wall",
 
   "com.minecolonies.coremod.gui.workerhuts.buildprio": "Delivery Priority:",
