@@ -539,6 +539,8 @@
 
   "com.minecolonies.coremod.gui.workerhuts.buildingwarehouse": "Warehouse",
   "block.minecolonies.blockhutdeliveryman": "Deliveryman",
+  "block.minecolonies.blockhutdeliveryman.name": "Deliveryman",
+
   "com.minecolonies.coremod.gui.workerhuts.deliveryman": "Deliveryman",
   "com.minecolonies.coremod.gui.workerhuts.cancelbuild": "Cancel Build",
   "com.minecolonies.coremod.gui.workerhuts.cancelupgrade": "Cancel Upgrade",
@@ -920,9 +922,9 @@
   "com.minecolonies.coremod.progress.nine_citizens_spawned": "§6 A growing colony increases the burdens on your settlers. You should consider upgrading your worker buildings.",
   "com.minecolonies.coremod.progress.twenty_building_levels": "§6 A barbarian spy had been caught next to our colony, and he seems to be from a bigger group. You should consider building barracks to defend your colony.",
   "com.minecolonies.coremod.progress.not_enough_jobs": "§6 Building more citizen huts than available jobs has a bad influence on your citizens happiness.",
-  "com.minecolonies.coremod.progress.newChild": "§6 A new child is now happily living in your Colony!",
-  "com.minecolonies.coremod.progress.childGrow": "%s grew up and wants a job now.",
-  "com.minecolonies.coremod.progress.hireCitizen": "§6 Your recruitment package was accepted, a new Citizen arrived!",
+  "com.minecolonies.coremod.progress.newchild": "§6 A new child is now happily living in your Colony!",
+  "com.minecolonies.coremod.progress.childgrow": "%s grew up and wants a job now.",
+  "com.minecolonies.coremod.progress.hirecitizen": "§6 Your recruitment package was accepted, a new Citizen arrived!",
 
   "com.minecolonies.coremod.gui.townhall.printprogress": "Print help messages:",
   "com.minecolonies.coremod.gui.townhall.on": "On",
@@ -990,7 +992,7 @@
   "com.minecolonies.coremod.request.compostable": "Compostable",
   "com.minecolonies.coremod.request.fertilizer": "Fertilizer",
   "com.minecolonies.coremod.gui.workerhuts.composter": "Composter Hut",
-  "com.minecolonies.coremod.furnaceuser.noFuel": "Please tell me what kind of fuel to use in my furnace!",
+  "com.minecolonies.coremod.furnaceuser.nofuel": "Please tell me what kind of fuel to use in my furnace!",
   "block.minecolonies.blockpostbox": "Postbox",
   "com.minecolonies.coremod.gui.citizen.stacks": "Blocks to Request:",
   "com.minecolonies.coremod.gui.workerhuts.request": "Request",
