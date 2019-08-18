@@ -95,9 +95,9 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     protected List<IToken<?>> attemptResolveForBuildingAndStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, final ItemStack stack, final int count)
     {
         if (!canBuildingCraftStack(manager, building, stack))
-	{
+        {
             return null;
-	}
+        }
 
         final IRecipeStorage fullfillableCrafting = building.getFirstFullFillableRecipe(stack);
         if (fullfillableCrafting != null)
@@ -134,16 +134,16 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
                    stack -> !ItemStackUtils.isEmpty(stack) && s.getItemStack().isItemEqual(stack)) < s.getAmount())
                  .map(stack -> {
                     final ItemStack craftingHelperStack = stack.getItemStack().copy();
-                    ItemStackUtils.setSize(craftingHelperStack, stack.getAmount() * craftingCount);
-
-                    return createNewRequestForStack(manager, craftingHelperStack);
+                     return createNewRequestForStack(manager, craftingHelperStack, stack.getAmount() * craftingCount);
                 }).collect(Collectors.toList());
     }
 
     @Nullable
-    protected IToken<?> createNewRequestForStack(@NotNull final IRequestManager manager, final ItemStack stack)
+    protected IToken<?> createNewRequestForStack(@NotNull final IRequestManager manager, final ItemStack stack, final int count)
     {
-        return manager.createRequest(this, new Stack(stack.copy()));
+        final Stack stackRequest = new Stack(stack);
+        stackRequest.setCount(count);
+        return manager.createRequest(this, stackRequest);
     }
 
     @Override

@@ -245,7 +245,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             final IAIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
             {
-                while (craftCounter < maxCraftingCount && currentRequest != null)
+                while (craftCounter <= maxCraftingCount && currentRequest != null)
                 {
                     currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen());
                     currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
