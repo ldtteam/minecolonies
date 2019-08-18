@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.management.handlers;
 
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.manager.AssigningStrategy;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -223,43 +224,15 @@ public class RequestHandler implements IRequestHandler
     @Override
     public IToken<?> reassignRequest(final IRequest<?> request, final Collection<IToken<?>> resolverTokenBlackList)
     {
-        //Get the current resolver
-        IRequestResolver currentResolver = null;
-        if (manager.getRequestHandler().isAssigned(request.getId()))
+        if (request.hasChildren())
         {
-            currentResolver = manager.getResolverHandler().getResolverForRequest(request);
+            throw new IllegalArgumentException("Can not reassign a request that has children.");
         }
 
-        IToken<?> parent = null;
-        if (request.hasParent())
-        {
-            parent = request.getParent();
-        }
-
-        //Cancel the request to restart the search
-        processInternalCancellation(request.getId());
-
-        if (currentResolver != null)
-        {
-            if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(currentResolver.getId()))
-            {
-                manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(currentResolver.getId()).remove(request.getId());
-                if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(currentResolver.getId()).isEmpty())
-                {
-                    manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(currentResolver.getId());
-                }
-            }
-        }
+        this.onRequestCancelledDirectly(request.getId());
 
         manager.updateRequestState(request.getId(), RequestState.REPORTED);
         IToken<?> resolver = assignRequest(request, resolverTokenBlackList);
-
-        if (parent != null)
-        {
-            request.setParent(parent);
-            final IRequest parentRequest = manager.getRequestHandler().getRequest(parent);
-            parentRequest.addChild(request.getId());
-        }
 
         return resolver;
     }
@@ -288,7 +261,7 @@ public class RequestHandler implements IRequestHandler
         @SuppressWarnings(RAWTYPES) final IRequest request = getRequest(token);
         @SuppressWarnings(RAWTYPES) final IRequestResolver resolver = manager.getResolverHandler().getResolverForRequest(token);
 
-        request.getRequester().onRequestedRequestComplete(manager, token);
+        request.getRequester().onRequestedRequestComplete(manager, request);
 
         //Retrieve a followup request.
         final List<IRequest<?>> followupRequests = resolver.getFollowupRequestForCompletion(manager, request);
@@ -348,14 +321,18 @@ public class RequestHandler implements IRequestHandler
         if (request.hasChildren())
         {
             final ImmutableCollection<IToken<?>> currentChildren = request.getChildren();
-            currentChildren.forEach(this::onRequestCancelled);
+            currentChildren.forEach(this::onRequestCancelledDirectly);
         }
 
         //Notify the resolver.
-        manager.getResolverHandler().getResolverForRequest(token).onRequestBeingOverruled(manager, request);
+        manager.getResolverHandler().getResolverForRequest(token).onAssignedRequestBeingCancelled(manager, request);
 
         //This will notify everyone :D
         manager.updateRequestState(token, RequestState.COMPLETED);
+
+        //Cancellation complete
+        manager.getResolverHandler().getResolverForRequest(token).onAssignedRequestCancelled(manager, request);
+        request.getRequester().onRequestedRequestComplete(manager, request);
     }
 
     /**
@@ -375,78 +352,54 @@ public class RequestHandler implements IRequestHandler
             return;
         }
 
-        request.setState(new WrappedStaticStateRequestManager(manager), RequestState.CANCELLED);
-
-        processInternalCancellation(token);
-
-        //Notify the requester.
-        final IRequester requester = request.getRequester();
-        requester.onRequestedRequestCancelled(manager, token);
-
-        cleanRequestData(token);
+        if (request.hasParent())
+        {
+            this.onChildRequestCancelled(token);
+        }
+        else
+        {
+            this.onRequestCancelledDirectly(token);
+        }
     }
 
-    /**
-     * Method used to handle cancellation internally without notifying the requester that the request has been cancelled.
-     *
-     * @param token   The token which is internally processed.
-     */
+
     @Override
-    @SuppressWarnings(UNCHECKED)
-    public void processInternalCancellation(final IToken<?> token)
+    public void onChildRequestCancelled(final IToken<?> token)
     {
-        @SuppressWarnings(RAWTYPES) final IRequest request = getRequest(token);
+        final IRequest<?> request = manager.getRequestForToken(token);
+        final IRequest<?> parent = request.getParent();
+        parent.getChildren().forEach(this::onRequestCancelledDirectly);
+        this.reassignRequest(parent, ImmutableList.of());
+    }
 
-        if (manager.getRequestResolverRequestAssignmentDataStore().getAssignmentForValue(token) == null)
-        {
-            return;
-        }
-
-        //Lets cancel all our children first, else this would make a big fat mess.
+    @Override
+    public void onRequestCancelledDirectly(final IToken<?> token)
+    {
+        final IRequest<?> request = manager.getRequestForToken(token);
         if (request.hasChildren())
         {
-            final ImmutableCollection<IToken<?>> currentChildren = request.getChildren();
-            currentChildren.forEach(this::onRequestCancelled);
+            request.getChildren().forEach(this::onRequestCancelledDirectly);
         }
 
-        //Now lets get ourselfs a clean up.
-        final IRequestResolver<?> targetResolver = manager.getResolverHandler().getResolverForRequest(request);
-        processParentReplacement(request, targetResolver.onAssignedRequestBeingCancelled(manager, request));
+        final IRequestResolver resolver = manager.getResolverForRequest(token);
+        resolver.onAssignedRequestBeingCancelled(new WrappedStaticStateRequestManager(manager), request);
 
-        manager.updateRequestState(token, RequestState.FINALIZING);
-    }
-
-    /**
-     * Method used during clean up to process Parent replacement.
-     *
-     * @param target    The target request, which gets their parent replaced.
-     * @param newParent The new cleanup request used to cleanup the target when it is finished.
-     */
-    @Override
-    @SuppressWarnings({RAWTYPES, UNCHECKED})
-    public void processParentReplacement(final IRequest target, final IRequest newParent)
-    {
-        //Clear out the existing parent.
-        if (target.hasParent())
+        if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolver.getId()))
         {
-            final IRequest currentParent = manager.getRequestHandler().getRequest(target.getParent());
-
-            currentParent.removeChild(target.getId());
-            target.setParent(null);
-        }
-
-        if (newParent != null)
-        {
-            //Switch out the parent, and add the old child to the cleanup request as new child
-            newParent.addChild(target.getId());
-            target.setParent(newParent.getId());
-
-            //Assign the new parent request if it is not assigned yet.
-            if (!manager.getRequestHandler().isAssigned(newParent.getId()))
+            manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).remove(request.getId());
+            if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).isEmpty())
             {
-                manager.getRequestHandler().assignRequest(newParent);
+                manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(resolver.getId());
             }
         }
+
+        request.setParent(null);
+        request.setState(manager, RequestState.CANCELLED);
+
+        resolver.onAssignedRequestCancelled(new WrappedStaticStateRequestManager(manager), request);
+        request.getRequester().onRequestedRequestCancelled(manager, request);
+
+        cleanRequestData(token);
     }
 
     /**

@@ -5,16 +5,14 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.proxy.ClientProxy;
-import com.minecolonies.coremod.proxy.ServerProxy;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.DistExecutor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -74,22 +72,22 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
     }
 
     @Override
-    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        getBuilding(manager, token).ifPresent(requester -> requester.onRequestedRequestComplete(manager, token));
+        getBuilding(manager, request.getId()).ifPresent(requester -> requester.onRequestedRequestComplete(manager, request));
     }
 
     @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        getBuilding(manager, token).ifPresent(requester -> requester.onRequestedRequestCancelled(manager, token));
+        getBuilding(manager, request.getId()).ifPresent(requester -> requester.onRequestedRequestCancelled(manager, request));
     }
 
     @NotNull
     @Override
-    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        return getBuilding(manager, token).map(requester -> requester.getRequesterDisplayName(manager, token)).orElseGet(() -> new StringTextComponent("<UNKNOWN>"));
+        return getBuilding(manager, request.getId()).map(requester -> requester.getRequesterDisplayName(manager, request)).orElseGet(() -> new StringTextComponent("<UNKNOWN>"));
     }
 
     @Override
@@ -98,7 +96,7 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
         updateBuilding();
         return Optional.ofNullable(building);
     }
-    
+
     private void updateBuilding()
     {
         if (building != null || location == null)

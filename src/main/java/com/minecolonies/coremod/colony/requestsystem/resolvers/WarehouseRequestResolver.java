@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -147,14 +146,13 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
 
     @Nullable
     @Override
-    public IRequest<?> onAssignedRequestBeingCancelled(
+    public void onAssignedRequestBeingCancelled(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        return null;
     }
 
     @Override
-    public void onRequestBeingOverruled(
+    public void onAssignedRequestCancelled(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
 
@@ -169,28 +167,18 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     }
 
     @Override
-    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
     }
 
     @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        //Somebody cancelled the delivery.
-        //reassign the parent request.
-        final IRequest request = manager.getRequestForToken(token);
-        if (request.hasParent())
-        {
-            final IRequest parent = manager.getRequestForToken(token);
-
-            if (parent.getState() != RequestState.CANCELLED && parent.getState() != RequestState.OVERRULED)
-                manager.reassignRequest(parent.getId(), ImmutableList.of());
-        }
     }
 
     @NotNull
     @Override
-    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         return new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME);
     }

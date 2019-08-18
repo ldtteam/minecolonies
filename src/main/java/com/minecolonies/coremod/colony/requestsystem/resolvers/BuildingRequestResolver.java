@@ -48,6 +48,19 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
         return TypeConstants.DELIVERABLE;
     }
 
+    @Override
+    public void onAssignedRequestBeingCancelled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    {
+
+    }
+
+    @Override
+    public void onAssignedRequestCancelled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    {
+
+    }
 
     @Override
     public boolean canResolveForBuilding(
@@ -113,31 +126,14 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
         return null;
     }
 
-    @Nullable
     @Override
-    public IRequest<?> onAssignedRequestBeingCancelled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
-    {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public void onRequestBeingOverruled(
-      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
-    {
-        return;
-    }
-
-
-    @Override
-    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
 
     }
 
     @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
 
     }
