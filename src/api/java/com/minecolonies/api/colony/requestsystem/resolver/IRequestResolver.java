@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.requestsystem.resolver;
 
+import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -115,6 +116,12 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
     default void onColonyUpdate(@NotNull final IRequestManager manager, @NotNull final Predicate<IRequest> shouldTriggerReassign)
     {
         //Noop
+    }
+
+    @Nullable
+    default List<IRequest<?>> getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<? extends R> completedRequest)
+    {
+        return Lists.newArrayList();
     }
 
     /**

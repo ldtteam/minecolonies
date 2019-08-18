@@ -42,42 +42,29 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
 
     @Nullable
     @Override
-    public IRequest<?> onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        return null;
+        return;
     }
 
     @Override
-    public void onRequestBeingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
+    public void onAssignedRequestCancelled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        //NOOP
-    }
 
-    @Override
-    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
-    {
-        /**
-         * Nothing to be done.
-         */
-    }
-
-    @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
-    {
-        //Noop
     }
 
     @NotNull
     @Override
-    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        IRequest<?> request = manager.getRequestForToken(token);
 
-        if (request == null)
-        {
-            return new TextComponentString("<UNKNOWN>");
-        }
+    }
 
+    @NotNull
+    @Override
+    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull IRequest<?> request)
+    {
         if (request.hasParent())
         {
             request = manager.getRequestForToken(request.getParent());

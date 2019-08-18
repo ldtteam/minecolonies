@@ -15,6 +15,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.filter.LevelRangeFilter;
+import org.jetbrains.annotations.NotNull;
 
 public class RequestSystemInitializer
 {
@@ -38,10 +39,31 @@ public class RequestSystemInitializer
     {
         final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         final Configuration config = ctx.getConfiguration();
-        final LoggerConfig loggerConfig = config.getLoggerConfig(String.format("%s.requestsystem", Constants.MOD_ID));
-        loggerConfig.addFilter(LevelRangeFilter.createFilter(Configurations.requestSystem.enableDebugLogging ? Level.DEBUG : Level.INFO, Level.FATAL, Filter.Result.NEUTRAL,
+        final LoggerConfig loggerConfig = getLoggerConfiguration(config, String.format("%s.requestsystem", Constants.MOD_ID));
+        loggerConfig.addFilter(LevelRangeFilter.createFilter(Level.FATAL, Configurations.requestSystem.enableDebugLogging ? Level.DEBUG : Level.INFO, Filter.Result.NEUTRAL,
           Filter.Result.DENY));
 
         ctx.updateLoggers();
+
+        LogManager.getLogger(String.format("%s.requestsystem", Constants.MOD_ID)).warn(String.format("Updated logging config. RS Debug logging enabled: %s",
+          Configurations.requestSystem.enableDebugLogging));
+    }
+
+    private static LoggerConfig getLoggerConfiguration(@NotNull final Configuration configuration, @NotNull final String loggerName)
+    {
+        final LoggerConfig lc = configuration.getLoggerConfig(loggerName);
+        if (lc.getName().equals(loggerName))
+        {
+            return lc;
+        }
+        else
+        {
+            final LoggerConfig nlc = new LoggerConfig(loggerName, lc.getLevel(), lc.isAdditive());
+            nlc.setParent(lc);
+            configuration.addLogger(loggerName, nlc);
+            configuration.getLoggerContext().updateLoggers();
+
+            return nlc;
+        }
     }
 }

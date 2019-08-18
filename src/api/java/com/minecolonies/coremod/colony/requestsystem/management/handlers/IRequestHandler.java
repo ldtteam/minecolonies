@@ -96,22 +96,9 @@ public interface IRequestHandler
     @SuppressWarnings(UNCHECKED)
     void onRequestCancelled(IToken<?> token);
 
-    /**
-     * Method used to handle cancellation internally without notifying the requester that the request has been cancelled.
-     *
-     * @param token The token which is internally processed.
-     */
-    @SuppressWarnings(UNCHECKED)
-    void processInternalCancellation(IToken<?> token);
+    void onChildRequestCancelled(IToken<?> token);
 
-    /**
-     * Method used during clean up to process Parent replacement.
-     *
-     * @param target    The target request, which gets their parent replaced.
-     * @param newParent The new cleanup request used to cleanup the target when it is finished.
-     */
-    @SuppressWarnings({RAWTYPES, UNCHECKED})
-    void processParentReplacement(IRequest target, IRequest newParent);
+    void onRequestCancelledDirectly(IToken<?> token);
 
     /**
      * Method used to resolve a request. When this method is called the given request has to be assigned.

@@ -146,7 +146,7 @@ public class WindowClipBoard extends AbstractWindowSkeleton
 
             final IColonyView view = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getMinecraft().world.provider.getDimension());
             rowPane.findPaneOfTypeByID(REQUESTER, Label.class)
-              .setLabelText(request.getRequester().getRequesterDisplayName(view.getRequestManager(), request.getId()).getFormattedText());
+              .setLabelText(request.getRequester().getRequesterDisplayName(view.getRequestManager(), request).getFormattedText());
 
             rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Label.class)
               .setLabelText(request.getShortDisplayString().getFormattedText().replace("§f", ""));

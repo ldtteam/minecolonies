@@ -485,10 +485,8 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     @NotNull
     @Override
-    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        final IRequest<?> request = manager.getRequestForToken(token);
-
         final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
         getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
 
@@ -500,10 +498,8 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     @NotNull
     @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        final IRequest request = manager.getRequestForToken(token);
-
         final Integer citizenThatRequested = getCitizensByRequest().remove(request.getId());
         getOpenRequestsByCitizen().get(citizenThatRequested).remove(request.getId());
 
@@ -515,10 +511,8 @@ public abstract class AbstractBuildingView implements IBuildingView
 
     @NotNull
     @Override
-    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        final IRequest request = manager.getRequestForToken(token);
-
         try
         {
             if (getColony() == null || !getCitizensByRequest().containsKey(request.getId()) || getColony().getCitizen(getCitizensByRequest().get(request.getId())) == null)

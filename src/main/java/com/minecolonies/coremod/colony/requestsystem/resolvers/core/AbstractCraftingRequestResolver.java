@@ -67,7 +67,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
 
     @NotNull
     @Override
-    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
 	//Noop
     }

@@ -416,14 +416,13 @@ public class StandardRequestManagerTest
 
         @Nullable
         @Override
-        public IRequest<?> onAssignedRequestBeingCancelled(
+        public void onAssignedRequestBeingCancelled(
           @NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request)
         {
-            return null;
         }
 
         @Override
-        public void onRequestBeingOverruled(
+        public void onAssignedRequestCancelled(
           @NotNull final IRequestManager manager, @NotNull final IRequest<? extends StringRequestable> request)
         {
 
@@ -451,21 +450,21 @@ public class StandardRequestManagerTest
 
         @NotNull
         @Override
-        public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+        public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
         {
 
         }
 
         @NotNull
         @Override
-        public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+        public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
         {
 
         }
 
         @NotNull
         @Override
-        public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+        public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
         {
             //Not used in test.
             return null;
@@ -544,21 +543,21 @@ public class StandardRequestManagerTest
 
         @NotNull
         @Override
-        public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+        public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
         {
 
         }
 
         @NotNull
         @Override
-        public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+        public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
         {
 
         }
 
         @NotNull
         @Override
-        public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+        public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
         {
             return new TextComponentString("Test Requester");
         }

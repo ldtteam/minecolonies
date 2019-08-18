@@ -67,7 +67,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken token)
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         /**
          * Nothing to do here right now.
@@ -81,7 +81,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
     }
 
     @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
 
     }
@@ -100,7 +100,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
     @NotNull
     @Override
-    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken token)
+    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         return new TextComponentString("Player");
     }
@@ -155,13 +155,13 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
                         players.remove(owner);
 
                         LanguageHandler.sendPlayerMessage(owner, "com.minecolonies.requestsystem.playerresolver",
-                          request.getRequester().getRequesterDisplayName(manager, request.getId()).getFormattedText(),
+                          request.getRequester().getRequesterDisplayName(manager, request).getFormattedText(),
                           getRequestMessage(request).getFormattedText(),
                           request.getRequester().getLocation().toString()
                         );
                     }
                     LanguageHandler.sendPlayersMessage(players, "com.minecolonies.requestsystem.playerresolver",
-                      colonyDescription.getFormattedText() + " " + request.getRequester().getRequesterDisplayName(manager, request.getId()).getFormattedText(),
+                      colonyDescription.getFormattedText() + " " + request.getRequester().getRequesterDisplayName(manager, request).getFormattedText(),
                       getRequestMessage(request).getFormattedText(),
                       request.getRequester().getLocation().toString());
                 }
@@ -181,28 +181,17 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
     @Nullable
     @Override
-    public List<IRequest<?>> getFollowupRequestForCompletion(@NotNull final IRequestManager manager, @NotNull final IRequest completedRequest)
-    {
-        //This is not what this method is for, but this is the closest we are getting right now, so why not.
-        assignedRequests.remove(completedRequest.getId());
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public IRequest<?> onAssignedRequestBeingCancelled(
+    public void onAssignedRequestBeingCancelled(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRequestable> request)
     {
-        getFollowupRequestForCompletion(manager, request);
-        return null;
+        assignedRequests.remove(request.getId());
     }
 
     @Override
-    public void onRequestBeingOverruled(
+    public void onAssignedRequestCancelled(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IRequestable> request)
     {
-        getFollowupRequestForCompletion(manager, request);
+
     }
 
     @Override
