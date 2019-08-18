@@ -100,6 +100,10 @@ public interface IRequestHandler
 
     void onRequestCancelledDirectly(IToken<?> token);
 
+    void processDirectCancellationAndNotifyRequesterOf(IRequest<?> request);
+
+    void processDirectCancellationOf(IRequest<?> request);
+
     /**
      * Method used to resolve a request. When this method is called the given request has to be assigned.
      *
