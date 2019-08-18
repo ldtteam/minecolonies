@@ -161,12 +161,12 @@ public class RequestHandler implements IRequestHandler
             }
 
             //Skip if preliminary check fails
-            if (!resolver.canResolve(manager, request))
+            if (!resolver.canResolveRequest(manager, request))
             {
                 continue;
             }
 
-            @Nullable final List<IToken<?>> attemptResult = resolver.attemptResolve(new WrappedBlacklistAssignmentRequestManager(manager, resolverTokenBlackList), request);
+            @Nullable final List<IToken<?>> attemptResult = resolver.attemptResolveRequest(new WrappedBlacklistAssignmentRequestManager(manager, resolverTokenBlackList), request);
 
             //Skip if attempt failed (aka attemptResult == null)
             if (attemptResult == null)
@@ -179,7 +179,7 @@ public class RequestHandler implements IRequestHandler
 
             manager.getResolverHandler().addRequestToResolver(resolver, request);
             //TODO: Change this false to simulation.
-            resolver.onAssignedToThisResolver(manager, request, false);
+            resolver.onRequestAssigned(manager, request, false);
 
             for (final IToken<?> childRequestToken :
               attemptResult)
@@ -288,7 +288,7 @@ public class RequestHandler implements IRequestHandler
         @SuppressWarnings(RAWTYPES) final IRequest request = getRequest(token);
         @SuppressWarnings(RAWTYPES) final IRequestResolver resolver = manager.getResolverHandler().getResolverForRequest(token);
 
-        request.getRequester().onRequestComplete(manager, token);
+        request.getRequester().onRequestedRequestComplete(manager, token);
 
         //Retrieve a followup request.
         final List<IRequest<?>> followupRequests = resolver.getFollowupRequestForCompletion(manager, request);
@@ -381,7 +381,7 @@ public class RequestHandler implements IRequestHandler
 
         //Notify the requester.
         final IRequester requester = request.getRequester();
-        requester.onRequestCancelled(manager, token);
+        requester.onRequestedRequestCancelled(manager, token);
 
         cleanRequestData(token);
     }
@@ -411,7 +411,7 @@ public class RequestHandler implements IRequestHandler
 
         //Now lets get ourselfs a clean up.
         final IRequestResolver<?> targetResolver = manager.getResolverHandler().getResolverForRequest(request);
-        processParentReplacement(request, targetResolver.onRequestCancelled(manager, request));
+        processParentReplacement(request, targetResolver.onAssignedRequestBeingCancelled(manager, request));
 
         manager.updateRequestState(token, RequestState.FINALIZING);
     }
@@ -479,7 +479,7 @@ public class RequestHandler implements IRequestHandler
         final IRequestResolver resolver = manager.getResolverHandler().getResolverForRequest(request);
 
         request.setState(new WrappedStaticStateRequestManager(manager), RequestState.IN_PROGRESS);
-        resolver.resolve(manager, request);
+        resolver.resolveRequest(manager, request);
     }
 
     /**

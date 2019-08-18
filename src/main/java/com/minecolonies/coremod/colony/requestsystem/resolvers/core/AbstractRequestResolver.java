@@ -43,7 +43,7 @@ public abstract class AbstractRequestResolver<R extends IRequestable> implements
 
     @NotNull
     @Override
-    public ITextComponent getDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
         return new StringTextComponent("Request System");
     }
