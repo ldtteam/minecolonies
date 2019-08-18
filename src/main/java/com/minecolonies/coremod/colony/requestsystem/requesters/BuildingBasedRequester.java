@@ -8,14 +8,18 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.DistExecutor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * A class that functions as the connection between a building and the request system.
@@ -93,19 +97,16 @@ public class BuildingBasedRequester implements IBuildingBasedRequester
     @Override
     public Optional<IRequester> getBuilding(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
     {
-        updateBuilding();
+        updateBuilding(manager.getColony());
         return Optional.ofNullable(building);
     }
 
-    private void updateBuilding()
+    private void updateBuilding(IColony colony)
     {
         if (building != null || location == null)
         {
             return;
         }
-
-        final World world = MineColonies.proxy.getWorld(location.getDimension());
-        final IColony colony = IColonyManager.getInstance().getClosestIColony(world, location.getInDimensionLocation());
 
         if (colony == null)
         {

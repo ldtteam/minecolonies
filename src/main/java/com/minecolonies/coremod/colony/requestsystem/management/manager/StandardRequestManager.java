@@ -300,7 +300,7 @@ public class StandardRequestManager implements IStandardRequestManager
             case OVERRULED:
                 getLogger().debug("Request overruled: " + token + ". Notifying parent, children and requester...");
                 getRequestHandler().onRequestOverruled(token);
-                break;
+                return;
             case CANCELLED:
                 getLogger().debug("Request cancelled: " + token + ". Notifying parent, children and requester...");
                 getRequestHandler().onRequestCancelled(token);
