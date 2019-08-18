@@ -5,8 +5,8 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.ldtteam.blockout.views.Window;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.coremod.client.gui.WindowPostBox;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -86,7 +86,7 @@ public class PostBox extends AbstractBuilding
 
         @NotNull
         @Override
-        public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IToken request)
+        public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
         {
             return new TranslationTextComponent("tile.minecolonies.blockpostbox.name");
         }

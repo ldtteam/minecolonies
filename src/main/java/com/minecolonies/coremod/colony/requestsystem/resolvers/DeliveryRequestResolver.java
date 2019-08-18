@@ -46,15 +46,15 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
         final Colony colony = (Colony) manager.getColony();
         final ICitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
-                                              .stream()
-                                              .filter(citizenData -> citizenData.getCitizenEntity()
-                                                                       .map(entityCitizen -> requestToCheck.getRequest()
-                                                                                               .getTarget()
-                                                                                               .isReachableFromLocation(entityCitizen.getLocation()))
-                                                                       .orElse(false))
-                                              .filter(c -> c.getJob() instanceof JobDeliveryman)
-                                              .findFirst()
-                                              .orElse(null);
+                                               .stream()
+                                               .filter(citizenData -> citizenData.getCitizenEntity()
+                                                                        .map(entityCitizen -> requestToCheck.getRequest()
+                                                                                                .getTarget()
+                                                                                                .isReachableFromLocation(entityCitizen.getLocation()))
+                                                                        .orElse(false))
+                                               .filter(c -> c.getJob() instanceof JobDeliveryman)
+                                               .findFirst()
+                                               .orElse(null);
 
         return freeDeliveryMan != null;
     }
@@ -71,23 +71,23 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
         final Colony colony = (Colony) manager.getColony();
         //We can do an instant get here, since we are already filtering on anything that has no entity.
         final ICitizenData freeDeliveryMan = colony.getCitizenManager()
-                                              .getCitizens()
-                                              .stream()
-                                              .filter(citizenData -> citizenData.getCitizenEntity()
-                                                                       .map(entityCitizen -> request.getRequest()
-                                                                                               .getTarget()
-                                                                                               .isReachableFromLocation(entityCitizen.getLocation()))
-                                                                       .orElse(false))
-                                              .filter(c -> c.getJob() instanceof JobDeliveryman)
-                                              .min(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
-                                                     .thenComparing(Comparator.comparing(c -> {
-                                                         BlockPos targetPos = request.getRequest().getTarget().getInDimensionLocation();
-                                                         //We can do an instant get here, since we are already filtering on anything that has no entity.
-                                                         BlockPos entityLocation = c.getCitizenEntity().get().getLocation().getInDimensionLocation();
+                                               .getCitizens()
+                                               .stream()
+                                               .filter(citizenData -> citizenData.getCitizenEntity()
+                                                                        .map(entityCitizen -> request.getRequest()
+                                                                                                .getTarget()
+                                                                                                .isReachableFromLocation(entityCitizen.getLocation()))
+                                                                        .orElse(false))
+                                               .filter(c -> c.getJob() instanceof JobDeliveryman)
+                                               .min(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
+                                                      .thenComparing(Comparator.comparing(c -> {
+                                                          BlockPos targetPos = request.getRequest().getTarget().getInDimensionLocation();
+                                                          //We can do an instant get here, since we are already filtering on anything that has no entity.
+                                                          BlockPos entityLocation = c.getCitizenEntity().get().getLocation().getInDimensionLocation();
 
-                                                         return BlockPosUtil.getDistanceSquared(targetPos, entityLocation);
-                                                     })))
-                                              .orElse(null);
+                                                          return BlockPosUtil.getDistanceSquared(targetPos, entityLocation);
+                                                      })))
+                                               .orElse(null);
 
         if (freeDeliveryMan == null)
         {
@@ -115,16 +115,23 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
 
     @Nullable
     @Override
-    public IRequest<?> onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+    public void onAssignedRequestBeingCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+    {
+
+    }
+
+    @Override
+    public void onAssignedRequestCancelled(
+      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
     {
         if (!manager.getColony().getWorld().isRemote)
         {
             final Colony colony = (Colony) manager.getColony();
             final ICitizenData freeDeliveryMan = colony.getCitizenManager().getCitizens()
-                                                  .stream()
-                                                  .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).getTaskQueue().contains(request.getId()))
-                                                  .findFirst()
-                                                  .orElse(null);
+                                                   .stream()
+                                                   .filter(c -> c.getJob() instanceof JobDeliveryman && ((JobDeliveryman) c.getJob()).getTaskQueue().contains(request.getId()))
+                                                   .findFirst()
+                                                   .orElse(null);
 
             if (freeDeliveryMan == null)
             {
@@ -136,25 +143,19 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
                 job.onTaskDeletion(request.getId());
             }
         }
-
-        return null;
     }
 
+    @NotNull
     @Override
-    public void onRequestBeingOverruled(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends Delivery> request)
+    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        onAssignedRequestBeingCancelled(manager, request);
+
     }
 
+    @NotNull
     @Override
-    public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
+    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        //We are not scheduling any child requests. So this should never be called.
-    }
 
-    @Override
-    public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IToken<?> token)
-    {
-        Log.getLogger().error("cancelled");
     }
 }
