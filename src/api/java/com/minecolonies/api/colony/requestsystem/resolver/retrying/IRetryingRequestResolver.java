@@ -4,10 +4,10 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requestable.IRetryable;
 import com.minecolonies.api.colony.requestsystem.resolver.IQueuedRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import net.minecraft.client.renderer.texture.ITickable;
+import net.minecraft.tileentity.ITickableTileEntity;
 import org.jetbrains.annotations.Nullable;
 
-public interface IRetryingRequestResolver extends IQueuedRequestResolver<IRetryable>, ITickable
+public interface IRetryingRequestResolver extends IQueuedRequestResolver<IRetryable>, ITickableTileEntity
 {
     /**
      * Update the associated manager data that links this resolver to a manager.

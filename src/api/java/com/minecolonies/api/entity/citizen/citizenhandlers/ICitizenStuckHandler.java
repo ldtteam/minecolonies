@@ -1,8 +1,8 @@
 package com.minecolonies.api.entity.citizen.citizenhandlers;
 
-import net.minecraft.client.renderer.texture.ITickable;
+import net.minecraft.tileentity.ITickableTileEntity;
 
-public interface ICitizenStuckHandler extends ITickable
+public interface ICitizenStuckHandler extends ITickableTileEntity
 {
     /**
      * Let worker AIs check if the citizen is stuck to not track it on their own.
