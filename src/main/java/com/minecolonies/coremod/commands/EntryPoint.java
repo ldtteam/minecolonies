@@ -21,10 +21,10 @@ public class EntryPoint
     {
         final CommandTree killCommands = new CommandTree("kill").addNode(new CommandKillAnimal().build()).addNode(new CommandKillChicken().build());
 
-        final CommandTree structurizeRoot = new CommandTree(Constants.MOD_ID)
+        final CommandTree minecoloniesRoot = new CommandTree(Constants.MOD_ID)
                                               .addNode(new TestCMD().build())
                                               .addNode(killCommands);
 
-        dispatcher.register(structurizeRoot.build());
+        dispatcher.register(minecoloniesRoot.build());
     }
 }

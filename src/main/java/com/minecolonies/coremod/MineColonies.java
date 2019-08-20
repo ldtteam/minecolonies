@@ -161,10 +161,4 @@ public class MineColonies
     {
         return config;
     }
-
-    @SubscribeEvent
-    public static void onServerStarting(final FMLServerStartingEvent event)
-    {
-        EntryPoint.register(event.getCommandDispatcher());
-    }
 }
