@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.commands.EntryPoint;
 import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.ServerUUIDMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -12,6 +13,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -61,5 +63,11 @@ public class FMLEventHandler
     public static void registerSounds(@NotNull final RegistryEvent.Register<SoundEvent> event)
     {
         ModSoundEvents.registerSounds(event.getRegistry());
+    }
+
+    @SubscribeEvent
+    public static void onServerStarting(final FMLServerStartingEvent event)
+    {
+        EntryPoint.register(event.getCommandDispatcher());
     }
 }
