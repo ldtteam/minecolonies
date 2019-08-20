@@ -50,17 +50,17 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     /**
      * The render name to render fish.
      */
-    private static final String RENDER_META_FISH = "Fish";
+    private static final String RENDER_META_FISH = "fish";
 
     /**
      * The render name to render fish and rod.
      */
-    private static final String RENDER_META_FISHANDROD = "RodFish";
+    private static final String RENDER_META_FISHANDROD = "rodfish";
 
     /**
      * The render name to render rod.
      */
-    private static final String RENDER_META_ROD = "Rod";
+    private static final String RENDER_META_ROD = "rod";
 
     /**
      * The maximum number of ponds to remember at one time.

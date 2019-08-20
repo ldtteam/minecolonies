@@ -72,7 +72,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
      */
     private static final int LADDER_REQUEST_BATCHES = 10;
 
-    private static final String RENDER_META_TORCH   = "Torch";
+    private static final String RENDER_META_TORCH   = "torch";
     private static final int    NODE_DISTANCE       = 7;
     /**
      * Return to chest after 3 stacks.

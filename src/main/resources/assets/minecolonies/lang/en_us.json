@@ -660,6 +660,8 @@
   "block.minecolonies.blockwaypoint": "Waypoint placeholder",
   "block.minecolonies.blockhutbarrackstower": "BarracksTower",
   "block.minecolonies.blockhutbarracks": "Barracks",
+  "block.minecolonies.blockhutbarrackstower.name": "BarracksTower",
+  "block.minecolonies.blockhutbarracks.name": "Barracks",
   "com.minecolonies.coremod.gui.workerhuts.buildbarracks": "Barracks",
 
   "com.minecolonies.coremod.permission.teleport_to_colony": "Teleport to Colony",

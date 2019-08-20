@@ -12,6 +12,7 @@ import com.minecolonies.coremod.MineColonies;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.state.IProperty;
@@ -25,6 +26,7 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -238,16 +240,15 @@ public class Tree
             if (Compatibility.isDynamicLeaf(block))
             {
                 list = (Compatibility.getDropsForDynamicLeaf(world, pos, blockState, A_LOT_OF_LUCK, block));
-                blockState = blockState.with(DYN_PROP_HYDRO, 1);
             }
             else
             {
-                list.addAll(blockState.getDrops(new LootContext.Builder(world)));
+                list.addAll(blockState.getDrops(new LootContext.Builder((ServerWorld) world).withParameter(LootParameters.POSITION, new BlockPos(pos)).withParameter(LootParameters.TOOL,
+                  new ItemStack(Items.WOODEN_AXE)).withLuck(100)));
             }
 
             for (final ItemStack stack : list)
             {
-
                 // Skip bad stacks from drops calc
                 if (stack.isEmpty())
                 {
