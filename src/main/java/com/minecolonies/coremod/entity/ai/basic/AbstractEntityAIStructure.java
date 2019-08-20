@@ -414,7 +414,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
     private boolean placeBlockAt(@NotNull final IBlockState blockState, @NotNull final BlockPos coords)
     {
-        if (blockState instanceof BlockGrassPath)
+        if (blockState.getBlock() instanceof BlockGrassPath)
         {
             holdEfficientTool(blockState.getBlock(), coords);
         }
