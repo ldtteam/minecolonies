@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.BipedArmorLayer;
+import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -41,6 +42,7 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
     {
         super(renderManagerIn, (M) new CitizenModel(0.0F), (float) SHADOW_SIZE);
         super.addLayer(new BipedArmorLayer<>(this, new CitizenModel(0.5F), new CitizenModel(1.0F)));
+        super.addLayer(new HeldItemLayer(this));
     }
 
     @Override
