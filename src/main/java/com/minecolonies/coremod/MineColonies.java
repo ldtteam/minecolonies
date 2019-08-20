@@ -1,5 +1,7 @@
 package com.minecolonies.coremod;
 
+import com.ldtteam.structurize.Structurize;
+import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.minecolonies.api.MinecoloniesAPIProxy;
@@ -23,6 +25,7 @@ import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
+import com.minecolonies.coremod.commands.EntryPoint;
 import com.minecolonies.coremod.entity.NewBobberEntity;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
@@ -54,6 +57,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import org.jetbrains.annotations.NotNull;
 
 @Mod(Constants.MOD_ID)
@@ -153,5 +157,11 @@ public class MineColonies
     public static Configuration getConfig()
     {
         return config;
+    }
+
+    @SubscribeEvent
+    public static void onServerStarting(final FMLServerStartingEvent event)
+    {
+        EntryPoint.register(event.getCommandDispatcher());
     }
 }
