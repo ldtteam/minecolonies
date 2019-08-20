@@ -11,11 +11,12 @@ import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import io.netty.buffer.Unpooled;
 
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -95,6 +96,7 @@ public class PermissionsMessage
             return LogicalSide.CLIENT;
         }
 
+        @OnlyIn(Dist.CLIENT)
         @Override
         public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
         {
@@ -169,7 +171,7 @@ public class PermissionsMessage
             }
 
             //Verify player has permission to do edit permissions
-            if (!colony.getPermissions().hasPermission(Minecraft.getInstance().player, Action.EDIT_PERMISSIONS))
+            if (!colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS))
             {
                 return;
             }
@@ -274,7 +276,7 @@ public class PermissionsMessage
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
 
-            if (colony != null && colony.getPermissions().hasPermission(Minecraft.getInstance().player, Action.CAN_PROMOTE) && colony.getWorld() != null)
+            if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.CAN_PROMOTE) && colony.getWorld() != null)
             {
                 colony.getPermissions().addPlayer(playerName, Rank.NEUTRAL, colony.getWorld());
             }
@@ -353,7 +355,7 @@ public class PermissionsMessage
         {
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
 
-            if (colony != null && colony.getPermissions().hasPermission(Minecraft.getInstance().player, Action.CAN_PROMOTE) && colony.getWorld() != null)
+            if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.CAN_PROMOTE) && colony.getWorld() != null)
             {
                 colony.getPermissions().addPlayer(id, playerName, Rank.NEUTRAL);
             }
