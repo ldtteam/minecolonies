@@ -14,7 +14,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequ
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.client.renderer.texture.ITickable;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ import java.util.function.Predicate;
  * Interface used to describe classes that function as managers for requests inside a colony.
  * Extends INBTSerializable to allow for easy reading and writing from NBT.
  */
-public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickable
+public interface IRequestManager extends INBTSerializable<CompoundNBT>, ITickableTileEntity
 {
 
     /**

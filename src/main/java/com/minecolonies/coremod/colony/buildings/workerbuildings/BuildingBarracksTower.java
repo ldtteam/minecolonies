@@ -83,7 +83,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         }
         else
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.worker.needBarracks"));
+            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.worker.needbarracks"));
         }
     }
 

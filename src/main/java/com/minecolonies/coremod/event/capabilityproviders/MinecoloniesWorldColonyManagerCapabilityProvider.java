@@ -46,6 +46,6 @@ public class MinecoloniesWorldColonyManagerCapabilityProvider implements ICapabi
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, final Direction dir)
     {
-        return cap == COLONY_MANAGER_CAP ? LazyOptional.of(() -> (T) colonyManager) : null;
+        return cap == COLONY_MANAGER_CAP ? LazyOptional.of(() -> (T) colonyManager) : LazyOptional.empty();
     }
 }

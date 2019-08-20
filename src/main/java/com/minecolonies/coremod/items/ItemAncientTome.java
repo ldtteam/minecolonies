@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
+import org.checkerframework.checker.units.qual.C;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
@@ -28,20 +29,14 @@ public class ItemAncientTome extends AbstractItemMinecolonies
     public void inventoryTick(final ItemStack stack, final World worldIn, final Entity entityIn, final int itemSlot, final boolean isSelected)
     {
         super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-
-
-        if (stack.getTag() == null)
+        if (!worldIn.isRemote)
         {
-            stack.setTag(new CompoundNBT());
             final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, entityIn.getPosition());
-            stack.getTag().putInt(NbtTagConstants.TAG_COLONY_ID, colony != null ? colony.getID() : 0);
-            stack.getTag().putInt(NbtTagConstants.TAG_DIMENSION, colony != null ? colony.getDimension() : 0);
-        }
 
-        final IColony colony =
-          IColonyManager.getInstance().getColonyByDimension(stack.getTag().getInt(NbtTagConstants.TAG_COLONY_ID), stack.getTag().getInt(NbtTagConstants.TAG_DIMENSION));
-        if (colony != null)
-        {
+            if (stack.getTag() == null)
+            {
+                stack.setTag(new CompoundNBT());
+            }
             stack.getTag().putBoolean(NbtTagConstants.TAG_RAID_WILL_HAPPEN, colony.getRaiderManager().willRaidTonight());
         }
     }

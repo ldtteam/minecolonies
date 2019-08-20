@@ -210,6 +210,18 @@ idea {
     }
 }
 
+task setupDecompWorkspace {
+    afterEvaluate {
+        println "Setup"
+    }
+}
+
+task setupCIWorkspace {
+    afterEvaluate {
+        println "Setup"
+    }
+}
+
 curseforge {
     if (System.getenv().CURSEAPIKEY != null && System.getenv().CURSERELEASETYPE != null)
     {
