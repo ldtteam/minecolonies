@@ -27,12 +27,12 @@ public final class FishermanSounds extends AbstractWorkerSounds
      */
     public static final class Female
     {
-        public static final SoundEvent generalPhrases = ModSoundEvents.getSoundID("mob.fisherman.female.generalPhrases");
+        public static final SoundEvent generalPhrases = ModSoundEvents.getSoundID("mob.fisherman.female.generalphrases");
         public static final SoundEvent noises         = ModSoundEvents.getSoundID("mob.fisherman.female.noise");
-        public static final SoundEvent iGotOne        = ModSoundEvents.getSoundID("mob.fisherman.female.iGotOne");
-        public static final SoundEvent needFishingRod = ModSoundEvents.getSoundID("mob.fisherman.female.needFishingRod");
-        public static final SoundEvent offToBed       = ModSoundEvents.getSoundID("mob.fisherman.female.offToBed");
-        public static final SoundEvent badWeather     = ModSoundEvents.getSoundID("mob.fisherman.female.badWeather");
+        public static final SoundEvent iGotOne        = ModSoundEvents.getSoundID("mob.fisherman.female.igotone");
+        public static final SoundEvent needFishingRod = ModSoundEvents.getSoundID("mob.fisherman.female.needfishingrod");
+        public static final SoundEvent offToBed       = ModSoundEvents.getSoundID("mob.fisherman.female.offtobed");
+        public static final SoundEvent badWeather     = ModSoundEvents.getSoundID("mob.fisherman.female.badweather");
 
         /**
          * Private constructor to hide the implicit public one.
@@ -50,12 +50,12 @@ public final class FishermanSounds extends AbstractWorkerSounds
      */
     public static final class Male
     {
-        public static final SoundEvent generalPhrases = ModSoundEvents.getSoundID("mob.fisherman.male.generalPhrases");
+        public static final SoundEvent generalPhrases = ModSoundEvents.getSoundID("mob.fisherman.MALE.generalPhrases");
         public static final SoundEvent noises         = ModSoundEvents.getSoundID("mob.fisherman.male.noise");
-        public static final SoundEvent iGotOne        = ModSoundEvents.getSoundID("mob.fisherman.male.iGotOne");
-        public static final SoundEvent needFishingRod = ModSoundEvents.getSoundID("mob.fisherman.male.needFishingRod");
-        public static final SoundEvent offToBed       = ModSoundEvents.getSoundID("mob.fisherman.male.offToBed");
-        public static final SoundEvent badWeather     = ModSoundEvents.getSoundID("mob.fisherman.male.badWeather");
+        public static final SoundEvent iGotOne        = ModSoundEvents.getSoundID("mob.fisherman.male.igotone");
+        public static final SoundEvent needFishingRod = ModSoundEvents.getSoundID("mob.fisherman.male.needfishingrod");
+        public static final SoundEvent offToBed       = ModSoundEvents.getSoundID("mob.fisherman.male.offtobed");
+        public static final SoundEvent badWeather     = ModSoundEvents.getSoundID("mob.fisherman.male.badweather");
 
         /**
          * Private constructor to hide the implicit public one.
