@@ -6,7 +6,8 @@ import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.network.PacketBuffer;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -86,6 +87,7 @@ public class ColonyViewMessage implements IMessage
         return LogicalSide.CLIENT;
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {

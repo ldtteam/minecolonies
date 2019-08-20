@@ -20,6 +20,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +35,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 /**
  * Used to handle client events.
  */
+@OnlyIn(Dist.CLIENT)
 public class ClientEventHandler
 {
     /**

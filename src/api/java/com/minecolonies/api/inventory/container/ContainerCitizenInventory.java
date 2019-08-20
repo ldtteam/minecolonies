@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.inventory.ModContainers;
-import com.sun.corba.se.impl.interceptors.SlotTable;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;

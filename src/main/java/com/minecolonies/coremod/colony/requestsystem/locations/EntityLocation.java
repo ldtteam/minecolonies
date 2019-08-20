@@ -7,7 +7,9 @@ import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +42,22 @@ public class EntityLocation implements ILocation
             return;
         }
 
-        entity = new WeakReference<>(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(getDimension())).getEntityByUuid(uuid));
+        for (final ServerWorld world : ServerLifecycleHooks.getCurrentServer().worlds.values())
+        {
+            try
+            {
+                final Entity ent = world.getEntityByUuid(uuid);
+                if (ent != null)
+                {
+                    entity = new WeakReference<>(ent);
+                    return;
+                }
+            }
+            catch (final NullPointerException ex)
+            {
+
+            }
+        }
     }
 
     /**
