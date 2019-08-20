@@ -71,14 +71,15 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
 
     private void setupMainModelFrom(@NotNull final AbstractEntityCitizen citizen)
     {
-        entityModel = (M) (citizen.isFemale()
+        entityModel = (citizen.isFemale()
                                       ? IModelTypeRegistry.getInstance().getFemaleMap().get(citizen.getModelType())
                                       : IModelTypeRegistry.getInstance().getMaleMap().get(citizen.getModelType()));
 
         if (entityModel == null)
         {
-            entityModel = (M) (citizen.isFemale() ? defaultModelFemale : defaultModelMale);
+            entityModel = (citizen.isFemale() ? defaultModelFemale : defaultModelMale);
         }
+        entityModel.isChild = citizen.isChild();
     }
 
     private BipedModel.ArmPose getArmPoseFrom(@NotNull final AbstractEntityCitizen citizen, final ItemStack mainHandStack, BipedModel.ArmPose armPoseMainHand)
