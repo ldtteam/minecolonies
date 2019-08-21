@@ -259,9 +259,9 @@
   "block.minecolonies.blockhutguardtower.name": "GuardTower",
   "block.minecolonies.blockhutfield.name": "Field",
 
-  "block.blockhut.messagenopermission": "You don't have permission to open huts in %s.",
-  "block.blockhut.messagenopermissionplace": "You don't have permission to place hutes in %s.",
-  "block.blockhut.messagetoofarfromtownhall": "You need to be closer to your town hall!",
+  "tile.blockhut.messagenopermission": "You don't have permission to open huts in %s.",
+  "tile.blockhut.messagenopermissionplace": "You don't have permission to place hutes in %s.",
+  "tile.blockhut.messagetoofarfromtownhall": "You need to be closer to your town hall!",
   "tile.blockhut.messagenotownhall": "You need to place a town hall first!",
 
   "block.blockhuttownhall.messagemaxSize": "%d has reached max size",

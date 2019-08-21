@@ -11,6 +11,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
@@ -126,12 +127,12 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         }
 
         int oldIndex = this.noPath() ? 0 : this.getPath().getCurrentPathIndex();
-        super.tick();
 
         if (handleLadders(oldIndex))
         {
             return;
         }
+        super.tick();
 
         if (pathResult != null && noPath())
         {
@@ -317,7 +318,10 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
             if (pEx.isOnLadder())
             {
-                handlePathPointOnLadder(pEx);
+                if (handlePathPointOnLadder(pEx))
+                {
+                    return true;
+                }
             }
             else if (ourEntity.isInWater())
             {
@@ -338,7 +342,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         return false;
     }
 
-    private void handlePathPointOnLadder(final PathPointExtended pEx)
+    private boolean handlePathPointOnLadder(final PathPointExtended pEx)
     {
         Vec3d vec3 = this.getPath().getPosition(this.ourEntity);
 
@@ -367,8 +371,16 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     break;
             }
 
-            this.ourEntity.getMoveHelper().setMoveTo(vec3.x, vec3.y, vec3.z, newSpeed);
+            if (newSpeed > 0)
+            {
+                this.ourEntity.getMoveHelper().setMoveTo(vec3.x, vec3.y, vec3.z, newSpeed);
+            }
+            else
+            {
+                return true;
+            }
         }
+        return false;
     }
 
     private boolean handleEntityInWater(int oldIndex, final PathPointExtended pEx)
