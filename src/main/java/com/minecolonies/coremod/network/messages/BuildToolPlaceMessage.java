@@ -244,7 +244,7 @@ public class BuildToolPlaceMessage implements IMessage
                             complete = true;
                         }
                     }
-                    player.inventory.clearMatchingItems(itemStack -> itemStack.isItemEqual(new ItemStack(block, 1)),-1);
+                    player.inventory.clearMatchingItems(itemStack -> itemStack.isItemEqual(new ItemStack(block, 1)),1);
                 }
                 setupBuilding(world, player, sn, rotation, buildPos, mirror, level, complete);
             }

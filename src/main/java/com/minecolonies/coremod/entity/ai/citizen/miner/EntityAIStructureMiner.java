@@ -40,22 +40,22 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     /**
      * Main shaft location.
      */
-    private static final String MAIN_SHAFT_NAME = "/miner/minerMainShaft";
+    private static final String MAIN_SHAFT_NAME = "/miner/minermainshaft";
 
     /**
      * X4 shaft location.
      */
-    private static final String X4_SHAFT_NAME = "/miner/minerX4";
+    private static final String X4_SHAFT_NAME = "/miner/minerx4";
 
     /**
      * X2 right shaft location.
      */
-    private static final String X2_RIGHT_SHAFT_NAME = "/miner/minerX2Right";
+    private static final String X2_RIGHT_SHAFT_NAME = "/miner/minerx2right";
 
     /**
      * X2 top shaft location.
      */
-    private static final String X2_TOP_SHAFT_NAME = "/miner/minerX2Top";
+    private static final String X2_TOP_SHAFT_NAME = "/miner/minerx2top";
 
     /**
      * Lead the miner to the other side of the shaft.

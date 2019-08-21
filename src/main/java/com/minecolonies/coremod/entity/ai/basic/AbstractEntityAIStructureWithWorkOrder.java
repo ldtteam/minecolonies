@@ -210,7 +210,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 blockState = getSolidSubstitution(worldPos);
                 block = blockState.getBlock();
             }
-            if (block == Blocks.GRASS)
+            if (block == Blocks.GRASS_BLOCK)
             {
                 block = Blocks.DIRT;
             }

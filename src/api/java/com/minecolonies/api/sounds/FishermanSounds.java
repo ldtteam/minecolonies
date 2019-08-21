@@ -50,7 +50,7 @@ public final class FishermanSounds extends AbstractWorkerSounds
      */
     public static final class Male
     {
-        public static final SoundEvent generalPhrases = ModSoundEvents.getSoundID("mob.fisherman.MALE.generalPhrases");
+        public static final SoundEvent generalPhrases = ModSoundEvents.getSoundID("mob.fisherman.male.generalphrases");
         public static final SoundEvent noises         = ModSoundEvents.getSoundID("mob.fisherman.male.noise");
         public static final SoundEvent iGotOne        = ModSoundEvents.getSoundID("mob.fisherman.male.igotone");
         public static final SoundEvent needFishingRod = ModSoundEvents.getSoundID("mob.fisherman.male.needfishingrod");
