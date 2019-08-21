@@ -1,6 +1,6 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
         lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
     <image source="minecolonies:textures/gui/colonist_clipboard.png" pos="0 0" size="190 244"/>
 
     <label size="158 11" pos="16 28" textalign="MIDDLE" color="black"

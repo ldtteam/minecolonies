@@ -1,9 +1,12 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
+import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.ai.util.StructureIterator;
 import com.minecolonies.api.util.*;
-import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
@@ -13,9 +16,6 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.ai.util.StructureIterator;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -30,8 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.MIN_OPEN_SLOTS;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * AI class for the builder.
@@ -209,7 +209,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        final AbstractBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
+        final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
         if (building == null && wo instanceof WorkOrderBuild && !(wo instanceof WorkOrderBuildRemoval))
         {
             job.complete();
@@ -251,7 +251,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         if (getOwnBuilding().getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && job.getWorkOrder() instanceof WorkOrderBuildBuilding)
         {
             final BlockPos buildingPos = job.getWorkOrder().getBuildingLocation();
-            final AbstractBuilding building = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(buildingPos);
+            final IBuilding building = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(buildingPos);
             if (building != null)
             {
                 world.getEntitiesWithinAABB(EntityMob.class, building.getTargetableArea(world)).forEach(Entity::setDead);
@@ -332,7 +332,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     public void connectBlockToBuildingIfNecessary(@NotNull final IBlockState blockState, @NotNull final BlockPos pos)
     {
         final BlockPos buildingLocation = job.getWorkOrder().getBuildingLocation();
-        final AbstractBuilding building = this.getOwnBuilding().getColony().getBuildingManager().getBuilding(buildingLocation);
+        final IBuilding building = this.getOwnBuilding().getColony().getBuildingManager().getBuilding(buildingLocation);
 
         if (building != null)
         {

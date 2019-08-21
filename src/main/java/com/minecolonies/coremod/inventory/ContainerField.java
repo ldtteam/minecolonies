@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.inventory;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -34,7 +34,7 @@ public class ContainerField extends Container
     /**
      * The colony.
      */
-    private final Colony colony;
+    private final IColony colony;
 
     /**
      * Creates an instance of our field container, this may be serve to open the GUI.
@@ -44,13 +44,14 @@ public class ContainerField extends Container
      * @param world               the world.
      * @param location            the position of the field.
      */
-    public ContainerField(@NotNull final ScarecrowTileEntity scarecrowTileEntity,
+    public ContainerField(
+      @NotNull final TileEntityScarecrow scarecrowTileEntity,
             final InventoryPlayer playerInventory,
             @NotNull final World world,
             @NotNull final BlockPos location)
     {
         super();
-        this.colony = ColonyManager.getColonyByPosFromWorld(world, location);
+        this.colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, location);
         this.inventory = scarecrowTileEntity.getInventory();
         final int extraOffset = 0;
 

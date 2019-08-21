@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.entity.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
-import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -71,7 +71,7 @@ public class RaidAllNowCommand extends AbstractSingleCommand implements IActionC
             return;
         }
 
-        for (final Colony colony : ColonyManager.getAllColonies())
+        for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
             MobEventsUtils.raiderEvent(colony.getWorld(), colony);
         }

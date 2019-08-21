@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.controls.Button;
@@ -7,7 +8,6 @@ import com.minecolonies.blockout.controls.ButtonHandler;
 import com.minecolonies.blockout.controls.TextField;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,14 +31,14 @@ public class WindowHutNameEntry extends Window implements ButtonHandler
     /**
      * The building associated to the GUI.
      */
-    private final AbstractBuildingView building;
+    private final IBuildingView building;
 
     /**
      * Constructor for a hut rename entry window.
      *
      * @param b {@link AbstractBuilding}
      */
-    public WindowHutNameEntry(final AbstractBuildingView b)
+    public WindowHutNameEntry(final IBuildingView b)
     {
         super(Constants.MOD_ID + HUT_NAME_RESOURCE_SUFFIX);
         this.building = b;

@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
@@ -9,10 +12,7 @@ import com.minecolonies.blockout.controls.ItemIcon;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
 import net.minecraft.client.Minecraft;
@@ -51,10 +51,10 @@ public class WindowResourceList extends AbstractWindowSkeleton
     public WindowResourceList(final int colonyId, final BlockPos buildingPos)
     {
         super(Constants.MOD_ID + RESOURCE_SCROLL_RESOURCE_SUFFIX);
-        final ColonyView colonyView = ColonyManager.getColonyView(colonyId, Minecraft.getMinecraft().world.provider.getDimension());
+        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getMinecraft().world.provider.getDimension());
         if (colonyView != null)
         {
-            final AbstractBuildingView buildingView = colonyView.getBuilding(buildingPos);
+            final IBuildingView buildingView = colonyView.getBuilding(buildingPos);
             if (buildingView instanceof BuildingBuilder.View)
             {
                 this.builder = (BuildingBuilder.View) buildingView;
@@ -71,7 +71,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
      */
     private void pullResourcesFromHut()
     {
-        final AbstractBuildingView newView = builder.getColony().getBuilding(builder.getID());
+        final IBuildingView newView = builder.getColony().getBuilding(builder.getID());
         if (newView instanceof BuildingBuilder.View)
         {
             final BuildingBuilder.View updatedView = (BuildingBuilder.View) newView;
@@ -183,7 +183,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
             resourceMissingLabel.setLabelText("");
         }
 
-        neededLabel.setLabelText(Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getAmount()));
+        neededLabel.setLabelText(resource.getAvailable() + " / " + resource.getAmount());
         rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(index));
         rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount() - resource.getAvailable()));
 

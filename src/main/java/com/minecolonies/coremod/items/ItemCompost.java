@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;

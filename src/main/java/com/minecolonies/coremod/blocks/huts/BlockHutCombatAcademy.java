@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.blocks.huts;
 
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -20,6 +22,12 @@ public class BlockHutCombatAcademy extends AbstractBlockHut<BlockHutCombatAcadem
     public String getName()
     {
         return "blockHutCombatAcademy";
+    }
+
+    @Override
+    public BuildingEntry getBuildingEntry()
+    {
+        return ModBuildings.combatAcademy;
     }
 
     /**

@@ -1,5 +1,5 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="420 240" pause="false"
-        lightbox="false" xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+        lightbox="false" xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
     <label size="50 11" pos="42 12" label="$(com.minecolonies.coremod.gui.workerHuts.patrol)" color="white" style="bold"/>
     <buttonimage id="patrol" size="86 17" pos="42 23"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png"

@@ -1,5 +1,13 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -7,14 +15,8 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.client.gui.WindowHutCrusher;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobCrusher;
 import com.minecolonies.coremod.network.messages.CrusherSetModeMessage;
 import io.netty.buffer.ByteBuf;
@@ -78,7 +80,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
      * @param c the colony.
      * @param l the location
      */
-    public BuildingCrusher(final Colony c, final BlockPos l)
+    public BuildingCrusher(final IColony c, final BlockPos l)
     {
         super(c, l);
         loadCrusherMode();
@@ -89,7 +91,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
      */
     private void loadCrusherMode()
     {
-        for (final Map.Entry<ItemStorage, ItemStorage> mode : ColonyManager.getCompatibilityManager().getCrusherModes().entrySet())
+        for (final Map.Entry<ItemStorage, ItemStorage> mode : IColonyManager.getInstance().getCompatibilityManager().getCrusherModes().entrySet())
         {
             if (this.crusherMode == null)
             {
@@ -129,7 +131,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
 
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return new JobCrusher(citizen);
     }
@@ -211,9 +213,9 @@ public class BuildingCrusher extends AbstractBuildingCrafter
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
-        super.readFromNBT(compound);
+        super.deserializeNBT(compound);
         this.dailyQuantity = compound.getInteger(TAG_DAILY);
         this.currentDailyQuantity = compound.getInteger(TAG_CURRENT_DAILY);
 
@@ -226,16 +228,16 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         {
             for (final IRecipeStorage recipe : crusherRecipes.values())
             {
-                final IToken token = ColonyManager.getRecipeManager().checkOrAddRecipe(recipe);
+                final IToken token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(recipe);
                 addRecipe(token);
             }
         }
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public NBTTagCompound serializeNBT()
     {
-        super.writeToNBT(compound);
+        final NBTTagCompound compound = super.serializeNBT();
         compound.setInteger(TAG_DAILY, dailyQuantity);
         compound.setInteger(TAG_CURRENT_DAILY, currentDailyQuantity);
         if (crusherMode != null)
@@ -244,6 +246,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
             crusherMode.getItemStack().writeToNBT(crusherModeNBT);
             compound.setTag(TAG_CRUSHER_MODE, crusherModeNBT);
         }
+        return compound;
     }
 
     @Override
@@ -273,6 +276,12 @@ public class BuildingCrusher extends AbstractBuildingCrafter
         }
     }
 
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.crusher;
+    }
+
     /**
      * BuildingCrusher View.
      */
@@ -299,7 +308,7 @@ public class BuildingCrusher extends AbstractBuildingCrafter
          * @param c the colonyview to put it in
          * @param l the positon
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }

@@ -2,14 +2,14 @@ package com.minecolonies.coremod.entity.ai.citizen.baker;
 
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -26,9 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_NO_FURNACES_MESSAGE;
 import static com.minecolonies.api.util.constant.TranslationConstants.BAKER_HAS_NO_RECIPES;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Baker AI class.
@@ -36,12 +36,12 @@ import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerSta
 public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 {
     /**
-     * How often should intelligence factor into the baker's skill modifier.
+     * How often should intelligence factor into the bakery's skill modifier.
      */
     private static final int INTELLIGENCE_MULTIPLIER = 2;
 
     /**
-     * How often should dexterity factor into the baker's skill modifier.
+     * How often should dexterity factor into the bakery's skill modifier.
      */
     private static final int DEXTERITY_MULTIPLIER = 1;
 
@@ -76,7 +76,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     private static final int MAX_LEVEL = 50;
 
     /**
-     * Experience per product the baker gains.
+     * Experience per product the bakery gains.
      */
     private static final double XP_PER_PRODUCT = 10.0;
 
@@ -96,16 +96,16 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     private int progress = 0;
 
     /**
-     * Pointer to the current recipe, when baker starts
+     * Pointer to the current recipe, when bakery starts
      * next recipe it starts checking right after this recipe.
-     * So the baker can rotate between recipes.
+     * So the bakery can rotate between recipes.
      */
     private int currentRecipe = -1;
     /**
      * Constructor for the Baker.
-     * Defines the tasks the baker executes.
+     * Defines the tasks the bakery executes.
      *
-     * @param job a baker job to use.
+     * @param job a bakery job to use.
      */
     public EntityAIWorkBaker(@NotNull final JobBaker job)
     {
@@ -132,61 +132,70 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     }
 
     /**
-     * @return new state of the baker
+     * Redirects the bakery to his building.
+     *
+     * @return the next state.
      */
-    private IAIState finishing()
+    private IAIState startWorkingAtOwnBuilding()
     {
-        if (currentBakingProduct == null || currentBakingProduct.getState() != ProductState.BAKED)
+        if (walkToBuilding())
         {
-            progress = 0;
-            final List<BakingProduct> bakingProducts = getOwnBuilding().getTasks().get(ProductState.BAKED);
-            if (bakingProducts == null || bakingProducts.isEmpty())
-            {
-                getOwnBuilding().removeFromTasks(ProductState.BAKED, null);
-                return PREPARING;
-            }
-            currentBakingProduct = bakingProducts.get(0);
+            return getState();
         }
-
-        if (currentBakingProduct.getState() != ProductState.BAKED)
-        {
-            return PREPARING;
-        }
-
-        worker.setHeldItem(EnumHand.MAIN_HAND, currentBakingProduct.getEndProduct());
-
-        final ItemStack newItem = currentBakingProduct.getEndProduct();
-        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getLocation());
-
-        if (progress >= getRequiredProgressForKneading())
-        {
-            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
-            getOwnBuilding().removeFromTasks(ProductState.BAKED, currentBakingProduct);
-            if (newItem != null)
-            {
-                InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), newItem);
-            }
-            worker.getCitizenExperienceHandler().addExperience(XP_PER_PRODUCT);
-            incrementActionsDoneAndDecSaturation();
-            progress = 0;
-            currentBakingProduct = null;
-            return PREPARING;
-        }
-
-        progress++;
-        setDelay(HIT_DELAY);
-        return getState();
+        return PREPARING;
     }
 
     /**
-     * Returns the baker's work building.
+     * Prepares the bakery for baking and requests ingredients.
      *
-     * @return building instance
+     * @return the next IAIState
      */
-    @Override
-    public BuildingBaker getOwnBuilding()
+    private IAIState prepareForBaking()
     {
-        return (BuildingBaker) worker.getCitizenColonyHandler().getWorkBuilding();
+        if (getOwnBuilding().getFurnaces().isEmpty())
+        {
+            chatSpamFilter.talkWithoutSpam(BAKER_HAS_NO_FURNACES_MESSAGE);
+            return getState();
+        }
+
+        if (getOwnBuilding().getCopyOfAllowedItems().isEmpty())
+        {
+            chatSpamFilter.talkWithoutSpam(BAKER_HAS_NO_RECIPES);
+            return getState();
+        }
+
+        boolean emptyFurnace = false;
+        for (final Map.Entry<BlockPos, BakingProduct> entry : getOwnBuilding().getFurnacesWithProduct().entrySet())
+        {
+            if (entry.getValue() == null)
+            {
+                emptyFurnace = true;
+                currentFurnace = entry.getKey();
+            }
+            else if (entry.getValue().getState() == ProductState.BAKED)
+            {
+                currentFurnace = entry.getKey();
+                return BAKER_TAKE_OUT_OF_OVEN;
+            }
+        }
+
+        @NotNull final Map<ProductState, List<BakingProduct>> map = getOwnBuilding().getTasks();
+        if (map.isEmpty())
+        {
+            return BAKER_KNEADING;
+        }
+
+        if (map.containsKey(ProductState.BAKED))
+        {
+            return BAKER_FINISHING;
+        }
+
+        if (emptyFurnace)
+        {
+            return handleEmptyFurnace(map);
+        }
+
+        return BAKER_KNEADING;
     }
 
     @Override
@@ -234,7 +243,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     }
 
     /**
-     * Prepares the baker for baking and requests ingredients.
+     * Prepares the bakery for baking and requests ingredients.
      *
      * @return the next IAIState
      */
@@ -265,7 +274,7 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
 	        }
 
 	        worker.setHeldItem(EnumHand.MAIN_HAND, storage.getInput().get(worker.getRandom().nextInt(storage.getInput().size())).copy());
-	        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getLocation());
+	        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
 
 	        if (progress >= getRequiredProgressForKneading())
 	        {
@@ -286,32 +295,52 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     }
 
     /**
-     * Create a new product depending on what the baker has available on resources.
+     * Prepares the bakery for baking and requests ingredients.
      *
-     * @return the next state to transit to.
+     * @return the next IAIState
      */
-    private IAIState createNewProduct()
+    private IAIState bake()
     {
-    	progress = 0;
         final BuildingBaker building = getOwnBuilding();
-        currentRecipe++;
-        if (currentRecipe >= building.getCopyOfAllowedItems().size())
+        if (currentFurnace == null || building.getFurnacesWithProduct().get(currentFurnace) != null)
         {
-            currentRecipe = 0;
+            return PREPARING;
         }
 
-        final ItemStorage itemStorage = building.getCopyOfAllowedItems().get("recipes").get(currentRecipe);
-        IRecipeStorage recipeStorage = BakerRecipes.getRecipes().stream().filter(recipe -> recipe.getPrimaryOutput().isItemEqual(itemStorage.getItemStack())).findFirst().orElse(null);
-        if (recipeStorage == null)
+        if (walkToBlock(currentFurnace))
         {
-            setDelay(UNABLE_TO_CRAFT_DELAY);
-            return IDLE;
+            return BAKER_BAKING;
         }
 
-        final BakingProduct bakingProduct = new BakingProduct(recipeStorage.getPrimaryOutput().copy(), BakerRecipes.getRecipes().indexOf(recipeStorage));
-        building.addToTasks(bakingProduct.getState(), bakingProduct);
-        currentBakingProduct = bakingProduct;
-        return getState();
+        final IBlockState furnace = world.getBlockState(currentFurnace);
+        final List<BakingProduct> bakingProducts = building.getTasks().get(ProductState.PREPARED);
+        if (!(furnace.getBlock() instanceof BlockFurnace))
+        {
+            if (bakingProducts.isEmpty())
+            {
+                building.removeFromTasks(ProductState.PREPARED, null);
+            }
+            else
+            {
+                building.removeFromFurnaces(currentFurnace);
+            }
+            return START_WORKING;
+        }
+        else if (bakingProducts.isEmpty())
+        {
+            return START_WORKING;
+        }
+
+        final BakingProduct bakingProduct = bakingProducts.get(0);
+        building.removeFromTasks(ProductState.PREPARED, bakingProduct);
+
+        if (bakingProduct != null && bakingProduct.getState() == ProductState.PREPARED)
+        {
+            building.putInFurnace(currentFurnace, bakingProduct);
+            bakingProduct.nextState();
+            world.setBlockState(currentFurnace, Blocks.LIT_FURNACE.getDefaultState().withProperty(BlockFurnace.FACING, furnace.getValue(BlockFurnace.FACING)));
+        }
+        return PREPARING;
     }
 
     /**
@@ -385,105 +414,61 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     }
 
     /**
-     * Prepares the baker for baking and requests ingredients.
-     *
-     * @return the next IAIState
+     * @return new state of the bakery
      */
-    private IAIState bake()
+    private IAIState finishing()
     {
-        final BuildingBaker building = getOwnBuilding();
-        if (currentFurnace == null || building.getFurnacesWithProduct().get(currentFurnace) != null)
+        if (currentBakingProduct == null || currentBakingProduct.getState() != ProductState.BAKED)
+        {
+            progress = 0;
+            final List<BakingProduct> bakingProducts = getOwnBuilding().getTasks().get(ProductState.BAKED);
+            if (bakingProducts == null || bakingProducts.isEmpty())
+            {
+                getOwnBuilding().removeFromTasks(ProductState.BAKED, null);
+                return PREPARING;
+            }
+            currentBakingProduct = bakingProducts.get(0);
+        }
+
+        if (currentBakingProduct.getState() != ProductState.BAKED)
         {
             return PREPARING;
         }
 
-        if (walkToBlock(currentFurnace))
-        {
-            return BAKER_BAKING;
-        }
+        worker.setHeldItem(EnumHand.MAIN_HAND, currentBakingProduct.getEndProduct());
 
-        final IBlockState furnace = world.getBlockState(currentFurnace);
-        final List<BakingProduct> bakingProducts = building.getTasks().get(ProductState.PREPARED);
-        if (!(furnace.getBlock() instanceof BlockFurnace))
+        final ItemStack newItem = currentBakingProduct.getEndProduct();
+        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
+
+        if (progress >= getRequiredProgressForKneading())
         {
-            if (bakingProducts.isEmpty())
+            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+            getOwnBuilding().removeFromTasks(ProductState.BAKED, currentBakingProduct);
+            if (newItem != null)
             {
-                building.removeFromTasks(ProductState.PREPARED, null);
+                InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), newItem);
             }
-            else
-            {
-                building.removeFromFurnaces(currentFurnace);
-            }
-            return START_WORKING;
-        }
-        else if (bakingProducts.isEmpty())
-        {
-            return START_WORKING;
+            worker.getCitizenExperienceHandler().addExperience(XP_PER_PRODUCT);
+            incrementActionsDoneAndDecSaturation();
+            progress = 0;
+            currentBakingProduct = null;
+            return PREPARING;
         }
 
-        final BakingProduct bakingProduct = bakingProducts.get(0);
-        building.removeFromTasks(ProductState.PREPARED, bakingProduct);
-
-        if (bakingProduct != null && bakingProduct.getState() == ProductState.PREPARED)
-        {
-            building.putInFurnace(currentFurnace, bakingProduct);
-            bakingProduct.nextState();
-            world.setBlockState(currentFurnace, Blocks.LIT_FURNACE.getDefaultState().withProperty(BlockFurnace.FACING, furnace.getValue(BlockFurnace.FACING)));
-        }
-        return PREPARING;
+        progress++;
+        setDelay(HIT_DELAY);
+        return getState();
     }
 
     /**
-     * Prepares the baker for baking and requests ingredients.
+     * Returns the bakery's work building.
      *
-     * @return the next IAIState
+     * @return building instance
      */
-    private IAIState prepareForBaking()
+    @Override
+    public BuildingBaker getOwnBuilding()
     {
-        if (getOwnBuilding().getFurnaces().isEmpty())
-        {
-            chatSpamFilter.talkWithoutSpam(BAKER_HAS_NO_FURNACES_MESSAGE);
-            return getState();
-        }
-
-        if (getOwnBuilding().getCopyOfAllowedItems().isEmpty())
-        {
-            chatSpamFilter.talkWithoutSpam(BAKER_HAS_NO_RECIPES);
-            return getState();
-        }
-
-        boolean emptyFurnace = false;
-        for (final Map.Entry<BlockPos, BakingProduct> entry : getOwnBuilding().getFurnacesWithProduct().entrySet())
-        {
-            if (entry.getValue() == null)
-            {
-                emptyFurnace = true;
-                currentFurnace = entry.getKey();
-            }
-            else if (entry.getValue().getState() == ProductState.BAKED)
-            {
-                currentFurnace = entry.getKey();
-                return BAKER_TAKE_OUT_OF_OVEN;
-            }
-        }
-
-        @NotNull final Map<ProductState, List<BakingProduct>> map = getOwnBuilding().getTasks();
-        if (map.isEmpty())
-        {
-            return BAKER_KNEADING;
-        }
-
-        if (map.containsKey(ProductState.BAKED))
-        {
-            return BAKER_FINISHING;
-        }
-
-        if (emptyFurnace)
-        {
-            return handleEmptyFurnace(map);
-        }
-
-        return BAKER_KNEADING;
+        return (BuildingBaker) worker.getCitizenColonyHandler().getWorkBuilding();
     }
 
     /**
@@ -502,26 +487,42 @@ public class EntityAIWorkBaker extends AbstractEntityAISkill<JobBaker>
     }
 
     /**
-     * Redirects the baker to his building.
+     * Create a new product depending on what the bakery has available on resources.
      *
-     * @return the next state.
+     * @return the next state to transit to.
      */
-    private IAIState startWorkingAtOwnBuilding()
+    private IAIState createNewProduct()
     {
-        if (walkToBuilding())
+        progress = 0;
+        final BuildingBaker building = getOwnBuilding();
+        currentRecipe++;
+        if (currentRecipe >= building.getCopyOfAllowedItems().size())
         {
-            return getState();
+            currentRecipe = 0;
         }
-        return PREPARING;
+
+        final ItemStorage itemStorage = building.getCopyOfAllowedItems().get("recipes").get(currentRecipe);
+        final IRecipeStorage recipeStorage =
+          BakerRecipes.getRecipes().stream().filter(recipe -> recipe.getPrimaryOutput().isItemEqual(itemStorage.getItemStack())).findFirst().orElse(null);
+        if (recipeStorage == null)
+        {
+            setDelay(UNABLE_TO_CRAFT_DELAY);
+            return IDLE;
+        }
+
+        final BakingProduct bakingProduct = new BakingProduct(recipeStorage.getPrimaryOutput().copy(), BakerRecipes.getRecipes().indexOf(recipeStorage));
+        building.addToTasks(bakingProduct.getState(), bakingProduct);
+        currentBakingProduct = bakingProduct;
+        return getState();
     }
 
     /**
-     * Returns the baker's worker instance. Called from outside this class.
+     * Returns the bakery's worker instance. Called from outside this class.
      *
      * @return citizen object.
      */
     @Nullable
-    public EntityCitizen getCitizen()
+    public AbstractEntityCitizen getCitizen()
     {
         return worker;
     }

@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.entity.mobs.util.MobEventsUtils;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
-import com.minecolonies.coremod.entity.ai.mobs.util.MobEventsUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -57,7 +57,7 @@ public class DoRaidNowCommand extends AbstractSingleCommand implements IActionCo
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        final Colony colony = actionMenuState.getColonyForArgument("colony");
+        final IColony colony = actionMenuState.getColonyForArgument("colony");
         if (colony == null)
         {
             sender.sendMessage(NO_COLONY_FOUND_MESSAGE);
@@ -69,10 +69,10 @@ public class DoRaidNowCommand extends AbstractSingleCommand implements IActionCo
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        Colony colony = null;
+        IColony colony = null;
         if (args.length != 0)
         {
-            colony = ColonyManager.getColonyByWorld(Integer.parseInt(args[0]), server.getWorld(sender.getEntityWorld().provider.getDimension()));
+            colony = IColonyManager.getInstance().getColonyByWorld(Integer.parseInt(args[0]), server.getWorld(sender.getEntityWorld().provider.getDimension()));
             if (colony == null)
             {
                 sender.sendMessage(NO_COLONY_FOUND_MESSAGE);
@@ -88,7 +88,7 @@ public class DoRaidNowCommand extends AbstractSingleCommand implements IActionCo
         executeShared(server, sender, colony);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final Colony colony)
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @Nullable final IColony colony)
     {
         if (sender instanceof EntityPlayer && !isPlayerOpped(sender))
         {

@@ -1,10 +1,9 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
@@ -60,7 +59,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
     }
 
     @Override
-    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
+    public boolean canRankUseCommand(@NotNull final IColony colony, @NotNull final EntityPlayer player)
     {
         return colony.getPermissions().getRank(player).equals(Rank.OWNER);
     }
@@ -68,7 +67,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        final Colony colony = actionMenuState.getColonyForArgument("colony");
+        final IColony colony = actionMenuState.getColonyForArgument("colony");
         final boolean canDestroy = actionMenuState.getBooleanValueForArgument("canDestroy", true);
         final boolean confirmDelete = actionMenuState.getBooleanValueForArgument("confirmDelete", false);
 
@@ -93,7 +92,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
             IColony colony = null;
             if (sender instanceof EntityPlayer)
             {
-                colony = ColonyManager.getIColonyByOwner(CompatibilityUtils.getWorld((EntityPlayer) sender), (EntityPlayer) sender);
+                colony = IColonyManager.getInstance().getIColonyByOwner(CompatibilityUtils.getWorldFromEntity((EntityPlayer) sender), (EntityPlayer) sender);
             }
 
             if (colony == null)
@@ -117,7 +116,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
             }
         }
 
-        final Colony colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
         if (colony == null)
         {
             final String noColonyFoundMessage = String.format(COLONY_X_NULL, colonyId);
@@ -129,7 +128,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
     }
 
     private void executeShared(
-            @NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final Colony colony, final boolean canDestroy,
+            @NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final IColony colony, final boolean canDestroy,
             final boolean confirmDelete) throws CommandException
     {
 
@@ -160,7 +159,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand implements IActio
         }
         final boolean shouldDestroy = canDestroy;
         // TODO: pass in sender and notify when the delete task finishes.
-        server.addScheduledTask(() -> ColonyManager.deleteColonyByWorld(colony.getID(), shouldDestroy, sender.getEntityWorld()));
+        server.addScheduledTask(() -> IColonyManager.getInstance().deleteColonyByWorld(colony.getID(), shouldDestroy, sender.getEntityWorld()));
         sender.sendMessage(new TextComponentString(DELETE_COLONY_TASK_SCHEDULED));
     }
 

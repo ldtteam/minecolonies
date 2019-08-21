@@ -1,27 +1,30 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.configuration.NameConfiguration;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.registry.JobRegistry;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler;
-import com.minecolonies.coremod.inventory.InventoryCitizen;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumHand;
@@ -43,13 +46,9 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Extra data for Citizens.
  */
-@SuppressWarnings(Suppression.BIG_CLASS)
-public class CitizenData
+@SuppressWarnings({Suppression.BIG_CLASS, "PMD.ExcessiveClassLength"})
+public class CitizenData implements ICitizenData
 {
-    /**
-     * Maximum saturation of a citizen.
-     */
-    public static final int MAX_SATURATION = 10;
 
     /**
      * The max health.
@@ -84,7 +83,7 @@ public class CitizenData
     /**
      * The colony the citizen belongs to.
      */
-    private final Colony colony;
+    private final IColony colony;
 
     /**
      * Inventory of the citizen.
@@ -140,18 +139,18 @@ public class CitizenData
      * The home building of the citizen.
      */
     @Nullable
-    private AbstractBuilding homeBuilding;
+    private IBuilding homeBuilding;
 
     /**
      * The work building of the citizen.
      */
     @Nullable
-    private AbstractBuildingWorker workBuilding;
+    private IBuildingWorker workBuilding;
 
     /**
      * The job of the citizen.
      */
-    private AbstractJob job;
+    private IJob job;
 
     /**
      * If the citizen is dirty (Has to be updated on client side).
@@ -167,7 +166,7 @@ public class CitizenData
      * Its entitity.
      */
     @NotNull
-    private WeakReference<EntityCitizen> entity;
+    private WeakReference<AbstractEntityCitizen> entity;
 
     /**
      * Attributes, which influence the workers behaviour.
@@ -196,7 +195,7 @@ public class CitizenData
      * The total amount of experiences the citizen has depending on his job.
      * This also includes the amount of experiences within their Experience Bar.
      */
-    private Map<String, Tuple<Integer, Double>> levelExperienceMap =  new HashMap<>();
+    private Map<String, Tuple<Integer, Double>> levelExperienceMap = new HashMap<>();
 
     /**
      * The last position of the citizen.
@@ -216,7 +215,7 @@ public class CitizenData
      * @param id     ID of the Citizen.
      * @param colony Colony the Citizen belongs to.
      */
-    public CitizenData(final int id, final Colony colony)
+    public CitizenData(final int id, final IColony colony)
     {
         this.id = id;
         this.colony = colony;
@@ -225,107 +224,21 @@ public class CitizenData
     }
 
     /**
-     * Creates CitizenData from tag compound.
-     *
-     * @param compound NBT compound to build from.
-     * @param colony   Colony of the citizen.
-     * @return CitizenData.
-     */
-    @NotNull
-    public static CitizenData createFromNBT(@NotNull final NBTTagCompound compound, final Colony colony)
-    {
-        final int id = compound.getInteger(TAG_ID);
-        final @NotNull CitizenData citizen = new CitizenData(id, colony);
-        citizen.readFromNBT(compound);
-        return citizen;
-    }
-
-    /**
-     * Reads data from NBT-tag compound.
-     *
-     * @param compound NBT-Tag compound.
-     */
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
-    {
-        name = compound.getString(TAG_NAME);
-        female = compound.getBoolean(TAG_FEMALE);
-        paused = compound.getBoolean(TAG_PAUSED);
-        isChild = compound.getBoolean(TAG_CHILD);
-        textureId = compound.getInteger(TAG_TEXTURE);
-
-        health = compound.getFloat(TAG_HEALTH);
-        maxHealth = compound.getFloat(TAG_MAX_HEALTH);
-
-        final NBTTagCompound nbtTagSkillsCompound = compound.getCompoundTag("skills");
-        strength = nbtTagSkillsCompound.getInteger("strength");
-        endurance = nbtTagSkillsCompound.getInteger("endurance");
-        charisma = nbtTagSkillsCompound.getInteger("charisma");
-        intelligence = nbtTagSkillsCompound.getInteger("intelligence");
-        dexterity = nbtTagSkillsCompound.getInteger("dexterity");
-        saturation = compound.getDouble(TAG_SATURATION);
-
-        if (compound.hasKey("job"))
-        {
-            setJob(JobRegistry.createFromNBT(this, compound.getCompoundTag("job")));
-        }
-
-        //  Attributes
-        if (compound.hasKey(TAG_LEVEL_MAP))
-        {
-            final NBTTagList levelTagList = compound.getTagList(TAG_LEVEL_MAP, Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < levelTagList.tagCount(); ++i)
-            {
-                final NBTTagCompound levelExperienceAtJob = levelTagList.getCompoundTagAt(i);
-                levelExperienceMap.put(levelExperienceAtJob.getString(TAG_NAME), new Tuple<>(Math.min(levelExperienceAtJob.getInteger(TAG_LEVEL), MAX_CITIZEN_LEVEL), levelExperienceAtJob.getDouble(TAG_EXPERIENCE)));
-            }
-        }
-        else if (job != null)
-        {
-            levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(compound.getInteger(TAG_LEVEL), compound.getDouble(TAG_EXPERIENCE)));
-        }
-
-        if (compound.hasKey(TAG_INVENTORY))
-        {
-            final NBTTagList nbttaglist = compound.getTagList(TAG_INVENTORY, 10);
-            this.inventory.readFromNBT(nbttaglist);
-            this.inventory.setHeldItem(EnumHand.MAIN_HAND, compound.getInteger(TAG_HELD_ITEM_SLOT));
-            this.inventory.setHeldItem(EnumHand.OFF_HAND, compound.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
-        }
-
-        if (name.isEmpty())
-        {
-            name = generateName(new Random());
-        }
-
-        if (compound.hasKey(TAG_ASLEEP))
-        {
-            bedPos = BlockPosUtil.readFromNBT(compound, TAG_POS);
-            isAsleep = compound.getBoolean(TAG_ASLEEP);
-        }
-
-        if (compound.hasKey(TAG_JUST_ATE))
-        {
-            justAte = compound.getBoolean(TAG_JUST_ATE);
-        }
-
-        citizenHappinessHandler.readFromNBT(compound);
-    }
-
-    /**
      * Return the entity instance of the citizen data. Respawn the citizen if
      * needed.
      *
      * @return {@link EntityCitizen} of the citizen data.
      */
+    @Override
     @NotNull
-    public Optional<EntityCitizen> getCitizenEntity()
+    public Optional<AbstractEntityCitizen> getCitizenEntity()
     {
         if (entity == null)
         {
             return Optional.empty();
         }
 
-        final EntityCitizen citizen = entity.get();
+        final AbstractEntityCitizen citizen = entity.get();
         return Optional.ofNullable(citizen);
     }
 
@@ -334,7 +247,8 @@ public class CitizenData
      *
      * @param citizen {@link EntityCitizen} instance of the citizen data.
      */
-    public void setCitizenEntity(@Nullable final EntityCitizen citizen)
+    @Override
+    public void setCitizenEntity(@Nullable final AbstractEntityCitizen citizen)
     {
         if (entity != null)
         {
@@ -350,36 +264,11 @@ public class CitizenData
     /**
      * Marks the instance dirty.
      */
+    @Override
     public void markDirty()
     {
         dirty = true;
         colony.getCitizenManager().markCitizensDirty();
-    }
-
-    /**
-     * Create a CitizenData View given it's saved NBTTagCompound.
-     *
-     * @param id  The citizen's id.
-     * @param buf The network data.
-     * @return View object of the citizen.
-     */
-    @Nullable
-    public static CitizenDataView createCitizenDataView(final int id, final ByteBuf buf)
-    {
-        @Nullable CitizenDataView citizenDataView = new CitizenDataView(id);
-
-        try
-        {
-            citizenDataView.deserialize(buf);
-        }
-        catch (final RuntimeException ex)
-        {
-            Log.getLogger().error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-              citizenDataView.getId()), ex);
-            citizenDataView = null;
-        }
-
-        return citizenDataView;
     }
 
     /**
@@ -475,7 +364,8 @@ public class CitizenData
      *
      * @return colony of the citizen.
      */
-    public Colony getColony()
+    @Override
+    public IColony getColony()
     {
         return colony;
     }
@@ -485,6 +375,7 @@ public class CitizenData
      *
      * @return id of the citizen.
      */
+    @Override
     public int getId()
     {
         return id;
@@ -493,6 +384,7 @@ public class CitizenData
     /**
      * Initializes a new citizen, when not read from nbt
      */
+    @Override
     public void initForNewCitizen()
     {
         final Random rand = new Random();
@@ -562,7 +454,7 @@ public class CitizenData
         }
 
         // Check whether there's already a citizen with this name
-        for (final CitizenData citizen : this.getColony().getCitizenManager().getCitizens())
+        for (final ICitizenData citizen : this.getColony().getCitizenManager().getCitizens())
         {
             if (citizen != null && citizen.getName().equals(citizenName))
             {
@@ -580,6 +472,7 @@ public class CitizenData
      *
      * @return name of the citizen.
      */
+    @Override
     public String getName()
     {
         return name;
@@ -590,6 +483,7 @@ public class CitizenData
      *
      * @return true for female, false for male.
      */
+    @Override
     public boolean isFemale()
     {
         return female;
@@ -600,6 +494,7 @@ public class CitizenData
      *
      * @param isFemale true if female
      */
+    @Override
     public void setIsFemale(@NotNull final boolean isFemale)
     {
         this.female = isFemale;
@@ -610,6 +505,7 @@ public class CitizenData
     /**
      * Check if the citizen is paused.
      */
+    @Override
     public void setPaused(final boolean p)
     {
         this.paused = p;
@@ -621,6 +517,7 @@ public class CitizenData
      *
      * @return true for paused, false for working.
      */
+    @Override
     public boolean isPaused()
     {
         return paused;
@@ -631,6 +528,7 @@ public class CitizenData
      *
      * @return texture ID.
      */
+    @Override
     public int getTextureId()
     {
         return textureId;
@@ -641,6 +539,7 @@ public class CitizenData
      *
      * @return true when dirty, otherwise false.
      */
+    @Override
     public boolean isDirty()
     {
         return dirty;
@@ -649,6 +548,7 @@ public class CitizenData
     /**
      * Markt the instance not dirty.
      */
+    @Override
     public void clearDirty()
     {
         dirty = false;
@@ -661,7 +561,8 @@ public class CitizenData
      *
      * @param building building that is destroyed.
      */
-    public void onRemoveBuilding(final AbstractBuilding building)
+    @Override
+    public void onRemoveBuilding(final IBuilding building)
     {
         if (getHomeBuilding() == building)
         {
@@ -679,8 +580,9 @@ public class CitizenData
      *
      * @return home building.
      */
+    @Override
     @Nullable
-    public AbstractBuilding getHomeBuilding()
+    public IBuilding getHomeBuilding()
     {
         return homeBuilding;
     }
@@ -690,7 +592,8 @@ public class CitizenData
      *
      * @param building home building.
      */
-    public void setHomeBuilding(@Nullable final AbstractBuilding building)
+    @Override
+    public void setHomeBuilding(@Nullable final IBuilding building)
     {
         if (homeBuilding != null && building != null && !homeBuilding.equals(building))
         {
@@ -715,8 +618,9 @@ public class CitizenData
      *
      * @return home building of a citizen.
      */
+    @Override
     @Nullable
-    public AbstractBuildingWorker getWorkBuilding()
+    public IBuildingWorker getWorkBuilding()
     {
         return workBuilding;
     }
@@ -726,7 +630,8 @@ public class CitizenData
      *
      * @param building work building.
      */
-    public void setWorkBuilding(@Nullable final AbstractBuildingWorker building)
+    @Override
+    public void setWorkBuilding(@Nullable final IBuildingWorker building)
     {
         if (workBuilding != null && building != null && workBuilding != building)
         {
@@ -749,10 +654,10 @@ public class CitizenData
             else if (job != null)
             {
                 getCitizenEntity().ifPresent(entityCitizen -> {
-                    entityCitizen.tasks.removeTask(entityCitizen.tasks.taskEntries.stream()
-                                                     .filter(task -> task.action instanceof AbstractAISkeleton)
-                                                     .findFirst()
-                                                     .orElse(null).action);
+                    entityCitizen.getTasks().removeTask(entityCitizen.getTasks().taskEntries.stream()
+                                                          .filter(task -> task.action instanceof AbstractAISkeleton)
+                                                          .findFirst()
+                                                          .orElse(null).action);
                 });
 
                 //  No place of employment, get rid of our job
@@ -767,12 +672,13 @@ public class CitizenData
     /**
      * Updates {@link EntityCitizen} for the instance.
      */
+    @Override
     public void updateCitizenEntityIfNecessary()
     {
-        final List<EntityCitizen> list = colony.getWorld()
-                                           .getEntities(EntityCitizen.class,
-                                             entityCitizen -> entityCitizen.getCitizenColonyHandler().getColonyId() == colony.getID()
-                                                                && entityCitizen.getCitizenData().getId() == getId());
+        final List<AbstractEntityCitizen> list = colony.getWorld()
+                                                   .getEntities(AbstractEntityCitizen.class,
+                                                     entityCitizen -> entityCitizen.getCitizenColonyHandler().getColonyId() == colony.getID()
+                                                                        && entityCitizen.getCitizenData().getId() == getId());
 
         if (!list.isEmpty())
         {
@@ -800,12 +706,12 @@ public class CitizenData
             {
                 if (colony.hasTownHall())
                 {
-                    location = colony.getBuildingManager().getTownHall().getLocation();
+                    location = colony.getBuildingManager().getTownHall().getPosition();
                 }
             }
             else
             {
-                location = getWorkBuilding().getLocation();
+                location = getWorkBuilding().getPosition();
             }
 
             if (location != null)
@@ -820,7 +726,8 @@ public class CitizenData
      *
      * @return Job of the citizen.
      */
-    public AbstractJob getJob()
+    @Override
+    public IJob getJob()
     {
         return job;
     }
@@ -830,7 +737,8 @@ public class CitizenData
      *
      * @param job Job of the citizen.
      */
-    public void setJob(final AbstractJob job)
+    @Override
+    public void setJob(final IJob job)
     {
         this.job = job;
 
@@ -846,8 +754,9 @@ public class CitizenData
      * @param <J>  The job type returned.
      * @return the job this citizen has.
      */
+    @Override
     @Nullable
-    public <J extends AbstractJob> J getJob(@NotNull final Class<J> type)
+    public <J extends IJob> J getJob(@NotNull final Class<J> type)
     {
         if (type.isInstance(job))
         {
@@ -858,77 +767,17 @@ public class CitizenData
     }
 
     /**
-     * Writes the citizen data to an NBT-compound.
-     *
-     * @param compound NBT-Tag compound.
-     * @return return the data in NBT format
-     */
-    public NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound)
-    {
-        compound.setInteger(TAG_ID, id);
-        compound.setString(TAG_NAME, name);
-        compound.setBoolean(TAG_FEMALE, female);
-        compound.setBoolean(TAG_PAUSED, paused);
-        compound.setBoolean(TAG_CHILD, isChild);
-        compound.setInteger(TAG_TEXTURE, textureId);
-
-        //  Attributes
-
-        @NotNull final NBTTagList levelTagList = new NBTTagList();
-        for (@NotNull final Map.Entry<String, Tuple<Integer, Double>> entry : levelExperienceMap.entrySet())
-        {
-            @NotNull final NBTTagCompound levelCompound = new NBTTagCompound();
-            levelCompound.setString(TAG_NAME, entry.getKey());
-            levelCompound.setInteger(TAG_LEVEL, entry.getValue().getFirst());
-            levelCompound.setDouble(TAG_EXPERIENCE, entry.getValue().getSecond());
-            levelTagList.appendTag(levelCompound);
-        }
-        compound.setTag(TAG_LEVEL_MAP, levelTagList);
-
-        compound.setDouble(TAG_HEALTH, health);
-        compound.setDouble(TAG_MAX_HEALTH, maxHealth);
-
-
-        @NotNull final NBTTagCompound nbtTagSkillsCompound = new NBTTagCompound();
-        nbtTagSkillsCompound.setInteger(TAG_SKILL_STRENGTH, strength);
-        nbtTagSkillsCompound.setInteger(TAG_SKILL_STAMINA, endurance);
-        nbtTagSkillsCompound.setInteger(TAG_SKILL_SPEED, charisma);
-        nbtTagSkillsCompound.setInteger(TAG_SKILL_INTELLIGENCE, intelligence);
-        nbtTagSkillsCompound.setInteger(TAG_SKILL_DEXTERITY, dexterity);
-        compound.setTag(TAG_SKILLS, nbtTagSkillsCompound);
-        compound.setDouble(TAG_SATURATION, saturation);
-
-        if (job != null)
-        {
-            @NotNull final NBTTagCompound jobCompound = new NBTTagCompound();
-            job.writeToNBT(jobCompound);
-            compound.setTag("job", jobCompound);
-        }
-
-        compound.setTag(TAG_INVENTORY, inventory.writeToNBT(new NBTTagList()));
-        compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.MAIN_HAND));
-        compound.setInteger(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.OFF_HAND));
-
-        BlockPosUtil.writeToNBT(compound, TAG_POS, bedPos);
-        compound.setBoolean(TAG_ASLEEP, isAsleep);
-        compound.setBoolean(TAG_JUST_ATE, justAte);
-
-        citizenHappinessHandler.writeToNBT(compound);
-
-        return compound;
-    }
-
-    /**
      * Writes the citizen data to a byte buf for transition.
      *
      * @param buf Buffer to write to.
      */
+    @Override
     public void serializeViewNetworkData(@NotNull final ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, name);
         buf.writeBoolean(female);
 
-        buf.writeInt(getCitizenEntity().map(Entity::getEntityId).orElse(-1));
+        buf.writeInt(getCitizenEntity().map(AbstractEntityCitizen::getEntityId).orElse(-1));
 
         buf.writeBoolean(paused);
 
@@ -951,8 +800,8 @@ public class CitizenData
         buf.writeDouble(getExperience());
 
         // If the entity is not present we assumes standard values.
-        buf.writeFloat(getCitizenEntity().map(EntityCitizen::getHealth).orElse(MAX_HEALTH));
-        buf.writeFloat(getCitizenEntity().map(EntityCitizen::getMaxHealth).orElse(MAX_HEALTH));
+        buf.writeFloat(getCitizenEntity().map(AbstractEntityCitizen::getHealth).orElse(MAX_HEALTH));
+        buf.writeFloat(getCitizenEntity().map(AbstractEntityCitizen::getMaxHealth).orElse(MAX_HEALTH));
 
         buf.writeInt(getStrength());
         buf.writeInt(getEndurance());
@@ -984,7 +833,7 @@ public class CitizenData
      */
     private void writeStatusToBuffer(@NotNull final ByteBuf buf)
     {
-        final Optional<EntityCitizen> optionalEntityCitizen = getCitizenEntity();
+        final Optional<AbstractEntityCitizen> optionalEntityCitizen = getCitizenEntity();
         buf.writeInt(optionalEntityCitizen.map(entityCitizen -> entityCitizen.getCitizenStatusHandler().getLatestStatus().length).orElse(0));
 
         optionalEntityCitizen.ifPresent(entityCitizen -> {
@@ -1001,6 +850,7 @@ public class CitizenData
      *
      * @return levels of the citizen.
      */
+    @Override
     public int getLevel()
     {
         if (job == null)
@@ -1015,6 +865,7 @@ public class CitizenData
      *
      * @param lvl the new levels for the citizen.
      */
+    @Override
     public void setLevel(final int lvl)
     {
         if (job == null)
@@ -1030,6 +881,7 @@ public class CitizenData
      *
      * @param xp the amount of xp to add.
      */
+    @Override
     public void addExperience(final double xp)
     {
         if (this.job != null)
@@ -1042,6 +894,7 @@ public class CitizenData
     /**
      * Levelup actions for the citizen, increases levels and notifies the Citizen's Job
      */
+    @Override
     public void levelUp()
     {
         increaseLevel();
@@ -1070,6 +923,7 @@ public class CitizenData
     /**
      * Returns the default chance to levelup
      */
+    @Override
     public int getChanceToLevel() {return CHANCE_TO_LEVEL;}
 
     /**
@@ -1077,6 +931,7 @@ public class CitizenData
      *
      * @param extraSaturation the extra saturation
      */
+    @Override
     public void increaseSaturation(final double extraSaturation)
     {
         this.saturation = Math.min(MAX_SATURATION, this.saturation + Math.abs(extraSaturation));
@@ -1087,9 +942,10 @@ public class CitizenData
      *
      * @param extraSaturation the saturation to remove.
      */
+    @Override
     public void decreaseSaturation(final double extraSaturation)
     {
-        this.saturation = Math.max(MIN_SATURATION, this.saturation - Math.abs(extraSaturation* Configurations.gameplay.foodModifier));
+        this.saturation = Math.max(MIN_SATURATION, this.saturation - Math.abs(extraSaturation * Configurations.gameplay.foodModifier));
         this.justAte = false;
     }
 
@@ -1098,6 +954,7 @@ public class CitizenData
      *
      * @param name the name to set.
      */
+    @Override
     public void setName(final String name)
     {
         this.name = name;
@@ -1108,6 +965,7 @@ public class CitizenData
      *
      * @return experiences of the citizen.
      */
+    @Override
     public double getExperience()
     {
         if (job == null)
@@ -1119,6 +977,7 @@ public class CitizenData
 
     /**
      * Query the map and compute absent if necessary.
+     *
      * @return the tuple for the job.
      */
     private Tuple<Integer, Double> queryLevelExperienceMap()
@@ -1131,6 +990,7 @@ public class CitizenData
      *
      * @return citizen Strength value.
      */
+    @Override
     public int getStrength()
     {
         return strength;
@@ -1141,6 +1001,7 @@ public class CitizenData
      *
      * @return citizen Endurance value.
      */
+    @Override
     public int getEndurance()
     {
         return endurance;
@@ -1151,6 +1012,7 @@ public class CitizenData
      *
      * @return citizen Charisma value.
      */
+    @Override
     public int getCharisma()
     {
         return charisma;
@@ -1161,6 +1023,7 @@ public class CitizenData
      *
      * @return citizen Intelligence value.
      */
+    @Override
     public int getIntelligence()
     {
         return intelligence;
@@ -1171,6 +1034,7 @@ public class CitizenData
      *
      * @return citizen Dexterity value.
      */
+    @Override
     public int getDexterity()
     {
         return dexterity;
@@ -1181,6 +1045,7 @@ public class CitizenData
      *
      * @param lastPosition the last position.
      */
+    @Override
     public void setLastPosition(final BlockPos lastPosition)
     {
         this.lastPosition = lastPosition;
@@ -1191,6 +1056,7 @@ public class CitizenData
      *
      * @return the last position.
      */
+    @Override
     public BlockPos getLastPosition()
     {
         return lastPosition;
@@ -1201,6 +1067,7 @@ public class CitizenData
      *
      * @return the saturation.
      */
+    @Override
     public double getSaturation()
     {
         return this.saturation;
@@ -1211,6 +1078,7 @@ public class CitizenData
      *
      * @return the direct reference to the citizen inventory.
      */
+    @Override
     public InventoryCitizen getInventory()
     {
         return inventory;
@@ -1221,6 +1089,7 @@ public class CitizenData
      *
      * @return true if so.
      */
+    @Override
     public boolean isAsleep()
     {
         return isAsleep;
@@ -1231,6 +1100,7 @@ public class CitizenData
      *
      * @return the bedPos.
      */
+    @Override
     public BlockPos getBedPos()
     {
         return bedPos;
@@ -1241,6 +1111,7 @@ public class CitizenData
      *
      * @param asleep true if asleep.
      */
+    @Override
     public void setAsleep(final boolean asleep)
     {
         isAsleep = asleep;
@@ -1251,6 +1122,7 @@ public class CitizenData
      *
      * @param bedPos the pos to set.
      */
+    @Override
     public void setBedPos(final BlockPos bedPos)
     {
         this.bedPos = bedPos;
@@ -1263,6 +1135,7 @@ public class CitizenData
      * @param <R>       the Type
      * @return the token of the request.
      */
+    @Override
     public <R extends IRequestable> IToken createRequest(@NotNull final R requested)
     {
         return getWorkBuilding().createRequest(this, requested, false);
@@ -1275,6 +1148,7 @@ public class CitizenData
      * @param <R>       the Type
      * @return the token of the request.
      */
+    @Override
     public <R extends IRequestable> IToken createRequestAsync(@NotNull final R requested)
     {
         return getWorkBuilding().createRequest(this, requested, true);
@@ -1285,6 +1159,7 @@ public class CitizenData
      *
      * @param token the token to be canceled.
      */
+    @Override
     public void onRequestCancelled(@NotNull final IToken token)
     {
         if (isRequestAsync(token))
@@ -1299,6 +1174,7 @@ public class CitizenData
      * @param token the token to check.
      * @return true if it is.
      */
+    @Override
     public boolean isRequestAsync(@NotNull final IToken token)
     {
         if (job != null)
@@ -1313,6 +1189,7 @@ public class CitizenData
      *
      * @return the instance of the handler
      */
+    @Override
     public CitizenHappinessHandler getCitizenHappinessHandler()
     {
         return citizenHappinessHandler;
@@ -1321,6 +1198,7 @@ public class CitizenData
     /**
      * Try a random levels up.
      */
+    @Override
     public void tryRandomLevelUp(final Random random)
     {
         tryRandomLevelUp(random, 0);
@@ -1331,6 +1209,7 @@ public class CitizenData
      *
      * @param customChance set to 0 to not use, chance for levelup is 1/customChance
      */
+    @Override
     public void tryRandomLevelUp(final Random random, final int customChance)
     {
         if ((customChance > 0 && random.nextInt(customChance) > 0) || (customChance < 1 && random.nextInt(CHANCE_TO_LEVEL) > 0))
@@ -1362,8 +1241,8 @@ public class CitizenData
 
     /**
      * Schedule restart and cleanup
-     * {@link com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic#restart}
      */
+    @Override
     public void scheduleRestart(final EntityPlayerMP player)
     {
         originPlayerRestart = player;
@@ -1373,6 +1252,7 @@ public class CitizenData
     /**
      * AI will be restarted, also restart building etc
      */
+    @Override
     public boolean shouldRestart()
     {
         return restartScheduled;
@@ -1381,6 +1261,7 @@ public class CitizenData
     /**
      * Restart done successfully
      */
+    @Override
     public void restartDone()
     {
         restartScheduled = false;
@@ -1392,6 +1273,7 @@ public class CitizenData
      *
      * @param isChild boolean
      */
+    @Override
     public void setIsChild(final boolean isChild)
     {
         this.isChild = isChild;
@@ -1403,6 +1285,7 @@ public class CitizenData
      *
      * @return boolean
      */
+    @Override
     public boolean isChild()
     {
         return isChild;
@@ -1413,6 +1296,7 @@ public class CitizenData
      *
      * @param strength value to set
      */
+    @Override
     public void setStrength(@NotNull final int strength)
     {
         if (strength < MIN_STAT)
@@ -1431,6 +1315,7 @@ public class CitizenData
      *
      * @param endurance value to set
      */
+    @Override
     public void setEndurance(@NotNull final int endurance)
     {
         if (endurance < MIN_STAT)
@@ -1449,6 +1334,7 @@ public class CitizenData
      *
      * @param charisma value to set
      */
+    @Override
     public void setCharisma(@NotNull final int charisma)
     {
         if (charisma < MIN_STAT)
@@ -1467,6 +1353,7 @@ public class CitizenData
      *
      * @param intelligence value to set
      */
+    @Override
     public void setIntelligence(@NotNull final int intelligence)
     {
         if (intelligence < MIN_STAT)
@@ -1485,6 +1372,7 @@ public class CitizenData
      *
      * @param dexterity value to set
      */
+    @Override
     public void setDexterity(@NotNull final int dexterity)
     {
         if (dexterity < MIN_STAT)
@@ -1501,6 +1389,7 @@ public class CitizenData
     /**
      * Get the max health
      */
+    @Override
     public double getMaxHealth()
     {
         return maxHealth;
@@ -1509,6 +1398,7 @@ public class CitizenData
     /**
      * Get the current healh
      */
+    @Override
     public double getHealth()
     {
         return health;
@@ -1516,8 +1406,10 @@ public class CitizenData
 
     /**
      * Check if the citizen just ate.
+     *
      * @return true if so.
      */
+    @Override
     public boolean justAte()
     {
         return this.justAte;
@@ -1525,10 +1417,137 @@ public class CitizenData
 
     /**
      * Set or reset if the citizen just ate.
+     *
      * @param justAte true if justAte, false to reset.
      */
+    @Override
     public void setJustAte(final boolean justAte)
     {
         this.justAte = justAte;
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT()
+    {
+        final NBTTagCompound nbtTagCompound = new NBTTagCompound();
+
+        nbtTagCompound.setInteger(TAG_ID, id);
+        nbtTagCompound.setString(TAG_NAME, name);
+        nbtTagCompound.setBoolean(TAG_FEMALE, female);
+        nbtTagCompound.setBoolean(TAG_PAUSED, paused);
+        nbtTagCompound.setBoolean(TAG_CHILD, isChild);
+        nbtTagCompound.setInteger(TAG_TEXTURE, textureId);
+
+        //  Attributes
+
+        @NotNull final NBTTagList levelTagList = new NBTTagList();
+        for (@NotNull final Map.Entry<String, Tuple<Integer, Double>> entry : levelExperienceMap.entrySet())
+        {
+            @NotNull final NBTTagCompound levelCompound = new NBTTagCompound();
+            levelCompound.setString(TAG_NAME, entry.getKey());
+            levelCompound.setInteger(TAG_LEVEL, entry.getValue().getFirst());
+            levelCompound.setDouble(TAG_EXPERIENCE, entry.getValue().getSecond());
+            levelTagList.appendTag(levelCompound);
+        }
+        nbtTagCompound.setTag(TAG_LEVEL_MAP, levelTagList);
+
+        nbtTagCompound.setDouble(TAG_HEALTH, health);
+        nbtTagCompound.setDouble(TAG_MAX_HEALTH, maxHealth);
+
+
+        @NotNull final NBTTagCompound nbtTagSkillsCompound = new NBTTagCompound();
+        nbtTagSkillsCompound.setInteger(TAG_SKILL_STRENGTH, strength);
+        nbtTagSkillsCompound.setInteger(TAG_SKILL_STAMINA, endurance);
+        nbtTagSkillsCompound.setInteger(TAG_SKILL_SPEED, charisma);
+        nbtTagSkillsCompound.setInteger(TAG_SKILL_INTELLIGENCE, intelligence);
+        nbtTagSkillsCompound.setInteger(TAG_SKILL_DEXTERITY, dexterity);
+        nbtTagCompound.setTag(TAG_SKILLS, nbtTagSkillsCompound);
+        nbtTagCompound.setDouble(TAG_SATURATION, saturation);
+
+        if (job != null)
+        {
+            @NotNull final NBTBase jobCompound = job.serializeNBT();
+            nbtTagCompound.setTag("job", jobCompound);
+        }
+
+        nbtTagCompound.setTag(TAG_INVENTORY, inventory.writeToNBT(new NBTTagList()));
+        nbtTagCompound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.MAIN_HAND));
+        nbtTagCompound.setInteger(TAG_OFFHAND_HELD_ITEM_SLOT, inventory.getHeldItemSlot(EnumHand.OFF_HAND));
+
+        BlockPosUtil.writeToNBT(nbtTagCompound, TAG_POS, bedPos);
+        nbtTagCompound.setBoolean(TAG_ASLEEP, isAsleep);
+        nbtTagCompound.setBoolean(TAG_JUST_ATE, justAte);
+
+        citizenHappinessHandler.writeToNBT(nbtTagCompound);
+
+        return nbtTagCompound;
+    }
+
+    @Override
+    public void deserializeNBT(final NBTTagCompound nbtTagCompound)
+    {
+        name = nbtTagCompound.getString(TAG_NAME);
+        female = nbtTagCompound.getBoolean(TAG_FEMALE);
+        paused = nbtTagCompound.getBoolean(TAG_PAUSED);
+        isChild = nbtTagCompound.getBoolean(TAG_CHILD);
+        textureId = nbtTagCompound.getInteger(TAG_TEXTURE);
+
+        health = nbtTagCompound.getFloat(TAG_HEALTH);
+        maxHealth = nbtTagCompound.getFloat(TAG_MAX_HEALTH);
+
+        final NBTTagCompound nbtTagSkillsCompound = nbtTagCompound.getCompoundTag("skills");
+        strength = nbtTagSkillsCompound.getInteger("strength");
+        endurance = nbtTagSkillsCompound.getInteger("endurance");
+        charisma = nbtTagSkillsCompound.getInteger("charisma");
+        intelligence = nbtTagSkillsCompound.getInteger("intelligence");
+        dexterity = nbtTagSkillsCompound.getInteger("dexterity");
+        saturation = nbtTagCompound.getDouble(TAG_SATURATION);
+
+        if (nbtTagCompound.hasKey("job"))
+        {
+            setJob(IJobDataManager.getInstance().createFrom(this, nbtTagCompound.getCompoundTag("job")));
+        }
+
+        //  Attributes
+        if (nbtTagCompound.hasKey(TAG_LEVEL_MAP))
+        {
+            final NBTTagList levelTagList = nbtTagCompound.getTagList(TAG_LEVEL_MAP, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < levelTagList.tagCount(); ++i)
+            {
+                final NBTTagCompound levelExperienceAtJob = levelTagList.getCompoundTagAt(i);
+                levelExperienceMap.put(levelExperienceAtJob.getString(TAG_NAME),
+                  new Tuple<>(Math.min(levelExperienceAtJob.getInteger(TAG_LEVEL), MAX_CITIZEN_LEVEL), levelExperienceAtJob.getDouble(TAG_EXPERIENCE)));
+            }
+        }
+        else if (job != null)
+        {
+            levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(nbtTagCompound.getInteger(TAG_LEVEL), nbtTagCompound.getDouble(TAG_EXPERIENCE)));
+        }
+
+        if (nbtTagCompound.hasKey(TAG_INVENTORY))
+        {
+            final NBTTagList nbttaglist = nbtTagCompound.getTagList(TAG_INVENTORY, 10);
+            this.inventory.readFromNBT(nbttaglist);
+            this.inventory.setHeldItem(EnumHand.MAIN_HAND, nbtTagCompound.getInteger(TAG_HELD_ITEM_SLOT));
+            this.inventory.setHeldItem(EnumHand.OFF_HAND, nbtTagCompound.getInteger(TAG_OFFHAND_HELD_ITEM_SLOT));
+        }
+
+        if (name.isEmpty())
+        {
+            name = generateName(new Random());
+        }
+
+        if (nbtTagCompound.hasKey(TAG_ASLEEP))
+        {
+            bedPos = BlockPosUtil.readFromNBT(nbtTagCompound, TAG_POS);
+            isAsleep = nbtTagCompound.getBoolean(TAG_ASLEEP);
+        }
+
+        if (nbtTagCompound.hasKey(TAG_JUST_ATE))
+        {
+            justAte = nbtTagCompound.getBoolean(TAG_JUST_ATE);
+        }
+
+        citizenHappinessHandler.readFromNBT(nbtTagCompound);
     }
 }

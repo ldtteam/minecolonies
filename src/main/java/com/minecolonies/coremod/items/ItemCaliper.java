@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.coremod.creativetab.ModCreativeTabs;
-import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ItemCaliper extends AbstractItemMinecolonies
 {
-    private static final RangedAttribute ATTRIBUTE_CALIPER_USE = new RangedAttribute((IAttribute) null, "player.caliperUse", 0.0, 0.0, 1.0);
+    private static final RangedAttribute ATTRIBUTE_CALIPER_USE = new RangedAttribute(null, "player.caliperUse", 0.0, 0.0, 1.0);
 
     private static final double HALF                        = 0.5;
     private static final String ITEM_CALIPER_MESSAGE_LINE   = "item.caliper.message.line";

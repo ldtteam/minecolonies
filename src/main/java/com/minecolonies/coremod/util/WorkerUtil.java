@@ -3,13 +3,14 @@ package com.minecolonies.coremod.util;
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.BlockInfo;
 import com.minecolonies.api.entity.ai.Status;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
-import com.minecolonies.coremod.entity.pathfinding.PathResult;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -23,7 +24,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -97,7 +97,7 @@ public final class WorkerUtil
      * @param destination Chunk coordinate of the distance.
      * @return True when found, and destination is set, otherwise false.
      */
-    public static PathResult moveLivingToXYZ(@NotNull final EntityCitizen citizen, @NotNull final BlockPos destination)
+    public static PathResult moveLivingToXYZ(@NotNull final AbstractEntityCitizen citizen, @NotNull final BlockPos destination)
     {
         return citizen.getNavigator().moveToXYZ(destination.getX(), destination.getY(), destination.getZ(), 1.0);
     }
@@ -109,7 +109,7 @@ public final class WorkerUtil
      * @param citizen    the citizen.
      * @return true if succesful.
      */
-    public static boolean setSpawnPoint(@Nullable final BlockPos spawnPoint, @NotNull final EntityCitizen citizen)
+    public static boolean setSpawnPoint(@Nullable final BlockPos spawnPoint, @NotNull final AbstractEntityCitizen citizen)
     {
         if (spawnPoint == null)
         {
@@ -120,8 +120,8 @@ public final class WorkerUtil
           spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
           spawnPoint.getY(),
           spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
-          citizen.rotationYaw,
-          citizen.rotationPitch);
+          citizen.getRotationYaw(),
+          citizen.getRotationPitch());
         citizen.getNavigator().clearPath();
         return true;
     }
@@ -175,7 +175,7 @@ public final class WorkerUtil
      * @param z       Z-coordinate
      * @return True if citizen heads to (x, z), otherwise false
      */
-    public static boolean isPathingTo(@NotNull final EntityCitizen citizen, final int x, final int z)
+    public static boolean isPathingTo(@NotNull final AbstractEntityCitizen citizen, final int x, final int z)
     {
         final PathPoint pathpoint = citizen.getNavigator().getPath().getFinalPathPoint();
         return pathpoint != null && pathpoint.x == x && pathpoint.z == z;
@@ -186,22 +186,22 @@ public final class WorkerUtil
      *
      * @param block the block he should look at.
      */
-    public static void faceBlock(@Nullable final BlockPos block, final EntityCitizen citizen)
+    public static void faceBlock(@Nullable final BlockPos block, final AbstractEntityCitizen citizen)
     {
         if (block == null)
         {
             return;
         }
 
-        final double xDifference = block.getX() - citizen.posX;
-        final double zDifference = block.getZ() - citizen.posZ;
-        final double yDifference = block.getY() - (citizen.posY + (double) citizen.getEyeHeight());
+        final double xDifference = block.getX() - citizen.getPosition().getX();
+        final double zDifference = block.getZ() - citizen.getPosition().getZ();
+        final double yDifference = block.getY() - (citizen.getPosition().getY() + citizen.getEyeHeight());
 
         final double squareDifference = Math.sqrt(xDifference * xDifference + zDifference * zDifference);
         final double intendedRotationYaw = (Math.atan2(zDifference, xDifference) * 180.0D / Math.PI) - 90.0;
         final double intendedRotationPitch = -(Math.atan2(yDifference, squareDifference) * 180.0D / Math.PI);
-        citizen.setOwnRotation((float) EntityUtils.updateRotation(citizen.rotationYaw, intendedRotationYaw, ROTATION_MOVEMENT),
-          (float) EntityUtils.updateRotation(citizen.rotationPitch, intendedRotationPitch, ROTATION_MOVEMENT));
+        citizen.setOwnRotation((float) EntityUtils.updateRotation(citizen.getRotationYaw(), intendedRotationYaw, ROTATION_MOVEMENT),
+          (float) EntityUtils.updateRotation(citizen.getRotationPitch(), intendedRotationPitch, ROTATION_MOVEMENT));
 
         final double goToX = xDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
         final double goToZ = zDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
@@ -233,7 +233,7 @@ public final class WorkerUtil
                         {
                             // try to make an anchor in 0,0,0 instead of the middle of the structure
                             BlockPos zeroAnchor = structure.getPosition();
-                            zeroAnchor = zeroAnchor.add(new BlockPos(-((int) structure.getWidth() / 2), 0, -((int) structure.getLength() / 2)));
+                            zeroAnchor = zeroAnchor.add(new BlockPos(-(structure.getWidth() / 2), 0, -(structure.getLength() / 2)));
                             return zeroAnchor.add(localPos);
                         }
                     }

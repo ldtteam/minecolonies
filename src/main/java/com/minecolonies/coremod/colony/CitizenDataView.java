@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.inventory.InventoryCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -19,11 +20,10 @@ import org.jetbrains.annotations.Nullable;
  * client-friendly form. Mutable operations on a View result in a message to the
  * server to perform the operation.
  */
-public class CitizenDataView
+public class CitizenDataView implements ICitizenDataView
 {
 
     private static final String TAG_HELD_ITEM_SLOT = "HeldItemSlot";
-    public static final String TAG_OFFHAND_HELD_ITEM_SLOT = "OffhandHeldItemSlot";
 
     /**
      * The max amount of lines the latest log allows.
@@ -116,6 +116,7 @@ public class CitizenDataView
      *
      * @return view Id.
      */
+    @Override
     public int getId()
     {
         return id;
@@ -126,6 +127,7 @@ public class CitizenDataView
      *
      * @return entity id.
      */
+    @Override
     public int getEntityId()
     {
         return entityId;
@@ -136,6 +138,7 @@ public class CitizenDataView
      *
      * @return entity name.
      */
+    @Override
     public String getName()
     {
         return name;
@@ -146,6 +149,7 @@ public class CitizenDataView
      *
      * @return true if entity is female.
      */
+    @Override
     public boolean isFemale()
     {
         return female;
@@ -156,6 +160,7 @@ public class CitizenDataView
      *
      * @return true if entity is paused.
      */
+    @Override
     public boolean isPaused()
     {
         return paused;
@@ -166,6 +171,7 @@ public class CitizenDataView
      *
      * @return true if child
      */
+    @Override
     public boolean isChild()
     {
         return isChild;
@@ -174,6 +180,7 @@ public class CitizenDataView
     /**
      * DEPRECATED
      */
+    @Override
     public void setPaused(final boolean p)
     {
         this.paused = p;
@@ -184,6 +191,7 @@ public class CitizenDataView
      *
      * @return the citizens level.
      */
+    @Override
     public int getLevel()
     {
         return level;
@@ -194,6 +202,7 @@ public class CitizenDataView
      *
      * @return it's experience.
      */
+    @Override
     public double getExperience()
     {
         return experience;
@@ -204,6 +213,7 @@ public class CitizenDataView
      *
      * @return the job as a string.
      */
+    @Override
     public String getJob()
     {
         return job;
@@ -214,6 +224,7 @@ public class CitizenDataView
      *
      * @return the home coordinates.
      */
+    @Override
     @Nullable
     public BlockPos getHomeBuilding()
     {
@@ -225,6 +236,7 @@ public class CitizenDataView
      *
      * @return the work coordinates.
      */
+    @Override
     @Nullable
     public BlockPos getWorkBuilding()
     {
@@ -234,6 +246,7 @@ public class CitizenDataView
     /**
      * DEPRECATED
      */
+    @Override
     @Nullable
     public void setWorkBuilding(final BlockPos bp)
     {
@@ -245,6 +258,7 @@ public class CitizenDataView
      *
      * @return unique id of the colony.
      */
+    @Override
     public int getColonyId()
     {
         return colonyId;
@@ -255,6 +269,7 @@ public class CitizenDataView
      *
      * @return citizen Strength value.
      */
+    @Override
     public int getStrength()
     {
         return strength;
@@ -265,6 +280,7 @@ public class CitizenDataView
      *
      * @return citizen Endurance value.
      */
+    @Override
     public int getEndurance()
     {
         return endurance;
@@ -275,6 +291,7 @@ public class CitizenDataView
      *
      * @return citizen Charisma value.
      */
+    @Override
     public int getCharisma()
     {
         return charisma;
@@ -285,6 +302,7 @@ public class CitizenDataView
      * 
      * @return citizens current Happiness value
      */
+    @Override
     public double getHappiness()
     {
         return happiness;
@@ -295,6 +313,7 @@ public class CitizenDataView
      *
      * @return the saturation a double.
      */
+    @Override
     public double getSaturation()
     {
         return saturation;
@@ -305,6 +324,7 @@ public class CitizenDataView
      *
      * @return citizen Intelligence value.
      */
+    @Override
     public int getIntelligence()
     {
         return intelligence;
@@ -315,6 +335,7 @@ public class CitizenDataView
      *
      * @return citizen Dexterity value.
      */
+    @Override
     public int getDexterity()
     {
         return dexterity;
@@ -325,6 +346,7 @@ public class CitizenDataView
      *
      * @return citizen Dexterity value
      */
+    @Override
     public double getHealth()
     {
         return health;
@@ -335,6 +357,7 @@ public class CitizenDataView
      *
      * @return citizen Dexterity value.
      */
+    @Override
     public double getMaxHealth()
     {
         return maxHealth;
@@ -345,6 +368,7 @@ public class CitizenDataView
      * 
      * @return the BlockPos.
      */
+    @Override
     public BlockPos getPosition()
     {
         return position;
@@ -356,6 +380,7 @@ public class CitizenDataView
      * @param buf
      *            Byte buffer to deserialize.
      */
+    @Override
     public void deserialize(@NotNull final ByteBuf buf)
     {
         name = ByteBufUtils.readUTF8String(buf);
@@ -415,11 +440,13 @@ public class CitizenDataView
      *
      * @return the array of ITextComponents.
      */
+    @Override
     public ITextComponent[] getLatestStatus()
     {
         return latestStatus.clone();
     }
 
+    @Override
     public InventoryCitizen getInventory()
     {
         return inventory;
@@ -428,6 +455,7 @@ public class CitizenDataView
     /**
      * @return returns the current modifier related to food.
      */
+    @Override
     public double getFoodModifier()
     {
         return foodModifier;
@@ -436,6 +464,7 @@ public class CitizenDataView
     /**
      * @return returns the current modifier related to damage.
      */
+    @Override
     public double getDamageModifier()
     {
         return damageModifier;
@@ -444,6 +473,7 @@ public class CitizenDataView
     /**
      * @return returns the current modifier related to house.
      */
+    @Override
     public double getHouseModifier()
     {
         return houseModifier;
@@ -452,6 +482,7 @@ public class CitizenDataView
     /**
      * @return returns the current modifier related to job.
      */
+    @Override
     public double getJobModifier()
     {
         return jobModifier;
@@ -460,6 +491,7 @@ public class CitizenDataView
     /**
      * @return returns the current modifier related to fields.
      */
+    @Override
     public double getFieldsModifier()
     {
         return fieldsModifier;
@@ -468,6 +500,7 @@ public class CitizenDataView
     /**
      * @return returns the current modifier related to tools.
      */
+    @Override
     public double getToolsModifiers()
     {
         return toolsModifiers;

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,7 +30,7 @@ public interface IColonyManagerCapability
      * @param pos the position of the colony.
      * @return the created colony.
      */
-    Colony createColony(@NotNull final World w, @NotNull final BlockPos pos);
+    IColony createColony(@NotNull final World w, @NotNull final BlockPos pos);
 
     /**
      * Delete a colony with a certain id.
@@ -43,19 +44,19 @@ public interface IColonyManagerCapability
      * @return the colony or null.
      */
     @Nullable
-    Colony getColony(final int id);
+    IColony getColony(final int id);
 
     /**
      * Get a list of all colonies.
      * @return a complete list.
      */
-    List<Colony> getColonies();
+    List<IColony> getColonies();
 
     /**
      * add a new colony to the capability.
      * @param colony the colony to add.
      */
-    void addColony(Colony colony);
+    void addColony(IColony colony);
 
     /**
      * Set how many chunks are missing to load.
@@ -84,7 +85,7 @@ public interface IColonyManagerCapability
          * The list of all colonies.
          */
         @NotNull
-        private final ColonyList<Colony> colonies = new ColonyList<>();
+        private final ColonyList<IColony> colonies = new ColonyList<>();
 
         /**
          * Removed elements of the list of chunks to load.
@@ -92,7 +93,7 @@ public interface IColonyManagerCapability
         private int missingChunksToLoad = 0;
 
         @Override
-        public Colony createColony(@NotNull final World w, @NotNull final BlockPos pos)
+        public IColony createColony(@NotNull final World w, @NotNull final BlockPos pos)
         {
             return colonies.create(w, pos);
         }
@@ -104,19 +105,19 @@ public interface IColonyManagerCapability
         }
 
         @Override
-        public Colony getColony(final int id)
+        public IColony getColony(final int id)
         {
             return colonies.get(id);
         }
 
         @Override
-        public List<Colony> getColonies()
+        public List<IColony> getColonies()
         {
             return colonies.getCopyAsList();
         }
 
         @Override
-        public void addColony(final Colony colony)
+        public void addColony(final IColony colony)
         {
             colonies.add(colony);
         }
@@ -149,7 +150,7 @@ public interface IColonyManagerCapability
         public NBTBase writeNBT(@NotNull final Capability<IColonyManagerCapability> capability, @NotNull final IColonyManagerCapability instance, @Nullable final EnumFacing side)
         {
             final NBTTagCompound compound = new NBTTagCompound();
-            compound.setTag(TAG_COLONIES, instance.getColonies().stream().map(Colony::getColonyTag).filter(Objects::nonNull).collect(NBTUtils.toNBTTagList()));
+            compound.setTag(TAG_COLONIES, instance.getColonies().stream().map(IColony::getColonyTag).filter(Objects::nonNull).collect(NBTUtils.toNBTTagList()));
             compound.setInteger(TAG_MISSING_CHUNKS, instance.getMissingChunksToLoad());
             return compound;
         }

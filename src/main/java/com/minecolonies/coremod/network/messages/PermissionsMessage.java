@@ -1,17 +1,17 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.network.PacketUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -88,7 +88,7 @@ public class PermissionsMessage
         @Override
         protected void messageOnClientThread(final View message, final MessageContext ctx)
         {
-            ColonyManager.handlePermissionsViewMessage(message.colonyID, message.data, message.dimension);
+            IColonyManager.getInstance().handlePermissionsViewMessage(message.colonyID, message.data, message.dimension);
         }
 
         @Override
@@ -131,7 +131,7 @@ public class PermissionsMessage
          * @param rank   Rank of the permission {@link Rank}
          * @param action Action of the permission {@link Action}
          */
-        public Permission(@NotNull final ColonyView colony, final MessageType type, final Rank rank, final Action action)
+        public Permission(@NotNull final IColonyView colony, final MessageType type, final Rank rank, final Action action)
         {
             super();
             this.colonyID = colony.getID();
@@ -144,7 +144,7 @@ public class PermissionsMessage
         @Override
         public void messageOnServerThread(final Permission message, final EntityPlayerMP player)
         {
-            final Colony colony = ColonyManager.getColonyByDimension(message.colonyID, message.dimension);
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
             if (colony == null)
             {
                 Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
@@ -221,7 +221,7 @@ public class PermissionsMessage
          * @param colony Colony the permission is set in.
          * @param player New player name to be added.
          */
-        public AddPlayer(@NotNull final ColonyView colony, final String player)
+        public AddPlayer(@NotNull final IColonyView colony, final String player)
         {
             super();
             this.colonyID = colony.getID();
@@ -248,7 +248,7 @@ public class PermissionsMessage
         @Override
         public void messageOnServerThread(final AddPlayer message, final EntityPlayerMP player)
         {
-            final Colony colony = ColonyManager.getColonyByDimension(message.colonyID, message.dimension);
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
 
             if (colony != null && colony.getPermissions().hasPermission(player, Action.CAN_PROMOTE) && colony.getWorld() != null)
             {
@@ -290,7 +290,7 @@ public class PermissionsMessage
          * @param playerName New player name to be added.
          * @param id the id of the player or fakeplayer.
          */
-        public AddPlayerOrFakePlayer(@NotNull final ColonyView colony, final String playerName, final UUID id)
+        public AddPlayerOrFakePlayer(@NotNull final IColonyView colony, final String playerName, final UUID id)
         {
             super();
             this.colonyID = colony.getID();
@@ -320,7 +320,7 @@ public class PermissionsMessage
         @Override
         public void messageOnServerThread(final AddPlayerOrFakePlayer message, final EntityPlayerMP player)
         {
-            final Colony colony = ColonyManager.getColonyByDimension(message.colonyID, message.dimension);
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
 
             if (colony != null && colony.getPermissions().hasPermission(player, Action.CAN_PROMOTE) && colony.getWorld() != null)
             {
@@ -362,7 +362,7 @@ public class PermissionsMessage
          * @param player UUID of the player to set rank.
          * @param type   Promote or demote.
          */
-        public ChangePlayerRank(@NotNull final ColonyView colony, final UUID player, final Type type)
+        public ChangePlayerRank(@NotNull final IColonyView colony, final UUID player, final Type type)
         {
             super();
             this.colonyID = colony.getID();
@@ -401,7 +401,7 @@ public class PermissionsMessage
         @Override
         public void messageOnServerThread(final ChangePlayerRank message, final EntityPlayerMP player)
         {
-            final Colony colony = ColonyManager.getColonyByDimension(message.colonyID, message.dimension);
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
 
             if (colony == null || colony.getWorld() == null)
             {
@@ -452,7 +452,7 @@ public class PermissionsMessage
          * @param colony Colony the player is removed from the permission.
          * @param player UUID of the removed player.
          */
-        public RemovePlayer(@NotNull final ColonyView colony, final UUID player)
+        public RemovePlayer(@NotNull final IColonyView colony, final UUID player)
         {
             super();
             this.colonyID = colony.getID();
@@ -479,7 +479,7 @@ public class PermissionsMessage
         @Override
         public void messageOnServerThread(final RemovePlayer message, final EntityPlayerMP player)
         {
-            final Colony colony = ColonyManager.getColonyByDimension(message.colonyID, message.dimension);
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(message.colonyID, message.dimension);
 
             if (colony == null)
             {

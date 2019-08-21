@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.blocks.huts;
 
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,5 +16,11 @@ public class BlockHutStoneSmeltery extends AbstractBlockHut<BlockHutStoneSmelter
     public String getName()
     {
         return "blockHutStoneSmeltery";
+    }
+
+    @Override
+    public BuildingEntry getBuildingEntry()
+    {
+        return ModBuildings.stoneSmelter;
     }
 }

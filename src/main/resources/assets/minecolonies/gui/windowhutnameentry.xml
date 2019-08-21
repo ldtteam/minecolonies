@@ -1,6 +1,6 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
         lightbox="true"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
     <label size="100% 11" pos="0 100" textalign="TOP_MIDDLE" color="white"
            label="$(com.minecolonies.coremod.gui.building.rename.title)"/>
     <input id="name" size="150 18" pos="135 110" maxlength="25"/>
