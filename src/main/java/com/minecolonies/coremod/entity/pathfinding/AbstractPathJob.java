@@ -245,7 +245,6 @@ public abstract class AbstractPathJob implements Callable<Path>
         final BlockState state = world.getBlockState(pos);
         if (state.getBlock() instanceof VineBlock)
         {
-
             if (state.get(VineBlock.SOUTH))
             {
                 p.setLadderFacing(Direction.SOUTH);
@@ -265,7 +264,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
         else
         {
-            p.setLadderFacing(world.getBlockState(pos).get(LadderBlock.FACING));
+            p.setLadderFacing(state.get(LadderBlock.FACING));
         }
     }
 
