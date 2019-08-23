@@ -46,14 +46,14 @@ public final class KnightSounds extends AbstractWorkerSounds
      */
     public static final class Male
     {
-        public static final SoundEvent generalPhrases    = ModSoundEvents.getSoundID("mob.guard.knight.male.generalPhrases");
+        public static final SoundEvent generalPhrases    = ModSoundEvents.getSoundID("mob.guard.knight.male.generalphrases");
         public static final SoundEvent noises            = ModSoundEvents.getSoundID("mob.guard.knight.male.noise");
         public static final SoundEvent retrieve          = ModSoundEvents.getSoundID("mob.guard.knight.male.retrieve");
-        public static final SoundEvent offToBed          = ModSoundEvents.getSoundID("mob.guard.knight.male.offToBed");
-        public static final SoundEvent badWeather        = ModSoundEvents.getSoundID("mob.guard.knight.male.badWeather");
-        public static final SoundEvent saturationVeryLow = ModSoundEvents.getSoundID("mob.guard.knight.male.saturationVeryLow");
-        public static final SoundEvent saturationLow     = ModSoundEvents.getSoundID("mob.guard.knight.male.saturationLow");
-        public static final SoundEvent saturationHigh    = ModSoundEvents.getSoundID("mob.guard.knight.male.saturationHigh");
+        public static final SoundEvent offToBed          = ModSoundEvents.getSoundID("mob.guard.knight.male.offtobed");
+        public static final SoundEvent badWeather        = ModSoundEvents.getSoundID("mob.guard.knight.male.badweather");
+        public static final SoundEvent saturationVeryLow = ModSoundEvents.getSoundID("mob.guard.knight.male.saturationverylow");
+        public static final SoundEvent saturationLow     = ModSoundEvents.getSoundID("mob.guard.knight.male.saturationlow");
+        public static final SoundEvent saturationHigh    = ModSoundEvents.getSoundID("mob.guard.knight.male.saturationhigh");
         public static final SoundEvent levelUp           = ModSoundEvents.getSoundID("mob.guard.knight.male.levelup");
         public static final SoundEvent badHousing        = ModSoundEvents.getSoundID("mob.guard.knight.male.badhousing");
         public static final SoundEvent greeting          = ModSoundEvents.getSoundID("mob.guard.knight.male.greeting");

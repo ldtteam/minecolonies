@@ -30,14 +30,14 @@ public final class FarmerSounds extends AbstractWorkerSounds
      */
     public static final class Female
     {
-        public static final SoundEvent generalPhrases    = ModSoundEvents.getSoundID("mob.farmer.female.generalPhrases");
+        public static final SoundEvent generalPhrases    = ModSoundEvents.getSoundID("mob.farmer.female.generalphrases");
         public static final SoundEvent noises            = ModSoundEvents.getSoundID("mob.farmer.female.noise");
         public static final SoundEvent hostile           = ModSoundEvents.getSoundID("mob.farmer.female.hostile");
-        public static final SoundEvent offToBed          = ModSoundEvents.getSoundID("mob.farmer.female.offToBed");
-        public static final SoundEvent badWeather        = ModSoundEvents.getSoundID("mob.farmer.female.badWeather");
-        public static final SoundEvent saturationVeryLow = ModSoundEvents.getSoundID("mob.farmer.female.saturationVeryLow");
-        public static final SoundEvent saturationLow     = ModSoundEvents.getSoundID("mob.farmer.female.saturationLow");
-        public static final SoundEvent saturationHigh    = ModSoundEvents.getSoundID("mob.farmer.female.saturationHigh");
+        public static final SoundEvent offToBed          = ModSoundEvents.getSoundID("mob.farmer.female.offtobed");
+        public static final SoundEvent badWeather        = ModSoundEvents.getSoundID("mob.farmer.female.badweather");
+        public static final SoundEvent saturationVeryLow = ModSoundEvents.getSoundID("mob.farmer.female.saturationverylow");
+        public static final SoundEvent saturationLow     = ModSoundEvents.getSoundID("mob.farmer.female.saturationlow");
+        public static final SoundEvent saturationHigh    = ModSoundEvents.getSoundID("mob.farmer.female.saturationhigh");
         public static final SoundEvent greeting          = ModSoundEvents.getSoundID("mob.farmer.female.greeting");
         public static final SoundEvent farewell          = ModSoundEvents.getSoundID("mob.farmer.female.farewell");
         public static final SoundEvent interaction       = ModSoundEvents.getSoundID("mob.farmer.female.interaction");
