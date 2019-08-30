@@ -234,13 +234,14 @@ public class WorkManager implements IWorkManager
     {
         dirty = true;
 
-        if (order instanceof WorkOrderBuildMiner)
+        if (order instanceof WorkOrderBuildDecoration)
         {
             for (final IWorkOrder or : workOrders.values())
             {
-                if (or instanceof WorkOrderBuildMiner)
+                if (or instanceof WorkOrderBuildDecoration)
                 {
-                    if (((WorkOrderBuildMiner) or).buildingLocation.equals(((WorkOrderBuildMiner) order).buildingLocation))
+                    if (((WorkOrderBuildDecoration) or).getBuildingLocation().equals(((WorkOrderBuildDecoration) order).buildingLocation)
+                    && ((WorkOrderBuildDecoration) or).getStructureName().equals(((WorkOrderBuildDecoration) order).getStructureName()))
                     {
                         Log.getLogger().warn("Avoiding adding duplicate workOrder");
                         removeWorkOrder(or);
