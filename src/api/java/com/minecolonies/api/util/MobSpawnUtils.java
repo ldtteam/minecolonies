@@ -50,7 +50,7 @@ public final class MobSpawnUtils
         aiTasks.keySet().forEach(priority -> aiTasks.get(priority).forEach(task -> mob.tasks.addTask(priority, task)));
 
         final Multimap<Integer, EntityAIBase> aiTargetTasks = IMinecoloniesAPI.getInstance().getMobAIRegistry().getEntityAiTargetTasksForMobs(mob);
-        aiTargetTasks.keySet().forEach(priority -> aiTasks.get(priority).forEach(task -> mob.tasks.addTask(priority, task)));
+        aiTargetTasks.keySet().forEach(priority -> aiTargetTasks.get(priority).forEach(task -> mob.tasks.addTask(priority, task)));
     }
 
     /**
