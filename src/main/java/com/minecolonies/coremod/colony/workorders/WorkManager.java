@@ -243,7 +243,8 @@ public class WorkManager implements IWorkManager
                     if (((WorkOrderBuildMiner) or).buildingLocation.equals(((WorkOrderBuildMiner) order).buildingLocation))
                     {
                         Log.getLogger().warn("Avoiding adding duplicate workOrder");
-                        return;
+                        removeWorkOrder(or);
+                        break;
                     }
                 }
             }
