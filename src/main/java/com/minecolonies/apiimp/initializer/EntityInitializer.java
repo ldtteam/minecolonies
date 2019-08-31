@@ -42,6 +42,7 @@ public class EntityInitializer
                                  .setUpdateInterval(ENTITY_UPDATE_FREQUENCY_FISHHOOK)
                                  .size(0.25F, 0.25F)
                                  .setShouldReceiveVelocityUpdates(true)
+                                 .setCustomClientFactory(NewBobberEntity::new)
                                  .build(Constants.MOD_ID + ":fishhook")
                                  .setRegistryName("fishhook");
 
