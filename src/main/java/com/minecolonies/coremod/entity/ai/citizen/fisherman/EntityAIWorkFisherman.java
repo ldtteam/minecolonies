@@ -538,8 +538,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
               0.5F,
               (float) (0.4D / (this.world.rand.nextFloat() * 0.4D + 0.8D)));
             this.entityFishHook = (NewBobberEntity) ModEntities.FISHHOOK.create(world);
-            this.entityFishHook.setAngler((EntityCitizen) worker, 0, fishingSkill);
             world.addEntity(this.entityFishHook);
+            this.entityFishHook.setAngler((EntityCitizen) worker, 0, fishingSkill);
         }
 
         worker.swingArm(worker.getActiveHand());
@@ -638,7 +638,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         {
             return false;
         }
-        if (entityFishHook.caughtEntity == null)
+        if (!entityFishHook.isReadyToCatch())
         {
             return false;
         }
@@ -657,6 +657,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         worker.swingArm(worker.getActiveHand());
         final int i = entityFishHook.getDamage();
+        entityFishHook.remove();
         worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, i);
         entityFishHook = null;
     }
