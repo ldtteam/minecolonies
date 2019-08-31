@@ -341,7 +341,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean shouldHoe(@NotNull final BlockPos position, @NotNull final ScarecrowTileEntity field)
     {
-        return !field.isNoPartOfField(world, position) && world.getBlockState(position.up()) .getBlock() instanceof CropsBlock
+
+         return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.up()) .getBlock() instanceof CropsBlock)
                  && !(world.getBlockState(position.up()).getBlock() instanceof BlockScarecrow)
                  && (world.getBlockState(position).getBlock().isIn(BlockTags.DIRT_LIKE) || world.getBlockState(position).getBlock() instanceof GrassBlock);
     }
