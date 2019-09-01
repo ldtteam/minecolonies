@@ -49,6 +49,7 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue minThLevelToTeleport;
     public final ForgeConfigSpec.BooleanValue suggestBuildToolPlacement;
     public final ForgeConfigSpec.DoubleValue foodModifier;
+    public ForgeConfigSpec.BooleanValue disableCitizenVoices;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Command settings ######## ------------------- *
@@ -195,7 +196,7 @@ public class CommonConfiguration extends AbstractConfiguration
         minThLevelToTeleport = defineInteger(builder, "minthleveltoteleport", 3, 0, 5);
         suggestBuildToolPlacement = defineBoolean(builder, "suggestbuildtoolplacement", true);
         foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0, 100);
-
+        disableCitizenVoices = defineBoolean(builder, "disablecitizenvoices", false);
 
         swapToCategory(builder, "commands");
 
