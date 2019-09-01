@@ -145,7 +145,8 @@ public class DebugRendererChunkBorder
 
                     if (levels > lowerYLimitSmaller)
                     {
-                        levels+=upperYLimit/relPlayerY/(upperYLimit/relPlayerY - levels/relPlayerY)*10;
+                        final double addition = upperYLimit/relPlayerY/(upperYLimit/relPlayerY - levels/relPlayerY)*10;
+                        levels+= addition > 1 ? addition : 1;
                     }
                     else
                     {

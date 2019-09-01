@@ -965,7 +965,7 @@ public class EntityCitizen extends AbstractEntityCitizen
                 final long tdist = BlockPosUtil.getDistanceSquared(entry.getCitizenEntity().get().getPosition(), getPosition());
 
                 // Checking for guard nearby
-                if (entry.getJob() instanceof AbstractJobGuard && tdist < guardDistance && ((AbstractEntityAIGuard) entry.getJob().getWorkerAI()).canHelp())
+                if (entry.getJob() instanceof AbstractJobGuard && tdist < guardDistance && entry.getJob().getWorkerAI() != null && ((AbstractEntityAIGuard) entry.getJob().getWorkerAI()).canHelp())
                 {
                     guardDistance = tdist;
                     guard = entry.getCitizenEntity().get();
