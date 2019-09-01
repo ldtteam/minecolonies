@@ -21,7 +21,6 @@ public class CommonConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue initialCitizenAmount;
     public final ForgeConfigSpec.BooleanValue builderPlaceConstructionTape;
     public final ForgeConfigSpec.BooleanValue playerGetsGuidebookOnFirstJoin;
-    public final ForgeConfigSpec.BooleanValue supplyChests;
     public final ForgeConfigSpec.BooleanValue allowInfiniteSupplyChests;
     public final ForgeConfigSpec.BooleanValue allowInfiniteColonies;
     public final ForgeConfigSpec.BooleanValue allowOtherDimColonies;
@@ -168,7 +167,6 @@ public class CommonConfiguration extends AbstractConfiguration
         initialCitizenAmount = defineInteger(builder, "initialcitizenamount", 4, 1, 10);
         builderPlaceConstructionTape = defineBoolean(builder, "builderplaceconstructiontape", true);
         playerGetsGuidebookOnFirstJoin = defineBoolean(builder, "playergetsguidebookonfirstjoin", true);
-        supplyChests = defineBoolean(builder, "supplychests", true);
         allowInfiniteSupplyChests = defineBoolean(builder, "allowinfinitesupplychests", false);
         allowInfiniteColonies = defineBoolean(builder, "allowinfinitecolonies", false);
         allowOtherDimColonies = defineBoolean(builder, "allowotherdimcolonies", false);
