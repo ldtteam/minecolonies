@@ -8,7 +8,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
-import org.checkerframework.checker.units.qual.C;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 

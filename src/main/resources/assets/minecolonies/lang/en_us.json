@@ -39,8 +39,6 @@
   "minecolonies.config.builderplaceconstructiontape.comment": "Should builder place construction tape? [Default: true]",
   "minecolonies.config.playergetsguidebookonfirstjoin": "Guidebook",
   "minecolonies.config.playergetsguidebookonfirstjoin.comment": "Should player get one guidebook on first join to a new world? [Default: true]",
-  "minecolonies.config.supplychests": "Supply-Chests",
-  "minecolonies.config.supplychests.comment": "Should supply chests be craftable on this server? [Default: true]",
   "minecolonies.config.allowinfinitesupplychests": "Infinite Supply-Chests",
   "minecolonies.config.allowinfinitesupplychests.comment": "Should players be able to place an infinite amount of supplychests? [Default: false]",
   "minecolonies.config.allowinfinitecolonies": "Infinite Colonies",
