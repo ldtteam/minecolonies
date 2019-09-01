@@ -19,6 +19,8 @@
   "minecolonies.config.requestSystem.comment": "All configurations related to the request system",
   "minecolonies.config.commands": "Command Settings",
   "minecolonies.config.commands.comment": "All configurations related to the Minecolonies commands",
+  "minecolonies.config.disablecitizenvoices": "Citizen Sounds",
+  "minecolonies.config.disablecitizenvoices.comment": "Disable citizen voices. [Default: false]",
 
   "minecolonies.config.names": "Name Settings",
   "minecolonies.config.names.comment": "All configuration items related to the citizen names",
