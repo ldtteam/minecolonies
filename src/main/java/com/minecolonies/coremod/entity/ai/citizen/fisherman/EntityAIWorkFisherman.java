@@ -220,7 +220,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             playNeedRodSound();
             return getState();
         }
-        if (job.getWater() == null)
+        if (job.getWater() == null || world.getBlockState(job.getWater()).getBlock() == Blocks.WATER)
         {
             return FISHERMAN_SEARCHING_WATER;
         }
