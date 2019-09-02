@@ -8,12 +8,12 @@
         <view id="levelActions" size="100% 100%">
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
             <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
-                   label="$(com.minecolonies.coremod.gui.workerHuts.minerNodeList):"/>
+                   label="$(com.minecolonies.coremod.gui.workerhuts.minerNodeList):"/>
             <list id="levels" size="164 185" pos="13 29">
                 <box size="100% 28" linewidth="2">
                     <label id="lvl" size="100 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                     <button id="changeToLevel" size="100 12" pos="35 2"
-                            label="$(com.minecolonies.coremod.gui.workerHuts.minerMineNode)"/>
+                            label="$(com.minecolonies.coremod.gui.workerhuts.minerMineNode)"/>
                     <label id="nONodes" size="50 12" pos="35 16" textalign="MIDDLE_LEFT" color="black"/>
                     <label id="yLevel" size="50 12" pos="100 16" textalign="MIDDLE_LEFT" color="black"/>
                 </box>

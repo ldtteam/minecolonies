@@ -163,11 +163,6 @@ public final class ColonyManager implements IColonyManager
         }
 
         final Colony colony = (Colony) iColony;
-        if (colony == null)
-        {
-            Log.getLogger().warn("Deleting Colony errored, colony null");
-            return;
-        }
         final int id = colony.getID();
         final World world = colony.getWorld();
         try

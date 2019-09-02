@@ -8,9 +8,9 @@
         <view id="pageFields" size="100% 100%">
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
             <label size="130 11" pos="30 14" color="black" textalign="MIDDLE"
-                label="$(com.minecolonies.coremod.gui.workerHuts.farmerHut.fields):"/>
+                label="$(com.minecolonies.coremod.gui.workerhuts.farmerHut.fields):"/>
             <label id="AssignmentModeLabel" size="164 11" pos="13 29" color="black" textalign="MIDDLE"
-                label="$(com.minecolonies.coremod.gui.workerHuts.farmerHut.AssignmentMode)"/>
+                label="$(com.minecolonies.coremod.gui.workerhuts.farmerHut.AssignmentMode)"/>
             <button id="assignmentMode" size="60 15" pos="65 42"
                 label="$(com.minecolonies.coremod.gui.hiring.off)"/>
 

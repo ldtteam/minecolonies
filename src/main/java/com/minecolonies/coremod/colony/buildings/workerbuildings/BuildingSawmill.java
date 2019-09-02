@@ -19,6 +19,7 @@ import com.minecolonies.coremod.colony.jobs.JobSawmill;
 import net.minecraft.item.Item;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.Tags;
@@ -106,6 +107,11 @@ public class BuildingSawmill extends AbstractBuildingCrafter
         {
             if(!ItemStackUtils.isEmpty(stack))
             {
+                if (stack.getItem().isIn(ItemTags.PLANKS))
+                {
+                    amountOfValidBlocks++;
+                    continue;
+                }
                 for (final ResourceLocation tag : stack.getItem().getTags())
                 {
                     if(tag.getPath().contains("wood"))

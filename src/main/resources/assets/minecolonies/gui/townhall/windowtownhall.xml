@@ -12,7 +12,7 @@
     <image id="happiness0" pos="56 217" size="31 14" source="minecolonies:textures/gui/bookmark_short_ribbon_01.png"/>
 
     <buttonimage id="info1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_01.png" visible="false"
-                label="$(com.minecolonies.coremod.gui.workerHuts.information)"
+                label="$(com.minecolonies.coremod.gui.workerhuts.information)"
                 textalign="MIDDLE_LEFT" textoffset="35 2" textcolor="White" textdisabledcolor="DarkGray"/>
     <buttonimage id="actions1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_02.png" visible="false"
                 label="$(com.minecolonies.coremod.gui.townHall.actions)"
@@ -24,17 +24,17 @@
                 label="$(com.minecolonies.coremod.gui.townHall.citizens)"
                 textalign="MIDDLE_LEFT" textoffset="35 2" textcolor="White" textdisabledcolor="DarkGray"/>
     <buttonimage id="settings1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_05.png" visible="false"
-                label="$(com.minecolonies.coremod.gui.workerHuts.settings)"
+                label="$(com.minecolonies.coremod.gui.workerhuts.settings)"
                 textalign="MIDDLE_LEFT" textoffset="35 2" textcolor="White" textdisabledcolor="DarkGray"/>
     <buttonimage id="workOrder1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_06.png" visible="false"
-                label="$(com.minecolonies.coremod.gui.workerHuts.workOrder)"
+                label="$(com.minecolonies.coremod.gui.workerhuts.workOrder)"
                 textalign="MIDDLE_LEFT" textoffset="35 2" textcolor="White" textdisabledcolor="DarkGray"/>
     <buttonimage id="happiness1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_01.png" visible="false"
-                label="$(com.minecolonies.coremod.gui.workerHuts.happiness)"
+                label="$(com.minecolonies.coremod.gui.workerhuts.happiness)"
                 textalign="MIDDLE_LEFT" textoffset="35 2" textcolor="White" textdisabledcolor="DarkGray"/>
 
     <buttonimage id="infoExt" pos="-17 73" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"
-                label="$(com.minecolonies.coremod.gui.workerHuts.information)"
+                label="$(com.minecolonies.coremod.gui.workerhuts.information)"
                 textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1" enabled="false"/>
     <buttonimage id="actionsExt" pos="-17 97" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_02.png" visible="false"
                 label="$(com.minecolonies.coremod.gui.townHall.actions)"
@@ -46,13 +46,13 @@
                 label="$(com.minecolonies.coremod.gui.townHall.citizens)"
                 textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1" enabled="false"/>
     <buttonimage id="settingsExt" pos="-17 169" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_05.png" visible="false"
-                label="$(com.minecolonies.coremod.gui.workerHuts.settings)"
+                label="$(com.minecolonies.coremod.gui.workerhuts.settings)"
                 textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1" enabled="false"/>
     <buttonimage id="workOrderExt" pos="-17 193" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_06.png" visible="false"
-                label="$(com.minecolonies.coremod.gui.workerHuts.workOrder)"
+                label="$(com.minecolonies.coremod.gui.workerhuts.workOrder)"
                 textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1" enabled="false"/>
     <buttonimage id="happinessExt" pos="-17 217" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"
-                label="$(com.minecolonies.coremod.gui.workerHuts.happiness)"
+                label="$(com.minecolonies.coremod.gui.workerhuts.happiness)"
                 textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1" enabled="false"/>
 
     <!-- onHoverId="infoExt" onHoverId="actionsExt" onHoverId="permissionsExt" onHoverId="citizensExt" onHoverId="settingsExt" onHoverId="workOrderExt" onHoverId="happinessExt" -->
