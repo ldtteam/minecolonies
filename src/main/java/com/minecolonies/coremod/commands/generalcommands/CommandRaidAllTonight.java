@@ -1,17 +1,16 @@
-package com.minecolonies.coremod.commands.killcommands;
+package com.minecolonies.coremod.commands.generalcommands;
 
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.entity.player.PlayerEntity;
 
-public class CommandKillChicken implements IMCOPCommand
+public class CommandRaidAllTonight implements IMCOPCommand
 {
-
-    int entitiesKilled = 0;
-
     /**
      * What happens when the command is executed
      *
@@ -21,14 +20,13 @@ public class CommandKillChicken implements IMCOPCommand
     public int onExecute(final CommandContext<CommandSource> context)
     {
         final Entity sender = context.getSource().getEntity();
-        entitiesKilled = 0;
 
-        context.getSource().getServer().getWorld(sender.dimension).getEntities(EntityType.CHICKEN, entity -> true).forEach(entity ->
+        for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
-            entity.remove();
-            entitiesKilled++;
-        });
-        sender.sendMessage(new StringTextComponent(entitiesKilled + " entities killed"));
+            colony.getRaiderManager().setWillRaidTonight(true);
+        }
+
+        LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.raidtonight");
         return 1;
     }
 
@@ -38,6 +36,6 @@ public class CommandKillChicken implements IMCOPCommand
     @Override
     public String getName()
     {
-        return "chicken";
+        return "raid-All-tonight";
     }
 }

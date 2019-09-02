@@ -7,9 +7,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.text.StringTextComponent;
 
-public class CommandKillChicken implements IMCOPCommand
+public class CommandKillPig implements IMCOPCommand
 {
-
     int entitiesKilled = 0;
 
     /**
@@ -23,7 +22,7 @@ public class CommandKillChicken implements IMCOPCommand
         final Entity sender = context.getSource().getEntity();
         entitiesKilled = 0;
 
-        context.getSource().getServer().getWorld(sender.dimension).getEntities(EntityType.CHICKEN, entity -> true).forEach(entity ->
+        context.getSource().getServer().getWorld(sender.dimension).getEntities(EntityType.PIG, entity -> true).forEach(entity ->
         {
             entity.remove();
             entitiesKilled++;
@@ -38,6 +37,6 @@ public class CommandKillChicken implements IMCOPCommand
     @Override
     public String getName()
     {
-        return "chicken";
+        return "pig";
     }
 }
