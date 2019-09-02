@@ -998,7 +998,7 @@
 
   "com.minecolonies.coremod.gui.warehouse.sort": "Sort",
   "com.minecolonies.coremod.gui.auto.hire.warning": "Turn the hiring mode of the building or colony to manual to fire this worker or hire another one.",
-  "com.minecolonies.coremod.citizens.nospace": "<Mysterious Voice> Colonists can't arrive at your colony because there is not enough space around the town hall!",
+  "com.minecolonies.coremod.citizens.nospace": "<Mysterious Voice> Colonists can't arrive at your colony because there is not enough space at pos X:%d Y:%d Z:%d",
 
   "entity.pirate": "Pirate",
   "entity.archerpirate": "Pirate Archer",
