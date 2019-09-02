@@ -1,15 +1,17 @@
 package com.minecolonies.coremod.commands.killcommands;
 
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.StringTextComponent;
 
-public class CommandKillChicken implements IMCOPCommand
+public class CommandKillCow implements IMCOPCommand
 {
-
     int entitiesKilled = 0;
 
     /**
@@ -21,9 +23,10 @@ public class CommandKillChicken implements IMCOPCommand
     public int onExecute(final CommandContext<CommandSource> context)
     {
         final Entity sender = context.getSource().getEntity();
+
         entitiesKilled = 0;
 
-        context.getSource().getServer().getWorld(sender.dimension).getEntities(EntityType.CHICKEN, entity -> true).forEach(entity ->
+        context.getSource().getServer().getWorld(sender.dimension).getEntities(EntityType.COW, entity -> true).forEach(entity ->
         {
             entity.remove();
             entitiesKilled++;
@@ -38,6 +41,6 @@ public class CommandKillChicken implements IMCOPCommand
     @Override
     public String getName()
     {
-        return "chicken";
+        return "cow";
     }
 }

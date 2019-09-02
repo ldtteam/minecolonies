@@ -209,6 +209,7 @@ public final class ColonyManager implements IColonyManager
             }
 
             cap.deleteColony(id);
+            BackUpHelper.markColonyDeleted(colony.getID(),colony.getDimension());
             Log.getLogger().info("Done with " + id);
         }
         catch (final RuntimeException e)

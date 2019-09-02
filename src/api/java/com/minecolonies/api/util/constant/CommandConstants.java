@@ -55,9 +55,9 @@ public final class CommandConstants
     @NonNls
     public static final String TOO_MANY_CHUNKS = "You are trying to claim an area bigger than twice the colony size! Aborting to avoid lags and crashes.";
     @NonNls
-    public static final int CHUNKS_TO_CLAM_THRESHOLD = 50000;
+    public static final int CHUNKS_TO_CLAM_THRESHOLD = 5000;
     @NonNls
-    public static final String TOO_MANY_CHUNKS_CLAIMED = "You already got a lot of chunks to be claimed in the storage, please try to generate these chunks bevore increasing it.";
+    public static final String TOO_MANY_CHUNKS_CLAIMED = "You've reached the maximal claimable chunk count, aborting.";
 
     /**
      * Private constructor to hide the implicit one.
