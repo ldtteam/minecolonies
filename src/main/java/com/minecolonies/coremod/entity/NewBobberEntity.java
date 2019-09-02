@@ -3,6 +3,12 @@ package com.minecolonies.coremod.entity;
 import java.util.List;
 import javax.annotation.Nullable;
 
+import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
@@ -16,6 +22,7 @@ import net.minecraft.item.FishingRodItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -38,14 +45,17 @@ import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTables;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
+import net.minecraftforge.fml.network.FMLPlayMessages;
+import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
-public class NewBobberEntity extends Entity
+public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnData
 {
     private static final DataParameter<Integer>    DATA_HOOKED_ENTITY = EntityDataManager.createKey(NewBobberEntity.class, DataSerializers.VARINT);
     private              boolean                   inGround;
     private              int                       ticksInGround;
-    private         EntityCitizen             angler;
+    private              EntityCitizen             angler;
     private              int                       ticksInAir;
     private              int                       ticksCatchable;
     private              int                       ticksCaughtDelay;
@@ -55,11 +65,18 @@ public class NewBobberEntity extends Entity
     private              NewBobberEntity.State currentState       = NewBobberEntity.State.FLYING;
     private         int                       luck;
     private         int                       lureSpeed;
+    private int anglerId = -1;
+    private boolean readyToCatch = false;
 
     public NewBobberEntity(EntityType type, World world)
     {
         super(type, world);
         this.ignoreFrustumCheck = true;
+    }
+
+    public NewBobberEntity(final FMLPlayMessages.SpawnEntity spawnEntity, final World world)
+    {
+        this(ModEntities.FISHHOOK, world);
     }
 
     /**
@@ -116,7 +133,6 @@ public class NewBobberEntity extends Entity
     @OnlyIn(Dist.CLIENT)
     public boolean isInRangeToRenderDist(double distance)
     {
-        double d0 = 64.0D;
         return distance < 4096.0D;
     }
 
@@ -148,7 +164,17 @@ public class NewBobberEntity extends Entity
         super.tick();
         if (this.angler == null)
         {
-            this.remove();
+            if (world.isRemote)
+            {
+                if (anglerId > -1)
+                {
+                    angler = (EntityCitizen) world.getEntityByID(anglerId);
+                }
+            }
+            else
+            {
+                this.remove();
+            }
         }
         else if (this.world.isRemote || !this.shouldStopFishing())
         {
@@ -248,7 +274,6 @@ public class NewBobberEntity extends Entity
 
             this.move(MoverType.SELF, this.getMotion());
             this.updateRotation();
-            double d1 = 0.92D;
             this.setMotion(this.getMotion().scale(0.92D));
             this.setPosition(this.posX, this.posY, this.posZ);
         }
@@ -383,10 +408,12 @@ public class NewBobberEntity extends Entity
             }
             else
             {
+                readyToCatch = true;
                 Vec3d vec3d = this.getMotion();
                 this.setMotion(vec3d.x, (double) (-0.4F * MathHelper.nextFloat(this.rand, 0.6F, 1.0F)), vec3d.z);
                 this.playSound(SoundEvents.ENTITY_FISHING_BOBBER_SPLASH, 0.25F, 1.0F + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.4F);
                 double d3 = this.getBoundingBox().minY + 0.5D;
+                Log.getLogger().warn("Fish!");
                 serverworld.spawnParticle(ParticleTypes.BUBBLE,
                   this.posX,
                   d3,
@@ -554,13 +581,42 @@ public class NewBobberEntity extends Entity
         return false;
     }
 
+    @Override
+    @NotNull
     public IPacket<?> createSpawnPacket()
     {
-        Entity entity = this.getAngler();
-        return new SSpawnObjectPacket(this, entity == null ? this.getEntityId() : entity.getEntityId());
+        return NetworkHooks.getEntitySpawningPacket(this);
     }
 
-    static enum State
+    @Override
+    public void writeSpawnData(final PacketBuffer buffer)
+    {
+        if (angler != null)
+        {
+            buffer.writeInt(angler.getEntityId());
+        }
+        else
+        {
+            buffer.writeInt(-1);
+        }
+    }
+
+    @Override
+    public void readSpawnData(final PacketBuffer additionalData)
+    {
+        final int citizenId = additionalData.readInt();
+        if (citizenId != -1)
+        {
+            anglerId = citizenId;
+        }
+    }
+
+    public boolean isReadyToCatch()
+    {
+        return readyToCatch;
+    }
+
+    enum State
     {
         FLYING,
         HOOKED_IN_ENTITY,

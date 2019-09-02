@@ -6,25 +6,32 @@ import com.minecolonies.api.util.constant.Literals;
 import com.minecolonies.coremod.entity.NewBobberEntity;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.FishRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Determines how the fish hook is rendered.
  */
+@OnlyIn(Dist.CLIENT)
 public class RenderFishHook extends EntityRenderer<NewBobberEntity>
 {
     /**
      * The resource location containing the particle textures (Spawned by the fishHook).
      */
-    private static final ResourceLocation texture = new ResourceLocation("textures/particle/particles.png");
+    private static final ResourceLocation texture = new ResourceLocation("textures/entity/fishing_hook.png");
 
     /**
      * Required constructor, sets the RenderManager.
@@ -50,79 +57,70 @@ public class RenderFishHook extends EntityRenderer<NewBobberEntity>
     @Override
     public void doRender(@NotNull final NewBobberEntity entity, final double x, final double y, final double z, final float entityYaw, final float partialTicks)
     {
-        GlStateManager.pushMatrix();
-        GlStateManager.translated((float) x, (float) y, (float) z);
-        GlStateManager.enableRescaleNormal();
-        GlStateManager.scaled(0.5F, 0.5F, 0.5F);
-        this.bindEntityTexture(entity);
-        final Tessellator tessellator = Tessellator.getInstance();
-        final BufferBuilder vertexBuffer = tessellator.getBuffer();
-
-        GlStateManager.rotated((float) (180.0D - this.renderManager.playerViewY), 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotated(-this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
-        vertexBuffer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
-        vertexBuffer.pos(-0.5D, -0.5D, 0.0D).tex(0.0625D, 0.1875D).normal(0.0F, 1.0F, 0.0F).endVertex();
-        vertexBuffer.pos(0.5D, -0.5D, 0.0D).tex(0.125D, 0.1875D).normal(0.0F, 1.0F, 0.0F).endVertex();
-        vertexBuffer.pos(0.5D, 0.5D, 0.0D).tex(0.125D, 0.125D).normal(0.0F, 1.0F, 0.0F).endVertex();
-        vertexBuffer.pos(-0.5D, 0.5D, 0.0D).tex(0.0625D, 0.125D).normal(0.0F, 1.0F, 0.0F).endVertex();
-        tessellator.draw();
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.popMatrix();
-
-        AbstractEntityCitizen citizen = entity.getAngler();
-
-        //If the citizen is null (Which he probably is) get the nearest citizen to the fishHook position.
-        //Check if he is a fisherman -> Through his texture
-        if (citizen == null)
-        {
-            for (@NotNull final Object citizenX : CompatibilityUtils.getWorldFromEntity(entity).getEntitiesWithinAABB(EntityCitizen.class, entity.getBoundingBox().expand(10, 10, 10)))
-            {
-                if (((EntityCitizen) citizenX).getModelType().getTextureBase().contains("Fisherman"))
-                {
-                    citizen = (EntityCitizen) citizenX;
-                    break;
-                }
+        EntityCitizen citizen = entity.getAngler();
+        if (citizen != null && !this.renderOutlines) {
+            GlStateManager.pushMatrix();
+            GlStateManager.translatef((float)x, (float)y, (float)z);
+            GlStateManager.enableRescaleNormal();
+            GlStateManager.scalef(0.5F, 0.5F, 0.5F);
+            this.bindEntityTexture(entity);
+            Tessellator tessellator = Tessellator.getInstance();
+            BufferBuilder bufferbuilder = tessellator.getBuffer();
+            float f = 1.0F;
+            float f1 = 0.5F;
+            float f2 = 0.5F;
+            GlStateManager.rotatef(180.0F - this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotatef((float)(this.renderManager.options.thirdPersonView == 2 ? -1 : 1) * -this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
+            if (this.renderOutlines) {
+                GlStateManager.enableColorMaterial();
+                GlStateManager.setupSolidRenderingTextureCombine(this.getTeamColor(entity));
             }
-        }
 
-        if (citizen != null)
-        {
-            final double orientation = citizen.getSwingProgress(partialTicks);
-            final double finalOrientation = Math.sin(Math.sqrt(orientation) * Math.PI);
-            @NotNull final Vec3d Vec3d = new Vec3d(-0.36D, 0.03D, 0.35D);
+            bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
+            bufferbuilder.pos(-0.5D, -0.5D, 0.0D).tex(0.0D, 1.0D).normal(0.0F, 1.0F, 0.0F).endVertex();
+            bufferbuilder.pos(0.5D, -0.5D, 0.0D).tex(1.0D, 1.0D).normal(0.0F, 1.0F, 0.0F).endVertex();
+            bufferbuilder.pos(0.5D, 0.5D, 0.0D).tex(1.0D, 0.0D).normal(0.0F, 1.0F, 0.0F).endVertex();
+            bufferbuilder.pos(-0.5D, 0.5D, 0.0D).tex(0.0D, 0.0D).normal(0.0F, 1.0F, 0.0F).endVertex();
+            tessellator.draw();
+            if (this.renderOutlines) {
+                GlStateManager.tearDownSolidRenderingTextureCombine();
+                GlStateManager.disableColorMaterial();
+            }
 
-            Vec3d.rotatePitch((float) (-((double) citizen.getPreviousRotationPitch() + ((double) citizen.getRotationPitch() - (double) citizen.getPreviousRotationPitch()) * partialTicks)
-                                         * Math.PI / Literals.HALF_CIRCLE));
-            Vec3d.rotateYaw((float) (-((double) citizen.getPreviousRotationYaw() + ((double) citizen.getRotationYaw() - (double) citizen.getPreviousRotationYaw())
-                                                                            * partialTicks) * Math.PI / Literals.HALF_CIRCLE));
-            Vec3d.rotateYaw((float) (finalOrientation * 0.5D));
-            Vec3d.rotatePitch((float) (-finalOrientation * 0.7D));
+            GlStateManager.disableRescaleNormal();
+            GlStateManager.popMatrix();
+            int i = citizen.getPrimaryHand() == HandSide.RIGHT ? 1 : -1;
+            ItemStack itemstack = citizen.getHeldItemMainhand();
+            if (!(itemstack.getItem() instanceof net.minecraft.item.FishingRodItem)) {
+                i = -i;
+            }
 
-            final double thirdPersonOffset = (citizen.getPreviousRenderYawOffset() + ((double) citizen.getRenderYawOffset() - citizen.getPreviousRenderYawOffset()) * partialTicks)
-                                               * Math.PI / Literals.HALF_CIRCLE;
-            final double correctedPosX = citizen.getPreviousPosX() + (citizen.getPosX() - citizen.getPreviousPosX()) * (double) partialTicks - MathHelper.cos((float) thirdPersonOffset) * 0.35D
-                                           - MathHelper.sin((float) thirdPersonOffset) * 0.8D;
-            final double correctedPosY = citizen.getPreviousPosY() + citizen.getEyeHeight() + (citizen.getPosY() - citizen.getPreviousPosY()) * (double) partialTicks - 0.45D;
-            final double correctedPosZ = citizen.getPreviousPosZ() + (citizen.getPosZ() - citizen.getPreviousPosZ()) * (double) partialTicks - MathHelper.sin((float) thirdPersonOffset) * 0.35D
-                                           + MathHelper.cos((float) thirdPersonOffset) * 0.8D;
-            final double eyeHeight = citizen.isSneaking() ? -0.1875D : 0.0D;
+            float f3 = citizen.getSwingProgress(partialTicks);
+            float f4 = MathHelper.sin(MathHelper.sqrt(f3) * (float)Math.PI);
+            float f5 = MathHelper.lerp(partialTicks, citizen.prevRenderYawOffset, citizen.renderYawOffset) * ((float)Math.PI / 180F);
+            double d0 = (double)MathHelper.sin(f5);
+            double d1 = (double)MathHelper.cos(f5);
+            double d2 = (double)i * 0.35D;
+            double d3 = 0.8D;
+            double d4 = MathHelper.lerp((double)partialTicks, citizen.prevPosX, citizen.posX) - d1 * d2 - d0 * 0.8D;
+            double d5 = citizen.prevPosY + (double)citizen.getEyeHeight() + (citizen.posY - citizen.prevPosY) * (double)partialTicks - 0.45D;
+            double d6 = MathHelper.lerp((double)partialTicks, citizen.prevPosZ, citizen.posZ) - d0 * d2 + d1 * 0.8D;
+            double d7 = citizen.shouldRenderSneaking() ? -0.1875D : 0.0D;
 
-            final double distX = entity.prevPosX + (entity.posX - entity.prevPosX) * partialTicks;
-            final double distY = entity.posY + 0.25;
-            final double distZ = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTicks;
-
-            final double correctionX = correctedPosX - distX;
-            final double correctionY = correctedPosY - distY + eyeHeight;
-            final double correctionZ = correctedPosZ - distZ;
-
+            double d13 = MathHelper.lerp((double)partialTicks, entity.prevPosX, entity.posX);
+            double d14 = MathHelper.lerp((double)partialTicks, entity.prevPosY, entity.posY) + 0.25D;
+            double d9 = MathHelper.lerp((double)partialTicks, entity.prevPosZ, entity.posZ);
+            double d10 = (double)((float)(d4 - d13));
+            double d11 = (double)((float)(d5 - d14)) + d7;
+            double d12 = (double)((float)(d6 - d9));
             GlStateManager.disableTexture();
             GlStateManager.disableLighting();
-            vertexBuffer.begin(3, DefaultVertexFormats.POSITION_COLOR);
+            bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
+            int j = 16;
 
-            for (int l = 0; l <= 16; ++l)
-            {
-                final double var = (double) l / 16.0;
-                vertexBuffer.pos(x + correctionX * var, y + correctionY * (var * var + var) * 0.5D + 0.25D, z + correctionZ * var).color(0, 0, 0, 255).endVertex();
+            for(int k = 0; k <= 16; ++k) {
+                float f6 = (float)k / 16.0F;
+                bufferbuilder.pos(x + d10 * (double)f6, y + d11 * (double)(f6 * f6 + f6) * 0.5D + 0.25D, z + d12 * (double)f6).color(0, 0, 0, 255).endVertex();
             }
 
             tessellator.draw();
@@ -140,7 +138,7 @@ public class RenderFishHook extends EntityRenderer<NewBobberEntity>
      */
     @NotNull
     @Override
-    protected ResourceLocation getEntityTexture(final NewBobberEntity entity)
+    protected ResourceLocation getEntityTexture(@NotNull final NewBobberEntity entity)
     {
         return getTexture();
     }

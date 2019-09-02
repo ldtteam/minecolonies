@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -232,6 +233,23 @@ public class WorkManager implements IWorkManager
     public void addWorkOrder(@NotNull final IWorkOrder order, final boolean readingFromNbt)
     {
         dirty = true;
+
+        if (order instanceof WorkOrderBuildDecoration)
+        {
+            for (final IWorkOrder or : workOrders.values())
+            {
+                if (or instanceof WorkOrderBuildDecoration)
+                {
+                    if (((WorkOrderBuildDecoration) or).getBuildingLocation().equals(((WorkOrderBuildDecoration) order).buildingLocation)
+                    && ((WorkOrderBuildDecoration) or).getStructureName().equals(((WorkOrderBuildDecoration) order).getStructureName()))
+                    {
+                        Log.getLogger().warn("Avoiding adding duplicate workOrder");
+                        removeWorkOrder(or);
+                        break;
+                    }
+                }
+            }
+        }
 
         if (order.getID() == 0)
         {

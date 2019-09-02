@@ -1,5 +1,6 @@
 package com.minecolonies.api.util;
 
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.sounds.AbstractWorkerSounds;
@@ -140,7 +141,7 @@ public final class SoundUtils
      */
     public static void playSoundAtCitizenWithChance(@NotNull final World worldIn, @NotNull final BlockPos position, @Nullable final SoundEvent event, final int chance)
     {
-        if (event == null)
+        if (event == null || MinecoloniesAPIProxy.getInstance().getConfig().getCommon().disableCitizenVoices.get())
         {
             return;
         }
