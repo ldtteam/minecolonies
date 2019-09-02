@@ -283,9 +283,9 @@ public final class WorkerUtil
                 final SignTileEntity teLevelSign = (SignTileEntity) te;
 
                 teLevelSign.signText[0] = new StringTextComponent(TextFormatting.getTextWithoutFormattingCodes(
-                  LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.minerMineNode") + ": " + levelId));
+                  LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.minerMineNode") + ": " + levelId));
                 teLevelSign.signText[1] = new StringTextComponent(TextFormatting.getTextWithoutFormattingCodes("Y: " + (level.getDepth() + 1)));
-                teLevelSign.signText[2] = new StringTextComponent(TextFormatting.getTextWithoutFormattingCodes(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.minerNode") + ": " + level.getNumberOfBuiltNodes()));
+                teLevelSign.signText[2] = new StringTextComponent(TextFormatting.getTextWithoutFormattingCodes(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.minerNode") + ": " + level.getNumberOfBuiltNodes()));
                 teLevelSign.signText[3] = new StringTextComponent(TextFormatting.getTextWithoutFormattingCodes(""));
 
                 teLevelSign.markDirty();

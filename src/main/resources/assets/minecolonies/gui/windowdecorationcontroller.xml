@@ -17,8 +17,8 @@
 
     <buttonimage id="repair" align="TOP_MIDDLE" size="129 17" pos="-70 120"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 label="$(com.minecolonies.coremod.gui.workerHuts.repair)" textcolor="black"/>
+                 label="$(com.minecolonies.coremod.gui.workerhuts.repair)" textcolor="black"/>
     <buttonimage id="build" align="TOP_MIDDLE" size="129 17" pos="60 120"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 label="$(com.minecolonies.coremod.gui.workerHuts.upgrade)" textcolor="black"/>
+                 label="$(com.minecolonies.coremod.gui.workerhuts.upgrade)" textcolor="black"/>
 </window>

@@ -2,7 +2,7 @@
     <layout source="minecolonies:gui/layouthuts/layouthutpageactionsmin.xml"/>    
 
     <label size="164 11" pos="13 32" textalign="MIDDLE" color="black"
-           label="$(com.minecolonies.coremod.gui.workerHuts.workerAssigned)"/>
+           label="$(com.minecolonies.coremod.gui.workerhuts.workerAssigned)"/>
 
     <list id="workers" size="164 30" pos="13 43">
         <view size="100% 22">
@@ -15,13 +15,13 @@
 
     <buttonimage id="hire" size="129 17" pos="30 74" textcolor="black"
                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                label="$(com.minecolonies.coremod.gui.workerHuts.manage)"/>
+                label="$(com.minecolonies.coremod.gui.workerhuts.manage)"/>
     <buttonimage id="recall" size="129 17" pos="30 92" textcolor="black"
                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                label="$(com.minecolonies.coremod.gui.workerHuts.recall)"/>
+                label="$(com.minecolonies.coremod.gui.workerhuts.recall)"/>
 
     <label size="100 11" pos="30 145" textalign="MIDDLE" color="black"
-           label="$(com.minecolonies.coremod.gui.workerHuts.buildPrio)"/>
+           label="$(com.minecolonies.coremod.gui.workerhuts.buildPrio)"/>
     <label id="type" size="27 11" pos="132 145" textalign="MIDDLE" color="black"/>
 
     <buttonimage id="deliveryPrioState" size="64 17" pos="46 156" textcolor="black"
@@ -34,8 +34,8 @@
 
     <buttonimage id="recipelist" size="129 17" pos="30 174" textcolor="black"
                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                label="$(com.minecolonies.coremod.gui.workerHuts.listRecipes)"/>
+                label="$(com.minecolonies.coremod.gui.workerhuts.listRecipes)"/>
     <buttonimage id="crafting" size="129 17" pos="30 192" textcolor="black"
                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                label="$(com.minecolonies.coremod.gui.workerHuts.crafting)"/>
+                label="$(com.minecolonies.coremod.gui.workerhuts.crafting)"/>
 </window>

@@ -54,7 +54,7 @@ public class WindowHutCowboy extends AbstractWindowWorkerBuilding<BuildingCowboy
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerHuts.cowboyHut";
+        return "com.minecolonies.coremod.gui.workerhuts.cowboyHut";
     }
 
     private void milkCowsClicked()

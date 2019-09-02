@@ -61,6 +61,6 @@ public class WindowHutCook extends AbstractHutFilterableLists
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerHuts.cook";
+        return "com.minecolonies.coremod.gui.workerhuts.cook";
     }
 }

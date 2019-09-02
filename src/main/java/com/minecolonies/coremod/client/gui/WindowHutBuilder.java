@@ -202,7 +202,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerHuts.buildersHut";
+        return "com.minecolonies.coremod.gui.workerhuts.buildersHut";
     }
 
     @Override
