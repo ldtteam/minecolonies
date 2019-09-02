@@ -143,7 +143,7 @@ public class RecallCitizenMessage implements IMessage
                     final BlockPos loc = building.getPosition();
                     if (optionalEntityCitizen.isPresent() && !TeleportHelper.teleportCitizen(optionalEntityCitizen.get(), colony.getWorld(), loc))
                     {
-                        LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.workerHuts.recallFail");
+                        LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.workerhuts.recallFail");
                     }
                 }
             }

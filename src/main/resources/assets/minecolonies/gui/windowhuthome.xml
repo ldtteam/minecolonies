@@ -5,12 +5,12 @@
         <view id="pageActions" size="100% 100%">
             <layout source="minecolonies:gui/layouthuts/layouthutpageactionsmin.xml"/>
             <button id="assign" size="116 15" pos="37 32"
-                    label="$(com.minecolonies.coremod.gui.workerHuts.assign)"/>
+                    label="$(com.minecolonies.coremod.gui.workerhuts.assign)"/>
 
             <list id="assignedCitizen" size="164 60" pos="13 49">
                 <box size="100% 30" linewidth="2">
                     <label id="name" size="100 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
-                    <button id="remove" size="100 12" pos="5 15" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.unassign)"/>
+                    <button id="remove" size="100 12" pos="5 15" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerhuts.unassign)"/>
                 </box>
             </list>
         </view>

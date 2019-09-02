@@ -61,6 +61,6 @@ public class WindowHutStoneSmelter extends AbstractHutFilterableLists
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerHuts.stonesmelter";
+        return "com.minecolonies.coremod.gui.workerhuts.stonesmelter";
     }
 }

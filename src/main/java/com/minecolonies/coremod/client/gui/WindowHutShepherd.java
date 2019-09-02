@@ -37,7 +37,7 @@ public class WindowHutShepherd extends AbstractWindowWorkerBuilding<BuildingShep
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerHuts.shepherdHut";
+        return "com.minecolonies.coremod.gui.workerhuts.shepherdHut";
     }
 
     @Override

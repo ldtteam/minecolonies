@@ -31,6 +31,6 @@ public class WindowHutWorkerPlaceholder<B extends com.minecolonies.coremod.colon
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerHuts." + name;
+        return "com.minecolonies.coremod.gui.workerhuts." + name;
     }
 }

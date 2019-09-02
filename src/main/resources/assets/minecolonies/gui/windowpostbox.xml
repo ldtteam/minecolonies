@@ -12,7 +12,7 @@
             <label id="resourceName" size="100 12" pos="20 1" color="black"/>
             <input id="qty" size="25 18" pos="113 1" maxlength="25"/>
 
-            <buttonimage label="$(com.minecolonies.coremod.gui.workerHuts.request)" id="request" pos="140 1" size="64 15"
+            <buttonimage label="$(com.minecolonies.coremod.gui.workerhuts.request)" id="request" pos="140 1" size="64 15"
                          source="minecolonies:textures/gui/builderhut/builder_button_small.png" textcolor="black"/>
         </box>
     </list>
