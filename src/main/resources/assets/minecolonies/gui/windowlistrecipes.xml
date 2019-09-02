@@ -2,7 +2,7 @@
         lightbox="true"
         xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
 
-    <label size="100% 11" pos="0 50" textalign="TOP_MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.workerHuts.listRecipes)"/>
+    <label size="100% 11" pos="0 50" textalign="TOP_MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.workerhuts.listRecipes)"/>
     <list id="recipes" size="70% 120" pos="60 70" align="TOP_MIDDLE">
         <view size="70% 50">
             <itemicon id="output" size="16 16" pos="80 5"/>

@@ -55,7 +55,7 @@ public class WindowHutComposter extends AbstractHutFilterableLists
         final ViewFilterableList window = new ViewFilterableList(findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class),
           this,
           building,
-          LanguageHandler.format("com.minecolonies.gui.workerHuts.composter.compostables"),
+          LanguageHandler.format("com.minecolonies.gui.workerhuts.composter.compostables"),
           PAGE_ITEMS_VIEW,
           false);
         views.put(PAGE_ITEMS_VIEW, window);
@@ -102,6 +102,6 @@ public class WindowHutComposter extends AbstractHutFilterableLists
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerHuts.composter";
+        return "com.minecolonies.coremod.gui.workerhuts.composter";
     }
 }

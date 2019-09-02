@@ -56,7 +56,7 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
         final ViewFilterableList window = new ViewFilterableList(findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class),
           this,
           building,
-          LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.saplingList"),
+          LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.saplingList"),
           PAGE_ITEMS_VIEW,
           true);
         views.put(PAGE_ITEMS_VIEW, window);

@@ -59,7 +59,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
     /**
      * Name string of the builder hut.
      */
-    private static final String BUILDER_HUT_NAME = "com.minecolonies.coremod.gui.workerHuts.buildersHut";
+    private static final String BUILDER_HUT_NAME = "com.minecolonies.coremod.gui.workerhuts.buildersHut";
 
     /**
      * Button to access the crafting grid.
@@ -86,9 +86,9 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
      */
     private static final String BUTTON_DP_STATE = "deliveryPrioState";
 
-    private static final String DP_MODE_STATIC = "com.minecolonies.coremod.gui.workerHuts.deliveryPrio.static";
+    private static final String DP_MODE_STATIC = "com.minecolonies.coremod.gui.workerhuts.deliveryPrio.static";
 
-    private static final String DP_MODE_AUTOMATIC = "com.minecolonies.coremod.gui.workerHuts.deliveryPrio.automatic";
+    private static final String DP_MODE_AUTOMATIC = "com.minecolonies.coremod.gui.workerhuts.deliveryPrio.automatic";
 
     private int prio = building.getBuildingDmPrio();
 
@@ -173,7 +173,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
     {
         if (building.getBuildingLevel() == 0 && !BUILDER_HUT_NAME.equals(getBuildingName()))
         {
-            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "com.minecolonies.coremod.gui.workerHuts.level0");
+            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "com.minecolonies.coremod.gui.workerhuts.level0");
             return;
         }
 
@@ -218,7 +218,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends com.minecolonies.co
                         {
                             rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabelText(worker.getName());
                             rowPane.findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class)
-                              .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.workerLevel", worker.getLevel()));
+                              .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.workerLevel", worker.getLevel()));
                         }
                     }
                 }

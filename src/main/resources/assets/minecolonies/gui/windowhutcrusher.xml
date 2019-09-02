@@ -8,13 +8,13 @@
         <view id="crusherSettings" size="100% 100%">
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
             <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
-                   label="$(com.minecolonies.coremod.gui.workerHuts.crusherSettings):"/>
+                   label="$(com.minecolonies.coremod.gui.workerhuts.crusherSettings):"/>
 
             <buttonimage id="block" size="86 17" pos="25 60" textcolor="black"
                          source="minecolonies:textures/gui/builderhut/builder_button_medium.png"/>
             <input id="qty" size="50 18" pos="115 60" maxlength="25"/>
             <buttonimage id="save" size="86 17" pos="52 214" textcolor="black"
-                         source="minecolonies:textures/gui/builderhut/builder_button_medium.png" label="$(com.minecolonies.coremod.gui.workerHuts.save)"/>
+                         source="minecolonies:textures/gui/builderhut/builder_button_medium.png" label="$(com.minecolonies.coremod.gui.workerhuts.save)"/>
         </view>
     </switch>
     <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>

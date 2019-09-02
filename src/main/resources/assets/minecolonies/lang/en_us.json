@@ -545,6 +545,8 @@
   "com.minecolonies.coremod.gui.debugscreen.blocksfromcenter": "%d blocks from the center.",
   "com.minecolonies.coremod.gui.workerhuts.guardtower": "Guard Tower",
 
+  "com.minecolonies.coremod.gui.workerhuts.bakery": "Bakery",
+  "com.minecolonies.coremod.gui.workerhuts.bakery.recipes": "Recipes",
 
   "com.minecolonies.coremod.gui.workerhuts.level0": "Please construct the hut to hire a worker.",
   "com.minecolonies.coremod.job.guard.needweapon": "a weapon!",
@@ -1043,6 +1045,8 @@
 
   "com.minecolonies.coremod.gui.workerhuts.sawmill": "Sawmill",
   "block.minecolonies.blockhutsawmill": "Sawmill",
+  "block.minecolonies.blockhutsawmill.name": "Sawmill",
+
   "com.minecolonies.coremod.recipe.unable": "Unable to store the blueprint. Either the %s has no space for any more blueprints, or the blueprint doesn't correspond with its profession.",
   "com.minecolonies.coremod.request.crafting": "Crafter",
   "entity.builder.messagebuilderstoofar": "There is no builder close enough to work at this building, assign a builder to it manually in the build screen or build it closer to the existing builders!",

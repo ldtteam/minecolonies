@@ -6,7 +6,7 @@
     <image source="minecolonies:textures/gui/builderhut/builder_charcoal_chalk.png" size="19 59" pos="175 180"/>
 
     <label size="164 11" pos="0 13" color="black" textalign="MIDDLE"
-           label="$(com.minecolonies.coremod.gui.workerHuts.resourceList)"/>
+           label="$(com.minecolonies.coremod.gui.workerhuts.resourceList)"/>
 
     <label size="164 11" pos="0 24" id="constructionName" label="" color="black" textalign="MIDDLE"/>
 

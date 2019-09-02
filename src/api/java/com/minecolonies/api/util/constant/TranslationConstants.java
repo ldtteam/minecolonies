@@ -8,15 +8,15 @@ import org.jetbrains.annotations.NonNls;
 public final class TranslationConstants
 {
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED          = "com.minecolonies.coremod.gui.workerHuts.farmerHut.unused";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED          = "com.minecolonies.coremod.gui.workerhuts.farmerHut.unused";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH           = "com.minecolonies.coremod.gui.workerHuts.farmerHut.South";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH           = "com.minecolonies.coremod.gui.workerhuts.farmerHut.South";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH           = "com.minecolonies.coremod.gui.workerHuts.farmerHut.North";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH           = "com.minecolonies.coremod.gui.workerhuts.farmerHut.North";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST            = "com.minecolonies.coremod.gui.workerHuts.farmerHut.East";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST            = "com.minecolonies.coremod.gui.workerhuts.farmerHut.East";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST            = "com.minecolonies.coremod.gui.workerHuts.farmerHut.West";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST            = "com.minecolonies.coremod.gui.workerhuts.farmerHut.West";
     @NonNls
     public static final String TILE_MINECOLONIES_BLOCK_HUT_FARMER_NAME                             = "block.minecolonies.blockhutfarmer.name";
     @NonNls
@@ -72,7 +72,7 @@ public final class TranslationConstants
     @NonNls
     public static final     String COM_MINECOLONIES_COREMOD_SATURATION_7     = "com.minecolonies.coremod.saturation.7";
     @NonNls
-    public static final     String COM_MINECOLONIES_COREMOD_GUI_BAKER        = "com.minecolonies.coremod.gui.workerHuts.bakery";
+    public static final     String COM_MINECOLONIES_COREMOD_GUI_BAKER        = "com.minecolonies.coremod.gui.workerhuts.bakery";
     @NonNls
     public static final     String COM_MINECOLONIES_COREMOD_JOB_BAKER        = "com.minecolonies.coremod.job.bakery";
     @NonNls
@@ -100,11 +100,11 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_HIRING_ON                              = "com.minecolonies.coremod.gui.hiring.on";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON                 = "com.minecolonies.coremod.gui.workerHuts.retrieveOn";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON                 = "com.minecolonies.coremod.gui.workerhuts.retrieveOn";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF                = "com.minecolonies.coremod.gui.workerHuts.retrieveOff";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF                = "com.minecolonies.coremod.gui.workerhuts.retrieveOff";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0                     = "com.minecolonies.coremod.gui.workerHuts.level0";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0                     = "com.minecolonies.coremod.gui.workerhuts.level0";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_LUMBERJACK                             = "com.minecolonies.coremod.job.Lumberjack";
     @NonNls
@@ -208,13 +208,13 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_SHEPHERD_SHEARING                   = "com.minecolonies.coremod.status.shepherd.shearing";
     @NonNls
-    public static final String TOGGLE_ALL_OPTIONS_OFF                                              = "com.minecolonies.coremod.gui.workerHuts.toggleAllOff";
+    public static final String TOGGLE_ALL_OPTIONS_OFF                                              = "com.minecolonies.coremod.gui.workerhuts.toggleAllOff";
     @NonNls
-    public static final String TOGGLE_ALL_OPTIONS_ON                                               = "com.minecolonies.coremod.gui.workerHuts.toggleAllOn";
+    public static final String TOGGLE_ALL_OPTIONS_ON                                               = "com.minecolonies.coremod.gui.workerhuts.toggleAllOn";
     @NonNls
-    public static final String TOGGLE_REPLANT_SAPLINGS_ON                                          = "com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOn";
+    public static final String TOGGLE_REPLANT_SAPLINGS_ON                                          = "com.minecolonies.coremod.gui.workerhuts.toggleReplantSaplingsOn";
     @NonNls
-    public static final String TOGGLE_REPLANT_SAPLINGS_OFF                                         = "com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOff";
+    public static final String TOGGLE_REPLANT_SAPLINGS_OFF                                         = "com.minecolonies.coremod.gui.workerhuts.toggleReplantSaplingsOff";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_COMPAT_JEI_CRAFTIN_TEACHING_UNKNOWN_RECIPE = "com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe";
     @NonNls
@@ -250,9 +250,9 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_COWBOY_NOTCOLLECT                      = "com.minecolonies.coremod.gui.cowboy.notcollect";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_AUTO                   = "com.minecolonies.coremod.gui.workerHuts.modeA";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_AUTO                   = "com.minecolonies.coremod.gui.workerhuts.modeA";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_MANUAL                 = "com.minecolonies.coremod.gui.workerHuts.modeM";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_MODE_MANUAL                 = "com.minecolonies.coremod.gui.workerhuts.modeM";
     @NonNls
     public static final String AUTOMATIC_HIRE_WARNING                                              = "com.minecolonies.coremod.gui.auto.hire.warning";
     @NonNls

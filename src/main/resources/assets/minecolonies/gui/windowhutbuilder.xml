@@ -9,7 +9,7 @@
         <view id="resourceActions" size="100% 100%">
             <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
             <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
-                   label="$(com.minecolonies.coremod.gui.workerHuts.resourceList)"/>
+                   label="$(com.minecolonies.coremod.gui.workerhuts.resourceList)"/>
 
             <label size="164 11" pos="13 29" id="constructionName" textalign="MIDDLE" label="" color="black"/>
             <label size="164 11" pos="13 40" id="constructionPos" textalign="MIDDLE" label="" color="black"/>

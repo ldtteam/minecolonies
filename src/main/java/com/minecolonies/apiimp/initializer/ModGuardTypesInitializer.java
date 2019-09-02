@@ -23,7 +23,7 @@ public final class ModGuardTypesInitializer
 
         ModGuardTypes.knight = new GuardType.Builder()
                                  .setJobTranslationKey("com.minecolonies.coremod.job.Knight")
-                                 .setButtonTranslationKey("com.minecolonies.coremod.gui.workerHuts.knight")
+                                 .setButtonTranslationKey("com.minecolonies.coremod.gui.workerhuts.knight")
                                  .setPrimarySkill(IBuildingWorker.Skill.STRENGTH)
                                  .setSecondarySkill(IBuildingWorker.Skill.ENDURANCE)
                                  .setWorkerSoundName("archer")
@@ -33,7 +33,7 @@ public final class ModGuardTypesInitializer
 
         ModGuardTypes.ranger = new GuardType.Builder()
                                  .setJobTranslationKey("com.minecolonies.coremod.job.Ranger")
-                                 .setButtonTranslationKey("com.minecolonies.coremod.gui.workerHuts.ranger")
+                                 .setButtonTranslationKey("com.minecolonies.coremod.gui.workerhuts.ranger")
                                  .setPrimarySkill(IBuildingWorker.Skill.INTELLIGENCE)
                                  .setSecondarySkill(IBuildingWorker.Skill.STRENGTH)
                                  .setWorkerSoundName("archer")

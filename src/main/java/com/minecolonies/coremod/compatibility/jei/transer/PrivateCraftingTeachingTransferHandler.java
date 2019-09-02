@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.coremod.network.messages.TransferRecipeCrafingTeachingMessage;
@@ -18,16 +17,12 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.ICraftingRecipe;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.RecipeBook;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.GameRules;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCrafting>
@@ -120,17 +115,9 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
             craftMatrix.setInventorySlotContents(1, guiIngredients.get(1));
             craftMatrix.setInventorySlotContents(2, guiIngredients.get(3));
             craftMatrix.setInventorySlotContents(3, guiIngredients.get(4));
-
         }
 
-        final Optional<ICraftingRecipe> recipe = player.world.getServer().getRecipeManager().getRecipe(IRecipeType.CRAFTING, craftMatrix, craftingGUIBuilding.getWorldObj());
-        if (!recipe.isPresent())
-        {
-            return handlerHelper.createInternalError();
-        }
-
-        final RecipeBook book = MineColonies.proxy.getRecipeBookFromPlayer(player);
-        if (craftingGUIBuilding.getWorldObj().getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING) && !craftingGUIBuilding.getPlayer().isCreative()  && !book.isUnlocked(recipe.get()))
+        if (craftingGUIBuilding.getWorldObj().getGameRules().getBoolean(GameRules.DO_LIMITED_CRAFTING) && !craftingGUIBuilding.getPlayer().isCreative())
         {
             final String tooltipMessage = LanguageHandler.format(TranslationConstants.COM_MINECOLONIES_COREMOD_COMPAT_JEI_CRAFTIN_TEACHING_UNKNOWN_RECIPE);
             return handlerHelper.createUserErrorWithTooltip(tooltipMessage);

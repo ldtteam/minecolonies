@@ -112,7 +112,7 @@ public class WindowHutCrusher extends AbstractWindowWorkerBuilding<BuildingCrush
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerHuts.Crusher";
+        return "com.minecolonies.coremod.gui.workerhuts.Crusher";
     }
 }
 

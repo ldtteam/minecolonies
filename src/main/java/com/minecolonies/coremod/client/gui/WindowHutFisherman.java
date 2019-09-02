@@ -28,7 +28,7 @@ public class WindowHutFisherman extends AbstractWindowWorkerBuilding<BuildingFis
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerHuts.fisherman";
+        return "com.minecolonies.coremod.gui.workerhuts.fisherman";
     }
 }
 

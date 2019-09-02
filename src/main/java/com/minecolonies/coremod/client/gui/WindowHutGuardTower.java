@@ -244,7 +244,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerHuts.GuardTower";
+        return "com.minecolonies.coremod.gui.workerhuts.GuardTower";
     }
 
     /**
@@ -279,7 +279,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
 
             if (patrolManually)
             {
-                buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.targetPatrol"));
+                buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.targetPatrol"));
             }
             else
             {
@@ -292,16 +292,16 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
             buttonTaskFollow.setEnabled(false);
             if (tightGrouping)
             {
-                buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.followTight"));
+                buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.followTight"));
             }
             else
             {
-                buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.followLoose"));
+                buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.followLoose"));
             }
         }
         else if (task.equals(GuardTask.GUARD))
         {
-            buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.targetGuard"));
+            buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.targetGuard"));
             buttonTaskGuard.setEnabled(false);
         }
     }
@@ -469,7 +469,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<AbstractBu
 
         if (emptySlot == -1)
         {
-            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.workerHuts.noSpace");
+            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.workerhuts.noSpace");
         }
 
         if (patrolManually && task.equals(GuardTask.PATROL))
