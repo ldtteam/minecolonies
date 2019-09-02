@@ -27,6 +27,8 @@ import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.tags.BlockTags;
@@ -207,7 +209,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             }
             else if (((ScarecrowTileEntity) entity).getFieldStage() == ScarecrowFieldStage.HOED)
             {
-                return canGoPlanting((ScarecrowTileEntity) entity, building);
+                 return canGoPlanting((ScarecrowTileEntity) entity, building);
             }
             else if (((ScarecrowTileEntity) entity).getFieldStage() == ScarecrowFieldStage.EMPTY && checkIfShouldExecute((ScarecrowTileEntity) entity,
               pos -> this.shouldHoe(pos, (ScarecrowTileEntity) entity)))
@@ -341,7 +343,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean shouldHoe(@NotNull final BlockPos position, @NotNull final ScarecrowTileEntity field)
     {
-        return !field.isNoPartOfField(world, position) && world.getBlockState(position.up()) .getBlock() instanceof CropsBlock
+
+         return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.up()) .getBlock() instanceof CropsBlock)
                  && !(world.getBlockState(position.up()).getBlock() instanceof BlockScarecrow)
                  && (world.getBlockState(position).getBlock().isIn(BlockTags.DIRT_LIKE) || world.getBlockState(position).getBlock() instanceof GrassBlock);
     }
@@ -595,15 +598,18 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             return false;
         }
 
-        @NotNull final IPlantable seed = (IPlantable) item.getItem();
-        if ((seed == Items.MELON_SEEDS || seed == Items.PUMPKIN_SEEDS) && prevPos != null && !world.isAirBlock(prevPos.up()))
+        if (item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof CropsBlock)
         {
-            return true;
-        }
+            @NotNull final Item seed = item.getItem();
+            if ((seed == Items.MELON_SEEDS || seed == Items.PUMPKIN_SEEDS) && prevPos != null && !world.isAirBlock(prevPos.up()))
+            {
+                return true;
+            }
 
-        world.setBlockState(position.up(), seed.getPlant(world, position));
-        worker.decreaseSaturationForContinuousAction();
-        getInventory().extractItem(slot, 1, false);
+            world.setBlockState(position.up(), ((BlockItem) item.getItem()).getBlock().getDefaultState());
+            worker.decreaseSaturationForContinuousAction();
+            getInventory().extractItem(slot, 1, false);
+        }
         return true;
     }
 

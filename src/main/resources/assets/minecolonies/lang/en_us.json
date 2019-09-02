@@ -19,6 +19,8 @@
   "minecolonies.config.requestSystem.comment": "All configurations related to the request system",
   "minecolonies.config.commands": "Command Settings",
   "minecolonies.config.commands.comment": "All configurations related to the Minecolonies commands",
+  "minecolonies.config.disablecitizenvoices": "Citizen Sounds",
+  "minecolonies.config.disablecitizenvoices.comment": "Disable citizen voices. [Default: false]",
 
   "minecolonies.config.names": "Name Settings",
   "minecolonies.config.names.comment": "All configuration items related to the citizen names",
@@ -39,8 +41,6 @@
   "minecolonies.config.builderplaceconstructiontape.comment": "Should builder place construction tape? [Default: true]",
   "minecolonies.config.playergetsguidebookonfirstjoin": "Guidebook",
   "minecolonies.config.playergetsguidebookonfirstjoin.comment": "Should player get one guidebook on first join to a new world? [Default: true]",
-  "minecolonies.config.supplychests": "Supply-Chests",
-  "minecolonies.config.supplychests.comment": "Should supply chests be craftable on this server? [Default: true]",
   "minecolonies.config.allowinfinitesupplychests": "Infinite Supply-Chests",
   "minecolonies.config.allowinfinitesupplychests.comment": "Should players be able to place an infinite amount of supplychests? [Default: false]",
   "minecolonies.config.allowinfinitecolonies": "Infinite Colonies",
@@ -259,9 +259,9 @@
   "block.minecolonies.blockhutguardtower.name": "GuardTower",
   "block.minecolonies.blockhutfield.name": "Field",
 
-  "block.blockhut.messagenopermission": "You don't have permission to open huts in %s.",
-  "block.blockhut.messagenopermissionplace": "You don't have permission to place hutes in %s.",
-  "block.blockhut.messagetoofarfromtownhall": "You need to be closer to your town hall!",
+  "tile.blockhut.messagenopermission": "You don't have permission to open huts in %s.",
+  "tile.blockhut.messagenopermissionplace": "You don't have permission to place hutes in %s.",
+  "tile.blockhut.messagetoofarfromtownhall": "You need to be closer to your town hall!",
   "tile.blockhut.messagenotownhall": "You need to place a town hall first!",
 
   "block.blockhuttownhall.messagemaxSize": "%d has reached max size",

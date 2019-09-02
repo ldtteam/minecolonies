@@ -91,7 +91,7 @@ public class ClientEventHandler
                 {
                     if (wayPointTemplate == null)
                     {
-                        wayPointTemplate = new Structure(world, "schematics/infrastructure/Waypoint", settings).getBluePrint();
+                        wayPointTemplate = new Structure(world, "schematics/infrastructure/waypoint", settings).getBluePrint();
                     }
                     BlueprintRenderHandler.getInstance().drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints().keySet()), event.getPartialTicks(), wayPointTemplate);
                 }
