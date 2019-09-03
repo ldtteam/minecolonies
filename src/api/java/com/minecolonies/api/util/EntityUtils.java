@@ -177,7 +177,7 @@ public final class EntityUtils
           world,
           nearPoint.down(),
           1,
-          1,
+          2,
           1,
           2,
           Blocks.AIR,
