@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
-import afu.org.checkerframework.checker.oigj.qual.O;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
