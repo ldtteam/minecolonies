@@ -156,7 +156,7 @@ public class CitizenManager implements ICitizenManager
         }
         else
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), "com.minecolonies.coremod.citizens.nospace");
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntitys(), "com.minecolonies.coremod.citizens.nospace",spawnLocation.getX(),spawnLocation.getY(),spawnLocation.getZ());
         }
         return data;
     }
