@@ -321,7 +321,7 @@
   "com.minecolonies.command.whereami.nocolony": "No colony close at all.",
   "com.minecolonies.command.whereami.colonyclose": "You're not inside any colony, the closest colony is approx %.2f blocks away.",
   "com.minecolonies.command.whereami.incolony": "You're inside colony %s with id: %s, the colony center is approx %.2f blocks away.",
-  "com.minecolonies.command.whoami.hascolony": "You are %s, your colony is %s at position %s",
+  "com.minecolonies.command.whoami.hascolony": "You are %s, your colony is %s, with ID:%d at position %s",
   "com.minecolonies.command.whoami.nocolony": "You are %s, you do not have a colony yet.",
   "com.minecolonies.command.rtp.notallowed": "You're not allowed to teleport, change serverconfig to enable it.",
   "com.minecolonies.command.rtp.wrongdim": "random teleport is only allowed on the overworld.",
