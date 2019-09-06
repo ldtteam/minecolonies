@@ -251,7 +251,7 @@ public final class ItemStackUtils
     @NotNull
     public static Boolean isEmpty(@Nullable final ItemStack stack)
     {
-        return stack == null || stack == EMPTY || stack.getCount() <= 0;
+        return stack == null || stack.isEmpty();
     }
 
     public static Boolean isNotEmpty(@Nullable final ItemStack stack)

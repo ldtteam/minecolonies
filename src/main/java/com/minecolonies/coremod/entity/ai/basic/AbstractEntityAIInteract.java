@@ -297,7 +297,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         items = world.getEntitiesWithinAABB(ItemEntity.class, boundingBox)
                   .stream()
                   .filter(item -> item != null && item.isAlive() &&
-                                    (!item.getEntityData().keySet().contains("PreventRemoteMovement") || !item.getEntityData().getBoolean("PreventRemoteMovement")))
+                                    (!item.getPersistantData().keySet().contains("PreventRemoteMovement") || !item.getPersistantData().getBoolean("PreventRemoteMovement")))
                   .map(BlockPosUtil::fromEntity)
                   .collect(Collectors.toList());
     }
