@@ -7,6 +7,7 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
@@ -136,9 +137,13 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
         {
             final CompoundNBT neededRes = neededResTagList.getCompound(i);
             final ItemStack stack = ItemStack.read(neededRes);
-            final BuildingBuilderResource resource = new BuildingBuilderResource(stack, ItemStackUtils.getSize(stack));
-            final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
-            neededResources.put(stack.getTranslationKey() + "-" + hashCode, resource);
+
+            if (!stack.isEmpty())
+            {
+                final BuildingBuilderResource resource = new BuildingBuilderResource(stack, ItemStackUtils.getSize(stack));
+                final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
+                neededResources.put(stack.getTranslationKey() + "-" + hashCode, resource);
+            }
         }
 
         if (compound.keySet().contains(TAG_PROGRESS_POS))

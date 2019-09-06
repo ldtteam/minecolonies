@@ -1,9 +1,4 @@
 {
-  "conditions": [
-    {
-      "type": "minecolonies:supplies"
-    }
-  ],
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "   ",

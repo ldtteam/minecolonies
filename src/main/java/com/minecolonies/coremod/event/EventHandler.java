@@ -293,32 +293,6 @@ public class EventHandler
     }
 
     /**
-     * Event when a block is broken.
-     * Event gets cancelled when there no permission to break a hut.
-     *
-     * @param event {@link net.minecraftforge.event.world.BlockEvent.BreakEvent}
-     */
-    @SubscribeEvent
-    public static void onBlockBreak(@NotNull final BlockEvent.BreakEvent event)
-    {
-        if (event.getPlayer() != null && event.getPlayer().getHeldItem(Hand.MAIN_HAND).getItem() == ModItems.scanTool)
-        {
-            final ItemStack itemstack = event.getPlayer().getHeldItem(Hand.MAIN_HAND);
-            if (!itemstack.hasTag())
-            {
-                itemstack.setTag(new CompoundNBT());
-            }
-            final CompoundNBT compound = itemstack.getTag();
-
-            BlockPosUtil.write(compound, FIRST_POS_STRING, event.getPos());
-            LanguageHandler.sendPlayerMessage(event.getPlayer(), "item.scepterSteel.point", event.getPos().getX(), event.getPos().getY(), event.getPos().getZ());
-            itemstack.setTag(compound);
-
-            event.setCanceled(true);
-        }
-    }
-
-    /**
      * Event when a player right clicks a block, or right clicks with an item.
      * Event gets cancelled when player has no permission. Event gets cancelled
      * when the player has no permission to place a hut, and tried it.

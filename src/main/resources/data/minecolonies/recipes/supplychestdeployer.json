@@ -5,11 +5,6 @@
     "B B",
     "BBB"
   ],
-  "conditions": [
-    {
-      "type": "minecolonies:supplies"
-    }
-  ],
   "key": {
     "B": {
       "tag": "minecraft:boats"
