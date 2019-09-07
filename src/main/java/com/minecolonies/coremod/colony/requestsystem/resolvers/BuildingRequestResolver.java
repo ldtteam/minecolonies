@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -12,6 +13,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractBuildingDependentRequestResolver;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -66,19 +69,21 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     public boolean canResolveForBuilding(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        final List<ICapabilityProvider> tileEntities = new ArrayList<>();
-        tileEntities.add(building.getTileEntity());
-        tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
-        tileEntities.removeIf(Objects::isNull);
+        final Set<ICapabilityProvider> tileEntities = getCapabilityProviders(manager, building);
 
         if (building.getCitizenForRequest(request.getId()).isPresent() && building.getCitizenForRequest(request.getId()).get().isRequestAsync(request.getId()))
         {
             return false;
         }
 
+        final int total = request.getRequest().getCount();
+
         return tileEntities.stream()
-                 .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
-                 .anyMatch(itemStacks -> !itemStacks.isEmpty());
+          .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
+          .filter(itemStacks -> !itemStacks.isEmpty())
+          .flatMap(List::stream)
+          .mapToInt(stack -> stack.getCount())
+          .sum() >= total;
     }
 
     @Nullable
@@ -92,10 +97,7 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     @Override
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        final List<ICapabilityProvider> tileEntities = new ArrayList<>();
-        tileEntities.add(building.getTileEntity());
-        tileEntities.addAll(building.getAdditionalCountainers().stream().map(manager.getColony().getWorld()::getTileEntity).collect(Collectors.toSet()));
-        tileEntities.removeIf(Objects::isNull);
+        final Set<ICapabilityProvider> tileEntities = getCapabilityProviders(manager, building);
 
         final int total = request.getRequest().getCount();
         final AtomicInteger current = new AtomicInteger(0);
@@ -136,5 +138,16 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     public void onRequestedRequestCancelled(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
 
+    }
+
+    @NotNull
+    private Set<ICapabilityProvider> getCapabilityProviders(
+      @NotNull final IRequestManager manager,
+      @NotNull final AbstractBuilding building)
+    {
+        final Set<ICapabilityProvider> tileEntities = Sets.newHashSet();
+        tileEntities.add(building.getTileEntity());
+        tileEntities.removeIf(Objects::isNull);
+        return tileEntities;
     }
 }
