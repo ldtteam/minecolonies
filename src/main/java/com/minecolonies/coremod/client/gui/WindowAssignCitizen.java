@@ -1,20 +1,19 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.util.constant.Constants;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonHandler;
 import com.ldtteam.blockout.controls.Label;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.coremod.MineColonies;
+import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.network.messages.AssignUnassignMessage;
 import net.minecraft.util.math.BlockPos;
@@ -78,7 +77,8 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
 
         //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
-                     .filter(cit -> cit.getHomeBuilding() == null || !(colony.getBuilding(cit.getHomeBuilding()) instanceof BuildingBarracksTower.View) && !cit.getHomeBuilding().equals(building.getID()))
+                     .filter(cit -> cit.getHomeBuilding() == null || !(colony.getBuilding(cit.getHomeBuilding()) instanceof AbstractBuildingGuards.View) && !cit.getHomeBuilding()
+                                                                                                                                                               .equals(building.getID()))
                      .sorted(Comparator.comparing(ICitizenDataView::getName)).collect(Collectors.toList());
     }
 
