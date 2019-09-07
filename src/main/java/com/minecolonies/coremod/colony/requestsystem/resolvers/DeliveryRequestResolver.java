@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
@@ -79,6 +78,7 @@ public class DeliveryRequestResolver extends AbstractRequestResolver<Delivery>
                                                                                                 .isReachableFromLocation(entityCitizen.getLocation()))
                                                                         .orElse(false))
                                                .filter(c -> c.getJob() instanceof JobDeliveryman)
+                                               .filter(c -> ((JobDeliveryman) c.getJob()).isActive())
                                                .min(Comparator.comparing((ICitizenData c) -> ((JobDeliveryman) c.getJob()).getTaskQueue().size())
                                                       .thenComparing(Comparator.comparing(c -> {
                                                           BlockPos targetPos = request.getRequest().getTarget().getInDimensionLocation();

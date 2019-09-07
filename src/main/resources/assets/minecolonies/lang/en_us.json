@@ -270,7 +270,7 @@
   "block.blockhuttownhall.messagetooclose": "Too close to existing town hall",
   "block.blockhuttownhall.messagetooclosetovillage": "Too close to existing village",
   "block.blockhuttownhall.messagetooFar": "Too far away from your Colony",
-  "block.blockHutTownHall.messageworkerdead": "The %s %s has died at %d %d %d of %s!",
+  "block.blockhuttownhall.messageworkerdead": "The %s %s has died at %d %d %d of %s!",
 
   "item.minecolonies.ancienttome": "Ancient Tome",
   "item.minecolonies.chiefsword": "Chief Sword",

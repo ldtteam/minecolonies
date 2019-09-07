@@ -40,6 +40,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -136,7 +137,11 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
             {
                 checkForRegisteredDeliverymen();
             }
-            return false;
+
+            if (registeredDeliverymen.size() >= getBuildingLevel())
+            {
+                return false;
+            }
         }
 
         registeredDeliverymen.add(new Vec3d(buildingWorker.getID()));
@@ -148,11 +153,9 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      */
     private void checkForRegisteredDeliverymen()
     {
-        final List<Vec3d> registeredDeliverymenCopy = new ArrayList<>(registeredDeliverymen);
-        for (final Vec3d pos : registeredDeliverymenCopy)
+        for (final Vec3d pos: new ArrayList<>(registeredDeliverymen))
         {
-            final IColony colony = getColony();
-            if (colony != null && colony.getWorld() != null && (!(colony.getWorld().getBlockState(new BlockPos(pos)).getBlock() instanceof BlockHutDeliveryman) || colony.isCoordInColony(colony.getWorld(), new BlockPos(pos))))
+            if (!(colony.getBuildingManager().getBuilding(new BlockPos(pos)) instanceof BuildingDeliveryman))
             {
                 registeredDeliverymen.remove(pos);
             }

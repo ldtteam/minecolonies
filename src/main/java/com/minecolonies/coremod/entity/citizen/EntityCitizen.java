@@ -1535,7 +1535,6 @@ public class EntityCitizen extends AbstractEntityCitizen
             citizenData.setLastPosition(getCurrentPosition());
             citizenData.setCitizenEntity(null);
         }
-        Log.getLogger().warn("Removing");
         super.remove();
     }
 }
