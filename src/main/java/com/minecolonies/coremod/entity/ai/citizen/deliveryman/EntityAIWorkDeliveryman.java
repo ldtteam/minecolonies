@@ -130,6 +130,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
           /*
            * Check if tasks should be executed.
            */
+          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::checkIfExecute, this::getState),
           new AITarget(IDLE, () -> START_WORKING),
           new AITarget(START_WORKING, this::checkWareHouse),
           new AITarget(PREPARE_DELIVERY, this::prepareDelivery),
@@ -729,6 +730,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     {
         if (getWareHouse() != null && getWareHouse().getTileEntity() != null)
         {
+            job.setActive(true);
             return false;
         }
 
@@ -745,10 +747,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             if (building instanceof BuildingWareHouse && ownColony != null && buildingColony.getID() == ownColony.getID()
                   && ((BuildingWareHouse) building).registerWithWareHouse(this.getOwnBuilding()))
             {
+                job.setActive(true);
                 return false;
             }
         }
 
+        job.setActive(false);
         chatSpamFilter.talkWithoutSpam(COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN_NOWAREHOUSE);
         return true;
     }
