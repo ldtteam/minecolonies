@@ -235,7 +235,6 @@ curseforge {
             releaseType = System.getenv().CURSERELEASETYPE
 
             addArtifact apiJar
-            addArtifact minimalJar
         }
     }
     else
