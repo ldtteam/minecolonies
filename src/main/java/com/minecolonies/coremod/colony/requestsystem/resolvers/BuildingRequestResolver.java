@@ -13,6 +13,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractBuildingDependentRequestResolver;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
@@ -76,14 +77,21 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
             return false;
         }
 
-        final int total = request.getRequest().getCount();
 
         return tileEntities.stream()
           .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
-          .filter(itemStacks -> !itemStacks.isEmpty())
+          .filter(itemStack -> !itemStack.isEmpty())
           .flatMap(List::stream)
-          .mapToInt(stack -> stack.getCount())
-          .sum() >= total;
+          .filter(itemStack -> {
+              if (!request.hasParent())
+                  return true;
+
+              final IRequest<?> requestParent = manager.getRequestForToken(request.getParent());
+
+              return !requestParent.getRequestOfType(IDeliverable.class).map(d -> d.matches(itemStack)).orElse(false);
+          })
+          .mapToInt(ItemStack::getCount)
+          .sum() > 0;
     }
 
     @Nullable
@@ -91,7 +99,22 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     public List<IToken<?>> attemptResolveForBuilding(
       @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        return Lists.newArrayList();
+        final Set<ICapabilityProvider> tileEntities = getCapabilityProviders(manager, building);
+
+        final int totalRequested = request.getRequest().getCount();
+        final int totalAvailable = tileEntities.stream()
+                                     .map(tileEntity -> InventoryUtils.filterProvider(tileEntity, itemStack -> request.getRequest().matches(itemStack)))
+                                     .filter(itemStacks -> !itemStacks.isEmpty())
+                                     .flatMap(List::stream)
+                                     .mapToInt(ItemStack::getCount)
+                                     .sum();
+
+        if (totalAvailable >= totalRequested)
+            return Lists.newArrayList();
+
+        final int totalRemainingRequired = totalRequested - totalAvailable;
+        final IDeliverable remainingRequest = request.getRequest().copyWithCount(totalRemainingRequired);
+        return Lists.newArrayList(manager.createRequest(this, remainingRequest));
     }
 
     @Override

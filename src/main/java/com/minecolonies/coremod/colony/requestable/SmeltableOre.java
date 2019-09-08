@@ -70,6 +70,12 @@ public class SmeltableOre implements IDeliverable
     }
 
     @Override
+    public IDeliverable copyWithCount(@NotNull final int newCount)
+    {
+        return new SmeltableOre(newCount);
+    }
+
+    @Override
     public int getCount()
     {
         return count;

@@ -203,6 +203,15 @@ public class Stack implements IDeliverable
         this.result = result;
     }
 
+    @Override
+    public IDeliverable copyWithCount(@NotNull final int newCount)
+    {
+        final Stack stack = new Stack(this.theStack.copy(), this.matchMeta, this.matchNBT, this.matchOreDic, this.result);
+        stack.setCount(newCount);
+
+        return stack;
+    }
+
     public Stack setMatchOreDic(final boolean match)
     {
         this.matchOreDic = match;

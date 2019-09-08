@@ -65,6 +65,12 @@ public class Burnable implements IDeliverable
     }
 
     @Override
+    public IDeliverable copyWithCount(@NotNull final int newCount)
+    {
+        return new Burnable(newCount);
+    }
+
+    @Override
     public int getCount()
     {
         return count;

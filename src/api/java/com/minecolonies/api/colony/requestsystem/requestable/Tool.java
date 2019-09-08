@@ -239,6 +239,12 @@ public class Tool implements IDeliverable
     }
 
     @Override
+    public IDeliverable copyWithCount(@NotNull final int newCount)
+    {
+        return new Tool(this.toolClass, this.minLevel, this.maxLevel, this.result);
+    }
+
+    @Override
     public boolean equals(final Object o)
     {
         if (this == o)

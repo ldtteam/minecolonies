@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -20,7 +21,8 @@ import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,52 +83,29 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
                                         @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
         if (manager.getColony().getWorld().isRemote)
-        {
-            return null;
-        }
+            return Lists.newArrayList();
+
+        if (!(manager.getColony() instanceof Colony))
+            return Lists.newArrayList();
 
         final Colony colony = (Colony) manager.getColony();
+
         final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
 
-        List<IToken<?>> deliveries = Lists.newArrayList();
-        int remainingCount = request.getRequest().getCount();
+        final int totalRequested = request.getRequest().getCount();
+        final int totalAvailable = wareHouses.stream()
+                                     .map(wareHouse -> wareHouse.getMatchingItemStacksInWarehouse(itemStack -> request.getRequest().matches(itemStack)))
+                                     .filter(itemStacks -> !itemStacks.isEmpty())
+                                     .flatMap(List::stream)
+                                     .mapToInt(ItemStack::getCount)
+                                     .sum();
 
-        tileentities:
-        for (final TileEntityWareHouse wareHouse : wareHouses)
-        {
-            final List<ItemStack> targetStacks = wareHouse.getMatchingItemStacksInWarehouse(itemStack -> request.getRequest().matches(itemStack));
-            for (final ItemStack stack :
-              targetStacks)
-            {
-                if (ItemStackUtils.isEmpty(stack))	
-		{
-                    continue;
-		}
+        if (totalAvailable >= totalRequested)
+            return Lists.newArrayList();
 
-                final ItemStack matchingStack = stack.copy();
-                matchingStack.setCount(Math.min(remainingCount, matchingStack.getCount()));
-
-                final ItemStack deliveryStack = matchingStack.copy();
-                request.addDelivery(deliveryStack.copy());
-
-                final BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> ItemStack.areItemsEqual(itemStack, deliveryStack));
-                final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().getDimension().getType().getId());
-
-                final Delivery delivery = new Delivery(itemStackLocation, request.getRequester().getLocation(), deliveryStack.copy());
-
-                final IToken<?> requestToken = manager.createRequest(new WarehouseRequestResolver(request.getRequester().getLocation(), request.getId()), delivery);
-
-                deliveries.add(requestToken);
-                remainingCount -= ItemStackUtils.getSize(matchingStack);
-
-                if (remainingCount <= 0)
-                {
-                    break tileentities;
-                }
-            }
-        }
-
-        return deliveries.isEmpty() ? null : deliveries;
+        final int totalRemainingRequired = totalRequested - totalAvailable;
+        final IDeliverable remainingRequest = request.getRequest().copyWithCount(totalRemainingRequired);
+        return Lists.newArrayList(manager.createRequest(this, remainingRequest));
     }
 
     @Override
@@ -140,8 +119,53 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     public List<IRequest<?>> getFollowupRequestForCompletion(
                                                      @NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> completedRequest)
     {
-        //No followup needed.
-        return null;
+        if (manager.getColony().getWorld().isRemote)
+        {
+            return null;
+        }
+
+        final Colony colony = (Colony) manager.getColony();
+        final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
+
+        List<IRequest<?>> deliveries = Lists.newArrayList();
+        int remainingCount = completedRequest.getRequest().getCount();
+
+        tileentities:
+        for (final TileEntityWareHouse wareHouse : wareHouses)
+        {
+            final List<ItemStack> targetStacks = wareHouse.getMatchingItemStacksInWarehouse(itemStack -> completedRequest.getRequest().matches(itemStack));
+            for (final ItemStack stack :
+              targetStacks)
+            {
+                if (ItemStackUtils.isEmpty(stack))
+                {
+                    continue;
+                }
+
+                final ItemStack matchingStack = stack.copy();
+                matchingStack.setCount(Math.min(remainingCount, matchingStack.getCount()));
+
+                final ItemStack deliveryStack = matchingStack.copy();
+                completedRequest.addDelivery(deliveryStack.copy());
+
+                final BlockPos itemStackPos = wareHouse.getPositionOfChestWithItemStack(itemStack -> ItemStack.areItemsEqual(itemStack, deliveryStack));
+                final ILocation itemStackLocation = manager.getFactoryController().getNewInstance(TypeConstants.ILOCATION, itemStackPos, wareHouse.getWorld().getDimension().getType().getId());
+
+                final Delivery delivery = new Delivery(itemStackLocation, completedRequest.getRequester().getLocation(), deliveryStack.copy());
+
+                final IToken<?> requestToken = manager.createRequest(new WarehouseRequestResolver(completedRequest.getRequester().getLocation(), completedRequest.getId()), delivery);
+
+                deliveries.add(manager.getRequestForToken(requestToken));
+                remainingCount -= ItemStackUtils.getSize(matchingStack);
+
+                if (remainingCount <= 0)
+                {
+                    break tileentities;
+                }
+            }
+        }
+
+        return deliveries.isEmpty() ? null : deliveries;
     }
 
     @Nullable
