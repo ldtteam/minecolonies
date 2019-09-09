@@ -8,10 +8,8 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static com.minecolonies.coremod.MineColonies.CHUNK_STORAGE_UPDATE_CAP;
-import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
  * Capability provider for the world capability of Minecolonies.
@@ -24,11 +22,17 @@ public class MinecoloniesWorldCapabilityProvider implements ICapabilitySerializa
     private final IChunkmanagerCapability chunkMap;
 
     /**
+     * The chunk map capability optional.
+     */
+    private final LazyOptional<IChunkmanagerCapability> chunkMapOptional;
+
+    /**
      * Constructor of the provider.
      */
     public MinecoloniesWorldCapabilityProvider()
     {
         this.chunkMap = new IChunkmanagerCapability.Impl();
+        this.chunkMapOptional = LazyOptional.of(() -> chunkMap);
     }
 
     @Override
@@ -47,6 +51,6 @@ public class MinecoloniesWorldCapabilityProvider implements ICapabilitySerializa
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, final Direction direction)
     {
-        return cap == CHUNK_STORAGE_UPDATE_CAP ? LazyOptional.of(() -> (T) chunkMap) : LazyOptional.empty();
+        return cap == CHUNK_STORAGE_UPDATE_CAP ? chunkMapOptional.cast() : LazyOptional.empty();
     }
 }
