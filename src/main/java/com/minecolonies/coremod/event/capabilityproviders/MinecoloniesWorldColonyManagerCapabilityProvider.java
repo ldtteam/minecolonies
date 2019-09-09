@@ -8,7 +8,6 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 
@@ -17,6 +16,11 @@ import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
  */
 public class MinecoloniesWorldColonyManagerCapabilityProvider implements ICapabilitySerializable<INBT>
 {
+    /**
+     * The chunk map capability optional.
+     */
+    private final LazyOptional<IColonyManagerCapability> colonyManagerOptional;
+
     /**
      * The chunk map capability.
      */
@@ -28,6 +32,7 @@ public class MinecoloniesWorldColonyManagerCapabilityProvider implements ICapabi
     public MinecoloniesWorldColonyManagerCapabilityProvider()
     {
         this.colonyManager = new IColonyManagerCapability.Impl();
+        this.colonyManagerOptional = LazyOptional.of(() -> colonyManager);
     }
 
     @Override
@@ -46,6 +51,6 @@ public class MinecoloniesWorldColonyManagerCapabilityProvider implements ICapabi
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, final Direction dir)
     {
-        return cap == COLONY_MANAGER_CAP ? LazyOptional.of(() -> (T) colonyManager) : LazyOptional.empty();
+        return cap == COLONY_MANAGER_CAP ? colonyManagerOptional.cast() : LazyOptional.empty();
     }
 }

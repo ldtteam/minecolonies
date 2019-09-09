@@ -19,32 +19,38 @@ public class MinecoloniesChunkCapabilityProvider implements ICapabilitySerializa
     /**
      * The colony list capability. (For closest colony and claimed)
      */
-    private final IColonyTagCapability colonyList;
+    private final IColonyTagCapability tag;
+
+    /**
+     * The colony list capability optional.
+     */
+    private final LazyOptional<IColonyTagCapability> tagOptional;
 
     /**
      * Constructor of the provider.
      */
     public MinecoloniesChunkCapabilityProvider()
     {
-        this.colonyList = new IColonyTagCapability.Impl();
+        this.tag = new IColonyTagCapability.Impl();
+        this.tagOptional = LazyOptional.of(() -> tag);
     }
 
     @Override
     public INBT serializeNBT()
     {
-        return CLOSE_COLONY_CAP.getStorage().writeNBT(CLOSE_COLONY_CAP, colonyList, null);
+        return CLOSE_COLONY_CAP.getStorage().writeNBT(CLOSE_COLONY_CAP, tag, null);
     }
 
     @Override
     public void deserializeNBT(final INBT nbt)
     {
-        CLOSE_COLONY_CAP.getStorage().readNBT(CLOSE_COLONY_CAP, colonyList, null, nbt);
+        CLOSE_COLONY_CAP.getStorage().readNBT(CLOSE_COLONY_CAP, tag, null, nbt);
     }
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, final Direction direction)
     {
-        return cap == CLOSE_COLONY_CAP ? LazyOptional.of(() -> (T) colonyList) : LazyOptional.empty();
+        return cap == CLOSE_COLONY_CAP ? tagOptional.cast() : LazyOptional.empty();
     }
 }
