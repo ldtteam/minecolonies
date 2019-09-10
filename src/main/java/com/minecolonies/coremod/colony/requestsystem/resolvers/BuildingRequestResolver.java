@@ -138,7 +138,7 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
               }
           });
 
-        manager.updateRequestState(request.getId(), RequestState.COMPLETED);
+        manager.updateRequestState(request.getId(), RequestState.RESOLVED);
     }
 
     @Nullable

@@ -110,7 +110,7 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     @Override
     public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request)
     {
-        manager.updateRequestState(request.getId(), RequestState.COMPLETED);
+        manager.updateRequestState(request.getId(), RequestState.RESOLVED);
     }
 
     @Nullable
