@@ -141,8 +141,6 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
         manager.updateRequestState(request.getId(), RequestState.RESOLVED);
     }
 
-
-
     @Nullable
     @Override
     public List<IRequest<?>> getFollowupRequestForCompletion(

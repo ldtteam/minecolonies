@@ -64,6 +64,7 @@ public class RenderBipedCitizen<C extends EntityCitizen> extends RenderBiped<C>
         {
             mainModel = citizen.isFemale() ? defaultModelFemale : defaultModelMale;
         }
+        mainModel.isChild = citizen.isChild();
     }
 
     private ModelBiped.ArmPose getArmPoseFrom(@NotNull final C citizen, final ItemStack mainHandStack, ModelBiped.ArmPose armPoseMainHand)

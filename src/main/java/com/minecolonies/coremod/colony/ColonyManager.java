@@ -216,6 +216,7 @@ public final class ColonyManager implements IColonyManager
                 return;
             }
 
+            BackUpHelper.markColonyDeleted(colony.getID(),colony.getDimension());
             cap.deleteColony(id);
             Log.getLogger().info("Done with " + id);
         }
