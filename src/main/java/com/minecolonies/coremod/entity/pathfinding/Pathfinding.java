@@ -62,7 +62,7 @@ public final class Pathfinding
 
         final Entity entity = Minecraft.getInstance().getRenderViewEntity();
         final double dx = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * frame;
-        final double dy = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * frame;
+        final double dy = entity.lastTickPosY + (double)entity.getEyeHeight() + (entity.posY - entity.lastTickPosY) * frame;
         final double dz = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * frame;
 
         GlStateManager.pushMatrix();
