@@ -55,7 +55,7 @@ public final class ColonyView implements IColonyView
     /**
      * Max allowed CompoundNBT in bytes
      */
-    private static final int MAX_BYTES_NBTCOMPOUND = (int) 1e6;
+    private static final int MAX_BYTES_NBTCOMPOUND = 250000;
 
     //  General Attributes
     private final int                            id;
