@@ -278,7 +278,7 @@ public class RequestHandler implements IRequestHandler
         //All follow ups resolved immediately or none where present.
         if (!request.hasChildren())
         {
-            request.setState(manager, RequestState.COMPLETED);
+            manager.updateRequestState(request.getId(), RequestState.COMPLETED);
         }
     }
 
@@ -315,7 +315,7 @@ public class RequestHandler implements IRequestHandler
                 //Follow up procssing is running, we completed all followups, complete the parent request.
                 else if (parentRequest.getState() == RequestState.FOLLOWUP_IN_PROGRESS)
                 {
-                    parentRequest.setState(manager, RequestState.COMPLETED);
+                    manager.updateRequestState(request.getId(), RequestState.COMPLETED);
                 }
             }
         }
