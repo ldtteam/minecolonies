@@ -293,9 +293,13 @@ public class StandardRequestManager implements IStandardRequestManager
 
         switch (request.getState())
         {
+            case RESOLVED:
+                getLogger().debug("Request resolved: " + token + ". Determining followup requests...");
+                getRequestHandler().onRequestResolved(token);
+                return;
             case COMPLETED:
                 getLogger().debug("Request completed: " + token + ". Notifying parent and requester...");
-                getRequestHandler().onRequestSuccessful(token);
+                getRequestHandler().onRequestCompleted(token);
                 return;
             case OVERRULED:
                 getLogger().debug("Request overruled: " + token + ". Notifying parent, children and requester...");

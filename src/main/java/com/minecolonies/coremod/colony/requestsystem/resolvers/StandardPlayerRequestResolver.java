@@ -131,7 +131,7 @@ public class StandardPlayerRequestResolver implements IPlayerRequestResolver
 
                     if (ItemStackUtils.isEmpty(remainingItemStack))
                     {
-                        manager.updateRequestState(request.getId(), RequestState.COMPLETED);
+                        manager.updateRequestState(request.getId(), RequestState.RESOLVED);
                         return;
                     }
                 }
