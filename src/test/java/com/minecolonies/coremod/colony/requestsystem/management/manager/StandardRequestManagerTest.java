@@ -402,7 +402,7 @@ public class StandardRequestManagerTest
         public void resolveRequest(final IRequestManager manager, final IRequest<? extends StringRequestable> request) throws RuntimeException
         {
             System.out.println(request.getRequest().content);
-            manager.updateRequestState(request.getId(), RequestState.COMPLETED);
+            manager.updateRequestState(request.getId(), RequestState.RESOLVED);
         }
 
         @SuppressWarnings(RAWTYPES)

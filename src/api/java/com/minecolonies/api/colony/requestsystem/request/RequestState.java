@@ -37,6 +37,17 @@ public enum RequestState
     IN_PROGRESS,
 
     /**
+     * States for a request who's primary processing has been completed.
+     * Followup processing still needs to be determined.
+     */
+    RESOLVED,
+
+    /**
+     * State for a requests, who's resolving has been completed, but who's followups are still in processing stages.
+     */
+    FOLLOWUP_IN_PROGRESS,
+
+    /**
      * State for a request that has been completed.
      */
     COMPLETED,

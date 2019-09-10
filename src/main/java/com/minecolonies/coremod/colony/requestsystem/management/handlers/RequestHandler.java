@@ -248,44 +248,22 @@ public class RequestHandler implements IRequestHandler
         return manager.getRequestResolverRequestAssignmentDataStore().getAssignmentForValue(token) != null;
     }
 
-    /**
-     * Method used to handle the successful resolving of a request.
-     *
-     * @param token   The token of the request that got finished successfully.
-     */
     @Override
-    @SuppressWarnings(UNCHECKED)
-    public void onRequestSuccessful(final IToken<?> token)
+    public void onRequestResolved(final IToken<?> token)
     {
         @SuppressWarnings(RAWTYPES) final IRequest request = getRequest(token);
         @SuppressWarnings(RAWTYPES) final IRequestResolver resolver = manager.getResolverHandler().getResolverForRequest(token);
 
-        request.getRequester().onRequestedRequestComplete(manager, request);
-
         //Retrieve a followup request.
         final List<IRequest<?>> followupRequests = resolver.getFollowupRequestForCompletion(manager, request);
 
-        //Check if the request has a parent
-        if (request.hasParent())
+        request.setState(manager, RequestState.FOLLOWUP_IN_PROGRESS);
+
+        //Assign the followup to the parent as a child so that processing is still halted.
+        if (followupRequests != null && !followupRequests.isEmpty())
         {
-            @SuppressWarnings(RAWTYPES) final IRequest parentRequest = getRequest(request.getParent());
-
-            //Assign the followup to the parent as a child so that processing is still halted.
-            if (followupRequests != null && !followupRequests.isEmpty())
-            {
-                followupRequests.forEach(followupRequest -> parentRequest.addChild(followupRequest.getId()));
-                followupRequests.forEach(followupRequest -> followupRequest.setParent(parentRequest.getId()));
-            }
-
-            manager.updateRequestState(request.getId(), RequestState.RECEIVED);
-            parentRequest.removeChild(request.getId());
-
-            request.setParent(null);
-
-            if (!parentRequest.hasChildren() && parentRequest.getState() == RequestState.IN_PROGRESS)
-            {
-                resolveRequest(parentRequest);
-            }
+            followupRequests.forEach(followupRequest -> request.addChild(followupRequest.getId()));
+            followupRequests.forEach(followupRequest -> followupRequest.setParent(request.getId()));
         }
 
         //Assign the followup request if need be
@@ -294,7 +272,52 @@ public class RequestHandler implements IRequestHandler
         {
             followupRequests.stream()
               .filter(followupRequest -> !isAssigned(followupRequest.getId()))
-              .forEach(unassignedFollowupRequest -> assignRequest(unassignedFollowupRequest));
+              .forEach(this::assignRequest);
+        }
+
+        //All follow ups resolved immediately or none where present.
+        if (!request.hasChildren())
+        {
+            request.setState(manager, RequestState.COMPLETED);
+        }
+    }
+
+    /**
+     * Method used to handle the successful resolving of a request.
+     *
+     * @param token   The token of the request that got finished successfully.
+     */
+    @Override
+    @SuppressWarnings(UNCHECKED)
+    public void onRequestCompleted(final IToken<?> token)
+    {
+        @SuppressWarnings(RAWTYPES) final IRequest request = getRequest(token);
+
+        request.getRequester().onRequestedRequestComplete(manager, request);
+
+        //Check if the request has a parent, and if resolving of the parent is needed.
+        if (request.hasParent())
+        {
+            @SuppressWarnings(RAWTYPES) final IRequest parentRequest = getRequest(request.getParent());
+
+            manager.updateRequestState(request.getId(), RequestState.RECEIVED);
+            parentRequest.removeChild(request.getId());
+
+            request.setParent(null);
+
+            if (!parentRequest.hasChildren())
+            {
+                //Normal processing still running, we received all dependencies, resolve parent request.
+                if (parentRequest.getState() == RequestState.IN_PROGRESS)
+                {
+                    resolveRequest(parentRequest);
+                }
+                //Follow up procssing is running, we completed all followups, complete the parent request.
+                else if (parentRequest.getState() == RequestState.FOLLOWUP_IN_PROGRESS)
+                {
+                    parentRequest.setState(manager, RequestState.COMPLETED);
+                }
+            }
         }
     }
 
@@ -327,7 +350,7 @@ public class RequestHandler implements IRequestHandler
         manager.getResolverHandler().getResolverForRequest(token).onAssignedRequestBeingCancelled(manager, request);
 
         //This will notify everyone :D
-        manager.updateRequestState(token, RequestState.COMPLETED);
+        manager.updateRequestState(token, RequestState.RESOLVED);
 
         //Cancellation complete
         manager.getResolverHandler().getResolverForRequest(token).onAssignedRequestCancelled(manager, request);

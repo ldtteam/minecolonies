@@ -73,12 +73,19 @@ public interface IRequestHandler
     boolean isAssigned(IToken<?> token);
 
     /**
-     * Method used to handle the successful resolving of a request.
+     * Method used to handle the successful resolving of a request and the completion of its children.
      *
-     * @param token The token of the request that got finished successfully.
+     * @param token The token of the requests that finished resolving.
+     */
+    void onRequestResolved(IToken<?> token);
+
+    /**
+     * Method used to handle the successful completion of a request, its children and the followups.
+     *
+     * @param token The token of the request that got completed successfully.
      */
     @SuppressWarnings(UNCHECKED)
-    void onRequestSuccessful(IToken<?> token);
+    void onRequestCompleted(IToken<?> token);
 
     /**
      * Method used to handle requests that were overruled or cancelled. Cancels all children first, handles the creation of clean up requests.
@@ -147,4 +154,5 @@ public interface IRequestHandler
      * @return A collection with request instances that are made by the given requester.
      */
     Collection<IRequest<?>> getRequestsMadeByRequester(IRequester requester);
+
 }

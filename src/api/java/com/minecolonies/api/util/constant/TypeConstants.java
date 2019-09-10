@@ -4,10 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.data.*;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
-import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
-import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
-import com.minecolonies.api.colony.requestsystem.requestable.IRetryable;
+import com.minecolonies.api.colony.requestsystem.requestable.*;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCrafting;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
@@ -55,8 +52,9 @@ public class TypeConstants
     public static final TypeToken<IRequestSystemCrafterJobDataStore> REQUEST_SYSTEM_CRAFTER_JOB_DATA_STORE = TypeToken.of(IRequestSystemCrafterJobDataStore.class);
 
     /////Implementations
-    public static final TypeToken<StandardToken> STANDARDTOKEN                           = TypeToken.of(StandardToken.class);
-    public static final TypeToken<PrivateCrafting>                      PRIVATE_CRAFTING = TypeToken.of(PrivateCrafting.class);
-    public static final TypeToken<PublicCrafting>                       PUBLIC_CRAFTING = TypeToken.of(PublicCrafting.class);
-    public static final TypeToken<Delivery> DELIVERY                                     = TypeToken.of(Delivery.class);
+    public static final TypeToken<StandardToken>   STANDARDTOKEN    = TypeToken.of(StandardToken.class);
+    public static final TypeToken<PrivateCrafting> PRIVATE_CRAFTING = TypeToken.of(PrivateCrafting.class);
+    public static final TypeToken<PublicCrafting>  PUBLIC_CRAFTING  = TypeToken.of(PublicCrafting.class);
+    public static final TypeToken<Delivery>        DELIVERY         = TypeToken.of(Delivery.class);
+    public static final TypeToken<Tool>            TOOL             = TypeToken.of(Tool.class);
 }

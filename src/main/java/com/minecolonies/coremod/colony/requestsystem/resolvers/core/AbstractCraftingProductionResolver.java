@@ -199,6 +199,6 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
             buildingWorker.fullFillRecipe(storage);
         }
 
-        manager.updateRequestState(request.getId(), RequestState.COMPLETED);
+        manager.updateRequestState(request.getId(), RequestState.RESOLVED);
     }
 }
