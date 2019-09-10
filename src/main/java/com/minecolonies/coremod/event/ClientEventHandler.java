@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.event;
 
 import com.ldtteam.structures.blueprints.v1.Blueprint;
-import com.ldtteam.structures.client.BlueprintRenderHandler;
+import com.ldtteam.structures.client.BlueprintHandler;
 import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -93,7 +93,7 @@ public class ClientEventHandler
                     {
                         wayPointTemplate = new Structure(world, "schematics/infrastructure/waypoint", settings).getBluePrint();
                     }
-                    BlueprintRenderHandler.getInstance().drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints().keySet()), event.getPartialTicks(), wayPointTemplate);
+                    BlueprintHandler.getInstance().drawBlueprintAtListOfPositions(new ArrayList<>(tempView.getWayPoints().keySet()), event.getPartialTicks(), wayPointTemplate);
                 }
             }
         }
@@ -123,7 +123,7 @@ public class ClientEventHandler
 
             if (hut instanceof AbstractBuildingGuards.View)
             {
-                BlueprintRenderHandler.getInstance()
+                BlueprintHandler.getInstance()
                   .drawBlueprintAtListOfPositions(((AbstractBuildingGuards.View) hut).getPatrolTargets().stream().map(BlockPos::up).collect(Collectors.toList()),
                     event.getPartialTicks(),
                     partolPointTemplate);
