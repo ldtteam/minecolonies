@@ -61,7 +61,7 @@ public class MobEntryView
     @NotNull
     public static MobEntryView readFromByteBuf(@NotNull final PacketBuffer buf)
     {
-        final ResourceLocation location = new ResourceLocation(buf.readString());
+        final ResourceLocation location = new ResourceLocation(buf.readString(32767));
         final Boolean attack = buf.readBoolean();
         final Integer priority = buf.readInt();
 

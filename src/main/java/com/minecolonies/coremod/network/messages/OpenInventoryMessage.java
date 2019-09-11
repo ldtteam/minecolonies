@@ -102,7 +102,7 @@ public class OpenInventoryMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         inventoryType = InventoryType.values()[buf.readInt()];
-        name = buf.readString();
+        name = buf.readString(32767);
         switch (inventoryType)
         {
             case INVENTORY_CITIZEN:

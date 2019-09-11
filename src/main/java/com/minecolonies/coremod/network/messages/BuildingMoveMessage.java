@@ -114,8 +114,8 @@ public class BuildingMoveMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        structureName = buf.readString();
-        workOrderName = buf.readString();
+        structureName = buf.readString(32767);
+        workOrderName = buf.readString(32767);
         pos = buf.readBlockPos();
         rotation = buf.readInt();
         mirror = buf.readBoolean();

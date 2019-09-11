@@ -55,7 +55,7 @@ public class TownHallRenameMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         colonyId = buf.readInt();
-        name = buf.readString();
+        name = buf.readString(32767);
         dimension = buf.readInt();
     }
 

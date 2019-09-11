@@ -118,8 +118,8 @@ public class BuildToolPasteMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        structureName = buf.readString();
-        workOrderName = buf.readString();
+        structureName = buf.readString(32767);
+        workOrderName = buf.readString(32767);
 
         pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
 

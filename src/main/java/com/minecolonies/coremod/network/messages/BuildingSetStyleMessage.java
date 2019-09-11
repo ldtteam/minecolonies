@@ -70,7 +70,7 @@ public class BuildingSetStyleMessage implements IMessage
     {
         colonyId = buf.readInt();
         buildingId = buf.readBlockPos();
-        style = buf.readString();
+        style = buf.readString(32767);
         dimension = buf.readInt();
     }
 

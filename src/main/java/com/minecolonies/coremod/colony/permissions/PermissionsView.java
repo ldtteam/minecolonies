@@ -200,7 +200,7 @@ public class PermissionsView implements IPermissions
      */
     public void deserialize(@NotNull final PacketBuffer buf)
     {
-        userRank = Rank.valueOf(buf.readString());
+        userRank = Rank.valueOf(buf.readString(32767));
 
         //  Owners
         players.clear();
@@ -208,8 +208,8 @@ public class PermissionsView implements IPermissions
         for (int i = 0; i < numOwners; ++i)
         {
             final UUID id = PacketUtils.readUUID(buf);
-            final String name = buf.readString();
-            final Rank rank = Rank.valueOf(buf.readString());
+            final String name = buf.readString(32767);
+            final Rank rank = Rank.valueOf(buf.readString(32767));
 
             players.put(id, new Player(id, name, rank));
         }
@@ -219,7 +219,7 @@ public class PermissionsView implements IPermissions
         final int numPermissions = buf.readInt();
         for (int i = 0; i < numPermissions; ++i)
         {
-            final Rank rank = Rank.valueOf(buf.readString());
+            final Rank rank = Rank.valueOf(buf.readString(32767));
             final int flags = buf.readInt();
             permissions.put(rank, flags);
         }

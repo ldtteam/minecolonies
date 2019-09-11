@@ -66,8 +66,8 @@ public class PermissionEvent
         {
             this.id = uuid;
         }
-        this.name = buf.readString();
-        this.action = Action.valueOf(buf.readString());
+        this.name = buf.readString(32767);
+        this.action = Action.valueOf(buf.readString(32767));
         this.position = buf.readBlockPos();
     }
 

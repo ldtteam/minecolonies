@@ -66,7 +66,7 @@ public class BuildingDataManager implements IBuildingDataManager
     public IBuildingView createViewFrom(
       final IColonyView colony, final BlockPos position, final PacketBuffer networkBuffer)
     {
-        final ResourceLocation buildingName = new ResourceLocation(networkBuffer.readString());
+        final ResourceLocation buildingName = new ResourceLocation(networkBuffer.readString(32767));
         final BuildingEntry entry = IBuildingRegistry.getInstance().getValue(buildingName);
 
         if (entry == null)

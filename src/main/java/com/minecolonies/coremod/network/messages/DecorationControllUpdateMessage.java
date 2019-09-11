@@ -57,7 +57,7 @@ public class DecorationControllUpdateMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
-        this.name = buf.readString();
+        this.name = buf.readString(32767);
         this.pos = buf.readBlockPos();
         this.level = buf.readInt();
     }

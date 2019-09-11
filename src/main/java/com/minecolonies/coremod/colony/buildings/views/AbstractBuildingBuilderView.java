@@ -70,10 +70,10 @@ public abstract class AbstractBuildingBuilderView extends AbstractBuildingWorker
             resources.put(itemStack.getDisplayName().getFormattedText(), resource);
         }
 
-        constructionName = buf.readString();
-        constructionPos = buf.readString();
+        constructionName = buf.readString(32767);
+        constructionPos = buf.readString(32767);
         progress = buf.readDouble();
-        workerName = buf.readString();
+        workerName = buf.readString(32767);
     }
 
     /**

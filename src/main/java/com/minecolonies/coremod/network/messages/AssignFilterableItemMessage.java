@@ -86,7 +86,7 @@ public class AssignFilterableItemMessage implements IMessage
         this.assign = buf.readBoolean();
         this.item = new ItemStorage(buf.readItemStack());
         this.dimension = buf.readInt();
-        this.id = buf.readString();
+        this.id = buf.readString(32767);
     }
 
     @Override

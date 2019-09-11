@@ -605,7 +605,7 @@ public final class ColonyView implements IColonyView
     {
         this.world = world;
         //  General Attributes
-        name = buf.readString();
+        name = buf.readString(32767);
         dimensionId = buf.readInt();
         center = buf.readBlockPos();
         manualHiring = buf.readBoolean();
@@ -627,7 +627,7 @@ public final class ColonyView implements IColonyView
         final int blockListSize = buf.readInt();
         for (int i = 0; i < blockListSize; i++)
         {
-            freeBlocks.add(ForgeRegistries.BLOCKS.getValue(new ResourceLocation((buf.readString()))));
+            freeBlocks.add(ForgeRegistries.BLOCKS.getValue(new ResourceLocation((buf.readString(32767)))));
         }
 
         final int posListSize = buf.readInt();
@@ -669,7 +669,7 @@ public final class ColonyView implements IColonyView
 
         this.mercenaryLastUseTime = buf.readLong();
 
-        this.style = buf.readString();
+        this.style = buf.readString(32767);
         this.horde = buf.readInt();
         return null;
     }

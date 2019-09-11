@@ -347,9 +347,9 @@ public abstract class AbstractBuildingView implements IBuildingView
         buildingDmPrio = buf.readInt();
         buildingDmPrioState = buf.readBoolean();
         workOrderLevel = buf.readInt();
-        style = buf.readString();
-        schematicName = buf.readString();
-        customName = buf.readString();
+        style = buf.readString(32767);
+        schematicName = buf.readString(32767);
+        customName = buf.readString(32767);
 
         rotation = buf.readInt();
         isBuildingMirrored = buf.readBoolean();
