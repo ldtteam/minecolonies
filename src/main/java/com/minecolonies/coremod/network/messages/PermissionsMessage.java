@@ -206,9 +206,9 @@ public class PermissionsMessage
         public void fromBytes(@NotNull final PacketBuffer buf)
         {
             colonyID = buf.readInt();
-            type = MessageType.valueOf(buf.readString());
-            rank = Rank.valueOf(buf.readString());
-            action = Action.valueOf(buf.readString());
+            type = MessageType.valueOf(buf.readString(32767));
+            rank = Rank.valueOf(buf.readString(32767));
+            action = Action.valueOf(buf.readString(32767));
             dimension = buf.readInt();
         }
     }
@@ -260,7 +260,7 @@ public class PermissionsMessage
         public void fromBytes(@NotNull final PacketBuffer buf)
         {
             colonyID = buf.readInt();
-            playerName = buf.readString();
+            playerName = buf.readString(32767);
             dimension = buf.readInt();
         }
 
@@ -338,7 +338,7 @@ public class PermissionsMessage
         public void fromBytes(@NotNull final PacketBuffer buf)
         {
             colonyID = buf.readInt();
-            playerName = buf.readString();
+            playerName = buf.readString(32767);
             id = PacketUtils.readUUID(buf);
             dimension = buf.readInt();
         }
@@ -427,7 +427,7 @@ public class PermissionsMessage
         {
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
-            type = Type.valueOf(buf.readString());
+            type = Type.valueOf(buf.readString(32767));
             dimension = buf.readInt();
         }
 

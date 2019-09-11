@@ -583,7 +583,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
 
 
             task = GuardTask.values()[buf.readInt()];
-            final ResourceLocation jobId = new ResourceLocation(buf.readString());
+            final ResourceLocation jobId = new ResourceLocation(buf.readString(32767));
             guardType = IGuardTypeRegistry.getInstance().getValue(jobId);
 
             final int targetSize = buf.readInt();

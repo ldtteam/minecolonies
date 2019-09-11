@@ -43,8 +43,8 @@ public class ColonyStylesMessage implements IMessage
         final int count = buf.readInt();
         for (int i = 0; i < count; i++)
         {
-            final String filename = buf.readString();
-            final String md5 = buf.readString();
+            final String filename = buf.readString(32767);
+            final String md5 = buf.readString(32767);
             map.put(filename, md5);
         }
         return map;

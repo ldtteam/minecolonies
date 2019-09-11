@@ -62,7 +62,7 @@ public class RemoveEntityMessage implements IMessage
     {
         from = buf.readBlockPos();
         to = buf.readBlockPos();
-        entityName = buf.readString();
+        entityName = buf.readString(32767);
     }
 
     @Override

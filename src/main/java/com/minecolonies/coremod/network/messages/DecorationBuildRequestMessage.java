@@ -75,7 +75,7 @@ public class DecorationBuildRequestMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         this.pos = buf.readBlockPos();
-        this.name = buf.readString();
+        this.name = buf.readString(32767);
         this.level = buf.readInt();
         this.dimension = buf.readInt();
     }
