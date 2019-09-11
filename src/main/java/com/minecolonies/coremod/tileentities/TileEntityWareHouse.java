@@ -1,13 +1,16 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.google.common.collect.Lists;
+import com.minecolonies.api.inventory.InventoryCitizen;
+import com.minecolonies.api.tileentities.AbstractTileEntityRack;
+import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.coremod.inventory.InventoryCitizen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -26,8 +29,14 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
 /**
  * Class which handles the tileEntity of our colonyBuildings.
  */
-public class TileEntityWareHouse extends TileEntityColonyBuilding
+public class TileEntityWareHouse extends AbstractTileEntityWareHouse
 {
+    public TileEntityWareHouse()
+    {
+        super();
+    }
+
+    public TileEntityWareHouse(final ResourceLocation resourceName) {super(resourceName);}
 
     /**
      * Method used to check if this warehouse holds any of the requested itemstacks.
@@ -35,6 +44,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param itemStackSelectionPredicate The predicate to check with.
      * @return True when the warehouse holds a stack, false when not.
      */
+    @Override
     public boolean hasMatchingItemStackInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate, int count)
     {
         final List<ItemStack> targetStacks = getMatchingItemStacksInWarehouse(itemStackSelectionPredicate);
@@ -47,6 +57,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param itemStackSelectionPredicate The predicate to select the ItemStack with.
      * @return The first matching ItemStack.
      */
+    @Override
     @NotNull
     public List<ItemStack> getMatchingItemStacksInWarehouse(@NotNull final Predicate<ItemStack> itemStackSelectionPredicate)
     {
@@ -96,6 +107,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      *
      * @param inventoryCitizen the inventory of the citizen
      */
+    @Override
     public void dumpInventoryIntoWareHouse(@NotNull final InventoryCitizen inventoryCitizen)
     {
         for (int i = 0; i < new InvWrapper(inventoryCitizen).getSlots(); i++)
@@ -156,7 +168,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      */
     private static boolean isInRack(final ItemStack stack, final TileEntity entity, final boolean ignoreDamageValue)
     {
-        return entity instanceof TileEntityRack && !((TileEntityRack) entity).isEmpty() && ((TileEntityRack) entity).hasItemStack(stack, ignoreDamageValue)
+        return entity instanceof TileEntityRack && !((AbstractTileEntityRack) entity).isEmpty() && ((AbstractTileEntityRack) entity).hasItemStack(stack, ignoreDamageValue)
                  && InventoryUtils.findSlotInItemHandlerNotFullWithItem(entity.getCapability(ITEM_HANDLER_CAPABILITY, null), stack);
     }
 
@@ -215,12 +227,12 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             final int tempFreeSlots;
             if (entity instanceof TileEntityRack)
             {
-                if (((TileEntityRack) entity).isEmpty())
+                if (((AbstractTileEntityRack) entity).isEmpty())
                 {
                     return entity;
                 }
 
-                tempFreeSlots = ((TileEntityRack) entity).getFreeSlots();
+                tempFreeSlots = ((AbstractTileEntityRack) entity).getFreeSlots();
                 if (freeSlots < tempFreeSlots)
                 {
                     freeSlots = tempFreeSlots;

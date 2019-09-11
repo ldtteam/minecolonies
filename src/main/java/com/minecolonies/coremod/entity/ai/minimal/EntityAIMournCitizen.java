@@ -1,13 +1,12 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.entity.EntityCitizen;
-
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
@@ -170,13 +169,13 @@ public class EntityAIMournCitizen extends EntityAIBase
     protected Vec3d getMournLocation()
     {
         Vec3d vec3d = null;
-        final Colony colony = citizen.getCitizenColonyHandler().getColony();
+        final IColony colony = citizen.getCitizenColonyHandler().getColony();
         if (colony == null || !colony.getBuildingManager().hasTownHall())
         {
             return new Vec3d(citizen.getHomePosition());
         }
 
-        final BlockPos pos = colony.getBuildingManager().getTownHall().getLocation();
+        final BlockPos pos = colony.getBuildingManager().getTownHall().getPosition();
         if (pos != null)
         {
             vec3d = new Vec3d(pos);
@@ -248,7 +247,7 @@ public class EntityAIMournCitizen extends EntityAIBase
                 vec3d = RandomPositionGenerator.getLandPos(citizen, 10, 10);
                 if (vec3d != null)
                 {
-                    vec3d = new Vec3d(vec3d.x, BlockPosUtil.getValidHeight(vec3d, CompatibilityUtils.getWorld(citizen)), vec3d.z);
+                    vec3d = new Vec3d(vec3d.x, BlockPosUtil.getValidHeight(vec3d, CompatibilityUtils.getWorldFromCitizen(citizen)), vec3d.z);
                 }
             }
             else

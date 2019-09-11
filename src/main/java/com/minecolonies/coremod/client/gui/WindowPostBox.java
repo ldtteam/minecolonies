@@ -1,18 +1,21 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.*;
 import com.minecolonies.blockout.views.ScrollingList;
+import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.PostBoxRequestMessage;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -117,9 +120,9 @@ public class WindowPostBox extends AbstractWindowRequestTree implements ButtonHa
     {
         if (filter.isEmpty())
         {
-            return ColonyManager.getCompatibilityManager().getBlockList();
+            return IColonyManager.getInstance().getCompatibilityManager().getBlockList();
         }
-        return ColonyManager.getCompatibilityManager().getBlockList().stream().filter(filterPredicate).collect(Collectors.toList());
+        return IColonyManager.getInstance().getCompatibilityManager().getBlockList().stream().filter(filterPredicate).collect(Collectors.toList());
     }
 
     /**

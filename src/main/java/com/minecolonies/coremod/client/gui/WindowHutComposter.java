@@ -1,19 +1,18 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
-import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.network.messages.ComposterRetrievalMessage;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -68,7 +67,7 @@ public class WindowHutComposter extends AbstractHutFilterableLists
     @Override
     public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
     {
-        return ColonyManager.getCompatibilityManager().getCopyOfCompostableItems().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList());
+        return IColonyManager.getInstance().getCompatibilityManager().getCopyOfCompostableItems().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList());
     }
 
     /**

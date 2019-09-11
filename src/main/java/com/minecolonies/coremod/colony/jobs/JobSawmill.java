@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.sawmill.EntityAIWorkSawmill;
 import org.jetbrains.annotations.NotNull;
@@ -15,9 +17,15 @@ public class JobSawmill extends AbstractJobCrafter
      *
      * @param entity the citizen who becomes a Sawmill
      */
-    public JobSawmill(final CitizenData entity)
+    public JobSawmill(final ICitizenData entity)
     {
         super(entity);
+    }
+
+    @Override
+    public JobEntry getJobRegistryEntry()
+    {
+        return ModJobs.sawmill;
     }
 
     @NotNull

@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.commands.citizencommands;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Rank;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.commands.IActionCommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -63,9 +63,9 @@ public class KillCitizenCommand extends AbstractCitizensCommands implements IAct
     }
 
     @Override
-    public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
+    public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final IColony colony, final int citizenId)
     {
-        final CitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
+        final ICitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
         citizenData.getCitizenEntity().ifPresent(entityCitizen -> {
             sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
             final BlockPos position = entityCitizen.getPosition();
@@ -103,6 +103,6 @@ public class KillCitizenCommand extends AbstractCitizensCommands implements IAct
     {
         final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0);
         return super.canPlayerUseCommand(player, theCommand, colonyId)
-                 && ColonyManager.getColonyByWorld(colonyId, world) != null && ColonyManager.getColonyByWorld(colonyId, world).getPermissions().getRank(player).equals(Rank.OWNER);
+                 && IColonyManager.getInstance().getColonyByWorld(colonyId, world) != null && IColonyManager.getInstance().getColonyByWorld(colonyId, world).getPermissions().getRank(player).equals(Rank.OWNER);
     }
 }

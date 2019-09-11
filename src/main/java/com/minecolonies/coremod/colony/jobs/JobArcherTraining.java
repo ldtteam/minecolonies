@@ -1,7 +1,10 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
-import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.trainingcamps.EntityAIArcherTraining;
 
@@ -15,9 +18,15 @@ public class JobArcherTraining extends AbstractJob
      *
      * @param entity the citizen data.
      */
-    public JobArcherTraining(final CitizenData entity)
+    public JobArcherTraining(final ICitizenData entity)
     {
         super(entity);
+    }
+
+    @Override
+    public JobEntry getJobRegistryEntry()
+    {
+        return ModJobs.archer;
     }
 
     @Override
@@ -33,13 +42,13 @@ public class JobArcherTraining extends AbstractJob
     }
 
     @Override
-    public RenderBipedCitizen.Model getModel()
+    public BipedModelType getModel()
     {
-        return RenderBipedCitizen.Model.ARCHER_GUARD;
+        return BipedModelType.ARCHER_GUARD;
     }
 
     @Override
-    public AbstractAISkeleton<? extends AbstractJob> generateAI()
+    public AbstractAISkeleton<? extends IJob> generateAI()
     {
         return new EntityAIArcherTraining(this);
     }

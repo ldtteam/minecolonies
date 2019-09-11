@@ -1,10 +1,11 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,12 +28,12 @@ import static org.mockito.Mockito.*;
 public class WindowTownHallTest {
 
     @Mock
-    private BuildingTownHall.View townHall;
+    private ITownHallView townHall;
     @Mock
-    private BuildingTownHall.View building;
+    private ITownHallView building;
 
     @Mock
-    private ColonyView colony;
+    private IColonyView colony;
 
     final private Map<Integer, CitizenDataView> citizensMap = new HashMap<>();
     final private List<CitizenDataView> citizensArray = new ArrayList<>();

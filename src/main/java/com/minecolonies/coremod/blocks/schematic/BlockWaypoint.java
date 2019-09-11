@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.blocks.schematic;
 
+import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
+import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.blocks.AbstractBlockMinecolonies;
-import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;

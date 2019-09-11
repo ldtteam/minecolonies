@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.commands.AbstractSingleCommand;
 import com.minecolonies.coremod.commands.ActionMenuState;
 import com.minecolonies.coremod.commands.IActionCommand;
@@ -65,7 +64,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final ActionMenuState actionMenuState) throws CommandException
     {
-        final Colony colony = actionMenuState.getColonyForArgument("colony");
+        final IColony colony = actionMenuState.getColonyForArgument("colony");
         final EntityPlayer player = actionMenuState.getPlayerForArgument("player");
         executeShared(server, sender, colony, player);
     }
@@ -99,7 +98,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
                     sender.sendMessage(new TextComponentString(NO_PLAYER));
                     return;
                 }
-                final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player.getUniqueID());
+                final IColony colony = IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), player.getUniqueID());
 
                 if (colony == null)
                 {
@@ -116,7 +115,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
             playerName = args[1];
         }
 
-        final Colony colony = ColonyManager.getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colonyId, server.getWorld(sender.getEntityWorld().provider.getDimension()));
         if (colony == null)
         {
             sender.sendMessage(new TextComponentString(String.format(COLONY_X_NULL, colonyId)));
@@ -134,7 +133,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
         executeShared(server, sender, colony, player);
     }
 
-    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final Colony colony, final EntityPlayer player) throws CommandException
+    private void executeShared(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, final IColony colony, final EntityPlayer player) throws CommandException
     {
         if (player == null)
         {
@@ -147,7 +146,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand implements I
             return;
         }
 
-        if (ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player) != null)
+        if (IColonyManager.getInstance().getIColonyByOwner(sender.getEntityWorld(), player) != null)
         {
             sender.sendMessage(new TextComponentString(String.format(HAS_A_COLONY, player.getName())));
             return;

@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.proxy;
 
-import com.minecolonies.coremod.colony.CitizenDataView;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
+import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.coremod.colony.CitizenDataView;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -19,6 +20,11 @@ import java.io.File;
  */
 public interface IProxy
 {
+    /**
+     * Sets up the API
+     */
+    void setupApi();
+
     /**
      * Returns whether or not the proxy is client sided or server sided.
      *
@@ -56,7 +62,7 @@ public interface IProxy
      *
      * @param citizen {@link CitizenDataView}
      */
-    void showCitizenWindow(CitizenDataView citizen);
+    void showCitizenWindow(ICitizenDataView citizen);
 
     /**
      * Opens a build tool window.

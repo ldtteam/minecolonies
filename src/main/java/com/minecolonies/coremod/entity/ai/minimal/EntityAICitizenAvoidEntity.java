@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
+import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
-import com.minecolonies.coremod.entity.pathfinding.PathResult;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,9 +18,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.Random;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.RUNNING;
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.SAFE;
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_GUARD_CALL_RANGE;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.RUNNING;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.SAFE;
 
 /**
  * AI task to avoid an Entity class.
@@ -148,11 +148,11 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     {
         if (targetEntityClass == EntityPlayer.class)
         {
-            return CompatibilityUtils.getWorld(citizen).getClosestPlayerToEntity(citizen, (double) distanceFromEntity);
+            return CompatibilityUtils.getWorldFromCitizen(citizen).getClosestPlayerToEntity(citizen, (double) distanceFromEntity);
         }
         else
         {
-            final Optional<Entity> entityOptional = CompatibilityUtils.getWorld(citizen).getEntitiesInAABBexcluding(
+            final Optional<Entity> entityOptional = CompatibilityUtils.getWorldFromCitizen(citizen).getEntitiesInAABBexcluding(
               citizen,
               citizen.getEntityBoundingBox().grow(
                 (double) distanceFromEntity,

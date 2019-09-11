@@ -1,17 +1,19 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.gui.WindowHutLumberjack;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractFilterableListBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFilterableListsView;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -20,7 +22,8 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.NUM_ACHIEVEMENT_FIRST;
@@ -56,7 +59,7 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
      * @param c the colony.
      * @param l the position.
      */
-    public BuildingLumberjack(final Colony c, final BlockPos l)
+    public BuildingLumberjack(final IColony c, final BlockPos l)
     {
         super(c, l);
 
@@ -104,6 +107,12 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
         }
 
         return toKeep;
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.lumberjack;
     }
 
     /**
@@ -155,15 +164,16 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
      */
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return new JobLumberjack(citizen);
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
-        super.readFromNBT(compound);
+        super.deserializeNBT(compound);
+
         if (compound.hasKey(TAG_REPLANT))
         {
             replant = compound.getBoolean(TAG_REPLANT);
@@ -175,10 +185,13 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public NBTTagCompound serializeNBT()
     {
-        super.writeToNBT(compound);
+        final NBTTagCompound compound = super.serializeNBT();
+
         compound.setBoolean(TAG_REPLANT, replant);
+
+        return compound;
     }
 
     /**
@@ -234,7 +247,7 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
          * @param c the colony.
          * @param l the position.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }

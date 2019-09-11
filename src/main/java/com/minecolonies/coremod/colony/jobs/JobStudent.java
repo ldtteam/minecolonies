@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.coremod.client.render.RenderBipedCitizen;
-import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.student.EntityAIStudy;
 import org.jetbrains.annotations.NotNull;
@@ -16,9 +18,15 @@ public class JobStudent extends AbstractJob
      *
      * @param entity the student.
      */
-    public JobStudent(final CitizenData entity)
+    public JobStudent(final ICitizenData entity)
     {
         super(entity);
+    }
+
+    @Override
+    public JobEntry getJobRegistryEntry()
+    {
+        return ModJobs.student;
     }
 
     /**
@@ -46,8 +54,8 @@ public class JobStudent extends AbstractJob
     }
 
     @Override
-    public RenderBipedCitizen.Model getModel()
+    public BipedModelType getModel()
     {
-        return RenderBipedCitizen.Model.STUDENT;
+        return BipedModelType.STUDENT;
     }
 }

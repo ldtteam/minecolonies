@@ -1,18 +1,18 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.views.View;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.network.messages.LumberjackReplantSaplingToggleMessage;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -68,7 +68,7 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
     @Override
     public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
     {
-        return ColonyManager.getCompatibilityManager().getCopyOfSaplings().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList());
+        return IColonyManager.getInstance().getCompatibilityManager().getCopyOfSaplings().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList());
     }
 
     /**

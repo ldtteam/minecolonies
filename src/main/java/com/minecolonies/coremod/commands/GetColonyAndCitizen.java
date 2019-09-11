@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.commands;
 
-import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.api.colony.IColonyManager;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
@@ -59,13 +59,13 @@ public final class GetColonyAndCitizen
         }
         else if (args.length == SHORT_ARGUMENT_LENGTH || args.length == NAME_ARGUMENT_LENGTH)
         {
-            if (ColonyManager.getIColonyByOwner(world, mayorID) == null)
+            if (IColonyManager.getInstance().getIColonyByOwner(world, mayorID) == null)
             {
                 throw new IllegalArgumentException(NO_COLONY);
             }
             else
             {
-                colonyId = ColonyManager.getIColonyByOwner(world, mayorID).getID();
+                colonyId = IColonyManager.getInstance().getIColonyByOwner(world, mayorID).getID();
             }
         }
         else if (args.length >= TOO_MANY_ARGUMENTS_LENGTH)
@@ -76,7 +76,7 @@ public final class GetColonyAndCitizen
         {
             throw new IllegalArgumentException(UNKNOWN_ERROR);
         }
-        if (colonyId >= 0 && ColonyManager.getColonyByWorld(colonyId, world) == null)
+        if (colonyId >= 0 && IColonyManager.getInstance().getColonyByWorld(colonyId, world) == null)
         {
             throw new IllegalArgumentException(String.format(NOT_FOUND, "Colony"));
         }
@@ -124,10 +124,10 @@ public final class GetColonyAndCitizen
         {
             citizenName = args[ARGUMENT_ZERO] + " " + args[ARGUMENT_ONE] + " " + args[ARGUMENT_TWO];
             for (int i = 1
-                   ; i <= ColonyManager.getColonyByWorld(colonyId, world).getCitizenManager().getCitizens().size(); i++)
+                   ; i <= IColonyManager.getInstance().getColonyByWorld(colonyId, world).getCitizenManager().getCitizens().size(); i++)
             {
-                if (ColonyManager.getColonyByWorld(colonyId, world).getCitizenManager().getCitizen(i).getName() != null
-                        && ColonyManager.getColonyByWorld(colonyId, world).getCitizenManager().getCitizen(i).getName().equals(citizenName))
+                if (IColonyManager.getInstance().getColonyByWorld(colonyId, world).getCitizenManager().getCitizen(i).getName() != null
+                        && IColonyManager.getInstance().getColonyByWorld(colonyId, world).getCitizenManager().getCitizen(i).getName().equals(citizenName))
                 {
                     citizenId = i;
                 }
@@ -136,9 +136,9 @@ public final class GetColonyAndCitizen
         else if (args.length == ID_AND_NAME_ARGUMENT_LENGTH && colonyId >= 0)
         {
             citizenName = args[ARGUMENT_ONE] + " " + args[ARGUMENT_TWO] + " " + args[ARGUMENT_THREE];
-            for (int i = 1; i <= ColonyManager.getColonyByWorld(colonyId, world).getCitizenManager().getCitizens().size(); i++)
+            for (int i = 1; i <= IColonyManager.getInstance().getColonyByWorld(colonyId, world).getCitizenManager().getCitizens().size(); i++)
             {
-                if (ColonyManager.getColonyByWorld(colonyId, world).getCitizenManager().getCitizen(i).getName().equals(citizenName))
+                if (IColonyManager.getInstance().getColonyByWorld(colonyId, world).getCitizenManager().getCitizen(i).getName().equals(citizenName))
                 {
                     citizenId = i;
                 }
@@ -152,7 +152,7 @@ public final class GetColonyAndCitizen
         {
             throw new IllegalArgumentException(UNKNOWN_ERROR);
         }
-        if (citizenId >= 0 && colonyId >= 0 && ColonyManager.getColonyByWorld(colonyId, world).getCitizenManager().getCitizen(citizenId) == null)
+        if (citizenId >= 0 && colonyId >= 0 && IColonyManager.getInstance().getColonyByWorld(colonyId, world).getCitizenManager().getCitizen(citizenId) == null)
         {
             throw new IllegalArgumentException(String.format(NOT_FOUND, "Citizen"));
         }

@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 
@@ -13,8 +13,8 @@ public final class EntityAIStatePausedHandler
     /**
      * The worker which is paused
      */
-    private final EntityCitizen           worker;
-    private final AbstractBuildingWorker  building;
+    private final AbstractEntityCitizen worker;
+    private final IBuildingWorker       building;
 
     /**
      * Wander AI task if worker paused
@@ -28,7 +28,7 @@ public final class EntityAIStatePausedHandler
      * @param w paused worker
      * @param b his building
      */
-    public EntityAIStatePausedHandler(final EntityCitizen w, final AbstractBuildingWorker b)
+    public EntityAIStatePausedHandler(final AbstractEntityCitizen w, final IBuildingWorker b)
     {
         this.worker = w;
         this.building = b;

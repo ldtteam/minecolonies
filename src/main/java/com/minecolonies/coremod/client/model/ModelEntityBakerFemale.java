@@ -4,7 +4,7 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 
 /**
- * Class used for the baker entity model.
+ * Class used for the bakery entity model.
  */
 public class ModelEntityBakerFemale extends ModelBiped
 {

@@ -61,7 +61,7 @@ public final class ResolverHandler
      */
     public static IToken<?> registerResolver(final IStandardRequestManager manager, final IRequestResolver<? extends IRequestable> resolver)
     {
-        if (manager.getRequestResolverIdentitiesDataStore().getIdentities().containsKey(resolver.getRequesterId()))
+        if (manager.getRequestResolverIdentitiesDataStore().getIdentities().containsKey(resolver.getId()))
         {
             throw new IllegalArgumentException("The token attached to this resolver is already registered. Cannot register twice!");
         }
@@ -71,7 +71,7 @@ public final class ResolverHandler
             throw new IllegalArgumentException("The given resolver is already registered with a different token. Cannot register twice!");
         }
 
-        manager.getRequestResolverIdentitiesDataStore().getIdentities().put(resolver.getRequesterId(), resolver);
+        manager.getRequestResolverIdentitiesDataStore().getIdentities().put(resolver.getId(), resolver);
 
         @SuppressWarnings(RAWTYPES) final Set<TypeToken> resolverTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
         resolverTypes.remove(TypeConstants.OBJECT);
@@ -82,10 +82,10 @@ public final class ResolverHandler
             }
 
             LogHandler.log("Registering resolver: " + resolver + " with request type: " + c);
-            manager.getRequestableTypeRequestResolverAssignmentDataStore().getAssignments().get(c).add(resolver.getRequesterId());
+            manager.getRequestableTypeRequestResolverAssignmentDataStore().getAssignments().get(c).add(resolver.getId());
         });
 
-        return resolver.getRequesterId();
+        return resolver.getId();
     }
 
     /**
@@ -143,7 +143,7 @@ public final class ResolverHandler
      */
     public static void removeResolver(final IStandardRequestManager manager, final IRequestResolver<?> resolver)
     {
-        final IRequestResolver<?> registeredResolver = getResolver(manager, resolver.getRequesterId());
+        final IRequestResolver<?> registeredResolver = getResolver(manager, resolver.getId());
 
         if (!registeredResolver.equals(resolver))
         {
@@ -151,9 +151,9 @@ public final class ResolverHandler
         }
 
         if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments()
-                .containsKey(registeredResolver.getRequesterId())
+                .containsKey(registeredResolver.getId())
                 && !manager.getRequestResolverRequestAssignmentDataStore().getAssignments()
-                .get(registeredResolver.getRequesterId()).isEmpty())
+                .get(registeredResolver.getId()).isEmpty())
         {
             throw new IllegalArgumentException("Cannot remove a resolver that is still in use. Reassign all registered requests before removing");
         }
@@ -172,9 +172,9 @@ public final class ResolverHandler
     public static Collection<IToken<?>> getRequestsAssignedToResolver(final IStandardRequestManager manager, final IRequestResolver<?> resolver)
     {
         if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments()
-              .containsKey(resolver.getRequesterId()))
+              .containsKey(resolver.getId()))
         {
-            return manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getRequesterId());
+            return manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId());
         }
 
         return Lists.newArrayList();
@@ -208,12 +208,12 @@ public final class ResolverHandler
 
     public static void removeResolverInternal(final IStandardRequestManager manager, final IRequestResolver<?> resolver)
     {
-        manager.getRequestResolverIdentitiesDataStore().getIdentities().remove(resolver.getRequesterId());
+        manager.getRequestResolverIdentitiesDataStore().getIdentities().remove(resolver.getId());
         @SuppressWarnings(RAWTYPES) final Set<TypeToken> requestTypes = ReflectionUtils.getSuperClasses(resolver.getRequestType());
         requestTypes.remove(TypeConstants.OBJECT);
         requestTypes.forEach(c -> {
             LogHandler.log("Removing resolver: " + resolver + " with request type: " + c);
-            manager.getRequestableTypeRequestResolverAssignmentDataStore().getAssignments().get(c).remove(resolver.getRequesterId());
+            manager.getRequestableTypeRequestResolverAssignmentDataStore().getAssignments().get(c).remove(resolver.getId());
         });
     }
 
@@ -266,14 +266,14 @@ public final class ResolverHandler
      */
     public static void addRequestToResolver(final IStandardRequestManager manager, final IRequestResolver<?> resolver, final IRequest<?> request)
     {
-        if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolver.getRequesterId()))
+        if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolver.getId()))
         {
-            manager.getRequestResolverRequestAssignmentDataStore().getAssignments().put(resolver.getRequesterId(), new HashSet<>());
+            manager.getRequestResolverRequestAssignmentDataStore().getAssignments().put(resolver.getId(), new HashSet<>());
         }
 
         LogHandler.log("Adding request: " + request + " to resolver: " + resolver);
 
-        manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getRequesterId()).add(request.getToken());
+        manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).add(request.getId());
 
         request.setState(new WrappedStaticStateRequestManager(manager), RequestState.ASSIGNED);
     }
@@ -293,22 +293,22 @@ public final class ResolverHandler
      */
     public static void removeRequestFromResolver(final IStandardRequestManager manager, final IRequestResolver<?> resolver, final IRequest<?> request)
     {
-        if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolver.getRequesterId()))
+        if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().containsKey(resolver.getId()))
         {
             throw new IllegalArgumentException("The given resolver is unknown to this Manager");
         }
 
-        if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getRequesterId()).contains(request.getToken()))
+        if (!manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).contains(request.getId()))
         {
             throw new IllegalArgumentException("The given request is not registered to the given resolver.");
         }
 
         LogHandler.log("Removing request: " + request + " from resolver: " + resolver);
 
-        manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getRequesterId()).remove(request.getToken());
-        if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getRequesterId()).isEmpty())
+        manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).remove(request.getId());
+        if (manager.getRequestResolverRequestAssignmentDataStore().getAssignments().get(resolver.getId()).isEmpty())
         {
-            manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(resolver.getRequesterId());
+            manager.getRequestResolverRequestAssignmentDataStore().getAssignments().remove(resolver.getId());
         }
     }
 
@@ -346,7 +346,7 @@ public final class ResolverHandler
      */
     public static IRequestResolver<? extends IRequestable> getResolverForRequest(final IStandardRequestManager manager, final IRequest<?> request)
     {
-        return getResolverForRequest(manager, (IToken<?>) request.getToken());
+        return getResolverForRequest(manager, (IToken<?>) request.getId());
     }
 
     /**

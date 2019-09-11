@@ -3,9 +3,14 @@ package com.minecolonies.coremod.proxy;
 import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.Structures;
+import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
 import com.minecolonies.coremod.client.gui.*;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.RenderMercenary;
@@ -14,23 +19,19 @@ import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarba
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererArcherPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
-import com.minecolonies.coremod.colony.CitizenDataView;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
-import com.minecolonies.coremod.entity.ai.mobs.EntityMercenary;
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityArcherBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.barbarians.EntityChiefBarbarian;
-import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityArcherPirate;
-import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityCaptainPirate;
-import com.minecolonies.coremod.entity.ai.mobs.pirates.EntityPirate;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import com.minecolonies.coremod.entity.mobs.EntityMercenary;
+import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
+import com.minecolonies.coremod.entity.mobs.barbarians.EntityBarbarian;
+import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
+import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
+import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
+import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
 import com.minecolonies.coremod.event.ClientEventHandler;
 import com.minecolonies.coremod.event.DebugRendererChunkBorder;
-import com.minecolonies.coremod.items.ModItems;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityInfoPoster;
+import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -68,6 +69,11 @@ public class ClientProxy extends CommonProxy
      */
     private static final String INVENTORY = "inventory";
 
+    public ClientProxy()
+    {
+        apiImpl = new ClientMinecoloniesAPIImpl();
+    }
+
     @Override
     public boolean isClient()
     {
@@ -102,12 +108,12 @@ public class ClientProxy extends CommonProxy
     public void registerTileEntityRendering()
     {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityColonyBuilding.class, new EmptyTileEntitySpecialRenderer());
-        ClientRegistry.bindTileEntitySpecialRenderer(ScarecrowTileEntity.class, new TileEntityScarecrowRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityScarecrow.class, new TileEntityScarecrowRenderer());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityInfoPoster.class, new TileEntityInfoPosterRenderer());
     }
 
     @Override
-    public void showCitizenWindow(final CitizenDataView citizen)
+    public void showCitizenWindow(final ICitizenDataView citizen)
     {
         @NotNull final WindowCitizen window = new WindowCitizen(citizen);
         window.open();
@@ -191,7 +197,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutBaker);
         createCustomModel(ModBlocks.blockHutBlacksmith);
         createCustomModel(ModBlocks.blockHutBuilder);
-        createCustomModel(ModBlocks.blockHutCitizen);
+        createCustomModel(ModBlocks.blockHutHome);
         createCustomModel(ModBlocks.blockHutFarmer);
         createCustomModel(ModBlocks.blockHutFisherman);
         createCustomModel(ModBlocks.blockHutLumberjack);
@@ -201,7 +207,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutWareHouse);
         createCustomModel(ModBlocks.blockHutDeliveryman);
         createCustomModel(ModBlocks.blockBarracksTowerSubstitution);
-        createCustomModel(ModBlocks.blockHutField);
+        createCustomModel(ModBlocks.blockScarecrow);
         createCustomModel(ModBlocks.blockHutGuardTower);
         createCustomModel(ModBlocks.blockHutBarracks);
         createCustomModel(ModBlocks.blockHutBarracksTower);
@@ -224,7 +230,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockRack);
         createCustomModel(ModBlocks.blockWayPoint);
         createCustomModel(ModBlocks.blockPostBox);
-        createCustomModel(ModBlocks.blockDecorationPlacerholder);
+        createCustomModel(ModBlocks.blockDecorationPlaceholder);
 
         createCustomModel(ModItems.clipboard);
         createCustomModel(ModItems.caliper);
@@ -277,9 +283,9 @@ public class ClientProxy extends CommonProxy
     {
         if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
-            if (ColonyManager.getServerUUID() != null)
+            if (IColonyManager.getInstance().getServerUUID() != null)
             {
-                return new File(Minecraft.getMinecraft().gameDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID());
+                return new File(Minecraft.getMinecraft().gameDir, Constants.MOD_ID + "/" + IColonyManager.getInstance().getServerUUID());
             }
             else
             {
