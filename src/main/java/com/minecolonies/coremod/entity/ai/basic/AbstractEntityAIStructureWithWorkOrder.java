@@ -213,6 +213,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             if (block == Blocks.GRASS_BLOCK)
             {
                 block = Blocks.DIRT;
+                blockState = block.getDefaultState();
             }
 
             final Block worldBlock = BlockPosUtil.getBlock(world, job.getStructure().getBlockPosition());

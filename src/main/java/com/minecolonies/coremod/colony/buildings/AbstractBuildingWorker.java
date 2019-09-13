@@ -19,7 +19,6 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
