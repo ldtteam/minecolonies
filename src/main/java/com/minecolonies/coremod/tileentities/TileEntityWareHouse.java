@@ -1,19 +1,19 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.google.common.collect.Lists;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.ldtteam.structurize.util.LanguageHandler;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

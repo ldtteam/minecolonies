@@ -6,14 +6,13 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
+import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.tileentities.TileEntityRack;
 import net.minecraft.block.Block;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -36,8 +35,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.minecolonies.api.util.constant.Suppression.DEPRECATION;
 
 /**
  * Block for the shelves of the warehouse.

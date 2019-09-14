@@ -188,7 +188,7 @@ public class OpenInventoryMessage implements IMessage
                 chest.setCustomName(new StringTextComponent(name));
             }
 
-            NetworkHooks.openGui(player, chest, packetBuffer -> packetBuffer.writeVarInt(chest.getColonyId()).writeBlockPos(chest.getPos()));
+            NetworkHooks.openGui(player, chest, packetBuffer -> packetBuffer.writeVarInt(colonyId).writeBlockPos(chest.getPos()));
         }
     }
 

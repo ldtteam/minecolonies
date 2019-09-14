@@ -1,7 +1,6 @@
 package com.minecolonies.api.tileentities;
 
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -9,10 +8,10 @@ import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
+import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -23,6 +22,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
@@ -54,7 +54,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TY
  * Class which handles the tileEntity of our colonyBuildings.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
+public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding implements ITickableTileEntity
 {
     /**
      * NBTTag to store the colony id.
@@ -354,8 +354,6 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     @Override
     public void tick()
     {
-        super.tick();
-
         if (!getWorld().isRemote && colonyId == 0)
         {
             final IColony tempColony = IColonyManager.getInstance().getColonyByPosFromWorld(getWorld(), this.getPosition());
@@ -372,10 +370,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
         combinedInv = null;
     }
 
-    @Override
     public boolean isUsableByPlayer(@NotNull final PlayerEntity player)
     {
-        return super.isUsableByPlayer(player) && this.hasAccessPermission(player);
+        return this.hasAccessPermission(player);
     }
 
     /**
