@@ -50,6 +50,6 @@ public class CommandHomeTeleport implements IMCCommand
     @Override
     public String getName()
     {
-        return "homeTP";
+        return "home";
     }
 }
