@@ -1,12 +1,10 @@
-package com.minecolonies.coremod.tileentities;
+package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -236,13 +234,13 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     protected void updateBlockState()
     {
-        if (world != null && world.getBlockState(pos).getBlock() instanceof BlockMinecoloniesRack && (main || single))
+        if (world != null && world.getBlockState(pos).getBlock() instanceof AbstractBlockMinecoloniesRack && (main || single))
         {
             final IBlockState typeHere;
             final IBlockState typeNeighbor;
             if (content.isEmpty() && (getOtherChest() == null || getOtherChest().isEmpty()))
             {
-                if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof BlockMinecoloniesRack)
+                if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
                 {
 
                     typeHere = world.getBlockState(pos).withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
@@ -257,7 +255,7 @@ public class TileEntityRack extends AbstractTileEntityRack
             }
             else
             {
-                if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof BlockMinecoloniesRack)
+                if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
                 {
                     typeHere = world.getBlockState(pos).withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
                     typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).withProperty(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
@@ -372,6 +370,22 @@ public class TileEntityRack extends AbstractTileEntityRack
                 inventory.setStackInSlot(i, stack);
             }
         }
+        
+        if (compound.hasKey("Items"))
+        {
+            NBTTagList nbttaglist = compound.getTagList("Items", 10);
+
+            for (int i = 0; i < nbttaglist.tagCount(); ++i)
+            {
+                NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
+                int j = nbttagcompound.getByte("Slot") & 255;
+                if (j >= 0 && j < inventory.getSlots())
+                {
+                    inventory.setStackInSlot(j, new ItemStack(nbttagcompound));
+                }
+            }
+        }
+
         main = compound.getBoolean(TAG_MAIN);
         updateItemStorage();
 

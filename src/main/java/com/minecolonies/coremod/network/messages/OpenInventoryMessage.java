@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.MineColonies;
@@ -11,7 +12,6 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.inventory.GuiHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -170,11 +170,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     {
         if (checkPermissions(IColonyManager.getInstance().getClosestColony(player.getEntityWorld(), message.tePos), player))
         {
-            @NotNull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(CompatibilityUtils.getWorldFromEntity(player), message.tePos);
-            if (!StringUtils.isNullOrEmpty(message.name))
-            {
-                chest.setCustomName(message.name);
-            }
+            @NotNull final TileEntityRack chest = (TileEntityRack) BlockPosUtil.getTileEntity(player.world, message.tePos);
 
             player.openGui(MineColonies.instance, GuiHandler.ID.BUILDING_INVENTORY.ordinal(), player.world, chest.getPos().getX(), chest.getPos().getY(), chest.getPos().getZ());
         }

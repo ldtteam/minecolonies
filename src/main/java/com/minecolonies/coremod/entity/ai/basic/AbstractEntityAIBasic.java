@@ -637,7 +637,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         boolean hasItem;
         if (building != null)
         {
-            hasItem = isInTileEntity(building.getTileEntity(), is);
+            hasItem = building.getTileEntity().hasItemStack(is);
 
             if (hasItem)
             {
