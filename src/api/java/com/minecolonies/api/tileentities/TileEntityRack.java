@@ -529,19 +529,22 @@ public class TileEntityRack extends AbstractTileEntityRack
      * @param neighbor the neighbor to define.
      */
     @Override
-    public void setNeighbor(final BlockPos neighbor)
+    public boolean setNeighbor(final BlockPos neighbor)
     {
-        if ((single && neighbor != null) || (!single && neighbor == null))
+        if (neighbor == null)
         {
-            single = neighbor == null;
+            single = true;
+            this.relativeNeighbor = null;
             markDirty();
         }
-
-        if ((this.relativeNeighbor == null && neighbor != null) || (this.relativeNeighbor != null && neighbor != null
-                                                                      && !this.relativeNeighbor.equals(this.pos.subtract(neighbor))))
+        // Only allow horizontal neighbor's
+        else if (this.pos.subtract(neighbor).getY() == 0)
         {
             this.relativeNeighbor = this.pos.subtract(neighbor);
+            single = false;
             markDirty();
+            return true;
         }
+        return false;
     }
 }
