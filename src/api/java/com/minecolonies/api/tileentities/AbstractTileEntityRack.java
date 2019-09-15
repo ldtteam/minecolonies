@@ -144,7 +144,11 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
         if (relativeNeighbor == null && world.getBlockState(newNeighbor).getBlock() instanceof AbstractBlockMinecoloniesRack
               && !(entity instanceof AbstractTileEntityRack && ((AbstractTileEntityRack) entity).getOtherChest() != null))
         {
-            this.relativeNeighbor = this.pos.subtract(newNeighbor);
+            if (!setNeighbor(newNeighbor))
+            {
+                return;
+            }
+
             single = false;
             if (entity instanceof AbstractTileEntityRack)
             {
@@ -187,5 +191,5 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
 
     public abstract BlockPos getNeighbor();
 
-    public abstract void setNeighbor(BlockPos neighbor);
+    public abstract boolean setNeighbor(BlockPos neighbor);
 }
