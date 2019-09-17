@@ -5,18 +5,15 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.network.IMessage;
-import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
-
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -182,13 +179,9 @@ public class OpenInventoryMessage implements IMessage
     {
         if (checkPermissions(IColonyManager.getInstance().getClosestColony(player.getEntityWorld(), tePos), player))
         {
-            @NotNull final TileEntityColonyBuilding chest = (TileEntityColonyBuilding) BlockPosUtil.getTileEntity(CompatibilityUtils.getWorldFromEntity(player), tePos);
-            if (!StringUtils.isNullOrEmpty(name))
-            {
-                chest.setCustomName(new StringTextComponent(name));
-            }
+            @NotNull final TileEntityRack chest = (TileEntityRack) BlockPosUtil.getTileEntity(player.world, tePos);
 
-            NetworkHooks.openGui(player, chest, packetBuffer -> packetBuffer.writeVarInt(chest.getColonyId()).writeBlockPos(chest.getPos()));
+            NetworkHooks.openGui(player, chest, packetBuffer -> packetBuffer.writeVarInt(colonyId).writeBlockPos(chest.getPos()));
         }
     }
 

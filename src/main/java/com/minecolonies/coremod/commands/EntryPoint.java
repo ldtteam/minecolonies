@@ -72,6 +72,7 @@ public class EntryPoint
         final CommandTree minecoloniesRoot = new CommandTree(Constants.MOD_ID)
                                                .addNode(killCommands)
                                                .addNode(colonyCommands)
+                                               .addNode(new CommandHomeTeleport().build())
                                                .addNode(citizenCommands)
                                                .addNode(new CommandWhereAmI().build())
                                                .addNode(new CommandWhoAmI().build())
@@ -80,7 +81,23 @@ public class EntryPoint
                                                .addNode(new CommandRaidAllNow().build())
                                                .addNode(new CommandBackup().build());
 
+        /**
+         * Root minecolonies alias command tree, all subtrees are added here.
+         */
+        final CommandTree minecoloniesRootAlias = new CommandTree("mc")
+                                                    .addNode(killCommands)
+                                                    .addNode(colonyCommands)
+                                                    .addNode(new CommandHomeTeleport().build())
+                                                    .addNode(citizenCommands)
+                                                    .addNode(new CommandWhereAmI().build())
+                                                    .addNode(new CommandWhoAmI().build())
+                                                    .addNode(new CommandRTP().build())
+                                                    .addNode(new CommandRaidAllTonight().build())
+                                                    .addNode(new CommandRaidAllNow().build())
+                                                    .addNode(new CommandBackup().build());
+
         // Adds all command trees to the dispatcher to register the commands.
         dispatcher.register(minecoloniesRoot.build());
+        dispatcher.register(minecoloniesRootAlias.build());
     }
 }
