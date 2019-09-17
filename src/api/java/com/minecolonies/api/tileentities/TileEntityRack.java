@@ -354,7 +354,14 @@ public class TileEntityRack extends AbstractTileEntityRack
 
         if (relativeNeighbor != null)
         {
-            single = false;
+            if (relativeNeighbor.getY() != 0)
+            {
+                relativeNeighbor = null;
+            }
+            else
+            {
+                single = false;
+            }
         }
         final NBTTagList inventoryTagList = compound.getTagList(TAG_INVENTORY, TAG_COMPOUND);
         for (int i = 0; i < inventoryTagList.tagCount(); ++i)
