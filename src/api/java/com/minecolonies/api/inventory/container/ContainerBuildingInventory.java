@@ -3,9 +3,9 @@ package com.minecolonies.api.inventory.container;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.inventory.ModContainers;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -13,7 +13,6 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -39,9 +38,10 @@ public class ContainerBuildingInventory extends Container
 
     /**
      * Constructor to create an instance of this container.
+     *
      * @param windowId the id of the window.
-     * @param inv the player inventory.
-     * @param extra some extra data
+     * @param inv      the player inventory.
+     * @param extra    some extra data
      */
     public ContainerBuildingInventory(final int windowId, final PlayerInventory inv, final PacketBuffer extra)
     {
@@ -66,8 +66,8 @@ public class ContainerBuildingInventory extends Container
                 {
                     this.addSlot(
                       new SlotItemHandler(buildingInventory, index,
-                                INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
-                                PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH)
+                        INVENTORY_BAR_SIZE + k * PLAYER_INVENTORY_OFFSET_EACH,
+                        PLAYER_INVENTORY_OFFSET_EACH + j * PLAYER_INVENTORY_OFFSET_EACH)
                       {
                           @Override
                           public void putStack(final ItemStack stack)
@@ -97,11 +97,11 @@ public class ContainerBuildingInventory extends Container
             for (int j = 0; j < INVENTORY_COLUMNS; j++)
             {
                 addSlot(new Slot(
-                                             inv,
-                                             j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
-                                             PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                                             PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
-                                               + i * PLAYER_INVENTORY_OFFSET_EACH
+                  inv,
+                  j + i * INVENTORY_COLUMNS + INVENTORY_COLUMNS,
+                  PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
+                  PLAYER_INVENTORY_INITIAL_Y_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize, INVENTORY_BAR_SIZE)
+                    + i * PLAYER_INVENTORY_OFFSET_EACH
                 ));
             }
         }
@@ -110,9 +110,9 @@ public class ContainerBuildingInventory extends Container
         {
             addSlot(new Slot(
               inv, i,
-                                         PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-                                         PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
-                                           INVENTORY_BAR_SIZE)
+              PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
+              PLAYER_INVENTORY_HOTBAR_OFFSET + extraOffset + PLAYER_INVENTORY_OFFSET_EACH * Math.min(this.inventorySize,
+                INVENTORY_BAR_SIZE)
             ));
         }
     }
@@ -170,7 +170,6 @@ public class ContainerBuildingInventory extends Container
     public void onContainerClosed(final PlayerEntity playerIn)
     {
         super.onContainerClosed(playerIn);
-        this.tileEntityColonyBuilding.closeInventory(playerIn);
     }
 
     /**
@@ -184,6 +183,7 @@ public class ContainerBuildingInventory extends Container
 
     /**
      * Get the size of the inventory.
+     *
      * @return the size.
      */
     public int getSize()

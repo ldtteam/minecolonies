@@ -1,14 +1,11 @@
-package com.minecolonies.coremod.tileentities;
+package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.tileentities.AbstractTileEntityRack;
-import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import com.minecolonies.api.inventory.container.ContainerRack;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -64,6 +61,11 @@ public class TileEntityRack extends AbstractTileEntityRack
      * The combined inv wrapper for double racks.
      */
     private CombinedInvWrapper combinedHandler;
+
+    public TileEntityRack(final TileEntityType type)
+    {
+        super(type);
+    }
 
     public TileEntityRack()
     {
@@ -242,13 +244,13 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     protected void updateBlockState()
     {
-        if (world != null && world.getBlockState(pos).getBlock() instanceof BlockMinecoloniesRack && (main || single))
+        if (world != null && world.getBlockState(pos).getBlock() instanceof AbstractBlockMinecoloniesRack && (main || single))
         {
             final BlockState typeHere;
             final BlockState typeNeighbor;
             if (content.isEmpty() && (getOtherChest() == null || getOtherChest().isEmpty()))
             {
-                if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof BlockMinecoloniesRack)
+                if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
                 {
 
                     typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
@@ -263,7 +265,7 @@ public class TileEntityRack extends AbstractTileEntityRack
             }
             else
             {
-                if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof BlockMinecoloniesRack)
+                if (getOtherChest() != null && world.getBlockState(this.pos.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
                 {
                     typeHere = world.getBlockState(pos).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
                     typeNeighbor = world.getBlockState(this.pos.subtract(relativeNeighbor)).with(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
@@ -378,6 +380,22 @@ public class TileEntityRack extends AbstractTileEntityRack
                 inventory.setStackInSlot(i, stack);
             }
         }
+
+        if (compound.keySet().contains("Items"))
+        {
+            ListNBT nbttaglist = compound.getList("Items", 10);
+
+            for (int i = 0; i < nbttaglist.size(); ++i)
+            {
+                CompoundNBT nbttagcompound = nbttaglist.getCompound(i);
+                int j = nbttagcompound.getByte("Slot") & 255;
+                if (j >= 0 && j < inventory.getSlots())
+                {
+                    inventory.setStackInSlot(j, ItemStack.read(nbttagcompound));
+                }
+            }
+        }
+
         main = compound.getBoolean(TAG_MAIN);
         updateItemStorage();
 
@@ -506,20 +524,23 @@ public class TileEntityRack extends AbstractTileEntityRack
      * @param neighbor the neighbor to define.
      */
     @Override
-    public void setNeighbor(final BlockPos neighbor)
+    public boolean setNeighbor(final BlockPos neighbor)
     {
-        if ((single && neighbor != null) || (!single && neighbor == null))
+        if (neighbor == null)
         {
-            single = neighbor == null;
+            single = true;
+            this.relativeNeighbor = null;
             markDirty();
         }
-
-        if ((this.relativeNeighbor == null && neighbor != null) || (this.relativeNeighbor != null && neighbor != null
-                                                                      && !this.relativeNeighbor.equals(this.pos.subtract(neighbor))))
+        // Only allow horizontal neighbor's
+        else if (this.pos.subtract(neighbor).getY() == 0)
         {
             this.relativeNeighbor = this.pos.subtract(neighbor);
+            single = false;
             markDirty();
+            return true;
         }
+        return false;
     }
 
     @Nullable

@@ -1,10 +1,14 @@
 package com.minecolonies.apiimp.initializer;
 
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.tileentities.*;
+import com.minecolonies.api.tileentities.TileEntityRack;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import com.minecolonies.coremod.tileentities.TileEntityBarrel;
+import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
+import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
