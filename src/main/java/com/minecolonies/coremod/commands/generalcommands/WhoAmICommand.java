@@ -31,7 +31,7 @@ public class WhoAmICommand extends AbstractSingleCommand implements IActionComma
     /**
      * Player description string.
      */
-    public static final String TELL_HIM = "You are %s, your colony is %s at position %s";
+    public static final String TELL_HIM = "You are %s, your colony is %s, with ID:%d at position %s";
 
     /**
      * no-args constructor called by new CommandEntryPoint executer.
@@ -75,7 +75,7 @@ public class WhoAmICommand extends AbstractSingleCommand implements IActionComma
         final String colonyName = colony.getName();
         final String playerName = sender.getDisplayName().getFormattedText();
         final String posString = "x: " + pos.getX() + " y: " + pos.getY() + " z: " + pos.getZ();
-        sender.sendMessage(new TextComponentString(String.format(TELL_HIM, playerName, colonyName, posString)));
+        sender.sendMessage(new TextComponentString(String.format(TELL_HIM, playerName, colonyName, colony.getID(), posString)));
     }
 
     @NotNull

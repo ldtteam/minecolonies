@@ -115,7 +115,7 @@ public abstract class AbstractTileEntityRack extends TileEntity
         this.main = main;
         markDirty();
     }
-
+    
     /**
      * On neighbor changed this will be called from the block.
      *
@@ -128,7 +128,11 @@ public abstract class AbstractTileEntityRack extends TileEntity
         if (relativeNeighbor == null && world.getBlockState(newNeighbor).getBlock() == ModBlocks.blockRack
               && !(entity instanceof AbstractTileEntityRack && ((AbstractTileEntityRack) entity).getOtherChest() != null))
         {
-            this.relativeNeighbor = this.pos.subtract(newNeighbor);
+            if (!setNeighbor(newNeighbor))
+            {
+                return;
+            }
+
             single = false;
             if (entity instanceof AbstractTileEntityRack)
             {
@@ -171,5 +175,5 @@ public abstract class AbstractTileEntityRack extends TileEntity
 
     public abstract BlockPos getNeighbor();
 
-    public abstract void setNeighbor(BlockPos neighbor);
+    public abstract boolean setNeighbor(BlockPos neighbor);
 }

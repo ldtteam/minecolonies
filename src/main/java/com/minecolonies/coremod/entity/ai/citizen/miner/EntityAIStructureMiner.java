@@ -673,10 +673,13 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         if (requiredName != null)
         {
-            final WorkOrderBuildMiner wo = new WorkOrderBuildMiner(requiredName, requiredName, rotateCount, structurePos, false, getOwnBuilding().getPosition());
-            worker.getCitizenColonyHandler().getColony().getWorkManager().addWorkOrder(wo, false);
-            job.setWorkOrder(wo);
-            initiate();
+            if (job.getWorkOrder() == null)
+            {
+                final WorkOrderBuildMiner wo = new WorkOrderBuildMiner(requiredName, requiredName, rotateCount, structurePos, false, getOwnBuilding().getPosition());
+                worker.getCitizenColonyHandler().getColony().getWorkManager().addWorkOrder(wo, false);
+                job.setWorkOrder(wo);
+                initiate();
+            }
         }
     }
 

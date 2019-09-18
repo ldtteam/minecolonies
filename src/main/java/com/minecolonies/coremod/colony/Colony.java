@@ -252,7 +252,6 @@ public class Colony implements IColony
     {
         this(id, w);
         center = c;
-        world = w;
         this.permissions = new Permissions(this);
         requestManager = new StandardRequestManager(this);
     }
@@ -269,7 +268,7 @@ public class Colony implements IColony
         if (world != null)
         {
             this.dimensionId = world.provider.getDimension();
-            this.world = world;
+            onWorldLoad(world);
             checkOrCreateTeam();
         }
         this.permissions = new Permissions(this);

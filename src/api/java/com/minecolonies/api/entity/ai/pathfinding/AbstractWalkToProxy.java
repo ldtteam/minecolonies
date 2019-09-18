@@ -89,7 +89,7 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
         }
 
         final double distanceToPath = careAboutY()
-                ? BlockPosUtil.getDistanceSquared2D(entity.getPosition(), target) : BlockPosUtil.getDistanceSquared(entity.getPosition(), target);
+                ? BlockPosUtil.getDistanceSquared(entity.getPosition(), target) : BlockPosUtil.getDistanceSquared2D(entity.getPosition(), target);
 
         if (distanceToPath <= MIN_RANGE_FOR_DIRECT_PATH)
         {
@@ -268,9 +268,9 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
 
         for (final BlockPos wayPoint : getWayPoints())
         {
-            final double simpleDistance = BlockPosUtil.getDistanceSquared(position, wayPoint);
-            final double targetDistance = BlockPosUtil.getDistanceSquared(wayPoint, target);
-            final double currentWeight = simpleDistance * simpleDistance + targetDistance;
+            final double simpleDistance = careAboutY() ? BlockPosUtil.getDistanceSquared(position, wayPoint) : BlockPosUtil.getDistanceSquared2D(position, wayPoint);
+            final double targetDistance = careAboutY() ? BlockPosUtil.getDistanceSquared(wayPoint, target) : BlockPosUtil.getDistanceSquared2D(wayPoint, target);
+            final double currentWeight = simpleDistance * simpleDistance + targetDistance + targetDistance;
             if (currentWeight < weight
                   && targetDistance < distanceToPath
                   && simpleDistance > MIN_DISTANCE

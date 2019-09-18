@@ -483,7 +483,10 @@ public class Configurations
         public boolean suggestBuildToolPlacement = true;
 
         @Config.Comment("Food consumption modifier (Min: 1.0). [Default: 1.0]")
-        public double foodModifier = 1;
+        public double   foodModifier = 1;
+
+        @Config.Comment("Disable citizen voices. [Default: false]")
+        public boolean disableCitizenVoices = false;
     }
 
     public static class Compatibility
