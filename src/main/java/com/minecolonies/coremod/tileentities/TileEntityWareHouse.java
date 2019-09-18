@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
+import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LanguageHandler;

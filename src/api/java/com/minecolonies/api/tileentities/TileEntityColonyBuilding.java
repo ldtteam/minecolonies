@@ -19,6 +19,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -46,7 +47,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TY
  * Class which handles the tileEntity of our colonyBuildings.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
+public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding implements ITickable
 {
     /**
      * NBTTag to store the colony id.
@@ -347,7 +348,6 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
     @Override
     public void update()
     {
-        super.update();
 
         if (!getWorld().isRemote && colonyId == 0)
         {
@@ -363,12 +363,6 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding
          * The accessed inventory in the same tick must be the same.
          */
         combinedInv = null;
-    }
-
-    @Override
-    public boolean isUsableByPlayer(final EntityPlayer player)
-    {
-        return super.isUsableByPlayer(player) && this.hasAccessPermission(player);
     }
 
     /**

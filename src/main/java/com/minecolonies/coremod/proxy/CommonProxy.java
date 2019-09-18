@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.LootTableConstants;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;

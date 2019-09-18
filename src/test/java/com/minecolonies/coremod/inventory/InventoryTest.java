@@ -7,10 +7,10 @@ import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.test.AbstractMockStaticsTest;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -20,7 +20,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 
 public class InventoryTest extends AbstractMockStaticsTest
 {
-    private IInventory inventory;
+    private IItemHandlerModifiable inventory;
 
     @Mock
     private ITownHall building;
@@ -38,13 +38,13 @@ public class InventoryTest extends AbstractMockStaticsTest
 
         final TileEntityColonyBuilding buildingTileEntity = new TileEntityColonyBuilding(building.getBuildingRegistryEntry().getRegistryName());
         buildingTileEntity.setBuilding(building);
-        this.inventory = buildingTileEntity;
+        this.inventory = buildingTileEntity.getInventory();
     }
 
     @Test
     public void testEmptyInventory()
     {
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
+        for (int i = 0; i < inventory.getSlots(); i++)
         {
             assertEquals("Inventory space wasn't empty", ItemStackUtils.EMPTY, inventory.getStackInSlot(i));
         }
@@ -55,7 +55,7 @@ public class InventoryTest extends AbstractMockStaticsTest
     {
         // Using a null item allows us to get past the call to Blocks or Items.
         final ItemStack itemStack = new ItemStack((Item) null);
-        inventory.setInventorySlotContents(0, itemStack);
+        inventory.setStackInSlot(0, itemStack);
         final ItemStack returnedItemStack = inventory.getStackInSlot(0);
         assertNotEquals("The Item wasn't set", itemStack, ItemStackUtils.EMPTY);
         assertSame("Stack wasn't the same", itemStack, returnedItemStack);

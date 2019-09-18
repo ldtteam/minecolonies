@@ -299,7 +299,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
         {
             handlers.add(new InvWrapper(workerEntity.getInventory()));
         }
-        handlers.add(new InvWrapper(getTileEntity()));
+        handlers.add(getTileEntity().getInventory());
         
         for (final BlockPos pos : getAdditionalCountainers())
         {
