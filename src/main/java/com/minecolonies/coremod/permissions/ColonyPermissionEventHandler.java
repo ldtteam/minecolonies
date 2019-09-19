@@ -225,7 +225,7 @@ public class ColonyPermissionEventHandler
 
             if (!building.getColony().getPermissions().hasPermission(event.getPlayer(), Action.BREAK_HUTS))
             {
-                if (checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getWorld().getBlockState(event.getPos()), Action.BREAK_HUTS))
+                if (checkEventCancelation(Action.BREAK_HUTS, event.getPlayer(), event.getWorld(), event, event.getPos()))
                 {
                     return;
                 }
@@ -240,7 +240,7 @@ public class ColonyPermissionEventHandler
         }
         else
         {
-            checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getWorld().getBlockState(event.getPos()), Action.BREAK_BLOCKS);
+            checkEventCancelation(Action.BREAK_BLOCKS, event.getPlayer(), event.getWorld(), event, event.getPos());
         }
     }
 
