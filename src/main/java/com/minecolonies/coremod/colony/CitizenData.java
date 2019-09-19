@@ -32,7 +32,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -654,10 +653,11 @@ public class CitizenData implements ICitizenData
             else if (job != null)
             {
                 getCitizenEntity().ifPresent(entityCitizen -> {
-                    entityCitizen.getTasks().removeGoal(entityCitizen.getTasks().getRunningGoals()
-                                                          .filter(task -> task.getGoal() instanceof AbstractAISkeleton)
-                                                          .findFirst()
-                                                          .orElseGet(null).getGoal());
+                    entityCitizen.getTasks()
+                      .getRunningGoals()
+                      .filter(task -> task.getGoal() instanceof AbstractAISkeleton)
+                      .findFirst()
+                      .ifPresent(e -> entityCitizen.getTasks().removeGoal(e));
                 });
 
                 //  No place of employment, get rid of our job
