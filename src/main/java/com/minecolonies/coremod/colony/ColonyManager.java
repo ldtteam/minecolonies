@@ -28,6 +28,7 @@ import net.minecraft.world.ServerMultiWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.event.TickEvent;
@@ -855,7 +856,7 @@ public final class ColonyManager implements IColonyManager
         {
             if (!loaded)
             {
-                @NotNull final File file = BackUpHelper.getSaveLocation();
+                @NotNull final File file = BackUpHelper.getSaveLocation((ServerWorld) world);
                 @Nullable final CompoundNBT data = BackUpHelper.loadNBTFromPath(file);
                 if (data != null)
                 {

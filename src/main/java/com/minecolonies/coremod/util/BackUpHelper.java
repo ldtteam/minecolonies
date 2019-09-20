@@ -11,6 +11,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -141,6 +142,19 @@ public final class BackUpHelper
     {
         @NotNull final File saveDir =
           new File(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+        return new File(saveDir, FILENAME_MINECOLONIES);
+    }
+
+    /**
+     * Get save location for Minecolonies data, from the world/save directory.
+     * @param world the server world object to use.
+     * @return Save file for minecolonies.
+     */
+    @NotNull
+    public static File getSaveLocation(final ServerWorld world)
+    {
+        @NotNull final File saveDir =
+          new File(world.getServer().getWorld(DimensionType.OVERWORLD).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, FILENAME_MINECOLONIES);
     }
 
