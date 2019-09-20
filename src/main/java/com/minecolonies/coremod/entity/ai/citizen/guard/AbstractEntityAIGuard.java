@@ -21,6 +21,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.scoreboard.ScorePlayerTeam;
@@ -496,11 +497,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
                 }
             }
 
-            final List<LivingEntity> targets = world.getEntitiesWithinAABB(LivingEntity.class, getSearchArea(),
+            final List<LivingEntity> targets = world.getEntitiesWithinAABB(MobEntity.class, getSearchArea(),
               entity -> buildingGuards.getMobsToAttack()
                           .stream()
                           .filter(MobEntryView::hasAttack)
-                          .anyMatch(mobEntry -> mobEntry.getEntityEntry().getClass().isInstance(entity)));
+                          .anyMatch(mobEntry -> mobEntry.getEntityEntry().equals(entity.getType())));
 
 
             int closest = Integer.MAX_VALUE;
