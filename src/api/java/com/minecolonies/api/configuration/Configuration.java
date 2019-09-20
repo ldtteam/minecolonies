@@ -1,16 +1,9 @@
 package com.minecolonies.api.configuration;
 
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.electronwill.nightconfig.core.io.WritingMode;
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.nio.file.Path;
 
 /**
  * Mod root configuration.
@@ -34,10 +27,8 @@ public class Configuration
 
     /**
      * Builds configuration tree.
-     *
-     * @param modContainer from event
      */
-    public Configuration(final ModContainer modContainer)
+    public Configuration()
     {
         final Pair<CommonConfiguration, ForgeConfigSpec> com = new ForgeConfigSpec.Builder().configure(CommonConfiguration::new);
         final Pair<ClientConfiguration, ForgeConfigSpec> cli = new ForgeConfigSpec.Builder().configure(ClientConfiguration::new);
