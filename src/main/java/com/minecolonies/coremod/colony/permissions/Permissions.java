@@ -483,7 +483,7 @@ public class Permissions implements IPermissions
         players.remove(getOwner());
 
         ownerName = "[abandoned]";
-        ownerUUID = new UUID(235123534,131231234);
+        ownerUUID = UUID.randomUUID();
 
         players.put(ownerUUID, new Player(ownerUUID, ownerName, Rank.OWNER));
 
