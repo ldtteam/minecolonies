@@ -72,6 +72,7 @@ import java.util.List;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
+import static net.minecraftforge.eventbus.api.EventPriority.LOWEST;
 
 /**
  * Handles all forge events.
@@ -694,7 +695,7 @@ public class EventHandler
      *
      * @param event {@link net.minecraftforge.event.world.WorldEvent.Load}
      */
-    @SubscribeEvent
+    @SubscribeEvent(priority = LOWEST)
     public static void onWorldLoad(@NotNull final WorldEvent.Load event)
     {
         Log.getLogger().warn("World load");

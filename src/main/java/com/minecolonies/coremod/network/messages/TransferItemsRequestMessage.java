@@ -148,7 +148,7 @@ public class TransferItemsRequestMessage implements IMessage
         }
 
         final ItemStack itemStackToTake = itemStack.copy();
-        itemStackToTake.setCount(quantity);
+        itemStackToTake.setCount(amountToTake);
 
         ItemStack remainingItemStack = InventoryUtils.addItemStackToProviderWithResult(building.getTileEntity(), itemStackToTake);
         if (!ItemStackUtils.isEmpty(remainingItemStack))
