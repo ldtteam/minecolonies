@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockStateStorage;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.block.*;
@@ -33,7 +32,8 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.ItemStackUtils.*;
-import static com.minecolonies.api.util.constant.Constants.*;
+import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
+import static com.minecolonies.api.util.constant.Constants.ORE_STRING;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAP_LEAF;
 
 /**
@@ -55,7 +55,7 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * List of properties we're ignoring when comparing leaves.
      */
-    private final List<IProperty> leafCompareWithoutProperties = ImmutableList.of(checkDecay, decayable, DYN_PROP_HYDRO);
+    private final List<IProperty> leafCompareWithoutProperties = ImmutableList.of(checkDecay, decayable, DYN_PROP_HYDRO,TREE_DISTANCE);
 
     /**
      * Properties for leaves we're ignoring upon comparing.
@@ -63,6 +63,7 @@ public class CompatibilityManager implements ICompatibilityManager
     private static final BooleanProperty checkDecay     = BooleanProperty.create("check_decay");
     private static final BooleanProperty decayable      = BooleanProperty.create("decayable");
     public static final  IntegerProperty DYN_PROP_HYDRO = IntegerProperty.create("hydro", 1, 4);
+    public static final  IntegerProperty TREE_DISTANCE = IntegerProperty.create("distance", 1, 7);
 
     /**
      * List of all ore-like blocks.
@@ -454,13 +455,6 @@ public class CompatibilityManager implements ICompatibilityManager
         for (final Item item : ItemTags.SAPLINGS.getAllElements())
         {
             final ItemStack stack = new ItemStack(item);
-            //Just put it in if not in there already, don't mind the leaf yet.
-            if (!ItemStackUtils.isEmpty(stack) && !leavesToSaplingMap.containsValue(new ItemStorage(stack, false, true)) && !saplings.contains(new ItemStorage(stack, false, true)))
-            {
-                saplings.add(new ItemStorage(stack, false, true));
-            }
-            else if (Compatibility.isDynamicTreeSapling(stack) && !ItemStackUtils.isEmpty(stack) && !leavesToSaplingMap.containsValue(new ItemStorage(stack, false, true))
-                       && !saplings.contains(new ItemStorage(stack, false, true)))
             {
                 saplings.add(new ItemStorage(stack, false, true));
             }

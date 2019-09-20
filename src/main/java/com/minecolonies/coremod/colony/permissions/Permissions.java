@@ -8,11 +8,11 @@ import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.Colony;
 import com.mojang.authlib.GameProfile;
-import net.minecraft.nbt.StringNBT;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
@@ -472,6 +472,22 @@ public class Permissions implements IPermissions
 
         markDirty();
         return true;
+    }
+
+    /**
+     * Change the owner of a colony to [abandoned]
+     */
+    @Override
+    public void setOwnerAbandoned()
+    {
+        players.remove(getOwner());
+
+        ownerName = "[abandoned]";
+        ownerUUID = UUID.randomUUID();
+
+        players.put(ownerUUID, new Player(ownerUUID, ownerName, Rank.OWNER));
+
+        markDirty();
     }
 
     /**

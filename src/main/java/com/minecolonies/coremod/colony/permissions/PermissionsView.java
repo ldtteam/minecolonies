@@ -7,10 +7,9 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Utils;
 import com.mojang.authlib.GameProfile;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -184,6 +183,11 @@ public class PermissionsView implements IPermissions
     public boolean setOwner(final PlayerEntity player)
     {
         return false;
+    }
+
+    @Override
+    public void setOwnerAbandoned()
+    {
     }
 
     @NotNull
