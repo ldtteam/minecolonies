@@ -2,14 +2,15 @@ package com.minecolonies.coremod.event;
 
 import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structurize.items.ModItems;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
@@ -19,6 +20,7 @@ import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.commands.ClickEventExecutable;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesChunkCapabilityProvider;
@@ -40,18 +42,15 @@ import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -71,7 +70,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
-import static com.minecolonies.api.util.constant.NbtTagConstants.FIRST_POS_STRING;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 import static net.minecraftforge.eventbus.api.EventPriority.LOWEST;
@@ -81,11 +79,6 @@ import static net.minecraftforge.eventbus.api.EventPriority.LOWEST;
  */
 public class EventHandler
 {
-    /**
-     * String to abandon a colony.
-     */
-    private static final String ABANDON_COLONY_CONFIRM_COMMAND_SUGGESTED = "/mc colony ownerchange colony: %d player: [abandoned]";
-
     /**
      * On Entity join do this.
      *
@@ -591,28 +584,40 @@ public class EventHandler
         {
             if (!world.isRemote)
             {
-                //todo temporarely disabled because of missing commands
-                /*final ITextComponent deleteButton = new TranslationTextComponent("tile.blockHutTownHall.deleteMessageLink")
+                final ITextComponent deleteButton = new TranslationTextComponent("tile.blockHutTownHall.deleteMessageLink")
                                                       .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-                                                        new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                                          String.format(DELETE_COLONY_CONFIRM_DELETE_COMMAND_SUGGESTED,
-                                                            colony.getID(), true
-                                                          ))));
+                                                        new ClickEventExecutable(() -> IColonyManager.getInstance()
+                                                                                         .deleteColonyByDimension(colony.getID(), false, colony.getDimension()),
+                                                          () -> LanguageHandler.sendPlayerMessage(player, "com.minecolonies.command.delete.success", colony.getName()))));
+
                 if (MineColonies.getConfig().getCommon().allowInfiniteColonies.get())
                 {
+                    player.sendMessage(new TranslationTextComponent("tile.blockHutTownHall.messagePlacedAlreadyInfi"));
+
+                    final ITextComponent addOfficerButton = new TranslationTextComponent("tile.blockHutTownHall.addOfficerMessageLink")
+                                                              .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD)
+                                                                          .setClickEvent(new ClickEventExecutable(() -> colony.getPermissions()
+                                                                                                                          .addPlayer(player.getGameProfile(), Rank.OFFICER),
+                                                                            () -> LanguageHandler.sendPlayerMessage(player,
+                                                                              "com.minecolonies.command.addofficer.success",
+                                                                              player.getName(),
+                                                                              colony.getName()))));
+
                     final ITextComponent abandonButton = new TranslationTextComponent("tile.blockHutTownHall.abandonMessageLink")
                                                            .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD)
-                                                                       .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                                                         String.format(ABANDON_COLONY_CONFIRM_COMMAND_SUGGESTED, colony.getID())))
-                                                           );
-                    player.sendMessage(new TranslationTextComponent("tile.blockHutTownHall.messagePlacedAlreadyInfi"));
+                                                                       .setClickEvent(new ClickEventExecutable(() -> colony.getPermissions().setOwnerAbandoned(),
+                                                                         () -> LanguageHandler.sendPlayerMessage(player,
+                                                                           "com.minecolonies.command.ownerchange.success",
+                                                                           "[abadoned]",
+                                                                           colony.getName()),
+                                                                         () -> player.sendMessage(addOfficerButton))));
                     player.sendMessage(abandonButton);
                 }
                 else
                 {
                     player.sendMessage(new TranslationTextComponent("tile.blockHutTownHall.messagePlacedAlreadyDel"));
                 }
-                player.sendMessage(deleteButton);*/
+                player.sendMessage(deleteButton);
             }
 
             //  Players are currently only allowed a single colony
@@ -672,7 +677,9 @@ public class EventHandler
 
         if (!world.isRemote
               && MineColonies.getConfig().getCommon().protectVillages.get()
-              && world.getChunkProvider().getChunkGenerator().findNearestStructure(world, "Village", pos, MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get() * BLOCKS_PER_CHUNK, false) != null)
+              && world.getChunkProvider()
+                   .getChunkGenerator()
+                   .findNearestStructure(world, "Village", pos, MineColonies.getConfig().getCommon().workingRangeTownHallChunks.get() * BLOCKS_PER_CHUNK, false) != null)
         {
             Log.getLogger().warn("Village close by!");
             LanguageHandler.sendPlayerMessage(player,
