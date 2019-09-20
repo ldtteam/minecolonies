@@ -63,13 +63,12 @@ public class FurnaceRecipes implements IFurnaceRecipes
     public static void onServerStarting(final FMLServerAboutToStartEvent event)
     {
         instance = new FurnaceRecipes();
+        instance.loadRecipes(event.getServer());
 
         ItemStackUtils.ISFOOD = itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().isFood();
         ItemStackUtils.IS_SMELTABLE = itemStack -> !ItemStackUtils.isEmpty(instance.getSmeltingResult(itemStack));
         ItemStackUtils.CAN_EAT = itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().isFood() && !ItemStackUtils.ISFOOD.test(instance.getSmeltingResult(itemStack));
         ItemStackUtils.ISCOOKABLE = itemStack -> ItemStackUtils.ISFOOD.test(instance.getSmeltingResult(itemStack));
-
-        instance.loadRecipes(event.getServer());
     }
 
     @SubscribeEvent
