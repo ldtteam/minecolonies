@@ -9,7 +9,9 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockStateUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -35,7 +37,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.minecolonies.api.compatibility.CompatibilityManager.DYN_PROP_HYDRO;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -230,10 +231,6 @@ public class Tree
                         return null;
                     }
                 }
-                else if (!BlockStateUtils.stateEqualsStateInPropertyByName(world.getBlockState(pos), world.getBlockState(location), "variant"))
-                {
-                    return null;
-                }
             }
 
             // Dynamic trees is using a custom Drops function
@@ -243,8 +240,7 @@ public class Tree
             }
             else
             {
-                list.addAll(blockState.getDrops(new LootContext.Builder((ServerWorld) world).withParameter(LootParameters.POSITION, new BlockPos(pos)).withParameter(LootParameters.TOOL,
-                  new ItemStack(Items.WOODEN_AXE)).withLuck(100)));
+             list.addAll(getSaplingsForLeaf(world,pos));
             }
 
             for (final ItemStack stack : list)
@@ -257,11 +253,43 @@ public class Tree
 
                 if (stack.getItem().isIn(ItemTags.SAPLINGS))
                 {
+                    IColonyManager.getInstance().getCompatibilityManager().connectLeafToSapling(blockState, stack);
                     return stack;
                 }
             }
         }
         return null;
+    }
+
+    /**
+     * Fills the list of drops for a leaf.
+     * @param world world reference
+     * @param position position of the leaf
+     * @return
+     */
+    public static List<ItemStack> getSaplingsForLeaf(ServerWorld world, BlockPos position)
+    {
+        NonNullList<ItemStack> list = NonNullList.create();
+        BlockState state = world.getBlockState(position);
+
+        for (int i = 1; i < 100; i++)
+        {
+            list.addAll(state.getDrops(new LootContext.Builder(world).withParameter(LootParameters.POSITION, position)
+                                              .withParameter(LootParameters.TOOL,
+                                                new ItemStack(Items.WOODEN_AXE))
+                                              .withLuck(100)));
+            if (!list.isEmpty())
+            {
+                for (ItemStack stack : list)
+                {
+                    if (stack.getItem().isIn(ItemTags.SAPLINGS))
+                    {
+                        return list;
+                    }
+                }
+            }
+        }
+        return list;
     }
 
     /**

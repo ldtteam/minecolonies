@@ -2,7 +2,6 @@ package com.minecolonies.api.colony.permissions;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,6 +51,11 @@ public interface IPermissions
     Map.Entry<UUID, Player> getOwnerEntry();
 
     boolean setOwner(PlayerEntity player);
+
+    /**
+     * Sets the owner to abandoned
+     */
+    void setOwnerAbandoned();
 
     @NotNull
     UUID getOwner();

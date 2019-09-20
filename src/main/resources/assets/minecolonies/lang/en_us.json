@@ -1,7 +1,6 @@
 {
   "itemGroup.minecolonies": "MineColonies",
 
-
   "com.minecolonies.configgui.title": "MineColonies Config",
   "minecolonies.config.gameplay": "Gameplay Settings",
   "minecolonies.config.gameplay.comment": "All configuration items related to the core gameplay",
@@ -154,7 +153,6 @@
   "minecolonies.config.barbarianhorddifficulty": "Barbarian Horde Difficulty",
   "minecolonies.config.barbarianhorddifficulty.comment": "The difficulty setting for barbarians. [Default: 5]",
 
-
   "minecolonies.config.spawnbarbariansize": "Spawn Barbarian Size",
   "minecolonies.config.spawnbarbariansize.comment": "The spawn size of a barbarian horde. [Default: 5]",
   "minecolonies.config.maxbarbariansize": "Max Barbarian Size",
@@ -218,7 +216,6 @@
   "minecolonies.config.canplayeruseresetcommand": "Can Player Use Reset Command",
   "minecolonies.config.canplayeruseresetcommand.comment": "Should the player be allowed to use the '/mc colony rs reset' command? [Default: false]",
 
-
   "block.minecolonies.blockhutcitizen": "Citizen's Hut",
   "block.minecolonies.blockhutshepherd": "Shepherd's Hut",
   "block.minecolonies.blockhutswineherder": "SwineHerders's Hut",
@@ -272,10 +269,17 @@
   "block.blockhuttownhall.messagetooFar": "Too far away from your Colony",
   "block.blockhuttownhall.messageworkerdead": "The %s %s has died at %d %d %d of %s!",
 
+  "tile.blockHutTownHall.messagePlacedAlreadyDel": "You have placed a Town Hall already, if you want to delete your colony to start a new one click:",
+  "tile.blockHutTownHall.messagePlacedAlreadyInfi": "You have placed a Town Hall already, if you want to delete your colony to start a new one click [DELETE], if you want to start a new colony but not delete your old one click [ABANDON].",
+  "tile.blockHutTownHall.messagePlacedAlready": "You have placed a Town Hall already, if you want to place a new one you're too close to the old one.",
+  "tile.blockHutTownHall.abandonAddOfficer": "If you want to add yourself as an officer to the abandoned colony to retain control click:",
+  "tile.blockHutTownHall.deleteMessageLink": "[DELETE]",
+  "tile.blockHutTownHall.abandonMessageLink": "[ABANDON]",
+  "tile.blockHutTownHall.addOfficerMessageLink": "[ADD AS OFFICER]",
+
   "item.minecolonies.ancienttome": "Ancient Tome",
   "item.minecolonies.chiefsword": "Chief Sword",
   "item.minecolonies.scepterGuard": "Guard-scepter",
-
 
   "entity.worker.inventoryfullchestfull": "Please make space in my building chest. I am not able to dump my inventory.",
 
@@ -673,7 +677,6 @@
   "com.minecolonies.coremod.gui.workerhuts.baker": "Baker",
   "com.minecolonies.coremod.baker.nofurnace": "My building doesn't have any furnaces, please repair it.",
 
-
   "com.minecolonies.coremod.gui.workerhuts.saplinglist": "Tasklist",
 
   "com.minecolonies.coremod.gui.townhall.housing": "Housing assignment mode:",
@@ -896,7 +899,6 @@
   "item.minecolonies.cactusdoor": "Cactus Door",
   "block.minecolonies.blockcactusslab_half": "Cactus Slab",
 
-
   "com.minecolonies.coremod.request.toolow": "Can't mine block %s at %s. Need to upgrade the building to use a tool with higher mining level.",
   "com.minecolonies.coremod.dimension.no": "You are not allowed to place colonies in other dimensions. (Triggered by config value)",
   "com.minecolonies.coremod.max.schematic.reached": "Max schematic size of %d blocks reached.",
@@ -927,8 +929,6 @@
   "com.minecolonies.coremod.gui.townhall.saturation": "Saturation of citizens:",
   "com.minecolonies.coremod.gui.workerhuts.happiness": "Happiness",
 
-
-
   "block.minecolonies.barrel_block": "Barrel",
   "item.minecolonies.compost": "Compost",
   "block.minecolonies.blockhutcomposter": "Composter Hut",
@@ -954,7 +954,6 @@
   "block.minecolonies.blockhutlibrary.name": "Library",
 
   "com.minecolonies.coremod.gui.workerhuts.library": "Library",
-
 
   "item.minecolonies.resourcescroll": "Resource-Scroll",
   "com.minecolonies.coremod.gui.resourcescroll.nobuilder": "Couldn't find a registered builder, please shift-right-click an existing builders hut.",
@@ -997,7 +996,6 @@
   "com.minecolonies.coremod.gui.hiring.restartmessagedone": "Citizen %s succesfully restarted.",
   "com.minecolonies.coremod.gui.townhall.buildinglevel": "Building level",
 
-
   "com.minecolonies.coremod.gui.warehouse.sort": "Sort",
   "com.minecolonies.coremod.gui.auto.hire.warning": "Turn the hiring mode of the building or colony to manual to fire this worker or hire another one.",
   "com.minecolonies.coremod.citizens.nospace": "<Mysterious Voice> Colonists can't arrive at your colony because there is not enough space at pos X:%d Y:%d Z:%d",
@@ -1030,7 +1028,6 @@
   "item.minecolonies.piratearcheregg": "Pirate Archer Egg",
   "item.minecolonies.piratecaptainegg": "Pirate Captain Egg",
   "item.minecolonies.mercegg": "Mercenary Egg",
-
 
   "com.minecolonies.coremod.pirates.sailing.away": "A pirate ship close to %s just sailed away to search another victim.",
   "com.minecolonies.coremod.cook.serve.player": "%s: Here you go Sir, take this food!",
@@ -1065,7 +1062,6 @@
   "com.minecolonies.coremod.gui.workerhuts.stonesmelter": "Stone Smeltery",
   "block.minecolonies.blockhutstonesmeltery": "Stone Smeltery",
   "block.minecolonies.blockhutstonesmeltery.name": "Stone Smeltery",
-
 
   "com.minecolonies.coremod.ai.wrongfood": "The food I have is too raw to eat!",
 
