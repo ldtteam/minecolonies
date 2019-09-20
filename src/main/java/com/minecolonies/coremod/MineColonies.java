@@ -77,7 +77,7 @@ public class MineColonies
 
     public MineColonies()
     {
-        config = new Configuration(ModLoadingContext.get().getActiveContainer());
+        config = new Configuration();
 
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(BarbarianSpawnEventHandler.class);
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(EventHandler.class);
