@@ -31,9 +31,16 @@ public class ItemAncientTome extends AbstractItemMinecolonies
         if (!worldIn.isRemote)
         {
             final IColony colony = IColonyManager.getInstance().getClosestColony(worldIn, entityIn.getPosition());
-
             final CompoundNBT tag = new CompoundNBT();
-            tag.putBoolean(NbtTagConstants.TAG_RAID_WILL_HAPPEN, colony.getRaiderManager().willRaidTonight());
+
+            if (colony != null)
+            {
+                tag.putBoolean(NbtTagConstants.TAG_RAID_WILL_HAPPEN, colony.getRaiderManager().willRaidTonight());
+            }
+            else
+            {
+                tag.putBoolean(NbtTagConstants.TAG_RAID_WILL_HAPPEN, false);
+            }
             stack.setTag(tag);
         }
     }
