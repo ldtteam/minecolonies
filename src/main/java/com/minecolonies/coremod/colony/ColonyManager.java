@@ -188,7 +188,6 @@ public final class ColonyManager implements IColonyManager
                 });
             }
 
-
             Log.getLogger().info("Removing buildings for " + id);
             for (final IBuilding building : new ArrayList<>(colony.getBuildingManager().getBuildings().values()))
             {
@@ -206,7 +205,15 @@ public final class ColonyManager implements IColonyManager
                 }
             }
 
-            MinecraftForge.EVENT_BUS.unregister(colony.getEventHandler());
+            try
+            {
+                MinecraftForge.EVENT_BUS.unregister(colony.getEventHandler());
+            }
+            catch (final NullPointerException e)
+            {
+                Log.getLogger().warn("Can't unregister the event handler twice");
+            }
+
             Log.getLogger().info("Deleting colony: " + colony.getID());
 
             final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null);

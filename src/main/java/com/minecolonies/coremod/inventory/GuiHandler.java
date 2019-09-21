@@ -37,11 +37,7 @@ public class GuiHandler implements IGuiHandler
             {
                 return new ContainerField((TileEntityScarecrow) tileEntity, player.inventory, world, pos);
             }
-            else if (tileEntity instanceof TileEntityRack)
-            {
-                return new ContainerRack((AbstractTileEntityRack) tileEntity, ((AbstractTileEntityRack) tileEntity).getOtherChest(), player.inventory);
-            }
-            else
+            else if (tileEntity instanceof TileEntityColonyBuilding)
             {
                 @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, new BlockPos(x,y,z));
                 if (building instanceof AbstractBuildingSmelterCrafter)
@@ -54,6 +50,11 @@ public class GuiHandler implements IGuiHandler
                 }
                 return null;
             }
+            else if (tileEntity instanceof TileEntityRack)
+            {
+                return new ContainerRack((AbstractTileEntityRack) tileEntity, ((AbstractTileEntityRack) tileEntity).getOtherChest(), player.inventory);
+            }
+            return null;
         }
         else if (id == ID.BUILDING_INVENTORY.ordinal())
         {
@@ -96,11 +97,7 @@ public class GuiHandler implements IGuiHandler
             {
                 return new GuiField(player.inventory, (TileEntityScarecrow) tileEntity, world, pos);
             }
-            else if (tileEntity instanceof TileEntityRack)
-            {
-                return new GuiRack(player.inventory, (AbstractTileEntityRack) tileEntity, ((AbstractTileEntityRack) tileEntity).getOtherChest(), world, pos);
-            }
-            else
+            else if (tileEntity instanceof TileEntityColonyBuilding)
             {
                 @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(player.world.provider.getDimension(), new BlockPos(x,y,z));
                 if (building instanceof AbstractBuildingSmelterCrafter.View)
@@ -111,6 +108,10 @@ public class GuiHandler implements IGuiHandler
                 {
                     return new WindowGuiCrafting(player.inventory, world, (AbstractBuildingWorker.View) building);
                 }
+            }
+            else if (tileEntity instanceof TileEntityRack)
+            {
+                return new GuiRack(player.inventory, (AbstractTileEntityRack) tileEntity, ((AbstractTileEntityRack) tileEntity).getOtherChest(), world, pos);
             }
         }
         else if (id == ID.BUILDING_INVENTORY.ordinal())
