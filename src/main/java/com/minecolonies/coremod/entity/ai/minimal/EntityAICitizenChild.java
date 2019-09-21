@@ -66,7 +66,7 @@ public class EntityAICitizenChild extends EntityAIBase
     /**
      * Timer for how long the AI is active
      */
-    private int AIActiveTime = 0;
+    private int aiActiveTime = 0;
 
     /**
      * Minimum ticks the AI is active before it is allowed to grow
@@ -139,7 +139,7 @@ public class EntityAICitizenChild extends EntityAIBase
             actionTimer -= Configurations.gameplay.updateRate;
         }
 
-        AIActiveTime += Configurations.gameplay.updateRate;
+        aiActiveTime += Configurations.gameplay.updateRate;
 
         return false;
     }
@@ -271,11 +271,11 @@ public class EntityAICitizenChild extends EntityAIBase
         {
             if (child.getCitizenColonyHandler().getColony().useAdditionalChildTime(BONUS_TIME_COLONY))
             {
-                AIActiveTime += BONUS_TIME_COLONY;
+                aiActiveTime += BONUS_TIME_COLONY;
             }
         }
 
-        if (AIActiveTime >= MIN_ACTIVE_TIME)
+        if (aiActiveTime >= MIN_ACTIVE_TIME)
         {
             if (!child.isChild())
             {
@@ -283,7 +283,7 @@ public class EntityAICitizenChild extends EntityAIBase
             }
 
             // 1/144 Chance to grow up, every 25 seconds = avg 1h. Set to half since this AI isnt always active, e.g. sleeping.  At 2h they directly grow
-            if (rand.nextInt((int) (70 / Configurations.gameplay.growthModifier) + 1) == 0 || AIActiveTime > 70000 / Configurations.gameplay.growthModifier)
+            if (rand.nextInt((int) (70 / Configurations.gameplay.growthModifier) + 1) == 0 || aiActiveTime > 70000 / Configurations.gameplay.growthModifier)
             {
 
                 LanguageHandler.sendPlayersMessage(child.getCitizenColonyHandler().getColony().getMessageEntityPlayers(),
