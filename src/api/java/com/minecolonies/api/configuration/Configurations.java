@@ -285,6 +285,7 @@ public class Configurations
         public boolean holidayFeatures = true;
 
         @Config.Comment("AI Update rate, increase to improve performance. [Default: 1]")
+        @Config.RangeInt(min = 1,max = 10000)
         public int updateRate = 1;
 
         @Config.Comment("Quantity of dirt per Compost filling. [Default: 1]")

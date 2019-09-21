@@ -74,6 +74,11 @@ public class EntityAICitizenChild extends EntityAIBase
     private static final int MIN_ACTIVE_TIME = 4000;
 
     /**
+     * Bonus ticks a child can get from a colony
+     */
+    private static final int BONUS_TIME_COLONY = 2000;
+
+    /**
      * The entity we're following around
      */
     private WeakReference<Entity> followTarget = new WeakReference<>(null);
@@ -262,6 +267,13 @@ public class EntityAICitizenChild extends EntityAIBase
      */
     private boolean tryGrowUp()
     {
+        if (child.getCitizenColonyHandler().getColony() != null)
+        {
+            if (child.getCitizenColonyHandler().getColony().useAdditionalChildTime(BONUS_TIME_COLONY))
+            {
+                AIActiveTime += BONUS_TIME_COLONY;
+            }
+        }
 
         if (AIActiveTime >= MIN_ACTIVE_TIME)
         {
@@ -271,7 +283,7 @@ public class EntityAICitizenChild extends EntityAIBase
             }
 
             // 1/144 Chance to grow up, every 25 seconds = avg 1h. Set to half since this AI isnt always active, e.g. sleeping.  At 2h they directly grow
-            if (rand.nextInt((int) (70 / Configurations.gameplay.growthModifier)) == 0 || AIActiveTime > 70000 / Configurations.gameplay.growthModifier)
+            if (rand.nextInt((int) (70 / Configurations.gameplay.growthModifier) + 1) == 0 || AIActiveTime > 70000 / Configurations.gameplay.growthModifier)
             {
 
                 LanguageHandler.sendPlayersMessage(child.getCitizenColonyHandler().getColony().getMessageEntityPlayers(),
@@ -280,6 +292,10 @@ public class EntityAICitizenChild extends EntityAIBase
                 // Grow up
                 child.setIsChild(false);
                 child.getCitizenData().setIsChild(false);
+                if (child.getCitizenColonyHandler().getColony() != null)
+                {
+                    child.getCitizenColonyHandler().getColony().updateHasChilds();
+                }
                 return true;
             }
         }
