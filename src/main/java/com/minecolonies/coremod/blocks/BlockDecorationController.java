@@ -18,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.World;
@@ -55,10 +56,10 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     /**
      * The bounding boxes.
      */
-    protected static final VoxelShape AABB_NORTH = Block.makeCuboidShape(0.4125D, 0.375D, 0.950D, 0.5875D, 0.625D, 1.0D);
-    protected static final VoxelShape AABB_SOUTH = Block.makeCuboidShape(0.4125D, 0.375D, 0.0D, 0.5875D, 0.625D, 0.050D);
-    protected static final VoxelShape AABB_WEST  = Block.makeCuboidShape(0.950D, 0.375D, 0.4125D, 1.0D, 0.625D, 0.5875D);
-    protected static final VoxelShape AABB_EAST  = Block.makeCuboidShape(0.0D, 0.375D, 0.4125D, 0.050D, 0.625D, 0.5875D);
+    protected static final VoxelShape AABB_NORTH = VoxelShapes.create(0.4125D, 0.375D, 0.950D, 0.5875D, 0.625D, 1.0D);
+    protected static final VoxelShape AABB_SOUTH = VoxelShapes.create(0.4125D, 0.375D, 0.0D, 0.5875D, 0.625D, 0.050D);
+    protected static final VoxelShape AABB_WEST  = VoxelShapes.create(0.950D, 0.375D, 0.4125D, 1.0D, 0.625D, 0.5875D);
+    protected static final VoxelShape AABB_EAST  = VoxelShapes.create(0.0D, 0.375D, 0.4125D, 0.050D, 0.625D, 0.5875D);
 
     /**
      * Constructor for the placerholder.
