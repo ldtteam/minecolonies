@@ -554,7 +554,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean isFishHookStuck()
     {
-        return (!entityFishHook.isInWater() && (entityFishHook.onGround || entityFishHook.shouldStopFishing())) || !entityFishHook.isAlive();
+        return (!entityFishHook.isInWater() && (entityFishHook.onGround || entityFishHook.shouldStopFishing()) || !entityFishHook.addedToChunk) || !entityFishHook.isAlive();
     }
 
     /**
