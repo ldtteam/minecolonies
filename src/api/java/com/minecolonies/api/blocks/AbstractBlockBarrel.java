@@ -8,6 +8,7 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.EnumProperty;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> extends AbstractBlockMinecoloniesHorizontal<B> implements IBlockMinecolonies<B>
 {
@@ -23,18 +24,15 @@ public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> exte
         super(properties);
     }
 
-    public static BlockState changeStateOverFullness(AbstractTileEntityBarrel entity, BlockState blockState)
+    public static BlockState changeStateOverFullness(@NotNull final AbstractTileEntityBarrel te, @NotNull final BlockState blockState)
     {
-
-        final AbstractTileEntityBarrel te = entity;
-
-        /**
+        /*
          * 12.8 -> the number of items needed to go up on a state (having 6 filling states)
          * So items/12.8 -> meta of the state we should get
          */
         BarrelType type = BarrelType.byMetadata((int) Math.round(te.getItems()/12.8));
 
-        /**
+        /*
          * We check if the barrel is marked as empty but it have items inside. If so, means that it
          * does not have all the items needed to go on TWENTY state, but we need to mark it so the player
          * knows it have some items inside
@@ -53,7 +51,6 @@ public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> exte
             type = BarrelType.DONE;
         }
 
-        return blockState.with(AbstractBlockBarrel.VARIANT,
-          type).with(AbstractBlockBarrel.FACING, blockState.get(AbstractBlockBarrel.FACING));
+        return blockState.with(AbstractBlockBarrel.VARIANT, type).with(AbstractBlockBarrel.FACING, blockState.get(AbstractBlockBarrel.FACING));
     }
 }

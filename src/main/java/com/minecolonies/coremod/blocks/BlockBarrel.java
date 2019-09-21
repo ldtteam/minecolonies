@@ -17,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -78,10 +79,11 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
         return true;
     }
 
+    @NotNull
     @Override
     public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
     {
-        return Block.makeCuboidShape(0,0,0,1,1.5,1);
+        return VoxelShapes.create(0,0,0,1,1.5,1);
     }
 
     /**
@@ -142,7 +144,8 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel>
 
     @NotNull
     @Override
-    public BlockRenderLayer getRenderLayer() {
+    public BlockRenderLayer getRenderLayer()
+    {
         return BlockRenderLayer.CUTOUT;
     }
 }
