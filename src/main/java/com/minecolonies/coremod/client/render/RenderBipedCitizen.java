@@ -28,10 +28,8 @@ import static com.minecolonies.api.util.constant.Constants.BED_HEIGHT;
  */
 public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends CitizenModel> extends MobRenderer
 {
-    private static final CitizenModel defaultModelMale   = new CitizenModel(0.0F);
-    private static final CitizenModel defaultModelFemale = new ModelEntityCitizenFemaleCitizen();
-    private static final double     SHADOW_SIZE        = 0.5F;
-    private static final int        THREE_QUARTERS     = 270;
+    private static final double SHADOW_SIZE    = 0.5F;
+    private static final int    THREE_QUARTERS = 270;
 
     /**
      * Renders model, see {@link BipedRenderer}.
@@ -40,7 +38,7 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
      */
     public RenderBipedCitizen(final EntityRendererManager renderManagerIn)
     {
-        super(renderManagerIn, (M) new CitizenModel(0.0F), (float) SHADOW_SIZE);
+        super(renderManagerIn, new CitizenModel(0.0F), (float) SHADOW_SIZE);
         super.addLayer(new BipedArmorLayer<>(this, new CitizenModel(0.5F), new CitizenModel(1.0F)));
         super.addLayer(new HeldItemLayer(this));
     }
@@ -72,12 +70,12 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
     private void setupMainModelFrom(@NotNull final AbstractEntityCitizen citizen)
     {
         entityModel = (citizen.isFemale()
-                                      ? IModelTypeRegistry.getInstance().getFemaleMap().get(citizen.getModelType())
-                                      : IModelTypeRegistry.getInstance().getMaleMap().get(citizen.getModelType()));
+                         ? IModelTypeRegistry.getInstance().getFemaleMap().get(citizen.getModelType())
+                         : IModelTypeRegistry.getInstance().getMaleMap().get(citizen.getModelType()));
 
         if (entityModel == null)
         {
-            entityModel = (citizen.isFemale() ? defaultModelFemale : defaultModelMale);
+            entityModel = (citizen.isFemale() ? new ModelEntityCitizenFemaleCitizen() : new CitizenModel(0.0F));
         }
         entityModel.isChild = citizen.isChild();
     }
@@ -128,7 +126,10 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
         final AbstractEntityCitizen entityCitizen = (AbstractEntityCitizen) entity;
         if (entityCitizen.isAlive() && entityCitizen.getCitizenSleepHandler().isAsleep())
         {
-            super.renderLivingAt(entity, x + (double)entityCitizen.getCitizenSleepHandler().getRenderOffsetX(), y + BED_HEIGHT, z + (double)entityCitizen.getCitizenSleepHandler().getRenderOffsetZ());
+            super.renderLivingAt(entity,
+              x + (double) entityCitizen.getCitizenSleepHandler().getRenderOffsetX(),
+              y + BED_HEIGHT,
+              z + (double) entityCitizen.getCitizenSleepHandler().getRenderOffsetZ());
         }
         else
         {
