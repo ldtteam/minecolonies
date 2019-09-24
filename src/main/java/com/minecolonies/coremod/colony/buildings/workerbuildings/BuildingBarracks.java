@@ -18,6 +18,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -97,11 +98,16 @@ public class BuildingBarracks extends AbstractBuilding
     public void registerBlockPosition(@NotNull final BlockState block, @NotNull final BlockPos pos, @NotNull final World world)
     {
         super.registerBlockPosition(block, pos, world);
-        if (block.getBlock() == ModBlocks.blockBarracksTowerSubstitution)
+        if (block.getBlock() == ModBlocks.blockBarracksTowerSubstitution || block.getBlock() == ModBlocks.blockHutBarracksTower)
         {
             if (world.getBlockState(pos).getBlock() != ModBlocks.blockHutBarracksTower)
             {
                 world.setBlockState(pos, ModBlocks.blockHutBarracksTower.getDefaultState().with(HorizontalBlock.HORIZONTAL_FACING, block.get(HorizontalBlock.HORIZONTAL_FACING)));
+                final TileEntity tile = world.getTileEntity(pos);
+                if (tile instanceof TileEntityColonyBuilding)
+                {
+                    ((TileEntityColonyBuilding) tile).setStyle(this.getStyle());
+                }
                 getColony().getBuildingManager().addNewBuilding((TileEntityColonyBuilding) world.getTileEntity(pos), world);
             }
             final IBuilding building = getColony().getBuildingManager().getBuilding(pos);
