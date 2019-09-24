@@ -75,7 +75,8 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
         super(pane);
         this.colony = colony;
         this.building = colony.getBuilding(building);
-
+        resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
+        
         registerButton(REQUEST_DETAIL, this::detailedClicked);
         registerButton(REQUEST_CANCEL, this::cancel);
 
@@ -103,7 +104,6 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
     public void onOpened()
     {
         super.onOpened();
-        resourceList = findPaneOfTypeByID(WINDOW_ID_LIST_REQUESTS, ScrollingList.class);
 
         if (building != null)
         {
