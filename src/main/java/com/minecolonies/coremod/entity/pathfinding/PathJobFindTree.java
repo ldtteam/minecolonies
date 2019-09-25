@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.pathfinding;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.api.entity.pathfinding.TreePathResult;
@@ -95,7 +96,7 @@ public class PathJobFindTree extends AbstractPathJob
             final BlockPos startRestriction,
             final BlockPos endRestriction,
             final List<ItemStorage> treesToCut,
-            final Colony colony,
+            final IColony colony,
             final EntityLivingBase entity)
     {
         super(world, startRestriction, endRestriction, new TreePathResult(), entity);

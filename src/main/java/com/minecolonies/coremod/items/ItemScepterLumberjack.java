@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.items;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
@@ -119,9 +122,9 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
 
         LanguageHandler.sendPlayerMessage(player, "item.minecolonies.scepterLumberjack.restrictionSet", area, maxArea);
 
-        final Colony colony = ColonyManager.getColonyByWorld(compound.getInteger(TAG_ID), worldIn);
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(compound.getInteger(TAG_ID), worldIn);
         final BlockPos hutPos = BlockPosUtil.readFromNBT(compound, TAG_POS);
-        final AbstractBuilding hut = colony.getBuildingManager().getBuilding(hutPos);
+        final IBuilding hut = colony.getBuildingManager().getBuilding(hutPos);
 
         final AbstractFilterableListBuilding abstractBuilding = (AbstractFilterableListBuilding) hut;
 

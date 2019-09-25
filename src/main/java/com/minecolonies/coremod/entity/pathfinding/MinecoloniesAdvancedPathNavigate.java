@@ -9,6 +9,8 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.pathfinding.Path;
@@ -486,6 +488,26 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     /**
      * Used to find a tree.
      *
+     * @param startRestriction the start of the restricted area.
+     * @param endRestriction the end of the restricted area.
+     * @param speed      walking speed.
+     * @param treesToCut the trees which should be cut.
+     * @return the result of the search.
+     */
+    public TreePathResult moveToTree(final BlockPos startRestriction, final BlockPos endRestriction, final double speed, final List<ItemStorage> treesToCut, final IColony colony)
+    {
+        @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
+        final BlockPos buildingPos = ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getPosition();
+
+        final PathJobFindTree job = new PathJobFindTree(CompatibilityUtils.getWorldFromEntity(entity), start, buildingPos, startRestriction, endRestriction, treesToCut, colony, ourEntity);
+        job.setAreaRestriction(startRestriction, endRestriction);
+
+        return (TreePathResult) setPathJob(job, null, speed);
+    }
+
+    /**
+     * Used to find a tree.
+     *
      * @param range      in the range.
      * @param speed      walking speed.
      * @param treesToCut the trees which should be cut.
@@ -494,7 +516,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     public TreePathResult moveToTree(final int range, final double speed, final List<ItemStorage> treesToCut, final IColony colony)
     {
         @NotNull BlockPos start = AbstractPathJob.prepareStart(ourEntity);
-        final BlockPos buildingPos = ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getPosition();
+        final BlockPos buildingPos = ((EntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getPosition();
 
         if (BlockPosUtil.getDistance2D(buildingPos, entity.getPosition()) > range * 4)
         {
