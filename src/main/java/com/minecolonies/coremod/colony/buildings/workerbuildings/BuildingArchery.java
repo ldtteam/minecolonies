@@ -1,14 +1,16 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
@@ -58,14 +60,14 @@ public class BuildingArchery extends AbstractBuildingWorker
      * @param c the colony
      * @param l the position
      */
-    public BuildingArchery(@NotNull final Colony c, final BlockPos l)
+    public BuildingArchery(@NotNull final IColony c, final BlockPos l)
     {
         super(c, l);
     }
 
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return new JobArcherTraining(citizen);
     }
@@ -85,10 +87,9 @@ public class BuildingArchery extends AbstractBuildingWorker
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
-        super.readFromNBT(compound);
-
+        super.deserializeNBT(compound);
         shootingTargets.clear();
         shootingStands.clear();
 
@@ -100,15 +101,17 @@ public class BuildingArchery extends AbstractBuildingWorker
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public NBTTagCompound serializeNBT()
     {
-        super.writeToNBT(compound);
+        final NBTTagCompound compound = super.serializeNBT();
 
         final NBTTagList targetTagList = shootingTargets.stream().map(target -> BlockPosUtil.writeToNBT(new NBTTagCompound(), TAG_TARGET, target)).collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_ARCHERY_TARGETS, targetTagList);
 
         final NBTTagList standTagList = shootingStands.stream().map(target -> BlockPosUtil.writeToNBT(new NBTTagCompound(), TAG_STAND, target)).collect(NBTUtils.toNBTTagList());
         compound.setTag(TAG_ARCHERY_STANDS, standTagList);
+
+        return compound;
     }
 
     @Override
@@ -167,8 +170,14 @@ public class BuildingArchery extends AbstractBuildingWorker
         return null;
     }
 
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.archery;
+    }
+
     /**
-     * The client view for the baker building.
+     * The client view for the bakery building.
      */
     public static class View extends AbstractBuildingWorker.View
     {
@@ -178,7 +187,7 @@ public class BuildingArchery extends AbstractBuildingWorker
          * @param c the colony.
          * @param l the location.
          */
-        public View(final ColonyView c, @NotNull final BlockPos l)
+        public View(final IColonyView c, @NotNull final BlockPos l)
         {
             super(c, l);
         }

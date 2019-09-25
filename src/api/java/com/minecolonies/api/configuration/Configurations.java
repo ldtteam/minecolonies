@@ -285,6 +285,7 @@ public class Configurations
         public boolean holidayFeatures = true;
 
         @Config.Comment("AI Update rate, increase to improve performance. [Default: 1]")
+        @Config.RangeInt(min = 1,max = 10000)
         public int updateRate = 1;
 
         @Config.Comment("Quantity of dirt per Compost filling. [Default: 1]")
@@ -483,7 +484,10 @@ public class Configurations
         public boolean suggestBuildToolPlacement = true;
 
         @Config.Comment("Food consumption modifier (Min: 1.0). [Default: 1.0]")
-        public double foodModifier = 1;
+        public double   foodModifier = 1;
+
+        @Config.Comment("Disable citizen voices. [Default: false]")
+        public boolean disableCitizenVoices = false;
     }
 
     public static class Compatibility

@@ -1,18 +1,18 @@
 package com.minecolonies.coremod.entity.ai.citizen.sifter;
 
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSifter;
 import com.minecolonies.coremod.colony.jobs.JobSifter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.coremod.network.messages.LocalizedParticleEffectMessage;
-import com.minecolonies.coremod.util.SoundUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -22,9 +22,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Sifter AI class.
@@ -135,7 +135,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
         {
             return getState();
         }
-        WorkerUtil.faceBlock(getOwnBuilding().getLocation(), worker);
+        WorkerUtil.faceBlock(getOwnBuilding().getPosition(), worker);
 
         setDelay(TICK_DELAY);
         progress++;
@@ -166,7 +166,7 @@ public class EntityAIWorkSifter extends AbstractEntityAIInteract<JobSifter>
                 }
 
                 final ItemStack result =
-                  ColonyManager.getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getFirst(), sifterBuilding.getSievableBlock());
+                  IColonyManager.getInstance().getCompatibilityManager().getRandomSieveResultForMeshAndBlock(sifterBuilding.getMesh().getFirst(), sifterBuilding.getSievableBlock());
                 if (!result.isEmpty())
                 {
                     InventoryUtils.addItemStackToItemHandler(new InvWrapper(worker.getInventoryCitizen()), result);

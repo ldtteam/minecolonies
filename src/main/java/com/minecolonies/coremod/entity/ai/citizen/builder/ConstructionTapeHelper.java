@@ -2,8 +2,8 @@ package com.minecolonies.coremod.entity.ai.citizen.builder;
 
 import com.ldtteam.structures.helpers.Structure;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.block.Block;

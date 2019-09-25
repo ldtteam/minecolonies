@@ -116,6 +116,10 @@ public class MineColonies
     @Mod.EventHandler
     public void preInit(@NotNull final FMLPreInitializationEvent event)
     {
+        MinecraftForge.EVENT_BUS.register(proxy);
+
+        proxy.setupApi();
+
         FMLCommonHandler.instance().getDataFixer().init(Constants.MOD_ID, TileEntityIdFixer.VERSION).registerFix(FixTypes.BLOCK_ENTITY, new TileEntityIdFixer());
         StructureLoadingUtils.originFolders.add(Constants.MOD_ID);
         CapabilityManager.INSTANCE.register(IColonyTagCapability.class, new IColonyTagCapability.Storage(), IColonyTagCapability.Impl::new);

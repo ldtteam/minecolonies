@@ -1,10 +1,9 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.configuration.Configurations;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.commands.MinecoloniesCommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -66,7 +65,7 @@ public final class TeleportToColony
             if (args.length == 0)
             {
                 playerToTeleport = (EntityPlayer) sender;
-                colony = ColonyManager.getIColonyByOwner(((EntityPlayer) sender).world, (EntityPlayer) sender);
+                colony = IColonyManager.getInstance().getIColonyByOwner(((EntityPlayer) sender).world, (EntityPlayer) sender);
 
                 if(colony == null)
                 {
@@ -102,10 +101,11 @@ public final class TeleportToColony
      * @param colID            the senders colony ID.
      * @param playerToTeleport the player which shall be teleported.
      */
+    @SuppressWarnings("PMD.PrematureDeclaration")
     private static void teleportPlayer(final EntityPlayer playerToTeleport, final int colID, final ICommandSender sender)
     {
-        final Colony colony = ColonyManager.getColonyByWorld(colID, FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0));
-        final BuildingTownHall townHall = colony.getBuildingManager().getTownHall();
+        final IColony colony = IColonyManager.getInstance().getColonyByWorld(colID, FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0));
+        final ITownHall townHall = colony.getBuildingManager().getTownHall();
 
         if (townHall == null)
         {
@@ -113,7 +113,7 @@ public final class TeleportToColony
             return;
         }
 
-        final BlockPos position = townHall.getLocation();
+        final BlockPos position = townHall.getPosition();
 
         final int dimension = playerToTeleport.getEntityWorld().provider.getDimension();
         final int colonyDimension = townHall.getColony().getDimension();

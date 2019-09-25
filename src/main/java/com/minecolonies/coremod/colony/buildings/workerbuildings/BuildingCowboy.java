@@ -1,13 +1,15 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.WindowHutCowboy;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobCowboy;
 import com.minecolonies.coremod.network.messages.CowboySetMilkCowsMessage;
 import io.netty.buffer.ByteBuf;
@@ -45,7 +47,7 @@ public class BuildingCowboy extends AbstractBuildingWorker
      * @param c the colony.
      * @param l the location.
      */
-    public BuildingCowboy(final Colony c, final BlockPos l)
+    public BuildingCowboy(final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -70,9 +72,15 @@ public class BuildingCowboy extends AbstractBuildingWorker
         return COWBOY;
     }
 
+    /**
+     * The abstract method which creates a job for the building.
+     *
+     * @param citizen the citizen to take the job.
+     * @return the Job.
+     */
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return new JobCowboy(citizen);
     }
@@ -85,17 +93,26 @@ public class BuildingCowboy extends AbstractBuildingWorker
     }
 
     @Override
-    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    public BuildingEntry getBuildingRegistryEntry()
     {
-        super.writeToNBT(compound);
-        compound.setBoolean(NBT_MILK_COWS, this.milkCows);
+        return ModBuildings.cowboy;
     }
 
     @Override
-    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    public void deserializeNBT(final NBTTagCompound compound)
     {
-        super.readFromNBT(compound);
+        super.deserializeNBT(compound);
         this.milkCows = compound.getBoolean(NBT_MILK_COWS);
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT()
+    {
+        final NBTTagCompound compound = super.serializeNBT();
+
+        compound.setBoolean(NBT_MILK_COWS, this.milkCows);
+
+        return compound;
     }
 
     public boolean isMilkingCows()
@@ -124,7 +141,7 @@ public class BuildingCowboy extends AbstractBuildingWorker
          * @param c the colonyView.
          * @param l the location of the block.
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }

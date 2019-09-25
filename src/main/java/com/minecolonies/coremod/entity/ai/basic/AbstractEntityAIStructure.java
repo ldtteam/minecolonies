@@ -1,27 +1,27 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
+import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.StructurePlacementUtils;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.ai.util.StructureIterator;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
-import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.statemachine.AIEventTarget;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.AIBlockingEventType;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.ai.util.StructureIterator;
 import com.minecolonies.coremod.util.WorkerUtil;
-import com.ldtteam.structurize.placementhandlers.IPlacementHandler;
-import com.ldtteam.structurize.placementhandlers.PlacementHandlers;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -46,8 +46,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Suppression.MULTIPLE_LOOPS_OVER_THE_SAME_SET_SHOULD_BE_COMBINED;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * This base ai class is used by ai's who need to build entire structures.
@@ -414,7 +414,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
 
     private boolean placeBlockAt(@NotNull final IBlockState blockState, @NotNull final BlockPos coords)
     {
-        if (blockState instanceof BlockGrassPath)
+        if (blockState.getBlock() instanceof BlockGrassPath)
         {
             holdEfficientTool(blockState.getBlock(), coords);
         }
@@ -603,12 +603,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
         @NotNull final IBlockState stateToPlace = state;
 
         //Move out of the way when placing blocks
-        if (MathHelper.floor(worker.posX) == pos.getX()
-              && MathHelper.abs(pos.getY() - (int) worker.posY) <= 1
-              && MathHelper.floor(worker.posZ) == pos.getZ()
+        if (MathHelper.floor(worker.getPosX()) == pos.getX()
+              && MathHelper.abs(pos.getY() - (int) worker.getPosY()) <= 1
+              && MathHelper.floor(worker.getPosZ()) == pos.getZ()
               && worker.getNavigator().noPath())
         {
-            worker.getNavigator().moveAwayFromXYZ(pos, RUN_AWAY_SPEED, 1.0);
+            worker.getNavigator().moveAwayFromXYZ(pos, RUN_AWAY_SPEED, 1);
         }
 
         @NotNull final Block blockToPlace = block;
@@ -686,7 +686,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
                  || block.equals(Blocks.LEAVES)
                  || block.equals(Blocks.LEAVES2)
                  || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08))
-                 || block == ModBlocks.blockDecorationPlacerholder;
+                 || block == ModBlocks.blockDecorationPlaceholder;
     }
 
     /*
@@ -1098,7 +1098,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure> 
      *
      * @return the EntityCitizen object.
      */
-    public EntityCitizen getWorker()
+    public AbstractEntityCitizen getWorker()
     {
         return this.worker;
     }

@@ -3,15 +3,16 @@ package com.minecolonies.coremod.entity.ai.basic;
 import com.ldtteam.structurize.blocks.schematic.BlockSolidSubstitution;
 import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.StructurePlacementUtils;
+import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.ai.util.StructureIterator;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.blocks.AbstractBlockHut;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
@@ -19,7 +20,6 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
-import com.minecolonies.coremod.entity.ai.util.StructureIterator;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
@@ -38,7 +38,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.api.util.constant.Suppression.LOOPS_SHOULD_NOT_CONTAIN_MORE_THAN_A_SINGLE_BREAK_OR_CONTINUE_STATEMENT;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART;
 
@@ -97,7 +96,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
             if (wo instanceof WorkOrderBuildBuilding)
             {
-                final AbstractBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
+                final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
                 if (building == null)
                 {
                     Log.getLogger().error(
@@ -215,6 +214,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             if (block == Blocks.GRASS)
             {
                 block = Blocks.DIRT;
+                blockState = block.getDefaultState();
             }
 
             final Block worldBlock = BlockPosUtil.getBlock(world, job.getStructure().getBlockPosition());
@@ -351,7 +351,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             final WorkOrderBuildBuilding woh = (wo instanceof WorkOrderBuildBuilding) ? (WorkOrderBuildBuilding) wo : null;
             if (woh != null)
             {
-                final AbstractBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
+                final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getBuildingLocation());
                 if (building == null)
                 {
                     Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",

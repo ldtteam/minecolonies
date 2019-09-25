@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.entity.ai.citizen.student;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.ai.util.StudyItem;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.ai.util.StudyItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * The Entity AI study class.
@@ -65,7 +65,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent>
      */
     private IAIState study()
     {
-        final CitizenData data = worker.getCitizenData();
+        final ICitizenData data = worker.getCitizenData();
         if (data == null)
         {
             setDelay(STUDY_DELAY);

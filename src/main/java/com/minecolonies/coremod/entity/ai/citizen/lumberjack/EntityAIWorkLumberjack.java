@@ -1,16 +1,16 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.pathfinding.TreePathResult;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.pathfinding.PathJobFindTree;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * The lumberjack AI class.
@@ -172,12 +172,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * The active pathfinding job used to walk to trees.
      */
     @Nullable
-    private PathJobFindTree.TreePathResult pathResult;
+    private TreePathResult pathResult;
     /**
      * A counter by how much the tree search radius
      * has been increased by now.
      */
-    private int                            searchIncrement = 0;
+    private int            searchIncrement = 0;
 
     /**
      * Create a new LumberjackAI.
@@ -286,7 +286,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private IAIState findTree()
     {
-        final AbstractBuilding building = getOwnBuilding();
+        final IBuilding building = getOwnBuilding();
 
         // Waiting for current path to finish
         if (pathResult != null && pathResult.isInProgress())

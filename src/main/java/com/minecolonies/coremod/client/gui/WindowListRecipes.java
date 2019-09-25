@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.Pane;
@@ -10,7 +11,6 @@ import com.minecolonies.blockout.views.Box;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.AddRemoveRecipeMessage;
 import com.minecolonies.coremod.network.messages.ChangeRecipePriorityMessage;
@@ -73,7 +73,7 @@ public class WindowListRecipes extends Window implements ButtonHandler
      * @param c          the colony view.
      * @param buildingId the building position.
      */
-    public WindowListRecipes(final ColonyView c, final BlockPos buildingId)
+    public WindowListRecipes(final IColonyView c, final BlockPos buildingId)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.building = (AbstractBuildingWorker.View) c.getBuilding(buildingId);

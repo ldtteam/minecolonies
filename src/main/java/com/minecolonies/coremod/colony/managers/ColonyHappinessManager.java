@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.minecolonies.coremod.colony.managers.interfaces.IColonyHappinessManager;
-import com.minecolonies.coremod.entity.citizenhandlers.CitizenHappinessHandler;
+import com.minecolonies.api.colony.managers.interfaces.IColonyHappinessManager;
+import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;

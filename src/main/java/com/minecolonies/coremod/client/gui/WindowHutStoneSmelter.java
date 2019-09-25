@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.blockout.views.View;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingStoneSmeltery;
 import net.minecraft.item.ItemStack;
 
@@ -55,7 +55,7 @@ public class WindowHutStoneSmelter extends AbstractHutFilterableLists
      */
     public List<? extends ItemStorage> getBlockList(final Predicate<ItemStack> filterPredicate, final String id)
     {
-        return ImmutableList.copyOf(ColonyManager.getCompatibilityManager().getFuel().stream().filter(item -> filterPredicate.test(item.getItemStack())).collect(Collectors.toList()));
+        return ImmutableList.copyOf(IColonyManager.getInstance().getCompatibilityManager().getFuel().stream().filter(item -> filterPredicate.test(item.getItemStack())).collect(Collectors.toList()));
     }
 
     @Override

@@ -1,16 +1,18 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingCrafter;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobStonemason;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -46,7 +48,7 @@ public class BuildingStonemason extends AbstractBuildingCrafter
      * @param c the colony.
      * @param l the location
      */
-    public BuildingStonemason(final Colony c, final BlockPos l)
+    public BuildingStonemason(final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -67,7 +69,7 @@ public class BuildingStonemason extends AbstractBuildingCrafter
 
     @NotNull
     @Override
-    public AbstractJob createJob(final CitizenData citizen)
+    public IJob createJob(final ICitizenData citizen)
     {
         return new JobStonemason(citizen);
     }
@@ -87,14 +89,14 @@ public class BuildingStonemason extends AbstractBuildingCrafter
             return false;
         }
 
-        final IRecipeStorage storage = ColonyManager.getRecipeManager().getRecipes().get(token);
+        final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
         if(storage == null)
         {
             return false;
         }
 
-        int amountOfValidBlocks = 0;
-        int blocks = 0;
+        double amountOfValidBlocks = 0;
+        double blocks = 0;
 
 
         if (storage.getPrimaryOutput().getItem() instanceof ItemBlock)
@@ -125,21 +127,23 @@ public class BuildingStonemason extends AbstractBuildingCrafter
             if(!ItemStackUtils.isEmpty(stack))
             {
                 blocks++;
+                if (stack.getItem() instanceof ItemBlock)
+                {
+                    final Block block = ((ItemBlock) stack.getItem()).getBlock();
+                    if (block == Blocks.STONEBRICK || block == Blocks.STONE_BRICK_STAIRS || block == Blocks.STONE_SLAB || block == Blocks.STONE_SLAB2)
+                    {
+                        amountOfValidBlocks++;
+                        continue;
+                    }
+                }
+
                 for(final int id: OreDictionary.getOreIDs(stack))
                 {
-                    if (stack.getItem() instanceof ItemBlock)
-                    {
-                        final Block block = ((ItemBlock) stack.getItem()).getBlock();
-                        if (block == Blocks.STONEBRICK || block == Blocks.STONE_BRICK_STAIRS || block == Blocks.STONE_SLAB || block == Blocks.STONE_SLAB2)
-                        {
-                            amountOfValidBlocks++;
-                            continue;
-                        }
-                    }
                     final String name = OreDictionary.getOreName(id);
                     if(name.contains("stone"))
                     {
                         amountOfValidBlocks++;
+                        break;
                     }
                     else if(name.contains("stick") || name.contains("wood") || name.toLowerCase(Locale.US).contains("redstone") || name.contains("string") || name.contains("gunpowder"))
                     {
@@ -149,7 +153,13 @@ public class BuildingStonemason extends AbstractBuildingCrafter
             }
         }
 
-        return amountOfValidBlocks > 0 && blocks/amountOfValidBlocks > MIN_PERCENTAGE_TO_CRAFT;
+        return amountOfValidBlocks > 0 && amountOfValidBlocks/blocks > MIN_PERCENTAGE_TO_CRAFT;
+    }
+
+    @Override
+    public BuildingEntry getBuildingRegistryEntry()
+    {
+        return ModBuildings.stoneMason;
     }
 
     /**
@@ -164,7 +174,7 @@ public class BuildingStonemason extends AbstractBuildingCrafter
          * @param c the colonyview to put it in
          * @param l the positon
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }

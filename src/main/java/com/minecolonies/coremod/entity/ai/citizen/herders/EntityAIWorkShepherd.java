@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.entity.ai.citizen.herders;
 
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingShepherd;
 import com.minecolonies.coremod.colony.jobs.JobShepherd;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * The AI behind the {@link JobShepherd} for Breeding, Killing and Shearing sheep.
@@ -141,7 +141,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, En
             }
             worker.swingArm(EnumHand.MAIN_HAND);
             final List<ItemStack> items = sheep.onSheared(worker.getHeldItemMainhand(),
-              worker.world,
+              worker.getEntityWorld(),
               worker.getPosition(),
               net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel(net.minecraft.init.Enchantments.FORTUNE, worker.getHeldItemMainhand()));
 

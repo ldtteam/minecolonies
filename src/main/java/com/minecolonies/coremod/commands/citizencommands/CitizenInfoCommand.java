@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.commands.citizencommands;
 
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -63,14 +63,14 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
     }
 
     @Override
-    public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
+    public void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final IColony colony, final int citizenId)
     {
-        final CitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
+        final ICitizenData citizenData = colony.getCitizenManager().getCitizen(citizenId);
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
           citizenData.getId(),
           citizenData.getName())));
 
-        final Optional<EntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
+        final Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getCitizenEntity();
 
         if (!optionalEntityCitizen.isPresent())
         {
@@ -79,7 +79,7 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
         }
 
 
-        final EntityCitizen entityCitizen = optionalEntityCitizen.get();
+        final AbstractEntityCitizen entityCitizen = optionalEntityCitizen.get();
 
         final BlockPos citizenPosition = entityCitizen.getPosition();
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_POSITION,
@@ -97,7 +97,7 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
         }
         else
         {
-            final BlockPos workingPosition = entityCitizen.getCitizenColonyHandler().getWorkBuilding().getLocation();
+            final BlockPos workingPosition = entityCitizen.getCitizenColonyHandler().getWorkBuilding().getPosition();
             sender.sendMessage(new TextComponentString(String.format(CITIZEN_WORK_POSITION,
               workingPosition.getX(),
               workingPosition.getY(),

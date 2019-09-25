@@ -1,17 +1,17 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.GuiHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -154,7 +154,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
 
     private static void doCitizenInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
     {
-        @Nullable final EntityCitizen citizen = (EntityCitizen) CompatibilityUtils.getWorld(player).getEntityByID(message.entityID);
+        @Nullable final AbstractEntityCitizen citizen = (AbstractEntityCitizen) CompatibilityUtils.getWorldFromEntity(player).getEntityByID(message.entityID);
         if (citizen != null && checkPermissions(citizen.getCitizenColonyHandler().getColony(), player))
         {
             if (!StringUtils.isNullOrEmpty(message.name))
@@ -168,13 +168,9 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
 
     private static void doHutInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
     {
-        if (checkPermissions(ColonyManager.getClosestColony(player.getEntityWorld(), message.tePos), player))
+        if (checkPermissions(IColonyManager.getInstance().getClosestColony(player.getEntityWorld(), message.tePos), player))
         {
-            @NotNull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(CompatibilityUtils.getWorld(player), message.tePos);
-            if (!StringUtils.isNullOrEmpty(message.name))
-            {
-                chest.setCustomName(message.name);
-            }
+            @NotNull final TileEntityRack chest = (TileEntityRack) BlockPosUtil.getTileEntity(player.world, message.tePos);
 
             player.openGui(MineColonies.instance, GuiHandler.ID.BUILDING_INVENTORY.ordinal(), player.world, chest.getPos().getX(), chest.getPos().getY(), chest.getPos().getZ());
         }
@@ -182,7 +178,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
 
     private static void doFieldInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
     {
-        if (checkPermissions(ColonyManager.getClosestColony(player.getEntityWorld(), message.tePos), player))
+        if (checkPermissions(IColonyManager.getInstance().getClosestColony(player.getEntityWorld(), message.tePos), player))
         {
             player.openGui(MineColonies.instance,
               GuiHandler.ID.BUILDING_INVENTORY.ordinal(),
@@ -193,7 +189,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
         }
     }
 
-    private static boolean checkPermissions(final Colony colony, final EntityPlayerMP player)
+    private static boolean checkPermissions(final IColony colony, final EntityPlayerMP player)
     {
         //Verify player has permission to change this huts settings
         return colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS);

@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.coremod.colony.Colony;
@@ -34,11 +36,11 @@ public final class PermissionUtils
      * @return The list with online players that has the rank or higher
      */
     @NotNull
-    public static List<Player> getPlayersWithAtLeastRank(@NotNull final Colony colony, @NotNull final Rank rank)
+    public static List<Player> getPlayersWithAtLeastRank(@NotNull final IColony colony, @NotNull final Rank rank)
     {
         @NotNull final List<Player> playersWithAtLeastRank = new ArrayList<>();
 
-        @NotNull final Permissions permissions = colony.getPermissions();
+        @NotNull final IPermissions permissions = colony.getPermissions();
         @NotNull final Map<UUID, Player> players = permissions.getPlayers();
 
         for (@NotNull final Player player : players.values())

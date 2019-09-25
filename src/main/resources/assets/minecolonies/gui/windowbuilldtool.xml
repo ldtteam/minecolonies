@@ -1,6 +1,6 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="420 240" pause="false"
         lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
 
     <button id="previousBuildingType" size="15 15" pos="0 0" label="&lt;"/>
     <dropdown id="buildingType" size="114 15" pos="13 0" dropDownSize="140 75">

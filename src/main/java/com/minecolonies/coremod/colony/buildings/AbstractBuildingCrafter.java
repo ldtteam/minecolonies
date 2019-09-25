@@ -2,6 +2,9 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
@@ -9,9 +12,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
@@ -20,6 +20,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -42,7 +43,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
      * @param c the colony.
      * @param l the location
      */
-    public AbstractBuildingCrafter(final Colony c, final BlockPos l)
+    public AbstractBuildingCrafter(final IColony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -60,10 +61,8 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
         final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
 
         builder.addAll(supers);
-        builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getRequesterLocation(),
-          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
-        builder.add(new PublicWorkerCraftingProductionResolver(getRequester().getRequesterLocation(),
-          getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+        builder.add(new PublicWorkerCraftingRequestResolver(getRequester().getLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+        builder.add(new PublicWorkerCraftingProductionResolver(getRequester().getLocation(), getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
 
         return builder.build();
     }
@@ -72,11 +71,12 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<ItemStorage, Tuple<Integer, Boolean>> recipeOutputs = new HashMap<>();
-        for (final CitizenData citizen : getAssignedCitizen())
+        for (final ICitizenData citizen : getAssignedCitizen())
         {
             if (citizen.getJob() instanceof AbstractJobCrafter)
             {
-                for (final IToken<?> taskToken : ((AbstractJobCrafter) citizen.getJob()).getAssignedTasksFromDataStore())
+                final List<IToken<?>> assignedTasks = citizen.getJob(AbstractJobCrafter.class).getAssignedTasks();
+                for (final IToken taskToken : assignedTasks)
                 {
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) colony.getRequestManager().getRequestForToken(taskToken);
                     final IRecipeStorage recipeStorage = getFirstRecipe(request.getRequest().getStack());
@@ -130,7 +130,7 @@ public abstract class AbstractBuildingCrafter extends AbstractBuildingWorker
          * @param c the colonyview to put it in
          * @param l the positon
          */
-        public View(final ColonyView c, final BlockPos l)
+        public View(final IColonyView c, final BlockPos l)
         {
             super(c, l);
         }

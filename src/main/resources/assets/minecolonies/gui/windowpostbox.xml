@@ -1,6 +1,6 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="190 244" pause="false"
         lightbox="false"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
+        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockout/blockOut.xsd">
     <image source="minecolonies:textures/gui/citizen/colonist_papper.png" size="440 244" pos="-120 0"/>
 
     <label id="desc" size="130 11" pos="-60 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.citizen.stacks)"/>

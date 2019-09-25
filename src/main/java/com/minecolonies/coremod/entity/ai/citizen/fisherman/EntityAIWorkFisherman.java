@@ -1,22 +1,21 @@
 package com.minecolonies.coremod.entity.ai.citizen.fisherman;
 
 import com.minecolonies.api.configuration.Configurations;
+import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.pathfinding.WaterPathResult;
+import com.minecolonies.api.sounds.FishermanSounds;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFisherman;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
-import com.minecolonies.coremod.entity.ai.statemachine.AITarget;
-import com.minecolonies.coremod.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.entity.pathfinding.PathJobFindWater;
-import com.minecolonies.coremod.sounds.FishermanSounds;
-import com.minecolonies.coremod.util.SoundUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
@@ -32,9 +31,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.coremod.entity.ai.statemachine.states.AIWorkerState.*;
 
 /**
  * Fisherman AI class.
@@ -141,14 +140,14 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * The PathResult when the fisherman searches water.
      */
     @Nullable
-    private PathJobFindWater.WaterPathResult pathResult;
+    private WaterPathResult pathResult;
 
 
     /**
      * The Previous PathResult when the fisherman already found water.
      */
     @Nullable
-    private PathJobFindWater.WaterPathResult lastPathResult;
+    private WaterPathResult lastPathResult;
 
     /**
      * The fishingSkill which directly influences the fisherman's chance to throw his rod.
@@ -531,7 +530,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         if (!world.isRemote)
         {
             WorkerUtil.faceBlock(job.getWater(), worker);
-            world.playSound((EntityPlayer) null,
+            world.playSound(null,
               this.worker.getPosition(),
               SoundEvents.ENTITY_BOBBER_THROW,
               SoundCategory.NEUTRAL,
@@ -592,7 +591,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             return FISHERMAN_SEARCHING_WATER;
         }
         //If there is no close water, try to move closer
-        if (!Utils.isBlockInRange(world, Blocks.WATER, (int) worker.posX, (int) worker.posY, (int) worker.posZ, MIN_DISTANCE_TO_WATER))
+        if (!Utils.isBlockInRange(world, Blocks.WATER, (int) worker.getPosX(), (int) worker.getPosY(), (int) worker.getPosZ(), MIN_DISTANCE_TO_WATER))
         {
             return FISHERMAN_WALKING_TO_WATER;
         }
@@ -643,7 +642,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
 
         worker.setCanPickUpLoot(true);
-        worker.captureDrops = true;
+        worker.setCanCaptureDrops(true);
         retrieveRod();
         fishingSkill = worker.getCitizenExperienceHandler().getLevel();
         return true;
@@ -667,7 +666,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * @return citizen object.
      */
     @Nullable
-    public EntityCitizen getCitizen()
+    public AbstractEntityCitizen getCitizen()
     {
         return worker;
     }

@@ -257,6 +257,12 @@ public abstract class AbstractWrappedRequestManager implements IRequestManager
     }
 
     @Override
+    public void markDirty()
+    {
+        wrappedManager.markDirty();
+    }
+
+    @Override
     public void onColonyUpdate(@NotNull final Predicate<IRequest> shouldTriggerReassign)
     {
         throw new UnsupportedOperationException("This method cannot be used by Wrapped Request Managers!");

@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.util;
 
 import com.google.common.io.Files;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.configuration.Configurations;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -40,24 +41,39 @@ public final class BackUpHelper
 
     /**
      * Backup the colony
+     *
      * @return true if succesful.
      */
     public static boolean backupColonyData()
     {
-        BackUpHelper.saveColonies(true);
-        try(FileOutputStream fos = new FileOutputStream(getBackupSaveLocation(new Date())))
+        BackUpHelper.saveColonies();
+        try (FileOutputStream fos = new FileOutputStream(getBackupSaveLocation(new Date())))
         {
             @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
             final ZipOutputStream zos = new ZipOutputStream(fos);
 
             for (int dim = 0; dim < FMLCommonHandler.instance().getMinecraftServerInstance().worlds.length; dim++)
             {
-                for (int i = 1; i <= ColonyManager.getTopColonyId() + 1; i++)
+                for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
                 {
                     @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dim));
+                    @NotNull final File fileDeleted = new File(saveDir, String.format(FILENAME_COLONY_DELETED, i, dim));
                     if (file.exists())
                     {
-                        addToZipFile(String.format(FILENAME_COLONY, i, dim), zos, saveDir);
+                        // mark existing files
+                        if (IColonyManager.getInstance().getColonyByDimension(i,dim) == null)
+                        {
+                            markColonyDeleted(i,dim);
+                            addToZipFile(String.format(FILENAME_COLONY_DELETED, i, dim), zos, saveDir);
+                        }
+                        else
+                        {
+                            addToZipFile(String.format(FILENAME_COLONY, i, dim), zos, saveDir);
+                        }
+                    }
+                    else if (fileDeleted.exists())
+                    {
+                        addToZipFile(String.format(FILENAME_COLONY_DELETED, i, dim), zos, saveDir);
                     }
                 }
             }
@@ -91,14 +107,15 @@ public final class BackUpHelper
 
     /**
      * Add zip to file.
+     *
      * @param fileName the file name.
-     * @param zos the output stream.
-     * @param folder the folder.
+     * @param zos      the output stream.
+     * @param folder   the folder.
      */
     private static void addToZipFile(final String fileName, final ZipOutputStream zos, final File folder)
     {
         final File file = new File(folder, fileName);
-        try(FileInputStream fis = new FileInputStream(file))
+        try (FileInputStream fis = new FileInputStream(file))
         {
             zos.putNextEntry(new ZipEntry(fileName));
             Files.copy(file, zos);
@@ -172,15 +189,15 @@ public final class BackUpHelper
     /**
      * Save all the Colonies.
      */
-    public static void saveColonies(final boolean isWorldUnload)
+    public static void saveColonies()
     {
         @NotNull final NBTTagCompound compound = new NBTTagCompound();
-        ColonyManager.writeToNBT(compound);
+        IColonyManager.getInstance().writeToNBT(compound);
 
         @NotNull final File file = getSaveLocation();
         saveNBTToPath(file, compound);
         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-        for (final Colony colony : ColonyManager.getAllColonies())
+        for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
             final NBTTagCompound colonyCompound = new NBTTagCompound();
             colony.writeToNBT(colonyCompound);
@@ -189,21 +206,43 @@ public final class BackUpHelper
     }
 
     /**
+     * Marks a colony's backup file as deleted.
+     *
+     * @param colonyID    id of the colony to delete
+     * @param dimensionID dimension of the colony to delete
+     */
+    public static void markColonyDeleted(final int colonyID, final int dimensionID)
+    {
+        @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+        final File todelete = new File(saveDir, String.format(FILENAME_COLONY, colonyID, dimensionID));
+        if (todelete.exists())
+        {
+            new File(saveDir, String.format(FILENAME_COLONY_DELETED, colonyID, dimensionID)).delete();
+            todelete.renameTo(new File(saveDir, String.format(FILENAME_COLONY_DELETED, colonyID, dimensionID)));
+        }
+    }
+
+    /**
      * Load the colony backup by colony.
-     * @param colonyId of the colony.
+     *
+     * @param colonyId  of the colony.
      * @param dimension the colony dimension.
      */
     public static void loadColonyBackup(final int colonyId, final int dimension)
     {
         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
-        final NBTTagCompound compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension)));
+        NBTTagCompound compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension)));
         if (compound == null)
         {
-            Log.getLogger().warn("Can't find NBT of colony: " + colonyId + " at location: " + new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension).toString()));
-            return;
+            compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY_DELETED, colonyId, dimension)));
+            if (compound == null)
+            {
+                Log.getLogger().warn("Can't find NBT of colony: " + colonyId + " at location: " + new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension)));
+                return;
+            }
         }
 
-        Colony colony = ColonyManager.getColonyByDimension(colonyId, dimension);
+        IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimension);
         if (colony != null)
         {
             colony.readFromNBT(compound);
@@ -217,9 +256,14 @@ public final class BackUpHelper
 
             if (Configurations.gameplay.enableDynamicColonySizes)
             {
-                for (final AbstractBuilding building : colony.getBuildingManager().getBuildings().values())
+                for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
                 {
-                    ChunkDataHelper.claimColonyChunks(colonyWorld, true, colony.getID(), building.getLocation(), colony.getDimension(), building.getClaimRadius(building.getBuildingLevel()));
+                    ChunkDataHelper.claimColonyChunks(colonyWorld,
+                      true,
+                      colony.getID(),
+                      building.getPosition(),
+                      colony.getDimension(),
+                      building.getClaimRadius(building.getBuildingLevel()));
                 }
             }
             else
