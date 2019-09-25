@@ -92,6 +92,7 @@ public final class NbtTagConstants
     public static final String TAG_MOURNING             = "mourning";
     public static final String TAG_PAUSED               = "paused";
     public static final String TAG_CHILD                = "child";
+    public static final String TAG_CHILD_TIME                = "childTime";
     public static final String TAG_BOUGHT_CITIZENS      = "bought_citizen";
     public static final String TAG_JUST_ATE             = "justAte";
     public static final String TAG_EXPLOSIONS           = "Explosions";
