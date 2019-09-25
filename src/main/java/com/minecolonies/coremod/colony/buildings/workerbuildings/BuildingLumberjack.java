@@ -236,8 +236,16 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
         final NBTTagCompound compound = super.serializeNBT();
 
         compound.setBoolean(TAG_REPLANT, replant);
-        compound.setTag(TAG_RESTRICT_START, NBTUtil.createPosTag(startRestriction));
-        compound.setTag(TAG_RESTRICT_END, NBTUtil.createPosTag(endRestriction));
+
+        if (startRestriction != null)
+        {
+            compound.setTag(TAG_RESTRICT_START, NBTUtil.createPosTag(startRestriction));
+        }
+
+        if (endRestriction != null)
+        {
+            compound.setTag(TAG_RESTRICT_END, NBTUtil.createPosTag(endRestriction));
+        }
         return compound;
     }
 
@@ -259,8 +267,6 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
         super.serializeToView(buf);
         buf.writeBoolean(replant);
         buf.writeBoolean(restrict);
-        BlockPosUtil.writeToByteBuf(buf, startRestriction);
-        BlockPosUtil.writeToByteBuf(buf, endRestriction);
     }
 
     /**
