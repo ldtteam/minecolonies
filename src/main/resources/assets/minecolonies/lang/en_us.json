@@ -1053,6 +1053,8 @@
   "com.minecolonies.coremod.gui.workerhuts.composter": "Composter Hut",
   "com.minecolonies.coremod.furnaceuser.nofuel": "Please tell me what kind of fuel to use in my furnace!",
   "block.minecolonies.blockpostbox": "Postbox",
+  "block.minecolonies.blockpostbox.name": "Postbox",
+
   "com.minecolonies.coremod.gui.citizen.stacks": "Blocks to Request:",
   "com.minecolonies.coremod.gui.workerhuts.request": "Request",
 

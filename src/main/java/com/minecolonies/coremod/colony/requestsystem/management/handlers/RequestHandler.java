@@ -313,10 +313,10 @@ public class RequestHandler implements IRequestHandler
                 {
                     resolveRequest(parentRequest);
                 }
-                //Follow up procssing is running, we completed all followups, complete the parent request.
+                //Follow up processing is running, we completed all followups, complete the parent request.
                 else if (parentRequest.getState() == RequestState.FOLLOWUP_IN_PROGRESS)
                 {
-                    manager.updateRequestState(request.getId(), RequestState.COMPLETED);
+                    manager.updateRequestState(parentRequest.getId(), RequestState.COMPLETED);
                 }
             }
         }
