@@ -241,6 +241,16 @@ public class Colony implements IColony
     private long mercenaryLastUse = 0;
 
     /**
+     * The amount of additional child time gathered when the colony is not loaded.
+     */
+    private int additionalChildTime = 0;
+
+    /**
+     * Boolean whether the colony has childs.
+     */
+    private boolean hasChilds = false;
+
+    /**
      * Constructor for a newly created Colony.
      *
      * @param id The id of the colony to create.
@@ -383,6 +393,7 @@ public class Colony implements IColony
 
         boughtCitizenCost = compound.getInteger(TAG_BOUGHT_CITIZENS);
         mercenaryLastUse = compound.getLong(TAG_MERCENARY_TIME);
+        additionalChildTime = compound.getInteger(TAG_CHILD_TIME);
 
         // Permissions
         permissions.loadPermissions(compound);
@@ -542,6 +553,8 @@ public class Colony implements IColony
 
         compound.setLong(TAG_MERCENARY_TIME, mercenaryLastUse);
 
+        compound.setInteger(TAG_CHILD_TIME, additionalChildTime);
+
         // Permissions
         permissions.savePermissions(compound);
 
@@ -677,6 +690,15 @@ public class Colony implements IColony
             return;
         }
         isActive = true;
+
+        if (hasChilds)
+        {
+            additionalChildTime++;
+        }
+        else
+        {
+            additionalChildTime = 0;
+        }
 
         buildingManager.tick(event);
 
@@ -1584,4 +1606,31 @@ public class Colony implements IColony
         return mercenaryLastUse;
     }
 
+    @Override
+    public boolean useAdditionalChildTime(final int amount)
+    {
+        if (additionalChildTime < amount)
+        {
+            return false;
+        }
+        else
+        {
+            additionalChildTime -= amount;
+            return true;
+        }
+    }
+
+    @Override
+    public void updateHasChilds()
+    {
+        for(ICitizenData data: this.getCitizenManager().getCitizens())
+        {
+            if (data.isChild())
+            {
+                this.hasChilds = true;
+                return;
+            }
+        }
+        this.hasChilds = false;
+    }
 }

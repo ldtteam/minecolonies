@@ -313,4 +313,16 @@ public interface IColony
     boolean isManualHousing();
 
     boolean canMoveIn();
+
+    /**
+     * Tries to use a given amount of additional growth-time for childs.
+     * @param amount amount to use
+     * @return true if used up.
+     */
+    boolean useAdditionalChildTime(int amount);
+
+    /**
+     * Sets whether the colony has a child.
+     */
+    void updateHasChilds();
 }

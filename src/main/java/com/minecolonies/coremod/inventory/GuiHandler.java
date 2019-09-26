@@ -7,11 +7,11 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.coremod.client.gui.WindowGuiCrafting;
 import com.minecolonies.coremod.client.gui.WindowGuiFurnaceCrafting;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingSmelterCrafter;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.tileentities.TileEntityRack;
 import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,11 +37,7 @@ public class GuiHandler implements IGuiHandler
             {
                 return new ContainerField((TileEntityScarecrow) tileEntity, player.inventory, world, pos);
             }
-            else if (tileEntity instanceof TileEntityRack)
-            {
-                return new ContainerRack((AbstractTileEntityRack) tileEntity, ((AbstractTileEntityRack) tileEntity).getOtherChest(), player.inventory);
-            }
-            else
+            else if (tileEntity instanceof TileEntityColonyBuilding)
             {
                 @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, new BlockPos(x,y,z));
                 if (building instanceof AbstractBuildingSmelterCrafter)
@@ -54,6 +50,11 @@ public class GuiHandler implements IGuiHandler
                 }
                 return null;
             }
+            else if (tileEntity instanceof TileEntityRack)
+            {
+                return new ContainerRack((AbstractTileEntityRack) tileEntity, ((AbstractTileEntityRack) tileEntity).getOtherChest(), player.inventory);
+            }
+            return null;
         }
         else if (id == ID.BUILDING_INVENTORY.ordinal())
         {
@@ -63,7 +64,11 @@ public class GuiHandler implements IGuiHandler
                 final TileEntityColonyBuilding tileEntityColonyBuilding = (TileEntityColonyBuilding) entity;
                 final IColony colony = IColonyManager.getInstance().getClosestColony(world, tileEntityColonyBuilding.getPos());
 
-                return new ContainerMinecoloniesBuildingInventory(player.inventory, tileEntityColonyBuilding, colony.getID(), tileEntityColonyBuilding.getPos(), world);
+                return new ContainerMinecoloniesBuildingInventory(player.inventory,
+                  tileEntityColonyBuilding.getInventory(),
+                  colony.getID(),
+                  tileEntityColonyBuilding.getPos(),
+                  world);
             }
         }
         else if (id == ID.CITIZEN_INVENTORY.ordinal())
@@ -92,11 +97,7 @@ public class GuiHandler implements IGuiHandler
             {
                 return new GuiField(player.inventory, (TileEntityScarecrow) tileEntity, world, pos);
             }
-            else if (tileEntity instanceof TileEntityRack)
-            {
-                return new GuiRack(player.inventory, (AbstractTileEntityRack) tileEntity, ((AbstractTileEntityRack) tileEntity).getOtherChest(), world, pos);
-            }
-            else
+            else if (tileEntity instanceof TileEntityColonyBuilding)
             {
                 @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(player.world.provider.getDimension(), new BlockPos(x,y,z));
                 if (building instanceof AbstractBuildingSmelterCrafter.View)
@@ -108,6 +109,10 @@ public class GuiHandler implements IGuiHandler
                     return new WindowGuiCrafting(player.inventory, world, (AbstractBuildingWorker.View) building);
                 }
             }
+            else if (tileEntity instanceof TileEntityRack)
+            {
+                return new GuiRack(player.inventory, (AbstractTileEntityRack) tileEntity, ((AbstractTileEntityRack) tileEntity).getOtherChest(), world, pos);
+            }
         }
         else if (id == ID.BUILDING_INVENTORY.ordinal())
         {
@@ -115,7 +120,7 @@ public class GuiHandler implements IGuiHandler
             if (entity instanceof TileEntityColonyBuilding)
             {
                 final AbstractTileEntityColonyBuilding ITileEntityColonyBuilding = (AbstractTileEntityColonyBuilding) entity;
-                return new GuiChest(player.inventory, ITileEntityColonyBuilding);
+                return new GuiRack(player.inventory, ITileEntityColonyBuilding, ITileEntityColonyBuilding.getOtherChest(), world, ITileEntityColonyBuilding.getPosition());
             }
         }
         else if (id == ID.CITIZEN_INVENTORY.ordinal())

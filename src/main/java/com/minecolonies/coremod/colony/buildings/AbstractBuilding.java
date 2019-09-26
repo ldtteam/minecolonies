@@ -43,7 +43,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -236,13 +235,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer impleme
     @Override
     public void onDestroyed()
     {
+        super.onDestroyed();
         final AbstractTileEntityColonyBuilding tileEntityNew = this.getTileEntity();
         final World world = colony.getWorld();
         final Block block = world.getBlockState(this.getPosition()).getBlock();
 
         if (tileEntityNew != null)
         {
-            InventoryHelper.dropInventoryItems(world, this.getPosition(), tileEntityNew);
+            InventoryUtils.dropItemHandler(tileEntityNew.getInventory(), world, tileEntityNew.getPosition().getX(), tileEntityNew.getPosition().getY(), tileEntityNew.getPosition().getZ());
             world.updateComparatorOutputLevel(this.getPosition(), block);
         }
 
