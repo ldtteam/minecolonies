@@ -3,9 +3,7 @@ package com.minecolonies.coremod.entity.pathfinding;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.LanguageHandler;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.api.entity.pathfinding.TreePathResult;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.block.material.Material;
@@ -105,17 +103,6 @@ public class PathJobFindTree extends AbstractPathJob
         this.colony = colony;
     }
 
-    /**
-     * Custom result of the class which contains the position of the tree.
-     */
-    public static class TreePathResult extends PathResult
-    {
-        /**
-         * Position of the found tree.
-         */
-        public BlockPos treeLocation;
-    }
-
     @NotNull
     @Override
     public TreePathResult getResult()
@@ -188,8 +175,6 @@ public class PathJobFindTree extends AbstractPathJob
                 {
                     return false;
                 }
-
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "Found tree with restrictions!");
             }
 
             getResult().treeLocation = pos;

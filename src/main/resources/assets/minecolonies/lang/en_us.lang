@@ -675,6 +675,9 @@ com.minecolonies.coremod.gui.workerHuts.listRecipes=List of recipes
 com.minecolonies.coremod.resolvers.crafter.private=Crafting
 com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOn=Replant (on)
 com.minecolonies.coremod.gui.workerHuts.toggleReplantSaplingsOff=Replant (off)
+com.minecolonies.coremod.gui.workerHuts.togglerestrictionon=Restriction (on)
+com.minecolonies.coremod.gui.workerHuts.togglerestrictionoff=Restriction (off)
+
 com.minecolonies.coremod.resolvers.crafter.public=Crafter
 
 com.minecolonies.coremod.compat.jei.crafting.teaching.unknown.recipe=You have not learned this recipe yet!

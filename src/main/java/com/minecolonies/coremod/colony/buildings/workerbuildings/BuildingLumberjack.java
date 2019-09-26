@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.blockout.views.Window;
@@ -50,6 +49,11 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
      * NBT tag for lj restriction end
      */
     private static final String TAG_RESTRICT_END = "endRestrictionPosition";
+
+    /**
+     * Nbt tag for restriction setting.
+     */
+    private static final String TAG_RESTRICT = "restrict";
 
     /**
      * Whether or not the LJ should replant saplings
@@ -211,6 +215,11 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
             replant = true;
         }
 
+        if (compound.hasKey(TAG_RESTRICT))
+        {
+            restrict = compound.getBoolean(TAG_RESTRICT);
+        }
+
         if (compound.hasKey(TAG_RESTRICT_START))
         {
             startRestriction = NBTUtil.getPosFromTag(compound.getCompoundTag(TAG_RESTRICT_START));
@@ -246,6 +255,8 @@ public class BuildingLumberjack extends AbstractFilterableListBuilding
         {
             compound.setTag(TAG_RESTRICT_END, NBTUtil.createPosTag(endRestriction));
         }
+
+        compound.setBoolean(TAG_RESTRICT, restrict);
         return compound;
     }
 

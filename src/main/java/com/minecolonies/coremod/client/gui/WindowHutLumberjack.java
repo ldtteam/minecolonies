@@ -76,8 +76,16 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
         views.put(PAGE_ITEMS_VIEW, window);
         this.ownBuilding = building;
 
-        setupReplantButton(findPaneOfTypeByID(BUTTON_TOGGLE_REPLANT, Button.class));
         registerButton(BUTTON_TOGGLE_REPLANT, this::switchReplant);
+        registerButton(BUTTON_TOGGLE_RESTRICTION, this::toggleRestriction);
+        registerButton(BUTTON_GIVE_TOOL, this::giveTool);
+
+
+        setupReplantButton(findPaneOfTypeByID(BUTTON_TOGGLE_REPLANT, Button.class));
+        setupRestrictionButton(findPaneOfTypeByID(BUTTON_TOGGLE_RESTRICTION, Button.class));
+        setupGiveToolButton(findPaneOfTypeByID(BUTTON_GIVE_TOOL, Button.class));
+
+
     }
 
     private void giveTool()
@@ -104,38 +112,6 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
     public void onOpened()
     {
         super.onOpened();
-        final ButtonImage button = new ButtonImage();
-        button.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium.png"));
-        button.setPosition(50, 193);
-        button.setSize(86, 17);
-        button.setID(BUTTON_TOGGLE_REPLANT);
-        button.setTextColor(BLACK);
-        setupReplantButton(button);
-
-        findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class).addChild(button);
-        registerButton(BUTTON_TOGGLE_REPLANT, this::switchReplant);
-
-        final ButtonImage toggleRestrictionButton = new ButtonImage();
-        toggleRestrictionButton.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium.png"));
-        toggleRestrictionButton.setPosition(20, 210);
-        toggleRestrictionButton.setSize(46, 17);
-        toggleRestrictionButton.setID(BUTTON_TOGGLE_RESTRICTION);
-        toggleRestrictionButton.setTextColor(BLACK);
-        setupRestrictionButton(toggleRestrictionButton);
-
-        findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class).addChild(toggleRestrictionButton);
-        registerButton(BUTTON_TOGGLE_RESTRICTION, this::toggleRestriction);
-
-        final ButtonImage giveToolButton = new ButtonImage();
-        giveToolButton.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium.png"));
-        giveToolButton.setPosition(100, 210);
-        giveToolButton.setSize(46, 17);
-        giveToolButton.setID(BUTTON_GIVE_TOOL);
-        giveToolButton.setTextColor(BLACK);
-        setupGiveToolButton(giveToolButton);
-
-        findPaneOfTypeByID(PAGE_ITEMS_VIEW, View.class).addChild(giveToolButton);
-        registerButton(BUTTON_GIVE_TOOL, this::giveTool);
     }
 
     /**
@@ -173,8 +149,7 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
      */
     private void setupRestrictionButton(final Button button)
     {
-        // TODO: Use localisation when this has proper UI
-        button.setLabel(LanguageHandler.format( ownBuilding.shouldRestrict ? "Unrestrict" : "Restrict" ));
+        button.setLabel(LanguageHandler.format( ownBuilding.shouldRestrict ? "com.minecolonies.coremod.gui.workerHuts.togglerestrictionon" : "com.minecolonies.coremod.gui.workerHuts.togglerestrictionoff" ));
     }
 
     /**
