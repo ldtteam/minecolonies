@@ -88,7 +88,7 @@ public class PostBox extends AbstractBuilding
         @Override
         public ITextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
         {
-            return new TranslationTextComponent("tile.minecolonies.blockpostbox.name");
+            return new TranslationTextComponent("block.minecolonies.blockpostbox.name");
         }
     }
 }
