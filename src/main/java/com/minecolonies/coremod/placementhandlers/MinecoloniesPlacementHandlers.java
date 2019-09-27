@@ -251,6 +251,8 @@ public final class MinecoloniesPlacementHandlers
 
     public static class GeneralBlockPlacementHandler implements IPlacementHandler
     {
+        private static final Direction[] DIRS = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP};
+
         @Override
         public boolean canHandle(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
         {
@@ -279,7 +281,7 @@ public final class MinecoloniesPlacementHandlers
 
             //todo remove very dirty hack after porting of schematics is finished!
             try (BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain()) {
-                for(Direction direction : new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP}) {
+                for(Direction direction : DIRS) {
                     blockpos$pooledmutableblockpos.setPos(pos).move(direction);
                     world.getBlockState(blockpos$pooledmutableblockpos).updateNeighbors(world, blockpos$pooledmutableblockpos, Constants.BlockFlags.NOTIFY_NEIGHBORS | Constants.BlockFlags.BLOCK_UPDATE);
                 }
