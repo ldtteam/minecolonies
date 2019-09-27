@@ -680,6 +680,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 job.setWorkOrder(wo);
                 initiate();
             }
+            else if (currentStructure == null)
+            {
+                initiate();
+            }
         }
     }
 
