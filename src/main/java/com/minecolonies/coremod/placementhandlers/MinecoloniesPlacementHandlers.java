@@ -9,6 +9,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
@@ -18,8 +19,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -274,9 +277,24 @@ public final class MinecoloniesPlacementHandlers
                 return ActionProcessingResult.ACCEPT;
             }
 
+            //todo remove very dirty hack after porting of schematics is finished!
+            try (BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain()) {
+                for(Direction direction : new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP}) {
+                    blockpos$pooledmutableblockpos.setPos(pos).move(direction);
+                    world.getBlockState(blockpos$pooledmutableblockpos).updateNeighbors(world, blockpos$pooledmutableblockpos, Constants.BlockFlags.NOTIFY_NEIGHBORS | Constants.BlockFlags.BLOCK_UPDATE);
+                }
+            }
+
             if (tileEntityData != null)
             {
-               handleTileEntityPlacement(tileEntityData, world, pos, settings);
+                try
+                {
+                    handleTileEntityPlacement(tileEntityData, world, pos, settings);
+                }
+                catch (final Exception ex)
+                {
+                    Log.getLogger().warn("Unable to place TileEntity");
+                }
             }
 
             return blockState;
