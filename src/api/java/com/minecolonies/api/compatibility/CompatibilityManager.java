@@ -53,7 +53,7 @@ public class CompatibilityManager implements ICompatibilityManager
      * List of saplings.
      * Works on client and server-side.
      */
-    private final List<ItemStorage> saplings = new ArrayList<>();
+    private final Set<ItemStorage> saplings = new HashSet<>();
 
     /**
      * List of properties we're ignoring when comparing leaves.
@@ -65,7 +65,7 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private static final PropertyBool    checkDecay     = PropertyBool.create("check_decay");
     private static final PropertyBool    decayable      = PropertyBool.create("decayable");
-    public static final PropertyInteger DYN_PROP_HYDRO = PropertyInteger.create("hydro", 1, 4);
+    public static final  PropertyInteger DYN_PROP_HYDRO = PropertyInteger.create("hydro", 1, 4);
 
     /**
      * List of all ore-like blocks.
@@ -428,9 +428,9 @@ public class CompatibilityManager implements ICompatibilityManager
         if (oreBlocks.isEmpty())
         {
             oreBlocks.addAll(ImmutableList.copyOf(allBlocks.stream().filter(this::isMineableOre)
-                                               .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof ItemBlock)
-                                               .map(stack -> ((ItemBlock) stack.getItem()).getBlock())
-                                               .collect(Collectors.toList())));
+                                                    .filter(stack -> !isEmpty(stack) && stack.getItem() instanceof ItemBlock)
+                                                    .map(stack -> ((ItemBlock) stack.getItem()).getBlock())
+                                                    .collect(Collectors.toList())));
 
             for (final String oreString : Configurations.gameplay.extraOres)
             {
@@ -456,21 +456,14 @@ public class CompatibilityManager implements ICompatibilityManager
                     saps.getItem().getSubItems(tabs, list);
                     for (final ItemStack stack : list)
                     {
-                        //Just put it in if not in there already, don't mind the leaf yet.
-                        if (!ItemStackUtils.isEmpty(stack) && !leavesToSaplingMap.containsValue(new ItemStorage(stack, false, true)) && !saplings.contains(new ItemStorage(stack,
-                          false,
-                          true)))
-                        {
-                            saplings.add(new ItemStorage(stack, false, true));
-                        }
+                        saplings.add(new ItemStorage(stack, false, true));
                     }
                 }
             }
             else
             {
                 // Dynamictree's saplings dont have sub types
-                if (Compatibility.isDynamicTreeSapling(saps) && !ItemStackUtils.isEmpty(saps) && !leavesToSaplingMap.containsValue(new ItemStorage(saps, false, true))
-                      && !saplings.contains(new ItemStorage(saps, false, true)))
+                if (Compatibility.isDynamicTreeSapling(saps) && !ItemStackUtils.isEmpty(saps))
                 {
                     saplings.add(new ItemStorage(saps, false, true));
                 }
