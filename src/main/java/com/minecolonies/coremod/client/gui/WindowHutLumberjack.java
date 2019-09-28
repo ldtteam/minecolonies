@@ -108,12 +108,6 @@ public class WindowHutLumberjack extends AbstractHutFilterableLists
         return IColonyManager.getInstance().getCompatibilityManager().getCopyOfSaplings().stream().filter(storage -> filterPredicate.test(storage.getItemStack())).collect(Collectors.toList());
     }
 
-    @Override
-    public void onOpened()
-    {
-        super.onOpened();
-    }
-
     /**
      * Setup replant button with correct string.
      *

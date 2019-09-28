@@ -124,6 +124,19 @@ public abstract class AbstractPathJob implements Callable<Path>
     private          int                totalNodesVisited            = 0;
 
     /**
+     * Are there hard xz restrictions.
+     */
+    private boolean xzRestricted = false;
+
+    /**
+     * The restriction parameters
+     */
+    private int maxX;
+    private int minX;
+    private int maxZ;
+    private int minZ;
+
+    /**
      * The entity this job belongs to.
      */
     private EntityLivingBase entity;
@@ -179,8 +192,6 @@ public abstract class AbstractPathJob implements Callable<Path>
         this.entity = entity;
     }
 
-
-
     /**
      * AbstractPathJob constructor.
      *
@@ -193,10 +204,13 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     public AbstractPathJob(final World world, final BlockPos startRestriction, final BlockPos endRestriction, final PathResult result, final EntityLivingBase entity)
     {
-        final int minX = Math.min(startRestriction.getX(), endRestriction.getX());
-        final int minZ = Math.min(startRestriction.getZ(), endRestriction.getZ());
-        final int maxX = Math.max(startRestriction.getX(), endRestriction.getX());
-        final int maxZ = Math.max(startRestriction.getZ(), endRestriction.getZ());
+        this.minX = Math.min(startRestriction.getX(), endRestriction.getX());
+        this.minZ = Math.min(startRestriction.getZ(), endRestriction.getZ());
+        this.maxX = Math.max(startRestriction.getX(), endRestriction.getX());
+        this.maxZ = Math.max(startRestriction.getZ(), endRestriction.getZ());
+
+        xzRestricted = true;
+
 
         final int range = (int)Math.sqrt(Math.pow(maxX - minX, 2) + Math.pow(maxZ - minZ, 2)) * 2;
 
@@ -470,7 +484,8 @@ public abstract class AbstractPathJob implements Callable<Path>
                 bestNodeResultScore = nodeResultScore;
             }
 
-            if (BlockPosUtil.getDistanceSquared2D(currentNode.pos, start) <= maxRange * maxRange)
+            if (BlockPosUtil.getDistanceSquared2D(currentNode.pos, start) <= maxRange * maxRange &&
+                  (!xzRestricted || (currentNode.pos.getX() >= minX && currentNode.pos.getX() <= maxX && currentNode.pos.getZ() >= minZ && currentNode.pos.getZ() <= maxZ)) )
             {
                 walkCurrentNode(currentNode);
             }
