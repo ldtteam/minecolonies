@@ -63,7 +63,14 @@ public class FurnaceRecipes implements IFurnaceRecipes
     public static void onServerStarting(final FMLServerStartedEvent event)
     {
         instance.loadRecipes(event.getServer());
+        loadUtilityPredicates();
+    }
 
+    /**
+     * Load all the utility predicates.
+     */
+    private static void loadUtilityPredicates()
+    {
         ItemStackUtils.ISFOOD = itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().isFood();
         ItemStackUtils.IS_SMELTABLE = itemStack -> !ItemStackUtils.isEmpty(instance.getSmeltingResult(itemStack));
         ItemStackUtils.CAN_EAT = itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().isFood() && !ItemStackUtils.ISFOOD.test(instance.getSmeltingResult(itemStack));
@@ -74,11 +81,7 @@ public class FurnaceRecipes implements IFurnaceRecipes
     public static void onServerStarting(final FMLServerAboutToStartEvent event)
     {
         instance = new FurnaceRecipes();
-
-        ItemStackUtils.ISFOOD = itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().isFood();
-        ItemStackUtils.IS_SMELTABLE = itemStack -> !ItemStackUtils.isEmpty(instance.getSmeltingResult(itemStack));
-        ItemStackUtils.CAN_EAT = itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().isFood() && !ItemStackUtils.ISFOOD.test(instance.getSmeltingResult(itemStack));
-        ItemStackUtils.ISCOOKABLE = itemStack -> ItemStackUtils.ISFOOD.test(instance.getSmeltingResult(itemStack));
+        loadUtilityPredicates();
     }
 
     @SubscribeEvent
@@ -98,6 +101,10 @@ public class FurnaceRecipes implements IFurnaceRecipes
     public void setMap(final Map<ItemStorage, RecipeStorage> map)
     {
         this.recipes = map;
+        if (ItemStackUtils.ISFOOD == null)
+        {
+            loadUtilityPredicates();
+        }
     }
 
     /**
@@ -121,6 +128,10 @@ public class FurnaceRecipes implements IFurnaceRecipes
      */
     public static FurnaceRecipes getInstance()
     {
+        if (instance == null)
+        {
+            instance = new FurnaceRecipes();
+        }
         return instance;
     }
 
