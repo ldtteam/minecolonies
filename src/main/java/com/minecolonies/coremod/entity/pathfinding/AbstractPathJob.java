@@ -124,6 +124,19 @@ public abstract class AbstractPathJob implements Callable<Path>
     private          int                totalNodesVisited            = 0;
 
     /**
+     * Are there hard xz restrictions.
+     */
+    private boolean xzRestricted = false;
+
+    /**
+     * The restriction parameters
+     */
+    private int maxX;
+    private int minX;
+    private int maxZ;
+    private int minZ;
+
+    /**
      * The entity this job belongs to.
      */
     private EntityLivingBase entity;
@@ -163,6 +176,47 @@ public abstract class AbstractPathJob implements Callable<Path>
         this.world = new ChunkCache(world, new BlockPos(minX, MIN_Y, minZ), new BlockPos(maxX, MAX_Y, maxZ), range);
 
         this.start = new BlockPos(start);
+        this.maxRange = range;
+
+        this.result = result;
+
+        allowJumpPointSearchTypeWalk = false;
+
+        if (Configurations.pathfinding.pathfindingDebugDraw)
+        {
+            debugDrawEnabled = true;
+            debugNodesVisited = new HashSet<>();
+            debugNodesNotVisited = new HashSet<>();
+            debugNodesPath = new HashSet<>();
+        }
+        this.entity = entity;
+    }
+
+    /**
+     * AbstractPathJob constructor.
+     *
+     * @param world  the world within which to path.
+     * @param startRestriction  start of restricted area.
+     * @param endRestriction  end of restricted area.
+     * @param result path result.
+     * @param entity the entity.
+     * @see AbstractPathJob#AbstractPathJob(World, BlockPos, BlockPos, int, EntityLivingBase)
+     */
+    public AbstractPathJob(final World world, final BlockPos startRestriction, final BlockPos endRestriction, final PathResult result, final EntityLivingBase entity)
+    {
+        this.minX = Math.min(startRestriction.getX(), endRestriction.getX());
+        this.minZ = Math.min(startRestriction.getZ(), endRestriction.getZ());
+        this.maxX = Math.max(startRestriction.getX(), endRestriction.getX());
+        this.maxZ = Math.max(startRestriction.getZ(), endRestriction.getZ());
+
+        xzRestricted = true;
+
+
+        final int range = (int)Math.sqrt(Math.pow(maxX - minX, 2) + Math.pow(maxZ - minZ, 2)) * 2;
+
+        this.world = new ChunkCache(world, new BlockPos(minX, MIN_Y, minZ), new BlockPos(maxX, MAX_Y, maxZ), range);
+
+        this.start = new BlockPos((minX + maxX) / 2, (startRestriction.getY() + endRestriction.getY()) / 2, (minZ + maxZ) / 2);
         this.maxRange = range;
 
         this.result = result;
@@ -430,7 +484,8 @@ public abstract class AbstractPathJob implements Callable<Path>
                 bestNodeResultScore = nodeResultScore;
             }
 
-            if (BlockPosUtil.getDistanceSquared2D(currentNode.pos, start) <= maxRange * maxRange)
+            if (BlockPosUtil.getDistanceSquared2D(currentNode.pos, start) <= maxRange * maxRange &&
+                  (!xzRestricted || (currentNode.pos.getX() >= minX && currentNode.pos.getX() <= maxX && currentNode.pos.getZ() >= minZ && currentNode.pos.getZ() <= maxZ)) )
             {
                 walkCurrentNode(currentNode);
             }

@@ -7,7 +7,14 @@
         </view>
         <view id="saplings" size="100% 100%">
             <layout source="minecolonies:gui/layouthuts/layoutfilterablelist.xml"/>
-            <buttonimage id="saplingReplant" textcolor="black" size="86 17" pos="50 193" source="minecolonies:textures/gui/builderhut/builder_button_medium.png"/>
+        </view>
+        <view id="settings" size="100% 100%">
+            <image source="minecolonies:textures/gui/builderhut/builder_papper.png" size="190 244"/>
+            <label id="desc" size="130 11" pos="70 15" color="black" label="$(com.minecolonies.coremod.gui.workerHuts.settings)"/>
+
+            <buttonimage id="saplingReplant" textcolor="black" size="86 17" pos="50 70" source="minecolonies:textures/gui/builderhut/builder_button_medium.png"/>
+            <buttonimage id="toggleRestriction" textcolor="black" size="86 17" pos="50 90" source="minecolonies:textures/gui/builderhut/builder_button_medium.png"/>
+            <buttonimage id="giveTool" textcolor="black" size="86 17" pos="50 110" source="minecolonies:textures/gui/builderhut/builder_button_medium.png"/>
         </view>
     </switch>
     <buttonimage id="prevPage" size="18 10" pos="13 13" source="minecolonies:textures/gui/builderhut/turn_page_left.png"/>
