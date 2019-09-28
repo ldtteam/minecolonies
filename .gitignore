@@ -32,12 +32,8 @@ README.txt
 /.project
 /.classpath
 /.checkstyle
-/MineColonies_Client.launch
-/MineColonies_Server.launch
+/*.launch
 
-# Old launcher (different case)
-/minecolonies_Client.launch
-/minecolonies_Server.launch
 
 tools/export_lang/.api_key
 tools/fix_model_angle/*.class

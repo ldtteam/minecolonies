@@ -77,6 +77,7 @@ public class MineColonies
 
     public MineColonies()
     {
+        LanguageHandler.loadLangPath("assets/minecolonies/lang/%s.json"); // hotfix config comments, it's ugly bcs it's gonna be replaced
         config = new Configuration();
 
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(BarbarianSpawnEventHandler.class);
@@ -117,7 +118,6 @@ public class MineColonies
     public static void onLoadComplete(final FMLLoadCompleteEvent event)
     {
         Log.getLogger().warn("FMLLoadCompleteEvent");
-        LanguageHandler.setMClanguageLoaded();
         MinecoloniesPlacementHandlers.initHandlers();
         //RecipeHandler.init(MineColonies.getConfig().getCommon().enableInDevelopmentFeatures.get(), MineColonies.getConfig().getCommon().supplyChests.get());
         RequestSystemInitializer.onPostInit();
