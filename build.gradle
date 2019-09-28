@@ -56,7 +56,6 @@ sourceSets {
             srcDir 'src/main/resources'
         }
         compileClasspath += compileClasspath += sourceSets.api.output
-        compileClasspath += compileClasspath += sourceSets.api.compileClasspath
     }
 }
 
@@ -76,34 +75,29 @@ configurations {
 dependencies {
     minecraft "net.minecraftforge:forge:${config.minecraft_version}-${config.forge_version}"
 
-    compileClasspath fg.deobf("com.ldtteam:structurize:${config.structurize_version}")
-    apiCompileOnly fg.deobf("com.ldtteam:structurize:${config.structurize_version}")
+    implementation fg.deobf("com.ldtteam:structurize:${config.structurize_version}")
+    apiImplementation fg.deobf("com.ldtteam:structurize:${config.structurize_version}")
+    implementation fg.deobf("mezz.jei:jei-1.14.4:${config.jei_version}")
 
-    //compile against the JEI API but do not include it at runtime
-    compileOnly fg.deobf("mezz.jei:jei-1.14.4:${config.jei_version}")
-    // at runtime, use the full JEI jar
-    runtime fg.deobf("mezz.jei:jei-1.14.4:${config.jei_version}")
+    testImplementation  'junit:junit:4.12'
+    testImplementation  "org.mockito:mockito-core:1.+"
+    testImplementation  group: 'org.powermock', name: 'powermock-module-junit4', version: '1.6.5'
+    testImplementation  group: 'org.powermock', name: 'powermock-api-mockito', version: '1.6.5'
+    testImplementation  group: 'org.powermock', name: 'powermock-module-junit4-rule-agent', version: '1.6.5'
 
-    testCompile 'junit:junit:4.12'
-    testCompile "org.mockito:mockito-core:1.+"
-    testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.6.5'
-    testCompile group: 'org.powermock', name: 'powermock-api-mockito', version: '1.6.5'
-    testCompile group: 'org.powermock', name: 'powermock-module-junit4-rule-agent', version: '1.6.5'
+    testImplementation  'org.assertj:assertj-core:3.9.0'
 
-    testCompile 'org.assertj:assertj-core:3.9.0'
+    testImplementation  group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
 
-    testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-
-    compile 'com.intellij:annotations:+@jar'
-    apiCompileOnly "com.intellij:annotations:+@jar"
+    implementation 'com.intellij:annotations:+@jar'
+    apiImplementation "com.intellij:annotations:+@jar"
 }
 
 group = "com.minecolonies"
 version = config.minecraft_version.toString() + "-" + System.getenv().containsKey("Version") ? System.getenv("Version") : 'null'
 archivesBaseName = "minecolonies"
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
@@ -155,19 +149,6 @@ minecraft {
     }
 }
 
-processResources {
-    from(sourceSets.main.resources.srcDirs) {
-        include 'META-INF/mods.toml'
-
-        expand 'version': project.version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'META-INF/mods.toml'
-    }
-}
-
-
 task apiJar(type: Jar) {
     from sourceSets.api.output
     classifier 'api'
@@ -188,11 +169,11 @@ jar {
                 'Maven-Artifact': "${project.group}:${project.archivesBaseName}:${project.version}:universal",
                 'Timestamp': System.currentTimeMillis(),
                 "Specification-Title": "minecolonies",
-                "Specification-Vendor": "minecoloniessareus",
+                "Specification-Vendor": "ldtteam",
                 "Specification-Version": "1", // We are version 1 of ourselves
                 "Implementation-Title": project.name,
-                "Implementation-Version": "${version}",
-                "Implementation-Vendor" :"minecoloniessareus",
+                "Implementation-Version": "${project.version}",
+                "Implementation-Vendor" :"ldtteam",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
