@@ -77,7 +77,7 @@ public class JobDeliveryman extends AbstractJob
     {
         if (getCitizen().getCitizenEntity().isPresent())
         {
-            AbstractEntityCitizen worker = getCitizen().getCitizenEntity().get();
+            final AbstractEntityCitizen worker = getCitizen().getCitizenEntity().get();
             worker.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
               .setBaseValue(
                 BASE_MOVEMENT_SPEED + (newLevel > 50 ? 50 : newLevel) * BONUS_SPEED_PER_LEVEL);
