@@ -341,6 +341,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard> extends 
         switch (buildingGuards.getTask())
         {
             case PATROL:
+                worker.getNavigator().clearPath();
                 return patrol();
             case GUARD:
                 return guard();

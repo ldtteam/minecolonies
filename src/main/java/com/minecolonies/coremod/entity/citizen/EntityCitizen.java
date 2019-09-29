@@ -28,6 +28,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
+import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
@@ -423,6 +424,7 @@ public class EntityCitizen extends AbstractEntityCitizen
         }
         else
         {
+            goalSelector.goals.stream().filter(goal -> goal.getGoal() instanceof EntityAICitizenChild).forEach(goal -> goalSelector.removeGoal(goal.getGoal()));
             setCitizensize((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT);
         }
         this.child = isChild;
