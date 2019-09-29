@@ -24,7 +24,6 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.item.ItemStack;
@@ -436,10 +435,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public IWareHouse getAndCheckWareHouse()
     {
-        final IWareHouse wareHouse = job.getColony().getBuildingManager().getWareHouse();
-        if (wareHouse instanceof BuildingWareHouse && wareHouse.registerWithWareHouse(this.getOwnBuilding()))
+        for (final IWareHouse wareHouse : job.getColony().getBuildingManager().getWareHouses())
         {
-            return wareHouse;
+            if (wareHouse.registerWithWareHouse(this.getOwnBuilding()))
+            {
+                return wareHouse;
+            }
         }
         return null;
     }

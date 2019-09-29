@@ -180,10 +180,8 @@ public interface IBuildingManager
     void setTownHall(@Nullable final ITownHall building);
 
     /**
-     * Set the warehouse building.
-     * @param building the building to set.
+     * Get a list of the warehouses in this colony.
+     * @return
      */
-    void setWareHouse(@Nullable final IWareHouse building);
-
-    IWareHouse getWareHouse();
+    List<IWareHouse> getWareHouses();
 }
