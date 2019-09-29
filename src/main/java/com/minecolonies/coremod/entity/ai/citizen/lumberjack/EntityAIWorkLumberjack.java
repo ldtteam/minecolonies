@@ -48,7 +48,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     /**
      * The range in which the lumberjack searches for trees.
      */
-    private static final int SEARCH_RANGE = 50;
+    public static final int SEARCH_RANGE = 50;
 
     /**
      * If no trees are found, increment the range.
@@ -294,10 +294,30 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             return getState();
         }
 
+
         if (pathResult == null || pathResult.treeLocation == null)
         {
-            final Map<String, List<ItemStorage>> copy = ((BuildingLumberjack) building).getCopyOfAllowedItems();
-            pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D, copy.containsKey(SAPLINGS_LIST) ? copy.get(SAPLINGS_LIST) : Collections.emptyList(), worker.getCitizenColonyHandler().getColony());
+
+            final BuildingLumberjack buildingLumberjack = (BuildingLumberjack) building;
+            final Map<String, List<ItemStorage>> copy = buildingLumberjack.getCopyOfAllowedItems();
+            if (buildingLumberjack.shouldRestrict())
+            {
+                final BlockPos startPos = buildingLumberjack.getStartRestriction();
+                final BlockPos endPos = buildingLumberjack.getEndRestriction();
+
+                pathResult = worker.getNavigator().moveToTree(
+                        startPos, endPos,
+                        1.0D,
+                  copy.getOrDefault(SAPLINGS_LIST, Collections.emptyList()),
+                        worker.getCitizenColonyHandler().getColony()
+                );
+
+            }
+            else
+            {
+                pathResult = worker.getNavigator().moveToTree(SEARCH_RANGE + searchIncrement, 1.0D, copy.getOrDefault(SAPLINGS_LIST, Collections.emptyList()), worker.getCitizenColonyHandler().getColony());
+            }
+
             // Delay between area searches
             setDelay(100);
             return getState();

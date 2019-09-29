@@ -40,6 +40,15 @@ public class PathJobFindTree extends AbstractPathJob
      */
     private final IColony colony;
 
+    private BlockPos startRestriction = null;
+    private BlockPos endRestriction = null;
+
+    public void setAreaRestriction(final BlockPos start, final BlockPos end)
+    {
+        this.startRestriction = start;
+        this.endRestriction = end;
+    }
+
     /**
      * AbstractPathJob constructor.
      *
@@ -60,6 +69,33 @@ public class PathJobFindTree extends AbstractPathJob
                             final LivingEntity entity)
     {
         super(world, start, start, range, new TreePathResult(), entity);
+        this.treesToNotCut = treesToCut;
+        this.hutLocation = home;
+        this.colony = colony;
+    }
+
+    /**
+     * AbstractPathJob constructor.
+     *
+     * @param world      the world within which to path.
+     * @param start      the start position from which to path from.
+     * @param home       the position of the worker hut.
+     * @param startRestriction    start of the restricted area.
+     * @param endRestriction      end of the restricted area.
+     * @param treesToCut the trees the lj is supposed to cut.
+     * @param entity the entity.
+     */
+    public PathJobFindTree(
+            final World world,
+            @NotNull final BlockPos start,
+            final BlockPos home,
+            final BlockPos startRestriction,
+            final BlockPos endRestriction,
+            final List<ItemStorage> treesToCut,
+            final IColony colony,
+            final LivingEntity entity)
+    {
+        super(world, startRestriction, endRestriction, new TreePathResult(), entity);
         this.treesToNotCut = treesToCut;
         this.hutLocation = home;
         this.colony = colony;
