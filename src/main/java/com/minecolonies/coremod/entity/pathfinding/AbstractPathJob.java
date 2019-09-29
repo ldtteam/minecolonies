@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
@@ -18,7 +19,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -121,6 +121,19 @@ public abstract class AbstractPathJob implements Callable<Path>
     private          int                totalNodesVisited            = 0;
 
     /**
+     * Are there hard xz restrictions.
+     */
+    private boolean xzRestricted = false;
+
+    /**
+     * The restriction parameters
+     */
+    private int maxX;
+    private int minX;
+    private int maxZ;
+    private int minZ;
+
+    /**
      * The entity this job belongs to.
      */
     private LivingEntity entity;
@@ -167,6 +180,47 @@ public abstract class AbstractPathJob implements Callable<Path>
         allowJumpPointSearchTypeWalk = false;
 
         if (MineColonies.getConfig().getCommon().pathfindingDebugDraw.get())
+        {
+            debugDrawEnabled = true;
+            debugNodesVisited = new HashSet<>();
+            debugNodesNotVisited = new HashSet<>();
+            debugNodesPath = new HashSet<>();
+        }
+        this.entity = entity;
+    }
+
+    /**
+     * AbstractPathJob constructor.
+     *
+     * @param world  the world within which to path.
+     * @param startRestriction  start of restricted area.
+     * @param endRestriction  end of restricted area.
+     * @param result path result.
+     * @param entity the entity.
+     * @see AbstractPathJob#AbstractPathJob(World, BlockPos, BlockPos, int, LivingEntity)
+     */
+    public AbstractPathJob(final World world, final BlockPos startRestriction, final BlockPos endRestriction, final PathResult result, final LivingEntity entity)
+    {
+        this.minX = Math.min(startRestriction.getX(), endRestriction.getX());
+        this.minZ = Math.min(startRestriction.getZ(), endRestriction.getZ());
+        this.maxX = Math.max(startRestriction.getX(), endRestriction.getX());
+        this.maxZ = Math.max(startRestriction.getZ(), endRestriction.getZ());
+
+        xzRestricted = true;
+
+
+        final int range = (int)Math.sqrt(Math.pow(maxX - minX, 2) + Math.pow(maxZ - minZ, 2)) * 2;
+
+        this.world = new ChunkCache(world, new BlockPos(minX, MIN_Y, minZ), new BlockPos(maxX, MAX_Y, maxZ), range);
+
+        this.start = new BlockPos((minX + maxX) / 2, (startRestriction.getY() + endRestriction.getY()) / 2, (minZ + maxZ) / 2);
+        this.maxRange = range;
+
+        this.result = result;
+
+        allowJumpPointSearchTypeWalk = false;
+
+        if (MinecoloniesAPIProxy.getInstance().getConfig().getCommon().pathfindingDebugDraw.get())
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
@@ -425,7 +479,8 @@ public abstract class AbstractPathJob implements Callable<Path>
                 bestNodeResultScore = nodeResultScore;
             }
 
-            if (BlockPosUtil.getDistanceSquared2D(currentNode.pos, start) <= maxRange * maxRange)
+            if (BlockPosUtil.getDistanceSquared2D(currentNode.pos, start) <= maxRange * maxRange &&
+                  (!xzRestricted || (currentNode.pos.getX() >= minX && currentNode.pos.getX() <= maxX && currentNode.pos.getZ() >= minZ && currentNode.pos.getZ() <= maxZ)) )
             {
                 walkCurrentNode(currentNode);
             }

@@ -497,6 +497,26 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     /**
      * Used to find a tree.
      *
+     * @param startRestriction the start of the restricted area.
+     * @param endRestriction the end of the restricted area.
+     * @param speed      walking speed.
+     * @param treesToCut the trees which should be cut.
+     * @return the result of the search.
+     */
+    public TreePathResult moveToTree(final BlockPos startRestriction, final BlockPos endRestriction, final double speed, final List<ItemStorage> treesToCut, final IColony colony)
+    {
+        @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
+        final BlockPos buildingPos = ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding().getPosition();
+
+        final PathJobFindTree job = new PathJobFindTree(CompatibilityUtils.getWorldFromEntity(entity), start, buildingPos, startRestriction, endRestriction, treesToCut, colony, ourEntity);
+        job.setAreaRestriction(startRestriction, endRestriction);
+
+        return (TreePathResult) setPathJob(job, null, speed);
+    }
+
+    /**
+     * Used to find a tree.
+     *
      * @param range      in the range.
      * @param speed      walking speed.
      * @param treesToCut the trees which should be cut.

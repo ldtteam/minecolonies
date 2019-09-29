@@ -92,6 +92,9 @@ public class NetworkChannel
         registerMessage(++idx, MarkBuildingDirtyMessage.class, MarkBuildingDirtyMessage::new);
         registerMessage(++idx, ChangeFreeToInteractBlockMessage.class, ChangeFreeToInteractBlockMessage::new);
         registerMessage(++idx, LumberjackReplantSaplingToggleMessage.class, LumberjackReplantSaplingToggleMessage::new);
+        registerMessage(++idx, LumberjackRestrictionToggleMessage.class, LumberjackRestrictionToggleMessage::new);
+        registerMessage(++idx, LumberjackScepterMessage.class, LumberjackScepterMessage::new);
+
         registerMessage(++idx, ToggleHousingMessage.class, ToggleHousingMessage::new);
         registerMessage(++idx, ToggleMoveInMessage.class, ToggleMoveInMessage::new);
         registerMessage(++idx, AssignUnassignMessage.class, AssignUnassignMessage::new);

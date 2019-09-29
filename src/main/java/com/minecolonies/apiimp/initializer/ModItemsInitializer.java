@@ -48,6 +48,7 @@ public final class ModItemsInitializer
     {
         EntityInitializer.setupEntities();
 
+        ModItems.scepterLumberjack = new ItemScepterLumberjack(new Item.Properties());
         ModItems.supplyChest = new ItemSupplyChestDeployer(new Item.Properties());
         ModItems.permTool = new ItemScepterPermission(new Item.Properties());
         ModItems.scepterGuard = new ItemScepterGuard(new Item.Properties());
@@ -81,6 +82,7 @@ public final class ModItemsInitializer
         registry.register(ModItems.compost);
         registry.register(ModItems.resourceScroll);
         registry.register(ModItems.scimitar);
+        registry.register(ModItems.scepterLumberjack);
 
         registry.register(ModItems.pirateHelmet_1);
         registry.register(ModItems.pirateChest_1);
