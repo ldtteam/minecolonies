@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.HappinessData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataManager;
@@ -8,7 +9,6 @@ import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.EntityUtils;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -28,7 +28,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -245,6 +244,7 @@ public class CitizenManager implements ICitizenManager
             Network.getNetwork().sendToPlayer(new ColonyViewRemoveCitizenMessage(colony, citizen.getId()), player);
         }
 
+        calculateMaxCitizens();
         colony.markDirty();
     }
 

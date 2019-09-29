@@ -184,4 +184,6 @@ public interface IBuildingManager
      * @param building the building to set.
      */
     void setWareHouse(@Nullable final IWareHouse building);
+
+    IWareHouse getWareHouse();
 }

@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structures.helpers.Structure;
-import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
@@ -483,6 +482,12 @@ public class BuildingManager implements IBuildingManager
     public void setWareHouse(@Nullable final IWareHouse building)
     {
         this.wareHouse = building;
+    }
+
+    @Override
+    public IWareHouse getWareHouse()
+    {
+        return wareHouse;
     }
 
     /**

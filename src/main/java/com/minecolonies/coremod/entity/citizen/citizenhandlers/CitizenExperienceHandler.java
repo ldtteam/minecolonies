@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.GameRules;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -60,6 +59,10 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
     {
         level = citizen.getCitizenData() == null ? 0 : citizen.getCitizenData().getLevel();
         citizen.getDataManager().set(DATA_LEVEL, level);
+        if (citizen.getCitizenData().getJob() != null)
+        {
+            citizen.getCitizenData().getJob().onLevelUp(level);
+        }
     }
 
     /**
