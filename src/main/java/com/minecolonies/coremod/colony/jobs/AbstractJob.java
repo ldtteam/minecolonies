@@ -14,6 +14,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import net.minecraft.entity.ai.goal.GoalSelector;
+import net.minecraft.entity.monster.AbstractSkeletonEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
@@ -207,6 +208,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
             return;
         }
 
+        tasks.goals.stream().filter(goal -> goal.getGoal() instanceof AbstractAISkeleton).forEach(goal -> tasks.removeGoal(goal.getGoal()));
         workerAI = new WeakReference<>(tempAI);
         tasks.addGoal(TASK_PRIORITY, tempAI);
     }
