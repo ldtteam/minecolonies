@@ -54,9 +54,9 @@ public class BuildingManager implements IBuildingManager
     private final List<BlockPos> fields = new ArrayList<>();
 
     /**
-     * The warehouse building position. Initially null.
+     * The list of all warehouses
      */
-    private IWareHouse wareHouse = null;
+    private final List<IWareHouse> wareHouses = new ArrayList<>();
 
     /**
      * The townhall of the colony.
@@ -263,7 +263,7 @@ public class BuildingManager implements IBuildingManager
     @Override
     public boolean hasWarehouse()
     {
-        return wareHouse != null;
+        return !wareHouses.isEmpty();
     }
 
     @Override
@@ -402,7 +402,7 @@ public class BuildingManager implements IBuildingManager
         }
         else if (building instanceof BuildingWareHouse)
         {
-            wareHouse = null;
+            wareHouses.remove(building);
         }
 
         colony.getRequestManager().onProviderRemovedFromColony(building);
@@ -451,9 +451,15 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public void setWareHouse(@Nullable final IWareHouse building)
+    public List<IWareHouse> getWareHouses()
     {
-        this.wareHouse = building;
+        return wareHouses;
+    }
+
+    @Override
+    public void removeWareHouse(final IWareHouse wareHouse)
+    {
+        wareHouses.remove(wareHouse);
     }
 
     /**
@@ -480,9 +486,9 @@ public class BuildingManager implements IBuildingManager
             townHall = (ITownHall) building;
         }
 
-        if (building instanceof BuildingWareHouse && wareHouse == null)
+        if (building instanceof IWareHouse)
         {
-            wareHouse = (IWareHouse) building;
+            wareHouses.add((IWareHouse) building);
         }
     }
 
