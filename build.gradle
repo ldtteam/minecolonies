@@ -210,12 +210,18 @@ curseforge {
 
         project {
             id = '245506'
-
+            addGameVersion '1.14.4'
             changelog = file('build/changelog.md')
             changelogType = 'markdown'
             releaseType = System.getenv().CURSERELEASETYPE
 
             addArtifact apiJar
+
+            mainArtifact(jar) {
+                relations {
+                    requiredDependency 'structurize'
+                }
+            }
         }
     }
     else
