@@ -5,19 +5,15 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
-import com.minecolonies.coremod.util.BackUpHelper;
 import com.mojang.authlib.GameProfile;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.arguments.GameProfileArgument;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.stats.Stats;
 
-import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.PLAYERNAME_ARG;
 
 public class CommandResetPlayerSupplies implements IMCOPCommand
@@ -56,6 +52,7 @@ public class CommandResetPlayerSupplies implements IMCOPCommand
         }
 
         player.addStat(Stats.ITEM_USED.get(ModItems.supplyChest), 0);
+        LanguageHandler.sendPlayerMessage(player, "com.minecolonies.command.resetsupply");
         return 1;
     }
 

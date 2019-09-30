@@ -383,6 +383,7 @@
   "com.minecolonies.command.colonyidnotfound": "Colony for id %s could not be found in this dimension!",
   "com.minecolonies.command.playernotfound": "Player %s could not be found.",
   "com.minecolonies.command.notenabledinconfig": "This command is disabled in the config.",
+  "com.minecolonies.command.resetsupply": "Successfully reset the supply camp and ship placement",
 
   "com.minecolonies.coremod.status.worker.goingtohut": "Going to Hut",
   "com.minecolonies.coremod.status.herder.breeding": "Breeding",

@@ -91,6 +91,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         colonyId = colony.getID();
         citizen.setCitizenId(data.getId());
         citizen.setCitizenData(data);
+        data.setCitizenEntity(citizen);
 
         citizen.setIsChild(data.isChild());
         citizen.setCustomName(new StringTextComponent(citizen.getCitizenData().getName()));
@@ -111,8 +112,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
         citizen.getCitizenExperienceHandler().updateLevel();
 
-        citizen.getCitizenData().setCitizenEntity(citizen);
-        citizen.getCitizenData().setLastPosition(citizen.getPosition());
+        data.setLastPosition(citizen.getPosition());
 
         citizen.getCitizenJobHandler().onJobChanged(citizen.getCitizenJobHandler().getColonyJob());
     }
