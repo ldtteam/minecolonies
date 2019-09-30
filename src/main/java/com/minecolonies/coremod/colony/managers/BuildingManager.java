@@ -484,6 +484,12 @@ public class BuildingManager implements IBuildingManager
         return wareHouses;
     }
 
+    @Override
+    public void removeWareHouse(final IWareHouse wareHouse)
+    {
+        wareHouses.remove(wareHouse);
+    }
+
     /**
      * Updates all subscribers of fields etc.
      */

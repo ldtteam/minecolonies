@@ -180,6 +180,11 @@ public interface IBuildingManager
     void setTownHall(@Nullable final ITownHall building);
 
     /**
+     * Removes a warehouse from the BuildingManager
+     */
+    void removeWareHouse(final IWareHouse wareHouse);
+
+    /**
      * Get a list of the warehouses in this colony.
      * @return
      */

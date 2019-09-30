@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
+import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -198,6 +199,10 @@ public class BuildingMoveMessage implements IMessage
                 tempColony.getBuildingManager().setTownHall(null);
             }
             world.destroyBlock(oldBuildingId, false);
+        }
+        else if (oldBuilding instanceof IWareHouse && tempColony != null)
+        {
+            tempColony.getBuildingManager().removeWareHouse((IWareHouse) oldBuilding);
         }
 
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
