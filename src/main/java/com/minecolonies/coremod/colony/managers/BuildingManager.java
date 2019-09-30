@@ -270,7 +270,7 @@ public class BuildingManager implements IBuildingManager
     @Override
     public boolean hasWarehouse()
     {
-        return wareHouses.isEmpty();
+        return !wareHouses.isEmpty();
     }
 
     @Override
