@@ -26,7 +26,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 
 public final class BackUpHelper
@@ -255,7 +254,7 @@ public final class BackUpHelper
                 @NotNull final File file = new File(saveDir, String.format(FILENAME_COLONY, i, dimensionType.getId()));
                 if (file.exists())
                 {
-                    loadColonyBackup(i, dimensionType.getId());
+                    loadColonyBackup(i, dimensionType.getId(), false);
                 }
             }
         });
@@ -266,15 +265,19 @@ public final class BackUpHelper
      *
      * @param colonyId  of the colony.
      * @param dimension the colony dimension.
+     * @param loadDeleted whether to load deleted colonies aswell.
      */
-    public static void loadColonyBackup(final int colonyId, final int dimension)
+    public static void loadColonyBackup(final int colonyId, final int dimension, boolean loadDeleted)
     {
         @NotNull final File saveDir =
           new File(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
         CompoundNBT compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension)));
         if (compound == null)
         {
-            compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY_DELETED, colonyId, dimension)));
+            if (loadDeleted)
+            {
+                compound = loadNBTFromPath(new File(saveDir, String.format(FILENAME_COLONY_DELETED, colonyId, dimension)));
+            }
             if (compound == null)
             {
                 Log.getLogger().warn("Can't find NBT of colony: " + colonyId + " at location: " + new File(saveDir, String.format(FILENAME_COLONY, colonyId, dimension)));

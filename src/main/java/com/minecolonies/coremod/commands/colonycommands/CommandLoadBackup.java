@@ -29,7 +29,7 @@ public class CommandLoadBackup implements IMCOPCommand
         final Entity sender = context.getSource().getEntity();
 
         final int colonyId = IntegerArgumentType.getInteger(context, COLONYID_ARG);
-        BackUpHelper.loadColonyBackup(colonyId, sender.dimension.getId());
+        BackUpHelper.loadColonyBackup(colonyId, sender.dimension.getId(), true);
         LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.loadbackup.success");
         return 1;
     }
