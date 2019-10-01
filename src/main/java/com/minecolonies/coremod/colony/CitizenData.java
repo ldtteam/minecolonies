@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -11,21 +12,18 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracksTower;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.util.TeleportHelper;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -597,14 +595,10 @@ public class CitizenData implements ICitizenData
         if (homeBuilding != null && building != null && !homeBuilding.equals(building))
         {
             homeBuilding.removeCitizen(this);
-            markDirty();
         }
 
-        if (building == null || building instanceof BuildingHome || building instanceof BuildingBarracksTower)
-        {
-            homeBuilding = building;
-            markDirty();
-        }
+        homeBuilding = building;
+        markDirty();
 
         if (getCitizenEntity().isPresent() && getCitizenEntity().get().getCitizenJobHandler().getColonyJob() == null)
         {
@@ -676,12 +670,12 @@ public class CitizenData implements ICitizenData
     public void updateCitizenEntityIfNecessary()
     {
         final List<AbstractEntityCitizen> list = ((ServerWorld) colony.getWorld())
-                                            .getEntities()
+                                                   .getEntities()
                                                    .filter(e -> e instanceof AbstractEntityCitizen)
                                                    .map(e -> (AbstractEntityCitizen) e)
-                                            .filter(
-                                              entityCitizen -> entityCitizen.getCitizenColonyHandler().getColonyId() == colony.getID()
-                                                                 && entityCitizen.getCitizenData().getId() == getId()).collect(Collectors.toList());
+                                                   .filter(
+                                                     entityCitizen -> entityCitizen.getCitizenColonyHandler().getColonyId() == colony.getID()
+                                                                        && entityCitizen.getCitizenData().getId() == getId()).collect(Collectors.toList());
 
         if (!list.isEmpty())
         {
@@ -876,6 +870,7 @@ public class CitizenData implements ICitizenData
         }
         final Tuple<Integer, Double> entry = queryLevelExperienceMap();
         this.levelExperienceMap.put(job.getExperienceTag(), new Tuple<>(lvl, entry.getB()));
+        job.onLevelUp(lvl);
     }
 
     /**
