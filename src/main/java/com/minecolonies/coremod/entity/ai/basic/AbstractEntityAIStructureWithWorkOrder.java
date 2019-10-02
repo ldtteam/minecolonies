@@ -194,7 +194,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
             final BlockPos worldPos = blockInfo.getPos().add(job.getStructure().getOffsetPosition());
 
-            @Nullable BlockState blockState = blockInfo.getState().getBlockState();
+            @Nullable BlockState blockState = blockInfo.getState();
             @Nullable Block block = blockState.getBlock();
 
             if (StructurePlacementUtils.isStructureBlockEqualWorldBlock(world, worldPos, blockState)
