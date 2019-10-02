@@ -377,19 +377,22 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
         for (@NotNull final BlockPos field : fields)
         {
-            final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
-            if (scareCrow instanceof ScarecrowTileEntity)
+            if (colony.getWorld().isAreaLoaded(field, 1))
             {
-                if (((ScarecrowTileEntity) scareCrow).isTaken())
+                final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
+                if (scareCrow instanceof ScarecrowTileEntity)
                 {
-                    if (getAssignedCitizen().isEmpty() || ((ScarecrowTileEntity) scareCrow).getOwnerId() == getMainCitizen().getId())
+                    if (((ScarecrowTileEntity) scareCrow).isTaken())
+                    {
+                        if (getAssignedCitizen().isEmpty() || ((ScarecrowTileEntity) scareCrow).getOwnerId() == getMainCitizen().getId())
+                        {
+                            size++;
+                        }
+                    }
+                    else
                     {
                         size++;
                     }
-                }
-                else
-                {
-                    size++;
                 }
             }
         }
@@ -397,19 +400,22 @@ public class BuildingFarmer extends AbstractBuildingWorker
         buf.writeInt(size);
         for (@NotNull final BlockPos field : getColony().getBuildingManager().getFields())
         {
-            final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
-            if (scareCrow instanceof ScarecrowTileEntity)
+            if (colony.getWorld().isAreaLoaded(field, 1))
             {
-                if (((ScarecrowTileEntity) scareCrow).isTaken())
+                final TileEntity scareCrow = getColony().getWorld().getTileEntity(field);
+                if (scareCrow instanceof ScarecrowTileEntity)
                 {
-                    if (getAssignedCitizen().isEmpty() || ((ScarecrowTileEntity) scareCrow).getOwnerId() == getMainCitizen().getId())
+                    if (((ScarecrowTileEntity) scareCrow).isTaken())
+                    {
+                        if (getAssignedCitizen().isEmpty() || ((ScarecrowTileEntity) scareCrow).getOwnerId() == getMainCitizen().getId())
+                        {
+                            buf.writeBlockPos(field);
+                        }
+                    }
+                    else
                     {
                         buf.writeBlockPos(field);
                     }
-                }
-                else
-                {
-                    buf.writeBlockPos(field);
                 }
             }
         }
