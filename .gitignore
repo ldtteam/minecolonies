@@ -45,3 +45,5 @@ runClient/
 libs/
 
 runServer/
+
+gradle\.properties

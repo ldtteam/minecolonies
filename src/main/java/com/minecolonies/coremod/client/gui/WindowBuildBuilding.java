@@ -258,7 +258,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         while (structure.findNextBlock())
         {
             @Nullable final BlockInfo blockInfo = structure.getBlockInfo();
-            @Nullable final BlockState blockState = blockInfo.getState().getBlockState();
+            @Nullable final BlockState blockState = blockInfo.getState();
 
             if (blockState == null)
             {
