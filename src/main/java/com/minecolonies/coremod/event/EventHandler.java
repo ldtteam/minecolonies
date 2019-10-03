@@ -261,14 +261,16 @@ public class EventHandler
     {
         if (MineColonies.getConfig().getCommon().pvp_mode.get() && event.getEntity() instanceof EntityCitizen)
         {
-            if (event.getEntity().world != null && !event.getEntity().world.isBlockLoaded(new BlockPos(event.getNewChunkX() * BLOCKS_PER_CHUNK,
-              70,
-              event.getNewChunkZ() * BLOCKS_PER_CHUNK)))
+            if (event.getEntity().world == null
+                  || !event.getEntity().world.chunkExists(event.getNewChunkX(), event.getNewChunkZ())
+                  || !event.getEntity().world.chunkExists(event.getOldChunkX(), event.getOldChunkZ())
+                  )
             {
                 return;
             }
+
             final EntityCitizen entityCitizen = (EntityCitizen) event.getEntity();
-            if (entityCitizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && entityCitizen.getEntityWorld().isAreaLoaded(entityCitizen.getPosition(), 5))
+            if (entityCitizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
             {
                 final World world = entityCitizen.getEntityWorld();
 
