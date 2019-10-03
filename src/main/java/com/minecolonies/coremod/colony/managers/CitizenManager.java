@@ -245,6 +245,7 @@ public class CitizenManager implements ICitizenManager
             MineColonies.getNetwork().sendTo(new ColonyViewRemoveCitizenMessage(colony, citizen.getId()), player);
         }
 
+        calculateMaxCitizens();
         colony.markDirty();
     }
 

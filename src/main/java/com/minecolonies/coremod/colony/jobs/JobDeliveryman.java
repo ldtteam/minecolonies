@@ -11,11 +11,13 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.sounds.DeliverymanSounds;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.BASE_MOVEMENT_SPEED;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
@@ -32,6 +35,11 @@ import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 public class JobDeliveryman extends AbstractJob
 {
     private IToken<?> rsDataStoreToken;
+
+    /**
+     * Walking speed bonus per level
+     */
+    public static final double BONUS_SPEED_PER_LEVEL = 0.003;
 
     /**
      * Instantiates the job for the deliveryman.
@@ -55,6 +63,18 @@ public class JobDeliveryman extends AbstractJob
                                TypeConstants.REQUEST_SYSTEM_DELIVERY_MAN_JOB_DATA_STORE
                              )
                              .getId();
+    }
+
+    @Override
+    public void onLevelUp(final int newLevel)
+    {
+        if (getCitizen().getCitizenEntity().isPresent())
+        {
+            final AbstractEntityCitizen worker = getCitizen().getCitizenEntity().get();
+            worker.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
+              .setBaseValue(
+                BASE_MOVEMENT_SPEED + (newLevel > 50 ? 50 : newLevel) * BONUS_SPEED_PER_LEVEL);
+        }
     }
 
     @Override
