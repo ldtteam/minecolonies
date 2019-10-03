@@ -471,7 +471,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
             return LazyOptional.of(() -> (T) this.combinedInv);
         }
-        return super.getCapability(capability);
+        return super.getCapability(capability, side);
     }
 
     @Nullable
