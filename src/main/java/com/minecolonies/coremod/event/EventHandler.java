@@ -263,8 +263,7 @@ public class EventHandler
         {
             if (event.getEntity().world == null
                   || !event.getEntity().world.chunkExists(event.getNewChunkX(), event.getNewChunkZ())
-                  || !event.getEntity().world.chunkExists(event.getOldChunkX(), event.getOldChunkZ())
-                  )
+                  || !event.getEntity().world.chunkExists(event.getOldChunkX(), event.getOldChunkZ()))
             {
                 return;
             }
