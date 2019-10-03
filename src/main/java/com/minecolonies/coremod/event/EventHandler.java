@@ -268,9 +268,10 @@ public class EventHandler
                 return;
             }
             final EntityCitizen entityCitizen = (EntityCitizen) event.getEntity();
-            if (entityCitizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && entityCitizen.getEntityWorld().isBlockLoaded(entityCitizen.getPosition()))
+            if (entityCitizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && entityCitizen.getEntityWorld().isAreaLoaded(entityCitizen.getPosition(), 5))
             {
                 final World world = entityCitizen.getEntityWorld();
+
                 final Chunk chunk = world.getChunk(event.getNewChunkX(), event.getNewChunkZ());
                 final IColonyTagCapability chunkCapability = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
                 if (chunkCapability != null && chunkCapability.getOwningColony() != 0
