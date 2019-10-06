@@ -54,7 +54,7 @@ public class CommandSetAbandoned implements IMCColonyOfficerCommand
             colony.getPermissions().addPlayer(((PlayerEntity) sender).getGameProfile(), Rank.OFFICER);
         }
 
-        LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.ownerchange.success", "[abadoned]", colony.getName());
+        LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.ownerchange.success", "[abandoned]", colony.getName());
         return 1;
     }
 
