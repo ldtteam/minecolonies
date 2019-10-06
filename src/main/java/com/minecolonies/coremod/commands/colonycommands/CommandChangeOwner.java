@@ -3,8 +3,8 @@ package com.minecolonies.coremod.commands.colonycommands;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
-import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -18,7 +18,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.PLAYERNAME_ARG;
 
-public class CommandChangeOwner implements IMCOPCommand
+public class CommandChangeOwner implements IMCColonyOfficerCommand
 {
 
     /**
@@ -56,7 +56,6 @@ public class CommandChangeOwner implements IMCOPCommand
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.playernotfound", profile.getName());
             return 0;
         }
-
 
         colony.getPermissions().setOwner(player);
 

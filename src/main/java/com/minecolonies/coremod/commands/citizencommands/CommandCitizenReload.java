@@ -4,8 +4,8 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
-import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -19,7 +19,7 @@ import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_AR
 /**
  * Reloads a citizen entity from its Citizendata.
  */
-public class CommandCitizenReload implements IMCOPCommand
+public class CommandCitizenReload implements IMCColonyOfficerCommand
 {
     /**
      * What happens when the command is executed after preConditions are successful.

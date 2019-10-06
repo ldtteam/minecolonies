@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -28,7 +29,7 @@ import static com.minecolonies.coremod.commands.colonycommands.CommandListColoni
 /**
  * Lists all citizen of a given colony.
  */
-public class CommandCitizenList implements IMCCommand
+public class CommandCitizenList implements IMCColonyOfficerCommand
 {
     private static final String LIST_COMMAND_SUGGESTED = "/minecolonies citizens list %d %d";
     private static final String COMMAND_CITIZEN_INFO   = "/minecolonies citizens info %d %d";

@@ -6,16 +6,16 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Small utility class to run an executable on a chat click event.
  */
-public class ClickEventExecutable extends ClickEvent
+public class ClickEventWithExecutable extends ClickEvent
 {
     /**
      * The actions to run
      */
     private Runnable[] actions;
 
-    public ClickEventExecutable(@NotNull final Runnable ... actions)
+    public ClickEventWithExecutable(final ClickEvent.Action action, final String actionString, @NotNull final Runnable... actions)
     {
-        super(Action.RUN_COMMAND, "");
+        super(action, actionString);
         this.actions = actions;
     }
 
@@ -33,6 +33,6 @@ public class ClickEventExecutable extends ClickEvent
             }
             actions = null;
         }
-        return Action.RUN_COMMAND;
+        return super.getAction();
     }
 }
