@@ -77,7 +77,7 @@ import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 import static com.minecolonies.coremod.commands.colonycommands.CommandDeleteColony.COLONY_DELETE_COMMAND;
-import static com.minecolonies.coremod.commands.colonycommands.CommandSetAbadoned.COLONY_ABANDON_COMMAND;
+import static com.minecolonies.coremod.commands.colonycommands.CommandSetAbandoned.COLONY_ABANDON_COMMAND;
 import static net.minecraftforge.eventbus.api.EventPriority.LOWEST;
 
 /**

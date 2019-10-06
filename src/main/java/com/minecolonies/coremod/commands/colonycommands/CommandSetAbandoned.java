@@ -15,12 +15,12 @@ import net.minecraft.entity.player.PlayerEntity;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 
-public class CommandSetAbadoned implements IMCColonyOfficerCommand
+public class CommandSetAbandoned implements IMCColonyOfficerCommand
 {
     /**
      * Formatable string to use the command
      */
-    public static final String COLONY_ABANDON_COMMAND = "/mc colony setAbadoned %d";
+    public static final String COLONY_ABANDON_COMMAND = "/mc colony setAbandoned %d";
 
     /**
      * What happens when the command is executed after preConditions are successful.
@@ -64,7 +64,7 @@ public class CommandSetAbadoned implements IMCColonyOfficerCommand
     @Override
     public String getName()
     {
-        return "setAbadoned";
+        return "setAbandoned";
     }
 
     @Override
