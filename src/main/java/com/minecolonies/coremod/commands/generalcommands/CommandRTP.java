@@ -66,6 +66,7 @@ public class CommandRTP implements IMCCommand
     /**
      * prechecks for both commands
      */
+    @Override
     public boolean checkPreCondition(final CommandContext<CommandSource> context)
     {
         final Entity sender = context.getSource().getEntity();

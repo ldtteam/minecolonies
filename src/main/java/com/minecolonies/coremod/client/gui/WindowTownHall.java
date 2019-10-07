@@ -1,5 +1,12 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.blockout.Color;
+import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.controls.*;
+import com.ldtteam.blockout.views.DropDownList;
+import com.ldtteam.blockout.views.ScrollingList;
+import com.ldtteam.blockout.views.SwitchView;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
@@ -9,28 +16,24 @@ import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
-import com.ldtteam.blockout.Color;
-import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.controls.*;
-import com.ldtteam.blockout.views.DropDownList;
-import com.ldtteam.blockout.views.ScrollingList;
-import com.ldtteam.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.commands.ClickEventWithExecutable;
 import com.minecolonies.coremod.network.messages.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -127,12 +130,12 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
     /**
      * The ScrollingList of all allies.
      */
-    private final        ScrollingList alliesList;
+    private final ScrollingList alliesList;
 
     /**
      * The ScrollingList of all feuds.
      */
-    private final        ScrollingList feudsList;
+    private final ScrollingList feudsList;
 
     /**
      * Constructor for the town hall window.
@@ -233,6 +236,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
 
     /**
      * Called when the dropdownList changed.
+     *
      * @param dropDownList the list.
      */
     private void onDropDownListChanged(final DropDownList dropDownList)
@@ -320,15 +324,16 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
      */
     private void teleportToColony(@NotNull final Button button)
     {
-        /*final int row = alliesList.getListElementIndexByPane(button);
+        final int row = alliesList.getListElementIndexByPane(button);
         final IColonyView ally = allies.get(row);
         final ITextComponent teleport = new StringTextComponent(LanguageHandler.format(DO_REALLY_WANNA_TP, ally.getName()))
                                           .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-                                            new ClickEvent(ClickEvent.Action.RUN_COMMAND, TELEPORT_COMMAND + ally.getID())
-                                          ));
-        */
-        Minecraft.getInstance().player.sendMessage(new StringTextComponent("Feature currently disabled"));
+                                            new ClickEventWithExecutable(ClickEvent.Action.RUN_COMMAND, "",
+                                              () -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(ally.getID(),
+                                                ally.getDimension())))));
 
+        Minecraft.getInstance().player.sendMessage(teleport);
+        this.close();
     }
 
     /**
@@ -483,19 +488,12 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         final TextField input = findPaneOfTypeByID(INPUT_BLOCK_NAME, TextField.class);
         final String inputText = input.getText();
 
-        try
-        {
-            final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(inputText));
+        final Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(inputText));
 
-            if (block != null)
-            {
-                townHall.getColony().addFreeBlock(block);
-                Network.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(townHall.getColony(), block, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
-            }
-        }
-        catch (final ResourceLocationException e)
+        if (block != null)
         {
-            //Do nothing, we expect this for positions.
+            townHall.getColony().addFreeBlock(block);
+            Network.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(townHall.getColony(), block, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
         }
 
         final BlockPos pos = BlockPosUtil.getBlockPosOfString(inputText);
@@ -657,13 +655,13 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         }
 
         final String numberOfCitizens =
-            LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens",
-                citizensSize, townHall.getColony().getCitizenCount());
+          LanguageHandler.format("com.minecolonies.coremod.gui.townHall.population.totalCitizens",
+            citizensSize, townHall.getColony().getCitizenCount());
         findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
 
         final Integer unemployed = jobCountMap.get("") == null ? 0 : jobCountMap.get("");
         final String numberOfUnemployed = LanguageHandler.format(
-            "com.minecolonies.coremod.gui.townHall.population.unemployed", unemployed);
+          "com.minecolonies.coremod.gui.townHall.population.unemployed", unemployed);
         jobCountMap.remove("");
 
         final Integer maxJobs = jobCountMap.size();
@@ -700,7 +698,7 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
                 final String job = entry.getKey();
                 final String labelJobKey = job.endsWith("man") ? job.replace("man", "men") : (job + "s");
                 final String numberOfWorkers = LanguageHandler.format(
-                    "com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.getValue());
+                  "com.minecolonies.coremod.gui.townHall.population." + labelJobKey, entry.getValue());
                 label.setLabelText(numberOfWorkers);
                 jobCountMap.remove(entry.getKey());
             }
@@ -921,9 +919,10 @@ public class WindowTownHall extends AbstractWindowBuilding<ITownHallView>
         button.disable();
         final ICitizenDataView view = citizens.get(row);
         WindowCitizen.createXpBar(view, this);
-        WindowCitizen.createHappinessBar(view, this); 
+        WindowCitizen.createHappinessBar(view, this);
         WindowCitizen.createSkillContent(view, this);
-        findPaneOfTypeByID(JOB_LABEL, Label.class).setLabelText("§l" + LanguageHandler.format(view.getJob().trim().isEmpty() ? GUI_TOWNHALL_CITIZEN_JOB_UNEMPLOYED : view.getJob()));
+        findPaneOfTypeByID(JOB_LABEL, Label.class).setLabelText(
+          "§l" + LanguageHandler.format(view.getJob().trim().isEmpty() ? GUI_TOWNHALL_CITIZEN_JOB_UNEMPLOYED : view.getJob()));
         findPaneOfTypeByID(HIDDEN_CITIZEN_ID, Label.class).setLabelText(String.valueOf(view.getId()));
     }
 
