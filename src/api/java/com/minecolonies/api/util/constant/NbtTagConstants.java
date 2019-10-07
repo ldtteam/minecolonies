@@ -439,6 +439,13 @@ public final class NbtTagConstants
     public static final String NBT_SLOT          = "Slot";
 
     /**
+     * Crafter job tags.
+     */
+    public static final String TAG_PROGRESS    = "progress";
+    public static final String TAG_MAX_COUNTER = "maxCounter";
+    public static final String TAG_CRAFT_COUNTER  = "craftCounter";
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private NbtTagConstants()

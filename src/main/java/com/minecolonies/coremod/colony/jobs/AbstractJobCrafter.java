@@ -32,6 +32,21 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
     private IToken<?> rsDataStoreToken;
 
     /**
+     * Max crafting count for current recipe.
+     */
+    private int maxCraftingCount = 0;
+
+    /**
+     * Count of already executed recipes.
+     */
+    private int craftCounter = 0;
+
+    /**
+     * Progress of hitting the block.
+     */
+    private int progress = 0;
+
+    /**
      * Instantiates the job for the crafter.
      *
      * @param entity the citizen who becomes a Sawmill
@@ -70,7 +85,9 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
     {
         final CompoundNBT compound = super.serializeNBT();
         compound.put(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
-
+        compound.putInt(NbtTagConstants.TAG_PROGRESS, progress);
+        compound.putInt(NbtTagConstants.TAG_MAX_COUNTER, maxCraftingCount);
+        compound.putInt(NbtTagConstants.TAG_CRAFT_COUNTER, craftCounter);
         return compound;
     }
 
@@ -86,6 +103,21 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
         else
         {
             setupRsDataStore();
+        }
+
+        if (compound.keySet().contains(NbtTagConstants.TAG_PROGRESS))
+        {
+            this.progress = compound.getInt(NbtTagConstants.TAG_PROGRESS);
+        }
+
+        if (compound.keySet().contains(NbtTagConstants.TAG_MAX_COUNTER))
+        {
+            this.progress = compound.getInt(NbtTagConstants.TAG_MAX_COUNTER);
+        }
+
+        if (compound.keySet().contains(NbtTagConstants.TAG_CRAFT_COUNTER))
+        {
+            this.progress = compound.getInt(NbtTagConstants.TAG_CRAFT_COUNTER);
         }
     }
 
@@ -212,4 +244,57 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
         return ImmutableList.copyOf(getAssignedTasksFromDataStore());
     }
 
+    /**
+     * Get the max crafting count for the current recipe.
+     * @return the count.
+     */
+    public int getMaxCraftingCount()
+    {
+        return maxCraftingCount;
+    }
+
+    /**
+     * Set the max crafting count for the current recipe.
+     * @param maxCraftingCount the count to set.
+     */
+    public void setMaxCraftingCount(final int maxCraftingCount)
+    {
+        this.maxCraftingCount = maxCraftingCount;
+    }
+
+    /**
+     * Get the current craft counter.
+     * @return the counter.
+     */
+    public int getCraftCounter()
+    {
+        return craftCounter;
+    }
+
+    /**
+     * Set the current craft counter.
+     * @param craftCounter the counter to set.
+     */
+    public void setCraftCounter(final int craftCounter)
+    {
+        this.craftCounter = craftCounter;
+    }
+
+    /**
+     * Get the crafting progress.
+     * @return the current progress.
+     */
+    public int getProgress()
+    {
+        return progress;
+    }
+
+    /**
+     * Set the crafting progress.
+     * @param progress the current progress.
+     */
+    public void setProgress(final int progress)
+    {
+        this.progress = progress;
+    }
 }
