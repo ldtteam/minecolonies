@@ -4,8 +4,9 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Rank;
+import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
-import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -19,7 +20,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.PLAYERNAME_ARG;
 
-public class CommandAddOfficer implements IMCOPCommand
+public class CommandAddOfficer implements IMCColonyOfficerCommand
 {
     /**
      * What happens when the command is executed after preConditions are successful.
@@ -30,6 +31,13 @@ public class CommandAddOfficer implements IMCOPCommand
     public int onExecute(final CommandContext<CommandSource> context)
     {
         final Entity sender = context.getSource().getEntity();
+
+        if (!MineColonies.getConfig().getCommon().canPlayerUseAddOfficerCommand.get())
+        {
+            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.notenabledinconfig");
+            return 0;
+        }
+
 
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender.dimension.getId());

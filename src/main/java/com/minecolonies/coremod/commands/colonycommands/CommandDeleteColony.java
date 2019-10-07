@@ -3,8 +3,9 @@ package com.minecolonies.coremod.commands.colonycommands;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
-import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -18,8 +19,13 @@ import net.minecraft.entity.player.PlayerEntity;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 
-public class CommandDeleteColony implements IMCOPCommand
+public class CommandDeleteColony implements IMCColonyOfficerCommand
 {
+    /**
+     * Formatable string to use the command
+     */
+    public static final String COLONY_DELETE_COMMAND = "/mc colony delete %d %s keep buildings";
+
     private static final String DELETE_BUILDNGS_ARG = "delete Buildings?";
 
     /**
@@ -31,6 +37,12 @@ public class CommandDeleteColony implements IMCOPCommand
     public int onExecute(final CommandContext<CommandSource> context)
     {
         final Entity sender = context.getSource().getEntity();
+
+        if (!MineColonies.getConfig().getCommon().canPlayerUseDeleteColonyCommand.get())
+        {
+            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.notenabledinconfig");
+            return 0;
+        }
 
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
