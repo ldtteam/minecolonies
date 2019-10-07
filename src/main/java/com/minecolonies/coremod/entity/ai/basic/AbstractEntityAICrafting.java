@@ -55,21 +55,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
     protected IRecipeStorage currentRecipeStorage;
 
     /**
-     * Max crafting count for current recipe.
-     */
-    protected int maxCraftingCount = 0;
-
-    /**
-     * Count of already executed recipes.
-     */
-    protected int craftCounter = 0;
-
-    /**
-     * Progress of hitting the block.
-     */
-    protected int progress = 0;
-
-    /**
      * The current request.
      */
     protected IRequest<? extends PublicCrafting> currentRequest;
@@ -148,9 +133,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             setDelay(TICKS_20);
             return START_WORKING;
         }
-
-        currentRequest = currentTask;
-
         setDelay(STANDARD_DELAY);
         return QUERY_ITEMS;
     }
@@ -226,7 +208,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             return getState();
         }
 
-        if (maxCraftingCount == 0)
+        if (job.getMaxCraftingCount() == 0)
         {
             final IRequest<? extends PublicCrafting> craftingRequest = job.getCurrentTask();
             if (craftingRequest == null)
@@ -235,22 +217,22 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             }
 
             final PublicCrafting crafting = craftingRequest.getRequest();
-            maxCraftingCount = CraftingUtils.calculateMaxCraftingCount(crafting.getCount(), currentRecipeStorage);
+            job.setMaxCraftingCount(CraftingUtils.calculateMaxCraftingCount(crafting.getCount(), currentRecipeStorage));
         }
 
-        if (maxCraftingCount == 0)
+        if (job.getMaxCraftingCount() == 0)
         {
             currentRequest = null;
             incrementActionsDone();
             job.finishRequest(false);
-            maxCraftingCount = 0;
-            progress = 0;
-            craftCounter = 0;
+            job.setMaxCraftingCount(0);
+            job.setProgress(0);
+            job.setCraftCounter(0);
             setDelay(TICKS_20);
             return START_WORKING;
         }
 
-        progress++;
+        job.setProgress(job.getProgress()+1);
 
         worker.setHeldItem(EnumHand.MAIN_HAND, currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
         worker.setHeldItem(EnumHand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
@@ -263,30 +245,30 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         {
             currentRequest = null;
             incrementActionsDone();
-            maxCraftingCount = 0;
-            progress = 0;
-            craftCounter = 0;
+            job.setMaxCraftingCount(0);
+            job.setProgress(0);
+            job.setCraftCounter(0);
             currentRecipeStorage = null;
             worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
             worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
             return START_WORKING;
         }
 
-        if (progress >= getRequiredProgressForMakingRawMaterial())
+        if (job.getProgress() >= getRequiredProgressForMakingRawMaterial())
         {
             final IAIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
             {
-                while (craftCounter < maxCraftingCount && currentRequest != null)
+                while (job.getCraftCounter() < job.getMaxCraftingCount() && currentRequest != null)
                 {
                     if (!currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen()))
                     {
                         currentRequest = null;
                         incrementActionsDone();
                         job.finishRequest(false);
-                        maxCraftingCount = 0;
-                        progress = 0;
-                        craftCounter = 0;
+                        job.setMaxCraftingCount(0);
+                        job.setProgress(0);
+                        job.setCraftCounter(0);
                         setDelay(TICKS_20);
                         worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
                         worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
@@ -294,13 +276,13 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
                     }
 
                     currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
-                    craftCounter++;
+                    job.setCraftCounter(job.getCraftCounter()+1);
                 }
 
                 incrementActionsDone();
-                maxCraftingCount = 0;
-                progress = 0;
-                craftCounter = 0;
+                job.setMaxCraftingCount(0);
+                job.setProgress(0);
+                job.setCraftCounter(0);
                 currentRecipeStorage = null;
                 worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
                 worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
@@ -310,9 +292,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             {
                 currentRequest = null;
                 job.finishRequest(false);
-                maxCraftingCount = 0;
-                progress = 0;
-                craftCounter = 0;
+                job.setMaxCraftingCount(0);
+                job.setProgress(0);
+                job.setCraftCounter(0);
                 incrementActionsDoneAndDecSaturation();
                 setDelay(TICKS_20);
                 worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
@@ -327,7 +309,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
     @Override
     public IAIState afterDump()
     {
-        if (maxCraftingCount == 0 && progress == 0 && craftCounter == 0 && currentRequest != null)
+        if (job.getMaxCraftingCount() == 0 && job.getProgress() == 0 && job.getCraftCounter() == 0 && currentRequest != null)
         {
             job.finishRequest(true);
             worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount()/2.0);
