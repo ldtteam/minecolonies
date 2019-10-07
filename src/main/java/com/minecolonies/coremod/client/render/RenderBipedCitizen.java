@@ -25,6 +25,7 @@ public class RenderBipedCitizen<C extends EntityCitizen> extends RenderBiped<C>
     private static final ModelBiped defaultModelFemale = new ModelEntityCitizenFemaleCitizen();
     private static final double     SHADOW_SIZE        = 0.5F;
     private static final int        THREE_QUARTERS     = 270;
+    public static        boolean    isItGhostTime      = true;
 
     /**
      * Renders model, see {@link RenderBiped}.
@@ -51,7 +52,24 @@ public class RenderBipedCitizen<C extends EntityCitizen> extends RenderBiped<C>
 
         updateArmPose(citizen, citizenModel, armPoseMainHand, armPoseOffHand);
 
-        super.doRender(citizen, d, d1, d2, f, f1);
+        if (isItGhostTime)
+        {
+            GlStateManager.enableAlpha();
+            GlStateManager.enableBlend();
+
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 0.3F);
+
+            super.doRender(citizen, d, d1, d2, f, f1);
+
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1F);
+
+            GlStateManager.disableAlpha();
+            GlStateManager.disableBlend();
+        }
+        else
+        {
+            super.doRender(citizen, d, d1, d2, f, f1);
+        }
     }
 
     private void setupMainModelFrom(@NotNull final C citizen)
