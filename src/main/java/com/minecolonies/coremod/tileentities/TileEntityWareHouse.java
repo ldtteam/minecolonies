@@ -18,6 +18,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -64,8 +65,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     {
         if (getBuilding() != null)
         {
-            final Set<TileEntity> tileEntities = getBuilding().getAdditionalCountainers().stream().map(pos -> getWorld().getTileEntity(pos)).collect(Collectors.toSet());
-            tileEntities.removeIf(Objects::isNull);
+            final Set<TileEntity> tileEntities = new HashSet<>();
             tileEntities.add(this);
 
             return tileEntities.stream()

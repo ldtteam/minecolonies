@@ -52,19 +52,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         if (!manager.getColony().getWorld().isRemote)
         {
             final Colony colony = (Colony) manager.getColony();
-            final ICitizenData holdingCrafter = colony.getCitizenManager().getCitizens()
-                                                  .stream()
-                                                  .filter(c -> c.getJob() instanceof AbstractJobCrafter && (
-                                                    ((AbstractJobCrafter) c.getJob()).getTaskQueue().contains(request.getId())
-                                                      || ((AbstractJobCrafter) c.getJob()).getAssignedTasks().contains(request.getId())))
-                                                  .findFirst()
-                                                  .orElse(null);
-
-            if (holdingCrafter != null)
-            {
-                final AbstractJobCrafter job = (AbstractJobCrafter) holdingCrafter.getJob();
-                job.onTaskDeletion(request.getId());
-            }
+            removeRequestFromTaskList(request, colony);
         }
     }
 
@@ -76,11 +64,17 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         final IColony colony = manager.getColony();
         if (colony instanceof Colony || !completedRequest.hasParent())
         {
+            //Remove it from the task list.
+            removeRequestFromTaskList(completedRequest, colony);
+
             //This is the crafting that got completed.
             //We go up the tree one level to get the actual request.
             //Get the requester for that request and ask where he wants his stuff delivered.
             final IRequest<?> parentRequest = manager.getRequestForToken(completedRequest.getParent());
             final IRequester parentRequestRequester = parentRequest.getRequester();
+
+            if (parentRequestRequester.getLocation().equals(getLocation()))
+                return null;
 
             final List<IRequest<?>> deliveries = Lists.newArrayList();
 
@@ -98,6 +92,23 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
             return deliveries;
         }
         return null;
+    }
+
+    private void removeRequestFromTaskList(@NotNull final IRequest<? extends PublicCrafting> completedRequest, final IColony colony)
+    {
+        final ICitizenData holdingCrafter = colony.getCitizenManager().getCitizens()
+                                              .stream()
+                                              .filter(c -> c.getJob() instanceof AbstractJobCrafter && (
+                                                ((AbstractJobCrafter) c.getJob()).getTaskQueue().contains(completedRequest.getId())
+                                                  || ((AbstractJobCrafter) c.getJob()).getAssignedTasks().contains(completedRequest.getId())))
+                                              .findFirst()
+                                              .orElse(null);
+
+        if (holdingCrafter != null)
+        {
+            final AbstractJobCrafter job = (AbstractJobCrafter) holdingCrafter.getJob();
+            job.onTaskDeletion(completedRequest.getId());
+        }
     }
 
     @NotNull

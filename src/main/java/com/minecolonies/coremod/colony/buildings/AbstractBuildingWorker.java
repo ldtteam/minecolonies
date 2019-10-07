@@ -294,7 +294,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             return Collections.emptyList();
         }
 
-        final List<IItemHandler> handlers = new ArrayList<>();
+        final Set<IItemHandler> handlers = new HashSet<>();
         for(final ICitizenData workerEntity: this.getAssignedCitizen())
         {
             handlers.add(new InvWrapper(workerEntity.getInventory()));
@@ -309,7 +309,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
                 handlers.addAll(InventoryUtils.getItemHandlersFromProvider(entity));
             }
         }
-        return handlers;
+        return ImmutableList.copyOf(handlers);
     }
 
     @Override

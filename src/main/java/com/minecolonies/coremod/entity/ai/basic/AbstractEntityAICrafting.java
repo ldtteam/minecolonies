@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -147,6 +148,9 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             setDelay(TICKS_20);
             return START_WORKING;
         }
+
+        currentRequest = currentTask;
+
         setDelay(STANDARD_DELAY);
         return QUERY_ITEMS;
     }
@@ -191,6 +195,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
                     return GATHERING_REQUIRED_MATERIALS;
                 }
                 currentRecipeStorage = null;
+                currentRequest = null;
                 return GET_RECIPE;
             }
         }
@@ -210,6 +215,11 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             return START_WORKING;
         }
 
+        if (currentRequest == null)
+        {
+            return GET_RECIPE;
+        }
+
         if (walkToBuilding())
         {
             setDelay(STANDARD_DELAY);
@@ -219,12 +229,19 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         if (maxCraftingCount == 0)
         {
             final IRequest<? extends PublicCrafting> craftingRequest = job.getCurrentTask();
+            if (craftingRequest == null)
+            {
+                return START_WORKING;
+            }
+
             final PublicCrafting crafting = craftingRequest.getRequest();
             maxCraftingCount = CraftingUtils.calculateMaxCraftingCount(crafting.getCount(), currentRecipeStorage);
         }
 
         if (maxCraftingCount == 0)
         {
+            currentRequest = null;
+            incrementActionsDone();
             job.finishRequest(false);
             maxCraftingCount = 0;
             progress = 0;
@@ -235,41 +252,75 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
         progress++;
 
-        worker.setHeldItem(EnumHand.MAIN_HAND, currentRecipeStorage.getInput().get(worker.getRandom().nextInt(currentRecipeStorage.getInput().size())).copy());
+        worker.setHeldItem(EnumHand.MAIN_HAND, currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
+        worker.setHeldItem(EnumHand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
         worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
         setDelay(HIT_DELAY);
 
         currentRequest = job.getCurrentTask();
+
+        if (currentRequest != null && currentRequest.getState() == RequestState.CANCELLED)
+        {
+            currentRequest = null;
+            incrementActionsDone();
+            maxCraftingCount = 0;
+            progress = 0;
+            craftCounter = 0;
+            currentRecipeStorage = null;
+            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+            worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
+            return START_WORKING;
+        }
+
         if (progress >= getRequiredProgressForMakingRawMaterial())
         {
             final IAIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
             {
-                while (craftCounter <= maxCraftingCount && currentRequest != null)
+                while (craftCounter < maxCraftingCount && currentRequest != null)
                 {
-                    currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen());
+                    if (!currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen()))
+                    {
+                        currentRequest = null;
+                        incrementActionsDone();
+                        job.finishRequest(false);
+                        maxCraftingCount = 0;
+                        progress = 0;
+                        craftCounter = 0;
+                        setDelay(TICKS_20);
+                        worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+                        worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
+                        return START_WORKING;
+                    }
+
                     currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
                     craftCounter++;
                 }
 
-                incrementActionsDoneAndDecSaturation();
+                incrementActionsDone();
                 maxCraftingCount = 0;
                 progress = 0;
                 craftCounter = 0;
                 currentRecipeStorage = null;
                 worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+                worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
                 return START_WORKING;
             }
             else
             {
+                currentRequest = null;
                 job.finishRequest(false);
                 maxCraftingCount = 0;
                 progress = 0;
                 craftCounter = 0;
+                incrementActionsDoneAndDecSaturation();
                 setDelay(TICKS_20);
+                worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+                worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
                 return START_WORKING;
             }
         }
+
         return getState();
     }
 
@@ -280,8 +331,13 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         {
             job.finishRequest(true);
             worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount()/2.0);
+            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+            worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
             currentRequest = null;
         }
+
+        getOwnBuilding().setPickUpPriority(1);
+
         return super.afterDump();
     }
 
