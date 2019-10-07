@@ -32,6 +32,7 @@ public final class ModItemsInitializer
         ModItems.clipboard = new ItemClipBoard();
         ModItems.compost = new ItemCompost();
         ModItems.resourceScroll = new ItemResourceScroll();
+        ModItems.scepterLumberjack = new ItemScepterLumberjack();
 
         ModItems.santaHat = new ItemSantaHead("santa_hat", ModCreativeTabs.MINECOLONIES, ItemSantaHead.SANTA_HAT, 0, EntityEquipmentSlot.HEAD);
 
@@ -61,6 +62,7 @@ public final class ModItemsInitializer
         registry.register(ModItems.compost);
         registry.register(ModItems.resourceScroll);
         registry.register(ModItems.scimitar);
+        registry.register(ModItems.scepterLumberjack);
 
         registry.register(ModItems.pirateHelmet_1);
         registry.register(ModItems.pirateChest_1);

@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
+import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
@@ -18,7 +19,10 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBaker;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHome;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
 import com.minecolonies.coremod.entity.ai.citizen.baker.BakingProduct;
@@ -186,9 +190,9 @@ public class BuildingMoveMessage extends AbstractMessage<BuildingMoveMessage, IM
             }
             world.destroyBlock(oldBuildingId, false);
         }
-        else if (oldBuilding instanceof BuildingWareHouse && tempColony != null)
+        else if (oldBuilding instanceof IWareHouse && tempColony != null)
         {
-            tempColony.getBuildingManager().setWareHouse(null);
+            tempColony.getBuildingManager().removeWareHouse((IWareHouse) oldBuilding);
         }
 
         if (block != null && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
