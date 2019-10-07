@@ -91,7 +91,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
         WorkerUtil.faceBlock(getOwnBuilding().getPosition(), worker);
 
         setDelay(TICK_DELAY);
-        progress++;
+        job.setProgress(job.getProgress()+1);
 
         final BuildingCrusher crusherBuilding = getOwnBuilding(BuildingCrusher.class);
         if (currentRecipeStorage == null)
@@ -105,9 +105,9 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
         }
 
         final IAIState check = checkForItems(currentRecipeStorage);
-        if (progress > MAX_LEVEL - Math.min(worker.getCitizenExperienceHandler().getLevel() + 1, MAX_LEVEL))
+        if (job.getProgress() > MAX_LEVEL - Math.min(worker.getCitizenExperienceHandler().getLevel() + 1, MAX_LEVEL))
         {
-            progress = 0;
+            job.setProgress(0);
 
             if (check == CRAFT)
             {
@@ -120,7 +120,7 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
                     }
                 }
 
-                craftCounter++;
+                job.setCraftCounter(job.getCraftCounter()+1);
                 currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen());
                 worker.decreaseSaturationForContinuousAction();
                 worker.getCitizenExperienceHandler().addExperience(0.1);
@@ -172,17 +172,17 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
             return getState();
         }
 
-        if (maxCraftingCount == 0)
+        if (job.getMaxCraftingCount() == 0)
         {
             final PublicCrafting crafting = (PublicCrafting) job.getCurrentTask().getRequest();
-            maxCraftingCount = CraftingUtils.calculateMaxCraftingCount(crafting.getCount(), currentRecipeStorage);
+            job.setMaxCraftingCount(CraftingUtils.calculateMaxCraftingCount(crafting.getCount(), currentRecipeStorage));
         }
 
-        if (maxCraftingCount == 0)
+        if (job.getMaxCraftingCount() == 0)
         {
             getOwnBuilding().getColony().getRequestManager().updateRequestState(job.getCurrentTask().getId(), RequestState.CANCELLED);
-            maxCraftingCount = 0;
-            craftCounter = 0;
+            job.setMaxCraftingCount(0);
+            job.setCraftCounter(0);
             setDelay(TICKS_20);
             return START_WORKING;
         }
@@ -191,22 +191,22 @@ public class EntityAIWorkCrusher<J extends JobCrusher> extends AbstractEntityAIC
         final IAIState nextState = crush();
         if (nextState == getState())
         {
-            if (craftCounter >= maxCraftingCount)
+            if (job.getCraftCounter() >= job.getMaxCraftingCount())
             {
                 final ItemStack primaryOutput = currentRecipeStorage.getPrimaryOutput();
                 primaryOutput.setCount(currentRequest.getRequest().getCount());
                 currentRequest.addDelivery(primaryOutput);
                 incrementActionsDoneAndDecSaturation();
-                maxCraftingCount = 0;
-                craftCounter = 0;
+                job.setMaxCraftingCount(0);
+                job.setCraftCounter(0);
                 currentRecipeStorage = null;
                 return START_WORKING;
             }
         }
         else
         {
-            maxCraftingCount = 0;
-            craftCounter = 0;
+            job.setMaxCraftingCount(0);
+            job.setCraftCounter(0);
             return START_WORKING;
         }
         return getState();
