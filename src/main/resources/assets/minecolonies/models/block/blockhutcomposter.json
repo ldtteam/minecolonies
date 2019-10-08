@@ -1,10 +1,10 @@
 {
   "credit": "created by:OddRobbia02 with Blockbench",
   "textures": {
-    "0": "minecraft:blocks/normal",
+    "0": "minecraft:entity/chest/normal",
     "2": "minecolonies:blocks/warehouse/blockhutwarehousetop",
     "3": "minecolonies:blocks/barrel_block/compost",
-    "particle": "minecraft:blocks/normal"
+    "particle": "minecraft:entity/chest/normal"
   },
   "elements": [
     {

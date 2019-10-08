@@ -5,8 +5,8 @@
     "1": "minecraft:items/iron_sword",
     "2": "minecraft:items/stick",
     "3": "minecolonies:blocks/map1",
-    "1_0": "minecraft:normal",
-    "particle": "minecraft:normal"
+    "1_0": "minecraft:entity/chest/normal",
+    "particle": "minecraft:entity/chest/normal"
   },
   "elements": [
     {
