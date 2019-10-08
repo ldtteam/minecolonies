@@ -3,9 +3,9 @@
   "defaults": {
     "model": "forge:block/multi-layer",
     "custom": {
-      "base": "minecolonies:blockhutswineherder#base",
-      "Solid": "minecolonies:blockhutswineherder#base",
-      "Cutout": "minecolonies:blockhutswineherder#overlay"
+      "base": "minecolonies:block/blockhutswineherder",
+      "Solid": "minecolonies:block/blockhutswineherder",
+      "Cutout": "minecolonies:block/blockhutswineherderitems"
     },
     "transform": "forge:default-block"
   },
@@ -21,12 +21,6 @@
     },
     "facing=north": {
       "y": 270
-    },
-    "base": [{
-      "model": "minecolonies:block/blockhutswineherder"
-    }],
-    "overlay": [{
-      "model": "minecolonies:block/blockhutswineherderitems"
-    }]
+    }
   }
 }
