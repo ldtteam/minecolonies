@@ -25,7 +25,7 @@ public class RenderBipedCitizen<C extends EntityCitizen> extends RenderBiped<C>
     private static final ModelBiped defaultModelFemale = new ModelEntityCitizenFemaleCitizen();
     private static final double     SHADOW_SIZE        = 0.5F;
     private static final int        THREE_QUARTERS     = 270;
-    public static        boolean    isItGhostTime      = true;
+    public static        boolean    isItGhostTime      = false;
 
     /**
      * Renders model, see {@link RenderBiped}.
