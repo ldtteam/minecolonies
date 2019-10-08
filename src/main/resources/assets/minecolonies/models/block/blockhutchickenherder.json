@@ -2,13 +2,13 @@
   "credit": "created by:OddRobbia02 with Blockbench",
   "textures": {
     "5": "minecolonies:blocks/chicken",
-    "7": "minecraft:items/egg",
+    "7": "minecraft:item/egg",
     "14": "minecraft:entity/chest/normal",
-    "15": "minecraft:items/bucket_empty",
-    "16": "minecraft:blocks/planks_oak",
-    "17": "minecraft:blocks/water_still",
-    "18": "minecraft:blocks/tallGrass",
-    "particle": "minecraft:items/bucket_empty"
+    "15": "minecraft:item/bucket",
+    "16": "minecraft:block/oak_planks",
+    "17": "minecraft:block/water_still",
+    "18": "minecraft:block/tall_grass_top",
+    "particle": "minecraft:item/bucket"
   },
   "elements": [
     {

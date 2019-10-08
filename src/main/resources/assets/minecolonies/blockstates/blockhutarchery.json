@@ -3,9 +3,9 @@
   "defaults": {
     "model": "forge:multi-layer",
     "custom": {
-      "base": "minecolonies:blockhutarchery#base",
-      "Solid": "minecolonies:blockhutarchery#base",
-      "Cutout": "minecolonies:blockhutarchery#overlay"
+      "base": "minecolonies:blockhutarchery",
+      "Solid": "minecolonies:blockhutarchery",
+      "Cutout": "minecolonies:blockhutarcheryarrows"
     },
     "transform": "forge:default-block"
   },
@@ -21,12 +21,6 @@
     },
     "facing=north": {
       "y": 270
-    },
-    "base": [{
-      "model": "minecolonies:blockhutarchery"
-    }],
-    "overlay": [{
-      "model": "minecolonies:blockhutarcheryarrows"
-    }]
+    }
   }
 }

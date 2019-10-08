@@ -2,8 +2,8 @@
   "credit": "created by:OddRobbia02 with Blockbench",
   "parent": "model",
   "textures": {
-    "1": "minecraft:items/iron_sword",
-    "2": "minecraft:items/stick",
+    "1": "minecraft:item/iron_sword",
+    "2": "minecraft:item/stick",
     "3": "minecolonies:blocks/map1",
     "1_0": "minecraft:entity/chest/normal",
     "particle": "minecraft:entity/chest/normal"

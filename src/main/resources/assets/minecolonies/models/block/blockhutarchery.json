@@ -1,10 +1,10 @@
 {
   "credit": "created by:OddRobbia02 with Blockbench",
   "textures": {
-    "1": "minecraft:items/bow_standby",
-    "2": "minecraft:blocks/planks_spruce",
-    "3": "minecraft:blocks/anvil_top_damaged_0",
-    "particle": "minecraft:items/arrow"
+    "1": "minecraft:item/bow",
+    "2": "minecraft:block/spruce_planks",
+    "3": "minecraft:block/anvil_top",
+    "particle": "minecraft:item/arrow"
   },
   "elements": [
     {

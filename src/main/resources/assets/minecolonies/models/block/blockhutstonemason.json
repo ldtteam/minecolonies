@@ -1,11 +1,11 @@
 {
   "credit": "created by:OddRobbia02 with Blockbench",
   "textures": {
-    "0": "minecraft:items/iron_ingot",
-    "1": "minecraft:blocks/planks_spruce",
-    "2": "minecraft:blocks/stonebrick",
-    "3": "minecraft:blocks/stonebrick_carved",
-    "particle": "minecraft:items/iron_ingot"
+    "0": "minecraft:item/iron_ingot",
+    "1": "minecraft:block/spruce_planks",
+    "2": "minecraft:block/stone_bricks",
+    "3": "minecraft:block/chiseled_stone_bricks",
+    "particle": "minecraft:item/iron_ingot"
   },
   "elements": [
     {
