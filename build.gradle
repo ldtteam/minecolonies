@@ -54,6 +54,7 @@ sourceSets {
         }
         resources {
             srcDir 'src/main/resources'
+            srcDir 'src/main/generated/resources'
         }
         compileClasspath += compileClasspath += sourceSets.api.output
     }
@@ -77,6 +78,8 @@ dependencies {
 
     implementation fg.deobf("com.ldtteam:structurize:${config.structurize_version}")
     apiImplementation fg.deobf("com.ldtteam:structurize:${config.structurize_version}")
+    compile "com.ldtteam:datagenerators:0.1.34-ALPHA"
+    
     implementation fg.deobf("mezz.jei:jei-1.14.4:${config.jei_version}")
 
     testImplementation  'junit:junit:4.12'
@@ -138,6 +141,21 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'info'
+
+            mods {
+                minecolonies {
+                    source sourceSets.main
+                    source sourceSets.api
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('runData')
+
+            property 'forge.logging.console.level', 'info'
+
+            args '--mod', 'minecolonies', '--all', '--output', file('src/main/generated/resources'), '--input', file('src/main/resources')
 
             mods {
                 minecolonies {
