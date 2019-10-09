@@ -250,4 +250,22 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         drops.add(new ItemStack(this, 1));
         return drops;
     }
+
+    @Override
+    public void onReplaced(BlockState state, @NotNull World worldIn, @NotNull BlockPos pos, BlockState newState, boolean isMoving) {
+        if (state.getBlock() != newState.getBlock()) {
+            TileEntity tileEntity = worldIn.getTileEntity(pos);
+            if (tileEntity instanceof TileEntityRack) {
+                TileEntityRack tileEntityRack = (TileEntityRack) tileEntity;
+                InventoryUtils.dropItemHandler(tileEntityRack.getInventory(),
+                        worldIn.getWorld(),
+                        tileEntityRack.getPos().getX(),
+                        tileEntityRack.getPos().getY(),
+                        tileEntityRack.getPos().getZ());
+                worldIn.getWorld().updateComparatorOutputLevel(pos, this);
+            }
+
+            super.onReplaced(state, worldIn, pos, newState, isMoving);
+        }
+    }
 }
