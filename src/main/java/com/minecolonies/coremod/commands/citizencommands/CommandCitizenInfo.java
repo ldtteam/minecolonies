@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -23,7 +24,7 @@ import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_AR
 /**
  * Displays information about a chosen citizen in a chosen colony.
  */
-public class CommandCitizenInfo implements IMCCommand
+public class CommandCitizenInfo implements IMCColonyOfficerCommand
 {
     /**
      * What happens when the command is executed after preConditions are successful.

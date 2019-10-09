@@ -8,7 +8,6 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
@@ -18,9 +17,9 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
+import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.commands.ClickEventExecutable;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.event.capabilityproviders.MinecoloniesChunkCapabilityProvider;
@@ -39,6 +38,8 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.horse.LlamaEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -49,6 +50,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
@@ -67,11 +69,15 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
+import static com.minecolonies.coremod.commands.colonycommands.CommandDeleteColony.COLONY_DELETE_COMMAND;
+import static com.minecolonies.coremod.commands.colonycommands.CommandSetAbandoned.COLONY_ABANDON_COMMAND;
 import static net.minecraftforge.eventbus.api.EventPriority.LOWEST;
 
 /**
@@ -93,7 +99,7 @@ public class EventHandler
             {
                 ((AbstractEntityCitizen) event.getEntity()).getCitizenColonyHandler().updateColonyServer();
             }
-            else if (MineColonies.getConfig().getCommon().mobAttackCitizens.get() && (event.getEntity() instanceof MobEntity))
+            else if (MineColonies.getConfig().getCommon().mobAttackCitizens.get() && (event.getEntity() instanceof IMob) && !(event.getEntity() instanceof LlamaEntity))
             {
                 ((MobEntity) event.getEntity()).goalSelector.addGoal(6, new NearestAttackableTargetGoal<>((MobEntity) event.getEntity(), EntityCitizen.class, true));
                 ((MobEntity) event.getEntity()).goalSelector.addGoal(7, new NearestAttackableTargetGoal((MobEntity) event.getEntity(), EntityMercenary.class, true));
@@ -587,32 +593,25 @@ public class EventHandler
             if (!world.isRemote)
             {
                 final ITextComponent deleteButton = new TranslationTextComponent("tile.blockHutTownHall.deleteMessageLink")
-                                                      .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-                                                        new ClickEventExecutable(() -> IColonyManager.getInstance()
-                                                                                         .deleteColonyByDimension(colony.getID(), false, colony.getDimension()),
-                                                          () -> LanguageHandler.sendPlayerMessage(player, "com.minecolonies.command.delete.success", colony.getName()))));
+                                                      .setStyle(new Style()
+                                                                  .setBold(true)
+                                                                  .setColor(TextFormatting.GOLD)
+                                                                  .setClickEvent(
+                                                                    new ClickEvent(
+                                                                      ClickEvent.Action.RUN_COMMAND,
+                                                                      String.format(COLONY_DELETE_COMMAND, colony.getID(), false))));
 
                 if (MineColonies.getConfig().getCommon().allowInfiniteColonies.get())
                 {
                     player.sendMessage(new TranslationTextComponent("tile.blockHutTownHall.messagePlacedAlreadyInfi"));
 
-                    final ITextComponent addOfficerButton = new TranslationTextComponent("tile.blockHutTownHall.addOfficerMessageLink")
-                                                              .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD)
-                                                                          .setClickEvent(new ClickEventExecutable(() -> colony.getPermissions()
-                                                                                                                          .addPlayer(player.getGameProfile(), Rank.OFFICER),
-                                                                            () -> LanguageHandler.sendPlayerMessage(player,
-                                                                              "com.minecolonies.command.addofficer.success",
-                                                                              player.getName(),
-                                                                              colony.getName()))));
-
                     final ITextComponent abandonButton = new TranslationTextComponent("tile.blockHutTownHall.abandonMessageLink")
                                                            .setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD)
-                                                                       .setClickEvent(new ClickEventExecutable(() -> colony.getPermissions().setOwnerAbandoned(),
-                                                                         () -> LanguageHandler.sendPlayerMessage(player,
-                                                                           "com.minecolonies.command.ownerchange.success",
-                                                                           "[abadoned]",
-                                                                           colony.getName()),
-                                                                         () -> player.sendMessage(addOfficerButton))));
+                                                                       .setClickEvent(new ClickEvent(
+                                                                         ClickEvent.Action.RUN_COMMAND,
+                                                                         String.format(COLONY_ABANDON_COMMAND, colony.getID()))));
+
+
                     player.sendMessage(abandonButton);
                 }
                 else
@@ -704,6 +703,16 @@ public class EventHandler
         if (event.getWorld() instanceof World)
         {
             IColonyManager.getInstance().onWorldLoad((World) event.getWorld());
+        }
+
+        // Global events
+        // Halloween ghost mode
+        if (MineColonies.getConfig().getCommon().holidayFeatures.get() &&
+              (LocalDateTime.now().getDayOfMonth() == 31 && LocalDateTime.now().getMonth() == Month.OCTOBER
+                 || LocalDateTime.now().getDayOfMonth() == 1 && LocalDateTime.now().getMonth() == Month.NOVEMBER
+                 || LocalDateTime.now().getDayOfMonth() == 2 && LocalDateTime.now().getMonth() == Month.NOVEMBER))
+        {
+            RenderBipedCitizen.isItGhostTime = true;
         }
     }
 

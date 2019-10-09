@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.Constants.MAX_BARBARIAN_HORDE_SIZE;
 
 /**
  * Mod common configuration.
@@ -55,22 +54,20 @@ public class CommonConfiguration extends AbstractConfiguration
      *  ------------------- ######## Command settings ######## ------------------- *
      *  --------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.IntValue teleportBuffer;
-    public final ForgeConfigSpec.IntValue opLevelForServer;
-    public final ForgeConfigSpec.IntValue autoDeleteColoniesInHours;
+    public final ForgeConfigSpec.IntValue     teleportBuffer;
+    public final ForgeConfigSpec.IntValue     opLevelForServer;
+    public final ForgeConfigSpec.IntValue     autoDeleteColoniesInHours;
     public final ForgeConfigSpec.BooleanValue autoDestroyColonyBlocks;
     public final ForgeConfigSpec.BooleanValue canPlayerUseRTPCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseColonyTPCommand;
+    public final ForgeConfigSpec.BooleanValue canPlayerUseAllyTHTeleport;
     public final ForgeConfigSpec.BooleanValue canPlayerUseHomeTPCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseCitizenInfoCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseListCitizensCommand;
-    public final ForgeConfigSpec.BooleanValue canPlayerRespawnCitizensCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseShowColonyInfoCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseKillCitizensCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseAddOfficerCommand;
     public final ForgeConfigSpec.BooleanValue canPlayerUseDeleteColonyCommand;
-    public final ForgeConfigSpec.BooleanValue canPlayerUseRefreshColonyCommand;
-    public final ForgeConfigSpec.BooleanValue canPlayerUseBackupCommand;
     public final ForgeConfigSpec.IntValue numberOfAttemptsForSafeTP;
 
     /*  --------------------------------------------------------------------------- *
@@ -206,16 +203,14 @@ public class CommonConfiguration extends AbstractConfiguration
         autoDestroyColonyBlocks = defineBoolean(builder, "autodestroycolonyblocks", true);
         canPlayerUseRTPCommand = defineBoolean(builder, "canplayerusertpcommand", true);
         canPlayerUseColonyTPCommand = defineBoolean(builder, "canplayerusecolonytpcommand", false);
+        canPlayerUseAllyTHTeleport = defineBoolean(builder, "canplayeruseallytownhallteleport", true);
         canPlayerUseHomeTPCommand = defineBoolean(builder, "canplayerusehometpcommand", true);
         canPlayerUseCitizenInfoCommand = defineBoolean(builder, "canplayerusecitizeninfocommand", true);
         canPlayerUseListCitizensCommand = defineBoolean(builder, "canplayeruselistcitizenscommand", true);
-        canPlayerRespawnCitizensCommand = defineBoolean(builder, "canplayerrespawncitizenscommand", true);
         canPlayerUseShowColonyInfoCommand = defineBoolean(builder, "canplayeruseshowcolonyinfocommand", true);
         canPlayerUseKillCitizensCommand = defineBoolean(builder, "canplayerusekillcitizenscommand", true);
         canPlayerUseAddOfficerCommand = defineBoolean(builder, "canplayeruseaddofficercommand", true);
         canPlayerUseDeleteColonyCommand = defineBoolean(builder, "canplayerusedeletecolonycommand", true);
-        canPlayerUseRefreshColonyCommand = defineBoolean(builder, "canplayeruserefreshcolonycommand", false);
-        canPlayerUseBackupCommand = defineBoolean(builder, "canplayerusebackupcommand", false);
         numberOfAttemptsForSafeTP = defineInteger(builder, "numberofattemptsforsafetp", 4, 1, 10);
 
 

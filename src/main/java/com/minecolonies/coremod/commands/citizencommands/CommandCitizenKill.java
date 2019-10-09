@@ -6,8 +6,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
-import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -25,7 +25,7 @@ import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_AR
 /**
  * Kills the given citizen.
  */
-public class CommandCitizenKill implements IMCOPCommand
+public class CommandCitizenKill implements IMCColonyOfficerCommand
 {
 
     /**
