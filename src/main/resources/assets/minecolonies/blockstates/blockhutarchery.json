@@ -1,19 +1,25 @@
 {
+  "forge_marker": 1,
+  "defaults": {
+    "model": "forge:multi-layer",
+    "custom": {
+      "base": "minecolonies:blockhutarchery",
+      "Solid": "minecolonies:blockhutarchery",
+      "Cutout": "minecolonies:blockhutarcheryarrows"
+    },
+    "transform": "forge:default-block"
+  },
   "variants": {
     "facing=east": {
-      "model": "minecolonies:block/blockhutarchery",
       "y": 0
     },
     "facing=south": {
-      "model": "minecolonies:block/blockhutarchery",
       "y": 90
     },
     "facing=west": {
-      "model": "minecolonies:block/blockhutarchery",
       "y": 180
     },
     "facing=north": {
-      "model": "minecolonies:block/blockhutarchery",
       "y": 270
     }
   }
