@@ -5,13 +5,13 @@ package com.minecolonies.api.client.render.modeltype;
  */
 public enum BipedModelType implements IModelType
 {
-    SETTLER("Settler", 3),
-    CITIZEN("Citizen", 3),
-    NOBLE("Noble", 3),
-    ARISTOCRAT("Aristocrat", 3),
-    BUILDER("Builder", 1),
-    DELIVERYMAN("Deliveryman", 1),
-    MINER("Miner", 1),
+    SETTLER("settler", 3),
+    CITIZEN("citizen", 3),
+    NOBLE("noble", 3),
+    ARISTOCRAT("aristocrat", 3),
+    BUILDER("builder", 1),
+    DELIVERYMAN("deliveryman", 1),
+    MINER("miner", 1),
     // Lumberjack: 4 male, 1 female
     LUMBERJACK("lumberjack", 1),
     FARMER("farmer", 1),
@@ -28,7 +28,8 @@ public enum BipedModelType implements IModelType
     COOK("cook", 1),
     STUDENT("student", 6),
     CRAFTER("crafter", 1),
-    BLACKSMITH("Blacksmith", 1);
+    BLACKSMITH("blacksmith", 1),
+    CHILD("child", 4);
 
     /**
      * String describing the citizen.

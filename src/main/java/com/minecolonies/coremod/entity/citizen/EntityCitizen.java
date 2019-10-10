@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.citizen;
 
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
