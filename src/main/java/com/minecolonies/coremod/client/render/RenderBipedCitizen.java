@@ -31,7 +31,7 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
 {
     private static final double  SHADOW_SIZE    = 0.5F;
     private static final int     THREE_QUARTERS = 270;
-    public static        boolean isItGhostTime  = false;
+    public static        boolean isItGhostTime  = true;
 
     /**
      * Renders model, see {@link BipedRenderer}.
@@ -74,16 +74,13 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
     {
         if (isItGhostTime)
         {
-            GlStateManager.enableAlphaTest();
             GlStateManager.enableBlend();
-
             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 0.3F);
 
             super.doRender(entity, x, y, z, f, partialTicks);
 
             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1F);
 
-            GlStateManager.disableAlphaTest();
             GlStateManager.disableBlend();
         }
         else

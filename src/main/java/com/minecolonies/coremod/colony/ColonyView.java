@@ -25,11 +25,11 @@ import com.minecolonies.coremod.colony.requestsystem.management.manager.Standard
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.TownHallRenameMessage;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -37,7 +37,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.event.TickEvent;
-
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -437,6 +436,23 @@ public final class ColonyView implements IColonyView
     public boolean canMoveIn()
     {
         return moveIn;
+    }
+
+    /**
+     * Tries to use a given amount of additional growth-time for childs.
+     *
+     * @param amount amount to use
+     * @return true if used up.
+     */
+    @Override
+    public boolean useAdditionalChildTime(final int amount)
+    {
+        return false;
+    }
+
+    @Override
+    public void updateHasChilds()
+    {
     }
 
     /**
