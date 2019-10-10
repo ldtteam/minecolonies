@@ -284,7 +284,7 @@ public class EntityAICitizenChild extends Goal
             }
 
             // 1/144 Chance to grow up, every 25 seconds = avg 1h. Set to half since this AI isnt always active, e.g. sleeping.  At 2h they directly grow
-            if (rand.nextInt((int) (70 / MineColonies.getConfig().getCommon().growthModifier.get())) == 0 || aiActiveTime > 70000 / MineColonies.getConfig()
+            if (rand.nextInt((int) (70 / MineColonies.getConfig().getCommon().growthModifier.get()) + 1) == 0 || aiActiveTime > 70000 / MineColonies.getConfig()
                                                                                                                                       .getCommon().growthModifier.get())
             {
 
