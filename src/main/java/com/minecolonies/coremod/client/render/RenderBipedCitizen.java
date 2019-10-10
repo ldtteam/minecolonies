@@ -31,7 +31,7 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
 {
     private static final double  SHADOW_SIZE    = 0.5F;
     private static final int     THREE_QUARTERS = 270;
-    public static        boolean isItGhostTime  = true;
+    public static        boolean isItGhostTime  = false;
 
     /**
      * Renders model, see {@link BipedRenderer}.
