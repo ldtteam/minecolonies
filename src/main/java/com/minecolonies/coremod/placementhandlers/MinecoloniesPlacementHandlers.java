@@ -13,6 +13,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
@@ -274,17 +275,9 @@ public final class MinecoloniesPlacementHandlers
                 return ActionProcessingResult.ACCEPT;
             }
 
-            if (!world.setBlockState(pos, blockState, UPDATE_FLAG))
+            if (!world.setBlockState(pos, Block.getValidBlockForPosition(blockState, world, pos), com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG))
             {
                 return ActionProcessingResult.ACCEPT;
-            }
-
-            //todo remove very dirty hack after porting of schematics is finished!
-            try (BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain()) {
-                for(Direction direction : DIRS) {
-                    blockpos$pooledmutableblockpos.setPos(pos).move(direction);
-                    world.getBlockState(blockpos$pooledmutableblockpos).updateNeighbors(world, blockpos$pooledmutableblockpos, Constants.BlockFlags.NOTIFY_NEIGHBORS | Constants.BlockFlags.BLOCK_UPDATE);
-                }
             }
 
             if (tileEntityData != null)
