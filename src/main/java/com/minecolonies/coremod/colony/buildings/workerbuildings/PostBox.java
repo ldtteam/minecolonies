@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
-import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowPostBox;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
