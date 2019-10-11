@@ -292,10 +292,6 @@ public class EntityAICitizenChild extends EntityAIBase
                 // Grow up
                 child.setIsChild(false);
                 child.getCitizenData().setIsChild(false);
-                if (child.getCitizenColonyHandler().getColony() != null)
-                {
-                    child.getCitizenColonyHandler().getColony().updateHasChilds();
-                }
                 return true;
             }
         }
@@ -311,7 +307,7 @@ public class EntityAICitizenChild extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        return child.isChild();
+        return child.isChild() && child.getCitizenData() != null;
     }
 
     /**
@@ -321,7 +317,7 @@ public class EntityAICitizenChild extends EntityAIBase
     @Override
     public boolean shouldContinueExecuting()
     {
-        if (child.getDesiredActivity() == DesiredActivity.SLEEP || !child.isChild())
+        if (child.getDesiredActivity() == DesiredActivity.SLEEP || !child.isChild() || child.getCitizenData() == null)
         {
             return false;
         }
