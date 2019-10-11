@@ -466,6 +466,7 @@ public class EntityAIEatTask extends Goal
             }
 
             reset();
+            currentState = IDLE;
             return IDLE;
         }
         foodSlot = slot;
