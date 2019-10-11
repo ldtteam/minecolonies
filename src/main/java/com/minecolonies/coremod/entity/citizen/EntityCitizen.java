@@ -419,15 +419,9 @@ public class EntityCitizen extends AbstractEntityCitizen
         {
             goalSelector.addGoal(50, new EntityAICitizenChild(this));
             setCitizensize((float) CITIZEN_WIDTH / 2, (float) CITIZEN_HEIGHT / 2);
-
-            if (citizenColonyHandler != null && citizenColonyHandler.getColony() != null)
-            {
-                citizenColonyHandler.getColony().updateHasChilds();
-            }
         }
         else
         {
-            goalSelector.goals.stream().filter(goal -> goal.getGoal() instanceof EntityAICitizenChild).forEach(goal -> goalSelector.removeGoal(goal.getGoal()));
             setCitizensize((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT);
         }
         this.child = isChild;
