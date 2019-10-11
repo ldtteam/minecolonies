@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Delivery;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
@@ -55,6 +54,9 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
     {
         if (!manager.getColony().getWorld().isRemote)
         {
+            if (!isRequestChainValid(manager, requestToCheck))
+                return false;
+
             final Colony colony = (Colony) manager.getColony();
             final Set<TileEntityWareHouse> wareHouses = getWareHousesInColony(colony);
             wareHouses.removeIf(Objects::isNull);
@@ -70,6 +72,23 @@ public class WarehouseRequestResolver extends AbstractRequestResolver<IDeliverab
         }
 
         return false;
+    }
+
+    public boolean isRequestChainValid(@NotNull final IRequestManager manager, final IRequest<?> requestToCheck)
+    {
+        if (requestToCheck.getRequester() instanceof WarehouseRequestResolver)
+            return false;
+
+        if (!requestToCheck.hasParent())
+            return true;
+
+        final IRequest<?> parentRequest = manager.getRequestForToken(requestToCheck.getParent());
+
+        //Should not happen but just to be sure.
+        if (parentRequest == null)
+            return true;
+
+        return isRequestChainValid(manager, parentRequest);
     }
 
     @Nullable

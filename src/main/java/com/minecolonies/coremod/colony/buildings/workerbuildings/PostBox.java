@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
@@ -7,6 +9,8 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowPostBox;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -34,6 +38,12 @@ public class PostBox extends AbstractBuilding
     public PostBox(final IColony c, final BlockPos l)
     {
         super(c, l);
+    }
+
+    @Override
+    public ImmutableCollection<IRequestResolver<?>> createResolvers()
+    {
+        return ImmutableList.of();
     }
 
     @NotNull
