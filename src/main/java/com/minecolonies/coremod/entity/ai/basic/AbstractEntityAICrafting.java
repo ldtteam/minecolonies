@@ -150,6 +150,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         }
 
         currentRequest = currentTask;
+        maxCraftingCount = CraftingUtils.calculateMaxCraftingCount(currentRequest.getRequest().getCount(), currentRecipeStorage);
 
         setDelay(STANDARD_DELAY);
         return QUERY_ITEMS;
@@ -226,30 +227,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             return getState();
         }
 
-        if (maxCraftingCount == 0)
-        {
-            final IRequest<? extends PublicCrafting> craftingRequest = job.getCurrentTask();
-            if (craftingRequest == null)
-            {
-                return START_WORKING;
-            }
-
-            final PublicCrafting crafting = craftingRequest.getRequest();
-            maxCraftingCount = CraftingUtils.calculateMaxCraftingCount(crafting.getCount(), currentRecipeStorage);
-        }
-
-        if (maxCraftingCount == 0)
-        {
-            currentRequest = null;
-            incrementActionsDone();
-            job.finishRequest(false);
-            maxCraftingCount = 0;
-            progress = 0;
-            craftCounter = 0;
-            setDelay(TICKS_20);
-            return START_WORKING;
-        }
-
         progress++;
 
         worker.setHeldItem(EnumHand.MAIN_HAND, currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
@@ -277,33 +254,39 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             final IAIState check = checkForItems(currentRecipeStorage);
             if (check == CRAFT)
             {
-                while (craftCounter < maxCraftingCount && currentRequest != null)
+                if (!currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen()))
                 {
-                    if (!currentRecipeStorage.fullFillRecipe(worker.getItemHandlerCitizen()))
-                    {
-                        currentRequest = null;
-                        incrementActionsDone();
-                        job.finishRequest(false);
-                        maxCraftingCount = 0;
-                        progress = 0;
-                        craftCounter = 0;
-                        setDelay(TICKS_20);
-                        worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
-                        worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
-                        return START_WORKING;
-                    }
-
-                    currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
-                    craftCounter++;
+                    currentRequest = null;
+                    incrementActionsDone();
+                    job.finishRequest(false);
+                    maxCraftingCount = 0;
+                    progress = 0;
+                    craftCounter = 0;
+                    setDelay(TICKS_20);
+                    worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+                    worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
+                    return START_WORKING;
                 }
 
-                incrementActionsDone();
-                maxCraftingCount = 0;
-                progress = 0;
-                craftCounter = 0;
-                currentRecipeStorage = null;
-                worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
-                worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
+                currentRequest.addDelivery(currentRecipeStorage.getPrimaryOutput());
+                craftCounter++;
+
+                if (craftCounter == maxCraftingCount)
+                {
+                    incrementActionsDone();
+                    maxCraftingCount = 0;
+                    progress = 0;
+                    craftCounter = 0;
+                    currentRecipeStorage = null;
+                    worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
+                    worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
+                }
+                else
+                {
+                    progress = 0;
+                    return GET_RECIPE;
+                }
+
                 return START_WORKING;
             }
             else
