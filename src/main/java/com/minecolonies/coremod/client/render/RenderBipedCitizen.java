@@ -54,7 +54,6 @@ public class RenderBipedCitizen<C extends EntityCitizen> extends RenderBiped<C>
 
         if (isItGhostTime)
         {
-            GlStateManager.enableAlpha();
             GlStateManager.enableBlend();
 
             GlStateManager.color(1.0F, 1.0F, 1.0F, 0.3F);
@@ -62,8 +61,7 @@ public class RenderBipedCitizen<C extends EntityCitizen> extends RenderBiped<C>
             super.doRender(citizen, d, d1, d2, f, f1);
 
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1F);
-
-            GlStateManager.disableAlpha();
+            
             GlStateManager.disableBlend();
         }
         else
