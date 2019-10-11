@@ -13,7 +13,6 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
-import com.mojang.realmsclient.client.Request;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,6 +30,21 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
      * The Token of the data store which belongs to this job.
      */
     private IToken<?> rsDataStoreToken;
+
+    /**
+     * Max crafting count for current recipe.
+     */
+    private int maxCraftingCount = 0;
+
+    /**
+     * Count of already executed recipes.
+     */
+    private int craftCounter = 0;
+
+    /**
+     * Progress of hitting the block.
+     */
+    private int progress = 0;
 
     /**
      * Instantiates the job for the crafter.
@@ -72,6 +86,9 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
         final NBTTagCompound compound = super.serializeNBT();
         compound.setTag(NbtTagConstants.TAG_RS_DMANJOB_DATASTORE, StandardFactoryController.getInstance().serialize(rsDataStoreToken));
 
+        compound.setInteger(NbtTagConstants.TAG_PROGRESS, progress);
+        compound.setInteger(NbtTagConstants.TAG_MAX_COUNTER, maxCraftingCount);
+        compound.setInteger(NbtTagConstants.TAG_CRAFT_COUNTER, craftCounter);
         return compound;
     }
 
@@ -87,6 +104,21 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
         else
         {
             setupRsDataStore();
+        }
+
+        if (compound.hasKey(NbtTagConstants.TAG_PROGRESS))
+        {
+            this.progress = compound.getInteger(NbtTagConstants.TAG_PROGRESS);
+        }
+
+        if (compound.hasKey(NbtTagConstants.TAG_MAX_COUNTER))
+        {
+            this.progress = compound.getInteger(NbtTagConstants.TAG_MAX_COUNTER);
+        }
+
+        if (compound.hasKey(NbtTagConstants.TAG_CRAFT_COUNTER))
+        {
+            this.progress = compound.getInteger(NbtTagConstants.TAG_CRAFT_COUNTER);
         }
     }
 
@@ -217,4 +249,57 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAICrafting<J>,
         return ImmutableList.copyOf(getAssignedTasksFromDataStore());
     }
 
+    /**
+     * Get the max crafting count for the current recipe.
+     * @return the count.
+     */
+    public int getMaxCraftingCount()
+    {
+        return maxCraftingCount;
+    }
+
+    /**
+     * Set the max crafting count for the current recipe.
+     * @param maxCraftingCount the count to set.
+     */
+    public void setMaxCraftingCount(final int maxCraftingCount)
+    {
+        this.maxCraftingCount = maxCraftingCount;
+    }
+
+    /**
+     * Get the current craft counter.
+     * @return the counter.
+     */
+    public int getCraftCounter()
+    {
+        return craftCounter;
+    }
+
+    /**
+     * Set the current craft counter.
+     * @param craftCounter the counter to set.
+     */
+    public void setCraftCounter(final int craftCounter)
+    {
+        this.craftCounter = craftCounter;
+    }
+
+    /**
+     * Get the crafting progress.
+     * @return the current progress.
+     */
+    public int getProgress()
+    {
+        return progress;
+    }
+
+    /**
+     * Set the crafting progress.
+     * @param progress the current progress.
+     */
+    public void setProgress(final int progress)
+    {
+        this.progress = progress;
+    }
 }
