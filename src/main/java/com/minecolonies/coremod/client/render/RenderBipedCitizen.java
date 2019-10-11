@@ -102,7 +102,10 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
         {
             entityModel = (citizen.isFemale() ? new ModelEntityCitizenFemaleCitizen() : new CitizenModel(0.0F));
         }
+
         entityModel.isChild = citizen.isChild();
+        entityModel.swingProgress = citizen.swingProgress;
+
     }
 
     private BipedModel.ArmPose getArmPoseFrom(@NotNull final AbstractEntityCitizen citizen, final ItemStack mainHandStack, BipedModel.ArmPose armPoseMainHand)
