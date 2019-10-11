@@ -118,14 +118,14 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
      */
     private IAIState getRecipe()
     {
-        currentRequest= job.getCurrentTask();
+        final IRequest<? extends PublicCrafting> currentTask = job.getCurrentTask();
 
-        if (currentRequest == null)
+        if (currentTask == null)
         {
             return START_WORKING;
         }
         final IBuildingWorker buildingWorker = getOwnBuilding();
-        currentRecipeStorage = buildingWorker.getFirstFullFillableRecipe(currentRequest.getRequest().getStack());
+        currentRecipeStorage = buildingWorker.getFirstFullFillableRecipe(currentTask.getRequest().getStack());
 
         if (currentRecipeStorage == null)
         {
@@ -133,9 +133,6 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             setDelay(TICKS_20);
             return START_WORKING;
         }
-
-        currentRequest = currentTask;
-
         setDelay(STANDARD_DELAY);
         return QUERY_ITEMS;
     }
@@ -237,8 +234,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
 
         job.setProgress(job.getProgress()+1);
 
-        worker.setHeldItem(EnumHand.MAIN_HAND, currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
-        worker.setHeldItem(EnumHand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
+        worker.setHeldItem(Hand.MAIN_HAND, currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
+        worker.setHeldItem(Hand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
         worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
         setDelay(HIT_DELAY);
 
@@ -248,12 +245,12 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         {
             currentRequest = null;
             incrementActionsDone();
-            maxCraftingCount = 0;
-            progress = 0;
-            craftCounter = 0;
+            job.setMaxCraftingCount(0);
+            job.setProgress(0);
+            job.setCraftCounter(0);
             currentRecipeStorage = null;
-            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
-            worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
+            worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
+            worker.setHeldItem(Hand.OFF_HAND, ItemStackUtils.EMPTY);
             return START_WORKING;
         }
 
@@ -269,12 +266,12 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
                         currentRequest = null;
                         incrementActionsDone();
                         job.finishRequest(false);
-                        maxCraftingCount = 0;
-                        progress = 0;
-                        craftCounter = 0;
+                        job.setMaxCraftingCount(0);
+                        job.setProgress(0);
+                        job.setCraftCounter(0);
                         setDelay(TICKS_20);
-                        worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
-                        worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
+                        worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
+                        worker.setHeldItem(Hand.OFF_HAND, ItemStackUtils.EMPTY);
                         return START_WORKING;
                     }
 
@@ -287,8 +284,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
                 job.setProgress(0);
                 job.setCraftCounter(0);
                 currentRecipeStorage = null;
-                worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
-                worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
+                worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
+                worker.setHeldItem(Hand.OFF_HAND, ItemStackUtils.EMPTY);
                 return START_WORKING;
             }
             else
@@ -300,8 +297,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
                 job.setCraftCounter(0);
                 incrementActionsDoneAndDecSaturation();
                 setDelay(TICKS_20);
-                worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
-                worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
+                worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
+                worker.setHeldItem(Hand.OFF_HAND, ItemStackUtils.EMPTY);
                 return START_WORKING;
             }
         }
@@ -316,8 +313,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
         {
             job.finishRequest(true);
             worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount()/2.0);
-            worker.setHeldItem(EnumHand.MAIN_HAND, ItemStackUtils.EMPTY);
-            worker.setHeldItem(EnumHand.OFF_HAND, ItemStackUtils.EMPTY);
+            worker.setHeldItem(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
+            worker.setHeldItem(Hand.OFF_HAND, ItemStackUtils.EMPTY);
             currentRequest = null;
         }
 
