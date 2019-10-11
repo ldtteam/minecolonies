@@ -166,8 +166,8 @@ public final class SortingUtils
         for (final Map.Entry<ItemStorage, Integer> entry : map.entrySet())
         {
             sum += Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize());
-            creativeTabs.put(entry.getKey().getCreativeTabIndex().get(0),
-              creativeTabs.getOrDefault(entry.getKey().getCreativeTabIndex(), 0) + (int) Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize()));
+            final int index = entry.getKey().getCreativeTabIndex().isEmpty() ? 0 : entry.getKey().getCreativeTabIndex().get(0);
+            creativeTabs.put(index, creativeTabs.getOrDefault(index, 0) + (int) Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize()));
         }
 
         return new Tuple<>(new AtomicInteger(sum), creativeTabs);

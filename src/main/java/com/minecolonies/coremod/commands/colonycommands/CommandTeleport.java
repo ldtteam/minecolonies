@@ -3,8 +3,10 @@ package com.minecolonies.coremod.commands.colonycommands;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
-import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
+import com.minecolonies.coremod.util.TeleportHelper;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -12,14 +14,13 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 
 /**
  * Teleports the user to the given colony
  */
-public class CommandTeleport implements IMCOPCommand
+public class CommandTeleport implements IMCColonyOfficerCommand
 {
     /**
      * What happens when the command is executed after preConditions are successful.
@@ -31,6 +32,12 @@ public class CommandTeleport implements IMCOPCommand
     {
         final Entity sender = context.getSource().getEntity();
 
+        if (!MineColonies.getConfig().getCommon().canPlayerUseColonyTPCommand.get())
+        {
+            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.notenabledinconfig");
+            return 0;
+        }
+
         // Colony
         final int colonyID = IntegerArgumentType.getInteger(context, COLONYID_ARG);
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, sender.dimension.getId());
@@ -39,10 +46,9 @@ public class CommandTeleport implements IMCOPCommand
             LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.colonyidnotfound", colonyID);
             return 0;
         }
-        final BlockPos position = colony.getBuildingManager().getTownHall().getPosition();
+
         final ServerPlayerEntity player = (ServerPlayerEntity) sender;
-        player.teleport(player.getServerWorld(), position.getX(), position.getY() + 2.0, position.getZ(), player.rotationYaw, player.rotationPitch);
-        LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.teleport.success", colony.getName());
+        TeleportHelper.colonyTeleport(player, colony);
         return 1;
     }
 

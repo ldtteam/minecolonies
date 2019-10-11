@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.render;
 
-import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
+import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.client.model.ModelEntityCitizenFemaleCitizen;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.util.HandSide;
@@ -28,8 +29,9 @@ import static com.minecolonies.api.util.constant.Constants.BED_HEIGHT;
  */
 public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends CitizenModel> extends MobRenderer
 {
-    private static final double SHADOW_SIZE    = 0.5F;
-    private static final int    THREE_QUARTERS = 270;
+    private static final double  SHADOW_SIZE    = 0.5F;
+    private static final int     THREE_QUARTERS = 270;
+    public static        boolean isItGhostTime  = false;
 
     /**
      * Renders model, see {@link BipedRenderer}.
@@ -65,6 +67,29 @@ public class RenderBipedCitizen<T extends AbstractEntityCitizen, M extends Citiz
 
         updateArmPose(citizen, citizenModel, armPoseMainHand, armPoseOffHand);
         super.renderModel(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
+    }
+
+    @Override
+    public void doRender(MobEntity entity, double x, double y, double z, float f, float partialTicks)
+    {
+        if (isItGhostTime)
+        {
+            GlStateManager.enableAlphaTest();
+            GlStateManager.enableBlend();
+
+            GlStateManager.color4f(1.0F, 1.0F, 1.0F, 0.3F);
+
+            super.doRender(entity, x, y, z, f, partialTicks);
+
+            GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1F);
+
+            GlStateManager.disableAlphaTest();
+            GlStateManager.disableBlend();
+        }
+        else
+        {
+            super.doRender(entity, x, y, z, f, partialTicks);
+        }
     }
 
     private void setupMainModelFrom(@NotNull final AbstractEntityCitizen citizen)

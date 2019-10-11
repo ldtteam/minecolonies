@@ -160,8 +160,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             if (colony == null && !getWorld().isRemote)
             {
                 //log on the server
-                Log.getLogger().warn(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] had colony.",
-                  getWorld().getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
+                //Log.getLogger().info(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] had colony.",getWorld().getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
             }
         }
 
