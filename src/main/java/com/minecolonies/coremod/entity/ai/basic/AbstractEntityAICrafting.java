@@ -133,6 +133,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter> ext
             setDelay(TICKS_20);
             return START_WORKING;
         }
+        currentRequest = currentTask;
+
         setDelay(STANDARD_DELAY);
         return QUERY_ITEMS;
     }
