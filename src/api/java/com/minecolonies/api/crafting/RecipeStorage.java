@@ -23,6 +23,9 @@ public class RecipeStorage implements IRecipeStorage
     @NotNull
     private final List<ItemStack> input;
 
+    @NotNull
+    private final List<ItemStorage> cleanedInput;
+
     /**
      * Primary output generated for the recipe.
      */
@@ -56,6 +59,7 @@ public class RecipeStorage implements IRecipeStorage
     public RecipeStorage(final IToken token, final List<ItemStack> input, final int gridSize, @NotNull final ItemStack primaryOutput, final Block intermediate)
     {
         this.input = Collections.unmodifiableList(input);
+        this.cleanedInput = this.calculateCleanedInput();
         this.primaryOutput = primaryOutput;
         this.gridSize = gridSize;
         this.intermediate = intermediate;
@@ -70,6 +74,11 @@ public class RecipeStorage implements IRecipeStorage
 
     @Override
     public List<ItemStorage> getCleanedInput()
+    {
+        return this.cleanedInput;
+    }
+
+    public List<ItemStorage> calculateCleanedInput()
     {
         final List<ItemStorage> items = new ArrayList<>();
 
