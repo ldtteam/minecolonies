@@ -1,11 +1,8 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.blockout.Log;
-import javafx.geometry.Pos;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockFlower;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
@@ -13,23 +10,43 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-//Todo: implement this class
+/**
+ * The composted dirty tileEntity to grow all kinds of flowers.
+ */
 public class TileEntityCompostedDirt extends TileEntity implements ITickable
 {
-
+    /**
+     * If currently composted.
+     */
     private boolean composted = false;
 
+    /**
+     * The current tick timer.
+     */
     private int ticker = 0;
 
+    /**
+     * Chance to grow something (per second).
+     */
     private int percentage = 20;
 
+    /**
+     * Max tick limit.
+     */
     private final static int TICKER_LIMIT = 450;
 
+    /**
+     * Random tick.
+     */
     private final Random random = new Random();
 
+    /**
+     * The flower to grow.
+     */
     private ItemStack flower;
 
     @Override
@@ -42,8 +59,18 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
         }
     }
 
-    private void updateTick(World worldIn)
+    /**
+     * Update tick running on the server world.
+     * @param worldIn the server world.
+     */
+    private void updateTick(@NotNull final World worldIn)
     {
+        if ( flower == null || flower.isEmpty())
+        {
+            this.composted = false;
+            return;
+        }
+
         if(this.composted)
         {
             ((WorldServer)worldIn).spawnParticle(
@@ -51,22 +78,16 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
               this.getPos().getY()+1, this.getPos().getZ()+0.5,
               1, 0.2, 0, 0.2, 0);
         }
-        ticker ++;
+        ticker++;
 
         if(this.ticker%(TICKER_LIMIT/20)==0)
         {
             if(random.nextInt(100) <= this.percentage)
             {
-                BlockPos position = pos.up();
+                final BlockPos position = pos.up();
                 if(worldIn.getBlockState(position).getBlock()== Blocks.AIR)
                 {
-                    Block block = Block.getBlockFromItem(flower.getItem());
-                    if(flower.getItem() == Items.REEDS)
-                    {
-                        block = Blocks.REEDS;
-                    }
-                    worldIn.setBlockState(position, block.getStateFromMeta(this.flower.getMetadata()));
-                    Log.getLogger().info(block.getLocalizedName());
+                    worldIn.setBlockState(position, BlockUtils.getBlockStateFromStack(flower));
                 }
             }
         }
@@ -78,10 +99,12 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
         }
     }
 
-
-    // AI interface
-
-    public void compost(final int percentage, ItemStack flower)
+    /**
+     * Method for the composter to call to start producing flowers.
+     * @param percentage the chance for this block to appear per second.
+     * @param flower the flower to grow.
+     */
+    public void compost(final int percentage, @NotNull final ItemStack flower)
     {
         if(percentage >= 0 && percentage <= 100)
         {
@@ -99,6 +122,10 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickable
         this.composted = true;
     }
 
+    /**
+     * Check if the current compost tile entity is running.
+     * @return true if so.
+     */
     public boolean isComposted()
     {
         return this.composted;

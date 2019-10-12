@@ -225,6 +225,7 @@ public class ClientProxy extends CommonProxy
         createCustomModel(ModBlocks.blockHutStoneSmeltery);
         createCustomModel(ModBlocks.blockHutCrusher);
         createCustomModel(ModBlocks.blockHutSifter);
+        createCustomModel(ModBlocks.blockHutFlorist);
 
         createCustomModel(ModBlocks.blockConstructionTape);
         createCustomModel(ModBlocks.blockRack);

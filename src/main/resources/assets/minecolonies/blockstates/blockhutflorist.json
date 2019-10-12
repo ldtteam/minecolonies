@@ -1,0 +1,23 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "minecolonies:blockHutFlorist"
+    },
+    "facing=east": {
+      "model": "minecolonies:blockHutFlorist",
+      "y": 0
+    },
+    "facing=south": {
+      "model": "minecolonies:blockHutFlorist",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "minecolonies:blockHutFlorist",
+      "y": 180
+    },
+    "facing=north": {
+      "model": "minecolonies:blockHutFlorist",
+      "y": 270
+    }
+  }
+}

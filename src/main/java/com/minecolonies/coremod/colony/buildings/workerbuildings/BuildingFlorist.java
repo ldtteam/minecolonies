@@ -6,12 +6,22 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.jobs.JobFlorist;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-//Todo: implement this class
+import static com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder.MAX_BUILDING_LEVEL;
+
+/**
+ * The florist building.
+ */
 public class BuildingFlorist extends AbstractBuildingWorker
 {
+    /**
+     * Florist.
+     */
+    private static final String FLORIST = "florist";
+
     /**
      * The abstract constructor of the building.
      *
@@ -27,26 +37,26 @@ public class BuildingFlorist extends AbstractBuildingWorker
     @Override
     public AbstractJob createJob(final ICitizenData citizen)
     {
-        return null;
+        return new JobFlorist(citizen);
     }
 
     @NotNull
     @Override
     public String getJobName()
     {
-        return null;
+        return FLORIST;
     }
 
     @Override
     public String getSchematicName()
     {
-        return null;
+        return FLORIST;
     }
 
     @Override
     public int getMaxBuildingLevel()
     {
-        return 0;
+        return MAX_BUILDING_LEVEL;
     }
 
     @Override

@@ -69,6 +69,7 @@ public final class ModBlocksInitializer
         ModBlocks.blockPostBox = new BlockPostBox().registerBlock(registry);
         ModBlocks.blockDecorationPlaceholder = new BlockDecorationController(Material.WOOD).registerBlock(registry);
         ModBlocks.blockBarrel = new BlockBarrel().registerBlock(registry);
+        ModBlocks.blockCompostedDirt = new BlockCompostedDirt().registerBlock(registry);
     }
 
     /**
@@ -118,5 +119,6 @@ public final class ModBlocksInitializer
         ModBlocks.blockBarrel.registerItemBlock(registry);
         ModBlocks.blockPostBox.registerItemBlock(registry);
         ModBlocks.blockDecorationPlaceholder.registerItemBlock(registry);
+        ModBlocks.blockCompostedDirt.registerItemBlock(registry);
     }
 }
